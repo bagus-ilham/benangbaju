@@ -1,0 +1,467 @@
+'use client'
+
+import React, { useState } from 'react'
+import {
+  useAdminOrders,
+  useAdminReturnRequests,
+  useAdminUpdateReturnRequest,
+} from '@/hooks/useAdmin'
+import { Button } from '@/components/shared/Button'
+import { Input } from '@/components/shared/Input'
+import { Modal } from '@/components/shared/Modal'
+import { Search, Eye, AlertTriangle, ShieldCheck } from 'lucide-react'
+import Link from 'next/link'
+import toast from 'react-hot-toast'
+
+const TABS = [
+  { id: 'all', label: 'Semua' },
+  { id: 'pending_payment', label: 'Belum Bayar' },
+  { id: 'processing', label: 'Diproses' },
+  { id: 'shipped', label: 'Dikirim' },
+  { id: 'completed', label: 'Selesai' },
+  { id: 'cancelled', label: 'Batal' },
+  { id: 'returns', label: 'Pengajuan Retur' },
+]
+
+export default function AdminOrdersPage() {
+  const [activeTab, setActiveTab] = useState('all')
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const limit = 10
+
+  // Queries
+  const { data: ordersData, isLoading: ordersLoading, refetch: refetchOrders } = useAdminOrders(
+    activeTab === 'returns' ? 'all' : activeTab,
+    search,
+    page,
+    limit
+  )
+  const { data: returnsData = [], isLoading: returnsLoading, refetch: refetchReturns } = useAdminReturnRequests()
+
+  const updateReturnMutation = useAdminUpdateReturnRequest()
+
+  // Return request Modal control
+  const [selectedReturn, setSelectedReturn] = useState<any | null>(null)
+  const [adminNotes, setAdminNotes] = useState('')
+  const [refundAmount, setRefundAmount] = useState(0)
+
+  const handleOpenReturnModal = (ret: any) => {
+    setSelectedReturn(ret)
+    setAdminNotes(ret.admin_notes || '')
+    setRefundAmount(ret.refund_amount || ret.orders?.total_amount || 0)
+  }
+
+  const handleUpdateReturnStatus = async (status: 'approved' | 'rejected' | 'completed') => {
+    if (!selectedReturn) return
+    
+    toast.loading('Memperbarui status retur...', { id: 'update-return' })
+    try {
+      await updateReturnMutation.mutateAsync({
+        requestId: selectedReturn.id,
+        status,
+        adminNotes: adminNotes.trim() || null,
+        refundAmount: Number(refundAmount) || 0
+      })
+      toast.success('Status pengajuan retur berhasil diperbarui!', { id: 'update-return' })
+      setSelectedReturn(null)
+      refetchReturns()
+      refetchOrders()
+    } catch (err) {
+      toast.error('Gagal memperbarui status retur', { id: 'update-return' })
+    }
+  }
+
+  const orders = ordersData?.orders || []
+  const totalCount = ordersData?.totalCount || 0
+  const totalPages = Math.ceil(totalCount / limit)
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Manajemen Pesanan</h2>
+        <p className="text-xs text-neutral-400 mt-1">Pantau status transaksi, konfirmasi pembayaran, dan kelola retur.</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-neutral-200 overflow-x-auto space-x-6 text-xs font-sans">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setActiveTab(tab.id)
+              setPage(1)
+            }}
+            className={`pb-3 font-semibold uppercase tracking-wider transition border-b-2 whitespace-nowrap ${
+              activeTab === tab.id
+                ? 'border-neutral-900 text-neutral-900'
+                : 'border-transparent text-neutral-400 hover:text-neutral-600'
+            }`}
+          >
+            {tab.label}
+            {tab.id === 'returns' && returnsData.length > 0 && (
+              <span className="ml-1.5 bg-red-500 text-white font-bold px-1.5 py-0.5 text-[9px] rounded-full">
+                {returnsData.filter((r: any) => r.status === 'pending').length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Toolbar */}
+      {activeTab !== 'returns' && (
+        <div className="flex bg-white border border-neutral-200 p-4 rounded-none items-center space-x-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
+            <input
+              type="text"
+              placeholder="Cari No. Pesanan atau nama penerima..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setPage(1)
+              }}
+              className="w-full pl-10 pr-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none transition"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Data Section */}
+      <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
+        {activeTab === 'returns' ? (
+          // Returns Table
+          returnsLoading ? (
+            <div className="py-24 text-center">
+              <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat retur...</p>
+            </div>
+          ) : returnsData.length === 0 ? (
+            <div className="py-24 text-center text-neutral-400 italic text-xs">
+              Tidak ada pengajuan retur barang.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-sans">
+                <thead>
+                  <tr className="bg-neutral-50/50 border-b border-neutral-200 text-neutral-400 uppercase tracking-widest font-bold text-[10px]">
+                    <th className="py-3 px-5">No. Pesanan</th>
+                    <th className="py-3 px-4">Pengaju</th>
+                    <th className="py-3 px-4">Alasan</th>
+                    <th className="py-3 px-4 text-center">Rencana Pengembalian</th>
+                    <th className="py-3 px-4 text-center">Status</th>
+                    <th className="py-3 px-5 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
+                  {returnsData.map((ret: any) => (
+                    <tr key={ret.id} className="hover:bg-neutral-50/20 transition">
+                      <td className="py-4 px-5">
+                        <span className="font-semibold text-neutral-900 block">{ret.orders?.order_number}</span>
+                        <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
+                          Tgl Ajuan: {new Date(ret.created_at).toLocaleDateString()}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <p>{ret.profiles?.name}</p>
+                        <p className="text-[10px] text-neutral-400 font-normal">{ret.profiles?.email}</p>
+                      </td>
+                      <td className="py-4 px-4 text-neutral-600 truncate max-w-[200px]">
+                        <span className="font-bold text-neutral-800">
+                          {ret.reason === 'wrong_item'
+                            ? 'Salah Produk'
+                            : ret.reason === 'damaged_item'
+                            ? 'Barang Rusak'
+                            : ret.reason === 'missing_item'
+                            ? 'Barang Kurang'
+                            : ret.reason === 'not_as_described'
+                            ? 'Tidak Sesuai Deskripsi'
+                            : ret.reason === 'size_issue'
+                            ? 'Salah Ukuran'
+                            : 'Lainnya'}
+                        </span>
+                        {ret.customer_notes && <p className="text-[10px] text-neutral-400 truncate mt-0.5">{ret.customer_notes}</p>}
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <p className="font-bold">Rp {(ret.refund_amount || ret.orders?.total_amount || 0).toLocaleString('id-ID')}</p>
+                        <p className="text-[10px] text-neutral-500 font-normal">{ret.refund_bank_name} - {ret.refund_account_number}</p>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2.5 py-1 ${
+                          ret.status === 'completed'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : ret.status === 'rejected'
+                            ? 'bg-red-50 text-red-700 border border-red-200'
+                            : ret.status === 'approved'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200'
+                        }`}>
+                          {ret.status === 'pending'
+                            ? 'Menunggu'
+                            : ret.status === 'approved'
+                            ? 'Disetujui'
+                            : ret.status === 'rejected'
+                            ? 'Ditolak'
+                            : 'Selesai'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 text-right">
+                        <Button
+                          onClick={() => handleOpenReturnModal(ret)}
+                          variant="outline"
+                          className="text-xs uppercase py-2 px-3 border-neutral-200"
+                        >
+                          Periksa Retur
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        ) : (
+          // Orders Table
+          ordersLoading ? (
+            <div className="py-24 text-center">
+              <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat pesanan...</p>
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="py-24 text-center text-neutral-400 italic text-xs">
+              Tidak ada pesanan ditemukan.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-sans">
+                <thead>
+                  <tr className="bg-neutral-50/50 border-b border-neutral-200 text-neutral-400 uppercase tracking-widest font-bold text-[10px]">
+                    <th className="py-3 px-5">No. Pesanan</th>
+                    <th className="py-3 px-4">Penerima</th>
+                    <th className="py-3 px-4 text-center">Total Belanja</th>
+                    <th className="py-3 px-4 text-center">Status</th>
+                    <th className="py-3 px-5 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
+                  {orders.map((o: any) => (
+                    <tr key={o.id} className="hover:bg-neutral-50/20 transition duration-150">
+                      <td className="py-4 px-5">
+                        <span className="font-semibold text-neutral-900 block">{o.order_number}</span>
+                        <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
+                          Tgl Beli: {new Date(o.created_at).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <p>{o.order_shipping?.recipient_name || 'Pelanggan'}</p>
+                        <p className="text-[10px] text-neutral-400 font-normal">{o.order_shipping?.courier_name} | {o.order_shipping?.phone}</p>
+                      </td>
+                      <td className="py-4 px-4 text-center font-bold text-neutral-900">
+                        Rp {o.total_amount.toLocaleString('id-ID')}
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${
+                          o.status === 'completed'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : o.status === 'cancelled'
+                            ? 'bg-red-50 text-red-700 border border-red-200'
+                            : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
+                        }`}>
+                          {o.status === 'pending_payment'
+                            ? 'Belum Bayar'
+                            : o.status === 'processing'
+                            ? 'Diproses'
+                            : o.status === 'shipped'
+                            ? 'Dikirim'
+                            : o.status === 'completed'
+                            ? 'Selesai'
+                            : 'Batal'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 text-right">
+                        <Link href={`/admin/pesanan/${o.order_number}`}>
+                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900">
+                            <Eye size={13} className="mr-1 inline" /> Detail
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        )}
+
+        {/* Pagination (Skip for returns) */}
+        {activeTab !== 'returns' && totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-neutral-150 px-5 py-4 text-xs font-semibold text-neutral-500">
+            <span>Menampilkan halaman {page} dari {totalPages}</span>
+            <div className="flex space-x-1">
+              <Button
+                variant="outline"
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                disabled={page === 1}
+                className="p-2 border-neutral-200"
+              >
+                &larr;
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={page === totalPages}
+                className="p-2 border-neutral-200"
+              >
+                &rarr;
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Return Review Modal */}
+      {selectedReturn && (
+        <Modal
+          isOpen={!!selectedReturn}
+          onClose={() => setSelectedReturn(null)}
+          title="Pemeriksaan Pengajuan Retur"
+        >
+          <div className="space-y-6 text-xs font-sans">
+            {/* Info Summary */}
+            <div className="border border-neutral-200 p-4 space-y-2.5 bg-neutral-50/30 rounded-none">
+              <div className="flex justify-between font-semibold">
+                <span>No. Pesanan:</span>
+                <span className="text-neutral-900">{selectedReturn.orders?.order_number}</span>
+              </div>
+              <div className="flex justify-between font-semibold">
+                <span>Status Saat Ini:</span>
+                <span className="uppercase text-amber-700">{selectedReturn.status}</span>
+              </div>
+              <div className="flex justify-between font-semibold">
+                <span>Alasan Retur:</span>
+                <span className="text-neutral-800">
+                  {selectedReturn.reason === 'wrong_item'
+                    ? 'Salah Produk'
+                    : selectedReturn.reason === 'damaged_item'
+                    ? 'Barang Rusak'
+                    : selectedReturn.reason === 'missing_item'
+                    ? 'Barang Kurang'
+                    : selectedReturn.reason === 'not_as_described'
+                    ? 'Tidak Sesuai Deskripsi'
+                    : selectedReturn.reason === 'size_issue'
+                    ? 'Salah Ukuran'
+                    : 'Lainnya'}
+                </span>
+              </div>
+              {selectedReturn.customer_notes && (
+                <div className="pt-2 border-t border-neutral-100">
+                  <p className="text-[10px] uppercase font-bold text-neutral-400">Catatan Pelanggan:</p>
+                  <p className="text-neutral-600 mt-1 italic leading-relaxed">{selectedReturn.customer_notes}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Return Items List */}
+            <div className="space-y-2">
+              <p className="text-[10px] uppercase font-bold text-neutral-400">Daftar Item Retur:</p>
+              <div className="border border-neutral-200 divide-y divide-neutral-100 p-3 bg-white max-h-36 overflow-y-auto rounded-none">
+                {selectedReturn.return_items?.map((item: any) => (
+                  <div key={item.id} className="py-2.5 flex justify-between items-center text-[11px]">
+                    <div>
+                      <p className="font-semibold text-neutral-800">{item.order_items?.product_name}</p>
+                      <p className="text-[10px] text-neutral-400">Varian: {item.order_items?.variant_name} | SKU: {item.order_items?.sku}</p>
+                    </div>
+                    <div className="text-right font-bold text-neutral-900">
+                      Jumlah Retur: {item.quantity} pcs
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Refund Bank Details */}
+            <div className="border border-neutral-200 p-4 space-y-2.5 bg-neutral-50/20 rounded-none">
+              <p className="text-[10px] uppercase font-bold text-neutral-400">Rekening Tujuan Refund:</p>
+              <div className="grid grid-cols-2 gap-2 text-[11px] font-medium text-neutral-700">
+                <p>Nama Bank: <span className="font-bold text-neutral-900">{selectedReturn.refund_bank_name}</span></p>
+                <p>No. Rekening: <span className="font-bold text-neutral-900 bg-neutral-100 px-1.5 py-0.5 select-all">{selectedReturn.refund_account_number}</span></p>
+                <p className="col-span-2">Nama Pemilik: <span className="font-bold text-neutral-900">{selectedReturn.refund_account_name}</span></p>
+              </div>
+            </div>
+
+            {/* Inputs: refund amount & admin notes */}
+            {selectedReturn.status === 'pending' || selectedReturn.status === 'approved' ? (
+              <div className="space-y-4 pt-2 border-t border-neutral-100">
+                <Input
+                  label="Jumlah Refund (Rupiah)*"
+                  type="number"
+                  value={refundAmount}
+                  onChange={(e) => setRefundAmount(Math.max(0, parseFloat(e.target.value) || 0))}
+                  required
+                />
+                
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
+                    Catatan Internal Admin (Alasan tolak/setuju)
+                  </label>
+                  <textarea
+                    value={adminNotes}
+                    onChange={(e) => setAdminNotes(e.target.value)}
+                    placeholder="Tulis catatan admin..."
+                    className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-16 resize-none"
+                  />
+                </div>
+              </div>
+            ) : (
+              selectedReturn.admin_notes && (
+                <div className="p-3 bg-neutral-100 text-neutral-600 rounded-none">
+                  <span className="font-bold text-neutral-700 block">Catatan Admin:</span>
+                  <span className="italic mt-1 block">{selectedReturn.admin_notes}</span>
+                </div>
+              )
+            )}
+
+            {/* Buttons depending on current status */}
+            <div className="flex justify-end space-x-2 pt-3 border-t border-neutral-100">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSelectedReturn(null)}
+              >
+                Tutup
+              </Button>
+              {selectedReturn.status === 'pending' && (
+                <>
+                  <Button
+                    type="button"
+                    onClick={() => handleUpdateReturnStatus('rejected')}
+                    className="bg-red-650 hover:bg-red-700 text-white border-red-650"
+                  >
+                    Tolak Retur
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handleUpdateReturnStatus('approved')}
+                    className="bg-blue-650 hover:bg-blue-700 text-white border-blue-650"
+                  >
+                    Setujui Retur
+                  </Button>
+                </>
+              )}
+              {selectedReturn.status === 'approved' && (
+                <Button
+                  type="button"
+                  onClick={() => handleUpdateReturnStatus('completed')}
+                >
+                  Konfirmasi Refund Selesai (Dana Dikirim)
+                </Button>
+              )}
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}

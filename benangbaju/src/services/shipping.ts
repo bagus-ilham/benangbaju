@@ -1,0 +1,403 @@
+import { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+export interface UserAddress {
+  id: string
+  user_id: string
+  label: string
+  recipient_name: string
+  phone: string
+  province_name: string
+  city_name: string
+  district_name: string
+  postal_code: string
+  full_address: string
+  zone_id: string | null
+  is_default: boolean
+  created_at: string
+}
+
+export interface District {
+  id: string
+  province_name: string
+  city_name: string
+  district_name: string
+  postal_code: string | null
+  zone_id: string | null
+}
+
+export interface ShippingOption {
+  id: string
+  courier_name: string
+  price: number
+  etd_min: number
+  etd_max: number
+  weight_used_gram: number
+}
+
+export interface ShippingCalculationResult {
+  success: boolean
+  message?: string
+  data?: ShippingOption[]
+}
+
+// 1. Fetch user addresses
+export async function getUserAddresses(
+  supabase: SupabaseClient<Database>,
+  userId: string
+): Promise<UserAddress[]> {
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .select('*')
+    .eq('user_id', userId)
+    .order('is_default', { ascending: false })
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching user addresses:', error)
+    return []
+  }
+
+  return data as UserAddress[]
+}
+
+// 2. Add user address
+export async function addUserAddress(
+  supabase: SupabaseClient<Database>,
+  address: Omit<UserAddress, 'id' | 'created_at'>
+): Promise<{ data: UserAddress | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .insert([address])
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error adding user address:', error)
+    return { data: null, error: new Error(error.message) }
+  }
+
+  return { data: data as UserAddress, error: null }
+}
+
+// 3. Update user address
+export async function updateUserAddress(
+  supabase: SupabaseClient<Database>,
+  addressId: string,
+  address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
+): Promise<{ data: UserAddress | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .update(address)
+    .eq('id', addressId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error updating user address:', error)
+    return { data: null, error: new Error(error.message) }
+  }
+
+  return { data: data as UserAddress, error: null }
+}
+
+// 4. Delete user address
+export async function deleteUserAddress(
+  supabase: SupabaseClient<Database>,
+  addressId: string
+): Promise<{ success: boolean; error: Error | null }> {
+  const { error } = await supabase
+    .from('user_addresses')
+    .delete()
+    .eq('id', addressId)
+
+  if (error) {
+    console.error('Error deleting user address:', error)
+    return { success: false, error: new Error(error.message) }
+  }
+
+  return { success: true, error: null }
+}
+
+// 5. Set default address
+export async function setDefaultAddress(
+  supabase: SupabaseClient<Database>,
+  addressId: string,
+  userId: string
+): Promise<{ success: boolean; error: Error | null }> {
+  // Directly update is_default to true.
+  // The database trigger will automatically reset other default addresses.
+  const { error } = await supabase
+    .from('user_addresses')
+    .update({ is_default: true })
+    .eq('id', addressId)
+    .eq('user_id', userId)
+
+  if (error) {
+    console.error('Error setting default address:', error)
+    return { success: false, error: new Error(error.message) }
+  }
+
+  return { success: true, error: null }
+}
+
+// 6. Autocomplete search districts (kecamatan)
+export async function searchDistricts(
+  supabase: SupabaseClient<Database>,
+  searchQuery: string
+): Promise<District[]> {
+  if (!searchQuery || searchQuery.trim().length < 2) return []
+
+  const escapedQuery = searchQuery.trim()
+    .replace(/\\/g, '\\\\')
+    .replace(/%/g, '\\%')
+    .replace(/_/g, '\\_')
+    .replace(/,/g, '\\,')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)')
+  const formattedQuery = `%${escapedQuery}%`
+
+  const { data, error } = await supabase
+    .from('districts')
+    .select('*')
+    .or(`district_name.ilike.${formattedQuery},city_name.ilike.${formattedQuery}`)
+    .limit(15)
+
+  if (error) {
+    console.error('Error searching districts:', error)
+    return []
+  }
+
+  return data as District[]
+}
+
+// 7. Calculate shipping rates options
+export async function calculateShippingRates(
+  supabase: SupabaseClient<Database>,
+  zoneId: string,
+  weightGram: number
+): Promise<ShippingCalculationResult> {
+  const { data, error } = await supabase.rpc('calculate_shipping', {
+    p_zone_id: zoneId,
+    p_weight_gram: weightGram,
+  })
+
+  if (error) {
+    console.error('Error calculating shipping:', error)
+    return {
+      success: false,
+      message: 'Gagal menghitung ongkos kirim. Silakan coba lagi.',
+    }
+  }
+
+  return data as unknown as ShippingCalculationResult
+}
+
+// =============================================================
+// ADMIN CRUD METHODS
+// =============================================================
+
+export interface ShippingZone {
+  id: string
+  name: string
+  description: string | null
+  is_active: boolean
+  shipping_zone_coverage?: { province_name: string }[]
+}
+
+export interface ShippingRate {
+  id: string
+  zone_id: string
+  courier_name: string
+  price_per_kg: number
+  min_weight_gram: number
+  base_price: number
+  etd_days_min: number
+  etd_days_max: number
+  is_active: boolean
+  shipping_zones?: { name: string } | null
+}
+
+// 8. Get all shipping zones with coverage
+export async function adminGetShippingZones(
+  supabase: SupabaseClient<Database>
+): Promise<ShippingZone[]> {
+  const { data, error } = await (supabase
+    .from('shipping_zones')
+    .select('*, shipping_zone_coverage(province_name)')
+    .order('name', { ascending: true }) as any)
+
+  if (error) {
+    console.error('Error fetching admin shipping zones:', error)
+    throw error
+  }
+
+  return (data || []) as unknown as ShippingZone[]
+}
+
+// 9. Create shipping zone
+export async function adminCreateShippingZone(
+  supabase: SupabaseClient<Database>,
+  zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>,
+  provinces: string[]
+): Promise<ShippingZone> {
+  const { data: newZone, error: zoneErr } = await supabase
+    .from('shipping_zones')
+    .insert([zone])
+    .select()
+    .single()
+
+  if (zoneErr) {
+    console.error('Error creating shipping zone:', zoneErr)
+    throw zoneErr
+  }
+
+  if (provinces.length > 0) {
+    const coverageRows = provinces.map((p) => ({
+      zone_id: newZone.id,
+      province_name: p,
+    }))
+    const { error: covErr } = await supabase
+      .from('shipping_zone_coverage')
+      .insert(coverageRows)
+
+    if (covErr) {
+      console.error('Error adding zone coverages:', covErr)
+      throw covErr
+    }
+  }
+
+  return newZone as ShippingZone
+}
+
+// 10. Update shipping zone
+export async function adminUpdateShippingZone(
+  supabase: SupabaseClient<Database>,
+  zoneId: string,
+  zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>,
+  provinces?: string[]
+): Promise<void> {
+  const { error: zoneErr } = await supabase
+    .from('shipping_zones')
+    .update(zone)
+    .eq('id', zoneId)
+
+  if (zoneErr) {
+    console.error('Error updating shipping zone:', zoneErr)
+    throw zoneErr
+  }
+
+  if (provinces !== undefined) {
+    // Delete existing coverages
+    const { error: delErr } = await supabase
+      .from('shipping_zone_coverage')
+      .delete()
+      .eq('zone_id', zoneId)
+
+    if (delErr) {
+      console.error('Error clearing old zone coverages:', delErr)
+      throw delErr
+    }
+
+    if (provinces.length > 0) {
+      const coverageRows = provinces.map((p) => ({
+        zone_id: zoneId,
+        province_name: p,
+      }))
+      const { error: covErr } = await supabase
+        .from('shipping_zone_coverage')
+        .insert(coverageRows)
+
+      if (covErr) {
+        console.error('Error updating zone coverages:', covErr)
+        throw covErr
+      }
+    }
+  }
+}
+
+// 11. Delete shipping zone
+export async function adminDeleteShippingZone(
+  supabase: SupabaseClient<Database>,
+  zoneId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('shipping_zones')
+    .delete()
+    .eq('id', zoneId)
+
+  if (error) {
+    console.error('Error deleting shipping zone:', error)
+    throw error
+  }
+}
+
+// 12. Get all shipping rates
+export async function adminGetShippingRates(
+  supabase: SupabaseClient<Database>
+): Promise<ShippingRate[]> {
+  const { data, error } = await supabase
+    .from('shipping_rates')
+    .select('*, shipping_zones(name)')
+    .order('courier_name', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching admin shipping rates:', error)
+    throw error
+  }
+
+  return (data || []) as unknown as ShippingRate[]
+}
+
+// 13. Create shipping rate
+export async function adminCreateShippingRate(
+  supabase: SupabaseClient<Database>,
+  rate: Omit<ShippingRate, 'id' | 'shipping_zones'>
+): Promise<ShippingRate> {
+  const { data, error } = await supabase
+    .from('shipping_rates')
+    .insert([rate])
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error creating shipping rate:', error)
+    throw error
+  }
+
+  return data as unknown as ShippingRate
+}
+
+// 14. Update shipping rate
+export async function adminUpdateShippingRate(
+  supabase: SupabaseClient<Database>,
+  rateId: string,
+  rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>>
+): Promise<void> {
+  const { error } = await supabase
+    .from('shipping_rates')
+    .update(rate)
+    .eq('id', rateId)
+
+  if (error) {
+    console.error('Error updating shipping rate:', error)
+    throw error
+  }
+}
+
+// 15. Delete shipping rate
+export async function adminDeleteShippingRate(
+  supabase: SupabaseClient<Database>,
+  rateId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('shipping_rates')
+    .delete()
+    .eq('id', rateId)
+
+  if (error) {
+    console.error('Error deleting shipping rate:', error)
+    throw error
+  }
+}
+

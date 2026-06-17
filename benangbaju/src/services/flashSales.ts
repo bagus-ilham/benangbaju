@@ -1,0 +1,239 @@
+import { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
+
+export interface FlashSaleItemDetail {
+  id: string
+  flash_sale_id: string
+  variant_id: string
+  original_price: number
+  sale_price: number
+  discount_percent: number
+  quota: number
+  sold_count: number
+  product_variants: {
+    id: string
+    sku: string
+    name: string
+    price: number
+    stock: number
+    products: {
+      id: string
+      name: string
+      slug: string
+      product_images: {
+        url: string
+        alt_text: string | null
+        is_primary: boolean
+      }[]
+    }
+  }
+}
+
+export interface FlashSaleDetail {
+  id: string
+  name: string
+  description: string | null
+  banner_url: string | null
+  starts_at: string
+  ends_at: string
+  is_active: boolean
+  flash_sale_items: FlashSaleItemDetail[]
+}
+
+export async function getActiveFlashSale(
+  supabase: SupabaseClient<Database>
+): Promise<FlashSaleDetail | null> {
+  const now = new Date().toISOString()
+
+  // Fetch active flash sale that is currently running
+  const { data, error } = await supabase
+    .from('flash_sales')
+    .select(
+      `
+        id, name, description, banner_url, starts_at, ends_at, is_active,
+        flash_sale_items (
+          id, flash_sale_id, variant_id, original_price, sale_price, discount_percent, quota, sold_count,
+          product_variants (
+            id, sku, name, price, stock,
+            products (
+              id, name, slug,
+              product_images (url, alt_text, is_primary)
+            )
+          )
+        )
+      `
+    )
+    .eq('is_active', true)
+    .lte('starts_at', now)
+    .gte('ends_at', now)
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    console.error('Error fetching active flash sale:', error)
+    return null
+  }
+
+  return data as unknown as FlashSaleDetail | null
+}
+
+export async function adminGetFlashSales(supabase: SupabaseClient<Database>) {
+  const { data, error } = await supabase
+    .from('flash_sales')
+    .select(`
+      *,
+      flash_sale_items (
+        id, variant_id, original_price, sale_price, quota, sold_count,
+        product_variants (
+          name,
+          products (name)
+        )
+      )
+    `)
+    .order('starts_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching admin flash sales:', error)
+    throw error
+  }
+
+  return data || []
+}
+
+export async function adminCreateFlashSale(
+  supabase: SupabaseClient<Database>,
+  saleData: {
+    name: string
+    description: string | null
+    banner_url: string | null
+    starts_at: string
+    ends_at: string
+    is_active: boolean
+  },
+  items: {
+    variant_id: string
+    original_price: number
+    sale_price: number
+    quota: number
+  }[]
+) {
+  const { data: sale, error: saleErr } = await supabase
+    .from('flash_sales')
+    .insert(saleData)
+    .select('id')
+    .single()
+
+  if (saleErr) throw saleErr
+  const flashSaleId = sale.id
+
+  if (items && items.length > 0) {
+    const itemsData = items.map(item => {
+      const discountPercent = ((item.original_price - item.sale_price) / item.original_price) * 100
+      return {
+        flash_sale_id: flashSaleId,
+        variant_id: item.variant_id,
+        original_price: item.original_price,
+        sale_price: item.sale_price,
+        discount_percent: Math.max(0, parseFloat(discountPercent.toFixed(2))),
+        quota: item.quota
+      }
+    })
+
+    const { error: itemsErr } = await supabase
+      .from('flash_sale_items')
+      .insert(itemsData)
+
+    if (itemsErr) throw itemsErr
+  }
+
+  return { id: flashSaleId }
+}
+
+export async function adminUpdateFlashSale(
+  supabase: SupabaseClient<Database>,
+  saleId: string,
+  saleData: {
+    name: string
+    description: string | null
+    banner_url: string | null
+    starts_at: string
+    ends_at: string
+    is_active: boolean
+  },
+  items: {
+    variant_id: string
+    original_price: number
+    sale_price: number
+    quota: number
+  }[]
+) {
+  const { error: saleErr } = await supabase
+    .from('flash_sales')
+    .update(saleData)
+    .eq('id', saleId)
+
+  if (saleErr) throw saleErr
+
+  // Fetch current items to preserve sold_count and determine deletions
+  const { data: existingItems, error: fetchErr } = await supabase
+    .from('flash_sale_items')
+    .select('variant_id, sold_count')
+    .eq('flash_sale_id', saleId)
+
+  if (fetchErr) throw fetchErr
+
+  const existingMap = new Map<string, number>()
+  existingItems?.forEach(item => existingMap.set(item.variant_id, item.sold_count || 0))
+
+  // Determine items to delete (those that are not in the new items list)
+  const newVariantIds = new Set(items.map(item => item.variant_id))
+  const itemsToDelete = (existingItems || [])
+    .filter(item => !newVariantIds.has(item.variant_id))
+    .map(item => item.variant_id)
+
+  if (itemsToDelete.length > 0) {
+    const { error: delErr } = await supabase
+      .from('flash_sale_items')
+      .delete()
+      .eq('flash_sale_id', saleId)
+      .in('variant_id', itemsToDelete)
+
+    if (delErr) throw delErr
+  }
+
+  // Upsert items (preserving sold_count, omitting discount_percent since it is generated)
+  if (items && items.length > 0) {
+    const itemsData = items.map(item => {
+      const soldCount = existingMap.get(item.variant_id) || 0
+      return {
+        flash_sale_id: saleId,
+        variant_id: item.variant_id,
+        original_price: item.original_price,
+        sale_price: item.sale_price,
+        quota: item.quota,
+        sold_count: soldCount
+      }
+    })
+
+    const { error: itemsErr } = await supabase
+      .from('flash_sale_items')
+      .upsert(itemsData, { onConflict: 'flash_sale_id,variant_id' })
+
+    if (itemsErr) throw itemsErr
+  }
+
+  return { id: saleId }
+}
+
+export async function adminDeleteFlashSale(
+  supabase: SupabaseClient<Database>,
+  saleId: string
+) {
+  const { error } = await supabase
+    .from('flash_sales')
+    .update({ is_active: false })
+    .eq('id', saleId)
+
+  if (error) throw error
+  return { success: true }
+}

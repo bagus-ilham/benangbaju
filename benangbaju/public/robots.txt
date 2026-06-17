@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Disallow indexing on administrative, checkout, user accounts, and dynamic/private search pages
+Disallow: /admin
+Disallow: /admin/
+Disallow: /cart
+Disallow: /cart/
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /akun
+Disallow: /akun/
+Disallow: /search
+Disallow: /search/
+Disallow: /wishlist
+Disallow: /wishlist/
+
+Sitemap: https://benangbaju.com/sitemap.xml
