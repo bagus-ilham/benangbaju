@@ -21,8 +21,8 @@ export function Card({
         'bg-white rounded-none transition-all duration-300',
         {
           'border border-neutral-200': bordered,
-          'hover:border-brand-black hover:shadow-sm': hoverEffect && bordered,
-          'hover:shadow-md': hoverEffect && !bordered,
+          'hover:border-brand-black/30 hover:shadow-md hover:-translate-y-[2px]': hoverEffect && bordered,
+          'hover:shadow-lg hover:-translate-y-[2px]': hoverEffect && !bordered,
           
           // Padding
           'p-0': padding === 'none',

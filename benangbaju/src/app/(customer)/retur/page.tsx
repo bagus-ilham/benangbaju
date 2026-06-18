@@ -1,6 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { AlertCircle, RotateCcw, Calendar, CheckCircle2 } from 'lucide-react'
+import { AlertCircle, Calendar, CheckCircle2 } from 'lucide-react'
+import { PageHero, PageContainer } from '@/components/shared'
 
 export const metadata: Metadata = {
   title: 'Kebijakan Pengembalian (Retur) — Benangbaju',
@@ -28,21 +29,14 @@ export default function ReturPage() {
   ]
 
   return (
-    <div className="min-h-[60vh] py-16 px-4 sm:px-6 lg:px-8 bg-white text-neutral-800 font-sans">
-      <div className="max-w-3xl mx-auto space-y-12">
-        {/* Header Heading */}
-        <div className="border-b border-neutral-100 pb-8 text-center sm:text-left">
-          <h1 className="text-3xl font-serif text-neutral-900 tracking-tight mb-2">Kebijakan Pengembalian (Retur)</h1>
-          <p className="text-xs uppercase tracking-widest font-bold text-neutral-400">Garansi Kepuasan & Ketentuan Retur</p>
-        </div>
-
-        {/* Intro */}
-        <div className="text-sm leading-relaxed text-neutral-600 font-medium">
-          <p>
-            Kepuasan Anda adalah prioritas utama kami. Jika produk yang Anda terima mengalami cacat produksi, salah ukuran, 
-            atau tidak sesuai dengan pesanan, Anda dapat mengajukan retur atau penukaran dengan syarat dan ketentuan berikut.
-          </p>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Garansi Kepuasan"
+        title="Kebijakan Retur"
+        subtitle="Syarat dan panduan pengajuan retur, tukar ukuran, dan pengembalian dana."
+      />
+      <PageContainer size="md" className="py-12 page-content">
+      <div className="max-w-3xl mx-auto space-y-10">
 
         {/* Highlight Values Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
@@ -121,11 +115,8 @@ export default function ReturPage() {
           </div>
         </div>
 
-        {/* Philosophy Footer quote */}
-        <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-400 uppercase tracking-widest font-bold font-sans">
-          &ldquo;Your peace of mind is our commitment. Hassle-free returns.&rdquo;
         </div>
-      </div>
+      </PageContainer>
     </div>
   )
 }

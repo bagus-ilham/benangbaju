@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAdminCategories } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
+import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Plus, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -324,24 +323,22 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
 
   return (
     <form onSubmit={handleFormSubmit} className="space-y-10 font-sans text-xs">
-      {/* Top action header */}
-      <div className="flex justify-between items-center border-b border-neutral-100 pb-5">
-        <div className="flex items-center space-x-3">
+      <AdminPageHeader title={title}>
+        <div className="flex items-center gap-2">
           <Link href="/admin/produk">
             <Button variant="outline" className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900">
               <ArrowLeft size={14} />
             </Button>
           </Link>
-          <h2 className="text-xl font-serif text-neutral-900 tracking-tight">{title}</h2>
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            className="text-xs uppercase font-bold tracking-widest py-3 px-6"
+          >
+            Simpan Produk
+          </Button>
         </div>
-        <Button
-          type="submit"
-          isLoading={isSubmitting}
-          className="text-xs uppercase font-bold tracking-widest py-3 px-6"
-        >
-          Simpan Produk
-        </Button>
-      </div>
+      </AdminPageHeader>
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

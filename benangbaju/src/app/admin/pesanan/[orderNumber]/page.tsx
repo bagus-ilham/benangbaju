@@ -4,8 +4,7 @@ import React, { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrderDetail } from '@/hooks/useOrders'
 import { useAdminUpdateOrderStatus } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
+import { Button, Input, AdminPageHeader, AdminPanel } from '@/components/shared'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle, FileText, Download } from 'lucide-react'
 import Link from 'next/link'
@@ -106,48 +105,36 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto font-sans text-xs">
-      {/* Header */}
-      <div className="flex justify-between items-center border-b border-neutral-100 pb-5">
-        <div className="flex items-center space-x-3">
+      <AdminPageHeader
+        title={`Pesanan ${order.order_number}`}
+        subtitle={`Dibuat pada: ${new Date(order.created_at).toLocaleString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })}`}
+      >
+        <div className="flex items-center gap-2">
           <Link href="/admin/pesanan">
             <Button variant="outline" className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900">
               <ArrowLeft size={14} />
             </Button>
           </Link>
-          <div>
-            <h2 className="text-xl font-serif text-neutral-900 tracking-tight">Pesanan {order.order_number}</h2>
-            <p className="text-[10px] text-neutral-400 mt-0.5">
-              Dibuat pada:{' '}
-              {new Date(order.created_at).toLocaleString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-          </div>
+          <Button
+            onClick={handleDownloadInvoice}
+            variant="outline"
+            isLoading={isInvoiceLoading}
+            className="text-[10px] font-bold uppercase py-2.5 px-4 border-neutral-800 text-neutral-800 hover:bg-neutral-50"
+          >
+            <Download size={13} className="mr-1.5" /> Unduh Invoice
+          </Button>
         </div>
+      </AdminPageHeader>
 
-        <Button
-          onClick={handleDownloadInvoice}
-          variant="outline"
-          isLoading={isInvoiceLoading}
-          className="text-[10px] font-bold uppercase py-2.5 px-4 border-neutral-800 text-neutral-800 hover:bg-neutral-50"
-        >
-          <Download size={13} className="mr-1.5" /> Unduh Invoice
-        </Button>
-      </div>
-
-      {/* Main Grid Details */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Left Side: Order items & Shipping information */}
         <div className="md:col-span-2 space-y-8">
-          {/* Order Items */}
-          <div className="border border-neutral-200 bg-white p-5 rounded-none space-y-4">
-            <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
-              Item Belanja
-            </h3>
+          <AdminPanel title="Item Belanja">
             <div className="divide-y divide-neutral-100">
               {order.order_items.map((item) => (
                 <div key={item.id} className="py-3.5 flex justify-between items-center text-sm">
@@ -166,13 +153,9 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
                 </div>
               ))}
             </div>
-          </div>
+          </AdminPanel>
 
-          {/* Shipping Address */}
-          <div className="border border-neutral-200 bg-white p-5 rounded-none space-y-4">
-            <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
-              Alamat Pengiriman
-            </h3>
+          <AdminPanel title="Alamat Pengiriman">
             {order.order_shipping ? (
               <div className="text-sm space-y-2 text-neutral-600 font-medium">
                 <p className="font-bold text-neutral-800">
@@ -192,25 +175,17 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
             ) : (
               <p className="text-xs text-neutral-400 italic">Data pengiriman tidak ditemukan.</p>
             )}
-          </div>
+          </AdminPanel>
 
-          {/* Customer notes if any */}
           {order.notes && (
-            <div className="border border-neutral-200 p-5 rounded-none bg-stone-50/20 space-y-2">
-              <h3 className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">Catatan Pelanggan</h3>
+            <AdminPanel title="Catatan Pelanggan" className="bg-brand-cream/20">
               <p className="text-xs text-neutral-700 whitespace-pre-wrap leading-relaxed">{order.notes}</p>
-            </div>
+            </AdminPanel>
           )}
         </div>
 
-        {/* Right Side: Status workflows & payment summaries */}
         <div className="space-y-8">
-          {/* Status Workflow Action Box */}
-          <div className="border border-neutral-200 bg-white p-5 rounded-none space-y-5">
-            <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
-              Status Alur Kerja
-            </h3>
-            
+          <AdminPanel title="Status Alur Kerja">
             <div className="flex items-center space-x-2 text-sm text-neutral-800 font-bold uppercase tracking-wider">
               {order.status === 'pending_payment' && <Clock size={16} className="text-amber-500" />}
               {order.status === 'processing' && <Package size={16} className="text-neutral-800" />}
@@ -295,13 +270,9 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
                 </div>
               )}
             </div>
-          </div>
+          </AdminPanel>
 
-          {/* Pricing Summary */}
-          <div className="border border-neutral-200 bg-white p-5 rounded-none space-y-4">
-            <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
-              Rincian Biaya
-            </h3>
+          <AdminPanel title="Rincian Biaya">
             <div className="space-y-3 text-neutral-600 font-medium">
               <div className="flex justify-between">
                 <span>Subtotal Produk</span>
@@ -321,12 +292,12 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
                   Rp {order.shipping_cost.toLocaleString('id-ID')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-neutral-900 border-t border-neutral-100 pt-3 mt-1.5 font-serif font-bold text-sm">
+              <div className="flex justify-between items-center text-neutral-900 border-t border-neutral-100 pt-3 mt-1.5 font-heading font-bold text-sm">
                 <span>Total Bayar</span>
                 <span className="text-base">Rp {order.total_amount.toLocaleString('id-ID')}</span>
               </div>
             </div>
-          </div>
+          </AdminPanel>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ export function HeroSection({ banners }: HeroSectionProps) {
             Koleksi Baru
           </span>
           <h2 className="text-3xl md:text-5xl font-heading font-light uppercase tracking-widest text-brand-black leading-tight">
-            ELEGANCE IN SIMPLICITY
+            Elegan dalam Kesederhanaan
           </h2>
           <p className="text-xs text-neutral-500 font-sans max-w-sm mx-auto">
             Temukan paduan gaya modest modern yang minimalis, nyaman, dan premium untuk aktivitas sehari-hari Anda.
@@ -63,7 +63,7 @@ export function HeroSection({ banners }: HeroSectionProps) {
   }
 
   return (
-    <div className="relative h-[65vh] md:h-[85vh] w-full overflow-hidden bg-brand-cream">
+    <div className="relative h-[70vh] md:h-[90vh] w-full overflow-hidden bg-brand-black">
       {/* Banner Slide */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -81,6 +81,7 @@ export function HeroSection({ banners }: HeroSectionProps) {
               fill
               priority
               className="object-cover"
+              style={{ animation: 'ken-burns 8s ease-out forwards' }}
             />
           </div>
           
@@ -92,35 +93,37 @@ export function HeroSection({ banners }: HeroSectionProps) {
               fill
               priority
               className="object-cover"
+              style={{ animation: 'ken-burns 8s ease-out forwards' }}
             />
           </div>
 
-          {/* Elegant overlay panel (THENBLANK style center or left aligned clean labels) */}
-          <div className="absolute inset-0 bg-neutral-900/10" />
+          {/* Elegant overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/60 via-neutral-900/25 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/40 via-transparent to-neutral-900/10" />
           
           <div className="absolute inset-0 flex items-center">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
               <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6">
                 <motion.span
-                  initial={{ y: 15, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1, transition: { delay: 0.2, duration: 0.5 } }}
-                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-widest text-brand-black/80 bg-white/70 backdrop-blur-xs px-3 py-1"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1, transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
+                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-gold-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-gold/30"
                 >
                   {currentBanner.subtitle || 'Koleksi Terbaru'}
                 </motion.span>
                 
                 <motion.h1
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1, transition: { delay: 0.3, duration: 0.6 } }}
-                  className="text-3xl md:text-5xl lg:text-6xl font-heading font-light uppercase tracking-wider text-brand-black leading-tight"
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1, transition: { delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] } }}
+                  className="text-3xl md:text-5xl lg:text-7xl font-heading font-light uppercase tracking-wider text-white leading-[1.1]"
                 >
                   {currentBanner.title}
                 </motion.h1>
 
                 {currentBanner.link_url && (
                   <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1, transition: { delay: 0.4, duration: 0.5 } }}
+                    initial={{ y: 25, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1, transition: { delay: 0.7, duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
                     className="pt-4"
                   >
                     <Link href={currentBanner.link_url}>
@@ -141,7 +144,7 @@ export function HeroSection({ banners }: HeroSectionProps) {
         <>
           <button
             onClick={handlePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/40 hover:bg-white text-brand-black transition-colors rounded-none hidden md:block"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-none hidden md:block"
             aria-label="Slide sebelumnya"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -149,24 +152,29 @@ export function HeroSection({ banners }: HeroSectionProps) {
           
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/40 hover:bg-white text-brand-black transition-colors rounded-none hidden md:block"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-none hidden md:block"
             aria-label="Slide berikutnya"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
 
           {/* Dots */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
             {banners.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className={cn(
-                  'h-1.5 transition-all duration-300 rounded-none',
-                  idx === currentIndex ? 'w-6 bg-brand-black' : 'w-1.5 bg-brand-black/30'
-                )}
+                className="p-2 flex items-center justify-center focus-ring-premium rounded-none"
                 aria-label={`Buka slide ${idx + 1}`}
-              />
+                aria-current={idx === currentIndex ? 'true' : undefined}
+              >
+                <span
+                  className={cn(
+                    'block h-0.5 transition-all duration-500 rounded-none',
+                    idx === currentIndex ? 'w-10 bg-brand-gold-light' : 'w-3 bg-white/40 hover:bg-white/70'
+                  )}
+                />
+              </button>
             ))}
           </div>
         </>

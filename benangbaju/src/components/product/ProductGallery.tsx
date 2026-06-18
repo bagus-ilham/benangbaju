@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ProductImage } from '@/services/products'
 import { cn } from '@/lib/utils'
 
@@ -53,21 +54,32 @@ export function ProductGallery({ images, productName, selectedVariantId }: Produ
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
       >
-        {activeImage && (
-          <Image
-            src={activeImage}
-            alt={productName}
-            fill
-            sizes="(max-w-7xl) 50vw, 100vw"
-            className="object-cover"
-            style={{
-              transformOrigin: isZoomed ? `${zoomPos.x}% ${zoomPos.y}%` : 'center',
-              transform: isZoomed ? 'scale(2.2)' : 'scale(1)',
-              transition: isZoomed ? 'none' : 'transform 0.3s ease-out'
-            }}
-            priority
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {activeImage && (
+            <motion.div
+              key={activeImage}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full h-full"
+            >
+              <Image
+                src={activeImage}
+                alt={productName}
+                fill
+                sizes="(max-w-7xl) 50vw, 100vw"
+                className="object-cover"
+                style={{
+                  transformOrigin: isZoomed ? `${zoomPos.x}% ${zoomPos.y}%` : 'center',
+                  transform: isZoomed ? 'scale(2.2)' : 'scale(1)',
+                  transition: isZoomed ? 'none' : 'transform 0.3s ease-out'
+                }}
+                priority
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Thumbnails (Horizontal Row below the main image) */}

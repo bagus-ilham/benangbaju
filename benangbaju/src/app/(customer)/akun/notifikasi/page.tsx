@@ -8,7 +8,7 @@ import {
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from '@/hooks/useNotifications'
-import { Button } from '@/components/shared/Button'
+import { AuthLoading, PageContainer, PageHero } from '@/components/shared'
 import { Bell, Check, ClipboardList, Heart, MapPin, LogOut, MailOpen, User, BellOff } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -62,71 +62,79 @@ export default function NotifikasiPage() {
   }
 
   if (authLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat halaman...</p>
-      </div>
-    )
+    return <AuthLoading message="Memuat halaman..." />
   }
 
   const hasUnread = notifications?.some((n) => !n.is_read)
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        <div className="border-b border-neutral-200 pb-5 mb-8">
-          <h1 className="text-3xl font-serif tracking-tight text-neutral-900 mb-1">Akun Saya</h1>
-          <p className="text-sm text-neutral-500">Kelola informasi pribadi Anda dan akses riwayat pesanan Anda.</p>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Profil Pengguna"
+        title="Notifikasi"
+        subtitle="Lihat pembaruan pesanan, promo, dan informasi akun Anda."
+      />
+      <PageContainer size="lg" className="py-10 page-content">
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Quick Navigation Menu */}
           <div className="space-y-2 md:col-span-1">
-            <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 mb-4">Navigasi Akun</h2>
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400 mb-4">Navigasi Akun</h2>
             
-            <Link
-              href="/pesanan"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <ClipboardList size={16} />
-              <span>Pesanan Saya</span>
+            <Link href="/pesanan">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <ClipboardList size={14} className="text-neutral-400" />
+                <span>Pesanan Saya</span>
+              </motion.div>
             </Link>
 
-            <Link
-              href="/akun/alamat"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <MapPin size={16} />
-              <span>Daftar Alamat</span>
+            <Link href="/akun/alamat">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <MapPin size={14} className="text-neutral-400" />
+                <span>Daftar Alamat</span>
+              </motion.div>
             </Link>
 
-            <Link
-              href="/wishlist"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <Heart size={16} />
-              <span>Wishlist Saya</span>
+            <Link href="/wishlist">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <Heart size={14} className="text-neutral-400" />
+                <span>Wishlist Saya</span>
+              </motion.div>
             </Link>
 
-            <Link
-              href="/akun/notifikasi"
-              className="flex items-center space-x-3 px-4 py-3 bg-neutral-900 border border-neutral-900 text-white font-semibold transition duration-150 rounded-none text-sm"
+            <div
+              className="flex items-center space-x-3 px-4 py-3 bg-brand-black border border-brand-black border-l-4 border-l-brand-gold text-white font-heading font-semibold tracking-wide uppercase rounded-none text-xs"
             >
-              <Bell size={16} />
+              <Bell size={14} className="text-brand-gold-light" />
               <span>Notifikasi Saya</span>
-            </Link>
+            </div>
 
-            <button
+            <motion.button
+              whileHover={{ x: 4, borderColor: '#ef4444', backgroundColor: 'rgba(254,226,226,0.2)' }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50/50 border border-red-100 text-red-500 hover:text-red-700 font-medium transition duration-150 rounded-none text-sm text-left"
+              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-100 text-red-500 hover:text-red-700 font-heading font-medium tracking-wide uppercase transition-all duration-200 rounded-none text-xs text-left bg-white"
             >
-              <LogOut size={16} />
+              <LogOut size={14} />
               <span>Keluar dari Akun</span>
-            </button>
+            </motion.button>
           </div>
 
           {/* Notifications Content */}
-          <div className="md:col-span-2 border border-neutral-200 p-6 sm:p-8 rounded-none bg-white">
+          <div className="md:col-span-2 border border-neutral-200 p-6 sm:p-8 rounded-none bg-white card-hover-lift gold-border-hover relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-neutral-100">
               <h2 className="text-lg font-serif tracking-tight text-neutral-900 flex items-center">
                 <Bell size={18} className="mr-2" /> Pemberitahuan Anda
@@ -161,7 +169,7 @@ export default function NotifikasiPage() {
                     className={`p-4 border text-xs font-sans transition relative cursor-pointer ${
                       n.is_read
                         ? 'border-neutral-100 bg-neutral-50/20 hover:bg-neutral-50/50 text-neutral-500'
-                        : 'border-neutral-900 bg-neutral-50/80 hover:border-neutral-950 text-neutral-900 hover:shadow-xs'
+                        : 'border-brand-gold bg-brand-gold-muted/10 hover:border-brand-gold-light text-neutral-900'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-1.5">
@@ -177,7 +185,7 @@ export default function NotifikasiPage() {
 
                     {/* Unread dot */}
                     {!n.is_read && (
-                      <span className="absolute top-4 right-4 h-2 w-2 rounded-full bg-neutral-950 animate-pulse" />
+                      <span className="absolute top-4 right-4 h-2 w-2 rounded-full bg-brand-gold animate-pulse" />
                     )}
                   </motion.div>
                 ))}
@@ -190,7 +198,7 @@ export default function NotifikasiPage() {
             )}
           </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   )
 }

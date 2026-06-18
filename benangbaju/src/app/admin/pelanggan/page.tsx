@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
+import { Button, AdminPageHeader } from '@/components/shared'
 import { Search, UserCheck, UserX, RefreshCw, Mail, Phone, Calendar } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
@@ -58,12 +58,10 @@ export default function AdminCustomersPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Manajemen Pelanggan</h2>
-          <p className="text-xs text-neutral-400 mt-1">Lihat daftar pelanggan terdaftar dan kelola status aktivasi akun mereka.</p>
-        </div>
+      <AdminPageHeader
+        title="Manajemen Pelanggan"
+        subtitle="Lihat daftar pelanggan terdaftar dan kelola status aktivasi akun mereka."
+      >
         <Button
           onClick={() => {
             refetch()
@@ -74,7 +72,7 @@ export default function AdminCustomersPage() {
         >
           <RefreshCw size={12} className="mr-1.5" /> Segarkan
         </Button>
-      </div>
+      </AdminPageHeader>
 
       {/* Search Bar */}
       <div className="border border-neutral-200 bg-white p-4 rounded-none flex items-center">

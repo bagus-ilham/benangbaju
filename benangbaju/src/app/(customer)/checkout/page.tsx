@@ -2,20 +2,22 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
+import type { CartItem } from '@/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/hooks/useShipping'
 import { useCreateOrder, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { validateVoucher } from '@/services/vouchers'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AddressCard } from '@/components/customer/AddressCard'
 import { AddressModal } from '@/components/customer/AddressModal'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
-import { Plus, MapPin, Tag, ShoppingBag, Truck } from 'lucide-react'
+import { Button, Input, AuthLoading, PageContainer, PageHero } from '@/components/shared'
+import { Plus, MapPin, Tag, ShoppingBag, Truck, Check } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
+import { formatIDR } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
@@ -34,6 +36,11 @@ export default function CheckoutPage() {
   const [voucherCodeInput, setVoucherCodeInput] = useState('')
   const [appliedVoucher, setAppliedVoucher] = useState<any | null>(null)
   const [voucherLoading, setVoucherLoading] = useState(false)
+  const [checkoutStep, setCheckoutStep] = useState<'shipping' | 'payment'>('shipping')
+  const [orderPlaced, setOrderPlaced] = useState(false)
+  const [orderSnapshot, setOrderSnapshot] = useState<CartItem[]>([])
+
+  const displayItems: CartItem[] = orderPlaced ? orderSnapshot : cartItems
 
   const createOrderMutation = useCreateOrder()
   const generatePaymentTokenMutation = useGeneratePaymentToken()
@@ -47,11 +54,11 @@ export default function CheckoutPage() {
 
   // 2. Redirect if cart is empty
   useEffect(() => {
-    if (!authLoading && isAuthenticated && cartItems.length === 0) {
+    if (!authLoading && isAuthenticated && cartItems.length === 0 && !orderPlaced) {
       toast.error('Keranjang belanja Anda kosong')
       router.push('/produk')
     }
-  }, [cartItems, authLoading, isAuthenticated, router])
+  }, [cartItems, authLoading, isAuthenticated, orderPlaced, router])
 
   // 3. Load Midtrans Snap.js Script
   useEffect(() => {
@@ -69,6 +76,21 @@ export default function CheckoutPage() {
   // 4. Fetch Addresses
   const { data: addresses, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
 
+  // Fetch available active vouchers
+  const { data: availableVouchers } = useQuery({
+    queryKey: ['checkout-available-vouchers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('vouchers')
+        .select('*')
+        .eq('is_active', true)
+        .gte('valid_until', new Date().toISOString())
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data || []
+    }
+  })
+
   // Set default address initially
   useEffect(() => {
     if (addresses && addresses.length > 0) {
@@ -79,21 +101,21 @@ export default function CheckoutPage() {
 
   // 5. Query Variant Weights to calculate total weight
   const { data: variantDetails } = useQuery({
-    queryKey: ['checkout-weights', cartItems.map((i) => i.variantId)],
+    queryKey: ['checkout-weights', displayItems.map((i) => i.variantId)],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('product_variants')
-        .select('id, weight_gram, products (weight_gram)')
-        .in('id', cartItems.map((i) => i.variantId))
+          .from('product_variants')
+          .select('id, weight_gram, products (weight_gram)')
+          .in('id', displayItems.map((i) => i.variantId))
       
       if (error) throw error
       return data
     },
-    enabled: cartItems.length > 0,
+    enabled: displayItems.length > 0,
   })
 
   // Calculate total weight
-  const totalWeight = cartItems.reduce((acc, item) => {
+  const totalWeight = displayItems.reduce((acc, item) => {
     const detail = variantDetails?.find((v) => v.id === item.variantId)
     const weight = detail?.weight_gram || (detail?.products as any)?.weight_gram || 1000
     return acc + weight * item.quantity
@@ -113,7 +135,7 @@ export default function CheckoutPage() {
   }, [selectedAddress])
 
   // Calculate Prices
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const subtotal = displayItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const shippingCost = selectedCourier ? selectedCourier.price : 0
   
   // Calculate Discount Amount
@@ -131,17 +153,17 @@ export default function CheckoutPage() {
 
   const totalAmount = Math.max(0, subtotal - discountAmount + shippingCost)
 
-  const handleApplyVoucher = async () => {
-    if (!voucherCodeInput.trim() || !user) return
+  const handleApplyVoucherDirectly = async (code: string) => {
+    if (!user) return
     setVoucherLoading(true)
     try {
-      const result = await validateVoucher(supabase, voucherCodeInput.trim(), subtotal, user.id)
+      const result = await validateVoucher(supabase, code, subtotal, user.id)
       if (result.success && result.valid) {
         // Fetch full details of the voucher to know constraints
         const { data: voucherInfo } = await supabase
           .from('vouchers')
           .select('value, discount_type, max_discount')
-          .eq('code', voucherCodeInput.trim().toUpperCase())
+          .eq('code', code.toUpperCase())
           .single()
 
         setAppliedVoucher({
@@ -161,6 +183,11 @@ export default function CheckoutPage() {
     } finally {
       setVoucherLoading(false)
     }
+  }
+
+  const handleApplyVoucher = async () => {
+    if (!voucherCodeInput.trim()) return
+    await handleApplyVoucherDirectly(voucherCodeInput.trim())
   }
 
   const handleRemoveVoucher = () => {
@@ -200,6 +227,10 @@ export default function CheckoutPage() {
       const orderId = orderRes.data.order_id
 
       toast.success('Pesanan berhasil dibuat, memproses pembayaran...')
+      setOrderSnapshot(cartItems)
+      setOrderPlaced(true)
+      clearCart()
+      setCheckoutStep('payment')
 
       // 2. Generate Midtrans payment token
       const paymentRes = await generatePaymentTokenMutation.mutateAsync(orderNumber)
@@ -214,24 +245,20 @@ export default function CheckoutPage() {
       // 3. Open Midtrans Snap pop-up
       if ((window as any).snap) {
         (window as any).snap.pay(paymentRes.token, {
-          onSuccess: (result: any) => {
+          onSuccess: () => {
             toast.success('Pembayaran berhasil!')
-            clearCart()
             router.push(`/pesanan/${orderNumber}`)
           },
-          onPending: (result: any) => {
+          onPending: () => {
             toast.success('Pesanan disimpan, silakan selesaikan pembayaran.')
-            clearCart()
             router.push(`/pesanan/${orderNumber}`)
           },
-          onError: (result: any) => {
+          onError: () => {
             toast.error('Pembayaran gagal! Silakan coba lagi.')
-            clearCart()
             router.push(`/pesanan/${orderNumber}`)
           },
           onClose: () => {
             toast('Menunggu pembayaran Anda.', { icon: 'ℹ️' })
-            clearCart()
             router.push(`/pesanan/${orderNumber}`)
           },
         })
@@ -252,36 +279,64 @@ export default function CheckoutPage() {
 
   const isCheckoutProcessing = createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
-  if (authLoading || !isAuthenticated || cartItems.length === 0) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat Checkout...</p>
-      </div>
-    )
+  if (authLoading || !isAuthenticated || (cartItems.length === 0 && !orderPlaced)) {
+    return <AuthLoading message="Memuat Checkout..." />
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-serif tracking-tight text-neutral-900 mb-8 pb-4 border-b border-neutral-100">
-          Checkout
-        </h1>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Pembelian"
+        title="Checkout"
+        subtitle="Lengkapi alamat pengiriman dan selesaikan pembayaran."
+      />
+      <PageContainer size="lg" className="py-10 page-content">
+        
+        {/* Step-style Visual Progress Bar */}
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto"
+        >
+          <Link href="/cart" className="flex items-center space-x-2 group">
+            <div className="w-5 h-5 rounded-full border border-neutral-300 flex items-center justify-center text-[10px] text-neutral-400 font-sans group-hover:border-brand-black group-hover:text-brand-black transition-colors">1</div>
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-heading group-hover:text-brand-black transition-colors">Keranjang</span>
+          </Link>
+          <div className="w-8 md:w-12 h-px bg-neutral-200" />
+          <div className="flex items-center space-x-2">
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'shipping' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}>2</div>
+            <span className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'shipping' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}>Pengiriman</span>
+          </div>
+          <div className="w-8 md:w-12 h-px bg-neutral-200" />
+          <div className="flex items-center space-x-2">
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'payment' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}>3</div>
+            <span className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'payment' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}>Pembayaran</span>
+          </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT: SHIPPING DETAILS */}
-          <div className="lg:col-span-7 space-y-8">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 space-y-8"
+          >
             {/* Address Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm uppercase tracking-widest font-bold text-neutral-800 flex items-center">
-                  <MapPin size={16} className="mr-2" /> Alamat Pengiriman
+                <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black flex items-center">
+                  <MapPin size={14} className="mr-2 text-neutral-500" /> Alamat Pengiriman
                 </h2>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setAddressModalOpen(true)}
-                  className="inline-flex items-center text-xs text-neutral-600 hover:text-neutral-950 font-semibold"
+                  className="inline-flex items-center text-[11px] text-neutral-600 hover:text-brand-black font-heading font-medium uppercase tracking-wider transition-colors duration-200"
                 >
-                  <Plus size={14} className="mr-1" /> Tambah Alamat
-                </button>
+                  <Plus size={12} className="mr-1" /> Tambah Alamat
+                </motion.button>
               </div>
 
               {addressesLoading ? (
@@ -290,35 +345,42 @@ export default function CheckoutPage() {
                 <div className="space-y-3">
                   {/* Selected Address Display */}
                   {selectedAddress ? (
-                    <div className="border border-neutral-900 bg-neutral-50/50 p-4 relative rounded-none">
-                      <p className="font-semibold text-neutral-800">{selectedAddress.label} (Pilihan)</p>
-                      <p className="font-medium text-neutral-700 mt-1">{selectedAddress.recipient_name} | {selectedAddress.phone}</p>
-                      <p className="text-neutral-600 text-sm mt-1">{selectedAddress.full_address}</p>
-                      <p className="text-xs text-neutral-400 mt-1">
+                    <motion.div 
+                      layoutId="selectedAddressBox"
+                      className="border border-brand-gold bg-brand-gold-muted/10 p-4 relative rounded-none shadow-sm"
+                    >
+                      <p className="font-heading font-semibold text-xs text-brand-gold uppercase tracking-wider">
+                        {selectedAddress.label} (Pilihan)
+                      </p>
+                      <p className="font-sans font-medium text-neutral-700 mt-1.5">{selectedAddress.recipient_name} | {selectedAddress.phone}</p>
+                      <p className="text-neutral-500 text-xs mt-1 leading-relaxed">{selectedAddress.full_address}</p>
+                      <p className="text-[10px] text-neutral-400 mt-1 font-sans">
                         {selectedAddress.district_name}, {selectedAddress.city_name}, {selectedAddress.province_name} {selectedAddress.postal_code}
                       </p>
-                    </div>
+                    </motion.div>
                   ) : (
                     <p className="text-sm text-red-500 font-medium">Harap pilih atau tambahkan alamat baru</p>
                   )}
 
                   {/* Other Addresses Accordion/Dropdown */}
                   {addresses.length > 1 && (
-                    <div className="border border-neutral-200 p-4 space-y-3">
-                      <p className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">Pilih Alamat Lain:</p>
+                    <div className="border border-neutral-200 p-4 space-y-3 bg-white">
+                      <p className="text-[10px] text-neutral-400 font-heading font-medium uppercase tracking-widest">Pilih Alamat Lain:</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
                         {addresses
                           .filter((a) => a.id !== selectedAddress?.id)
                           .map((address) => (
-                            <div
+                            <motion.div
+                              whileHover={{ y: -1, borderColor: '#171717' }}
+                              whileTap={{ scale: 0.98 }}
                               key={address.id}
                               onClick={() => setSelectedAddress(address)}
-                              className="p-3 border border-neutral-200 hover:border-neutral-800 text-xs cursor-pointer bg-white transition"
+                              className="p-3 border border-neutral-200 text-xs cursor-pointer bg-white transition-all duration-200"
                             >
-                              <p className="font-semibold text-neutral-800">{address.label}</p>
-                              <p className="font-medium text-neutral-700 mt-1">{address.recipient_name}</p>
-                              <p className="text-neutral-500 truncate mt-0.5">{address.full_address}</p>
-                            </div>
+                              <p className="font-heading font-medium text-[10px] text-brand-black uppercase tracking-wider">{address.label}</p>
+                              <p className="font-sans text-neutral-700 mt-1 font-medium">{address.recipient_name}</p>
+                              <p className="text-neutral-500 truncate mt-0.5 text-[11px]">{address.full_address}</p>
+                            </motion.div>
                           ))}
                       </div>
                     </div>
@@ -326,7 +388,7 @@ export default function CheckoutPage() {
                 </div>
               ) : (
                 <div className="text-center py-8 border border-dashed border-neutral-200">
-                  <p className="text-sm text-neutral-500 mb-3">Belum ada alamat pengiriman.</p>
+                  <p className="text-xs text-neutral-400 mb-3">Belum ada alamat pengiriman.</p>
                   <Button
                     onClick={() => setAddressModalOpen(true)}
                     variant="outline"
@@ -340,12 +402,12 @@ export default function CheckoutPage() {
 
             {/* Shipping Method Section */}
             <div className="space-y-4 pt-4 border-t border-neutral-100">
-              <h2 className="text-sm uppercase tracking-widest font-bold text-neutral-800 flex items-center">
-                <Truck size={16} className="mr-2" /> Opsi Pengiriman
+              <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black flex items-center">
+                <Truck size={14} className="mr-2 text-neutral-500" /> Opsi Pengiriman
               </h2>
 
               {!selectedAddress ? (
-                <p className="text-sm text-neutral-400 italic">Harap pilih alamat terlebih dahulu untuk menampilkan opsi pengiriman.</p>
+                <p className="text-xs text-neutral-400 italic">Harap pilih alamat terlebih dahulu untuk menampilkan opsi pengiriman.</p>
               ) : shippingLoading ? (
                 <div className="space-y-2">
                   <div className="h-12 bg-neutral-100 animate-pulse rounded-none" />
@@ -354,73 +416,89 @@ export default function CheckoutPage() {
               ) : shippingOptions.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {shippingOptions.map((option) => (
-                    <div
+                    <motion.div
+                      whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#171717' }}
+                      whileTap={{ scale: 0.99 }}
                       key={option.id}
                       onClick={() => setSelectedCourier(option)}
-                      className={`p-4 border cursor-pointer transition rounded-none ${
+                      className={`p-4 border cursor-pointer transition-all duration-300 relative rounded-none ${
                         selectedCourier?.id === option.id
-                          ? 'border-neutral-900 bg-neutral-50/50 ring-1 ring-neutral-900'
-                          : 'border-neutral-200 hover:border-neutral-400 bg-white'
+                          ? 'border-brand-gold bg-brand-gold-muted/10 ring-1 ring-brand-gold'
+                          : 'border-neutral-200 bg-white'
                       }`}
                     >
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-semibold text-sm text-neutral-800 uppercase">
+                        <span className="font-heading font-medium text-xs text-brand-black uppercase tracking-wider">
                           {option.courier_name}
                         </span>
-                        <span className="font-bold text-sm text-neutral-900">
-                          Rp {option.price.toLocaleString('id-ID')}
+                        <span className="font-sans font-bold text-xs text-brand-black">
+                          {formatIDR(option.price)}
                         </span>
                       </div>
-                      <p className="text-xs text-neutral-500">
+                      <p className="text-[11px] text-neutral-400">
                         Estimasi tiba: {option.etd_min} - {option.etd_max} Hari
                       </p>
-                    </div>
+                      {selectedCourier?.id === option.id && (
+                        <div className="absolute top-2 right-2 bg-brand-gold text-white rounded-full p-0.5">
+                          <Check size={8} />
+                        </div>
+                      )}
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-red-500 font-medium">Pengiriman tidak tersedia untuk zona alamat Anda. Harap hubungi Admin.</p>
+                <p className="text-xs text-red-500 font-semibold">Pengiriman tidak tersedia untuk zona alamat Anda. Harap hubungi Admin.</p>
               )}
             </div>
 
             {/* Note Section */}
             <div className="space-y-2 pt-4 border-t border-neutral-100">
-              <label className="block text-xs uppercase tracking-widest font-bold text-neutral-800">
+              <label className="block text-xs uppercase tracking-widest font-heading font-bold text-brand-black">
                 Catatan Pesanan
               </label>
               <textarea
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none rounded-none transition h-20 resize-none"
+                className="w-full px-4 py-3 border border-neutral-200 focus:border-brand-black focus:bg-neutral-50/30 outline-none rounded-none transition-all duration-300 h-20 resize-none text-xs focus-ring-premium"
                 placeholder="Tulis instruksi khusus (cth: ukuran tambahan, warna cadangan, dll)..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT: ORDER SUMMARY */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="border border-neutral-200 p-6 bg-white rounded-none">
-              <h2 className="text-sm uppercase tracking-widest font-bold text-neutral-800 mb-6 flex items-center border-b border-neutral-100 pb-3">
-                <ShoppingBag size={16} className="mr-2" /> Ringkasan Pesanan
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 space-y-6"
+          >
+            <div className="border border-neutral-200 p-6 bg-white rounded-none shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+              <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center border-b border-neutral-100 pb-3">
+                <ShoppingBag size={14} className="mr-2 text-neutral-500" /> Ringkasan Pesanan
               </h2>
 
               {/* Items List */}
               <div className="divide-y divide-neutral-100 max-h-60 overflow-y-auto pr-1 mb-6">
-                {cartItems.map((item) => (
-                  <div key={item.variantId} className="py-3 flex space-x-3 text-sm">
+                {displayItems.map((item) => (
+                  <div key={item.variantId} className="py-3 flex space-x-3 text-xs">
                     {item.imageUrl && (
                       <img
                         src={item.imageUrl}
-                        alt={item.name}
-                        className="w-12 h-16 object-cover border border-neutral-100 rounded-none bg-neutral-50"
+                        alt={item.productName || item.name}
+                        className="w-10 h-14 object-cover border border-neutral-100 rounded-none bg-neutral-50"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-neutral-800 truncate">{item.name}</p>
-                      <p className="text-xs text-neutral-500 mt-0.5">Qty: {item.quantity}</p>
+                      <p className="font-heading font-medium text-brand-black uppercase tracking-wide truncate text-[11px]">{item.productName || item.name}</p>
+                      {item.variantName && (
+                        <p className="text-[9px] text-neutral-400 uppercase tracking-wider">{item.variantName}</p>
+                      )}
+                      <p className="text-[10px] text-neutral-400 mt-0.5">Qty: {item.quantity}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-neutral-900">
-                        Rp {(item.price * item.quantity).toLocaleString('id-ID')}
+                      <p className="font-sans font-semibold text-brand-black">
+                        {formatIDR(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -429,76 +507,129 @@ export default function CheckoutPage() {
 
               {/* Voucher Code Form */}
               <div className="pb-6 border-b border-neutral-100 mb-6">
-                <label className="block text-xs uppercase tracking-widest font-bold text-neutral-600 mb-2">
+                <label className="block text-[10px] uppercase tracking-widest font-heading font-bold text-neutral-400 mb-2">
                   Punya Kode Voucher?
                 </label>
-                {appliedVoucher ? (
-                  <div className="flex items-center justify-between bg-neutral-50 border border-neutral-800 px-4 py-2.5 rounded-none text-xs">
-                    <div className="flex items-center space-x-2 text-neutral-800 font-semibold">
-                      <Tag size={14} />
-                      <span>{appliedVoucher.code} diterapkan</span>
+                <AnimatePresence mode="wait">
+                  {appliedVoucher ? (
+                    <motion.div 
+                      key="applied"
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                      className="flex items-center justify-between bg-brand-gold-muted/10 border border-brand-gold px-4 py-2.5 rounded-none text-xs"
+                    >
+                      <div className="flex items-center space-x-2 text-brand-gold font-heading font-medium uppercase tracking-wider text-[10px]">
+                        <Tag size={12} className="text-neutral-500" />
+                        <span>{appliedVoucher.code} diterapkan</span>
+                      </div>
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        type="button"
+                        onClick={handleRemoveVoucher}
+                        className="text-red-500 font-bold hover:text-red-700 transition ml-2"
+                      >
+                        Hapus
+                      </motion.button>
+                    </motion.div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex space-x-2">
+                        <input
+                          type="text"
+                          placeholder="Masukkan kode voucher"
+                          className="flex-1 px-3 py-2 border border-neutral-200 focus:border-brand-black outline-none text-xs uppercase rounded-none transition-colors duration-200 focus-ring-premium"
+                          value={voucherCodeInput}
+                          onChange={(e) => setVoucherCodeInput(e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="py-2.5 px-4 text-xs font-bold uppercase tracking-wider"
+                          onClick={handleApplyVoucher}
+                          isLoading={voucherLoading}
+                        >
+                          Pakai
+                        </Button>
+                      </div>
+
+                      {/* Available Vouchers suggestions */}
+                      {availableVouchers && availableVouchers.length > 0 && (
+                        <div className="pt-1 space-y-1.5">
+                          <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400 block">
+                            Voucher Tersedia (Klik untuk Memakai)
+                          </span>
+                          <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
+                            {availableVouchers.map((voucher: any) => {
+                              const isSpendMet = subtotal >= voucher.min_spend;
+                              return (
+                                <button
+                                  key={voucher.id}
+                                  type="button"
+                                  disabled={!isSpendMet}
+                                  onClick={() => handleApplyVoucherDirectly(voucher.code)}
+                                  className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-none relative overflow-hidden select-none ${
+                                    isSpendMet
+                                      ? 'border-brand-gold/40 bg-brand-gold-muted/5 hover:bg-brand-gold-muted/10 cursor-pointer animate-pulse-gentle'
+                                      : 'border-neutral-200 bg-neutral-50/50 opacity-40 cursor-not-allowed'
+                                  }`}
+                                >
+                                  <div className="flex justify-between items-center mb-0.5">
+                                    <span className="font-heading font-bold text-[10px] text-brand-gold uppercase tracking-wider">
+                                      {voucher.code}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] font-heading font-semibold text-brand-black">
+                                    {voucher.discount_type === 'percentage'
+                                      ? `Diskon ${voucher.value}%`
+                                      : `Potongan ${formatIDR(voucher.value)}`}
+                                  </p>
+                                  <p className="text-[8px] text-neutral-400 font-sans mt-0.5">
+                                    Min. Belanja: {formatIDR(voucher.min_spend)}
+                                  </p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleRemoveVoucher}
-                      className="text-red-500 font-bold hover:text-red-700 transition ml-2"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      placeholder="Masukkan kode voucher"
-                      className="flex-1 px-3 py-2 border border-neutral-200 focus:border-neutral-800 outline-none text-sm uppercase rounded-none"
-                      value={voucherCodeInput}
-                      onChange={(e) => setVoucherCodeInput(e.target.value)}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="py-2.5 px-4 text-xs font-bold uppercase tracking-wider"
-                      onClick={handleApplyVoucher}
-                      isLoading={voucherLoading}
-                    >
-                      Pakai
-                    </Button>
-                  </div>
-                )}
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Cost Calculation Details */}
-              <div className="space-y-3 text-sm text-neutral-600 border-b border-neutral-100 pb-5 mb-5">
+              <div className="space-y-3 text-xs text-neutral-500 border-b border-neutral-100 pb-5 mb-5 font-sans">
                 <div className="flex justify-between">
                   <span>Subtotal Produk</span>
-                  <span className="font-semibold text-neutral-900">
-                    Rp {subtotal.toLocaleString('id-ID')}
+                  <span className="font-semibold text-brand-black">
+                    {formatIDR(subtotal)}
                   </span>
                 </div>
                 {appliedVoucher && (
-                  <div className="flex justify-between text-neutral-800 font-semibold">
+                  <div className="flex justify-between font-semibold">
                     <span>Diskon Voucher</span>
                     <span className="text-red-600">
-                      - Rp {discountAmount.toLocaleString('id-ID')}
+                      - {formatIDR(discountAmount)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>Ongkos Kirim</span>
-                  <span className="font-semibold text-neutral-900">
+                  <span className="font-semibold text-brand-black">
                     {selectedCourier
-                      ? `Rp ${shippingCost.toLocaleString('id-ID')}`
+                      ? formatIDR(shippingCost)
                       : 'Pilih kurir...'}
                   </span>
                 </div>
               </div>
 
               {/* Grand Total */}
-              <div className="flex justify-between items-center text-neutral-900 font-serif mb-8">
-                <span className="text-base font-semibold">Total Pembayaran</span>
-                <span className="text-xl font-bold">
-                  Rp {totalAmount.toLocaleString('id-ID')}
+              <div className="flex justify-between items-center text-brand-black font-heading mb-8">
+                <span className="text-xs uppercase tracking-widest font-medium">Total Pembayaran</span>
+                <span className="text-lg font-bold">
+                  {formatIDR(totalAmount)}
                 </span>
               </div>
 
@@ -514,9 +645,9 @@ export default function CheckoutPage() {
                 Bayar Sekarang
               </Button>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </PageContainer>
 
       <AddressModal
         isOpen={addressModalOpen}
@@ -526,3 +657,4 @@ export default function CheckoutPage() {
     </div>
   )
 }
+

@@ -30,8 +30,12 @@ export default function RootLayout({
     <html
       lang="id"
       className={`${outfit.variable} ${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-neutral-50 text-neutral-900 selection:bg-neutral-900 selection:text-white">
+      <body 
+        className="min-h-full flex flex-col font-sans bg-neutral-50 text-neutral-900 selection:bg-neutral-900 selection:text-white"
+        suppressHydrationWarning
+      >
         <Providers>
           {children}
         </Providers>

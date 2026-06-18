@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
   Package,
@@ -14,13 +15,13 @@ import {
   MessageSquare,
   Settings,
   LogOut,
-  User,
   Users,
   Truck,
   ExternalLink,
   Menu,
   X,
-  Globe
+  Globe,
+  Layers
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -36,7 +37,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const router = useRouter()
   const supabase = createBrowserClient()
   const { user, profile, clearAuth } = useAuthStore()
-  
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const handleLogout = async () => {
@@ -57,7 +58,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Pesanan', href: '/admin/pesanan', icon: ShoppingBag },
     { name: 'Produk', href: '/admin/produk', icon: Package },
     { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
-    { name: 'Koleksi', href: '/admin/koleksi', icon: FolderTree },
+    { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
     { name: 'Voucher', href: '/admin/voucher', icon: Ticket },
     { name: 'Flash Sale', href: '/admin/flash-sale', icon: Percent },
     { name: 'Banner Promo', href: '/admin/banner', icon: Image },
@@ -68,43 +69,52 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
   ]
 
+  const renderNavLink = (item: (typeof menuItems)[0], onNavigate?: () => void) => {
+    const Icon = item.icon
+    const isActive = pathname === item.href
+    return (
+      <Link
+        key={item.name}
+        href={item.href}
+        onClick={onNavigate}
+        className={cn(
+          'group flex items-center px-3 py-2.5 text-xs font-heading font-medium rounded-none transition-all duration-200',
+          isActive
+            ? 'bg-brand-black text-white font-semibold shadow-sm'
+            : 'text-neutral-600 hover:bg-brand-gold-muted hover:text-brand-black'
+        )}
+      >
+        <Icon
+          className={cn(
+            'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
+            isActive ? 'text-brand-gold-light' : 'text-neutral-400 group-hover:text-brand-gold'
+          )}
+        />
+        {item.name}
+        {isActive && (
+          <span className="ml-auto w-1 h-1 bg-brand-gold-light rounded-full" />
+        )}
+      </Link>
+    )
+  }
+
   return (
-    <div className="flex h-screen bg-neutral-100 overflow-hidden font-sans">
+    <div className="flex h-screen bg-neutral-50 overflow-hidden font-sans">
       {/* Sidebar for Desktop */}
       <aside className="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 border-r border-neutral-200 bg-white">
         <div className="flex h-16 items-center px-6 border-b border-neutral-200">
           <Link href="/admin" className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-            BENANGBAJU <span className="text-neutral-400 font-normal">CMS</span>
+            BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
           </Link>
         </div>
-        
-        {/* Navigation list */}
+
         <div className="flex flex-col flex-1 overflow-y-auto pt-5 pb-4">
-          <nav className="flex-1 px-4 space-y-1">
-            {menuItems.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    'group flex items-center px-3 py-2.5 text-xs font-medium rounded-none transition-colors duration-150',
-                    isActive
-                      ? 'bg-neutral-900 text-white font-semibold'
-                      : 'text-neutral-600 hover:bg-neutral-50 hover:text-brand-black'
-                  )}
-                >
-                  <Icon className={cn('mr-3 h-4 w-4 flex-shrink-0', isActive ? 'text-white' : 'text-neutral-400 group-hover:text-brand-black')} />
-                  {item.name}
-                </Link>
-              )
-            })}
+          <nav className="flex-1 px-4 space-y-0.5">
+            {menuItems.map((item) => renderNavLink(item))}
           </nav>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="flex-shrink-0 p-4 border-t border-neutral-200 bg-neutral-50">
+        <div className="flex-shrink-0 p-4 border-t border-neutral-200 bg-brand-cream/50">
           <Link
             href="/"
             className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-black transition-colors"
@@ -122,76 +132,67 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </div>
       </aside>
 
-      {/* Mobile Sidebar / Drawer */}
-      {isSidebarOpen && (
-        <div className="relative z-50 lg:hidden">
-          {/* Backdrop */}
-          <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs" onClick={() => setIsSidebarOpen(false)} />
-          
-          {/* Sliding sidebar container */}
-          <div className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white">
-            <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200">
-              <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-                BENANGBAJU CMS
-              </span>
-              <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto pt-5 pb-4 px-4">
-              <nav className="space-y-1">
-                {menuItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = pathname === item.href
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setIsSidebarOpen(false)}
-                      className={cn(
-                        'flex items-center px-3 py-2.5 text-xs font-medium rounded-none transition-colors',
-                        isActive
-                          ? 'bg-neutral-900 text-white font-semibold'
-                          : 'text-neutral-600 hover:bg-neutral-50'
-                      )}
-                    >
-                      <Icon className="mr-3 h-4 w-4" />
-                      {item.name}
-                    </Link>
-                  )
-                })}
-              </nav>
-            </div>
-            
-            <div className="p-4 border-t border-neutral-200 bg-neutral-50">
-              <Link
-                href="/"
-                onClick={() => setIsSidebarOpen(false)}
-                className="flex items-center px-3 py-2 text-xs font-medium text-neutral-600"
-              >
-                <ExternalLink className="mr-3 h-4 w-4" />
-                Ke Halaman Toko
-              </Link>
-              <button
-                onClick={() => {
-                  setIsSidebarOpen(false)
-                  handleLogout()
-                }}
-                className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600"
-              >
-                <LogOut className="mr-3 h-4 w-4" />
-                Keluar
-              </button>
-            </div>
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <div className="relative z-50 lg:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+              className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white shadow-xl"
+            >
+              <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200">
+                <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+                  BENANGBAJU <span className="text-brand-gold">CMS</span>
+                </span>
+                <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto pt-5 pb-4 px-4">
+                <nav className="space-y-0.5">
+                  {menuItems.map((item) => renderNavLink(item, () => setIsSidebarOpen(false)))}
+                </nav>
+              </div>
+
+              <div className="p-4 border-t border-neutral-200 bg-brand-cream/50">
+                <Link
+                  href="/"
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="flex items-center px-3 py-2 text-xs font-medium text-neutral-600"
+                >
+                  <ExternalLink className="mr-3 h-4 w-4" />
+                  Ke Halaman Toko
+                </Link>
+                <button
+                  onClick={() => {
+                    setIsSidebarOpen(false)
+                    handleLogout()
+                  }}
+                  className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600"
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  Keluar
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 w-0 overflow-hidden">
-        {/* Topbar */}
-        <header className="flex h-16 flex-shrink-0 border-b border-neutral-200 bg-white z-10">
+        <header className="flex h-16 flex-shrink-0 border-b border-neutral-200 bg-white/95 backdrop-blur-md z-10">
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-black lg:hidden"
@@ -199,17 +200,17 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          
+
           <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center">
               <h1 className="text-sm font-heading font-semibold uppercase tracking-wider text-neutral-700">
                 {menuItems.find((item) => pathname === item.href)?.name || 'CMS Admin'}
               </h1>
             </div>
-            
+
             <div className="ml-4 flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-none bg-neutral-900 text-white flex items-center justify-center text-xs font-bold uppercase">
+                <div className="h-8 w-8 bg-brand-black text-brand-gold-light flex items-center justify-center text-xs font-heading font-bold uppercase">
                   {profile?.name?.substring(0, 2) || user?.email?.substring(0, 2) || 'AD'}
                 </div>
                 <div className="hidden md:block">
@@ -221,8 +222,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </header>
 
-        {/* Content Container */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-neutral-50">
           <div className="mx-auto max-w-7xl animate-slide-up">
             {children}
           </div>

@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button } from '@/components/shared/Button'
+import { AuthLoading } from '@/components/shared/AuthLoading'
+import { Button, PageHero, PageContainer, EmptyState } from '@/components/shared'
 import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, FileText, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -150,19 +151,22 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
     if (status === 'cancelled') {
       return (
-        <div className="flex items-center space-x-3 p-4 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-none">
+      <div className="border border-error-border p-5 bg-error-bg card-hover-lift gold-border-hover">
+        <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-error mb-4">Status Pesanan</p>
+        <div className="flex items-center space-x-3 text-error text-xs font-semibold">
           <XCircle size={18} />
           <div>
             <p className="font-bold uppercase tracking-wider text-xs">Pesanan Dibatalkan</p>
-            {order?.cancel_reason && <p className="font-normal text-red-600 mt-1">Alasan: {order.cancel_reason}</p>}
+            {order?.cancel_reason && <p className="font-normal text-error/80 mt-1">Alasan: {order.cancel_reason}</p>}
           </div>
         </div>
-      )
+      </div>
+    )
     }
 
     return (
-      <div className="border border-neutral-200 p-5 bg-neutral-50/50 rounded-none">
-        <p className="text-xs uppercase tracking-widest font-bold text-neutral-400 mb-6">Status Pesanan</p>
+      <div className="border border-neutral-200 p-5 bg-brand-cream/30 card-hover-lift gold-border-hover">
+        <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold mb-6">Status Pesanan</p>
         <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
           {steps.map((step, idx) => {
             const isCompleted = idx <= statusIndex
@@ -170,31 +174,28 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
             return (
               <div key={step.id} className="flex md:flex-col items-center flex-1 w-full relative z-10">
-                {/* Step circle */}
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition duration-200 ${
                     isCompleted
-                      ? 'bg-neutral-900 border-neutral-900 text-white'
+                      ? 'bg-brand-gold border-brand-gold text-white'
                       : 'bg-white border-neutral-200 text-neutral-400'
-                  } ${isActive ? 'ring-4 ring-neutral-100' : ''}`}
+                  } ${isActive ? 'ring-4 ring-brand-gold/20' : ''}`}
                 >
                   {step.icon}
                 </div>
 
-                {/* Step label */}
                 <span
                   className={`ml-4 md:ml-0 md:mt-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${
-                    isActive ? 'text-neutral-900 font-bold' : isCompleted ? 'text-neutral-700' : 'text-neutral-400'
+                    isActive ? 'text-brand-gold font-bold' : isCompleted ? 'text-brand-black' : 'text-neutral-400'
                   }`}
                 >
                   {step.label}
                 </span>
 
-                {/* Progress bar line (horizontal desktop, skip last) */}
                 {idx < steps.length - 1 && (
                   <div
                     className={`hidden md:block absolute top-4 left-[50%] right-[-50%] h-[2px] transition duration-200 -z-10 ${
-                      idx < statusIndex ? 'bg-neutral-900' : 'bg-neutral-200'
+                      idx < statusIndex ? 'bg-brand-gold' : 'bg-neutral-200'
                     }`}
                   />
                 )}
@@ -207,11 +208,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   }
 
   if (authLoading || orderLoading) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat pesanan...</p>
-      </div>
-    )
+    return <AuthLoading message="Memuat pesanan..." />
   }
 
   if (!isAuthenticated) {
@@ -220,78 +217,63 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-white py-16 px-4 flex flex-col items-center justify-center font-sans text-center">
-        <AlertCircle size={40} className="text-red-500 mb-4 animate-bounce" />
-        <h1 className="text-xl font-serif text-neutral-800 mb-2">Pesanan Tidak Ditemukan</h1>
-        <p className="text-neutral-500 text-sm mb-6">Tautan tidak valid atau data telah dihapus.</p>
-        <Link href="/pesanan">
-          <Button className="text-xs uppercase font-semibold">Kembali ke Daftar Pesanan</Button>
-        </Link>
+      <div className="bg-white min-h-screen">
+        <PageHero eyebrow="Pesanan" title="Detail Pesanan" variant="cream" />
+        <PageContainer size="md" className="py-12 page-content">
+          <EmptyState
+            icon={AlertCircle}
+            title="Pesanan Tidak Ditemukan"
+            description="Tautan tidak valid atau data telah dihapus."
+            action={{ label: 'Kembali ke Daftar Pesanan', href: '/pesanan' }}
+          />
+        </PageContainer>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-            <Link href="/akun" className="hover:text-neutral-900 transition">Akun Saya</Link>
-            <span>/</span>
-            <Link href="/pesanan" className="hover:text-neutral-900 transition">Pesanan Saya</Link>
-            <span>/</span>
-            <span className="text-neutral-900 font-semibold">{order.order_number}</span>
-          </div>
+  const orderDate = new Date(order.created_at).toLocaleDateString('id-ID', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
+  return (
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Pesanan Saya"
+        title="Detail Pesanan"
+        subtitle={`No. ${order.order_number} · ${orderDate}`}
+      >
+        <div className="flex flex-wrap items-center gap-4 mt-2">
           <Link
             href="/pesanan"
-            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-neutral-950 transition"
+            className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-gold transition"
           >
             <ArrowLeft size={13} className="mr-1" /> Kembali
           </Link>
-        </div>
-
-        {/* Header Title block */}
-        <div className="border-b border-neutral-100 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-serif tracking-tight text-neutral-900 mb-1">
-              Detail Pesanan
-            </h1>
-            <p className="text-xs text-neutral-400">
-              No. Pesanan: <span className="font-semibold text-neutral-700">{order.order_number}</span> | Tanggal:{' '}
-              {new Date(order.created_at).toLocaleDateString('id-ID', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-          </div>
-
-          {/* Action invoice download */}
           {order.status !== 'pending_payment' && order.status !== 'cancelled' && (
             <Button
               onClick={handleDownloadInvoice}
               variant="outline"
               isLoading={isInvoiceLoading}
-              className="flex items-center text-xs uppercase tracking-wider font-bold py-2.5 px-4"
+              className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
             >
               <Download size={14} className="mr-2" /> Unduh Invoice
             </Button>
           )}
         </div>
+      </PageHero>
 
-        {/* Timeline Status */}
+      <PageContainer size="lg" className="py-10 page-content space-y-8">
         {renderTimeline(order.status)}
 
-        {/* Grid: Delivery details & Price breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Shipping & Payment Info */}
           <div className="space-y-6">
-            <div className="border border-neutral-200 p-5 rounded-none space-y-4">
-              <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 border-b border-neutral-100 pb-2">
+            <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+              <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
                 Informasi Pengiriman
               </h2>
               {order.order_shipping ? (
@@ -328,16 +310,17 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
 
             {/* Notes Section if exists */}
             {order.notes && (
-              <div className="border border-neutral-200 p-5 rounded-none bg-stone-50/50 space-y-2">
-                <h3 className="text-xs uppercase tracking-widest font-bold text-neutral-400">Catatan dari Anda</h3>
+              <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-brand-cream/30 space-y-2">
+                <h3 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold">Catatan dari Anda</h3>
                 <p className="text-sm text-neutral-700 whitespace-pre-wrap">{order.notes}</p>
               </div>
             )}
           </div>
 
           {/* Pricing Breakdowns */}
-          <div className="border border-neutral-200 p-5 rounded-none h-fit space-y-5">
-            <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 border-b border-neutral-100 pb-2">
+          <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-white h-fit space-y-5 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
               Rincian Pembayaran
             </h2>
             <div className="space-y-3 text-sm text-neutral-600">
@@ -359,7 +342,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                   Rp {order.shipping_cost.toLocaleString('id-ID')}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-neutral-900 font-serif border-t border-neutral-100 pt-4 mt-2">
+              <div className="flex justify-between items-center text-brand-black font-heading border-t border-neutral-100 pt-4 mt-2">
                 <span className="text-sm font-semibold">Total Pembayaran</span>
                 <span className="text-lg font-bold">Rp {order.total_amount.toLocaleString('id-ID')}</span>
               </div>
@@ -412,8 +395,9 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         </div>
 
         {/* Order items snapshots list */}
-        <div className="border border-neutral-200 p-5 sm:p-6 rounded-none space-y-4">
-          <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 border-b border-neutral-100 pb-2">
+        <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+          <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
             Item Pesanan
           </h2>
           <div className="divide-y divide-neutral-100">
@@ -437,7 +421,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
             ))}
           </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   )
 }

@@ -28,7 +28,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
         className={cn(
           className,
           i < Math.round(rating)
-            ? 'fill-yellow-400 text-yellow-400'
+            ? 'fill-brand-gold text-brand-gold'
             : 'text-neutral-200'
         )}
       />
@@ -37,13 +37,16 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
 
   if (isLoading) {
     return (
-      <div className="py-8 space-y-4">
+      <div className="py-10 space-y-4">
         <h3 className="text-sm font-heading font-medium uppercase tracking-wider text-brand-black">
           Ulasan Pembeli ({total})
         </h3>
-        <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-neutral-100 w-full" />
-          <div className="h-16 bg-neutral-50 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="h-44 bg-neutral-50 border border-neutral-200/60 skeleton-shimmer" />
+          <div className="md:col-span-2 space-y-4">
+            <div className="h-20 bg-neutral-50/50 skeleton-shimmer" />
+            <div className="h-20 bg-neutral-50/50 skeleton-shimmer" />
+          </div>
         </div>
       </div>
     )
@@ -53,12 +56,13 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
     <div className="py-10 border-t border-neutral-100 space-y-8">
       <div className="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0">
         {/* Left: Ratings Summary */}
-        <div className="flex flex-col space-y-2 md:w-1/4">
-          <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
+        <div className="flex flex-col space-y-4 md:w-1/3 bg-neutral-50 border border-neutral-200/60 p-6 md:p-8 card-hover-lift gold-border-hover relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+          <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-black">
             Ulasan Pembeli
           </h3>
           <div className="flex items-baseline space-x-2">
-            <span className="text-3xl font-heading font-light text-brand-black">
+            <span className="text-4xl font-heading font-light text-brand-black tracking-tight">
               {avgRating.toFixed(1)}
             </span>
             <span className="text-xs text-neutral-400 font-sans">/ 5.0</span>
@@ -66,8 +70,8 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
           <div className="flex space-x-1">
             {renderStars(avgRating, 'h-4 w-4')}
           </div>
-          <p className="text-[11px] text-neutral-400 font-sans">
-            Berdasarkan {total} ulasan terverifikasi
+          <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
+            Berdasarkan {total} ulasan terverifikasi dari pembeli.
           </p>
         </div>
 
@@ -91,8 +95,8 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
                           {renderStars(review.rating)}
                         </div>
                         {review.is_verified_purchase && (
-                          <span className="flex items-center text-[9px] uppercase tracking-wider text-neutral-400 font-heading">
-                            <CheckCircle className="h-2.5 w-2.5 text-neutral-400 mr-1" />
+                          <span className="flex items-center text-[9px] uppercase tracking-wider text-brand-gold font-heading">
+                            <CheckCircle className="h-2.5 w-2.5 text-brand-gold mr-1" />
                             Terverifikasi
                           </span>
                         )}
@@ -141,12 +145,12 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
 
                   {/* Admin Reply */}
                   {review.review_replies && review.review_replies.length > 0 && (
-                    <div className="bg-neutral-50 p-4 border-l-2 border-brand-black mt-3 space-y-1">
-                      <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-black">
+                    <div className="bg-neutral-50 p-4 border-l-2 border-brand-gold mt-3 space-y-1">
+                      <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
                         Balasan dari Benangbaju
                       </p>
-                      <p className="text-xs text-neutral-600 font-sans leading-relaxed">
-                        {review.review_replies[0].body}
+                      <p className="text-xs text-neutral-600 font-sans leading-relaxed italic">
+                        "{review.review_replies[0].body}"
                       </p>
                       <p className="text-[9px] text-neutral-400 font-sans">
                         {formatDate(review.review_replies[0].created_at)}

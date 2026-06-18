@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { useProducts } from '@/hooks/useProducts'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 import { getActiveCategories } from '@/services/categories'
 import { ProductCard } from '@/components/product/ProductCard'
-import { Button } from '@/components/shared'
-import { SlidersHorizontal, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Button, PageContainer, PageHeader, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
+import { SlidersHorizontal, ChevronLeft, ChevronRight, X, PackageSearch } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 function CatalogContent() {
@@ -83,22 +84,17 @@ function CatalogContent() {
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-        
-        {/* Title / Header */}
-        <div className="flex flex-col space-y-2 mb-8 border-b border-neutral-100 pb-6">
-          <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-            Katalog Busana
-          </span>
-          <h1 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
-            Semua Produk
-          </h1>
-          {searchQuery && (
-            <p className="text-xs text-neutral-500 font-sans">
-              Hasil pencarian untuk: <strong className="text-brand-black">"{searchQuery}"</strong> ({totalCount} produk)
-            </p>
-          )}
-        </div>
+      <PageHero
+        eyebrow="Katalog Busana"
+        title="Semua Produk"
+        subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
+      />
+      <PageContainer className="py-10 page-content">
+        {searchQuery && (
+          <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
+            Hasil pencarian untuk: <strong className="text-brand-black">"{searchQuery}"</strong> ({totalCount} produk)
+          </p>
+        )}
 
         {/* Toolbar (Mobile Filter Trigger & Desktop Sort) */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-neutral-100">
@@ -255,31 +251,25 @@ function CatalogContent() {
           {/* 3. Product Listings Grid */}
           <div className="flex-1">
             {isLoading ? (
-              // Loading skeletons
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="space-y-4">
-                    <div className="aspect-[3/4] bg-neutral-100 animate-pulse w-full" />
-                    <div className="h-4 bg-neutral-100 animate-pulse w-2/3" />
-                    <div className="h-4 bg-neutral-50 animate-pulse w-1/3" />
-                  </div>
-                ))}
-              </div>
+              <ProductGridSkeleton count={6} />
             ) : products.length === 0 ? (
-              // Empty State
-              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-                <span className="text-xs text-neutral-400 font-sans italic">
-                  Tidak ditemukan produk yang cocok dengan kriteria filter Anda.
-                </span>
-                <Button variant="outline" size="sm" onClick={handleClearAll}>
-                  Reset Filter
-                </Button>
-              </div>
+              <EmptyState
+                icon={PackageSearch}
+                title="Produk Tidak Ditemukan"
+                description="Tidak ditemukan produk yang cocok dengan kriteria filter Anda."
+                action={{ label: 'Reset Filter', onClick: handleClearAll, variant: 'outline' }}
+              />
             ) : (
-              // Products List
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 animate-fade-in">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+                {products.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <ProductCard product={product} />
+                  </motion.div>
                 ))}
               </div>
             )}
@@ -313,7 +303,7 @@ function CatalogContent() {
           </div>
         </div>
 
-      </div>
+      </PageContainer>
     </div>
   )
 }

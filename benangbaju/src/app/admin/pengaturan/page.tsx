@@ -6,8 +6,7 @@ import {
   useAdminUpdateSettings,
   useAdminActivityLogs,
 } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
+import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -69,11 +68,10 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Pengaturan & Log</h2>
-        <p className="text-xs text-neutral-400 mt-1">Kelola preferensi situs dan pantau riwayat audit log admin.</p>
-      </div>
+      <AdminPageHeader
+        title="Pengaturan & Log"
+        subtitle="Kelola preferensi situs dan pantau riwayat audit log admin."
+      />
 
       {/* Tabs */}
       <div className="flex border-b border-neutral-200 overflow-x-auto space-x-6 text-xs font-sans">

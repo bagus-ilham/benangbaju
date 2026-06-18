@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ProductDetailItem,
   ProductVariant,
@@ -14,13 +15,13 @@ import {
   MarketplaceLinks,
   ReviewSection
 } from '@/components/product'
-import { Button, Card } from '@/components/shared'
+import { Button, PageContainer } from '@/components/shared'
 import { useCart } from '@/hooks/useCart'
 import { useWishlist } from '@/hooks/useWishlist'
 import { useRecentlyViewedStore, RecentlyViewedState } from '@/stores/recentlyViewedStore'
 import { RelatedProducts } from './RelatedProducts' // Similar products slider
 import { formatIDR, cn } from '@/lib/utils'
-import { Heart, Plus, Minus, Shield, RefreshCw, Truck } from 'lucide-react'
+import { Heart, Plus, Minus, Shield, RefreshCw, Truck, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface ProductDetailClientProps {
@@ -28,8 +29,18 @@ interface ProductDetailClientProps {
   relatedProducts: ProductListItem[]
 }
 
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: 'spring' as const, stiffness: 260, damping: 25 }
+  }
+}
+
+
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
-  const { addItem } = useCart()
+  const { addItem, setCartDrawerOpen } = useCart()
   const { isLiked, toggleWishlist } = useWishlist()
   const addProductToRecentlyViewed = useRecentlyViewedStore((s: RecentlyViewedState) => s.addProduct)
   const router = useRouter()
@@ -39,8 +50,83 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const [activeTab, setActiveTab] = useState<'details' | 'shipping' | 'care'>('details')
   const [isAdding, setIsAdding] = useState(false)
   const [isBuying, setIsBuying] = useState(false)
+  const [showStickyBar, setShowStickyBar] = useState(false)
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
+
+  const handleToggleWishlist = async () => {
+    try {
+      await toggleWishlist(product.id)
+      if (liked) {
+        toast.success('Dihapus dari wishlist.')
+      } else {
+        toast.custom((t) => (
+          <div
+            className={`${
+              t.visible ? 'animate-enter' : 'animate-leave'
+            } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
+          >
+            <div className="flex-1 w-0 p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 pt-0.5">
+                  {product.product_images[0]?.url ? (
+                    <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
+                      <img
+                        className="h-full w-full object-cover"
+                        src={product.product_images[0].url}
+                        alt={product.name}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">
+                      No Img
+                    </div>
+                  )}
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
+                    Ditambahkan ke Wishlist
+                  </p>
+                  <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
+                    {product.name}
+                  </p>
+                  <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
+                    Tersimpan di daftar impian Anda.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex border-l border-neutral-100">
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id)
+                  router.push('/wishlist')
+                }}
+                className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
+              >
+                Lihat
+              </button>
+            </div>
+          </div>
+        ))
+      }
+    } catch (err) {
+      toast.error('Gagal memperbarui wishlist.')
+    }
+  }
 
   const liked = isLiked(product.id)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 600) {
+        setShowStickyBar(true)
+      } else {
+        setShowStickyBar(false)
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // 1. Record viewed item in recently viewed list on load
   useEffect(() => {
@@ -74,6 +160,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
     try {
       const cartItem = {
         variantId: selectedVariant.id,
+        productName: product.name,
+        variantName: selectedVariant.name,
         name: product.name,
         sku: selectedVariant.sku,
         price: Number(selectedVariant.price),
@@ -84,7 +172,55 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
       }
 
       await addItem(cartItem, quantity)
-      toast.success(`${product.name} (${selectedVariant.name}) dimasukkan ke keranjang.`)
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                {product.product_images[0]?.url ? (
+                  <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
+                    <img
+                      className="h-full w-full object-cover"
+                      src={product.product_images[0].url}
+                      alt={product.name}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">
+                    No Img
+                  </div>
+                )}
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
+                  Berhasil Ditambahkan!
+                </p>
+                <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
+                  {product.name}
+                </p>
+                <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
+                  Varian: {selectedVariant.name} &bull; Qty: {quantity}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-neutral-100">
+            <button
+              onClick={() => {
+                toast.dismiss(t.id)
+                setCartDrawerOpen(true)
+              }}
+              className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
+            >
+              Lihat
+            </button>
+          </div>
+        </div>
+      ))
     } catch (error) {
       toast.error('Gagal menambahkan ke keranjang.')
     } finally {
@@ -108,6 +244,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
     try {
       const cartItem = {
         variantId: selectedVariant.id,
+        productName: product.name,
+        variantName: selectedVariant.name,
         name: product.name,
         sku: selectedVariant.sku,
         price: Number(selectedVariant.price),
@@ -140,11 +278,15 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const maxPrice = Math.max(...product.product_variants.map((v: ProductVariant) => Number(v.price)))
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-        
+    <div className="bg-white min-h-screen pb-24 md:pb-10">
+      <PageContainer className="py-10 md:py-12 page-content">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-2 text-[10px] uppercase tracking-wider text-neutral-400 mb-8 font-heading">
+        <motion.nav
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center flex-wrap gap-x-2 gap-y-1 text-[10px] uppercase tracking-wider text-neutral-400 mb-8 font-heading"
+        >
           <Link href="/" className="hover:text-brand-black transition-colors">Home</Link>
           <span>/</span>
           <Link href="/produk" className="hover:text-brand-black transition-colors">Produk</Link>
@@ -157,28 +299,45 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               <span>/</span>
             </>
           )}
-          <span className="text-brand-black font-semibold truncate max-w-xs">{product.name}</span>
-        </nav>
+          <span className="text-brand-gold font-semibold truncate max-w-xs">{product.name}</span>
+        </motion.nav>
 
         {/* Main Grid: Left Gallery, Right Details */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
           
           {/* Left Gallery column (takes 7 cols) */}
-          <div className="md:col-span-7">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="md:col-span-7"
+          >
             <ProductGallery 
               images={product.product_images} 
               productName={product.name} 
               selectedVariantId={selectedVariant?.id || null}
             />
-          </div>
+          </motion.div>
 
           {/* Right sticky Details column (takes 5 cols) */}
-          <div className="md:col-span-5 md:sticky md:top-24 space-y-6">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: 0.06
+                }
+              }
+            }}
+            className="md:col-span-5 md:sticky md:top-24 space-y-6"
+          >
             
             {/* Title, Category & Price */}
-            <div className="space-y-2">
+            <motion.div variants={itemVariants} className="space-y-2">
               {product.categories && (
-                <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold">
                   {product.categories.name}
                 </span>
               )}
@@ -209,69 +368,86 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                   </span>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* Description intro */}
             {product.short_description && (
-              <p className="text-xs text-neutral-500 font-sans leading-relaxed">
+              <motion.p variants={itemVariants} className="text-xs text-neutral-500 font-sans leading-relaxed">
                 {product.short_description}
-              </p>
+              </motion.p>
             )}
 
             {/* Varian Picker */}
-            <VariantPicker
-              variants={product.product_variants}
-              selectedVariantId={selectedVariant?.id || null}
-              onVariantSelect={(variant: ProductVariant | null) => {
-                setSelectedVariant(variant)
-                // reset qty to 1 when changing variants
-                setQuantity(1)
-              }}
-            />
+            <motion.div variants={itemVariants} className="relative">
+              {product.product_variants.some(v => v.product_variant_attrs?.some(a => a.attr_name.toLowerCase().includes('ukuran'))) && (
+                <div className="flex justify-end absolute top-1 right-0 z-10">
+                  <button
+                    type="button"
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="text-[9px] uppercase tracking-wider font-heading font-semibold text-brand-gold hover:text-brand-gold-light transition-colors underline underline-offset-2 cursor-pointer"
+                  >
+                    Panduan Ukuran
+                  </button>
+                </div>
+              )}
+              <VariantPicker
+                variants={product.product_variants}
+                selectedVariantId={selectedVariant?.id || null}
+                onVariantSelect={(variant: ProductVariant | null) => {
+                  setSelectedVariant(variant)
+                  // reset qty to 1 when changing variants
+                  setQuantity(1)
+                }}
+              />
+            </motion.div>
 
             {/* Varian Stock indicator */}
             {selectedVariant && (
-              <div className="text-[11px] text-neutral-500 font-sans">
+              <motion.div variants={itemVariants} className="text-[11px] text-neutral-500 font-sans">
                 {selectedVariant.stock > 0 ? (
                   <span>Stok Tersedia: <strong className="text-brand-black">{selectedVariant.stock} pcs</strong></span>
                 ) : (
                   <span className="text-red-500 font-semibold">Stok Habis</span>
                 )}
-              </div>
+              </motion.div>
             )}
 
             {/* Actions: Quantity & Add to Cart & Wishlist */}
-            <div className="space-y-3 pt-2">
+            <motion.div variants={itemVariants} className="space-y-3 pt-2">
               <div className="flex items-center space-x-3">
                 {/* Quantity adjustments */}
-                <div className="flex items-center border border-neutral-200 bg-white">
-                  <button
+                <div className="flex items-center border border-neutral-200 bg-white gold-border-hover">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
                     onClick={handleDecrement}
                     className="p-3 text-neutral-500 hover:text-brand-black transition-colors"
                     disabled={!selectedVariant || selectedVariant.stock === 0}
                   >
                     <Minus className="h-3 w-3" />
-                  </button>
+                  </motion.button>
                   <span className="px-4 text-xs font-sans font-semibold text-brand-black w-8 text-center select-none">
                     {quantity}
                   </span>
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
                     onClick={handleIncrement}
                     className="p-3 text-neutral-500 hover:text-brand-black transition-colors"
                     disabled={!selectedVariant || selectedVariant.stock === 0}
                   >
                     <Plus className="h-3 w-3" />
-                  </button>
+                  </motion.button>
                 </div>
 
                 {/* Wishlist Heart button */}
-                <button
-                  onClick={() => toggleWishlist(product.id)}
-                  className="p-4 border border-neutral-200 hover:border-brand-black bg-white transition-all text-neutral-500 hover:text-brand-black"
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                  onClick={handleToggleWishlist}
+                  className="p-4 border border-neutral-200 hover:border-brand-gold bg-white transition-all text-neutral-500 hover:text-brand-gold relative gold-border-hover"
                   aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
                 >
-                  <Heart className={cn('h-4 w-4', liked && 'fill-red-500 text-red-500')} />
-                </button>
+                  <Heart className={cn('h-4 w-4 transition-colors duration-300', liked && 'fill-red-500 text-red-500')} />
+                </motion.button>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2 w-full">
@@ -305,88 +481,133 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                     : 'Beli Sekarang'}
                 </Button>
               </div>
-            </div>
+            </motion.div>
 
             {/* Info Badges (Shipping / Return / Guarantee) */}
-            <div className="grid grid-cols-3 gap-2 border-t border-b border-neutral-100 py-4">
-              <div className="flex flex-col items-center text-center space-y-1">
-                <Truck className="h-4 w-4 text-neutral-400" />
-                <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">Flat Shipping</span>
+            <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2 border border-neutral-100 py-4 px-2 card-hover-lift gold-border-hover bg-brand-cream/30">
+              <motion.div
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col items-center text-center space-y-1 cursor-default group"
+              >
+                <Truck className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
+                <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">Ongkir Flat</span>
                 <span className="text-[8px] text-neutral-400 font-sans">Tarif murah per zona</span>
-              </div>
-              <div className="flex flex-col items-center text-center space-y-1">
-                <RefreshCw className="h-4 w-4 text-neutral-400" />
+              </motion.div>
+              <motion.div 
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col items-center text-center space-y-1 cursor-default group"
+              >
+                <RefreshCw className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
                 <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">7 Hari Retur</span>
                 <span className="text-[8px] text-neutral-400 font-sans">Bebas tukar ukuran</span>
-              </div>
-              <div className="flex flex-col items-center text-center space-y-1">
-                <Shield className="h-4 w-4 text-neutral-400" />
-                <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">Premium Quality</span>
+              </motion.div>
+              <motion.div 
+                whileHover={{ y: -3 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col items-center text-center space-y-1 cursor-default group"
+              >
+                <Shield className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
+                <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">Kualitas Premium</span>
                 <span className="text-[8px] text-neutral-400 font-sans">Bahan terkurasi</span>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Marketplace Purchase Links */}
-            <MarketplaceLinks links={product.product_marketplace_links} />
+            <motion.div variants={itemVariants}>
+              <MarketplaceLinks links={product.product_marketplace_links} />
+            </motion.div>
 
             {/* Accordion Tabs (Details, Shipping, Care Guides) */}
-            <div className="space-y-2 pt-2">
-              <div className="flex border-b border-neutral-200 font-heading text-[10px] font-medium uppercase tracking-widest">
+            <motion.div variants={itemVariants} className="space-y-2 pt-2">
+              <div className="flex border-b border-neutral-200 font-heading text-[10px] font-medium uppercase tracking-widest relative">
                 <button
                   onClick={() => setActiveTab('details')}
                   className={cn(
-                    'pb-2 pr-4 transition-all border-b-2',
-                    activeTab === 'details' ? 'border-brand-black text-brand-black' : 'border-transparent text-neutral-400'
+                    'pb-2 pr-4 transition-colors relative z-10',
+                    activeTab === 'details' ? 'text-brand-black' : 'text-neutral-400'
                   )}
                 >
                   Detail
+                  {activeTab === 'details' && (
+                    <motion.div
+                      layoutId="activeTabUnderline"
+                      className="absolute bottom-0 left-0 right-4 h-[2px] bg-brand-gold"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
                 </button>
                 <button
                   onClick={() => setActiveTab('shipping')}
                   className={cn(
-                    'pb-2 px-4 transition-all border-b-2',
-                    activeTab === 'shipping' ? 'border-brand-black text-brand-black' : 'border-transparent text-neutral-400'
+                    'pb-2 px-4 transition-colors relative z-10',
+                    activeTab === 'shipping' ? 'text-brand-black' : 'text-neutral-400'
                   )}
                 >
                   Panduan
+                  {activeTab === 'shipping' && (
+                    <motion.div
+                      layoutId="activeTabUnderline"
+                      className="absolute bottom-0 left-4 right-4 h-[2px] bg-brand-gold"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
                 </button>
                 <button
                   onClick={() => setActiveTab('care')}
                   className={cn(
-                    'pb-2 px-4 transition-all border-b-2',
-                    activeTab === 'care' ? 'border-brand-black text-brand-black' : 'border-transparent text-neutral-400'
+                    'pb-2 px-4 transition-colors relative z-10',
+                    activeTab === 'care' ? 'text-brand-black' : 'text-neutral-400'
                   )}
                 >
                   Perawatan
+                  {activeTab === 'care' && (
+                    <motion.div
+                      layoutId="activeTabUnderline"
+                      className="absolute bottom-0 left-4 right-4 h-[2px] bg-brand-gold"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
                 </button>
               </div>
 
-              <div className="pt-2 text-xs text-neutral-500 font-sans leading-relaxed">
-                {activeTab === 'details' && (
-                  <div className="space-y-2">
-                    <p>{product.description || 'Tidak ada deskripsi tambahan.'}</p>
-                    {selectedVariant && (
-                      <p className="text-[10px] text-neutral-400 font-sans">SKU: {selectedVariant.sku}</p>
+              <div className="pt-2 text-xs text-neutral-500 font-sans leading-relaxed min-h-[80px]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {activeTab === 'details' && (
+                      <div className="space-y-2">
+                        <p>{product.description || 'Tidak ada deskripsi tambahan.'}</p>
+                        {selectedVariant && (
+                          <p className="text-[10px] text-neutral-400 font-sans">SKU: {selectedVariant.sku}</p>
+                        )}
+                      </div>
                     )}
-                  </div>
-                )}
-                {activeTab === 'shipping' && (
-                  <div className="space-y-1">
-                    <p><strong>Pengiriman:</strong> Pesanan dikirimkan dalam 1-2 hari kerja setelah pembayaran dikonfirmasi.</p>
-                    <p><strong>Ukuran:</strong> Pastikan mengukur detail ukuran badan sebelum membeli.</p>
-                  </div>
-                )}
-                {activeTab === 'care' && (
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>Cuci dengan suhu dingin menggunakan warna senada</li>
-                    <li>Hindari pemutih pakaian</li>
-                    <li>Setrika dengan suhu rendah jika diperlukan</li>
-                  </ul>
-                )}
+                    {activeTab === 'shipping' && (
+                      <div className="space-y-1">
+                        <p><strong>Pengiriman:</strong> Pesanan dikirimkan dalam 1-2 hari kerja setelah pembayaran dikonfirmasi.</p>
+                        <p><strong>Ukuran:</strong> Pastikan mengukur detail ukuran badan sebelum membeli.</p>
+                      </div>
+                    )}
+                    {activeTab === 'care' && (
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li>Cuci dengan suhu dingin menggunakan warna senada</li>
+                        <li>Hindari pemutih pakaian</li>
+                        <li>Setrika dengan suhu rendah jika diperlukan</li>
+                      </ul>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
         </div>
 
         {/* Reviews Section at the bottom */}
@@ -394,8 +615,180 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
 
         {/* Related Products Section */}
         <RelatedProducts products={relatedProducts} />
+      </PageContainer>
 
-      </div>
+      {/* Dynamic Premium Sticky Bar (Desktop & Mobile) */}
+      <AnimatePresence>
+        {showStickyBar && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 25 }}
+            className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-neutral-200 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] py-3 px-4 md:py-4 md:px-8"
+          >
+            <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
+              {/* Product Info (Desktop/Tablet) */}
+              <div className="hidden sm:flex items-center space-x-3">
+                <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0">
+                  <img
+                    src={product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || ''}
+                    alt={product.name}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <h4 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black line-clamp-1">
+                    {product.name}
+                  </h4>
+                  <p className="text-xs font-sans font-semibold text-brand-gold mt-0.5">
+                    {selectedVariant ? formatIDR(selectedVariant.price) : formatIDR(minPrice)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Variant and Action Buttons */}
+              <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                {/* Small variant display or picker dropdown */}
+                {product.product_variants.length > 0 && (
+                  <div className="text-xs font-sans text-neutral-500">
+                    {selectedVariant ? (
+                      <span>Varian: <strong className="text-brand-black">{selectedVariant.name}</strong></span>
+                    ) : (
+                      <span className="italic text-neutral-400">Pilih varian di atas</span>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleAddToCart}
+                    variant="outline"
+                    size="sm"
+                    className="py-2.5 px-4 text-[10px]"
+                    isLoading={isAdding}
+                    disabled={!selectedVariant || selectedVariant.stock === 0}
+                  >
+                    Keranjang
+                  </Button>
+                  <Button
+                    onClick={handleBuyNow}
+                    variant="primary"
+                    size="sm"
+                    className="py-2.5 px-4 text-[10px]"
+                    isLoading={isBuying}
+                    disabled={!selectedVariant || selectedVariant.stock === 0}
+                  >
+                    Beli
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Size Guide Modal */}
+      <AnimatePresence>
+        {isSizeGuideOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSizeGuideOpen(false)}
+              className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-lg bg-white p-6 shadow-2xl z-10 border border-t-4 border-t-brand-gold border-neutral-100"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsSizeGuideOpen(false)}
+                className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors cursor-pointer"
+                aria-label="Tutup panduan ukuran"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-brand-gold">
+                    Panduan
+                  </span>
+                  <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-brand-black">
+                    Panduan Ukuran Pakaian (Size Chart)
+                  </h3>
+                  <p className="text-[10px] text-neutral-400 font-sans">
+                    Semua ukuran dalam centimeter (cm). Toleransi perbedaan ukuran 1-2 cm wajar terjadi.
+                  </p>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-[10px] font-sans">
+                    <thead>
+                      <tr className="border-b border-neutral-200 bg-neutral-50">
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Ukuran</th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Lingkar Dada</th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Lebar Bahu</th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Panjang Lengan</th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Panjang Baju</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-100 text-neutral-600">
+                      <tr className="hover:bg-neutral-50/50 transition-colors">
+                        <td className="py-2.5 px-3 font-semibold text-brand-black">S</td>
+                        <td className="py-2.5 px-3">92 cm</td>
+                        <td className="py-2.5 px-3">37 cm</td>
+                        <td className="py-2.5 px-3">55 cm</td>
+                        <td className="py-2.5 px-3">135 cm</td>
+                      </tr>
+                      <tr className="hover:bg-neutral-50/50 transition-colors">
+                        <td className="py-2.5 px-3 font-semibold text-brand-black">M</td>
+                        <td className="py-2.5 px-3">96 cm</td>
+                        <td className="py-2.5 px-3">38 cm</td>
+                        <td className="py-2.5 px-3">56 cm</td>
+                        <td className="py-2.5 px-3">137 cm</td>
+                      </tr>
+                      <tr className="hover:bg-neutral-50/50 transition-colors">
+                        <td className="py-2.5 px-3 font-semibold text-brand-black">L</td>
+                        <td className="py-2.5 px-3">102 cm</td>
+                        <td className="py-2.5 px-3">40 cm</td>
+                        <td className="py-2.5 px-3">57 cm</td>
+                        <td className="py-2.5 px-3">140 cm</td>
+                      </tr>
+                      <tr className="hover:bg-neutral-50/50 transition-colors">
+                        <td className="py-2.5 px-3 font-semibold text-brand-black">XL</td>
+                        <td className="py-2.5 px-3">110 cm</td>
+                        <td className="py-2.5 px-3">42 cm</td>
+                        <td className="py-2.5 px-3">58 cm</td>
+                        <td className="py-2.5 px-3">142 cm</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="pt-2 border-t border-neutral-100">
+                  <h4 className="text-[9px] uppercase tracking-widest font-heading font-medium text-brand-black/70 mb-1">
+                    Tips Menentukan Ukuran:
+                  </h4>
+                  <ul className="list-disc list-inside text-[9px] text-neutral-500 space-y-1 leading-relaxed">
+                    <li><strong>Lingkar Dada</strong>: Ukur di sekeliling bagian dada terlebar Anda dengan pas.</li>
+                    <li><strong>Lebar Bahu</strong>: Ukur dari ujung bahu kiri ke ujung bahu kanan.</li>
+                    <li><strong>Panjang Baju</strong>: Ukur secara vertikal dari pangkal leher/bahu hingga batas bawah baju yang diinginkan.</li>
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
+

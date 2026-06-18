@@ -3,6 +3,8 @@
 import React from 'react'
 import { ProductListItem } from '@/services/products'
 import { ProductCard } from '@/components/product/ProductCard'
+import { SectionHeader } from '@/components/shared'
+import { motion } from 'framer-motion'
 
 interface RelatedProductsProps {
   products: ProductListItem[]
@@ -11,23 +13,45 @@ interface RelatedProductsProps {
 export function RelatedProducts({ products }: RelatedProductsProps) {
   if (products.length === 0) return null
 
-  return (
-    <div className="py-10 border-t border-neutral-100 space-y-8">
-      <div className="flex flex-col items-center text-center space-y-2">
-        <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-          Rekomendasi Kami
-        </span>
-        <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
-          Produk Serupa
-        </h3>
-        <div className="w-8 h-[1px] bg-brand-black pt-1" />
-      </div>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  }
+
+  return (
+    <div className="py-12 border-t border-neutral-100 space-y-8">
+      <SectionHeader 
+        eyebrow="Rekomendasi Kami" 
+        title="Produk Serupa" 
+        showDivider={true} 
+        align="center" 
+        className="mb-8" 
+      />
+
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="flex md:grid md:grid-cols-4 gap-x-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory w-full"
+      >
         {products.slice(0, 4).map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <motion.div key={product.id} variants={itemVariants} className="w-[75vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-start">
+            <ProductCard product={product} />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   )
 }
+

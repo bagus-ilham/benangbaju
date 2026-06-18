@@ -7,9 +7,7 @@ import {
   useAdminUpdateVoucher,
   useAdminDeleteVoucher,
 } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
-import { Modal } from '@/components/shared/Modal'
+import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit2, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -143,15 +141,14 @@ export default function AdminVouchersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Kupon Voucher</h2>
-          <p className="text-xs text-neutral-400 mt-1">Kelola diskon belanja dan penawaran khusus.</p>
-        </div>
+      <AdminPageHeader
+        title="Kupon Voucher"
+        subtitle="Kelola diskon belanja dan penawaran khusus."
+      >
         <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
           <Plus size={14} className="mr-1.5" /> Tambah Voucher
         </Button>
-      </div>
+      </AdminPageHeader>
 
       {/* Main Table */}
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">

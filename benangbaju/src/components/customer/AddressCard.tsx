@@ -30,23 +30,23 @@ export function AddressCard({
   return (
     <div
       onClick={() => onSelect?.(address)}
-      className={`p-5 border text-sm font-sans relative transition duration-150 rounded-none cursor-pointer ${
+      className={`p-5 border text-sm font-sans relative transition duration-150 rounded-none cursor-pointer card-hover-lift gold-border-hover ${
         isSelected
-          ? 'border-neutral-900 bg-neutral-50/50 ring-1 ring-neutral-900'
-          : 'border-neutral-200 hover:border-neutral-400 bg-white'
+          ? 'border-brand-gold bg-brand-gold-muted/10 ring-1 ring-brand-gold'
+          : 'border-neutral-200 bg-white'
       }`}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center space-x-2">
           <span className="font-semibold text-neutral-800">{address.label}</span>
           {address.is_default && (
-            <Badge variant="neutral" className="text-[10px] uppercase font-bold tracking-wider py-0 px-2 border-neutral-800 text-neutral-800 bg-transparent rounded-none">
+            <Badge variant="gold" className="text-[10px] py-0 px-2 rounded-none">
               Utama
             </Badge>
           )}
         </div>
         {isSelected && (
-          <span className="text-neutral-900">
+          <span className="text-brand-gold">
             <Check size={18} strokeWidth={2.5} />
           </span>
         )}
@@ -71,7 +71,7 @@ export function AddressCard({
                   e.stopPropagation()
                   onEdit(address)
                 }}
-                className="flex items-center text-xs text-neutral-600 hover:text-neutral-950 transition duration-100"
+                className="flex items-center text-xs text-neutral-600 hover:text-brand-gold transition duration-100"
               >
                 <Edit2 size={13} className="mr-1" /> Ubah
               </button>
@@ -97,7 +97,7 @@ export function AddressCard({
                 e.stopPropagation()
                 onSetDefault(address.id)
               }}
-              className="text-xs text-neutral-900 hover:underline font-semibold"
+              className="text-xs text-neutral-600 hover:text-brand-gold hover:underline font-semibold transition duration-100"
             >
               Jadikan Utama
             </button>

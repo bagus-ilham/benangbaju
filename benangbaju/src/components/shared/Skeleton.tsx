@@ -8,7 +8,7 @@ export function Skeleton({ className, variant = 'rect', ...props }: SkeletonProp
   return (
     <div
       className={cn(
-        'animate-pulse bg-neutral-200',
+        'skeleton-shimmer',
         {
           'rounded-none': variant === 'rect',
           'rounded-full': variant === 'circle',

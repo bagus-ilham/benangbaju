@@ -7,28 +7,28 @@ import { getActiveFlashSale } from '@/services/flashSales'
 import { getProducts } from '@/services/products'
 import {
   HeroSection,
+  TrustStrip,
   FlashSaleSection,
   CategorySection,
-  CollectionSection,
   FeaturedProductsSection,
   NewArrivalsSection,
+  CollectionSpotlight,
+  ProductGridSection,
   RecentlyViewedSection
 } from '@/components/home'
 
-// Enable dynamic revalidation for Server Components updates
-export const revalidate = 60 // revalidate every minute
+export const revalidate = 60
 
 export default async function Homepage() {
   const supabase = await createServerClient()
 
-  // Fetch all required data in parallel on the server
   const [
     banners,
     categories,
     collections,
     flashSale,
     featuredResponse,
-    newestResponse
+    newestResponse,
   ] = await Promise.all([
     getActiveBanners(supabase),
     getActiveCategories(supabase),
@@ -38,27 +38,62 @@ export default async function Homepage() {
     getProducts(supabase, { sortBy: 'newest', limit: 4 }),
   ])
 
+  const col1 = collections[0] ?? null
+  const col2 = collections[1] ?? null
+
+  const [collection1Products, collection2Products] = await Promise.all([
+    col1
+      ? getProducts(supabase, { collectionSlug: col1.slug, limit: 4 })
+      : Promise.resolve({ products: [], totalCount: 0 }),
+    col2
+      ? getProducts(supabase, { collectionSlug: col2.slug, limit: 4 })
+      : Promise.resolve({ products: [], totalCount: 0 }),
+  ])
+
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-white">
-      {/* 1. Carousel Hero Banner */}
+      {/* 1. Banner */}
       <HeroSection banners={banners} />
 
-      {/* 2. Flash Sale Section */}
-      <FlashSaleSection flashSale={flashSale} />
+      {/* Trust strip right after banner */}
+      <TrustStrip />
 
-      {/* 3. Category Grid */}
-      <CategorySection categories={categories} />
-
-      {/* 4. Large Split Collections */}
-      <CollectionSection collections={collections} />
-
-      {/* 5. Featured Products Selection */}
+      {/* 2. Produk Pilihan */}
       <FeaturedProductsSection products={featuredResponse.products} />
 
-      {/* 6. New Arrivals Selection */}
-      <NewArrivalsSection products={newestResponse.products} />
+      {/* 3. Collection 1 */}
+      {col1 && <CollectionSpotlight collection={col1} index={0} />}
 
-      {/* 7. Recently Viewed Slider (Client-Side state) */}
+      {/* 4. Produk dari Collection 1 */}
+      {col1 && (
+        <ProductGridSection
+          products={collection1Products.products}
+          eyebrow="Dari Koleksi"
+          title={`Produk ${col1.name}`}
+          viewAllHref={`/koleksi/${col1.slug}`}
+          viewAllLabel={`Lihat Semua ${col1.name}`}
+          variant="alt"
+        />
+      )}
+
+      {/* 5. Collection 2 */}
+      {col2 && <CollectionSpotlight collection={col2} variant="dark" index={1} />}
+
+      {/* 6. Produk dari Collection 2 */}
+      {col2 && (
+        <ProductGridSection
+          products={collection2Products.products}
+          eyebrow="Dari Koleksi"
+          title={`Produk ${col2.name}`}
+          viewAllHref={`/koleksi/${col2.slug}`}
+          viewAllLabel={`Lihat Semua ${col2.name}`}
+        />
+      )}
+
+      {/* Additional sections */}
+      <FlashSaleSection flashSale={flashSale} />
+      <CategorySection categories={categories} />
+      <NewArrivalsSection products={newestResponse.products} />
       <RecentlyViewedSection />
     </div>
   )

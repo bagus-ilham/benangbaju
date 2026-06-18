@@ -3,8 +3,9 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/hooks/useCart'
-import { Button, Card } from '@/components/shared'
+import { Button, Card, PageContainer, PageHeader, EmptyState, PageHero } from '@/components/shared'
 import { formatIDR } from '@/lib/utils'
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -42,131 +43,132 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-white min-h-screen py-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Title Header */}
-        <div className="flex flex-col space-y-2 border-b border-neutral-100 pb-6 mb-10">
-          <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-            Pembelian Anda
-          </span>
-          <h1 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
-            Keranjang Belanja
-          </h1>
-        </div>
+    <div className="bg-white min-h-screen">
+      <PageHero
+        eyebrow="Pembelian Anda"
+        title="Keranjang Belanja"
+        subtitle={items.length > 0 ? `${totalQuantity} item dalam keranjang` : 'Keranjang belanja Anda'}
+      />
+      <PageContainer className="py-10 page-content">
 
         {items.length === 0 ? (
-          // Empty State
-          <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
-            <div className="p-4 bg-brand-cream border border-brand-beige">
-              <ShoppingBag className="h-8 w-8 text-neutral-400" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
-                Keranjang Anda Kosong
-              </h3>
-              <p className="text-xs text-neutral-400 font-sans max-w-xs leading-relaxed">
-                Anda belum menambahkan produk apapun ke dalam keranjang belanja.
-              </p>
-            </div>
-            <Link href="/produk">
-              <Button variant="primary" size="md">
-                Jelajahi Produk
-              </Button>
-            </Link>
-          </div>
+          <EmptyState
+            icon={ShoppingBag}
+            title="Keranjang Anda Kosong"
+            description="Anda belum menambahkan produk apapun ke dalam keranjang belanja."
+            action={{ label: 'Jelajahi Produk', href: '/produk' }}
+          />
         ) : (
           // Cart Grid Layout
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
             {/* Left: Cart Items List (8 cols) */}
             <div className="lg:col-span-8 space-y-6">
-              <div className="divide-y divide-neutral-100">
-                {items.map((item) => (
-                  <div key={item.variantId} className="flex py-6 first:pt-0 last:pb-0 space-x-4 md:space-x-6 items-start">
-                    {/* Item Image */}
-                    <div className="relative aspect-[3/4] w-20 md:w-24 bg-neutral-100 flex-shrink-0 overflow-hidden border border-neutral-100">
-                      {item.imageUrl ? (
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          fill
-                          sizes="100px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[8px] text-neutral-400 uppercase font-sans">
-                          No Img
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Item Details */}
-                    <div className="flex-1 flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-6">
-                      <div className="space-y-1">
-                        <Link href={`/produk/${item.slug}`}>
-                          <h3 className="text-xs md:text-sm font-heading font-medium uppercase tracking-wide text-brand-black hover:text-brand-gray transition-colors">
-                            {item.name}
-                          </h3>
-                        </Link>
-                        <p className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400">
-                          Varian: {item.name.includes('-') ? item.name.split('-').slice(1).join('-').trim() : 'Default'}
-                        </p>
-                        <p className="text-[9px] text-neutral-400 font-sans">SKU: {item.sku}</p>
-                        
-                        {/* Remove Action */}
-                        <button
-                          onClick={() => handleRemove(item.variantId, item.name)}
-                          className="flex items-center text-[10px] text-red-500 hover:text-red-700 space-x-1 pt-2 font-sans"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                          <span>Hapus</span>
-                        </button>
+              <div className="space-y-0">
+                <AnimatePresence initial={false}>
+                  {items.map((item) => (
+                    <motion.div
+                      key={item.variantId}
+                      layout
+                      initial={{ opacity: 0, height: 0, y: 15 }}
+                      animate={{ opacity: 1, height: 'auto', y: 0 }}
+                      exit={{ opacity: 0, height: 0, y: -15, transition: { duration: 0.2 } }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      className="flex py-6 border-b border-neutral-100 last:border-0 space-x-4 md:space-x-6 items-start overflow-hidden"
+                    >
+                      {/* Item Image */}
+                      <div className="relative aspect-[3/4] w-20 md:w-24 bg-neutral-100 flex-shrink-0 overflow-hidden border border-neutral-100">
+                        {item.imageUrl ? (
+                          <Image
+                            src={item.imageUrl}
+                            alt={item.name}
+                            fill
+                            sizes="100px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[8px] text-neutral-400 uppercase font-sans">
+                            No Img
+                          </div>
+                        )}
                       </div>
 
-                      {/* Pricing and Quantities */}
-                      <div className="flex flex-row md:flex-col md:items-end justify-between items-center space-y-0 md:space-y-3">
-                        {/* Price tags */}
-                        <div className="flex flex-col md:items-end space-y-0.5">
-                          <span className="text-xs md:text-sm font-sans font-semibold text-brand-black">
-                            {formatIDR(item.price * item.quantity)}
-                          </span>
-                          {item.comparePrice && item.comparePrice > item.price && (
-                            <span className="text-[10px] font-sans text-neutral-400 line-through">
-                              {formatIDR(item.comparePrice * item.quantity)}
+                      {/* Item Details */}
+                      <div className="flex-1 flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-6">
+                        <div className="space-y-1">
+                          <Link href={`/produk/${item.slug}`}>
+                            <h3 className="text-xs md:text-sm font-heading font-medium uppercase tracking-wide text-brand-black hover:text-brand-gray transition-colors">
+                              {item.productName || item.name}
+                            </h3>
+                          </Link>
+                          <p className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400">
+                            Varian: {item.variantName || 'Default'}
+                          </p>
+                          <p className="text-[9px] text-neutral-400 font-sans">SKU: {item.sku}</p>
+                          
+                          {/* Remove Action */}
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleRemove(item.variantId, item.productName || item.name)}
+                            className="flex items-center text-[10px] text-red-500 hover:text-red-700 space-x-1 pt-2 font-sans"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            <span>Hapus</span>
+                          </motion.button>
+                        </div>
+
+                        {/* Pricing and Quantities */}
+                        <div className="flex flex-row md:flex-col md:items-end justify-between items-center space-y-0 md:space-y-3">
+                          {/* Price tags */}
+                          <div className="flex flex-col md:items-end space-y-0.5">
+                            <span className="text-xs md:text-sm font-sans font-semibold text-brand-black">
+                              {formatIDR(item.price * item.quantity)}
                             </span>
-                          )}
-                        </div>
+                            {item.comparePrice && item.comparePrice > item.price && (
+                              <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                {formatIDR(item.comparePrice * item.quantity)}
+                              </span>
+                            )}
+                          </div>
 
-                        {/* Qty adjustments */}
-                        <div className="flex items-center border border-neutral-200 bg-white">
-                          <button
-                            onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
-                            className="p-2 text-neutral-500 hover:text-brand-black transition-colors"
-                          >
-                            <Minus className="h-2.5 w-2.5" />
-                          </button>
-                          <span className="px-3 text-[11px] font-sans font-semibold text-brand-black w-6 text-center select-none">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
-                            className="p-2 text-neutral-500 hover:text-brand-black transition-colors"
-                          >
-                            <Plus className="h-2.5 w-2.5" />
-                          </button>
+                          {/* Qty adjustments */}
+                          <div className="flex items-center border border-neutral-200 bg-white gold-border-hover">
+                            <motion.button
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
+                              className="p-2 text-neutral-500 hover:text-brand-black transition-colors"
+                            >
+                              <Minus className="h-2.5 w-2.5" />
+                            </motion.button>
+                            <span className="px-3 text-[11px] font-sans font-semibold text-brand-black w-6 text-center select-none">
+                              {item.quantity}
+                            </span>
+                            <motion.button
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
+                              className="p-2 text-neutral-500 hover:text-brand-black transition-colors"
+                            >
+                              <Plus className="h-2.5 w-2.5" />
+                            </motion.button>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                  </div>
-                ))}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             </div>
 
             {/* Right: Checkout Summary Sidebar (4 cols) */}
-            <div className="lg:col-span-4 lg:sticky lg:top-24">
-              <Card bordered={true} className="bg-neutral-50 border-neutral-200 p-6 md:p-8 space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="lg:col-span-4 lg:sticky lg:top-24"
+            >
+              <Card bordered={true} className="bg-neutral-50 border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
                 <h3 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black border-b border-neutral-200 pb-4">
                   Ringkasan Belanja
                 </h3>
@@ -203,16 +205,17 @@ export default function CartPage() {
                   </Button>
                 </Link>
 
-                <div className="bg-white border border-neutral-200 p-4 rounded-none text-[10px] text-neutral-400 leading-relaxed font-sans">
+                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-gold p-4 rounded-none text-[10px] text-neutral-400 leading-relaxed font-sans">
                   Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank otomatis, QRIS, GoPay, dan ShopeePay via Midtrans.
                 </div>
               </Card>
-            </div>
+            </motion.div>
 
           </div>
         )}
 
-      </div>
+      </PageContainer>
     </div>
   )
 }
+

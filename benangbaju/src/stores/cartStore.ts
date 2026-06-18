@@ -4,8 +4,11 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/stores/authStore'
 
 export interface CartItem {
-  id?: string // cart_items row id (if synced)
+  id?: string
   variantId: string
+  productName: string
+  variantName: string
+  /** @deprecated Use productName instead */
   name: string
   sku: string
   price: number
@@ -19,6 +22,8 @@ export interface CartItem {
 interface CartState {
   items: CartItem[]
   sessionId: string
+  isCartDrawerOpen: boolean
+  setCartDrawerOpen: (open: boolean) => void
   addItem: (item: Omit<CartItem, 'quantity'>, qty?: number) => Promise<void>
   updateQuantity: (variantId: string, quantity: number) => Promise<void>
   removeItem: (variantId: string) => Promise<void>
@@ -45,6 +50,8 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       sessionId: generateSessionId(),
+      isCartDrawerOpen: false,
+      setCartDrawerOpen: (open) => set({ isCartDrawerOpen: open }),
       
       addItem: async (newItem, qty = 1) => {
         const { items } = get()
@@ -242,7 +249,9 @@ export const useCartStore = create<CartState>()(
               return {
                 id: item.id,
                 variantId: item.variant_id,
-                name: pv?.name || prod?.name || 'Produk',
+                productName: prod?.name || 'Produk',
+                variantName: pv?.name || 'Default',
+                name: prod?.name || pv?.name || 'Produk',
                 sku: pv?.sku || '',
                 price: Number(pv?.price || 0),
                 comparePrice: pv?.compare_price ? Number(pv.compare_price) : null,

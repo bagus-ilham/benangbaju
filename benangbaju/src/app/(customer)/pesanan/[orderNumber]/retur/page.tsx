@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail } from '@/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
+import { Button, Input, PageHero, PageContainer, EmptyState, AuthLoading } from '@/components/shared'
 import { ArrowLeft, AlertTriangle, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -157,11 +156,7 @@ export default function ReturnPage({ params }: ReturnPageProps) {
   }
 
   if (authLoading || orderLoading || checkReturnLoading) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat form retur...</p>
-      </div>
-    )
+    return <AuthLoading message="Memuat form retur..." />
   }
 
   if (!isAuthenticated) return null
@@ -169,58 +164,56 @@ export default function ReturnPage({ params }: ReturnPageProps) {
   // Security checks
   if (!order || order.status !== 'completed') {
     return (
-      <div className="min-h-screen bg-white py-16 px-4 flex flex-col items-center justify-center font-sans text-center">
-        <AlertTriangle size={40} className="text-amber-500 mb-4" />
-        <h1 className="text-xl font-serif text-neutral-800 mb-2">Akses Ditolak</h1>
-        <p className="text-neutral-500 text-sm mb-6">Retur hanya bisa diajukan untuk pesanan dengan status Selesai.</p>
-        <Link href="/pesanan">
-          <Button className="text-xs uppercase font-semibold">Kembali</Button>
-        </Link>
+      <div className="bg-white min-h-screen">
+        <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
+        <PageContainer size="md" className="py-12 page-content">
+          <EmptyState
+            icon={AlertTriangle}
+            title="Akses Ditolak"
+            description="Retur hanya bisa diajukan untuk pesanan dengan status Selesai."
+            action={{ label: 'Kembali ke Pesanan', href: '/pesanan' }}
+          />
+        </PageContainer>
       </div>
     )
   }
 
   if (existingReturn) {
     return (
-      <div className="min-h-screen bg-white py-16 px-4 flex flex-col items-center justify-center font-sans text-center">
-        <ShieldCheck size={40} className="text-neutral-800 mb-4" />
-        <h1 className="text-xl font-serif text-neutral-800 mb-2">Pengajuan Retur Sudah Ada</h1>
-        <p className="text-neutral-500 text-sm mb-2">
-          Anda sudah mengajukan retur untuk pesanan ini.
-        </p>
-        <p className="text-xs text-neutral-400 mb-6 uppercase tracking-widest font-semibold">
-          Status saat ini: {existingReturn.status}
-        </p>
-        <Link href={`/pesanan/${order.order_number}`}>
-          <Button className="text-xs uppercase font-semibold">Lihat Detail Pesanan</Button>
-        </Link>
+      <div className="bg-white min-h-screen">
+        <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
+        <PageContainer size="md" className="py-12 page-content">
+          <EmptyState
+            icon={ShieldCheck}
+            title="Pengajuan Retur Sudah Ada"
+            description={`Anda sudah mengajukan retur untuk pesanan ini. Status saat ini: ${existingReturn.status}`}
+            action={{ label: 'Lihat Detail Pesanan', href: `/pesanan/${order.order_number}` }}
+          />
+        </PageContainer>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-3xl mx-auto">
-        {/* Navigation Breadcrumb */}
-        <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-          <Link href="/akun" className="hover:text-neutral-900 transition">Akun Saya</Link>
-          <span>/</span>
-          <Link href="/pesanan" className="hover:text-neutral-900 transition">Pesanan Saya</Link>
-          <span>/</span>
-          <Link href={`/pesanan/${order.order_number}`} className="hover:text-neutral-900 transition">{order.order_number}</Link>
-          <span>/</span>
-          <span className="text-neutral-900 font-semibold">Ajukan Retur</span>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Garansi Kepuasan"
+        title="Pengajuan Retur"
+        subtitle={`Isi formulir pengembalian untuk pesanan ${order.order_number}`}
+      >
+        <Link
+          href={`/pesanan/${order.order_number}`}
+          className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-gold transition mt-2"
+        >
+          <ArrowLeft size={13} className="mr-1" /> Kembali ke Detail Pesanan
+        </Link>
+      </PageHero>
 
-        <div className="border-b border-neutral-200 pb-5 mb-8">
-          <h1 className="text-3xl font-serif tracking-tight text-neutral-900 mb-1">Pengajuan Retur Barang</h1>
-          <p className="text-sm text-neutral-500">Isi formulir pengembalian produk dan dana untuk pesanan {order.order_number}.</p>
-        </div>
-
+      <PageContainer size="md" className="py-10 page-content">
         <form onSubmit={handleSubmitReturn} className="space-y-8">
-          {/* 1. Select Items */}
-          <div className="border border-neutral-200 p-5 sm:p-6 rounded-none space-y-4">
-            <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 border-b border-neutral-100 pb-2">
+          <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
               Pilih Produk yang Ingin Dikembalikan*
             </h2>
             <div className="divide-y divide-neutral-100">
@@ -264,8 +257,9 @@ export default function ReturnPage({ params }: ReturnPageProps) {
           </div>
 
           {/* 2. Return Reason */}
-          <div className="border border-neutral-200 p-5 sm:p-6 rounded-none space-y-4">
-            <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 border-b border-neutral-100 pb-2">
+          <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
               Alasan Pengembalian*
             </h2>
             <div className="relative">
@@ -295,8 +289,9 @@ export default function ReturnPage({ params }: ReturnPageProps) {
           </div>
 
           {/* 3. Refund Bank Info */}
-          <div className="border border-neutral-200 p-5 sm:p-6 rounded-none space-y-4">
-            <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 border-b border-neutral-100 pb-2">
+          <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
               Rekening Bank untuk Pengembalian Dana*
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -328,7 +323,7 @@ export default function ReturnPage({ params }: ReturnPageProps) {
           <div className="flex justify-between items-center pt-4 border-t border-neutral-100">
             <Link
               href={`/pesanan/${order.order_number}`}
-              className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-neutral-950 transition"
+              className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-gold transition"
             >
               <ArrowLeft size={13} className="mr-1" /> Batal
             </Link>
@@ -336,13 +331,13 @@ export default function ReturnPage({ params }: ReturnPageProps) {
               type="submit"
               variant="primary"
               isLoading={isSubmitting}
-              className="text-xs uppercase tracking-widest font-bold py-3 px-6"
+              className="text-[10px] uppercase tracking-widest font-bold py-3 px-6"
             >
               Kirim Pengajuan
             </Button>
           </div>
         </form>
-      </div>
+      </PageContainer>
     </div>
   )
 }

@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/services/flashSales'
 import { ProductCard } from '@/components/product/ProductCard'
 import { ProductListItem } from '@/services/products'
+import { Button, PageContainer, SectionHeader } from '@/components/shared'
 
 interface FlashSaleSectionProps {
   flashSale: FlashSaleDetail | null
@@ -22,7 +24,7 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) {
 
     const calculateTimeLeft = () => {
       const difference = +new Date(flashSale.ends_at) - +new Date()
-      
+
       if (difference <= 0) {
         setTimeLeft(null)
         return
@@ -43,18 +45,16 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) {
 
   if (!flashSale || !timeLeft) return null
 
-  // Map flash sale items into standard ProductListItem format so we can render them with ProductCard!
   const mappedProducts: ProductListItem[] = flashSale.flash_sale_items.map((item) => {
     const pv = item.product_variants
     const prod = pv?.products
-    
-    // Map product images
-    const images = prod?.product_images?.map((img: any, idx: number) => ({
+
+    const images = prod?.product_images?.map((img: { url: string; alt_text?: string | null; is_primary?: boolean }, idx: number) => ({
       id: String(idx),
       url: img.url,
       alt_text: img.alt_text || prod.name,
       sort_order: idx,
-      is_primary: img.is_primary,
+      is_primary: img.is_primary ?? false,
     })) || []
 
     return {
@@ -87,47 +87,58 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) {
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 
   return (
-    <section className="bg-neutral-50 py-16 border-b border-neutral-100">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 space-y-4 md:space-y-0">
-          <div className="flex flex-col space-y-1">
-            <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-red-500">
-              Penawaran Terbatas
-            </span>
-            <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
-              {flashSale.name || 'Flash Sale'}
-            </h2>
-          </div>
-
-          {/* Countdown Clock */}
-          <div className="flex items-center space-x-2">
-            <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400 mr-2">
+    <section className="relative bg-brand-black py-16 md:py-20 border-b border-neutral-800 overflow-hidden">
+      <div className="absolute inset-0 gradient-mesh opacity-30 pointer-events-none" aria-hidden />
+      <PageContainer className="relative">
+        <SectionHeader
+          align="left"
+          showDivider={false}
+          eyebrow="Penawaran Terbatas"
+          title={flashSale.name || 'Flash Sale'}
+          className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-error [&_h2]:text-white"
+        >
+          <div className="flex items-center space-x-2 mt-4 md:mt-0">
+            <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-500 mr-2">
               Berakhir Dalam:
             </span>
-            <div className="flex items-center space-x-1 font-heading text-xs font-semibold">
-              <span className="bg-brand-black text-white px-2.5 py-1.5 rounded-none">
+            <div className="flex items-center space-x-1.5 font-heading text-xs font-semibold">
+              <span className="bg-brand-gold text-brand-black px-3 py-2 rounded-none animate-pulse-glow min-w-[2.5rem] text-center">
                 {formatNumber(timeLeft.hours)}
               </span>
-              <span className="text-brand-black">:</span>
-              <span className="bg-brand-black text-white px-2.5 py-1.5 rounded-none">
+              <span className="text-brand-gold-light">:</span>
+              <span className="bg-brand-gold text-brand-black px-3 py-2 rounded-none animate-pulse-glow min-w-[2.5rem] text-center">
                 {formatNumber(timeLeft.minutes)}
               </span>
-              <span className="text-brand-black">:</span>
-              <span className="bg-brand-black text-white px-2.5 py-1.5 rounded-none">
+              <span className="text-brand-gold-light">:</span>
+              <span className="bg-brand-gold text-brand-black px-3 py-2 rounded-none animate-pulse-glow min-w-[2.5rem] text-center">
                 {formatNumber(timeLeft.seconds)}
               </span>
             </div>
           </div>
-        </div>
+        </SectionHeader>
 
-        {/* Products Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-          {mappedProducts.slice(0, 4).map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {mappedProducts.slice(0, 4).map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <ProductCard product={product} />
+            </motion.div>
           ))}
         </div>
-      </div>
+
+        <div className="flex justify-center mt-12">
+          <Link href="/flash-sale">
+            <Button variant="secondary" size="md" className="bg-transparent text-white border-white/30 hover:bg-white hover:text-brand-black">
+              Lihat Semua Flash Sale
+            </Button>
+          </Link>
+        </div>
+      </PageContainer>
     </section>
   )
 }

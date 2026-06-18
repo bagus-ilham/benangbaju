@@ -12,7 +12,7 @@ import {
   useAdminDeleteShippingRate,
 } from '@/hooks/useAdmin'
 import type { ShippingZone, ShippingRate } from '@/services/shipping'
-import { Button } from '@/components/shared/Button'
+import { Button, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit, Trash2, MapPin, Truck, RefreshCw, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatIDR } from '@/lib/utils/format'
@@ -214,12 +214,10 @@ export default function AdminShippingPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Manajemen Pengiriman</h2>
-          <p className="text-xs text-neutral-400 mt-1">Kelola zona pengiriman custom beserta tarif per kg untuk setiap ekspedisi.</p>
-        </div>
+      <AdminPageHeader
+        title="Manajemen Pengiriman"
+        subtitle="Kelola zona pengiriman custom beserta tarif per kg untuk setiap ekspedisi."
+      >
         <Button
           onClick={handleRefresh}
           variant="outline"
@@ -227,7 +225,7 @@ export default function AdminShippingPage() {
         >
           <RefreshCw size={12} className="mr-1.5" /> Segarkan
         </Button>
-      </div>
+      </AdminPageHeader>
 
       {/* Tabs Layout */}
       <div className="flex border-b border-neutral-200">

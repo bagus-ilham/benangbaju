@@ -1,6 +1,9 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/shared/Button'
 
 export default function RootError({
   error,
@@ -15,28 +18,49 @@ export default function RootError({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-white font-sans">
-      <div className="max-w-md space-y-6">
-        <h1 className="text-3xl font-serif tracking-tight text-neutral-900">
-          Terjadi Kesalahan
-        </h1>
-        <p className="text-sm text-neutral-500 leading-relaxed">
-          Mohon maaf, sistem mendeteksi kesalahan yang tidak terduga pada aplikasi kami.
-        </p>
-        <div className="flex justify-center space-x-4">
-          <button
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-md space-y-6 flex flex-col items-center"
+      >
+        <motion.div 
+          initial={{ scale: 0.8, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+          className="p-4 bg-red-50 border border-red-100 rounded-none text-red-600 mb-2"
+        >
+          <AlertTriangle className="h-8 w-8" />
+        </motion.div>
+        
+        <div className="space-y-2">
+          <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
+            Terjadi Kesalahan
+          </h1>
+          <p className="text-xs text-neutral-500 leading-relaxed max-w-xs mx-auto">
+            Mohon maaf, sistem mendeteksi kesalahan yang tidak terduga pada aplikasi kami.
+          </p>
+        </div>
+
+        <div className="flex justify-center space-x-3 w-full max-w-xs pt-2">
+          <Button
             onClick={() => reset()}
-            className="px-6 py-2.5 bg-neutral-900 text-white hover:bg-neutral-800 text-xs font-heading font-medium uppercase tracking-wider transition"
+            variant="primary"
+            className="flex-1 text-[10px] py-3"
           >
             Coba Lagi
-          </button>
-          <a
-            href="/"
-            className="px-6 py-2.5 border border-neutral-300 text-neutral-700 hover:bg-neutral-50 text-xs font-heading font-medium uppercase tracking-wider transition"
-          >
-            Kembali Ke Beranda
+          </Button>
+          <a href="/" className="flex-1">
+            <Button
+              variant="outline"
+              className="w-full text-[10px] py-3"
+            >
+              Ke Beranda
+            </Button>
           </a>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
+

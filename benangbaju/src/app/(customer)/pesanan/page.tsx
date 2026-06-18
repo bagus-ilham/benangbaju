@@ -2,15 +2,16 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrdersList, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { lazyCancelExpiredOrders } from '@/services/orders'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button } from '@/components/shared/Button'
-import { Badge } from '@/components/shared/Badge'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle } from 'lucide-react'
+import { Button, Badge, AuthLoading, EmptyState, PageContainer, PageHero } from '@/components/shared'
+import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, ClipboardList } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { formatIDR } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
@@ -142,7 +143,7 @@ export default function PesananPage() {
     switch (status) {
       case 'pending_payment':
         return (
-          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-amber-800 bg-amber-50 border border-amber-200">
+          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-amber-800 bg-amber-50 border border-amber-200 animate-pulse-glow">
             <Clock size={12} className="mr-1" /> Menunggu Pembayaran
           </span>
         )
@@ -176,26 +177,22 @@ export default function PesananPage() {
   }
 
   if (authLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat riwayat...</p>
-      </div>
-    )
+    return <AuthLoading message="Memuat riwayat..." />
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Akun Saya"
+        title="Riwayat Pesanan"
+        subtitle="Lacak pengiriman dan riwayat pembelian produk Anda."
+      />
+      <PageContainer size="lg" className="py-10 page-content">
         {/* Navigation Breadcrumb */}
         <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
           <Link href="/akun" className="hover:text-neutral-900 transition">Akun Saya</Link>
           <span>/</span>
           <span className="text-neutral-900 font-semibold">Pesanan Saya</span>
-        </div>
-
-        <div className="border-b border-neutral-200 pb-5 mb-8">
-          <h1 className="text-3xl font-serif tracking-tight text-neutral-900 mb-1">Riwayat Pesanan</h1>
-          <p className="text-sm text-neutral-500">Lacak pengiriman dan riwayat pembelian produk Anda.</p>
         </div>
 
         {/* Tab Filter */}
@@ -218,15 +215,18 @@ export default function PesananPage() {
         {/* Orders Listing */}
         {ordersLoading ? (
           <div className="space-y-4">
-            <div className="h-44 bg-neutral-50 animate-pulse border border-neutral-200 rounded-none" />
-            <div className="h-44 bg-neutral-50 animate-pulse border border-neutral-200 rounded-none" />
+            <div className="h-44 skeleton-shimmer border border-neutral-200 rounded-none" />
+            <div className="h-44 skeleton-shimmer border border-neutral-200 rounded-none" />
           </div>
         ) : orders.length > 0 ? (
           <div className="space-y-6">
-            {orders.map((order) => (
-              <div
+            {orders.map((order, index) => (
+              <motion.div
                 key={order.id}
-                className="border border-neutral-200 p-5 sm:p-6 bg-white hover:border-neutral-400 transition duration-150 rounded-none"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className="border border-neutral-200 p-5 sm:p-6 bg-white hover:border-neutral-400 transition duration-200 rounded-none hover:shadow-sm"
               >
                 {/* Header info */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-neutral-100 mb-4 text-sm gap-2">
@@ -259,11 +259,11 @@ export default function PesananPage() {
                           {item.product_name} - {item.variant_name}
                         </p>
                         <p className="text-xs text-neutral-400 mt-0.5">
-                          {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
+                          {item.quantity} x {formatIDR(item.price)}
                         </p>
                       </div>
                       <span className="font-semibold text-neutral-900 whitespace-nowrap">
-                        Rp {item.subtotal.toLocaleString('id-ID')}
+                        {formatIDR(item.subtotal)}
                       </span>
                     </div>
                   ))}
@@ -274,7 +274,7 @@ export default function PesananPage() {
                   <div className="text-sm">
                     <span className="text-neutral-500">Total Pembayaran:</span>{' '}
                     <span className="font-bold text-neutral-900 text-base">
-                      Rp {order.total_amount.toLocaleString('id-ID')}
+                      {formatIDR(order.total_amount)}
                     </span>
                   </div>
 
@@ -313,7 +313,7 @@ export default function PesananPage() {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
 
             {/* Pagination Controls */}
@@ -342,14 +342,12 @@ export default function PesananPage() {
             )}
           </div>
         ) : (
-          <div className="text-center py-20 border border-dashed border-neutral-200 bg-neutral-50/50">
-            <p className="text-sm text-neutral-500 mb-6">Belum ada pesanan dengan status ini.</p>
-            <Link href="/produk">
-              <Button className="text-xs uppercase tracking-widest font-semibold py-3 px-6">
-                Belanja Sekarang
-              </Button>
-            </Link>
-          </div>
+          <EmptyState
+            icon={ClipboardList}
+            title="Belum Ada Pesanan"
+            description="Belum ada pesanan dengan status ini."
+            action={{ label: 'Belanja Sekarang', href: '/produk' }}
+          />
         )}
 
         <div className="mt-12 pt-6 border-t border-neutral-100">
@@ -360,7 +358,7 @@ export default function PesananPage() {
             <ArrowLeft size={14} className="mr-2" /> Kembali ke Akun
           </Link>
         </div>
-      </div>
+      </PageContainer>
     </div>
   )
 }

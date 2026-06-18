@@ -7,9 +7,7 @@ import {
   useAdminUpdateFlashSale,
   useAdminDeleteFlashSale,
 } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
-import { Modal } from '@/components/shared/Modal'
+import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit2, Trash2, Search } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -220,15 +218,14 @@ export default function AdminFlashSalesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Flash Sale</h2>
-          <p className="text-xs text-neutral-400 mt-1">Kelola promo kilat dengan slot waktu terbatas.</p>
-        </div>
+      <AdminPageHeader
+        title="Flash Sale"
+        subtitle="Kelola promo kilat dengan slot waktu terbatas."
+      >
         <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
           <Plus size={14} className="mr-1.5" /> Tambah Flash Sale
         </Button>
-      </div>
+      </AdminPageHeader>
 
       {/* Main Table */}
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">

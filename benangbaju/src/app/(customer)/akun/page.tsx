@@ -2,15 +2,34 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
+import { Button, Input, AuthLoading, PageContainer, PageHero } from '@/components/shared'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { User, MapPin, ClipboardList, Heart, LogOut, Key, Bell } from 'lucide-react'
 
 const supabase = createBrowserClient()
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: 'spring' as const, stiffness: 260, damping: 25 }
+  }
+}
 
 export default function AkunPage() {
   const router = useRouter()
@@ -126,73 +145,96 @@ export default function AkunPage() {
   }
 
   if (authLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat halaman...</p>
-      </div>
-    )
+    return <AuthLoading message="Memuat halaman..." />
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        <div className="border-b border-neutral-200 pb-5 mb-8">
-          <h1 className="text-3xl font-serif tracking-tight text-neutral-900 mb-1">Akun Saya</h1>
-          <p className="text-sm text-neutral-500">Kelola informasi pribadi Anda dan akses riwayat pesanan Anda.</p>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Profil Pengguna"
+        title="Akun Saya"
+        subtitle="Kelola informasi pribadi Anda dan akses riwayat pesanan Anda."
+      />
+      <PageContainer size="lg" className="py-10 page-content">
 
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Quick Navigation Menu */}
-          <div className="space-y-2 md:col-span-1">
-            <h2 className="text-xs uppercase tracking-widest font-bold text-neutral-400 mb-4">Navigasi Akun</h2>
+          <motion.div variants={itemVariants} className="space-y-2 md:col-span-1">
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400 mb-4">Navigasi Akun</h2>
             
-            <Link
-              href="/pesanan"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <ClipboardList size={16} />
-              <span>Pesanan Saya</span>
+            <Link href="/pesanan">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <ClipboardList size={14} className="text-neutral-400" />
+                <span>Pesanan Saya</span>
+              </motion.div>
             </Link>
 
-            <Link
-              href="/akun/alamat"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <MapPin size={16} />
-              <span>Daftar Alamat</span>
+            <Link href="/akun/alamat">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <MapPin size={14} className="text-neutral-400" />
+                <span>Daftar Alamat</span>
+              </motion.div>
             </Link>
 
-            <Link
-              href="/wishlist"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <Heart size={16} />
-              <span>Wishlist Saya</span>
+            <Link href="/wishlist">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <Heart size={14} className="text-neutral-400" />
+                <span>Wishlist Saya</span>
+              </motion.div>
             </Link>
 
-            <Link
-              href="/akun/notifikasi"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-neutral-50 border border-neutral-100 text-neutral-700 hover:text-neutral-950 font-medium transition duration-150 rounded-none text-sm"
-            >
-              <Bell size={16} />
-              <span>Notifikasi Saya</span>
+            <Link href="/akun/notifikasi">
+              <motion.div
+                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-gold font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+              >
+                <Bell size={14} className="text-neutral-400" />
+                <span>Notifikasi Saya</span>
+              </motion.div>
             </Link>
 
-            <button
+            <motion.button
+              whileHover={{ x: 4, borderColor: '#ef4444', backgroundColor: 'rgba(254,226,226,0.2)' }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-red-50/50 border border-red-100 text-red-500 hover:text-red-700 font-medium transition duration-150 rounded-none text-sm text-left"
+              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-100 text-red-500 hover:text-red-700 font-heading font-medium tracking-wide uppercase transition-all duration-200 rounded-none text-xs text-left bg-white"
             >
-              <LogOut size={16} />
+              <LogOut size={14} />
               <span>Keluar dari Akun</span>
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {/* Forms Section */}
           <div className="md:col-span-2 space-y-8">
             {/* Edit Profile Form */}
-            <div className="border border-neutral-200 p-6 sm:p-8 rounded-none bg-white">
-              <h2 className="text-lg font-serif tracking-tight text-neutral-900 mb-6 flex items-center">
-                <User size={18} className="mr-2" /> Informasi Profil
+            <motion.div 
+              variants={itemVariants} 
+              className="border border-neutral-200 p-6 sm:p-8 rounded-none bg-white shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden group"
+            >
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+              <h2 className="text-sm uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center">
+                <motion.div whileHover={{ rotate: 15 }} className="mr-2">
+                  <User size={16} className="text-neutral-500 group-hover:text-brand-black transition-colors" />
+                </motion.div> 
+                Informasi Profil
               </h2>
 
               <form onSubmit={handleUpdateProfile} className="space-y-6">
@@ -229,12 +271,19 @@ export default function AkunPage() {
                   </Button>
                 </div>
               </form>
-            </div>
+            </motion.div>
 
             {/* Change Password Form */}
-            <div className="border border-neutral-200 p-6 sm:p-8 rounded-none bg-white">
-              <h2 className="text-lg font-serif tracking-tight text-neutral-900 mb-6 flex items-center">
-                <Key size={18} className="mr-2" /> Ganti Kata Sandi
+            <motion.div 
+              variants={itemVariants} 
+              className="border border-neutral-200 p-6 sm:p-8 rounded-none bg-white shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden group"
+            >
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+              <h2 className="text-sm uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center">
+                <motion.div whileHover={{ y: [0, -2, 2, -2, 0] }} className="mr-2">
+                  <Key size={16} className="text-neutral-500 group-hover:text-brand-black transition-colors" />
+                </motion.div> 
+                Ganti Kata Sandi
               </h2>
 
               <form onSubmit={handleUpdatePassword} className="space-y-6">
@@ -267,10 +316,12 @@ export default function AkunPage() {
                   </Button>
                 </div>
               </form>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+        </motion.div>
+      </PageContainer>
     </div>
   )
 }
+

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
+import { PageHero, PageContainer } from '@/components/shared'
 
 export const metadata: Metadata = {
   title: 'Syarat & Ketentuan — Benangbaju',
@@ -35,42 +36,46 @@ export default function SyaratKetentuanPage() {
   ]
 
   return (
-    <div className="min-h-[60vh] py-16 px-4 sm:px-6 lg:px-8 bg-white text-neutral-800 font-sans">
-      <div className="max-w-3xl mx-auto space-y-12">
-        {/* Header Heading */}
-        <div className="border-b border-neutral-100 pb-8 text-center sm:text-left">
-          <h1 className="text-3xl font-serif text-neutral-900 tracking-tight mb-2">Syarat & Ketentuan</h1>
-          <p className="text-xs uppercase tracking-widest font-bold text-neutral-400">Ketentuan Penggunaan & Perjanjian Lisensi</p>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Ketentuan Penggunaan"
+        title="Syarat & Ketentuan"
+        subtitle="Perjanjian lisensi dan ketentuan penggunaan situs Benangbaju."
+      />
 
-        {/* Intro */}
-        <div className="text-sm leading-relaxed text-neutral-600 font-medium">
-          <p className="text-neutral-400 text-xs italic mb-4">Terakhir diperbarui: 10 Juni 2026</p>
-          <p>
-            Harap baca syarat dan ketentuan ini dengan saksama sebelum mulai menggunakan situs kami atau melakukan transaksi pembelian produk. 
-            Penggunaan situs dan transaksi Anda diatur oleh dokumen perjanjian ini.
-          </p>
-        </div>
+      <PageContainer size="md" className="py-12 page-content">
+        <div className="max-w-3xl mx-auto space-y-10">
+          <div className="text-xs leading-relaxed text-neutral-500 font-sans">
+            <p className="text-neutral-400 text-[10px] uppercase tracking-widest mb-3">
+              Terakhir diperbarui: 10 Juni 2026
+            </p>
+            <p>
+              Harap baca syarat dan ketentuan ini dengan saksama sebelum mulai menggunakan situs kami atau melakukan transaksi pembelian produk.
+              Penggunaan situs dan transaksi Anda diatur oleh dokumen perjanjian ini.
+            </p>
+          </div>
 
-        {/* Terms Sections */}
-        <div className="space-y-8 pt-4">
-          {sections.map((section, idx) => (
-            <div key={idx} className="space-y-3">
-              <h3 className="font-serif text-sm font-bold text-neutral-950 uppercase tracking-wide">
-                {section.title}
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
-                {section.content}
-              </p>
-            </div>
-          ))}
-        </div>
+          <div className="space-y-5">
+            {sections.map((section, idx) => (
+              <div
+                key={idx}
+                className="border border-neutral-200 p-6 md:p-8 card-hover-lift gold-border-hover bg-white space-y-3"
+              >
+                <h3 className="font-heading text-sm font-semibold text-brand-black uppercase tracking-wide">
+                  {section.title}
+                </h3>
+                <p className="text-xs text-neutral-500 leading-relaxed font-sans">
+                  {section.content}
+                </p>
+              </div>
+            ))}
+          </div>
 
-        {/* Philosophy Footer quote */}
-        <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-400 uppercase tracking-widest font-bold font-sans">
-          &ldquo;Governing fair transactions, ensuring premium experiences.&rdquo;
+          <div className="border-t border-neutral-100 pt-8 text-center text-[10px] text-neutral-400 uppercase tracking-[0.2em] font-heading">
+            Governing fair transactions, ensuring premium experiences.
+          </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   )
 }

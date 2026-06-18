@@ -1,6 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { Truck, ShieldCheck, Scale, MapPin } from 'lucide-react'
+import { PageHero, PageContainer } from '@/components/shared'
 
 export const metadata: Metadata = {
   title: 'Informasi Pengiriman — Benangbaju',
@@ -16,27 +17,20 @@ export default function PengirimanPage() {
   ]
 
   return (
-    <div className="min-h-[60vh] py-16 px-4 sm:px-6 lg:px-8 bg-white text-neutral-800 font-sans">
-      <div className="max-w-3xl mx-auto space-y-12">
-        {/* Header Heading */}
-        <div className="border-b border-neutral-100 pb-8 text-center sm:text-left">
-          <h1 className="text-3xl font-serif text-neutral-900 tracking-tight mb-2">Informasi Pengiriman</h1>
-          <p className="text-xs uppercase tracking-widest font-bold text-neutral-400">Kebijakan & Jadwal Pengiriman Barang</p>
-        </div>
-
-        {/* Intro */}
-        <div className="text-sm leading-relaxed text-neutral-600 font-medium space-y-4">
-          <p>
-            Benangbaju berkomitmen mengirimkan produk pesanan Anda dengan cepat, aman, dan dapat dilacak. Kami bekerja sama 
-            dengan berbagai mitra logistik terkemuka untuk memastikan paket tiba di tujuan dengan kondisi sempurna.
-          </p>
-        </div>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Logistik & Pengiriman"
+        title="Informasi Pengiriman"
+        subtitle="Kebijakan, jadwal, dan mitra ekspedisi pengiriman Benangbaju."
+      />
+      <PageContainer size="md" className="py-12 page-content">
+      <div className="max-w-3xl mx-auto space-y-10">
 
         {/* Delivery Terms Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4">
-          <div className="border border-neutral-200 p-6 rounded-none space-y-3">
-            <div className="p-2 bg-neutral-100/80 rounded-none w-max">
-              <Scale className="h-4 w-4 text-neutral-800" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="border border-neutral-200 p-6 space-y-3 card-hover-lift bg-brand-cream/30">
+            <div className="p-2 bg-brand-gold-muted border border-brand-gold/20 w-max">
+              <Scale className="h-4 w-4 text-brand-gold" strokeWidth={1.5} />
             </div>
             <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
               Perhitungan Berat
@@ -110,10 +104,8 @@ export default function PengirimanPage() {
         </div>
 
         {/* Philosophy Footer quote */}
-        <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-400 uppercase tracking-widest font-bold font-sans">
-          &ldquo;Safe wrapping, reliable shipping, right to your doorstep.&rdquo;
         </div>
-      </div>
+      </PageContainer>
     </div>
   )
 }

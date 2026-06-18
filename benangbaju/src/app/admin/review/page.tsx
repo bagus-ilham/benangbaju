@@ -6,8 +6,7 @@ import {
   useAdminUpdateReviewStatus,
   useAdminReplyToReview,
 } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Modal } from '@/components/shared/Modal'
+import { Button, Modal, AdminPageHeader } from '@/components/shared'
 import { Star, MessageSquare } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import toast from 'react-hot-toast'
@@ -65,11 +64,10 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Ulasan Produk</h2>
-        <p className="text-xs text-neutral-400 mt-1">Moderasi ulasan produk dan berikan balasan ke pelanggan.</p>
-      </div>
+      <AdminPageHeader
+        title="Ulasan Produk"
+        subtitle="Moderasi ulasan produk dan berikan balasan ke pelanggan."
+      />
 
       {/* Main Table */}
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">

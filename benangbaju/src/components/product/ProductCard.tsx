@@ -5,8 +5,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Heart } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
+import { useCart } from '@/hooks/useCart'
 import { ProductListItem } from '@/services/products'
 import { cn, formatIDR } from '@/lib/utils'
+import { Badge } from '@/components/shared/Badge'
+import toast from 'react-hot-toast'
 
 interface ProductCardProps {
   product: ProductListItem
@@ -15,7 +18,10 @@ interface ProductCardProps {
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const { isLiked, toggleWishlist } = useWishlist()
+  const { addItem, setCartDrawerOpen } = useCart()
   const [isHovered, setIsHovered] = useState(false)
+  const [showAltImage, setShowAltImage] = useState(false)
+  const [isAdding, setIsAdding] = useState<string | null>(null)
 
   const liked = isLiked(product.id)
 
@@ -31,19 +37,125 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const minPriceVariant = activeVariants.find((v) => Number(v.price) === minPrice)
   const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
 
+  const discountPercent =
+    comparePrice && comparePrice > minPrice
+      ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
+      : null
+
   // Images swap layout
   const primaryImage = product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || null
   const hoverImage = product.product_images.find((img) => !img.is_primary && img.sort_order > 0)?.url || product.product_images[1]?.url || primaryImage
 
+  const displayAltImage = isHovered || showAltImage
+
+  // Check if variants only vary by size (no color differences, or only one color)
+  const colorAttributes = new Set(
+    activeVariants.flatMap((v) => 
+      v.product_variant_attrs
+        ?.filter((a) => a.attr_name.toLowerCase().includes('warna'))
+        .map((a) => a.attr_value) || []
+    )
+  )
+  const hasMultipleColors = colorAttributes.size > 1
+
+  // Extract all sizes in variants that have stock
+  const sizeVariants = activeVariants.filter((v) => 
+    v.stock > 0 && 
+    v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
+  )
+
+  const handleQuickAdd = async (e: React.MouseEvent, variant: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isAdding) return
+    setIsAdding(variant.id)
+    try {
+      const cartItem = {
+        variantId: variant.id,
+        productName: product.name,
+        variantName: variant.name,
+        name: product.name,
+        sku: variant.sku,
+        price: Number(variant.price),
+        comparePrice: variant.compare_price ? Number(variant.compare_price) : null,
+        imageUrl: primaryImage,
+        slug: product.slug,
+        stock: variant.stock,
+      }
+      await addItem(cartItem, 1)
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                {primaryImage ? (
+                  <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
+                    <img
+                      className="h-full w-full object-cover"
+                      src={primaryImage}
+                      alt={product.name}
+                    />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">
+                    No Img
+                  </div>
+                )}
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
+                  Berhasil Ditambahkan!
+                </p>
+                <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
+                  {product.name}
+                </p>
+                <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
+                  Varian: {variant.name} &bull; Qty: 1
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-neutral-100">
+            <button
+              onClick={() => {
+                toast.dismiss(t.id)
+                setCartDrawerOpen(true)
+              }}
+              className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
+            >
+              Lihat
+            </button>
+          </div>
+        </div>
+      ))
+    } catch (err) {
+      toast.error('Gagal menambahkan ke keranjang.')
+    } finally {
+      setIsAdding(null)
+    }
+  }
+
   return (
     <div
-      className={cn('group relative flex flex-col w-full text-left bg-white', className)}
+      className={cn('group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] gold-border-hover', className)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Area */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 transition-colors duration-300">
-        <Link href={`/produk/${product.slug}`} className="block w-full h-full">
+        <Link
+          href={`/produk/${product.slug}`}
+          className="block w-full h-full"
+          onClick={() => {
+            if (hoverImage && hoverImage !== primaryImage) {
+              setShowAltImage((prev) => !prev)
+            }
+          }}
+        >
           {primaryImage ? (
             <div className="relative w-full h-full">
               {/* Primary Image */}
@@ -54,7 +166,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
                 sizes="(max-w-7xl) 33vw, 50vw"
                 className={cn(
                   'object-cover transition-opacity duration-700 ease-in-out',
-                  isHovered && hoverImage !== primaryImage ? 'opacity-0' : 'opacity-100'
+                  displayAltImage && hoverImage !== primaryImage ? 'opacity-0' : 'opacity-100'
                 )}
                 priority={false}
               />
@@ -67,7 +179,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
                   sizes="(max-w-7xl) 33vw, 50vw"
                   className={cn(
                     'object-cover absolute inset-0 transition-opacity duration-700 ease-in-out',
-                    isHovered ? 'opacity-100' : 'opacity-0'
+                    displayAltImage ? 'opacity-100' : 'opacity-0'
                   )}
                 />
               )}
@@ -79,6 +191,24 @@ export function ProductCard({ product, className }: ProductCardProps) {
           )}
         </Link>
 
+        {/* Discount badge */}
+        {discountPercent && discountPercent > 0 && (
+          <div className="absolute top-3 left-3 z-10">
+            <Badge variant="sale" size="sm">
+              -{discountPercent}%
+            </Badge>
+          </div>
+        )}
+
+        {/* Featured badge */}
+        {product.is_featured && !discountPercent && (
+          <div className="absolute top-3 left-3 z-10">
+            <Badge variant="gold" size="sm">
+              Pilihan
+            </Badge>
+          </div>
+        )}
+
         {/* Wishlist Toggle Button (Top-Right overlay) */}
         <button
           onClick={(e) => {
@@ -86,7 +216,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             e.stopPropagation()
             toggleWishlist(product.id)
           }}
-          className="absolute top-3 right-3 p-1.5 bg-white/85 hover:bg-white border border-neutral-100 transition-all rounded-none duration-300 hover:scale-105 z-10"
+          className="absolute top-3 right-3 p-1.5 bg-white/85 hover:bg-white border border-neutral-100 transition-all rounded-none duration-300 hover:scale-110 active:scale-90 z-10"
           aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
         >
           <Heart
@@ -100,11 +230,48 @@ export function ProductCard({ product, className }: ProductCardProps) {
         {/* Special Out of Stock overlay */}
         {activeVariants.every((v) => v.stock === 0) && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center pointer-events-none">
-            <span className="bg-brand-black text-white text-[9px] font-heading font-medium uppercase tracking-widest px-3 py-1.5">
+            <Badge variant="brand" size="md">
               Habis Terjual
-            </span>
+            </Badge>
           </div>
         )}
+
+        {/* Quick add or view details overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-brand-black/85 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 md:group-hover:translate-y-0 max-md:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
+          {!hasMultipleColors && sizeVariants.length > 0 ? (
+            <div className="w-full space-y-1 text-center">
+              <span className="text-[8px] font-heading font-medium uppercase tracking-widest text-brand-gold-light">
+                + Keranjang Instan
+              </span>
+              <div className="flex flex-wrap gap-1 justify-center">
+                {sizeVariants.map((v) => {
+                  const sizeAttr = v.product_variant_attrs?.find((a) => a.attr_name.toLowerCase().includes('ukuran'))
+                  const sizeLabel = sizeAttr ? sizeAttr.attr_value : v.name
+                  const isCurrentAdding = isAdding === v.id
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      disabled={isAdding !== null}
+                      onClick={(e) => handleQuickAdd(e, v)}
+                      className="px-2 py-0.5 bg-white hover:bg-brand-gold hover:text-white text-[9px] font-heading font-bold uppercase tracking-wider text-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] border border-neutral-100 flex items-center justify-center cursor-pointer"
+                    >
+                      {isCurrentAdding ? (
+                        <div className="w-2.5 h-2.5 border border-brand-black border-t-transparent animate-spin rounded-full" />
+                      ) : (
+                        sizeLabel
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ) : (
+            <span className="text-[9px] font-heading font-medium uppercase tracking-widest text-white py-1 text-center w-full block">
+              Lihat Detail
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Product Information */}

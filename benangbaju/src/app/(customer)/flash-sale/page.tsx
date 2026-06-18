@@ -2,8 +2,10 @@ import React from 'react'
 import { createServerClient } from '@/lib/supabase/server'
 import { getActiveFlashSale } from '@/services/flashSales'
 import { FlashSaleSection } from '@/components/home/FlashSaleSection'
+import { PageHero, PageContainer, EmptyState } from '@/components/shared'
+import { Percent } from 'lucide-react'
 
-export const revalidate = 10 // revalidate frequently to keep timer accurate
+export const revalidate = 10
 
 export default async function FlashSalePage() {
   const supabase = await createServerClient()
@@ -11,23 +13,24 @@ export default async function FlashSalePage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <PageHero
+        eyebrow="Penawaran Spesial"
+        title="Flash Sale"
+        subtitle="Diskon terbatas dengan waktu terbatas. Jangan lewatkan penawaran eksklusif ini."
+        variant="dark"
+      />
+
       {flashSale ? (
-        <div className="py-10">
-          <FlashSaleSection flashSale={flashSale} />
-        </div>
+        <FlashSaleSection flashSale={flashSale} />
       ) : (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 text-center space-y-4">
-          <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-            Penawaran Spesial
-          </span>
-          <h1 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
-            Tidak Ada Flash Sale Aktif
-          </h1>
-          <p className="text-xs text-neutral-500 font-sans max-w-xs mx-auto">
-            Saat ini sedang tidak ada promo flash sale yang berlangsung. Nantikan promo menarik berikutnya dari kami!
-          </p>
-          <div className="w-12 h-[1px] bg-brand-black mx-auto mt-6" />
-        </div>
+        <PageContainer>
+          <EmptyState
+            icon={Percent}
+            title="Tidak Ada Flash Sale Aktif"
+            description="Saat ini sedang tidak ada promo flash sale yang berlangsung. Nantikan promo menarik berikutnya dari kami!"
+            action={{ label: 'Belanja Produk', href: '/produk' }}
+          />
+        </PageContainer>
       )}
     </div>
   )

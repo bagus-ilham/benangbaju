@@ -47,3 +47,9 @@ export const VOUCHER_DISCOUNT_TYPE = {
 } as const
 
 export type VoucherDiscountType = typeof VOUCHER_DISCOUNT_TYPE[keyof typeof VOUCHER_DISCOUNT_TYPE]
+
+export const SOCIAL_LINKS = {
+  instagram: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM || 'https://instagram.com/benangbaju',
+  tiktok: process.env.NEXT_PUBLIC_SOCIAL_TIKTOK || 'https://tiktok.com/@benangbaju',
+  whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || 'https://wa.me/6281234567890',
+} as const

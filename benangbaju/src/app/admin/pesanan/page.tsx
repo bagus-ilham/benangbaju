@@ -6,9 +6,7 @@ import {
   useAdminReturnRequests,
   useAdminUpdateReturnRequest,
 } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
-import { Modal } from '@/components/shared/Modal'
+import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Search, Eye, AlertTriangle, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -77,11 +75,10 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Manajemen Pesanan</h2>
-        <p className="text-xs text-neutral-400 mt-1">Pantau status transaksi, konfirmasi pembayaran, dan kelola retur.</p>
-      </div>
+      <AdminPageHeader
+        title="Manajemen Pesanan"
+        subtitle="Pantau status transaksi, konfirmasi pembayaran, dan kelola retur."
+      />
 
       {/* Tabs */}
       <div className="flex border-b border-neutral-200 overflow-x-auto space-x-6 text-xs font-sans">

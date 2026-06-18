@@ -1,16 +1,17 @@
 'use client'
 
 import React from 'react'
+import { motion } from 'framer-motion'
 import { useRecentlyViewedStore } from '@/stores/recentlyViewedStore'
 import { ProductCard } from '@/components/product/ProductCard'
 import { ProductListItem } from '@/services/products'
+import { PageContainer, SectionHeader } from '@/components/shared'
 
 export function RecentlyViewedSection() {
   const { products } = useRecentlyViewedStore()
 
   if (products.length === 0) return null
 
-  // Map simple stored product items into the full ProductListItem shape for ProductCard
   const mappedProducts: ProductListItem[] = products.map((p) => ({
     id: p.id,
     category_id: '',
@@ -29,7 +30,7 @@ export function RecentlyViewedSection() {
         name: '',
         price: p.price,
         compare_price: null,
-        stock: 99, // default stock for viewed items
+        stock: 99,
         weight_gram: null,
         is_active: true,
       },
@@ -47,27 +48,29 @@ export function RecentlyViewedSection() {
       : [],
   }))
 
+  const displayProducts = mappedProducts.slice(0, 4)
+
   return (
     <section className="bg-white py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-10 space-y-2">
-          <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-            Riwayat Anda
-          </span>
-          <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
-            Terakhir Dilihat
-          </h2>
-          <div className="w-8 h-[1px] bg-brand-black pt-1" />
-        </div>
+      <PageContainer>
+        <SectionHeader eyebrow="Riwayat Anda" title="Terakhir Dilihat" />
 
         {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-          {mappedProducts.slice(0, 4).map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <div className="flex md:grid md:grid-cols-4 gap-x-4 gap-y-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
+          {displayProducts.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className="min-w-[45%] sm:min-w-[35%] md:min-w-0 snap-start flex-shrink-0"
+            >
+              <ProductCard product={product} />
+            </motion.div>
           ))}
         </div>
-      </div>
+      </PageContainer>
     </section>
   )
 }

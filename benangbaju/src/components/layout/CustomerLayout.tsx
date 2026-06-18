@@ -1,14 +1,22 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { Search, Heart, ShoppingBag, User, LogOut, Menu, X, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { cn } from '@/lib/utils'
+import { useCart } from '@/hooks/useCart'
+import { useWishlist } from '@/hooks/useWishlist'
+import { cn, formatIDR } from '@/lib/utils'
 import toast from 'react-hot-toast'
-import { AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Button, Input } from '@/components/shared'
+import { SOCIAL_LINKS } from '@/lib/constants'
+import { getProducts } from '@/services/products'
+import { MiniCartDrawer } from './MiniCartDrawer'
+
 
 interface CustomerLayoutProps {
   children: React.ReactNode
@@ -20,11 +28,72 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
   const supabase = createBrowserClient()
   
   const { user, profile, isAuthenticated, clearAuth } = useAuthStore()
+  const { totalQuantity, setCartDrawerOpen } = useCart()
+  const { productIds } = useWishlist()
+  const wishlistCount = productIds.length
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [instantResults, setInstantResults] = useState<any[]>([])
+  const [isSearchingInstant, setIsSearchingInstant] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [animateCart, setAnimateCart] = useState(false)
+
+  useEffect(() => {
+    if (!isSearchOpen || searchQuery.trim().length < 2) {
+      setInstantResults([])
+      setIsSearchingInstant(false)
+      return
+    }
+
+    setIsSearchingInstant(true)
+    const delayDebounceFn = setTimeout(async () => {
+      try {
+        const { products } = await getProducts(supabase, { searchQuery: searchQuery.trim(), limit: 3 })
+        setInstantResults(products)
+      } catch (err) {
+        console.error('Instant search error:', err)
+      } finally {
+        setIsSearchingInstant(false)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [searchQuery, isSearchOpen, supabase])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+      
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight
+      if (totalScroll > 0) {
+        const currentProgress = (window.scrollY / totalScroll) * 100
+        setScrollProgress(currentProgress)
+      }
+      setShowScrollTop(window.scrollY > 400)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    if (totalQuantity > 0) {
+      setAnimateCart(true)
+      const timer = setTimeout(() => setAnimateCart(false), 500)
+      return () => clearTimeout(timer)
+    }
+  }, [totalQuantity])
+
 
   const handleLogout = async () => {
     try {
@@ -56,8 +125,31 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex-1 flex flex-col min-h-screen">
-      {/* Header — Sticky THENBLANK style clean navigation with glassmorphism */}
-      <header className="sticky top-0 z-40 w-full border-b border-neutral-100 bg-white/95 backdrop-blur-xs transition-all duration-300">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-brand-black focus:text-white focus:px-4 focus:py-2 focus:text-xs focus:font-heading focus:uppercase"
+      >
+        Lewati ke konten
+      </a>
+      {/* Announcement bar */}
+      <div className="bg-brand-black text-white text-center py-2 px-4">
+        <p className="text-[10px] font-heading font-medium uppercase tracking-[0.15em]">
+          Gratis ongkir untuk pembelian di atas Rp 500.000 &mdash;{' '}
+          <Link href="/produk" className="underline underline-offset-2 hover:text-brand-gold-light transition-colors">
+            Belanja Sekarang
+          </Link>
+        </p>
+      </div>
+
+      {/* Header — Sticky clean navigation with glassmorphism */}
+      <header
+        className={cn(
+          'sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur-md transition-all duration-300',
+          isScrolled
+            ? 'border-neutral-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
+            : 'border-neutral-100'
+        )}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Left side: Mobile menu toggle & Desktop links */}
@@ -77,10 +169,10 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                     key={link.name}
                     href={link.href}
                     className={cn(
-                      'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200',
+                      'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 nav-link-underline',
                       pathname === link.href
-                        ? 'text-brand-black font-semibold'
-                        : 'text-neutral-500 hover:text-brand-black'
+                        ? 'text-brand-gold font-semibold font-bold'
+                        : 'text-neutral-500 hover:text-brand-gold'
                     )}
                   >
                     {link.name}
@@ -89,11 +181,10 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
               </nav>
             </div>
 
-            {/* Center: Brand Logo */}
-            <div className="flex justify-center">
+            <div className="flex justify-center absolute left-1/2 -translate-x-1/2">
               <Link
                 href="/"
-                className="font-heading text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none"
+                className="font-heading text-base md:text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none hover:text-brand-gold transition-colors duration-300"
               >
                 BENANGBAJU
               </Link>
@@ -106,6 +197,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="text-neutral-500 hover:text-brand-black p-2"
                 aria-label="Cari produk"
+                aria-expanded={isSearchOpen}
               >
                 <Search className="h-4 w-4 md:h-5 md:w-5" />
               </button>
@@ -113,20 +205,49 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
               {/* Wishlist */}
               <Link
                 href="/wishlist"
-                className="text-neutral-500 hover:text-brand-black p-2 relative"
+                className="text-neutral-500 hover:text-brand-black p-2 relative group"
                 aria-label="Wishlist"
               >
-                <Heart className="h-4 w-4 md:h-5 md:w-5" />
+                <Heart className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+                {wishlistCount > 0 && (
+                  <motion.span
+                    key={`wishlist-badge-${wishlistCount}`}
+                    initial={{ scale: 0.6, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
+                    className="absolute -top-0.5 -right-0.5 bg-brand-gold text-white text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(154,123,79,0.3)]"
+                  >
+                    {wishlistCount}
+                  </motion.span>
+                )}
               </Link>
 
               {/* Cart */}
-              <Link
-                href="/cart"
-                className="text-neutral-500 hover:text-brand-black p-2 relative"
+              <button
+                onClick={() => setCartDrawerOpen(true)}
+                className="text-neutral-500 hover:text-brand-black p-2 relative group cursor-pointer"
                 aria-label="Keranjang"
               >
-                <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
-              </Link>
+                <motion.div
+                  animate={animateCart ? { scale: [1, 1.25, 0.95, 1], rotate: [0, -8, 8, 0] } : {}}
+                  transition={{ duration: 0.45 }}
+                  className="relative"
+                >
+                  <ShoppingBag className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+                </motion.div>
+                {totalQuantity > 0 && (
+                  <motion.span
+                    key={`cart-badge-${totalQuantity}`}
+                    initial={{ scale: 0.6, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
+                    className="absolute -top-0.5 -right-0.5 bg-brand-gold text-white text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(154,123,79,0.3)]"
+                  >
+                    {totalQuantity}
+                  </motion.span>
+                )}
+              </button>
+
 
               {/* User Account / Menu */}
               <div className="relative">
@@ -136,6 +257,8 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                       onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                       className="text-neutral-500 hover:text-brand-black p-2 flex items-center"
                       aria-label="Menu pengguna"
+                      aria-expanded={isUserMenuOpen}
+                      aria-haspopup="menu"
                     >
                       <User className="h-4 w-4 md:h-5 md:w-5" />
                     </button>
@@ -146,7 +269,12 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                           className="fixed inset-0 z-10"
                           onClick={() => setIsUserMenuOpen(false)}
                         />
-                        <div className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-none shadow-lg py-1 z-20 animate-fade-in">
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                          className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 border-t-2 border-t-brand-gold rounded-none shadow-lg py-1 z-20">
                           <div className="px-4 py-2 border-b border-neutral-100">
                             <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
                               Halo,
@@ -186,7 +314,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                               <span>Keluar</span>
                             </div>
                           </button>
-                        </div>
+                        </motion.div>
                       </>
                     )}
                   </div>
@@ -203,30 +331,160 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        {/* Search Panel Dropdown */}
-        {isSearchOpen && (
-          <div className="border-t border-neutral-100 bg-white py-4 shadow-inner animate-fade-in">
-            <div className="mx-auto max-w-3xl px-4">
-              <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari produk di sini..."
-                  className="w-full bg-neutral-50 text-xs px-4 py-3 pr-12 border border-neutral-200 rounded-none focus:border-brand-black focus:bg-white"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="absolute right-3 p-2 text-neutral-400 hover:text-brand-black transition-colors"
-                >
-                  <Search className="h-4 w-4" />
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
       </header>
+
+      {/* Glassmorphic Search Overlay Drawer */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-neutral-900/40 backdrop-blur-md flex flex-col items-center justify-start pt-20 px-4"
+          >
+            {/* Backdrop close area */}
+            <div className="absolute inset-0 -z-10" onClick={() => setIsSearchOpen(false)} />
+
+            <motion.div
+              initial={{ y: -50, scale: 0.95 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: -30, scale: 0.95 }}
+              transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
+              className="w-full max-w-2xl bg-white p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-gold border-neutral-100"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors"
+                aria-label="Tutup pencarian"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="space-y-6">
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                    Cari Koleksi
+                  </span>
+                  <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
+                    Pencarian Produk
+                  </h3>
+                </div>
+
+                <form onSubmit={handleSearchSubmit} className="relative">
+                  <Input
+                    label="Kata kunci"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Masukkan kata kunci produk (cth: linen, kemeja, hijab)..."
+                    rightIcon={
+                      <button type="submit" aria-label="Cari produk">
+                        <Search className="h-4 w-4" />
+                      </button>
+                    }
+                    autoFocus
+                  />
+                </form>
+
+                {/* Instant Autocomplete Results */}
+                {searchQuery.trim().length >= 2 && (
+                  <div className="border border-neutral-100 bg-neutral-50/50 p-4 -mt-2 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                        Hasil Pencarian Instan
+                      </span>
+                      {isSearchingInstant && (
+                        <span className="text-[8px] font-heading font-semibold uppercase tracking-wider text-brand-gold animate-pulse">
+                          Mencari...
+                        </span>
+                      )}
+                    </div>
+
+                    {instantResults.length > 0 ? (
+                      <div className="space-y-3">
+                        {instantResults.map((product) => {
+                          const primaryImg = product.product_images?.find((img: any) => img.is_primary)?.url 
+                            || product.product_images?.[0]?.url 
+                            || null;
+
+                          const prices = product.product_variants?.map((v: any) => Number(v.price)) || [];
+                          const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+
+                          return (
+                            <Link
+                              key={product.id}
+                              href={`/produk/${product.slug}`}
+                              onClick={() => {
+                                setIsSearchOpen(false);
+                                setSearchQuery('');
+                              }}
+                              className="flex items-center space-x-3 p-2 bg-white border border-neutral-100 hover:border-brand-gold/50 transition-all duration-200 group"
+                            >
+                              <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0">
+                                {primaryImg ? (
+                                  <Image
+                                    src={primaryImg}
+                                    alt={product.name}
+                                    fill
+                                    sizes="40px"
+                                    className="object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-[7px] text-neutral-400 uppercase font-sans">
+                                    No Image
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-[11px] font-heading font-medium uppercase tracking-wider text-brand-black group-hover:text-brand-gold transition-colors truncate">
+                                  {product.name}
+                                </h4>
+                                <p className="text-[10px] font-sans font-semibold text-neutral-500 mt-0.5">
+                                  Mulai {formatIDR(minPrice)}
+                                </p>
+                              </div>
+                              <ChevronRight className="h-3.5 w-3.5 text-neutral-300 group-hover:text-brand-gold group-hover:translate-x-0.5 transition-all" />
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      !isSearchingInstant && (
+                        <p className="text-[10px] text-neutral-400 font-sans py-1">
+                          Tidak ada produk yang cocok dengan pencarian Anda.
+                        </p>
+                      )
+                    )}
+                  </div>
+                )}
+
+                {/* Popular Tags */}
+                <div className="space-y-2.5">
+                  <h4 className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                    Pencarian Populer
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {['Linen', 'Kemeja', 'Outer', 'Hijab', 'Tunika', 'Satin'].map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery(tag)
+                          router.push(`/search?q=${encodeURIComponent(tag)}`)
+                          setIsSearchOpen(false)
+                        }}
+                        className="px-3 py-1.5 border border-neutral-200 hover:border-brand-gold text-[10px] font-heading font-medium uppercase tracking-wider transition-all duration-200 text-neutral-600 hover:text-brand-gold hover:bg-brand-gold-muted/30 bg-white cursor-pointer"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Navigation Drawer */}
       <AnimatePresence>
@@ -239,7 +497,13 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
             />
             
             {/* Menu Panel */}
-            <div className="relative flex w-full max-w-xs flex-col bg-white py-4 shadow-xl border-r border-neutral-100">
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+              className="relative flex w-full max-w-xs flex-col bg-white py-4 shadow-xl border-r border-neutral-100"
+            >
               <div className="flex items-center justify-between px-6 pb-4 border-b border-neutral-100">
                 <span className="font-heading text-sm font-bold tracking-[0.2em] text-brand-black uppercase">
                   MENU
@@ -248,6 +512,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                   type="button"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-neutral-400 hover:text-brand-black p-1"
+                  aria-label="Tutup menu"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -282,18 +547,52 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                   )}
                 </nav>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
       </AnimatePresence>
 
       {/* Main Page Area */}
-      <main className="flex-1 flex flex-col">
+      <main id="main-content" className="flex-1 flex flex-col">
         {children}
       </main>
 
-      {/* Footer — spacious off-white clean minimal footer */}
-      <footer className="bg-brand-cream border-t border-neutral-200 py-16">
+      {/* Footer — spacious editorial footer */}
+      <footer className="bg-brand-cream border-t border-neutral-200">
+        {/* Newsletter CTA band */}
+        <div className="border-b border-neutral-200 bg-brand-black py-12 md:py-14">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-gold-light">
+              Tetap Terhubung
+            </span>
+            <h3 className="text-lg md:text-xl font-heading font-light uppercase tracking-wider text-white">
+              Dapatkan Info Koleksi Terbaru
+            </h3>
+            <p className="text-xs text-neutral-400 font-sans max-w-md mx-auto">
+              Berlangganan newsletter untuk promo eksklusif dan akses early ke koleksi baru.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                toast.success('Terima kasih! Fitur newsletter segera hadir.')
+              }}
+              className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2"
+            >
+              <Input
+                type="email"
+                label="Email"
+                placeholder="Email Anda"
+                required
+                className="flex-1 [&_input]:bg-white/10 [&_input]:border-white/20 [&_input]:text-white [&_input]:placeholder:text-neutral-500 [&_label]:text-neutral-400"
+              />
+              <Button type="submit" variant="primary" size="sm" className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-gold hover:text-white hover:border-brand-gold transition-all duration-300">
+                Daftar
+              </Button>
+            </form>
+          </div>
+        </div>
+
+        <div className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
             {/* Col 1: Brand Info */}
@@ -313,22 +612,22 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/cara-belanja" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/cara-belanja" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Cara Belanja
                   </Link>
                 </li>
                 <li>
-                  <Link href="/pengiriman" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/pengiriman" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Informasi Pengiriman
                   </Link>
                 </li>
                 <li>
-                  <Link href="/retur" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/retur" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Kebijakan Pengembalian (Retur)
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kontak" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/kontak" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Hubungi Kami
                   </Link>
                 </li>
@@ -342,45 +641,57 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/syarat-ketentuan" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/syarat-ketentuan" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Syarat & Ketentuan
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kebijakan-privasi" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/kebijakan-privasi" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Kebijakan Privasi
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tentang" className="text-[11px] text-neutral-500 hover:text-brand-black transition-colors font-sans">
+                  <Link href="/tentang" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
                     Tentang Kami
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Col 4: Newsletter / Social */}
+            {/* Col 4: Social */}
             <div className="flex flex-col space-y-4">
               <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
-                Newsletter
+                Ikuti Kami
               </h4>
               <p className="text-[11px] text-neutral-500 font-sans">
-                Berlangganan untuk info koleksi terbaru dan promo eksklusif.
+                Temukan inspirasi gaya modest di media sosial kami.
               </p>
-              <form onSubmit={(e) => { e.preventDefault(); toast.success('Berhasil mendaftar newsletter!'); }} className="flex">
-                <input
-                  type="email"
-                  placeholder="Email Anda"
-                  required
-                  className="w-full bg-white text-[11px] px-3 py-2 border border-neutral-300 rounded-none focus:border-brand-black focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="bg-brand-black text-white hover:bg-neutral-800 text-[10px] font-heading font-medium uppercase tracking-wider px-4 py-2 border border-brand-black"
+              <div className="flex space-x-3 pt-1">
+                <a
+                  href={SOCIAL_LINKS.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 border border-neutral-200 text-[10px] font-heading uppercase tracking-wider text-neutral-500 hover:border-brand-gold hover:text-brand-gold transition-all duration-200"
                 >
-                  Daftar
-                </button>
-              </form>
+                  IG
+                </a>
+                <a
+                  href={SOCIAL_LINKS.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 border border-neutral-200 text-[10px] font-heading uppercase tracking-wider text-neutral-500 hover:border-brand-gold hover:text-brand-gold transition-all duration-200"
+                >
+                  TT
+                </a>
+                <a
+                  href={SOCIAL_LINKS.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 border border-neutral-200 text-[10px] font-heading uppercase tracking-wider text-neutral-500 hover:border-brand-gold hover:text-brand-gold transition-all duration-200"
+                >
+                  WA
+                </a>
+              </div>
             </div>
           </div>
 
@@ -389,13 +700,54 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
               &copy; {new Date().getFullYear()} Benangbaju Store. All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
-              <span>Instagram</span>
-              <span>TikTok</span>
-              <span>WhatsApp</span>
+              <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">Syarat</Link>
+              <Link href="/kebijakan-privasi" className="hover:text-brand-gold transition-colors">Privasi</Link>
+              <Link href="/kontak" className="hover:text-brand-gold transition-colors">Kontak</Link>
             </div>
           </div>
         </div>
+        </div>
       </footer>
+      <MiniCartDrawer />
+
+      {/* Scroll-to-Top Floating Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 z-40 p-3 bg-white text-brand-black shadow-lg border border-neutral-100 flex items-center justify-center cursor-pointer hover:border-brand-gold transition-colors group rounded-none"
+            aria-label="Kembali ke atas"
+          >
+            {/* Circular Progress Path */}
+            <svg className="absolute inset-0 w-full h-full -rotate-90 p-0.5" viewBox="0 0 36 36">
+              <path
+                className="text-neutral-100"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+              <path
+                className="text-brand-gold transition-all duration-100"
+                strokeDasharray={`${scrollProgress}, 100`}
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                stroke="currentColor"
+                fill="none"
+                d="M18 2.0845
+                  a 15.9155 15.9155 0 0 1 0 31.831
+                  a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+            </svg>
+            <ChevronRight className="h-4 w-4 -rotate-90 group-hover:-translate-y-0.5 transition-transform text-brand-black relative z-10" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

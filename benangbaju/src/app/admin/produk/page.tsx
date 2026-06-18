@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useAdminProducts, useAdminDeleteProduct } from '@/hooks/useAdmin'
-import { Button } from '@/components/shared/Button'
+import { Button, AdminPageHeader } from '@/components/shared'
 import { Input } from '@/components/shared/Input'
 import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star } from 'lucide-react'
 import Link from 'next/link'
@@ -67,18 +67,16 @@ export default function AdminProductListPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Daftar Produk</h2>
-          <p className="text-xs text-neutral-400 mt-1">Kelola katalog produk, harga, varian, dan stok.</p>
-        </div>
+      <AdminPageHeader
+        title="Daftar Produk"
+        subtitle="Kelola katalog produk, harga, varian, dan stok."
+      >
         <Link href="/admin/produk/tambah">
           <Button className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
             <Plus size={14} className="mr-1.5" /> Tambah Produk
           </Button>
         </Link>
-      </div>
+      </AdminPageHeader>
 
       {/* Filters Toolbar */}
       <div className="flex bg-white border border-neutral-200 p-4 rounded-none items-center space-x-3">

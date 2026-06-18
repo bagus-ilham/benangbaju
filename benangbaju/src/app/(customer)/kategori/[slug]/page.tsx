@@ -1,10 +1,12 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
+import { PackageSearch } from 'lucide-react'
 import { createServerClient } from '@/lib/supabase/server'
 import { getCategoryBySlug } from '@/services/categories'
 import { getProducts } from '@/services/products'
 import { ProductCard } from '@/components/product/ProductCard'
-import Image from 'next/image'
+import { PageHero, PageContainer, EmptyState } from '@/components/shared'
 
 interface CategoryPageProps {
   params: Promise<{
@@ -16,14 +18,12 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
   const { slug } = await params
   const supabase = await createServerClient()
 
-  // Fetch category info on the server
   const category = await getCategoryBySlug(supabase, slug)
 
   if (!category) {
     notFound()
   }
 
-  // Fetch products under this category
   const { products } = await getProducts(supabase, {
     categorySlug: slug,
     limit: 40,
@@ -31,52 +31,50 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Category banner (if image exists) */}
       {category.image_url ? (
-        <div className="relative h-[30vh] w-full bg-neutral-100 overflow-hidden border-b border-neutral-200">
+        <div className="relative h-[35vh] md:h-[45vh] w-full bg-neutral-100 overflow-hidden border-b border-neutral-200">
           <Image
             src={category.image_url}
             alt={category.name}
             fill
             priority
-            className="object-cover opacity-90"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-neutral-950/20" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center space-y-2 text-white">
-              <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-200">
+          <div className="absolute inset-0 gradient-overlay-dark" />
+          <div className="absolute inset-0 section-texture opacity-20 pointer-events-none" aria-hidden />
+          <div className="absolute inset-0 flex items-end">
+            <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-10 md:pb-14">
+              <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold-light">
                 Kategori Pilihan
               </span>
-              <h1 className="text-2xl md:text-4xl font-heading font-light uppercase tracking-widest leading-tight">
+              <h1 className="text-2xl md:text-4xl font-heading font-light uppercase tracking-wider text-white mt-2 leading-tight">
                 {category.name}
               </h1>
+              <div className="w-12 h-px bg-brand-gold-light mt-3" />
+              {category.description && (
+                <p className="text-xs text-neutral-300 font-sans max-w-lg leading-relaxed mt-3">
+                  {category.description}
+                </p>
+              )}
             </div>
           </div>
         </div>
       ) : (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10">
-          <div className="flex flex-col space-y-2 border-b border-neutral-100 pb-6">
-            <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-              Kategori Pilihan
-            </span>
-            <h1 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
-              {category.name}
-            </h1>
-            {category.description && (
-              <p className="text-xs text-neutral-500 font-sans leading-relaxed">
-                {category.description}
-              </p>
-            )}
-          </div>
-        </div>
+        <PageHero
+          eyebrow="Kategori Pilihan"
+          title={category.name}
+          subtitle={category.description || undefined}
+        />
       )}
 
-      {/* Products list */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <PageContainer className="py-12 md:py-16 page-content">
         {products.length === 0 ? (
-          <div className="text-center py-20 text-xs text-neutral-400 font-sans italic">
-            Belum ada produk dalam kategori ini.
-          </div>
+          <EmptyState
+            icon={PackageSearch}
+            title="Belum Ada Produk"
+            description="Belum ada produk dalam kategori ini. Coba jelajahi kategori lain."
+            action={{ label: 'Lihat Semua Produk', href: '/produk' }}
+          />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
             {products.map((product) => (
@@ -84,7 +82,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
             ))}
           </div>
         )}
-      </div>
+      </PageContainer>
     </div>
   )
 }

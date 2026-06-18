@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useUserAddresses, useDeleteUserAddress, useSetDefaultAddress } from '@/hooks/useShipping'
 import { AddressCard } from '@/components/customer/AddressCard'
 import { AddressModal } from '@/components/customer/AddressModal'
-import { Button } from '@/components/shared/Button'
+import { AuthLoading, Button, PageContainer, PageHero } from '@/components/shared'
 import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -56,34 +56,29 @@ export default function AlamatPage() {
   }
 
   if (authLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center font-sans">
-        <p className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Memuat halaman...</p>
-      </div>
-    )
+    return <AuthLoading message="Memuat halaman..." />
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        {/* Navigation Breadcrumb */}
-        <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-          <Link href="/akun" className="hover:text-neutral-900 transition">Akun Saya</Link>
-          <span>/</span>
-          <span className="text-neutral-900 font-semibold">Daftar Alamat</span>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-neutral-200 pb-5 mb-8">
-          <div>
-            <h1 className="text-3xl font-serif tracking-tight text-neutral-900 mb-1">Daftar Alamat</h1>
-            <p className="text-sm text-neutral-500">Kelola alamat pengiriman Anda untuk memudahkan proses checkout.</p>
+    <div className="min-h-screen bg-white font-sans">
+      <PageHero
+        eyebrow="Pengiriman"
+        title="Daftar Alamat"
+        subtitle="Kelola alamat pengiriman Anda untuk memudahkan proses checkout."
+      />
+      <PageContainer size="lg" className="py-10 page-content">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
+            <Link href="/akun" className="hover:text-brand-gold transition">Akun Saya</Link>
+            <span>/</span>
+            <span className="text-brand-black font-semibold">Daftar Alamat</span>
           </div>
           <Button
             onClick={() => {
               setAddressToEdit(null)
               setModalOpen(true)
             }}
-            className="mt-4 sm:mt-0 flex items-center justify-center text-xs uppercase tracking-widest font-semibold py-3 px-5"
+            className="flex items-center justify-center text-xs uppercase tracking-widest font-semibold py-3 px-5"
           >
             <Plus size={14} className="mr-2" /> Tambah Alamat
           </Button>
@@ -125,12 +120,12 @@ export default function AlamatPage() {
         <div className="mt-12 pt-6 border-t border-neutral-100">
           <Link
             href="/akun"
-            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-neutral-950 transition duration-100"
+            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-gold transition duration-100"
           >
             <ArrowLeft size={14} className="mr-2" /> Kembali ke Akun
           </Link>
         </div>
-      </div>
+      </PageContainer>
 
       <AddressModal
         isOpen={modalOpen}

@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import React from 'react'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { ProductVariant } from '@/services/products'
 
@@ -105,21 +106,31 @@ export function VariantPicker({
               const isSelected = selectedValues[name] === val
               const disabled = isOptionDisabled(name, val)
               return (
-                <button
+                <motion.button
                   key={val}
                   type="button"
                   disabled={disabled}
                   onClick={() => handleSelect(name, val)}
+                  whileHover={!disabled ? { y: -1 } : {}}
+                  whileTap={!disabled ? { scale: 0.97 } : {}}
+                  transition={{ duration: 0.2 }}
                   className={cn(
                     // THENBLANK style variant picker buttons: sharp edges, clean text, minimal borders
-                    'px-4 py-2 border text-xs font-heading font-medium tracking-wide uppercase transition-all duration-200 disabled:opacity-30 disabled:line-through',
+                    'relative px-4 py-2 border text-xs font-heading font-medium tracking-wide uppercase transition-colors duration-200 disabled:opacity-30 disabled:line-through focus:outline-none focus-ring-premium',
                     isSelected
                       ? 'border-brand-black bg-brand-black text-white'
                       : 'border-neutral-200 text-brand-black hover:border-brand-black hover:bg-neutral-50'
                   )}
                 >
                   {val}
-                </button>
+                  {isSelected && (
+                    <motion.div
+                      layoutId={`active-indicator-${name}`}
+                      className="absolute inset-0 border border-brand-black pointer-events-none"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </motion.button>
               )
             })}
           </div>
@@ -128,3 +139,4 @@ export function VariantPicker({
     </div>
   )
 }
+

@@ -12,7 +12,7 @@ import {
   useAdminDeleteLandingPage,
 } from '@/hooks/useAdmin'
 import type { RedirectRule, LandingPage } from '@/services/cms'
-import { Button } from '@/components/shared/Button'
+import { Button, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit, Trash2, Link2, FileCode, RefreshCw, X, Eye, Check, AlertTriangle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
@@ -198,14 +198,10 @@ export default function AdminCmsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-serif text-neutral-900 tracking-tight">Konten & SEO (CMS)</h2>
-          <p className="text-xs text-neutral-400 mt-1">
-            Kelola pengalihan tautan URL dinamis dan kustomisasi halaman arahan untuk optimasi SEO.
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Konten & SEO (CMS)"
+        subtitle="Kelola pengalihan tautan URL dinamis dan kustomisasi halaman arahan untuk optimasi SEO."
+      >
         <Button
           onClick={handleRefresh}
           variant="outline"
@@ -213,7 +209,7 @@ export default function AdminCmsPage() {
         >
           <RefreshCw size={12} className="mr-1.5" /> Segarkan
         </Button>
-      </div>
+      </AdminPageHeader>
 
       {/* Glassmorphic Tabs Layout */}
       <div className="flex border-b border-neutral-200 relative mb-2">

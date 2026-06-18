@@ -11,16 +11,39 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <SupabaseProvider>
         {children}
         <Toaster
-          position="top-center"
+          position="top-right"
           toastOptions={{
-            duration: 4000,
+            duration: 3500,
             style: {
-              background: '#1c1c1c',
-              color: '#fff',
-              fontSize: '0.875rem',
-              borderRadius: '0px', // THENBLANK style sharp corners
-              padding: '12px 24px',
+              background: '#ffffff',
+              color: '#171717',
+              fontSize: '11px',
+              fontFamily: 'var(--font-sans)',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              borderRadius: '0px',
+              border: '1px solid #e5e5e5',
+              padding: '12px 20px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
             },
+            success: {
+              iconTheme: {
+                primary: '#171717',
+                secondary: '#ffffff',
+              },
+              style: {
+                borderLeft: '3px solid #171717',
+              }
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#ffffff',
+              },
+              style: {
+                borderLeft: '3px solid #ef4444',
+              }
+            }
           }}
         />
       </SupabaseProvider>

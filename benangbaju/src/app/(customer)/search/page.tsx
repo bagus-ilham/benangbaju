@@ -2,8 +2,30 @@
 
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { Search } from 'lucide-react'
 import { useProducts } from '@/hooks/useProducts'
 import { ProductCard } from '@/components/product/ProductCard'
+import { PageContainer, PageHeader, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
+
+const gridVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring' as const, stiffness: 260, damping: 25 },
+  },
+}
 
 function SearchResultsContent() {
   const searchParams = useSearchParams()
@@ -18,43 +40,37 @@ function SearchResultsContent() {
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="flex flex-col space-y-2 border-b border-neutral-100 pb-6 mb-8">
-          <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-            Hasil Pencarian
-          </span>
-          <h1 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
-            Pencarian: "{query}"
-          </h1>
-          <p className="text-xs text-neutral-500 font-sans">
-            Ditemukan <strong className="text-brand-black">{totalCount}</strong> produk yang cocok.
-          </p>
-        </div>
+      <PageHero
+        eyebrow="Hasil Pencarian"
+        title={query ? `"${query}"` : 'Pencarian Produk'}
+        subtitle={`Ditemukan ${totalCount} produk yang cocok.`}
+      />
+      <PageContainer className="py-10 page-content">
 
-        {/* Results */}
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="space-y-4">
-                <div className="aspect-[3/4] bg-neutral-100 animate-pulse w-full" />
-                <div className="h-4 bg-neutral-100 animate-pulse w-2/3" />
-                <div className="h-4 bg-neutral-50 animate-pulse w-1/3" />
-              </div>
-            ))}
-          </div>
+          <ProductGridSkeleton count={8} />
         ) : products.length === 0 ? (
-          <div className="text-center py-20 text-xs text-neutral-400 font-sans italic">
-            Tidak ditemukan produk yang cocok dengan kata kunci "{query}".
-          </div>
+          <EmptyState
+            icon={Search}
+            title="Produk Tidak Ditemukan"
+            description={`Tidak ditemukan produk yang cocok dengan kata kunci "${query}".`}
+            action={{ label: 'Jelajahi Katalog', href: '/produk' }}
+          />
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
+          <motion.div
+            variants={gridVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8"
+          >
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <motion.div key={product.id} variants={cardVariants}>
+                <ProductCard product={product} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </PageContainer>
     </div>
   )
 }
@@ -62,8 +78,10 @@ function SearchResultsContent() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center text-xs text-neutral-400 uppercase tracking-widest font-heading">
-        Mencari produk...
+      <div className="bg-white min-h-screen py-12">
+        <PageContainer>
+          <ProductGridSkeleton count={8} />
+        </PageContainer>
       </div>
     }>
       <SearchResultsContent />

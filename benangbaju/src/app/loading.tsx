@@ -2,12 +2,15 @@ import React from 'react'
 
 export default function RootLoading() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white font-sans">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white font-heading">
       <div className="flex flex-col items-center space-y-4">
-        <div className="w-8 h-8 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin" />
-        <p className="text-xs uppercase tracking-widest text-neutral-400 animate-pulse">
-          Memuat halaman...
-        </p>
+        {/* Branded Text Shimmer */}
+        <div className="text-xl md:text-2xl font-light tracking-[0.3em] uppercase text-brand-black select-none text-shimmer">
+          BENANGBAJU
+        </div>
+        <div className="w-16 h-[1px] bg-neutral-100 overflow-hidden relative">
+          <div className="absolute inset-y-0 left-0 bg-brand-black w-1/2 animate-[shimmer-sweep_1.2s_ease-in-out_infinite]" />
+        </div>
       </div>
     </div>
   )
