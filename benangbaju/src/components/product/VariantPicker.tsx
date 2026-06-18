@@ -36,9 +36,24 @@ export function VariantPicker({
   })
 
   // 2. Track selected values for each attribute name
-  const [selectedValues, setSelectedValues] = React.useState<Record<string, string>>({})
+  // Pre-select any attribute groups that have only one unique value across all variants
+  const [selectedValues, setSelectedValues] = React.useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {}
+    Object.entries(attributeGroups).forEach(([name, values]) => {
+      if (values.length === 1) {
+        initial[name] = values[0]
+      }
+    })
+    return initial
+  })
 
-  // Initialize selected values if a selectedVariantId is given
+  // Safe ref wrapper for parent callback to avoid infinite loops on inline arrow functions
+  const onVariantSelectRef = React.useRef(onVariantSelect)
+  React.useEffect(() => {
+    onVariantSelectRef.current = onVariantSelect
+  }, [onVariantSelect])
+
+  // Initialize selected values if a selectedVariantId is given by the parent
   React.useEffect(() => {
     if (selectedVariantId) {
       const selectedVariant = variants.find((v) => v.id === selectedVariantId)
@@ -52,24 +67,25 @@ export function VariantPicker({
     }
   }, [selectedVariantId, variants])
 
-  const handleSelect = (attrName: string, value: string) => {
-    const updated = { ...selectedValues, [attrName]: value }
-    setSelectedValues(updated)
-
-    // Check if the combination matches a valid variant
+  // Run matching reactive validation whenever selected values change
+  React.useEffect(() => {
     const matchedVariant = variants.find((v) => {
       if (!v.product_variant_attrs || v.product_variant_attrs.length === 0) return false
       
       return v.product_variant_attrs.every((attr) => {
-        return updated[attr.attr_name] === attr.attr_value
+        return selectedValues[attr.attr_name] === attr.attr_value
       })
     })
 
     if (matchedVariant) {
-      onVariantSelect(matchedVariant)
+      onVariantSelectRef.current(matchedVariant)
     } else {
-      onVariantSelect(null)
+      onVariantSelectRef.current(null)
     }
+  }, [selectedValues, variants])
+
+  const handleSelect = (attrName: string, value: string) => {
+    setSelectedValues((prev) => ({ ...prev, [attrName]: value }))
   }
 
   // Helper to determine if a variant value is disabled (has no stock anywhere or is invalid combination)
