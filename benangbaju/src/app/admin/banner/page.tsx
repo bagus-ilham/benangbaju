@@ -103,6 +103,11 @@ export default function AdminBannersPage() {
       return
     }
 
+    if (starts_at && ends_at && new Date(ends_at) <= new Date(starts_at)) {
+      toast.error('Tanggal selesai berlaku harus setelah tanggal mulai aktif')
+      return
+    }
+
     const payload = {
       title: title.trim(),
       subtitle: subtitle.trim() || null,

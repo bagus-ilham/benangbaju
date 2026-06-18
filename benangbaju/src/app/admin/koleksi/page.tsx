@@ -13,6 +13,7 @@ import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 import { formatLocalISO } from '@/lib/utils/format'
+import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
@@ -141,6 +142,11 @@ export default function AdminCollectionPage() {
     }
 
     const linkedProductIds = Object.keys(selectedProductIds).filter((pid) => selectedProductIds[pid])
+
+    if (starts_at && ends_at && new Date(ends_at) <= new Date(starts_at)) {
+      toast.error('Tanggal selesai tampil harus setelah tanggal mulai tampil')
+      return
+    }
 
     const payload = {
       collectionData: {
@@ -274,6 +280,7 @@ export default function AdminCollectionPage() {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         title={editingCollection ? 'Ubah Koleksi' : 'Tambah Koleksi Baru'}
+        size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-5 text-xs font-sans">
           <div className="grid grid-cols-2 gap-4">
@@ -308,13 +315,42 @@ export default function AdminCollectionPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="URL Gambar Banner"
-              value={image_url}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://..."
-            />
+          <div className="grid grid-cols-2 gap-4 items-end">
+            <div className="space-y-1">
+              <Input
+                label="URL Gambar Banner"
+                value={image_url}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="https://... atau unggah gambar"
+              />
+              <div className="flex items-center gap-2 mt-1">
+                <input
+                  type="file"
+                  id="collection-image-upload"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    
+                    const toastId = toast.loading('Mengunggah gambar...')
+                    try {
+                      const publicUrl = await uploadImage(file, 'banners')
+                      setImageUrl(publicUrl)
+                      toast.success('Gambar berhasil diunggah!', { id: toastId })
+                    } catch (err: any) {
+                      toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
+                    }
+                  }}
+                />
+                <label
+                  htmlFor="collection-image-upload"
+                  className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none bg-white"
+                >
+                  Unggah Gambar
+                </label>
+              </div>
+            </div>
             <Input
               label="Nomor Urut Tampil*"
               type="number"

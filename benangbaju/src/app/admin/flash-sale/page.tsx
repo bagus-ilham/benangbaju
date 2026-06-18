@@ -162,6 +162,11 @@ export default function AdminFlashSalesPage() {
       return
     }
 
+    if (starts_at && ends_at && new Date(ends_at) <= new Date(starts_at)) {
+      toast.error('Waktu selesai harus setelah waktu mulai')
+      return
+    }
+
     if (items.length === 0) {
       toast.error('Wajib menambahkan minimal satu produk flash sale')
       return

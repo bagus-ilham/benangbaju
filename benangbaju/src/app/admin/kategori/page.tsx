@@ -11,6 +11,7 @@ import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit2, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
@@ -285,12 +286,41 @@ export default function AdminCategoryPage() {
             />
           </div>
 
-          <Input
-            label="URL Gambar"
-            value={image_url}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://..."
-          />
+          <div className="space-y-1">
+            <Input
+              label="URL Gambar"
+              value={image_url}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://... atau unggah gambar"
+            />
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="file"
+                id="category-image-upload"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  
+                  const toastId = toast.loading('Mengunggah gambar kategori...')
+                  try {
+                    const publicUrl = await uploadImage(file, 'products')
+                    setImageUrl(publicUrl)
+                    toast.success('Gambar kategori berhasil diunggah!', { id: toastId })
+                  } catch (err: any) {
+                    toast.error(err.message || 'Gagal mengunggah gambar kategori', { id: toastId })
+                  }
+                }}
+              />
+              <label
+                htmlFor="category-image-upload"
+                className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none bg-white"
+              >
+                Unggah Gambar
+              </label>
+            </div>
+          </div>
 
           <div className="space-y-1">
             <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">

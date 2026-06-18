@@ -105,6 +105,11 @@ export default function AdminVouchersPage() {
       return
     }
 
+    if (starts_at && expires_at && new Date(expires_at) <= new Date(starts_at)) {
+      toast.error('Tanggal akhir berlaku (expired) harus setelah tanggal mulai aktif')
+      return
+    }
+
     const payload = {
       code: code.trim().toUpperCase(),
       name: name.trim(),
