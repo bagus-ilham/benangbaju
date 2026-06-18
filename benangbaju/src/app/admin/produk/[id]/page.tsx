@@ -36,6 +36,7 @@ export default function AdminProductEditPage({ params }: EditProductPageProps) {
           collection_products (*)
         `)
         .eq('id', productId)
+        .eq('product_variants.is_active', true)
         .single()
 
       if (error) throw error
