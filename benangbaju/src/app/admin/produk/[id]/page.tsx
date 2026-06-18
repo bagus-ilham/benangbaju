@@ -52,7 +52,8 @@ export default function AdminProductEditPage({ params }: EditProductPageProps) {
         productData: payload.productData,
         variants: payload.variants,
         images: payload.images,
-        links: payload.links
+        links: payload.links,
+        collectionIds: payload.collectionIds
       })
       toast.success('Produk berhasil diperbarui!', { id: 'update-product' })
       refetch()
