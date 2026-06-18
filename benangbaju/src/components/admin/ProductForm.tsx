@@ -588,6 +588,23 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                     />
                   </div>
 
+                  {/* Status checkbox for variant */}
+                  <div className="flex items-center space-x-2 pt-1 pb-1">
+                    <input
+                      type="checkbox"
+                      id={`variant-active-${vIdx}`}
+                      checked={v.is_active}
+                      onChange={(e) => handleUpdateVariantField(vIdx, 'is_active', e.target.checked)}
+                      className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0 cursor-pointer"
+                    />
+                    <label
+                      htmlFor={`variant-active-${vIdx}`}
+                      className="select-none text-neutral-700 font-bold uppercase cursor-pointer tracking-wider text-[10px]"
+                    >
+                      Aktifkan Varian
+                    </label>
+                  </div>
+
                   {/* Attributes Sub-section */}
                   <div className="space-y-3 pt-2 border-t border-neutral-100">
                     <div className="flex justify-between items-center">

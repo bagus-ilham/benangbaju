@@ -524,13 +524,28 @@ export async function adminUpdateProduct(
 
   const updatedVariantIds = variants.map(v => v.id).filter(id => id && !id.startsWith('temp-')) as string[]
 
-  const idsToDeactivate = dbVariantIds.filter(id => !updatedVariantIds.includes(id))
-  if (idsToDeactivate.length > 0) {
-    const { error: deacErr } = await supabase
+  const idsToDelete = dbVariantIds.filter(id => !updatedVariantIds.includes(id))
+  if (idsToDelete.length > 0) {
+    // 1. Delete attributes first to avoid constraint issues
+    await supabase
+      .from('product_variant_attrs')
+      .delete()
+      .in('variant_id', idsToDelete)
+
+    // 2. Try to hard delete the variants
+    const { error: deleteErr } = await supabase
       .from('product_variants')
-      .update({ is_active: false })
-      .in('id', idsToDeactivate)
-    if (deacErr) throw deacErr
+      .delete()
+      .in('id', idsToDelete)
+
+    if (deleteErr) {
+      // 3. Fallback to soft-deactivate if they are referenced in other tables (e.g. order items)
+      const { error: deacErr } = await supabase
+        .from('product_variants')
+        .update({ is_active: false })
+        .in('id', idsToDelete)
+      if (deacErr) throw deacErr
+    }
   }
 
   const idMap = new Map<string, string>()
