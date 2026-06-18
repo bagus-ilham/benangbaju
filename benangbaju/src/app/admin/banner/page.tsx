@@ -12,6 +12,7 @@ import { Plus, Edit2, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
+import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
@@ -269,20 +270,127 @@ export default function AdminBannersPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="URL Gambar Desktop*"
-              value={image_url}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://..."
-              required
-            />
-            <Input
-              label="URL Gambar Mobile"
-              value={image_mobile_url}
-              onChange={(e) => setImageMobileUrl(e.target.value)}
-              placeholder="https://..."
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Desktop Banner Image Uploader & Preview */}
+            <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10">
+              <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+                Gambar Desktop*
+              </span>
+              <div className="flex gap-3 items-start">
+                <div className="w-20 h-10 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                  {image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={image_url}
+                      alt="Desktop Preview"
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                      }}
+                    />
+                  ) : (
+                    <span className="text-[8px] text-neutral-400 uppercase font-semibold">No Image</span>
+                  )}
+                </div>
+                <div className="flex-1 space-y-2">
+                  <input
+                    type="text"
+                    className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                    value={image_url}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="https://... atau unggah gambar"
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      id="banner-upload-desktop"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        
+                        const toastId = toast.loading('Mengunggah gambar desktop...')
+                        try {
+                          const publicUrl = await uploadImage(file, 'banners')
+                          setImageUrl(publicUrl)
+                          toast.success('Gambar desktop berhasil diunggah!', { id: toastId })
+                        } catch (err: any) {
+                          toast.error(err.message || 'Gagal mengunggah gambar desktop', { id: toastId })
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="banner-upload-desktop"
+                      className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                    >
+                      Unggah Desktop
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Banner Image Uploader & Preview */}
+            <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10">
+              <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+                Gambar Mobile (Opsional)
+              </span>
+              <div className="flex gap-3 items-start">
+                <div className="w-12 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                  {image_mobile_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={image_mobile_url}
+                      alt="Mobile Preview"
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                      }}
+                    />
+                  ) : (
+                    <span className="text-[8px] text-neutral-400 uppercase font-semibold">No Image</span>
+                  )}
+                </div>
+                <div className="flex-1 space-y-2">
+                  <input
+                    type="text"
+                    className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                    value={image_mobile_url}
+                    onChange={(e) => setImageMobileUrl(e.target.value)}
+                    placeholder="https://... atau unggah gambar"
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      id="banner-upload-mobile"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        
+                        const toastId = toast.loading('Mengunggah gambar mobile...')
+                        try {
+                          const publicUrl = await uploadImage(file, 'banners')
+                          setImageMobileUrl(publicUrl)
+                          toast.success('Gambar mobile berhasil diunggah!', { id: toastId })
+                        } catch (err: any) {
+                          toast.error(err.message || 'Gagal mengunggah gambar mobile', { id: toastId })
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="banner-upload-mobile"
+                      className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                    >
+                      Unggah Mobile
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4">

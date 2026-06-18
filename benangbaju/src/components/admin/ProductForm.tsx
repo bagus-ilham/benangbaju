@@ -7,6 +7,7 @@ import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Plus, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { uploadImage } from '@/lib/supabase/storage'
 
 interface ProductFormProps {
   initialData?: any
@@ -613,16 +614,70 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                       <Trash2 size={12} />
                     </button>
 
-                    <div className="space-y-1">
-                      <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Gambar</label>
-                      <input
-                        type="text"
-                        className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-850"
-                        value={img.url}
-                        onChange={(e) => handleUpdateImageField(idx, 'url', e.target.value)}
-                        placeholder="https://..."
-                        required
-                      />
+                    <div className="flex gap-3 items-start w-full">
+                      {/* Thumbnail Preview */}
+                      <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                        {img.url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={img.url}
+                            alt={img.alt_text || 'Preview'}
+                            className="object-cover w-full h-full"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                            }}
+                          />
+                        ) : (
+                          <span className="text-[9px] text-neutral-400 uppercase font-semibold">No Image</span>
+                        )}
+                      </div>
+
+                      {/* URL input and upload button */}
+                      <div className="flex-1 space-y-2">
+                        <div className="space-y-1">
+                          <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Gambar</label>
+                          <input
+                            type="text"
+                            className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                            value={img.url}
+                            onChange={(e) => handleUpdateImageField(idx, 'url', e.target.value)}
+                            placeholder="https://... atau unggah gambar"
+                            required
+                          />
+                        </div>
+
+                        {/* File Upload Button */}
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="file"
+                            id={`file-upload-${idx}`}
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0]
+                              if (!file) return
+                              
+                              const toastId = toast.loading('Mengunggah gambar...')
+                              try {
+                                const publicUrl = await uploadImage(file, 'products')
+                                handleUpdateImageField(idx, 'url', publicUrl)
+                                toast.success('Gambar berhasil diunggah!', { id: toastId })
+                              } catch (err: any) {
+                                toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
+                              }
+                            }}
+                          />
+                          <label
+                            htmlFor={`file-upload-${idx}`}
+                            className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                          >
+                            Unggah File
+                          </label>
+                          <span className="text-[9px] text-neutral-400 font-medium">
+                            Format: JPG, PNG, WEBP (Max 2MB)
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-[10px]">
