@@ -32,7 +32,8 @@ export default function AdminProductEditPage({ params }: EditProductPageProps) {
           *,
           product_variants (*, product_variant_attrs(*)),
           product_images (*),
-          product_marketplace_links (*)
+          product_marketplace_links (*),
+          collection_products (*)
         `)
         .eq('id', productId)
         .single()

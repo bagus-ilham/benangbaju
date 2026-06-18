@@ -374,7 +374,8 @@ export async function adminCreateProduct(
     attrs: { attr_name: string; attr_value: string }[]
   }[],
   images: { url: string; alt_text: string | null; sort_order: number; is_primary: boolean; variant_id?: string | null }[],
-  marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[]
+  marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[],
+  collectionIds: string[] = []
 ) {
   const { data: product, error: productErr } = await supabase
     .from('products')
@@ -460,6 +461,19 @@ export async function adminCreateProduct(
     if (linkErr) throw linkErr
   }
 
+  // Save collections mapping
+  if (collectionIds && collectionIds.length > 0) {
+    const collData = collectionIds.map((cid, idx) => ({
+      collection_id: cid,
+      product_id: productId,
+      sort_order: idx
+    }))
+    const { error: collErr } = await supabase
+      .from('collection_products')
+      .insert(collData)
+    if (collErr) throw collErr
+  }
+
   return { id: productId }
 }
 
@@ -490,7 +504,8 @@ export async function adminUpdateProduct(
     attrs: { attr_name: string; attr_value: string }[]
   }[],
   images: { url: string; alt_text: string | null; sort_order: number; is_primary: boolean; variant_id?: string | null }[],
-  marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[]
+  marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[],
+  collectionIds: string[] = []
 ) {
   const { error: productErr } = await supabase
     .from('products')
@@ -637,6 +652,25 @@ export async function adminUpdateProduct(
       .from('product_marketplace_links')
       .insert(linksData)
     if (linkErr) throw linkErr
+  }
+
+  // Update collections mapping: delete first then insert new ones
+  const { error: delCollErr } = await supabase
+    .from('collection_products')
+    .delete()
+    .eq('product_id', productId)
+  if (delCollErr) throw delCollErr
+
+  if (collectionIds && collectionIds.length > 0) {
+    const collData = collectionIds.map((cid, idx) => ({
+      collection_id: cid,
+      product_id: productId,
+      sort_order: idx
+    }))
+    const { error: collErr } = await supabase
+      .from('collection_products')
+      .insert(collData)
+    if (collErr) throw collErr
   }
 
   return { id: productId }

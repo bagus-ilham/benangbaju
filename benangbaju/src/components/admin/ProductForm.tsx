@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAdminCategories } from '@/hooks/useAdmin'
+import { useAdminCategories, useAdminCollections } from '@/hooks/useAdmin'
 import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Plus, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -19,6 +19,7 @@ interface ProductFormProps {
 export function ProductForm({ initialData, onSubmit, isSubmitting, title }: ProductFormProps) {
   const router = useRouter()
   const { data: categories, isLoading: catsLoading } = useAdminCategories()
+  const { data: collections, isLoading: colsLoading } = useAdminCollections()
 
   // Form states
   const [name, setName] = useState('')
@@ -40,6 +41,9 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
 
   // Marketplace links state
   const [marketplaceLinks, setMarketplaceLinks] = useState<any[]>([])
+
+  // Selected collections state
+  const [selectedCollections, setSelectedCollections] = useState<string[]>([])
 
   // Populate data on edit mode
   useEffect(() => {
@@ -100,6 +104,15 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
           }))
         )
       }
+
+      // Map collections
+      if (initialData.collection_products) {
+        setSelectedCollections(
+          initialData.collection_products.map((cp: any) => cp.collection_id)
+        )
+      } else {
+        setSelectedCollections([])
+      }
     } else {
       // Add default variant for new product
       setVariants([
@@ -124,6 +137,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
           variant_id: '',
         },
       ])
+      setSelectedCollections([])
     }
   }, [initialData])
 
@@ -311,6 +325,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       variants,
       images: cleanedImages,
       links: cleanedLinks,
+      collectionIds: selectedCollections,
     }
 
     try {
@@ -399,6 +414,46 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                 onChange={(e) => setWeightGram(Math.max(1, parseInt(e.target.value) || 0))}
                 required
               />
+            </div>
+
+            <div className="space-y-2 pt-2 border-t border-neutral-100">
+              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
+                Koleksi Kurasi (Opsional)
+              </label>
+              {colsLoading ? (
+                <p className="text-neutral-400 italic text-[11px] animate-pulse">Memuat daftar koleksi...</p>
+              ) : !collections || collections.length === 0 ? (
+                <p className="text-neutral-400 italic text-[11px]">Belum ada koleksi yang dibuat.</p>
+              ) : (
+                <div className="flex flex-wrap gap-x-6 gap-y-2.5 p-3 border border-neutral-200 bg-neutral-50/20">
+                  {collections.map((col) => {
+                    const isChecked = selectedCollections.includes(col.id)
+                    return (
+                      <div key={col.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`col-select-${col.id}`}
+                          checked={isChecked}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedCollections((prev) => [...prev, col.id])
+                            } else {
+                              setSelectedCollections((prev) => prev.filter((id) => id !== col.id))
+                            }
+                          }}
+                          className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0 cursor-pointer"
+                        />
+                        <label
+                          htmlFor={`col-select-${col.id}`}
+                          className="select-none text-neutral-700 font-semibold cursor-pointer text-xs animate-none"
+                        >
+                          {col.name}
+                        </label>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             <div className="space-y-1">
