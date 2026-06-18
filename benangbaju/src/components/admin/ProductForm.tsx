@@ -605,6 +605,105 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                     </label>
                   </div>
 
+                  {/* Variant Images Sub-section */}
+                  <div className="space-y-3 pt-2 border-t border-neutral-100">
+                    <div className="flex justify-between items-center">
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">Gambar Varian</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImages((prev) => [
+                            ...prev,
+                            {
+                              url: '',
+                              alt_text: '',
+                              sort_order: prev.length,
+                              is_primary: false,
+                              variant_id: v.id,
+                            },
+                          ])
+                        }}
+                        className="text-[9px] uppercase font-bold text-neutral-800 hover:underline inline"
+                      >
+                        + Tambah Gambar Varian
+                      </button>
+                    </div>
+
+                    {images.filter((img) => img.variant_id === v.id).length > 0 && (
+                      <div className="space-y-2.5">
+                        {images.map((img, imgIdx) => {
+                          if (img.variant_id !== v.id) return null
+                          return (
+                            <div key={imgIdx} className="flex gap-2 items-center border border-neutral-100 p-2 bg-white">
+                              {/* Thumbnail preview */}
+                              <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                                {img.url ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={img.url}
+                                    alt={img.alt_text || 'Preview'}
+                                    className="object-cover w-full h-full"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="text-[7px] text-neutral-400 uppercase font-semibold">No Img</span>
+                                )}
+                              </div>
+
+                              {/* Input URL */}
+                              <input
+                                type="text"
+                                className="flex-1 px-2 py-1 border border-neutral-200 outline-none text-[10px] bg-white focus:border-neutral-800"
+                                value={img.url}
+                                onChange={(e) => handleUpdateImageField(imgIdx, 'url', e.target.value)}
+                                placeholder="https://... atau unggah"
+                                required
+                              />
+
+                              {/* File Upload Button */}
+                              <input
+                                type="file"
+                                id={`variant-${vIdx}-file-upload-${imgIdx}`}
+                                accept="image/*"
+                                className="hidden"
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0]
+                                  if (!file) return
+                                  
+                                  const toastId = toast.loading('Mengunggah gambar...')
+                                  try {
+                                    const publicUrl = await uploadImage(file, 'products')
+                                    handleUpdateImageField(imgIdx, 'url', publicUrl)
+                                    toast.success('Gambar berhasil diunggah!', { id: toastId })
+                                  } catch (err: any) {
+                                    toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor={`variant-${vIdx}-file-upload-${imgIdx}`}
+                                className="cursor-pointer inline-flex items-center text-[8px] font-bold uppercase tracking-wider py-1 px-2 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none bg-white"
+                              >
+                                Unggah
+                              </label>
+
+                              {/* Remove button */}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(imgIdx)}
+                                className="text-neutral-400 hover:text-red-500 p-1"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Attributes Sub-section */}
                   <div className="space-y-3 pt-2 border-t border-neutral-100">
                     <div className="flex justify-between items-center">
@@ -672,138 +771,141 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
               </Button>
             </div>
 
-            {images.length === 0 ? (
+            {!images.some((img) => !img.variant_id) ? (
               <p className="text-[11px] text-neutral-400 italic">Belum ada gambar ditambahkan. Silakan tambah url gambar.</p>
             ) : (
               <div className="space-y-4">
-                {images.map((img, idx) => (
-                  <div key={idx} className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute right-2 top-2 text-neutral-400 hover:text-red-600 p-1"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                {images.map((img, idx) => {
+                  if (img.variant_id) return null
+                  return (
+                    <div key={idx} className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(idx)}
+                        className="absolute right-2 top-2 text-neutral-400 hover:text-red-600 p-1"
+                      >
+                        <Trash2 size={12} />
+                      </button>
 
-                    <div className="flex gap-3 items-start w-full">
-                      {/* Thumbnail Preview */}
-                      <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
-                        {img.url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={img.url}
-                            alt={img.alt_text || 'Preview'}
-                            className="object-cover w-full h-full"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
-                            }}
-                          />
-                        ) : (
-                          <span className="text-[9px] text-neutral-400 uppercase font-semibold">No Image</span>
-                        )}
+                      <div className="flex gap-3 items-start w-full">
+                        {/* Thumbnail Preview */}
+                        <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                          {img.url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={img.url}
+                              alt={img.alt_text || 'Preview'}
+                              className="object-cover w-full h-full"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                              }}
+                            />
+                          ) : (
+                            <span className="text-[9px] text-neutral-400 uppercase font-semibold">No Image</span>
+                          )}
+                        </div>
+
+                        {/* URL input and upload button */}
+                        <div className="flex-1 space-y-2">
+                          <div className="space-y-1">
+                            <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Gambar</label>
+                            <input
+                              type="text"
+                              className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                              value={img.url}
+                              onChange={(e) => handleUpdateImageField(idx, 'url', e.target.value)}
+                              placeholder="https://... atau unggah gambar"
+                              required
+                            />
+                          </div>
+
+                          {/* File Upload Button */}
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="file"
+                              id={`file-upload-${idx}`}
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0]
+                                if (!file) return
+                                
+                                const toastId = toast.loading('Mengunggah gambar...')
+                                try {
+                                  const publicUrl = await uploadImage(file, 'products')
+                                  handleUpdateImageField(idx, 'url', publicUrl)
+                                  toast.success('Gambar berhasil diunggah!', { id: toastId })
+                                } catch (err: any) {
+                                  toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
+                                }
+                              }}
+                            />
+                            <label
+                              htmlFor={`file-upload-${idx}`}
+                              className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                            >
+                              Unggah File
+                            </label>
+                            <span className="text-[9px] text-neutral-400 font-medium">
+                              Format: JPG, PNG, WEBP (Max 2MB)
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* URL input and upload button */}
-                      <div className="flex-1 space-y-2">
-                        <div className="space-y-1">
-                          <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Gambar</label>
+                      <div className="grid grid-cols-2 gap-2 text-[10px]">
+                        <div>
+                          <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Alt Text</label>
                           <input
                             type="text"
-                            className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
-                            value={img.url}
-                            onChange={(e) => handleUpdateImageField(idx, 'url', e.target.value)}
-                            placeholder="https://... atau unggah gambar"
-                            required
+                            className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white"
+                            value={img.alt_text}
+                            onChange={(e) => handleUpdateImageField(idx, 'alt_text', e.target.value)}
+                            placeholder="Keterangan foto"
                           />
                         </div>
-
-                        {/* File Upload Button */}
-                        <div className="flex items-center gap-2">
+                        <div>
+                          <label className="block text-[9px] font-semibold text-neutral-400 uppercase">No. Urut</label>
                           <input
-                            type="file"
-                            id={`file-upload-${idx}`}
-                            accept="image/*"
-                            className="hidden"
-                            onChange={async (e) => {
-                              const file = e.target.files?.[0]
-                              if (!file) return
-                              
-                              const toastId = toast.loading('Mengunggah gambar...')
-                              try {
-                                const publicUrl = await uploadImage(file, 'products')
-                                handleUpdateImageField(idx, 'url', publicUrl)
-                                toast.success('Gambar berhasil diunggah!', { id: toastId })
-                              } catch (err: any) {
-                                toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
-                              }
-                            }}
+                            type="number"
+                            className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white text-center"
+                            value={img.sort_order}
+                            onChange={(e) => handleUpdateImageField(idx, 'sort_order', parseInt(e.target.value) || 0)}
                           />
-                          <label
-                            htmlFor={`file-upload-${idx}`}
-                            className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
-                          >
-                            Unggah File
-                          </label>
-                          <span className="text-[9px] text-neutral-400 font-medium">
-                            Format: JPG, PNG, WEBP (Max 2MB)
-                          </span>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-[10px]">
-                      <div>
-                        <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Alt Text</label>
-                        <input
-                          type="text"
-                          className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white"
-                          value={img.alt_text}
-                          onChange={(e) => handleUpdateImageField(idx, 'alt_text', e.target.value)}
-                          placeholder="Keterangan foto"
-                        />
+                      <div className="space-y-1">
+                        <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Tautkan ke Varian</label>
+                        <select
+                          className="w-full px-2 py-1.5 border border-neutral-200 bg-white text-[11px] font-medium"
+                          value={img.variant_id || ''}
+                          onChange={(e) => handleUpdateImageField(idx, 'variant_id', e.target.value || null)}
+                        >
+                          <option value="">Semua Varian (Gambar Umum)</option>
+                          {variants.map((v, vIdx) => (
+                            <option key={v.id || vIdx} value={v.id || `temp-${vIdx}`}>
+                              {v.name || `Varian #${vIdx + 1}`} ({v.sku || 'Tanpa SKU'})
+                            </option>
+                          ))}
+                        </select>
                       </div>
-                      <div>
-                        <label className="block text-[9px] font-semibold text-neutral-400 uppercase">No. Urut</label>
+
+                      <div className="flex items-center space-x-1.5 pt-1">
                         <input
-                          type="number"
-                          className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white text-center"
-                          value={img.sort_order}
-                          onChange={(e) => handleUpdateImageField(idx, 'sort_order', parseInt(e.target.value) || 0)}
+                          type="checkbox"
+                          id={`img-primary-${idx}`}
+                          checked={img.is_primary}
+                          onChange={(e) => handleUpdateImageField(idx, 'is_primary', e.target.checked)}
+                          className="w-3.5 h-3.5 border-neutral-300 accent-neutral-900 rounded-none"
                         />
+                        <label htmlFor={`img-primary-${idx}`} className="select-none text-[10px] text-neutral-600 font-bold uppercase">
+                          Gambar Utama
+                        </label>
                       </div>
                     </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Tautkan ke Varian</label>
-                      <select
-                        className="w-full px-2 py-1.5 border border-neutral-200 bg-white text-[11px] font-medium"
-                        value={img.variant_id || ''}
-                        onChange={(e) => handleUpdateImageField(idx, 'variant_id', e.target.value || null)}
-                      >
-                        <option value="">Semua Varian (Gambar Umum)</option>
-                        {variants.map((v, vIdx) => (
-                          <option key={v.id || vIdx} value={v.id || `temp-${vIdx}`}>
-                            {v.name || `Varian #${vIdx + 1}`} ({v.sku || 'Tanpa SKU'})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="flex items-center space-x-1.5 pt-1">
-                      <input
-                        type="checkbox"
-                        id={`img-primary-${idx}`}
-                        checked={img.is_primary}
-                        onChange={(e) => handleUpdateImageField(idx, 'is_primary', e.target.checked)}
-                        className="w-3.5 h-3.5 border-neutral-300 accent-neutral-900 rounded-none"
-                      />
-                      <label htmlFor={`img-primary-${idx}`} className="select-none text-[10px] text-neutral-600 font-bold uppercase">
-                        Gambar Utama
-                      </label>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>

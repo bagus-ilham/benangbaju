@@ -25,6 +25,7 @@ export function ProductGallery({ images, productName, selectedVariantId }: Produ
     if (selectedVariantId) {
       const variantImage = images.find((img) => img.variant_id === selectedVariantId)
       if (variantImage) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setActiveImage(variantImage.url)
       }
     }

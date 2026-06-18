@@ -1,7 +1,6 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import { PackageSearch } from 'lucide-react'
 import { createServerClient } from '@/lib/supabase/server'
 import { getCategoryBySlug } from '@/services/categories'
 import { getProducts } from '@/services/products'
@@ -70,7 +69,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
       <PageContainer className="py-12 md:py-16 page-content">
         {products.length === 0 ? (
           <EmptyState
-            icon={PackageSearch}
+            icon="PackageSearch"
             title="Belum Ada Produk"
             description="Belum ada produk dalam kategori ini. Coba jelajahi kategori lain."
             action={{ label: 'Lihat Semua Produk', href: '/produk' }}

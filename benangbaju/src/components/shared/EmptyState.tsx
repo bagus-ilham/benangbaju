@@ -3,10 +3,18 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { LucideIcon } from 'lucide-react'
+import { LucideIcon, Percent, PackageSearch, Heart, ClipboardList, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { EASE_PREMIUM } from '@/lib/motion'
+
+const iconMap = {
+  Percent,
+  PackageSearch,
+  Heart,
+  ClipboardList,
+  ShoppingBag,
+} as const
 
 interface EmptyStateAction {
   label: string
@@ -16,7 +24,7 @@ interface EmptyStateAction {
 }
 
 interface EmptyStateProps {
-  icon: LucideIcon
+  icon: keyof typeof iconMap | LucideIcon
   title: string
   description?: string
   action?: EmptyStateAction
@@ -25,13 +33,15 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon: Icon,
+  icon,
   title,
   description,
   action,
   secondaryAction,
   className,
 }: EmptyStateProps) {
+  const Icon = typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon;
+
   const renderAction = (act: EmptyStateAction, key: string) => {
     const button = (
       <Button variant={act.variant ?? 'primary'} size="md" onClick={act.onClick}>

@@ -2,9 +2,10 @@ import React from 'react'
 import { createServerClient } from '@/lib/supabase/server'
 import { getActiveBanners } from '@/services/banners'
 import { getActiveCategories } from '@/services/categories'
-import { getActiveCollections } from '@/services/collections'
+import { getActiveCollections, getCollectionBySlug } from '@/services/collections'
 import { getActiveFlashSale } from '@/services/flashSales'
 import { getProducts } from '@/services/products'
+import { getSiteSettings } from '@/services/settings'
 import {
   HeroSection,
   TrustStrip,
@@ -29,6 +30,7 @@ export default async function Homepage() {
     flashSale,
     featuredResponse,
     newestResponse,
+    settings,
   ] = await Promise.all([
     getActiveBanners(supabase),
     getActiveCategories(supabase),
@@ -36,10 +38,29 @@ export default async function Homepage() {
     getActiveFlashSale(supabase),
     getProducts(supabase, { sortBy: 'featured', limit: 4 }),
     getProducts(supabase, { sortBy: 'newest', limit: 4 }),
+    getSiteSettings(supabase),
   ])
 
-  const col1 = collections[0] ?? null
-  const col2 = collections[1] ?? null
+  const spotlight1Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_1')?.value || ''
+  const spotlight2Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_2')?.value || ''
+
+  let col1 = null
+  let col2 = null
+
+  if (spotlight1Slug) {
+    col1 = await getCollectionBySlug(supabase, spotlight1Slug)
+  }
+  if (spotlight2Slug) {
+    col2 = await getCollectionBySlug(supabase, spotlight2Slug)
+  }
+
+  // Fallback to defaults if not set or not found
+  if (!col1) {
+    col1 = collections[0] ?? null
+  }
+  if (!col2) {
+    col2 = collections[1] ?? null
+  }
 
   const [collection1Products, collection2Products] = await Promise.all([
     col1

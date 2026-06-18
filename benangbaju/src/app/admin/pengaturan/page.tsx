@@ -5,10 +5,25 @@ import {
   useAdminSettings,
   useAdminUpdateSettings,
   useAdminActivityLogs,
+  useAdminCollections,
+  useAdminUpsertSettings,
 } from '@/hooks/useAdmin'
 import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+const DEFAULT_SETTINGS = [
+  { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
+  { key: 'store_tagline', value: 'Fashion Muslim Premium Indonesia', type: 'text', group: 'general', label: 'Slogan Toko' },
+  { key: 'homepage_spotlight_collection_1', value: '', type: 'text', group: 'general', label: 'Koleksi Beranda Utama (Spotlight 1)' },
+  { key: 'homepage_spotlight_collection_2', value: '', type: 'text', group: 'general', label: 'Koleksi Beranda Kedua (Spotlight 2)' },
+  { key: 'meta_title', value: 'Benangbaju — Fashion Muslim Premium Indonesia', type: 'text', group: 'seo', label: 'Meta Title Default' },
+  { key: 'meta_description', value: 'Belanja busana muslim premium dengan desain minimalis dan bahan berkualitas.', type: 'text', group: 'seo', label: 'Meta Description Default' },
+  { key: 'enable_midtrans', value: 'true', type: 'boolean', group: 'payment', label: 'Aktifkan Midtrans Sandbox' },
+  { key: 'whatsapp_number', value: '6281234567890', type: 'text', group: 'social', label: 'Nomor WhatsApp Chat' },
+  { key: 'instagram_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username Instagram' },
+  { key: 'tiktok_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username TikTok' },
+] as const
 
 export default function AdminSettingsPage() {
   const [activeSubTab, setActiveSubTab] = useState<'settings' | 'logs'>('settings')
@@ -16,22 +31,36 @@ export default function AdminSettingsPage() {
   // Queries
   const { data: settingsList = [], isLoading: settingsLoading, refetch: refetchSettings } = useAdminSettings()
   const { data: logsList = [], isLoading: logsLoading } = useAdminActivityLogs()
+  const { data: collections = [] } = useAdminCollections()
 
   const updateMutation = useAdminUpdateSettings()
+  const upsertMutation = useAdminUpsertSettings()
 
   // Setting fields dictionary
   const [fields, setFields] = useState<Record<string, string>>({})
 
-  // Initialize fields
+  // Auto-seed settings if empty, otherwise initialize fields
   useEffect(() => {
-    if (settingsList && settingsList.length > 0) {
-      const dict: Record<string, string> = {}
-      settingsList.forEach((s: any) => {
-        dict[s.key] = s.value || ''
-      })
-      setFields(dict)
+    if (!settingsLoading) {
+      if (settingsList.length === 0) {
+        const seedSettings = async () => {
+          try {
+            await upsertMutation.mutateAsync(DEFAULT_SETTINGS as any)
+            refetchSettings()
+          } catch (err) {
+            console.error('Failed to seed default settings:', err)
+          }
+        }
+        seedSettings()
+      } else {
+        const dict: Record<string, string> = {}
+        settingsList.forEach((s: any) => {
+          dict[s.key] = s.value || ''
+        })
+        setFields(dict)
+      }
     }
-  }, [settingsList])
+  }, [settingsList, settingsLoading])
 
   const handleFieldChange = (key: string, value: string) => {
     setFields((prev) => ({
@@ -116,7 +145,22 @@ export default function AdminSettingsPage() {
                       <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
                         {setting.label || setting.key}
                       </label>
-                      {setting.type === 'boolean' ? (
+                      {setting.key === 'homepage_spotlight_collection_1' || setting.key === 'homepage_spotlight_collection_2' ? (
+                        <select
+                          value={fields[setting.key] || ''}
+                          onChange={(e) => handleFieldChange(setting.key, e.target.value)}
+                          className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
+                        >
+                          <option value="">Pilih Koleksi (Gunakan Urutan Default)</option>
+                          {collections
+                            .filter((col: any) => col.is_active)
+                            .map((col: any) => (
+                              <option key={col.id} value={col.slug}>
+                                {col.name} ({col.slug})
+                              </option>
+                            ))}
+                        </select>
+                      ) : setting.type === 'boolean' ? (
                         <select
                           value={fields[setting.key] || 'false'}
                           onChange={(e) => handleFieldChange(setting.key, e.target.value)}

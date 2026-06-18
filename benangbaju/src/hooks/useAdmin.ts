@@ -64,6 +64,8 @@ import {
   adminGetSettings,
   adminUpdateSettings,
   adminGetActivityLogs,
+  adminUpsertSettings,
+  SiteSetting,
 } from '@/services/settings'
 import {
   adminGetCustomers,
@@ -498,6 +500,17 @@ export function useAdminUpdateSettings() {
     }
   })
 }
+
+export function useAdminUpsertSettings() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (settings: SiteSetting[]) => adminUpsertSettings(supabase, settings),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'settings'] })
+    }
+  })
+}
+
 
 export function useAdminActivityLogs() {
   return useQuery({

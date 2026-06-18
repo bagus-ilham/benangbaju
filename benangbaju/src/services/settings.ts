@@ -76,3 +76,33 @@ export async function adminGetActivityLogs(supabase: SupabaseClient<Database>): 
 
   return data as unknown as ActivityLog[]
 }
+
+export async function adminUpsertSettings(
+  supabase: SupabaseClient<Database>,
+  settings: SiteSetting[]
+): Promise<void> {
+  const { error } = await supabase
+    .from('site_settings')
+    .upsert(settings, { onConflict: 'key' })
+
+  if (error) {
+    console.error('Error upserting settings:', error)
+    throw error
+  }
+}
+
+export async function getSiteSettings(
+  supabase: SupabaseClient<Database>
+): Promise<SiteSetting[]> {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('*')
+
+  if (error) {
+    console.error('Error fetching site settings:', error)
+    return []
+  }
+
+  return data as SiteSetting[]
+}
+

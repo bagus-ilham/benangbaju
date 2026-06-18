@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
@@ -50,14 +51,14 @@ export default function RootError({
           >
             Coba Lagi
           </Button>
-          <a href="/" className="flex-1">
+          <Link href="/" className="flex-1">
             <Button
               variant="outline"
               className="w-full text-[10px] py-3"
             >
               Ke Beranda
             </Button>
-          </a>
+          </Link>
         </div>
       </motion.div>
     </div>

@@ -3,7 +3,6 @@ import { createServerClient } from '@/lib/supabase/server'
 import { getActiveFlashSale } from '@/services/flashSales'
 import { FlashSaleSection } from '@/components/home/FlashSaleSection'
 import { PageHero, PageContainer, EmptyState } from '@/components/shared'
-import { Percent } from 'lucide-react'
 
 export const revalidate = 10
 
@@ -25,7 +24,7 @@ export default async function FlashSalePage() {
       ) : (
         <PageContainer>
           <EmptyState
-            icon={Percent}
+            icon="Percent"
             title="Tidak Ada Flash Sale Aktif"
             description="Saat ini sedang tidak ada promo flash sale yang berlangsung. Nantikan promo menarik berikutnya dari kami!"
             action={{ label: 'Belanja Produk', href: '/produk' }}

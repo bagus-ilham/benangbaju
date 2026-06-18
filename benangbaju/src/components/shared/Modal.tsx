@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useId } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -22,6 +23,13 @@ export function Modal({
   size = 'md',
   className,
 }: ModalProps) {
+  const [mounted, setMounted] = React.useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true)
+  }, [])
+
   const titleId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -75,7 +83,9 @@ export function Modal({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose])
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -139,6 +149,7 @@ export function Modal({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
