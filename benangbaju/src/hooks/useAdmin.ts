@@ -176,8 +176,8 @@ export function useAdminProducts(page = 1, limit = 20, search = '') {
 export function useAdminCreateProduct() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ productData, variants, images, links }: any) =>
-      adminCreateProduct(supabase, productData, variants, images, links),
+    mutationFn: ({ productData, variants, images, links, collectionIds }: any) =>
+      adminCreateProduct(supabase, productData, variants, images, links, collectionIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'products'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })
@@ -188,10 +188,14 @@ export function useAdminCreateProduct() {
 export function useAdminUpdateProduct() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ productId, productData, variants, images, links }: any) =>
-      adminUpdateProduct(supabase, productId, productData, variants, images, links),
-    onSuccess: () => {
+    mutationFn: ({ productId, productData, variants, images, links, collectionIds }: any) =>
+      adminUpdateProduct(supabase, productId, productData, variants, images, links, collectionIds),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'products'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'product-edit'] })
+      if (variables?.productId) {
+        queryClient.invalidateQueries({ queryKey: ['admin', 'product-edit', variables.productId] })
+      }
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['product'] })
