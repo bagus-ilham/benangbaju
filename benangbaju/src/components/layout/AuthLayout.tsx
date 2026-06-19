@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import { CurrentYear } from '@/components/shared/CurrentYear'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -40,7 +41,7 @@ export function AuthLayout({ children }: AuthLayoutProps) : React.JSX.Element {
           </div>
 
           <p className="text-[10px] text-neutral-500 font-sans tracking-wide">
-            &copy; {new Date().getFullYear()} Benangbaju Store
+            &copy; <CurrentYear /> Benangbaju Store
           </p>
         </div>
       </div>

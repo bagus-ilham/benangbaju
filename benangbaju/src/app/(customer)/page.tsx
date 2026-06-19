@@ -19,8 +19,6 @@ import {
   RecentlyViewedSection
 } from '@/components/home'
 
-export const revalidate = 60
-
 async function getCachedHomepageData() {
   'use cache'
   cacheLife('hours')
