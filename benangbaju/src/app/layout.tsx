@@ -25,7 +25,7 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) : import("d:/Aulia Project/benangbaju/node_modules/@types/react/index").JSX.Element {
+}>) : React.JSX.Element {
   return (
     <html
       lang="id"

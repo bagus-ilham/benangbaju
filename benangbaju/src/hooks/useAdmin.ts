@@ -779,14 +779,14 @@ export function useAdminReplyToReview() : UseMutationResult<
 }
 
 // --- 10. Settings Hooks ---
-export function useAdminSettings() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<SiteSetting[]>, Error> {
+export function useAdminSettings() : import("@tanstack/react-query").UseQueryResult<NoInfer<SiteSetting[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'settings'],
     queryFn: () => adminGetSettings(supabase)
   })
 }
 
-export function useAdminUpdateSettings() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, Record<string, string>, unknown> {
+export function useAdminUpdateSettings() : import("@tanstack/react-query").UseMutationResult<void, Error, Record<string, string>, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (settings: Record<string, string>) => adminUpdateSettings(supabase, settings),
@@ -798,7 +798,7 @@ export function useAdminUpdateSettings() : import("D:/Aulia Project/benangbaju/n
   })
 }
 
-export function useAdminUpsertSettings() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, SiteSetting[], unknown> {
+export function useAdminUpsertSettings() : import("@tanstack/react-query").UseMutationResult<void, Error, SiteSetting[], unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (settings: SiteSetting[]) => adminUpsertSettings(supabase, settings),
@@ -811,7 +811,7 @@ export function useAdminUpsertSettings() : import("D:/Aulia Project/benangbaju/n
 }
 
 
-export function useAdminActivityLogs() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<import("D:/Aulia Project/benangbaju/src/services/settings").ActivityLog[]>, Error> {
+export function useAdminActivityLogs() : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/settings").ActivityLog[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'activity-logs'],
     queryFn: () => adminGetActivityLogs(supabase)
@@ -819,7 +819,7 @@ export function useAdminActivityLogs() : import("D:/Aulia Project/benangbaju/nod
 }
 
 // --- 11. Customer Management Hooks ---
-export function useAdminCustomers() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<import("D:/Aulia Project/benangbaju/src/services/adminCustomers").CustomerProfile[]>, Error> {
+export function useAdminCustomers() : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/adminCustomers").CustomerProfile[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'customers'],
     queryFn: () => adminGetCustomers(supabase)
@@ -844,14 +844,14 @@ export function useAdminToggleCustomerStatus() : UseMutationResult<
 }
 
 // --- 12. Shipping Management Hooks ---
-export function useAdminShippingZones() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<ShippingZone[]>, Error> {
+export function useAdminShippingZones() : import("@tanstack/react-query").UseQueryResult<NoInfer<ShippingZone[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'shipping-zones'],
     queryFn: () => adminGetShippingZones(supabase)
   })
 }
 
-export function useAdminCreateShippingZone() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<ShippingZone, Error, { zone: Omit<ShippingZone, "id" | "shipping_zone_coverage">; provinces: string[]; }, unknown> {
+export function useAdminCreateShippingZone() : import("@tanstack/react-query").UseMutationResult<ShippingZone, Error, { zone: Omit<ShippingZone, "id" | "shipping_zone_coverage">; provinces: string[]; }, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ zone, provinces }: { zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>; provinces: string[] }) =>
@@ -862,7 +862,7 @@ export function useAdminCreateShippingZone() : import("D:/Aulia Project/benangba
   })
 }
 
-export function useAdminUpdateShippingZone() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, { zoneId: string; zone: Partial<Omit<ShippingZone, "id" | "shipping_zone_coverage">>; provinces?: string[]; }, unknown> {
+export function useAdminUpdateShippingZone() : import("@tanstack/react-query").UseMutationResult<void, Error, { zoneId: string; zone: Partial<Omit<ShippingZone, "id" | "shipping_zone_coverage">>; provinces?: string[]; }, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ zoneId, zone, provinces }: { zoneId: string; zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>; provinces?: string[] }) =>
@@ -874,7 +874,7 @@ export function useAdminUpdateShippingZone() : import("D:/Aulia Project/benangba
   })
 }
 
-export function useAdminDeleteShippingZone() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, string, unknown> {
+export function useAdminDeleteShippingZone() : import("@tanstack/react-query").UseMutationResult<void, Error, string, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (zoneId: string) => adminDeleteShippingZone(supabase, zoneId),
@@ -885,14 +885,14 @@ export function useAdminDeleteShippingZone() : import("D:/Aulia Project/benangba
   })
 }
 
-export function useAdminShippingRates() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<ShippingRate[]>, Error> {
+export function useAdminShippingRates() : import("@tanstack/react-query").UseQueryResult<NoInfer<ShippingRate[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'shipping-rates'],
     queryFn: () => adminGetShippingRates(supabase)
   })
 }
 
-export function useAdminCreateShippingRate() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<ShippingRate, Error, Omit<ShippingRate, "shipping_zones" | "id">, unknown> {
+export function useAdminCreateShippingRate() : import("@tanstack/react-query").UseMutationResult<ShippingRate, Error, Omit<ShippingRate, "shipping_zones" | "id">, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (rate: Omit<ShippingRate, 'id' | 'shipping_zones'>) => adminCreateShippingRate(supabase, rate),
@@ -903,7 +903,7 @@ export function useAdminCreateShippingRate() : import("D:/Aulia Project/benangba
   })
 }
 
-export function useAdminUpdateShippingRate() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, { rateId: string; rate: Partial<Omit<ShippingRate, "id" | "shipping_zones">>; }, unknown> {
+export function useAdminUpdateShippingRate() : import("@tanstack/react-query").UseMutationResult<void, Error, { rateId: string; rate: Partial<Omit<ShippingRate, "id" | "shipping_zones">>; }, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ rateId, rate }: { rateId: string; rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>> }) =>
@@ -915,7 +915,7 @@ export function useAdminUpdateShippingRate() : import("D:/Aulia Project/benangba
   })
 }
 
-export function useAdminDeleteShippingRate() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, string, unknown> {
+export function useAdminDeleteShippingRate() : import("@tanstack/react-query").UseMutationResult<void, Error, string, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (rateId: string) => adminDeleteShippingRate(supabase, rateId),
@@ -927,14 +927,14 @@ export function useAdminDeleteShippingRate() : import("D:/Aulia Project/benangba
 }
 
 // --- 13. Redirects Hooks ---
-export function useAdminRedirects() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<RedirectRule[]>, Error> {
+export function useAdminRedirects() : import("@tanstack/react-query").UseQueryResult<NoInfer<RedirectRule[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'redirects'],
     queryFn: () => adminGetRedirects(supabase)
   })
 }
 
-export function useAdminCreateRedirect() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<RedirectRule, Error, Omit<RedirectRule, "id" | "created_at">, unknown> {
+export function useAdminCreateRedirect() : import("@tanstack/react-query").UseMutationResult<RedirectRule, Error, Omit<RedirectRule, "id" | "created_at">, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (redirect: Omit<RedirectRule, 'id' | 'created_at'>) =>
@@ -945,7 +945,7 @@ export function useAdminCreateRedirect() : import("D:/Aulia Project/benangbaju/n
   })
 }
 
-export function useAdminUpdateRedirect() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, { redirectId: string; redirect: Partial<Omit<RedirectRule, "id" | "created_at">>; }, unknown> {
+export function useAdminUpdateRedirect() : import("@tanstack/react-query").UseMutationResult<void, Error, { redirectId: string; redirect: Partial<Omit<RedirectRule, "id" | "created_at">>; }, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ redirectId, redirect }: { redirectId: string; redirect: Partial<Omit<RedirectRule, 'id' | 'created_at'>> }) =>
@@ -956,7 +956,7 @@ export function useAdminUpdateRedirect() : import("D:/Aulia Project/benangbaju/n
   })
 }
 
-export function useAdminDeleteRedirect() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, string, unknown> {
+export function useAdminDeleteRedirect() : import("@tanstack/react-query").UseMutationResult<void, Error, string, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (redirectId: string) => adminDeleteRedirect(supabase, redirectId),
@@ -967,14 +967,14 @@ export function useAdminDeleteRedirect() : import("D:/Aulia Project/benangbaju/n
 }
 
 // --- 14. Landing Pages Hooks ---
-export function useAdminLandingPages() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseQueryResult<NoInfer<LandingPage[]>, Error> {
+export function useAdminLandingPages() : import("@tanstack/react-query").UseQueryResult<NoInfer<LandingPage[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'landing-pages'],
     queryFn: () => adminGetLandingPages(supabase)
   })
 }
 
-export function useAdminCreateLandingPage() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<LandingPage, Error, Omit<LandingPage, "id" | "created_at" | "updated_at">, unknown> {
+export function useAdminCreateLandingPage() : import("@tanstack/react-query").UseMutationResult<LandingPage, Error, Omit<LandingPage, "id" | "created_at" | "updated_at">, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (landingPage: Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>) =>
@@ -985,7 +985,7 @@ export function useAdminCreateLandingPage() : import("D:/Aulia Project/benangbaj
   })
 }
 
-export function useAdminUpdateLandingPage() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, { landingPageId: string; landingPage: Partial<Omit<LandingPage, "id" | "created_at" | "updated_at">>; }, unknown> {
+export function useAdminUpdateLandingPage() : import("@tanstack/react-query").UseMutationResult<void, Error, { landingPageId: string; landingPage: Partial<Omit<LandingPage, "id" | "created_at" | "updated_at">>; }, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ landingPageId, landingPage }: { landingPageId: string; landingPage: Partial<Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>> }) =>
@@ -996,7 +996,7 @@ export function useAdminUpdateLandingPage() : import("D:/Aulia Project/benangbaj
   })
 }
 
-export function useAdminDeleteLandingPage() : import("D:/Aulia Project/benangbaju/node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup").UseMutationResult<void, Error, string, unknown> {
+export function useAdminDeleteLandingPage() : import("@tanstack/react-query").UseMutationResult<void, Error, string, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (landingPageId: string) => adminDeleteLandingPage(supabase, landingPageId),

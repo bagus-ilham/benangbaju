@@ -1,7 +1,7 @@
 import { PageContainer } from '@/components/shared/PageContainer'
 import { ProductGridSkeleton } from '@/components/shared/ProductGridSkeleton'
 
-export default function ProductDetailLoading() : import("d:/Aulia Project/benangbaju/node_modules/@types/react/index").JSX.Element {
+export default function ProductDetailLoading() : React.JSX.Element {
   return (
     <div className="bg-white min-h-screen">
       <PageContainer className="py-10 md:py-12 page-content">

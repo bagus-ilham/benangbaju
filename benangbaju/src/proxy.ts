@@ -1,7 +1,7 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
-export async function proxy(request: NextRequest) : Promise<import("d:/Aulia Project/benangbaju/node_modules/next/server").NextResponse<unknown>> {
+export async function proxy(request: NextRequest) : Promise<NextResponse> {
   return await updateSession(request)
 }
 
