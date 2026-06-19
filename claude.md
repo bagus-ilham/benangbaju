@@ -360,38 +360,3 @@ supabase db reset                 # Drop + recreate + seed
 8. **RPC untuk operasi kompleks** — checkout, cancel order, stock adjustment.
 9. **Snapshot data di order_items** — nama produk, harga, SKU di-copy saat order dibuat.
 10. **Lazy cancel** — tidak ada cron job, expired orders di-cancel saat halaman dibuka.
-
-Audit this codebase specifically for Next.js 16 breaking changes and migration issues.
-
-Check for:
-
-1. middleware.ts → proxy.ts
-   - Does middleware.ts still exist at root?
-   - Is the exported function named `proxy`?
-   - Is the NextRequest import updated?
-
-2. Async params
-   - All page/layout components using `params` — is it awaited?
-   - Pattern: `const { slug } = params` → should be `const { slug } = await params`
-
-3. revalidateTag() signature
-   - All calls to revalidateTag() — do they have a second argument (cacheLife profile)?
-   - Fix: revalidateTag('tag', 'max')
-
-4. PPR / Cache Components config
-   - Does next.config.ts have `experimental.ppr`? Remove it.
-   - Replace with `cacheComponents: true` if PPR behavior is desired
-
-5. React Compiler memoization conflicts
-   - Is `reactCompiler: true` set in next.config.ts?
-   - If yes, find all manual React.memo / useMemo / useCallback that are now redundant
-
-6. next/image defaults
-   - Any <Image> without width+height or fill prop?
-
-7. "use cache" adoption
-   - Server functions/components still using old fetch cache options?
-   - Candidates for "use cache" directive migration?
-
-Report each as: File:Line | Issue | Fix
-Then give a migration completion percentage estimate.

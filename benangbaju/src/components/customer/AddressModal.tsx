@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Modal } from '@/components/shared/Modal'
 import { Button } from '@/components/shared/Button'
 import { Input } from '@/components/shared/Input'
-import { useAddUserAddress, useUpdateUserAddress } from '@/hooks/useShipping'
+import { useAddUserAddress, useUpdateUserAddress, useDistrictSearch } from '@/hooks/useShipping'
 import type { UserAddress } from '@/services/shipping'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -43,6 +43,11 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
   const [zoneId, setZoneId] = useState<string | null>(null)
   const [isDefault, setIsDefault] = useState(false)
 
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const { data: searchResults } = useDistrictSearch(searchQuery)
+  const skipProvinceFetchRef = useRef(false)
+
   const addAddressMutation = useAddUserAddress()
   const updateAddressMutation = useUpdateUserAddress()
 
@@ -61,6 +66,8 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
       setFullAddress(addressToEdit.full_address)
       setZoneId(addressToEdit.zone_id)
       setIsDefault(addressToEdit.is_default)
+      setSearchQuery(addressToEdit.district_name ? `${addressToEdit.district_name}, ${addressToEdit.city_name}` : '')
+      setShowSuggestions(false)
       if (addressToEdit.province_name) {
         justInitializedRef.current = true
       }
@@ -75,12 +82,19 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
       setFullAddress('')
       setZoneId(null)
       setIsDefault(false)
+      setSearchQuery('')
+      setShowSuggestions(false)
       justInitializedRef.current = false
     }
   }, [addressToEdit, isOpen])
 
   // Fetch zone_id when provinceName changes
   useEffect(() => {
+    if (skipProvinceFetchRef.current) {
+      skipProvinceFetchRef.current = false
+      return
+    }
+
     if (!provinceName) {
       setZoneId(null)
       justInitializedRef.current = false
@@ -187,6 +201,51 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
           placeholder="cth: 08123456789"
           required
         />
+
+        {/* Autocomplete district search */}
+        <div className="relative">
+          <Input
+            label="Cari Kota / Kecamatan (Ketik min. 2 karakter)*"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setShowSuggestions(true)
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => {
+              setTimeout(() => setShowSuggestions(false), 200)
+            }}
+            placeholder="Cari cth: Kebayoran Baru atau Bandung..."
+            helperText="Pencarian otomatis untuk provinsi, kota, kecamatan, dan kode pos."
+          />
+          {showSuggestions && searchResults && searchResults.length > 0 && (
+            <div className="absolute z-10 w-full bg-white border border-neutral-200 shadow-lg max-h-48 overflow-y-auto mt-1 font-sans text-xs">
+              {searchResults.map((district) => (
+                <div
+                  key={district.id}
+                  onClick={() => {
+                    skipProvinceFetchRef.current = true
+                    setProvinceName(district.province_name)
+                    setCityName(district.city_name)
+                    setDistrictName(district.district_name)
+                    setPostalCode(district.postal_code || '')
+                    setZoneId(district.zone_id)
+                    setSearchQuery(`${district.district_name}, ${district.city_name}`)
+                    setShowSuggestions(false)
+                  }}
+                  className="p-2.5 hover:bg-neutral-50 cursor-pointer border-b border-neutral-100 last:border-0"
+                >
+                  <p className="font-bold text-neutral-800">
+                    {district.district_name}, {district.city_name}
+                  </p>
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-wider">
+                    {district.province_name} {district.postal_code ? `• ${district.postal_code}` : ''}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Province Select Dropdown */}
         <div className="flex flex-col space-y-1">

@@ -12,7 +12,7 @@ import {
   useAdminDeleteShippingRate,
 } from '@/hooks/useAdmin'
 import type { ShippingZone, ShippingRate } from '@/services/shipping'
-import { Button, AdminPageHeader } from '@/components/shared'
+import { Button, AdminPageHeader, Modal } from '@/components/shared'
 import { Plus, Edit, Trash2, MapPin, Truck, RefreshCw, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatIDR } from '@/lib/utils/format'
@@ -419,185 +419,177 @@ export default function AdminShippingPage() : React.JSX.Element {
       </AnimatePresence>
 
       {/* --- ZONES CONFIG MODAL --- */}
-      {zoneModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs font-sans text-xs">
-          <div className="bg-white border border-neutral-200 w-full max-w-xl p-6 sm:p-8 space-y-6">
-            <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
-              <h3 className="font-serif text-lg font-bold text-neutral-900">{editingZone ? 'Ubah Zona Pengiriman' : 'Tambah Zona Baru'}</h3>
-              <button onClick={() => setZoneModalOpen(false)} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal"><X size={18} /></button>
-            </div>
-            
-            <form onSubmit={handleSaveZone} className="space-y-4">
-              <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Nama Zona*</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="cth: Pulau Jawa"
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                  value={zoneName}
-                  onChange={(e) => setZoneName(e.target.value)}
-                />
-              </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Deskripsi</label>
-                <textarea
-                  placeholder="Deskripsi wilayah cakupan..."
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black h-16 resize-none"
-                  value={zoneDesc}
-                  onChange={(e) => setZoneDesc(e.target.value)}
-                />
-              </div>
-
-              {/* Covered Provinces selection grid */}
-              <div className="flex flex-col space-y-2">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Pilih Cakupan Provinsi* (Minimal 1)</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-neutral-50 border border-neutral-200 max-h-48 overflow-y-auto">
-                  {PROVINCES.map((p) => {
-                    const isSelected = selectedProvinces.includes(p)
-                    return (
-                      <div
-                        key={p}
-                        onClick={() => handleToggleProvince(p)}
-                        className={`p-2 border text-[10px] font-medium text-center cursor-pointer transition select-none ${
-                          isSelected
-                            ? 'bg-neutral-950 text-white border-neutral-950'
-                            : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'
-                        }`}
-                      >
-                        {p}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="zoneActive"
-                  checked={zoneActive}
-                  onChange={(e) => setZoneActive(e.target.checked)}
-                  className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
-                />
-                <label htmlFor="zoneActive" className="font-bold text-neutral-700">Aktifkan Zona ini</label>
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
-                <Button type="button" variant="outline" onClick={() => setZoneModalOpen(false)}>Batal</Button>
-                <Button type="submit" variant="primary" isLoading={createZoneMutation.isPending || updateZoneMutation.isPending}>Simpan</Button>
-              </div>
-            </form>
+      <Modal
+        isOpen={zoneModalOpen}
+        onClose={() => setZoneModalOpen(false)}
+        title={editingZone ? 'Ubah Zona Pengiriman' : 'Tambah Zona Baru'}
+        size="lg"
+      >
+        <form onSubmit={handleSaveZone} className="space-y-4">
+          <div className="flex flex-col space-y-1">
+            <label className="font-bold text-neutral-500 uppercase tracking-wider">Nama Zona*</label>
+            <input
+              type="text"
+              required
+              placeholder="cth: Pulau Jawa"
+              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
+              value={zoneName}
+              onChange={(e) => setZoneName(e.target.value)}
+            />
           </div>
-        </div>
-      )}
+
+          <div className="flex flex-col space-y-1">
+            <label className="font-bold text-neutral-500 uppercase tracking-wider">Deskripsi</label>
+            <textarea
+              placeholder="Deskripsi wilayah cakupan..."
+              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black h-16 resize-none"
+              value={zoneDesc}
+              onChange={(e) => setZoneDesc(e.target.value)}
+            />
+          </div>
+
+          {/* Covered Provinces selection grid */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-bold text-neutral-500 uppercase tracking-wider">Pilih Cakupan Provinsi* (Minimal 1)</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-neutral-50 border border-neutral-200 max-h-48 overflow-y-auto">
+              {PROVINCES.map((p) => {
+                const isSelected = selectedProvinces.includes(p)
+                return (
+                  <div
+                    key={p}
+                    onClick={() => handleToggleProvince(p)}
+                    className={`p-2 border text-[10px] font-medium text-center cursor-pointer transition select-none ${
+                      isSelected
+                        ? 'bg-neutral-950 text-white border-neutral-950'
+                        : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    {p}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <input
+              type="checkbox"
+              id="zoneActive"
+              checked={zoneActive}
+              onChange={(e) => setZoneActive(e.target.checked)}
+              className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
+            />
+            <label htmlFor="zoneActive" className="font-bold text-neutral-700">Aktifkan Zona ini</label>
+          </div>
+
+          <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
+            <Button type="button" variant="outline" onClick={() => setZoneModalOpen(false)}>Batal</Button>
+            <Button type="submit" variant="primary" isLoading={createZoneMutation.isPending || updateZoneMutation.isPending}>Simpan</Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* --- RATES CONFIG MODAL --- */}
-      {rateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs font-sans text-xs">
-          <div className="bg-white border border-neutral-200 w-full max-w-md p-6 sm:p-8 space-y-6">
-            <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
-              <h3 className="font-serif text-lg font-bold text-neutral-900">{editingRate ? 'Ubah Tarif Kurir' : 'Tambah Tarif Baru'}</h3>
-              <button onClick={() => setRateModalOpen(false)} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal"><X size={18} /></button>
-            </div>
-            
-            <form onSubmit={handleSaveRate} className="space-y-4">
-              <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Pilih Zona Pengiriman*</label>
-                <select
-                  required
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black bg-white"
-                  value={rateZoneId}
-                  onChange={(e) => setRateZoneId(e.target.value)}
-                >
-                  {zones?.map((z) => (
-                    <option key={z.id} value={z.id}>{z.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Nama Ekspedisi / Layanan*</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="cth: JNE REG"
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                  value={rateCourier}
-                  onChange={(e) => setRateCourier(e.target.value)}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Biaya Minimum (Rp)*</label>
-                  <input
-                    type="number"
-                    required
-                    min={0}
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={rateBasePrice}
-                    onChange={(e) => setRateBasePrice(Math.max(0, parseInt(e.target.value) || 0))}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Tarif Per Kg (Rp)*</label>
-                  <input
-                    type="number"
-                    required
-                    min={0}
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={ratePricePerKg}
-                    onChange={(e) => setRatePricePerKg(Math.max(0, parseInt(e.target.value) || 0))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Est. Tiba Min (Hari)*</label>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={rateEtdMin}
-                    onChange={(e) => setRateEtdMin(Math.max(1, parseInt(e.target.value) || 1))}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Est. Tiba Max (Hari)*</label>
-                  <input
-                    type="number"
-                    required
-                    min={rateEtdMin}
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={rateEtdMax}
-                    onChange={(e) => setRateEtdMax(Math.max(rateEtdMin, parseInt(e.target.value) || rateEtdMin))}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="rateActive"
-                  checked={rateActive}
-                  onChange={(e) => setRateActive(e.target.checked)}
-                  className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
-                />
-                <label htmlFor="rateActive" className="font-bold text-neutral-700">Aktifkan Layanan Kurir ini</label>
-              </div>
-
-              <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
-                <Button type="button" variant="outline" onClick={() => setRateModalOpen(false)}>Batal</Button>
-                <Button type="submit" variant="primary" isLoading={createRateMutation.isPending || updateRateMutation.isPending}>Simpan</Button>
-              </div>
-            </form>
+      <Modal
+        isOpen={rateModalOpen}
+        onClose={() => setRateModalOpen(false)}
+        title={editingRate ? 'Ubah Tarif Kurir' : 'Tambah Tarif Baru'}
+        size="md"
+      >
+        <form onSubmit={handleSaveRate} className="space-y-4">
+          <div className="flex flex-col space-y-1">
+            <label className="font-bold text-neutral-500 uppercase tracking-wider">Pilih Zona Pengiriman*</label>
+            <select
+              required
+              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black bg-white"
+              value={rateZoneId}
+              onChange={(e) => setRateZoneId(e.target.value)}
+            >
+              {zones?.map((z) => (
+                <option key={z.id} value={z.id}>{z.name}</option>
+              ))}
+            </select>
           </div>
-        </div>
-      )}
+
+          <div className="flex flex-col space-y-1">
+            <label className="font-bold text-neutral-500 uppercase tracking-wider">Nama Ekspedisi / Layanan*</label>
+            <input
+              type="text"
+              required
+              placeholder="cth: JNE REG"
+              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
+              value={rateCourier}
+              onChange={(e) => setRateCourier(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-1">
+              <label className="font-bold text-neutral-500 uppercase tracking-wider">Biaya Minimum (Rp)*</label>
+              <input
+                type="number"
+                required
+                min={0}
+                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
+                value={rateBasePrice}
+                onChange={(e) => setRateBasePrice(Math.max(0, parseInt(e.target.value) || 0))}
+              />
+            </div>
+            <div className="flex flex-col space-y-1">
+              <label className="font-bold text-neutral-500 uppercase tracking-wider">Tarif Per Kg (Rp)*</label>
+              <input
+                type="number"
+                required
+                min={0}
+                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
+                value={ratePricePerKg}
+                onChange={(e) => setRatePricePerKg(Math.max(0, parseInt(e.target.value) || 0))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col space-y-1">
+              <label className="font-bold text-neutral-500 uppercase tracking-wider">Est. Tiba Min (Hari)*</label>
+              <input
+                type="number"
+                required
+                min={1}
+                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
+                value={rateEtdMin}
+                onChange={(e) => setRateEtdMin(Math.max(1, parseInt(e.target.value) || 1))}
+              />
+            </div>
+            <div className="flex flex-col space-y-1">
+              <label className="font-bold text-neutral-500 uppercase tracking-wider">Est. Tiba Max (Hari)*</label>
+              <input
+                type="number"
+                required
+                min={rateEtdMin}
+                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
+                value={rateEtdMax}
+                onChange={(e) => setRateEtdMax(Math.max(rateEtdMin, parseInt(e.target.value) || rateEtdMin))}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <input
+              type="checkbox"
+              id="rateActive"
+              checked={rateActive}
+              onChange={(e) => setRateActive(e.target.checked)}
+              className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
+            />
+            <label htmlFor="rateActive" className="font-bold text-neutral-700">Aktifkan Layanan Kurir ini</label>
+          </div>
+
+          <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
+            <Button type="button" variant="outline" onClick={() => setRateModalOpen(false)}>Batal</Button>
+            <Button type="submit" variant="primary" isLoading={createRateMutation.isPending || updateRateMutation.isPending}>Simpan</Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   )
 }
