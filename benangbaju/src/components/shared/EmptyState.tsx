@@ -39,7 +39,7 @@ export function EmptyState({
   action,
   secondaryAction,
   className,
-}: EmptyStateProps) {
+}: EmptyStateProps) : React.JSX.Element {
   const Icon = typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon;
 
   const renderAction = (act: EmptyStateAction, key: string) => {

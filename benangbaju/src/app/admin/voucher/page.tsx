@@ -15,16 +15,33 @@ import { formatLocalISO } from '@/lib/utils/format'
 
 const supabase = createBrowserClient()
 
-export default function AdminVouchersPage() {
-  const { data: vouchers = [], isLoading, refetch } = useAdminVouchers()
+export default function AdminVouchersPage() : React.JSX.Element {
+  const { data: vouchers = [], isLoading, isError, refetch } = useAdminVouchers()
 
   const createMutation = useAdminCreateVoucher()
   const updateMutation = useAdminUpdateVoucher()
   const deleteMutation = useAdminDeleteVoucher()
 
+interface AdminVoucherItem {
+  id: string
+  code: string
+  name: string
+  discount_type: string
+  value: number
+  max_discount: number | null
+  min_purchase: number
+  starts_at: string
+  expires_at: string
+  usage_limit: number | null
+  usage_per_user: number
+  used_count: number
+  is_active: boolean
+  created_at: string
+}
+
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
-  const [editingVoucher, setEditingVoucher] = useState<any | null>(null)
+  const [editingVoucher, setEditingVoucher] = useState<AdminVoucherItem | null>(null)
 
   // Form states
   const [code, setCode] = useState('')
@@ -55,11 +72,11 @@ export default function AdminVouchersPage() {
     setIsOpen(true)
   }
 
-  const handleOpenEdit = (v: any) => {
+  const handleOpenEdit = (v: AdminVoucherItem) => {
     setEditingVoucher(v)
     setCode(v.code || '')
     setName(v.name || '')
-    setDiscountType(v.discount_type || 'percentage')
+    setDiscountType(v.discount_type === 'percentage' || v.discount_type === 'fixed' ? v.discount_type : 'percentage')
     setValue(Number(v.value) || 0)
     setMinPurchase(Number(v.min_purchase) || 0)
     setMaxDiscount(v.max_discount ? Number(v.max_discount) : null)
@@ -71,7 +88,7 @@ export default function AdminVouchersPage() {
     setIsOpen(true)
   }
 
-  const handleToggleActive = async (v: any) => {
+  const handleToggleActive = async (v: AdminVoucherItem) => {
     try {
       const { error } = await supabase
         .from('vouchers')
@@ -137,9 +154,10 @@ export default function AdminVouchersPage() {
       }
       setIsOpen(false)
       refetch()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal menyimpan voucher')
+      const errorMessage = err instanceof Error ? err.message : 'Gagal menyimpan voucher'
+      toast.error(errorMessage)
     }
   }
 
@@ -161,6 +179,13 @@ export default function AdminVouchersPage() {
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat voucher...</p>
           </div>
+        ) : isError ? (
+          <div className="py-24 text-center">
+            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat voucher dari server</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+              Coba Lagi
+            </Button>
+          </div>
         ) : vouchers.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
             Belum ada kupon diskon ditambahkan.
@@ -179,7 +204,7 @@ export default function AdminVouchersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {vouchers.map((v: any) => (
+                 {vouchers.map((v: AdminVoucherItem) => (
                   <tr key={v.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
                       <span className="font-bold text-neutral-900 text-sm block font-mono select-all tracking-wider">
@@ -272,7 +297,12 @@ export default function AdminVouchersPage() {
               </label>
               <select
                 value={discount_type}
-                onChange={(e) => setDiscountType(e.target.value as 'percentage' | 'fixed')}
+                onChange={(e) => {
+                  const val = e.target.value
+                  if (val === 'percentage' || val === 'fixed') {
+                    setDiscountType(val)
+                  }
+                }}
                 className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
                 required
               >

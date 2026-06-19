@@ -27,6 +27,31 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Validate authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const isServiceRole = serviceRoleKey && token === serviceRoleKey;
+
+    let user = null;
+    if (!isServiceRole) {
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser(token);
+      if (authError || !authUser) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Unauthorized" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      user = authUser;
+    }
+
     // Fetch order data
     const { data: order, error } = await supabase
       .from("orders")
@@ -44,6 +69,14 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({ success: false, message: "Pesanan tidak ditemukan" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check ownership if not service role
+    if (!isServiceRole && user && order.user_id !== user.id) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Akses ditolak: Anda bukan pemilik pesanan ini" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 

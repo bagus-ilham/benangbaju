@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use, useState } from 'react'
+import React, { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrderDetail } from '@/hooks/useOrders'
 import { useAdminUpdateOrderStatus } from '@/hooks/useAdmin'
@@ -18,7 +18,7 @@ interface AdminOrderDetailPageProps {
   }>
 }
 
-export default function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) {
+export default function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) : React.JSX.Element {
   const { orderNumber } = use(params)
   const router = useRouter()
 
@@ -27,8 +27,23 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
 
   const [trackingNumber, setTrackingNumber] = useState('')
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
+  const [formattedDate, setFormattedDate] = useState('')
 
-  const handleUpdateStatus = async (status: string) => {
+  useEffect(() => {
+    if (order?.created_at) {
+      setFormattedDate(
+        new Date(order.created_at).toLocaleString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      )
+    }
+  }, [order?.created_at])
+
+  const handleUpdateStatus = async (status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled') => {
     if (!order) return
 
     if (status === 'shipped' && !trackingNumber.trim()) {
@@ -46,8 +61,9 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
         })
         toast.success('Status pesanan berhasil diubah', { id: 'status-update' })
         refetch()
-      } catch (err: any) {
-        toast.error(err.message || 'Gagal mengubah status', { id: 'status-update' })
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Gagal mengubah status'
+        toast.error(errorMessage, { id: 'status-update' })
       }
     }
   }
@@ -107,13 +123,7 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
     <div className="space-y-8 max-w-4xl mx-auto font-sans text-xs">
       <AdminPageHeader
         title={`Pesanan ${order.order_number}`}
-        subtitle={`Dibuat pada: ${new Date(order.created_at).toLocaleString('id-ID', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })}`}
+        subtitle={formattedDate ? `Dibuat pada: ${formattedDate}` : 'Dibuat pada: ...'}
       >
         <div className="flex items-center gap-2">
           <Link href="/admin/pesanan">

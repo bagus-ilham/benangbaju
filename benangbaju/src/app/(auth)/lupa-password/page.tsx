@@ -7,7 +7,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, Card } from '@/components/shared'
 import toast from 'react-hot-toast'
 
-export default function ForgotPasswordPage() {
+export default function ForgotPasswordPage() : React.JSX.Element {
   const supabase = createBrowserClient()
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -30,8 +30,9 @@ export default function ForgotPasswordPage() {
 
       toast.success('Tautan reset kata sandi telah dikirim ke email Anda.')
       setIsSent(true)
-    } catch (error: any) {
-      toast.error(error.message || 'Gagal mengirim email reset. Silakan coba lagi.')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Gagal mengirim email reset. Silakan coba lagi.'
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

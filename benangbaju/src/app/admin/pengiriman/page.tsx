@@ -28,12 +28,12 @@ const PROVINCES = [
   'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Maluku', 'Maluku Utara'
 ]
 
-export default function AdminShippingPage() {
+export default function AdminShippingPage() : React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'zones' | 'rates'>('zones')
   
   // Queries
-  const { data: zones, isLoading: zonesLoading, refetch: refetchZones } = useAdminShippingZones()
-  const { data: rates, isLoading: ratesLoading, refetch: refetchRates } = useAdminShippingRates()
+  const { data: zones, isLoading: zonesLoading, isError: zonesError, refetch: refetchZones } = useAdminShippingZones()
+  const { data: rates, isLoading: ratesLoading, isError: ratesError, refetch: refetchRates } = useAdminShippingRates()
 
   // Mutations
   const createZoneMutation = useAdminCreateShippingZone()
@@ -116,8 +116,9 @@ export default function AdminShippingPage() {
         toast.success('Zona pengiriman baru berhasil ditambahkan')
       }
       setZoneModalOpen(false)
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal menyimpan zona pengiriman')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan zona pengiriman'
+      toast.error(message)
     }
   }
 
@@ -128,8 +129,9 @@ export default function AdminShippingPage() {
     try {
       await deleteZoneMutation.mutateAsync(id)
       toast.success('Zona pengiriman berhasil dihapus')
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal menghapus zona')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Gagal menghapus zona'
+      toast.error(message)
     }
   }
 
@@ -189,8 +191,9 @@ export default function AdminShippingPage() {
         toast.success('Tarif pengiriman baru berhasil ditambahkan')
       }
       setRateModalOpen(false)
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal menyimpan tarif pengiriman')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan tarif pengiriman'
+      toast.error(message)
     }
   }
 
@@ -201,8 +204,9 @@ export default function AdminShippingPage() {
     try {
       await deleteRateMutation.mutateAsync(id)
       toast.success('Tarif pengiriman berhasil dihapus')
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal menghapus tarif')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Gagal menghapus tarif'
+      toast.error(message)
     }
   }
 
@@ -270,6 +274,13 @@ export default function AdminShippingPage() {
 
           {zonesLoading ? (
             <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
+          ) : zonesError ? (
+            <div className="text-center py-12 border border-neutral-200 bg-white">
+              <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat zona pengiriman</p>
+              <Button onClick={() => refetchZones()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+                Coba Lagi
+              </Button>
+            </div>
           ) : !zones || zones.length === 0 ? (
             <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-white">
               Belum ada zona pengiriman custom yang terdaftar.
@@ -347,6 +358,13 @@ export default function AdminShippingPage() {
 
           {ratesLoading ? (
             <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
+          ) : ratesError ? (
+            <div className="text-center py-12 border border-neutral-200 bg-white">
+              <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat tarif pengiriman</p>
+              <Button onClick={() => refetchRates()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+                Coba Lagi
+              </Button>
+            </div>
           ) : !rates || rates.length === 0 ? (
             <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-white">
               Belum ada tarif pengiriman kurir yang terdaftar.
@@ -406,7 +424,7 @@ export default function AdminShippingPage() {
           <div className="bg-white border border-neutral-200 w-full max-w-xl p-6 sm:p-8 space-y-6">
             <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
               <h3 className="font-serif text-lg font-bold text-neutral-900">{editingZone ? 'Ubah Zona Pengiriman' : 'Tambah Zona Baru'}</h3>
-              <button onClick={() => setZoneModalOpen(false)} className="text-neutral-400 hover:text-neutral-800"><X size={18} /></button>
+              <button onClick={() => setZoneModalOpen(false)} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal"><X size={18} /></button>
             </div>
             
             <form onSubmit={handleSaveZone} className="space-y-4">
@@ -481,7 +499,7 @@ export default function AdminShippingPage() {
           <div className="bg-white border border-neutral-200 w-full max-w-md p-6 sm:p-8 space-y-6">
             <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
               <h3 className="font-serif text-lg font-bold text-neutral-900">{editingRate ? 'Ubah Tarif Kurir' : 'Tambah Tarif Baru'}</h3>
-              <button onClick={() => setRateModalOpen(false)} className="text-neutral-400 hover:text-neutral-800"><X size={18} /></button>
+              <button onClick={() => setRateModalOpen(false)} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal"><X size={18} /></button>
             </div>
             
             <form onSubmit={handleSaveRate} className="space-y-4">

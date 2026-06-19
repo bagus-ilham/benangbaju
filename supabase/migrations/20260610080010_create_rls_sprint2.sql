@@ -155,9 +155,16 @@ CREATE POLICY "all_districts_admin" ON districts
 -- Public read approved reviews
 CREATE POLICY "select_product_reviews_public" ON product_reviews
   FOR SELECT USING (status = 'approved' OR auth.uid() = user_id OR public.is_admin());
--- Auth user can insert review
 CREATE POLICY "insert_product_reviews_auth" ON product_reviews
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM order_items oi
+      JOIN orders o ON o.id = oi.order_id
+      WHERE oi.id = order_item_id
+        AND o.user_id = auth.uid()
+    )
+  );
 -- Admin can update (moderate)
 CREATE POLICY "update_product_reviews_admin" ON product_reviews
   FOR UPDATE USING (public.is_admin());
@@ -249,7 +256,13 @@ CREATE POLICY "select_notifications_admin" ON notifications
 CREATE POLICY "select_return_requests_own" ON return_requests
   FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "insert_return_requests_own" ON return_requests
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM orders
+      WHERE orders.id = order_id AND orders.user_id = auth.uid()
+    )
+  );
 CREATE POLICY "select_return_requests_admin" ON return_requests
   FOR SELECT USING (public.is_admin());
 CREATE POLICY "update_return_requests_admin" ON return_requests

@@ -27,7 +27,14 @@ Deno.serve(async (req: Request) => {
     } = payload;
 
     // ========== VALIDATE SIGNATURE ==========
-    const serverKey = Deno.env.get("MIDTRANS_SERVER_KEY")!;
+    const serverKey = Deno.env.get("MIDTRANS_SERVER_KEY");
+    if (!serverKey) {
+      console.error("Missing MIDTRANS_SERVER_KEY environment variable");
+      return new Response(
+        JSON.stringify({ success: false, message: "Server configuration error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
     const signatureInput = `${midtransOrderId}${statusCode}${grossAmount}${serverKey}`;
     const encoder = new TextEncoder();
     const data = encoder.encode(signatureInput);
@@ -45,10 +52,16 @@ Deno.serve(async (req: Request) => {
     }
 
     // Init Supabase admin client
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Missing Supabase credentials in Edge Function environment");
+      return new Response(
+        JSON.stringify({ success: false, message: "Server configuration error" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // ========== IDEMPOTENCY CHECK ==========
     const { data: existingLog } = await supabase

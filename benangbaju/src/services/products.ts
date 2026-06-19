@@ -97,7 +97,7 @@ export async function getProducts(
     .from('products')
     .select(
       `
-        id, name, slug, description, short_description, weight_gram, is_featured, created_at,
+        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active),
         product_images (id, url, alt_text, sort_order, is_primary)
@@ -171,21 +171,62 @@ export async function getProducts(
   }
 
   // 6. Execute Query
-  const { data, error, count } = await query
+  const { data, error } = await query
 
   if (error) {
     console.error('Error fetching products:', error)
     return { products: [], totalCount: 0 }
   }
 
-  let results = (data as any[] || []).map((p) => {
-    // Sort product images by sort_order
-    const sortedImages = [...(p.product_images || [])].sort((a, b) => a.sort_order - b.sort_order)
+  if (!data) return { products: [], totalCount: 0 }
+
+  let results: ProductListItem[] = data.map((p) => {
+    const rawCat = p.categories
+    let categories: { name: string; slug: string } | null = null
+    if (rawCat && !Array.isArray(rawCat)) {
+      categories = {
+        name: rawCat.name,
+        slug: rawCat.slug,
+      }
+    }
+
+    const rawVariants = p.product_variants
+    const variantsList = Array.isArray(rawVariants) ? rawVariants : []
+    const product_variants: ProductVariant[] = variantsList.map(v => ({
+      id: v.id,
+      sku: v.sku,
+      name: v.name,
+      price: v.price,
+      compare_price: v.compare_price,
+      stock: v.stock,
+      weight_gram: null,
+      is_active: v.is_active,
+    }))
+
+    const rawImages = p.product_images
+    const imagesList = Array.isArray(rawImages) ? rawImages : []
+    const sortedImages = imagesList.map(img => ({
+      id: img.id,
+      url: img.url,
+      alt_text: img.alt_text,
+      sort_order: img.sort_order,
+      is_primary: img.is_primary,
+    })).sort((a, b) => a.sort_order - b.sort_order)
+
     return {
-      ...p,
+      id: p.id,
+      category_id: p.category_id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      short_description: p.short_description,
+      weight_gram: p.weight_gram,
+      is_featured: p.is_featured,
+      created_at: p.created_at,
+      categories,
+      product_variants,
       product_images: sortedImages,
-      product_variants: p.product_variants || [],
-    } as ProductListItem
+    }
   })
 
   // 7. Client-side price filters (Supabase doesn't easily allow filtering by child min/max price inside one complex query)
@@ -240,7 +281,7 @@ export async function getProductBySlug(
     .from('products')
     .select(
       `
-        id, name, slug, description, short_description, weight_gram, is_featured, created_at,
+        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at,
         categories (name, slug),
         product_variants (*, product_variant_attrs(*)),
         product_images (*),
@@ -258,16 +299,84 @@ export async function getProductBySlug(
     return null
   }
 
-  const p = data as any
-  const sortedImages = [...(p.product_images || [])].sort((a, b) => a.sort_order - b.sort_order)
-  
+  if (!data) return null
+
+  const rawCat = data.categories
+  let categories: { name: string; slug: string } | null = null
+  if (rawCat && !Array.isArray(rawCat)) {
+    categories = {
+      name: rawCat.name,
+      slug: rawCat.slug,
+    }
+  }
+
+  const rawVariants = data.product_variants
+  const variantsList = Array.isArray(rawVariants) ? rawVariants : []
+  const product_variants: ProductVariant[] = variantsList.map(v => {
+    const rawAttrs = v.product_variant_attrs
+    const attrsList = Array.isArray(rawAttrs) ? rawAttrs : []
+    const product_variant_attrs = attrsList.map(attr => ({
+      id: attr.id,
+      attr_name: attr.attr_name,
+      attr_value: attr.attr_value,
+    }))
+    return {
+      id: v.id,
+      sku: v.sku,
+      name: v.name,
+      price: v.price,
+      compare_price: v.compare_price,
+      stock: v.stock,
+      weight_gram: v.weight_gram,
+      is_active: v.is_active,
+      product_variant_attrs,
+    }
+  })
+
+  const rawImages = data.product_images
+  const imagesList = Array.isArray(rawImages) ? rawImages : []
+  const sortedImages = imagesList.map(img => ({
+    id: img.id,
+    url: img.url,
+    alt_text: img.alt_text,
+    sort_order: img.sort_order,
+    is_primary: img.is_primary,
+    variant_id: img.variant_id,
+  })).sort((a, b) => a.sort_order - b.sort_order)
+
+  const rawLinks = data.product_marketplace_links
+  const linksList = Array.isArray(rawLinks) ? rawLinks : []
+  const product_marketplace_links = linksList.map(link => ({
+    id: link.id,
+    platform: link.platform,
+    url: link.url,
+    label: link.label,
+  }))
+
+  const rawSummary = data.product_rating_summary
+  const summaryList = Array.isArray(rawSummary) ? rawSummary : []
+  const firstSummary = summaryList[0] || null
+  const product_rating_summary = firstSummary ? {
+    avg_rating: firstSummary.avg_rating,
+    total_reviews: firstSummary.total_reviews,
+  } : null
+
   return {
-    ...p,
+    id: data.id,
+    category_id: data.category_id,
+    name: data.name,
+    slug: data.slug,
+    description: data.description,
+    short_description: data.short_description,
+    weight_gram: data.weight_gram,
+    is_featured: data.is_featured,
+    created_at: data.created_at,
+    categories,
+    product_variants,
     product_images: sortedImages,
-    product_variants: p.product_variants || [],
-    product_marketplace_links: p.product_marketplace_links || [],
-    product_rating_summary: p.product_rating_summary?.[0] || null,
-  } as ProductDetailItem
+    product_marketplace_links,
+    product_rating_summary,
+  }
 }
 
 export async function getRelatedProducts(
@@ -280,7 +389,7 @@ export async function getRelatedProducts(
     .from('products')
     .select(
       `
-        id, name, slug, description, short_description, weight_gram, is_featured, created_at,
+        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active),
         product_images (id, url, alt_text, sort_order, is_primary)
@@ -297,20 +406,87 @@ export async function getRelatedProducts(
     return []
   }
 
-  return (data as any[] || []).map((p) => {
-    const sortedImages = [...(p.product_images || [])].sort((a, b) => a.sort_order - b.sort_order)
+  if (!data) return []
+
+  return data.map((p) => {
+    const rawCat = p.categories
+    let categories: { name: string; slug: string } | null = null
+    if (rawCat && !Array.isArray(rawCat)) {
+      categories = {
+        name: rawCat.name,
+        slug: rawCat.slug,
+      }
+    }
+
+    const rawVariants = p.product_variants
+    const variantsList = Array.isArray(rawVariants) ? rawVariants : []
+    const product_variants: ProductVariant[] = variantsList.map(v => ({
+      id: v.id,
+      sku: v.sku,
+      name: v.name,
+      price: v.price,
+      compare_price: v.compare_price,
+      stock: v.stock,
+      weight_gram: null,
+      is_active: v.is_active,
+    }))
+
+    const rawImages = p.product_images
+    const imagesList = Array.isArray(rawImages) ? rawImages : []
+    const sortedImages = imagesList.map(img => ({
+      id: img.id,
+      url: img.url,
+      alt_text: img.alt_text,
+      sort_order: img.sort_order,
+      is_primary: img.is_primary,
+    })).sort((a, b) => a.sort_order - b.sort_order)
+
     return {
-      ...p,
+      id: p.id,
+      category_id: p.category_id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      short_description: p.short_description,
+      weight_gram: p.weight_gram,
+      is_featured: p.is_featured,
+      created_at: p.created_at,
+      categories,
+      product_variants,
       product_images: sortedImages,
-      product_variants: p.product_variants || [],
-    } as ProductListItem
+    }
   })
+}
+
+export interface AdminProductListItem {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  short_description: string | null
+  weight_gram: number
+  is_featured: boolean
+  is_active: boolean
+  created_at: string
+  categories: {
+    name: string
+    slug: string
+  } | null
+  product_variants: Array<{
+    id: string
+    sku: string
+    name: string
+    price: number
+    compare_price: number | null
+    stock: number
+    is_active: boolean
+  }>
 }
 
 export async function adminGetProducts(
   supabase: SupabaseClient<Database>,
   params: { page?: number; limit?: number; search?: string } = {}
-) {
+): Promise<{ products: AdminProductListItem[]; totalCount: number }> {
   const { page = 1, limit = 20, search = '' } = params
   const offset = (page - 1) * limit
 
@@ -342,9 +518,48 @@ export async function adminGetProducts(
     throw error
   }
 
+  if (!data) return { products: [], totalCount: 0 }
+
+  const products: AdminProductListItem[] = data.map(p => {
+    const rawCat = p.categories
+    let categories: { name: string; slug: string } | null = null
+    if (rawCat && !Array.isArray(rawCat)) {
+      categories = {
+        name: rawCat.name,
+        slug: rawCat.slug,
+      }
+    }
+
+    const rawVariants = p.product_variants
+    const variantsList = Array.isArray(rawVariants) ? rawVariants : []
+    const product_variants = variantsList.map(v => ({
+      id: v.id,
+      sku: v.sku,
+      name: v.name,
+      price: v.price,
+      compare_price: v.compare_price,
+      stock: v.stock,
+      is_active: v.is_active,
+    }))
+
+    return {
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description,
+      short_description: p.short_description,
+      weight_gram: p.weight_gram,
+      is_featured: p.is_featured,
+      is_active: p.is_active,
+      created_at: p.created_at,
+      categories,
+      product_variants,
+    }
+  })
+
   return {
-    products: (data || []) as any[],
-    totalCount: count || 0
+    products,
+    totalCount: count || 0,
   }
 }
 
@@ -376,7 +591,7 @@ export async function adminCreateProduct(
   images: { url: string; alt_text: string | null; sort_order: number; is_primary: boolean; variant_id?: string | null }[],
   marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[],
   collectionIds: string[] = []
-) {
+) : Promise<{ id: string; }> {
   const { data: product, error: productErr } = await supabase
     .from('products')
     .insert(productData)
@@ -506,7 +721,7 @@ export async function adminUpdateProduct(
   images: { url: string; alt_text: string | null; sort_order: number; is_primary: boolean; variant_id?: string | null }[],
   marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[],
   collectionIds: string[] = []
-) {
+) : Promise<{ id: string; }> {
   const { error: productErr } = await supabase
     .from('products')
     .update(productData)
@@ -522,7 +737,12 @@ export async function adminUpdateProduct(
   if (dbVariantsErr) throw dbVariantsErr
   const dbVariantIds = dbVariants.map(v => v.id)
 
-  const updatedVariantIds = variants.map(v => v.id).filter(id => id && !id.startsWith('temp-')) as string[]
+  const updatedVariantIds: string[] = []
+  variants.forEach(v => {
+    if (v.id && !v.id.startsWith('temp-')) {
+      updatedVariantIds.push(v.id)
+    }
+  })
 
   const idsToDelete = dbVariantIds.filter(id => !updatedVariantIds.includes(id))
   if (idsToDelete.length > 0) {
@@ -694,7 +914,7 @@ export async function adminUpdateProduct(
 export async function adminDeleteProduct(
   supabase: SupabaseClient<Database>,
   productId: string
-) {
+) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('products')
     .update({ is_active: false })

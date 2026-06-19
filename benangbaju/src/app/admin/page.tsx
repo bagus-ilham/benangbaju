@@ -1,16 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminDashboard } from '@/hooks/useAdmin'
+import { useAdminDashboard, LowStockVariant, RecentOrder, RecentActivityLog } from '@/hooks/useAdmin'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, AdminPageHeader, AdminStatCard, AdminPanel } from '@/components/shared'
+import { Button, AdminPageHeader, AdminStatCard, AdminPanel, ClientDateTime } from '@/components/shared'
 import { TrendingUp, ShoppingBag, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardPage() : React.JSX.Element {
   const { data: stats, isLoading, isError, refetch } = useAdminDashboard()
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null)
   const [newStockVal, setNewStockVal] = useState<number>(0)
@@ -125,13 +125,13 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {stats.lowStockVariants.map((item: { id: string; name: string; sku: string; stock: number; products?: { name: string } }) => (
+                    {stats.lowStockVariants.map((item: LowStockVariant) => (
                       <tr key={item.id}>
                         <td>
                           <p className="font-semibold text-brand-black">{item.products?.name}</p>
                           <p className="text-[10px] text-neutral-400 font-normal">{item.name}</p>
                         </td>
-                        <td className="font-mono">{item.sku}</td>
+                        <td className="font-mono">{item.sku || '-'}</td>
                         <td className="text-center">
                           {updatingStockId === item.id ? (
                             <input
@@ -175,7 +175,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-neutral-400 italic">Belum ada pesanan masuk.</p>
             ) : (
               <div className="space-y-4">
-                {stats.recentOrders.map((order: { id: string; order_number: string; total_amount: number; status: string; created_at: string; order_shipping?: { recipient_name: string } }) => (
+                {stats.recentOrders.map((order: RecentOrder) => (
                   <div key={order.id} className="flex justify-between items-center border-b border-neutral-100 last:border-0 pb-3 last:pb-0 text-xs font-sans">
                     <div>
                       <Link href="/admin/pesanan" className="font-semibold text-brand-black hover:underline">
@@ -226,7 +226,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-neutral-400 italic">Belum ada log aktivitas.</p>
             ) : (
               <div className="space-y-4 overflow-y-auto max-h-[500px] pr-1">
-                {stats.recentLogs.map((log: { id: string; action: string; resource_type: string; resource_id: string | null; created_at: string; profiles?: { name: string } }) => (
+                {stats.recentLogs.map((log: RecentActivityLog) => (
                   <div key={log.id} className="text-xs space-y-1.5 pb-3 border-b border-neutral-100 last:border-0 last:pb-0 font-sans">
                     <p className="font-semibold text-neutral-800">
                       {log.profiles?.name || 'Administrator'}
@@ -241,12 +241,15 @@ export default function AdminDashboardPage() {
                       (ID: {log.resource_id || '-'})
                     </p>
                     <p className="text-[10px] text-neutral-400 font-normal">
-                      {new Date(log.created_at).toLocaleString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      <ClientDateTime
+                        date={log.created_at}
+                        options={{
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        }}
+                      />
                     </p>
                   </div>
                 ))}

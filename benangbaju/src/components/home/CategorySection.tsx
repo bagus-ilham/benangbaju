@@ -12,7 +12,7 @@ interface CategorySectionProps {
   categories: Category[]
 }
 
-export function CategorySection({ categories }: CategorySectionProps) {
+export function CategorySection({ categories }: CategorySectionProps) : React.JSX.Element | null {
   if (categories.length === 0) return null
 
   const mainCategories = categories.filter((c) => !c.parent_id).slice(0, 4)

@@ -1,14 +1,21 @@
 import React from 'react'
-import { createServerClient } from '@/lib/supabase/server'
+import { cacheLife, cacheTag } from 'next/cache'
+import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveFlashSale } from '@/services/flashSales'
 import { FlashSaleSection } from '@/components/home/FlashSaleSection'
 import { PageHero, PageContainer, EmptyState } from '@/components/shared'
 
-export const revalidate = 10
+async function getCachedFlashSale() {
+  'use cache'
+  cacheLife('minutes')
+  cacheTag('flash-sales')
 
-export default async function FlashSalePage() {
-  const supabase = await createServerClient()
-  const flashSale = await getActiveFlashSale(supabase)
+  const supabase = createStaticClient()
+  return getActiveFlashSale(supabase)
+}
+
+export default async function FlashSalePage() : Promise<React.JSX.Element> {
+  const flashSale = await getCachedFlashSale()
 
   return (
     <div className="bg-white min-h-screen">

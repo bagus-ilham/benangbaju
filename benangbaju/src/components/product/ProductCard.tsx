@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Heart } from 'lucide-react'
 import { useWishlist } from '@/hooks/useWishlist'
 import { useCart } from '@/hooks/useCart'
-import { ProductListItem } from '@/services/products'
+import { ProductListItem, ProductVariant } from '@/services/products'
 import { cn, formatIDR } from '@/lib/utils'
 import { Badge } from '@/components/shared/Badge'
 import toast from 'react-hot-toast'
@@ -16,7 +16,7 @@ interface ProductCardProps {
   className?: string
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className }: ProductCardProps) : React.JSX.Element {
   const { isLiked, toggleWishlist } = useWishlist()
   const { addItem, setCartDrawerOpen } = useCart()
   const [isHovered, setIsHovered] = useState(false)
@@ -28,7 +28,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
   // Get active pricing (minimum price from variants)
   const activeVariants = product.product_variants.filter((v) => v.is_active)
   const prices = activeVariants.map((v) => Number(v.price))
-  const comparePrices = activeVariants.map((v) => v.compare_price ? Number(v.compare_price) : null)
   
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0
@@ -64,7 +63,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
     v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
   )
 
-  const handleQuickAdd = async (e: React.MouseEvent, variant: any) => {
+  const handleQuickAdd = async (e: React.MouseEvent, variant: ProductVariant) => {
     e.preventDefault()
     e.stopPropagation()
     if (isAdding) return
@@ -94,10 +93,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
               <div className="flex-shrink-0 pt-0.5">
                 {primaryImage ? (
                   <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
-                    <img
-                      className="h-full w-full object-cover"
+                    <Image
+                      className="object-cover"
                       src={primaryImage}
                       alt={product.name}
+                      fill
+                      sizes="40px"
                     />
                   </div>
                 ) : (
@@ -132,7 +133,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </div>
         </div>
       ))
-    } catch (err) {
+    } catch {
       toast.error('Gagal menambahkan ke keranjang.')
     } finally {
       setIsAdding(null)

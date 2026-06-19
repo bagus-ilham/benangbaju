@@ -24,7 +24,7 @@ const STATUS_TABS = [
   { id: 'cancelled', label: 'Dibatalkan' },
 ]
 
-export default function PesananPage() {
+export default function PesananPage() : React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [activeTab, setActiveTab] = useState('all')
@@ -113,8 +113,8 @@ export default function PesananPage() {
         return
       }
 
-      if ((window as any).snap) {
-        (window as any).snap.pay(paymentRes.token, {
+      if (window.snap) {
+        window.snap.pay(paymentRes.token, {
           onSuccess: () => {
             toast.success('Pembayaran berhasil!')
             refetch()

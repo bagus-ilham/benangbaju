@@ -1,13 +1,22 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { createServerClient } from '@/lib/supabase/server'
+import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveCollections } from '@/services/collections'
 import { PageHero, PageContainer } from '@/components/shared'
 
-export default async function CollectionsIndexPage() {
-  const supabase = await createServerClient()
-  const collections = await getActiveCollections(supabase)
+import { cacheLife, cacheTag } from 'next/cache'
+
+async function getCachedCollections() {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('collections')
+  const supabase = createStaticClient()
+  return getActiveCollections(supabase)
+}
+
+export default async function CollectionsIndexPage() : Promise<React.JSX.Element> {
+  const collections = await getCachedCollections()
 
   return (
     <div className="bg-white min-h-screen">

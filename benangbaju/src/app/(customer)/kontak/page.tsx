@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { MapPin, Clock, Mail, MessageSquare } from 'lucide-react'
 import { PageContainer, PageHero } from '@/components/shared'
 
-export default function KontakPage() {
+export default function KontakPage() : React.JSX.Element {
   const whatsappNumber = '6281234567890'
   const whatsappMessage = encodeURIComponent('Halo Benangbaju, saya ingin bertanya tentang produk / pesanan saya.')
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`

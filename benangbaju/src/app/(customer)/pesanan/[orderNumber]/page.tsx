@@ -1,7 +1,6 @@
 'use client'
 
-import React, { use, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { use, useState, useEffect } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -19,14 +18,29 @@ interface OrderDetailPageProps {
   }>
 }
 
-export default function OrderDetailPage({ params }: OrderDetailPageProps) {
+export default function OrderDetailPage({ params }: OrderDetailPageProps) : React.JSX.Element | null {
   const { orderNumber } = use(params)
-  const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
 
   // 1. Fetch Order Details
   const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber)
+
+  const [formattedDate, setFormattedDate] = useState('')
+
+  useEffect(() => {
+    if (order?.created_at) {
+      setFormattedDate(
+        new Date(order.created_at).toLocaleDateString('id-ID', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      )
+    }
+  }, [order?.created_at])
 
   const cancelMutation = useCancelOrder()
   const confirmMutation = useConfirmDelivery()
@@ -81,8 +95,8 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
         return
       }
 
-      if ((window as any).snap) {
-        (window as any).snap.pay(paymentRes.token, {
+      if (window.snap) {
+        window.snap.pay(paymentRes.token, {
           onSuccess: () => {
             toast.success('Pembayaran berhasil!')
             refetch()
@@ -231,20 +245,12 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
     )
   }
 
-  const orderDate = new Date(order.created_at).toLocaleDateString('id-ID', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
   return (
     <div className="min-h-screen bg-white font-sans">
       <PageHero
         eyebrow="Pesanan Saya"
         title="Detail Pesanan"
-        subtitle={`No. ${order.order_number} · ${orderDate}`}
+        subtitle={`No. ${order.order_number} · ${formattedDate || '...'}`}
       >
         <div className="flex flex-wrap items-center gap-4 mt-2">
           <Link

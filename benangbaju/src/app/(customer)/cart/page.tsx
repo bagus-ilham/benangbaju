@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,7 +10,7 @@ import { formatIDR } from '@/lib/utils'
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-export default function CartPage() {
+export default function CartPage() : React.JSX.Element {
   const {
     items,
     updateQuantity,
@@ -20,6 +20,25 @@ export default function CartPage() {
     originalSubtotal,
     totalDiscount,
   } = useCart()
+
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return (
+      <div className="bg-white min-h-screen">
+        <PageHero eyebrow="Pembelian Anda" title="Keranjang Belanja" subtitle="Memuat keranjang belanja Anda..." />
+        <PageContainer className="py-10 page-content">
+          <div className="py-20 text-center text-xs text-neutral-400 uppercase tracking-widest animate-pulse">
+            Memuat keranjang...
+          </div>
+        </PageContainer>
+      </div>
+    )
+  }
 
   const handleQtyChange = async (variantId: string, currentQty: number, change: number, stock: number) => {
     const newQty = currentQty + change

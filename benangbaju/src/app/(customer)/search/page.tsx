@@ -31,12 +31,35 @@ function SearchResultsContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
 
-  const { data, isLoading } = useProducts({
+  const { data, isLoading, isError } = useProducts({
     searchQuery: query || undefined,
     limit: 40,
   })
 
   const { products = [], totalCount = 0 } = data || {}
+
+  if (isError) {
+    return (
+      <div className="bg-white min-h-screen">
+        <PageHero
+          eyebrow="Hasil Pencarian"
+          title={query ? `"${query}"` : 'Pencarian Produk'}
+          subtitle="Gagal memuat hasil pencarian"
+        />
+        <PageContainer className="py-10 page-content">
+          <EmptyState
+            icon={Search}
+            title="Gagal Memuat Hasil Pencarian"
+            description="Terjadi kesalahan koneksi saat mencari produk. Silakan coba kembali."
+            action={{
+              label: "Coba Lagi",
+              onClick: () => window.location.reload()
+            }}
+          />
+        </PageContainer>
+      </div>
+    )
+  }
 
   return (
     <div className="bg-white min-h-screen">
@@ -75,7 +98,7 @@ function SearchResultsContent() {
   )
 }
 
-export default function SearchPage() {
+export default function SearchPage() : React.JSX.Element {
   return (
     <Suspense fallback={
       <div className="bg-white min-h-screen py-12">

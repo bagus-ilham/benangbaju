@@ -1354,11 +1354,284 @@ interface RawDatabase {
   }
 }
 
+type TableRelationships = {
+  products: [
+    {
+      foreignKeyName: "products_category_id_fkey"
+      columns: ["category_id"]
+      isOneToOne: false
+      referencedRelation: "categories"
+      referencedColumns: ["id"]
+    }
+  ]
+  product_variants: [
+    {
+      foreignKeyName: "product_variants_product_id_fkey"
+      columns: ["product_id"]
+      isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
+  ]
+  product_variant_attrs: [
+    {
+      foreignKeyName: "product_variant_attrs_variant_id_fkey"
+      columns: ["variant_id"]
+      isOneToOne: false
+      referencedRelation: "product_variants"
+      referencedColumns: ["id"]
+    }
+  ]
+  product_images: [
+    {
+      foreignKeyName: "product_images_product_id_fkey"
+      columns: ["product_id"]
+      isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
+  ]
+  product_marketplace_links: [
+    {
+      foreignKeyName: "product_marketplace_links_product_id_fkey"
+      columns: ["product_id"]
+      isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
+  ]
+  product_rating_summary: [
+    {
+      foreignKeyName: "product_rating_summary_product_id_fkey"
+      columns: ["product_id"]
+      isOneToOne: true
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
+  ]
+  collection_products: [
+    {
+      foreignKeyName: "collection_products_collection_id_fkey"
+      columns: ["collection_id"]
+      isOneToOne: false
+      referencedRelation: "collections"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "collection_products_product_id_fkey"
+      columns: ["product_id"]
+      isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    }
+  ]
+  flash_sale_items: [
+    {
+      foreignKeyName: "flash_sale_items_flash_sale_id_fkey"
+      columns: ["flash_sale_id"]
+      isOneToOne: false
+      referencedRelation: "flash_sales"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "flash_sale_items_variant_id_fkey"
+      columns: ["variant_id"]
+      isOneToOne: false
+      referencedRelation: "product_variants"
+      referencedColumns: ["id"]
+    }
+  ]
+  product_reviews: [
+    {
+      foreignKeyName: "product_reviews_product_id_fkey"
+      columns: ["product_id"]
+      isOneToOne: false
+      referencedRelation: "products"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "product_reviews_variant_id_fkey"
+      columns: ["variant_id"]
+      isOneToOne: false
+      referencedRelation: "product_variants"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "product_reviews_user_id_fkey"
+      columns: ["user_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+  ]
+  review_media: [
+    {
+      foreignKeyName: "review_media_review_id_fkey"
+      columns: ["review_id"]
+      isOneToOne: false
+      referencedRelation: "product_reviews"
+      referencedColumns: ["id"]
+    }
+  ]
+  review_replies: [
+    {
+      foreignKeyName: "review_replies_review_id_fkey"
+      columns: ["review_id"]
+      isOneToOne: false
+      referencedRelation: "product_reviews"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "review_replies_admin_id_fkey"
+      columns: ["admin_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+  ]
+  user_addresses: [
+    {
+      foreignKeyName: "user_addresses_user_id_fkey"
+      columns: ["user_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+  ]
+  orders: [
+    {
+      foreignKeyName: "orders_user_id_fkey"
+      columns: ["user_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+  ]
+  order_items: [
+    {
+      foreignKeyName: "order_items_order_id_fkey"
+      columns: ["order_id"]
+      isOneToOne: false
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "order_items_variant_id_fkey"
+      columns: ["variant_id"]
+      isOneToOne: false
+      referencedRelation: "product_variants"
+      referencedColumns: ["id"]
+    }
+  ]
+  order_shipping: [
+    {
+      foreignKeyName: "order_shipping_order_id_fkey"
+      columns: ["order_id"]
+      isOneToOne: true
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    }
+  ]
+  payments: [
+    {
+      foreignKeyName: "payments_order_id_fkey"
+      columns: ["order_id"]
+      isOneToOne: false
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    }
+  ]
+  notifications: [
+    {
+      foreignKeyName: "notifications_user_id_fkey"
+      columns: ["user_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+  ]
+  shipping_zone_coverage: [
+    {
+      foreignKeyName: "shipping_zone_coverage_zone_id_fkey"
+      columns: ["zone_id"]
+      isOneToOne: false
+      referencedRelation: "shipping_zones"
+      referencedColumns: ["id"]
+    }
+  ]
+  shipping_rates: [
+    {
+      foreignKeyName: "shipping_rates_zone_id_fkey"
+      columns: ["zone_id"]
+      isOneToOne: false
+      referencedRelation: "shipping_zones"
+      referencedColumns: ["id"]
+    }
+  ]
+  admin_activity_logs: [
+    {
+      foreignKeyName: "admin_activity_logs_admin_id_fkey"
+      columns: ["admin_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+  ]
+  return_requests: [
+    {
+      foreignKeyName: "return_requests_user_id_fkey"
+      columns: ["user_id"]
+      isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "return_requests_order_id_fkey"
+      columns: ["order_id"]
+      isOneToOne: false
+      referencedRelation: "orders"
+      referencedColumns: ["id"]
+    }
+  ]
+  return_items: [
+    {
+      foreignKeyName: "return_items_return_request_id_fkey"
+      columns: ["return_request_id"]
+      isOneToOne: false
+      referencedRelation: "return_requests"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "return_items_order_item_id_fkey"
+      columns: ["order_item_id"]
+      isOneToOne: false
+      referencedRelation: "order_items"
+      referencedColumns: ["id"]
+    }
+  ]
+  cart_items: [
+    {
+      foreignKeyName: "cart_items_cart_id_fkey"
+      columns: ["cart_id"]
+      isOneToOne: false
+      referencedRelation: "carts"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "cart_items_variant_id_fkey"
+      columns: ["variant_id"]
+      isOneToOne: false
+      referencedRelation: "product_variants"
+      referencedColumns: ["id"]
+    }
+  ]
+}
+
 export type Database = {
   public: {
     Tables: {
-      [K in keyof RawDatabase['public']['Tables']]: RawDatabase['public']['Tables'][K] & {
-        Relationships: []
+      [K in keyof RawDatabase['public']['Tables']]: Omit<RawDatabase['public']['Tables'][K], 'Relationships'> & {
+        Relationships: K extends keyof TableRelationships ? TableRelationships[K] : []
       }
     }
     Views: RawDatabase['public']['Views']

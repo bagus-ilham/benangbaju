@@ -13,7 +13,7 @@ export function AdminPageHeader({
   subtitle,
   className,
   children,
-}: AdminPageHeaderProps) {
+}: AdminPageHeaderProps) : React.JSX.Element {
   return (
     <div
       className={cn(

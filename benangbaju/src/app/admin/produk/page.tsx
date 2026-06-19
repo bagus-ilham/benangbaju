@@ -1,54 +1,49 @@
 'use client'
-
+ 
 import React, { useState } from 'react'
-import { useAdminProducts, useAdminDeleteProduct } from '@/hooks/useAdmin'
+import {
+  useAdminProducts,
+  useAdminDeleteProduct,
+  useAdminUpdateProductActiveStatus,
+  useAdminUpdateProductFeaturedStatus
+} from '@/hooks/useAdmin'
+import type { AdminProductListItem } from '@/services/products'
 import { Button, AdminPageHeader } from '@/components/shared'
 import { Input } from '@/components/shared/Input'
 import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import { createBrowserClient } from '@/lib/supabase/client'
-
-const supabase = createBrowserClient()
-
-export default function AdminProductListPage() {
+ 
+export default function AdminProductListPage() : React.JSX.Element {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const limit = 10
-
-  const { data, isLoading, refetch } = useAdminProducts(page, limit, search)
+ 
+  const { data, isLoading, isError, refetch } = useAdminProducts(page, limit, search)
   const deleteMutation = useAdminDeleteProduct()
-
+  const updateActiveStatusMutation = useAdminUpdateProductActiveStatus()
+  const updateFeaturedStatusMutation = useAdminUpdateProductFeaturedStatus()
+ 
   const handleToggleActive = async (productId: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ is_active: !currentStatus })
-        .eq('id', productId)
-
-      if (error) throw error
+      await updateActiveStatusMutation.mutateAsync({ productId, isActive: !currentStatus })
       toast.success('Status aktif berhasil diubah')
       refetch()
     } catch (err) {
       toast.error('Gagal memperbarui status')
     }
   }
-
+ 
   const handleToggleFeatured = async (productId: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ is_featured: !currentStatus })
-        .eq('id', productId)
-
-      if (error) throw error
+      await updateFeaturedStatusMutation.mutateAsync({ productId, isFeatured: !currentStatus })
       toast.success('Status unggulan berhasil diubah')
       refetch()
     } catch (err) {
       toast.error('Gagal memperbarui status unggulan')
     }
   }
-
+ 
   const handleDeleteProduct = async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menonaktifkan produk ini?')) {
       try {
@@ -91,6 +86,7 @@ export default function AdminProductListPage() {
               setPage(1)
             }}
             className="w-full pl-10 pr-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none transition"
+            aria-label="Cari nama produk"
           />
         </div>
       </div>
@@ -100,6 +96,13 @@ export default function AdminProductListPage() {
         {isLoading ? (
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat produk...</p>
+          </div>
+        ) : isError ? (
+          <div className="py-24 text-center">
+            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat produk dari server</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+              Coba Lagi
+            </Button>
           </div>
         ) : products.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
@@ -119,8 +122,8 @@ export default function AdminProductListPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {products.map((p: any) => {
-                  const totalStock = p.product_variants?.reduce((sum: number, v: any) => sum + v.stock, 0) || 0
+                {products.map((p: AdminProductListItem) => {
+                  const totalStock = p.product_variants?.reduce((sum: number, v) => sum + v.stock, 0) || 0
                   
                   return (
                     <tr key={p.id} className="hover:bg-neutral-50/20 transition duration-150">

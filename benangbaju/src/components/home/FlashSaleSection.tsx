@@ -12,7 +12,7 @@ interface FlashSaleSectionProps {
   flashSale: FlashSaleDetail | null
 }
 
-export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) {
+export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.JSX.Element | null {
   const [timeLeft, setTimeLeft] = useState<{
     hours: number
     minutes: number

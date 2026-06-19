@@ -20,7 +20,7 @@ export function CollectionSpotlight({
   collection,
   variant = 'light',
   index = 0,
-}: CollectionSpotlightProps) {
+}: CollectionSpotlightProps) : React.JSX.Element {
   const isReversed = index % 2 === 1
   const isDark = variant === 'dark'
 

@@ -9,7 +9,7 @@ import { Button, Input, Card } from '@/components/shared'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import toast from 'react-hot-toast'
 
-export default function RegisterPage() {
+export default function RegisterPage() : React.JSX.Element {
   const router = useRouter()
   const supabase = createBrowserClient()
 
@@ -61,8 +61,9 @@ export default function RegisterPage() {
         toast.success('Registrasi berhasil! Silakan cek email Anda untuk konfirmasi akun.')
         router.push('/masuk')
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Gagal mendaftar. Silakan coba lagi.')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Gagal mendaftar. Silakan coba lagi.'
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -115,6 +116,7 @@ export default function RegisterPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Masukkan nama lengkap Anda"
                   required
+                  autoComplete="name"
                 />
               </motion.div>
 
@@ -126,6 +128,7 @@ export default function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
                   required
+                  autoComplete="email"
                 />
               </motion.div>
 
@@ -136,6 +139,7 @@ export default function RegisterPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="0812xxxxxxxx"
+                  autoComplete="tel"
                 />
               </motion.div>
 
@@ -147,6 +151,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Minimal 6 karakter"
                   required
+                  autoComplete="new-password"
                 />
               </motion.div>
 
@@ -158,6 +163,7 @@ export default function RegisterPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Ulangi kata sandi"
                   required
+                  autoComplete="new-password"
                 />
               </motion.div>
 

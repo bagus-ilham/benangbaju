@@ -22,7 +22,7 @@ export function Modal({
   children,
   size = 'md',
   className,
-}: ModalProps) {
+}: ModalProps) : React.ReactPortal | null {
   const [mounted, setMounted] = React.useState(false)
 
   useEffect(() => {
@@ -37,7 +37,11 @@ export function Modal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
-      previousFocusRef.current = document.activeElement as HTMLElement | null
+      if (document.activeElement instanceof HTMLElement) {
+        previousFocusRef.current = document.activeElement
+      } else {
+        previousFocusRef.current = null
+      }
       dialogRef.current?.focus()
     } else {
       document.body.style.overflow = 'unset'

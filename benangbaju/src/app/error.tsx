@@ -12,7 +12,7 @@ export default function RootError({
 }: {
   error: Error & { digest?: string }
   reset: () => void
-}) {
+}) : React.JSX.Element {
   useEffect(() => {
     console.error('Root application error:', error)
   }, [error])

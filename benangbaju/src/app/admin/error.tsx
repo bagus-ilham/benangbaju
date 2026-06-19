@@ -9,7 +9,7 @@ export default function AdminError({
 }: {
   error: Error & { digest?: string }
   reset: () => void
-}) {
+}) : React.JSX.Element {
   useEffect(() => {
     console.error('Admin panel error:', error)
   }, [error])

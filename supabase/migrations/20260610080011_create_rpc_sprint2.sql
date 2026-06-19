@@ -40,7 +40,7 @@ CREATE OR REPLACE FUNCTION public.create_order(
 )
 RETURNS JSONB AS $$
 DECLARE
-  v_cart RECORD;
+  v_cart_id UUID;
   v_item RECORD;
   v_order_id UUID;
   v_order_number TEXT;
@@ -72,17 +72,17 @@ BEGIN
   END IF;
 
   -- ========== GET CART ==========
-  SELECT id INTO v_cart
+  SELECT id INTO v_cart_id
   FROM carts
   WHERE user_id = p_user_id
   LIMIT 1;
 
-  IF v_cart.id IS NULL THEN
+  IF v_cart_id IS NULL THEN
     RETURN jsonb_build_object('success', false, 'message', 'Keranjang belanja kosong', 'code', 'CART_EMPTY');
   END IF;
 
   -- Check cart has items
-  IF NOT EXISTS (SELECT 1 FROM cart_items WHERE cart_id = v_cart.id) THEN
+  IF NOT EXISTS (SELECT 1 FROM cart_items WHERE cart_id = v_cart_id) THEN
     RETURN jsonb_build_object('success', false, 'message', 'Keranjang belanja kosong', 'code', 'CART_EMPTY');
   END IF;
 
@@ -118,7 +118,7 @@ BEGIN
     FROM cart_items ci
     JOIN product_variants pv ON pv.id = ci.variant_id
     JOIN products p ON p.id = pv.product_id
-    WHERE ci.cart_id = v_cart.id
+    WHERE ci.cart_id = v_cart_id
     FOR UPDATE OF pv  -- Lock variant rows
   LOOP
     -- Validate active
@@ -224,7 +224,7 @@ BEGIN
   END IF;
 
   -- ========== CLEAR CART ==========
-  DELETE FROM cart_items WHERE cart_id = v_cart.id;
+  DELETE FROM cart_items WHERE cart_id = v_cart_id;
 
   -- ========== CREATE PAYMENT RECORD ==========
   INSERT INTO payments (order_id, midtrans_order_id, status, amount)

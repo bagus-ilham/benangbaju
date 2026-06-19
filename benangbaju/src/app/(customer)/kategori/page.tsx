@@ -1,13 +1,22 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { createServerClient } from '@/lib/supabase/server'
+import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveCategories } from '@/services/categories'
 import { PageHero, PageContainer } from '@/components/shared'
 
-export default async function CategoriesIndexPage() {
-  const supabase = await createServerClient()
-  const categories = await getActiveCategories(supabase)
+import { cacheLife, cacheTag } from 'next/cache'
+
+async function getCachedCategories() {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('categories')
+  const supabase = createStaticClient()
+  return getActiveCategories(supabase)
+}
+
+export default async function CategoriesIndexPage() : Promise<React.JSX.Element> {
+  const categories = await getCachedCategories()
   const parentCategories = categories.filter((cat) => !cat.parent_id)
 
   return (

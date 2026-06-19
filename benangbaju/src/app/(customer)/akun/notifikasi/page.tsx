@@ -16,7 +16,7 @@ import { formatDate } from '@/lib/utils/format'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 
-export default function NotifikasiPage() {
+export default function NotifikasiPage() : React.JSX.Element {
   const router = useRouter()
   const supabase = createBrowserClient()
   const { user, profile, clearAuth, isAuthenticated, isLoading: authLoading } = useAuthStore()

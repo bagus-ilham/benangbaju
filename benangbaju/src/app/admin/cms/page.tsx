@@ -12,13 +12,14 @@ import {
   useAdminDeleteLandingPage,
 } from '@/hooks/useAdmin'
 import type { RedirectRule, LandingPage } from '@/services/cms'
+import type { Json } from '@/types/database'
 import { Button, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit, Trash2, Link2, FileCode, RefreshCw, X, Eye, Check, AlertTriangle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
 
-export default function AdminCmsPage() {
+export default function AdminCmsPage() : React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'redirects' | 'landing_pages'>('redirects')
 
   // Queries
@@ -141,7 +142,7 @@ export default function AdminCmsPage() {
       return
     }
 
-    let parsedContent: Record<string, unknown> = {}
+    let parsedContent: Json = null
     try {
       parsedContent = JSON.parse(jsonContent)
     } catch (err) {
@@ -387,7 +388,7 @@ export default function AdminCmsPage() {
                           <FileCode size={11} className="mr-1" /> JSON Content Keys:
                         </span>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {Object.keys(page.content).map((key) => (
+                          {typeof page.content === 'object' && page.content !== null && !Array.isArray(page.content) && Object.keys(page.content).map((key) => (
                             <span key={key} className="bg-neutral-50 border border-neutral-200 text-[9px] px-1.5 py-0.5 text-neutral-600 font-mono">
                               {key}
                             </span>
@@ -423,7 +424,7 @@ export default function AdminCmsPage() {
               <h3 className="font-serif text-lg font-bold text-neutral-900">
                 {editingRedirect ? 'Ubah Aturan Pengalihan' : 'Tambah Aturan Pengalihan'}
               </h3>
-              <button onClick={() => setRedirectModalOpen(false)} className="text-neutral-400 hover:text-neutral-800">
+              <button onClick={() => setRedirectModalOpen(false)} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal">
                 <X size={18} />
               </button>
             </div>
@@ -498,7 +499,7 @@ export default function AdminCmsPage() {
               <h3 className="font-serif text-lg font-bold text-neutral-900">
                 {editingPage ? 'Ubah Landing Page' : 'Buat Landing Page Baru'}
               </h3>
-              <button onClick={() => setPageModalOpen(false)} className="text-neutral-400 hover:text-neutral-800">
+              <button onClick={() => setPageModalOpen(false)} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal">
                 <X size={18} />
               </button>
             </div>

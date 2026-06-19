@@ -5,7 +5,7 @@ interface AuthLayoutProps {
   children: React.ReactNode
 }
 
-export function AuthLayout({ children }: AuthLayoutProps) {
+export function AuthLayout({ children }: AuthLayoutProps) : React.JSX.Element {
   return (
     <div className="min-h-screen flex">
       {/* Brand panel — visible on desktop */}

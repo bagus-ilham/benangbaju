@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { Button } from '@/components/shared/Button'
 import { ArrowLeft } from 'lucide-react'
+import type { ProductPayload } from '@/types/product'
 
 const supabase = createBrowserClient()
 
@@ -18,7 +19,7 @@ interface EditProductPageProps {
   }>
 }
 
-export default function AdminProductEditPage({ params }: EditProductPageProps) {
+export default function AdminProductEditPage({ params }: EditProductPageProps) : React.JSX.Element {
   const { id: productId } = use(params)
   const updateMutation = useAdminUpdateProduct()
 
@@ -44,7 +45,7 @@ export default function AdminProductEditPage({ params }: EditProductPageProps) {
     enabled: !!productId
   })
 
-  const handleUpdateProduct = async (payload: any) => {
+  const handleUpdateProduct = async (payload: ProductPayload) => {
     toast.loading('Menyimpan perubahan...', { id: 'update-product' })
     try {
       await updateMutation.mutateAsync({
@@ -57,9 +58,10 @@ export default function AdminProductEditPage({ params }: EditProductPageProps) {
       })
       toast.success('Produk berhasil diperbarui!', { id: 'update-product' })
       refetch()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal memperbarui produk', { id: 'update-product' })
+      const errorMessage = err instanceof Error ? err.message : 'Gagal memperbarui produk'
+      toast.error(errorMessage, { id: 'update-product' })
       throw err
     }
   }

@@ -11,7 +11,7 @@ export function AuthLoading({
   message = 'Memuat halaman...',
   className,
   fullScreen = true,
-}: AuthLoadingProps) {
+}: AuthLoadingProps) : React.JSX.Element {
   return (
     <div
       className={cn(

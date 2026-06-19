@@ -21,7 +21,7 @@ export function SectionHeader({
   className,
   showDivider = true,
   children,
-}: SectionHeaderProps) {
+}: SectionHeaderProps) : React.JSX.Element {
   const isCenter = align === 'center'
 
   return (

@@ -12,7 +12,7 @@ interface NewArrivalsSectionProps {
   products: ProductListItem[]
 }
 
-export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
+export function NewArrivalsSection({ products }: NewArrivalsSectionProps) : React.JSX.Element | null {
   if (products.length === 0) return null
 
   return (

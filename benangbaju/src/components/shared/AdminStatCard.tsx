@@ -25,7 +25,7 @@ export function AdminStatCard({
   icon: Icon,
   className,
   accent = 'default',
-}: AdminStatCardProps) {
+}: AdminStatCardProps) : React.JSX.Element {
   return (
     <div
       className={cn(

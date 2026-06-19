@@ -41,7 +41,22 @@ export async function getCollectionBySlug(
   return data
 }
 
-export async function adminGetCollections(supabase: SupabaseClient<Database>) {
+export interface AdminCollectionItem {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  image_url: string | null
+  sort_order: number
+  is_active: boolean
+  starts_at: string | null
+  ends_at: string | null
+  product_ids: string[]
+}
+
+export async function adminGetCollections(
+  supabase: SupabaseClient<Database>
+): Promise<AdminCollectionItem[]> {
   const { data, error } = await supabase
     .from('collections')
     .select('*, collection_products(product_id)')
@@ -52,10 +67,26 @@ export async function adminGetCollections(supabase: SupabaseClient<Database>) {
     throw error
   }
 
-  return (data || []).map((col: any) => ({
-    ...col,
-    product_ids: col.collection_products?.map((cp: any) => cp.product_id) || []
-  }))
+  if (!data) return []
+
+  return data.map(col => {
+    const products = col.collection_products
+    const product_ids = Array.isArray(products)
+      ? products.map(cp => cp.product_id)
+      : []
+    return {
+      id: col.id,
+      name: col.name,
+      slug: col.slug,
+      description: col.description,
+      image_url: col.image_url,
+      sort_order: col.sort_order,
+      is_active: col.is_active,
+      starts_at: col.starts_at,
+      ends_at: col.ends_at,
+      product_ids,
+    }
+  })
 }
 
 export async function adminCreateCollection(
@@ -71,7 +102,7 @@ export async function adminCreateCollection(
     ends_at: string | null
   },
   productIds: string[]
-) {
+) : Promise<{ id: string; }> {
   const { data: col, error: colErr } = await supabase
     .from('collections')
     .insert(collectionData)
@@ -111,7 +142,7 @@ export async function adminUpdateCollection(
     ends_at: string | null
   },
   productIds: string[]
-) {
+) : Promise<{ id: string; }> {
   const { error: colErr } = await supabase
     .from('collections')
     .update(collectionData)
@@ -146,7 +177,7 @@ export async function adminUpdateCollection(
 export async function adminDeleteCollection(
   supabase: SupabaseClient<Database>,
   collectionId: string
-) {
+) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('collections')
     .update({ is_active: false })

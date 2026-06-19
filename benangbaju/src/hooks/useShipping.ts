@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query'
 import { createBrowserClient } from '@/lib/supabase/client'
 import {
   getUserAddresses,
@@ -11,15 +11,8 @@ import {
   UserAddress,
 } from '@/services/shipping'
 
-const supabase = new Proxy({} as any, {
-  get(target, prop) {
-    const client = createBrowserClient()
-    const value = Reflect.get(client, prop)
-    return typeof value === 'function' ? value.bind(client) : value
-  },
-})
-
-export function useUserAddresses(userId: string) {
+export function useUserAddresses(userId: string) : import("@tanstack/react-query").UseQueryResult<UserAddress[], Error> {
+  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['addresses', userId],
     queryFn: () => getUserAddresses(supabase, userId),
@@ -27,8 +20,14 @@ export function useUserAddresses(userId: string) {
   })
 }
 
-export function useAddUserAddress() {
+export function useAddUserAddress() : UseMutationResult<
+  Awaited<ReturnType<typeof addUserAddress>>,
+  Error,
+  Omit<UserAddress, 'id' | 'created_at'>,
+  unknown
+> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: (address: Omit<UserAddress, 'id' | 'created_at'>) =>
       addUserAddress(supabase, address),
@@ -38,12 +37,21 @@ export function useAddUserAddress() {
   })
 }
 
-export function useUpdateUserAddress() {
+export function useUpdateUserAddress() : UseMutationResult<
+  Awaited<ReturnType<typeof updateUserAddress>>,
+  Error,
+  {
+    addressId: string
+    userId: string
+    address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
+  },
+  unknown
+> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: ({
       addressId,
-      userId,
       address,
     }: {
       addressId: string
@@ -56,10 +64,16 @@ export function useUpdateUserAddress() {
   })
 }
 
-export function useDeleteUserAddress() {
+export function useDeleteUserAddress() : UseMutationResult<
+  Awaited<ReturnType<typeof deleteUserAddress>>,
+  Error,
+  { addressId: string; userId: string },
+  unknown
+> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: ({ addressId, userId }: { addressId: string; userId: string }) =>
+    mutationFn: ({ addressId }: { addressId: string; userId: string }) =>
       deleteUserAddress(supabase, addressId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.userId] })
@@ -67,8 +81,14 @@ export function useDeleteUserAddress() {
   })
 }
 
-export function useSetDefaultAddress() {
+export function useSetDefaultAddress() : UseMutationResult<
+  Awaited<ReturnType<typeof setDefaultAddress>>,
+  Error,
+  { addressId: string; userId: string },
+  unknown
+> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: ({ addressId, userId }: { addressId: string; userId: string }) =>
       setDefaultAddress(supabase, addressId, userId),
@@ -78,7 +98,8 @@ export function useSetDefaultAddress() {
   })
 }
 
-export function useDistrictSearch(searchQuery: string) {
+export function useDistrictSearch(searchQuery: string) : import("@tanstack/react-query").UseQueryResult<import("@/services/shipping").District[], Error> {
+  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['districts-search', searchQuery],
     queryFn: () => searchDistricts(supabase, searchQuery),
@@ -87,7 +108,8 @@ export function useDistrictSearch(searchQuery: string) {
   })
 }
 
-export function useShippingRates(zoneId: string | null, weightGram: number) {
+export function useShippingRates(zoneId: string | null, weightGram: number) : import("@tanstack/react-query").UseQueryResult<import("@/services/shipping").ShippingCalculationResult, Error> {
+  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['shipping-rates', zoneId, weightGram],
     queryFn: () => calculateShippingRates(supabase, zoneId!, weightGram),

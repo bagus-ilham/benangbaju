@@ -1,7 +1,8 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import { createServerClient } from '@/lib/supabase/server'
+import { cacheLife, cacheTag } from 'next/cache'
+import { createStaticClient } from '@/lib/supabase/static'
 import { getCollectionBySlug } from '@/services/collections'
 import { getProducts } from '@/services/products'
 import { ProductCard } from '@/components/product/ProductCard'
@@ -13,20 +14,37 @@ interface CollectionPageProps {
   }>
 }
 
-export default async function CollectionDetailPage({ params }: CollectionPageProps) {
-  const { slug } = await params
-  const supabase = await createServerClient()
+async function getCachedCollection(slug: string) {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('collections', `collection-${slug}`)
 
-  const collection = await getCollectionBySlug(supabase, slug)
+  const supabase = createStaticClient()
+  return getCollectionBySlug(supabase, slug)
+}
+
+async function getCachedCollectionProducts(slug: string) {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('products', 'collections')
+
+  const supabase = createStaticClient()
+  return getProducts(supabase, {
+    collectionSlug: slug,
+    limit: 40,
+  })
+}
+
+export default async function CollectionDetailPage({ params }: CollectionPageProps) : Promise<React.JSX.Element> {
+  const { slug } = await params
+
+  const collection = await getCachedCollection(slug)
 
   if (!collection) {
     notFound()
   }
 
-  const { products } = await getProducts(supabase, {
-    collectionSlug: slug,
-    limit: 40,
-  })
+  const { products } = await getCachedCollectionProducts(slug)
 
   return (
     <div className="bg-white min-h-screen">

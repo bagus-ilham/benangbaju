@@ -28,7 +28,19 @@ export async function adminGetCustomers(
     throw error
   }
 
-  return (data || []) as CustomerProfile[]
+  if (!data) return []
+
+  return data.map(row => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    avatar_url: row.avatar_url,
+    role: row.role,
+    is_active: row.is_active,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  }))
 }
 
 // 2. Toggle customer activation status (Block / Unblock)

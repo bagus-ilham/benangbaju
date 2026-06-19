@@ -55,8 +55,9 @@ function LoginContent() {
         router.push(redirectPath)
         router.refresh()
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Email atau kata sandi salah.')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Email atau kata sandi salah.'
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -71,8 +72,9 @@ function LoginContent() {
         },
       })
       if (error) throw error
-    } catch (error: any) {
-      toast.error(error.message || 'Gagal memulai masuk dengan Google.')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Gagal memulai masuk dengan Google.'
+      toast.error(message)
     }
   }
 
@@ -110,6 +112,7 @@ function LoginContent() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@email.com"
                 required
+                autoComplete="email"
               />
             </motion.div>
 
@@ -132,6 +135,7 @@ function LoginContent() {
                 placeholder="••••••••"
                 required
                 className="w-full"
+                autoComplete="current-password"
               />
             </motion.div>
 
@@ -195,7 +199,7 @@ function LoginContent() {
   )
 }
 
-export default function LoginPage() {
+export default function LoginPage() : React.JSX.Element {
   return (
     <Suspense fallback={<AuthLoading message="Memuat halaman masuk..." />}>
       <LoginContent />

@@ -5,8 +5,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Modal } from '@/components/shared/Modal'
 import { Button } from '@/components/shared/Button'
 import { Input } from '@/components/shared/Input'
-import { useAddUserAddress, useUpdateUserAddress, useDistrictSearch } from '@/hooks/useShipping'
-import type { UserAddress, District } from '@/services/shipping'
+import { useAddUserAddress, useUpdateUserAddress } from '@/hooks/useShipping'
+import type { UserAddress } from '@/services/shipping'
+import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
 interface AddressModalProps {
@@ -16,7 +17,18 @@ interface AddressModalProps {
   addressToEdit?: UserAddress | null
 }
 
-export function AddressModal({ isOpen, onClose, userId, addressToEdit }: AddressModalProps) {
+const supabase = createBrowserClient()
+
+const PROVINCES = [
+  'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur', 'DI Yogyakarta', 'Banten',
+  'Sumatera Utara', 'Sumatera Barat', 'Sumatera Selatan', 'Riau', 'Lampung', 'Aceh',
+  'Jambi', 'Bengkulu', 'Kepulauan Riau', 'Kepulauan Bangka Belitung',
+  'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Tengah', 'Kalimantan Utara',
+  'Sulawesi Selatan', 'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
+  'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Maluku', 'Maluku Utara'
+]
+
+export function AddressModal({ isOpen, onClose, userId, addressToEdit }: AddressModalProps) : React.JSX.Element {
   const isEdit = !!addressToEdit
 
   // Form states
@@ -31,15 +43,10 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
   const [zoneId, setZoneId] = useState<string | null>(null)
   const [isDefault, setIsDefault] = useState(false)
 
-  // District autocomplete search
-  const [districtSearch, setDistrictSearch] = useState('')
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const suggestionsRef = useRef<HTMLDivElement>(null)
-
-  const { data: districts, isLoading: searchLoading } = useDistrictSearch(districtSearch)
-
   const addAddressMutation = useAddUserAddress()
   const updateAddressMutation = useUpdateUserAddress()
+
+  const justInitializedRef = useRef(false)
 
   // Initialize fields on open/edit change
   useEffect(() => {
@@ -54,7 +61,9 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
       setFullAddress(addressToEdit.full_address)
       setZoneId(addressToEdit.zone_id)
       setIsDefault(addressToEdit.is_default)
-      setDistrictSearch(`${addressToEdit.district_name}, ${addressToEdit.city_name}`)
+      if (addressToEdit.province_name) {
+        justInitializedRef.current = true
+      }
     } else {
       setLabel('')
       setRecipientName('')
@@ -66,31 +75,47 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
       setFullAddress('')
       setZoneId(null)
       setIsDefault(false)
-      setDistrictSearch('')
+      justInitializedRef.current = false
     }
-    setShowSuggestions(false)
   }, [addressToEdit, isOpen])
 
-  // Handle click outside suggestions
+  // Fetch zone_id when provinceName changes
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false)
+    if (!provinceName) {
+      setZoneId(null)
+      justInitializedRef.current = false
+      return
+    }
+
+    if (justInitializedRef.current) {
+      justInitializedRef.current = false
+      return
+    }
+
+    const fetchZoneId = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('shipping_zone_coverage')
+          .select('zone_id')
+          .eq('province_name', provinceName)
+          .maybeSingle()
+
+        if (error) {
+          console.error('Error fetching zone for province:', error)
+          setZoneId(null)
+        } else if (data) {
+          setZoneId(data.zone_id)
+        } else {
+          setZoneId(null)
+        }
+      } catch (err) {
+        console.error('Error fetching zone for province:', err)
+        setZoneId(null)
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
-  const handleSelectDistrict = (district: District) => {
-    setProvinceName(district.province_name)
-    setCityName(district.city_name)
-    setDistrictName(district.district_name)
-    setPostalCode(district.postal_code || '')
-    setZoneId(district.zone_id)
-    setDistrictSearch(`${district.district_name}, ${district.city_name}`)
-    setShowSuggestions(false)
-  }
+    fetchZoneId()
+  }, [provinceName])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -163,55 +188,51 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
           required
         />
 
-        {/* District Autocomplete Search */}
-        <div className="relative" ref={suggestionsRef}>
-          <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-            Kecamatan atau Kota Pengiriman*
+        {/* Province Select Dropdown */}
+        <div className="flex flex-col space-y-1">
+          <label className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70 transition-colors duration-200">
+            Provinsi*
           </label>
-          <input
-            type="text"
-            className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none rounded-none transition duration-150"
-            placeholder="Ketik minimal 2 huruf (cth: Kebayoran Baru)"
-            value={districtSearch}
-            onChange={(e) => {
-              setDistrictSearch(e.target.value)
-              setShowSuggestions(true)
-            }}
+          <select
+            className="w-full bg-white text-xs px-4 py-3 border border-neutral-200 rounded-none text-brand-black transition-all duration-300 focus:border-brand-black focus:bg-neutral-50/50 outline-none focus:ring-1 focus:ring-brand-black"
+            value={provinceName}
+            onChange={(e) => setProvinceName(e.target.value)}
             required
-          />
-          
-          {showSuggestions && districtSearch.trim().length >= 2 && (
-            <div className="absolute z-20 w-full mt-1 bg-white border border-neutral-200 shadow-lg max-h-60 overflow-y-auto rounded-none">
-              {searchLoading ? (
-                <div className="px-4 py-3 text-neutral-400 text-xs italic">Mencari kecamatan...</div>
-              ) : districts && districts.length > 0 ? (
-                districts.map((d) => (
-                  <button
-                    key={d.id}
-                    type="button"
-                    className="w-full text-left px-4 py-3 hover:bg-neutral-50 border-b border-neutral-100 last:border-0 text-xs transition duration-100"
-                    onClick={() => handleSelectDistrict(d)}
-                  >
-                    <span className="font-semibold text-neutral-800">{d.district_name}</span>,{' '}
-                    <span>{d.city_name}</span>, <span className="text-neutral-400">{d.province_name}</span>
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-3 text-neutral-400 text-xs italic">Kecamatan tidak ditemukan</div>
-              )}
-            </div>
-          )}
+          >
+            <option value="">Pilih Provinsi</option>
+            {PROVINCES.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Display Resolved Address Fields (Read-only for integrity) */}
-        {districtName && (
-          <div className="p-3 bg-neutral-50 border border-neutral-200 text-xs space-y-1 text-neutral-600 rounded-none">
-            <p><span className="font-semibold text-neutral-700">Provinsi:</span> {provinceName}</p>
-            <p><span className="font-semibold text-neutral-700">Kota/Kabupaten:</span> {cityName}</p>
-            <p><span className="font-semibold text-neutral-700">Kecamatan:</span> {districtName}</p>
-            <p><span className="font-semibold text-neutral-700">Kode Pos:</span> {postalCode || '-'}</p>
-          </div>
-        )}
+        {/* City and District inputs */}
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="Kota/Kabupaten*"
+            value={cityName}
+            onChange={(e) => setCityName(e.target.value)}
+            placeholder="cth: Jakarta Barat"
+            required
+          />
+          <Input
+            label="Kecamatan*"
+            value={districtName}
+            onChange={(e) => setDistrictName(e.target.value)}
+            placeholder="cth: Kebayoran Baru"
+            required
+          />
+        </div>
+
+        {/* Postal Code input */}
+        <Input
+          label="Kode Pos"
+          value={postalCode}
+          onChange={(e) => setPostalCode(e.target.value)}
+          placeholder="cth: 12110"
+        />
 
         <div className="space-y-1">
           <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">

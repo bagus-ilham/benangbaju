@@ -12,7 +12,7 @@ export default function CustomerError({
 }: {
   error: Error & { digest?: string }
   reset: () => void
-}) {
+}) : React.JSX.Element {
   useEffect(() => {
     console.error('Customer section error:', error)
   }, [error])

@@ -6,7 +6,7 @@ const redirectCache = new Map<string, { to_path: string; status_code: number; ex
 const CACHE_TTL = 60 * 1000 // 1 minute
 const NEGATIVE_CACHE_TTL = 10 * 1000 // 10 seconds
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(request: NextRequest) : Promise<NextResponse<unknown>> {
   let supabaseResponse = NextResponse.next({
     request,
   })

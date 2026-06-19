@@ -62,7 +62,7 @@ export async function adminCreateCategory(
     sort_order: number
     is_active: boolean
   }
-) {
+) : Promise<{ id: string; parent_id: string | null; name: string; slug: string; description: string | null; image_url: string | null; sort_order: number; is_active: boolean; }> {
   const { data, error } = await supabase
     .from('categories')
     .insert(categoryData)
@@ -85,7 +85,7 @@ export async function adminUpdateCategory(
     sort_order: number
     is_active: boolean
   }
-) {
+) : Promise<{ id: string; parent_id: string | null; name: string; slug: string; description: string | null; image_url: string | null; sort_order: number; is_active: boolean; }> {
   const { data, error } = await supabase
     .from('categories')
     .update(categoryData)
@@ -100,7 +100,7 @@ export async function adminUpdateCategory(
 export async function adminDeleteCategory(
   supabase: SupabaseClient<Database>,
   categoryId: string
-) {
+) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('categories')
     .update({ is_active: false })

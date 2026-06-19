@@ -28,7 +28,7 @@ interface ReturnPageProps {
   }>
 }
 
-export default function ReturnPage({ params }: ReturnPageProps) {
+export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Element | null {
   const { orderNumber } = use(params)
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
@@ -70,6 +70,9 @@ export default function ReturnPage({ params }: ReturnPageProps) {
   // Initialize checkboxes & quantities
   useEffect(() => {
     if (order?.order_items) {
+      // Only initialize if we haven't set up the state yet to prevent resetting selections on background refetches
+      if (Object.keys(selectedItems).length > 0) return
+
       const initialChecked: Record<string, boolean> = {}
       const initialQty: Record<string, number> = {}
       order.order_items.forEach((item) => {
@@ -79,7 +82,7 @@ export default function ReturnPage({ params }: ReturnPageProps) {
       setSelectedItems(initialChecked)
       setQuantities(initialQty)
     }
-  }, [order])
+  }, [order, selectedItems])
 
   const handleToggleItem = (itemId: string) => {
     setSelectedItems((prev) => ({
@@ -147,9 +150,10 @@ export default function ReturnPage({ params }: ReturnPageProps) {
 
       toast.success('Pengajuan retur berhasil dikirim!')
       router.push(`/pesanan/${order.order_number}`)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error submitting return:', err)
-      toast.error(err.message || 'Gagal mengirim pengajuan retur')
+      const message = err instanceof Error ? err.message : 'Gagal mengirim pengajuan retur'
+      toast.error(message)
     } finally {
       setIsSubmitting(false)
     }

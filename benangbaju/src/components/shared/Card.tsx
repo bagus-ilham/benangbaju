@@ -14,7 +14,7 @@ export function Card({
   padding = 'md',
   bordered = true,
   ...props
-}: CardProps) {
+}: CardProps) : React.JSX.Element {
   return (
     <div
       className={cn(

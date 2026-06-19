@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/database'
+import type { Database, Json } from '@/types/database'
 
 export interface UserNotification {
   id: string
@@ -8,7 +8,7 @@ export interface UserNotification {
   title: string
   message: string
   is_read: boolean
-  data: Record<string, unknown> | null
+  data: Json | null
   created_at: string
 }
 
@@ -28,7 +28,18 @@ export async function getUserNotifications(
     return []
   }
 
-  return (data || []) as UserNotification[]
+  if (!data) return []
+
+  return data.map(row => ({
+    id: row.id,
+    user_id: row.user_id,
+    type: row.type,
+    title: row.title,
+    message: row.message,
+    is_read: row.is_read,
+    data: row.data,
+    created_at: row.created_at,
+  }))
 }
 
 // 2. Mark single notification as read

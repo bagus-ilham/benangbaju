@@ -23,7 +23,8 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
   if (error) {
     console.error('Storage upload error details:', error)
     // Check for common errors like missing bucket or permission issues
-    if (error.message.includes('Bucket not found') || (error as any).status === 404) {
+    const status = 'status' in error ? error['status'] : undefined
+    if (error.message.includes('Bucket not found') || status === 404) {
       throw new Error(
         `Bucket "${targetBucket}" tidak ditemukan. Silakan buat bucket bernama "${targetBucket}" (dengan centang "Public") di dashboard Supabase Anda terlebih dahulu.`
       )

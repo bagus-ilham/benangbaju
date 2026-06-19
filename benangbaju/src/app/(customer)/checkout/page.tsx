@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import type { CartItem } from '@/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/hooks/useShipping'
+import type { UserAddress, ShippingOption } from '@/services/shipping'
 import { useCreateOrder, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { validateVoucher } from '@/services/vouchers'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -15,13 +16,22 @@ import { AddressModal } from '@/components/customer/AddressModal'
 import { Button, Input, AuthLoading, PageContainer, PageHero } from '@/components/shared'
 import { Plus, MapPin, Tag, ShoppingBag, Truck, Check } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { formatIDR } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
-export default function CheckoutPage() {
+interface AppliedVoucher {
+  code: string
+  discount_amount: number
+  discount_type?: string | null
+  value: number
+  max_discount?: number | null
+}
+
+export default function CheckoutPage() : React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const { items: cartItems, clearCart } = useCartStore()
@@ -30,15 +40,20 @@ export default function CheckoutPage() {
   const [addressModalOpen, setAddressModalOpen] = useState(false)
 
   // Checkout Form States
-  const [selectedAddress, setSelectedAddress] = useState<any | null>(null)
-  const [selectedCourier, setSelectedCourier] = useState<any | null>(null)
+  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null)
+  const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(null)
   const [notes, setNotes] = useState('')
   const [voucherCodeInput, setVoucherCodeInput] = useState('')
-  const [appliedVoucher, setAppliedVoucher] = useState<any | null>(null)
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null)
   const [voucherLoading, setVoucherLoading] = useState(false)
   const [checkoutStep, setCheckoutStep] = useState<'shipping' | 'payment'>('shipping')
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [orderSnapshot, setOrderSnapshot] = useState<CartItem[]>([])
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const displayItems: CartItem[] = orderPlaced ? orderSnapshot : cartItems
 
@@ -47,18 +62,21 @@ export default function CheckoutPage() {
 
   // 1. Redirect if not authenticated
   useEffect(() => {
+    if (!isMounted) return
     if (!authLoading && !isAuthenticated) {
       router.push('/masuk?redirect=/checkout')
     }
-  }, [isAuthenticated, authLoading, router])
+  }, [isMounted, isAuthenticated, authLoading, router])
 
   // 2. Redirect if cart is empty
   useEffect(() => {
+    if (!isMounted) return
+    if (!useCartStore.persist.hasHydrated()) return
     if (!authLoading && isAuthenticated && cartItems.length === 0 && !orderPlaced) {
       toast.error('Keranjang belanja Anda kosong')
       router.push('/produk')
     }
-  }, [cartItems, authLoading, isAuthenticated, orderPlaced, router])
+  }, [isMounted, cartItems, authLoading, isAuthenticated, orderPlaced, router])
 
   // 3. Load Midtrans Snap.js Script
   useEffect(() => {
@@ -84,7 +102,7 @@ export default function CheckoutPage() {
         .from('vouchers')
         .select('*')
         .eq('is_active', true)
-        .gte('valid_until', new Date().toISOString())
+        .gte('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
       if (error) throw error
       return data || []
@@ -114,12 +132,37 @@ export default function CheckoutPage() {
     enabled: displayItems.length > 0,
   })
 
-  // Calculate total weight
-  const totalWeight = displayItems.reduce((acc, item) => {
-    const detail = variantDetails?.find((v) => v.id === item.variantId)
-    const weight = detail?.weight_gram || (detail?.products as any)?.weight_gram || 1000
-    return acc + weight * item.quantity
-  }, 0)
+  // Calculate total weight - wait until variantDetails is fetched to avoid double fetching shipping rates
+  const totalWeight = useMemo(() => {
+    return variantDetails
+      ? displayItems.reduce((acc, item) => {
+          const detail = variantDetails.find((v) => v.id === item.variantId)
+          let weight = 1000
+          if (detail) {
+            if (typeof detail.weight_gram === 'number') {
+              weight = detail.weight_gram
+            } else if (detail.products) {
+              const prod = detail.products
+              if (Array.isArray(prod)) {
+                const first = prod[0]
+                if (first && typeof first === 'object' && 'weight_gram' in first) {
+                  const w = first['weight_gram']
+                  if (typeof w === 'number') {
+                    weight = w
+                  }
+                }
+              } else if (typeof prod === 'object' && 'weight_gram' in prod) {
+                const w = prod['weight_gram']
+                if (typeof w === 'number') {
+                  weight = w
+                }
+              }
+            }
+          }
+          return acc + weight * item.quantity
+        }, 0)
+      : 0
+  }, [displayItems, variantDetails])
 
   // 6. Fetch Shipping Rates for selected zone
   const { data: shippingData, isLoading: shippingLoading } = useShippingRates(
@@ -167,8 +210,8 @@ export default function CheckoutPage() {
           .single()
 
         setAppliedVoucher({
-          code: result.code,
-          discount_amount: result.discount_amount,
+          code: result.code || code.toUpperCase(),
+          discount_amount: result.discount_amount || 0,
           discount_type: voucherInfo?.discount_type,
           value: voucherInfo?.value || 0,
           max_discount: voucherInfo?.max_discount,
@@ -243,8 +286,8 @@ export default function CheckoutPage() {
       }
 
       // 3. Open Midtrans Snap pop-up
-      if ((window as any).snap) {
-        (window as any).snap.pay(paymentRes.token, {
+      if (window.snap) {
+        window.snap.pay(paymentRes.token, {
           onSuccess: () => {
             toast.success('Pembayaran berhasil!')
             router.push(`/pesanan/${orderNumber}`)
@@ -271,7 +314,7 @@ export default function CheckoutPage() {
           router.push(`/pesanan/${orderNumber}`)
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
       toast.error('Terjadi kesalahan saat membuat pesanan')
     }
@@ -483,11 +526,15 @@ export default function CheckoutPage() {
                 {displayItems.map((item) => (
                   <div key={item.variantId} className="py-3 flex space-x-3 text-xs">
                     {item.imageUrl && (
-                      <img
-                        src={item.imageUrl}
-                        alt={item.productName || item.name}
-                        className="w-10 h-14 object-cover border border-neutral-100 rounded-none bg-neutral-50"
-                      />
+                      <div className="relative w-10 h-14 border border-neutral-100 rounded-none bg-neutral-50 flex-shrink-0">
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.productName || item.name}
+                          className="object-cover"
+                          fill
+                          sizes="40px"
+                        />
+                      </div>
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="font-heading font-medium text-brand-black uppercase tracking-wide truncate text-[11px]">{item.productName || item.name}</p>
@@ -561,8 +608,8 @@ export default function CheckoutPage() {
                             Voucher Tersedia (Klik untuk Memakai)
                           </span>
                           <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
-                            {availableVouchers.map((voucher: any) => {
-                              const isSpendMet = subtotal >= voucher.min_spend;
+                            {availableVouchers.map((voucher) => {
+                              const isSpendMet = subtotal >= voucher.min_purchase;
                               return (
                                 <button
                                   key={voucher.id}
@@ -580,14 +627,15 @@ export default function CheckoutPage() {
                                       {voucher.code}
                                     </span>
                                   </div>
-                                  <p className="text-[10px] font-heading font-semibold text-brand-black">
-                                    {voucher.discount_type === 'percentage'
-                                      ? `Diskon ${voucher.value}%`
-                                      : `Potongan ${formatIDR(voucher.value)}`}
-                                  </p>
-                                  <p className="text-[8px] text-neutral-400 font-sans mt-0.5">
-                                    Min. Belanja: {formatIDR(voucher.min_spend)}
-                                  </p>
+                                  <div className="text-[9px] text-neutral-500 font-sans line-clamp-1 mb-1">
+                                    {voucher.name}
+                                  </div>
+                                  <div className="text-[9px] font-heading font-bold text-neutral-700">
+                                    {voucher.discount_type === 'percentage' ? `${voucher.value}% OFF` : `${formatIDR(voucher.value)} OFF`}
+                                  </div>
+                                  <div className="text-[8px] text-neutral-400 font-sans">
+                                    Min. Belanja: {formatIDR(voucher.min_purchase)}
+                                  </div>
                                 </button>
                               );
                             })}

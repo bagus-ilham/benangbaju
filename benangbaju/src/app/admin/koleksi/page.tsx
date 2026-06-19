@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import type { Database } from '@/types/database'
 import {
   useAdminCollections,
   useAdminCreateCollection,
   useAdminUpdateCollection,
   useAdminDeleteCollection,
 } from '@/hooks/useAdmin'
+import type { AdminCollectionItem } from '@/services/collections'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit2, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -17,8 +19,8 @@ import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
-export default function AdminCollectionPage() {
-  const { data: collections = [], isLoading, refetch } = useAdminCollections()
+export default function AdminCollectionPage() : React.JSX.Element {
+  const { data: collections = [], isLoading, isError, refetch } = useAdminCollections()
   
   const createMutation = useAdminCreateCollection()
   const updateMutation = useAdminUpdateCollection()
@@ -40,7 +42,7 @@ export default function AdminCollectionPage() {
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
-  const [editingCollection, setEditingCollection] = useState<any | null>(null)
+  const [editingCollection, setEditingCollection] = useState<AdminCollectionItem | null>(null)
 
   // Form states
   const [name, setName] = useState('')
@@ -67,7 +69,7 @@ export default function AdminCollectionPage() {
     setIsOpen(true)
   }
 
-  const handleOpenEdit = (col: any) => {
+  const handleOpenEdit = (col: AdminCollectionItem) => {
     setEditingCollection(col)
     setName(col.name || '')
     setSlug(col.slug || '')
@@ -107,7 +109,7 @@ export default function AdminCollectionPage() {
     }))
   }
 
-  const handleToggleActive = async (col: any) => {
+  const handleToggleActive = async (col: AdminCollectionItem) => {
     try {
       const { error } = await supabase
         .from('collections')
@@ -175,9 +177,10 @@ export default function AdminCollectionPage() {
       }
       setIsOpen(false)
       refetch()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal menyimpan koleksi')
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan koleksi'
+      toast.error(message)
     }
   }
 
@@ -199,6 +202,13 @@ export default function AdminCollectionPage() {
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat koleksi...</p>
           </div>
+        ) : isError ? (
+          <div className="py-24 text-center">
+            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat koleksi dari server</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+              Coba Lagi
+            </Button>
+          </div>
         ) : collections.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
             Belum ada koleksi kurasi ditambahkan.
@@ -217,7 +227,7 @@ export default function AdminCollectionPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {collections.map((col: any) => (
+                {collections.map((col: AdminCollectionItem) => (
                   <tr key={col.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
                       <span className="font-semibold text-neutral-900 text-sm block">
@@ -338,8 +348,9 @@ export default function AdminCollectionPage() {
                       const publicUrl = await uploadImage(file, 'banners')
                       setImageUrl(publicUrl)
                       toast.success('Gambar berhasil diunggah!', { id: toastId })
-                    } catch (err: any) {
-                      toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
+                    } catch (err: unknown) {
+                      const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar koleksi'
+                      toast.error(message, { id: toastId })
                     }
                   }}
                 />

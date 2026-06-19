@@ -16,7 +16,7 @@ export function AdminPanel({
   className,
   children,
   ...props
-}: AdminPanelProps) {
+}: AdminPanelProps) : React.JSX.Element {
   return (
     <div
       className={cn(

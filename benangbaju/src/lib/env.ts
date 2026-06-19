@@ -6,7 +6,7 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_APP_URL',
 ] as const
 
-export function validateEnv() {
+export function validateEnv() : void {
   const missing = requiredEnvVars.filter((key) => {
     const value = process.env[key]
     return !value || value.trim() === ''

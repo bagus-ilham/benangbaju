@@ -74,14 +74,96 @@ export async function getActiveFlashSale(
     return null
   }
 
-  return data as unknown as FlashSaleDetail | null
+  if (!data) return null
+
+  const rawItems = data.flash_sale_items
+  const itemsList = Array.isArray(rawItems) ? rawItems : []
+
+  const flash_sale_items: FlashSaleItemDetail[] = []
+
+  for (const item of itemsList) {
+    if (!item) continue
+    const pv = item.product_variants
+    if (!pv) continue
+    const prod = pv.products
+    if (!prod) continue
+
+    const rawImages = prod.product_images
+    const imagesList = Array.isArray(rawImages) ? rawImages : []
+    const product_images = imagesList.map(img => ({
+      url: img.url,
+      alt_text: img.alt_text,
+      is_primary: img.is_primary,
+    }))
+
+    flash_sale_items.push({
+      id: item.id,
+      flash_sale_id: item.flash_sale_id,
+      variant_id: item.variant_id,
+      original_price: item.original_price,
+      sale_price: item.sale_price,
+      discount_percent: item.discount_percent,
+      quota: item.quota,
+      sold_count: item.sold_count,
+      product_variants: {
+        id: pv.id,
+        sku: pv.sku,
+        name: pv.name,
+        price: pv.price,
+        stock: pv.stock,
+        products: {
+          id: prod.id,
+          name: prod.name,
+          slug: prod.slug,
+          product_images,
+        },
+      },
+    })
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    banner_url: data.banner_url,
+    starts_at: data.starts_at,
+    ends_at: data.ends_at,
+    is_active: data.is_active,
+    flash_sale_items,
+  }
 }
 
-export async function adminGetFlashSales(supabase: SupabaseClient<Database>) {
+export interface AdminFlashSaleListItem {
+  id: string
+  name: string
+  description: string | null
+  banner_url: string | null
+  starts_at: string
+  ends_at: string
+  is_active: boolean
+  flash_sale_items: Array<{
+    id: string
+    variant_id: string
+    original_price: number
+    sale_price: number
+    quota: number
+    sold_count: number
+    product_variants: {
+      name: string
+      products: {
+        name: string
+      } | null
+    } | null
+  }>
+}
+
+export async function adminGetFlashSales(
+  supabase: SupabaseClient<Database>
+): Promise<AdminFlashSaleListItem[]> {
   const { data, error } = await supabase
     .from('flash_sales')
     .select(`
-      *,
+      id, name, description, banner_url, starts_at, ends_at, is_active,
       flash_sale_items (
         id, variant_id, original_price, sale_price, quota, sold_count,
         product_variants (
@@ -97,7 +179,39 @@ export async function adminGetFlashSales(supabase: SupabaseClient<Database>) {
     throw error
   }
 
-  return data || []
+  if (!data) return []
+
+  return data.map(sale => {
+    const rawItems = sale.flash_sale_items
+    const itemsList = Array.isArray(rawItems) ? rawItems : []
+    const flash_sale_items = itemsList.map(item => {
+      const pv = item.product_variants
+      const prod = pv?.products
+      return {
+        id: item.id,
+        variant_id: item.variant_id,
+        original_price: item.original_price,
+        sale_price: item.sale_price,
+        quota: item.quota,
+        sold_count: item.sold_count,
+        product_variants: pv ? {
+          name: pv.name,
+          products: prod ? { name: prod.name } : null
+        } : null
+      }
+    })
+
+    return {
+      id: sale.id,
+      name: sale.name,
+      description: sale.description,
+      banner_url: sale.banner_url,
+      starts_at: sale.starts_at,
+      ends_at: sale.ends_at,
+      is_active: sale.is_active,
+      flash_sale_items,
+    }
+  })
 }
 
 export async function adminCreateFlashSale(
@@ -116,7 +230,7 @@ export async function adminCreateFlashSale(
     sale_price: number
     quota: number
   }[]
-) {
+) : Promise<{ id: string; }> {
   const { data: sale, error: saleErr } = await supabase
     .from('flash_sales')
     .insert(saleData)
@@ -166,7 +280,7 @@ export async function adminUpdateFlashSale(
     sale_price: number
     quota: number
   }[]
-) {
+) : Promise<{ id: string; }> {
   const { error: saleErr } = await supabase
     .from('flash_sales')
     .update(saleData)
@@ -228,7 +342,7 @@ export async function adminUpdateFlashSale(
 export async function adminDeleteFlashSale(
   supabase: SupabaseClient<Database>,
   saleId: string
-) {
+) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('flash_sales')
     .update({ is_active: false })

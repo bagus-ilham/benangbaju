@@ -50,7 +50,7 @@ export async function adminCreateBanner(
     starts_at: string | null
     ends_at: string | null
   }
-) {
+) : Promise<{ id: string; title: string; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
   const { data, error } = await supabase
     .from('banners')
     .insert(bannerData)
@@ -76,7 +76,7 @@ export async function adminUpdateBanner(
     starts_at: string | null
     ends_at: string | null
   }
-) {
+) : Promise<{ id: string; title: string; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
   const { data, error } = await supabase
     .from('banners')
     .update(bannerData)
@@ -91,7 +91,7 @@ export async function adminUpdateBanner(
 export async function adminDeleteBanner(
   supabase: SupabaseClient<Database>,
   bannerId: string
-) {
+) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('banners')
     .update({ is_active: false })

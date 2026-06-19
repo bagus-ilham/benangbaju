@@ -5,7 +5,7 @@ import { QueryProvider } from './QueryProvider'
 import { SupabaseProvider } from './SupabaseProvider'
 import { Toaster } from 'react-hot-toast'
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children }: { children: React.ReactNode }) : React.JSX.Element {
   return (
     <QueryProvider>
       <SupabaseProvider>

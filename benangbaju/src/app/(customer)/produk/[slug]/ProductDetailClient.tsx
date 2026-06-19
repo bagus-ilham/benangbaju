@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -39,7 +40,7 @@ const itemVariants = {
 }
 
 
-export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
+export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) : React.JSX.Element {
   const { addItem, setCartDrawerOpen } = useCart()
   const { isLiked, toggleWishlist } = useWishlist()
   const addProductToRecentlyViewed = useRecentlyViewedStore((s: RecentlyViewedState) => s.addProduct)
@@ -70,10 +71,12 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 <div className="flex-shrink-0 pt-0.5">
                   {product.product_images[0]?.url ? (
                     <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
-                      <img
-                        className="h-full w-full object-cover"
+                      <Image
+                        className="object-cover"
                         src={product.product_images[0].url}
                         alt={product.name}
+                        fill
+                        sizes="40px"
                       />
                     </div>
                   ) : (
@@ -183,10 +186,12 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               <div className="flex-shrink-0 pt-0.5">
                 {product.product_images[0]?.url ? (
                   <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
-                    <img
-                      className="h-full w-full object-cover"
+                    <Image
+                      className="object-cover"
                       src={product.product_images[0].url}
                       alt={product.name}
+                      fill
+                      sizes="40px"
                     />
                   </div>
                 ) : (
@@ -631,10 +636,12 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               {/* Product Info (Desktop/Tablet) */}
               <div className="hidden sm:flex items-center space-x-3">
                 <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0">
-                  <img
+                  <Image
                     src={product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || ''}
                     alt={product.name}
-                    className="object-cover w-full h-full"
+                    className="object-cover"
+                    fill
+                    sizes="32px"
                   />
                 </div>
                 <div>

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import type { Database } from '@/types/database'
 import {
   useAdminCategories,
   useAdminCreateCategory,
@@ -15,8 +16,10 @@ import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
-export default function AdminCategoryPage() {
-  const { data: categories = [], isLoading, refetch } = useAdminCategories()
+type CategoryRow = Database['public']['Tables']['categories']['Row']
+
+export default function AdminCategoryPage() : React.JSX.Element {
+  const { data: categories = [], isLoading, isError, refetch } = useAdminCategories()
 
   const createMutation = useAdminCreateCategory()
   const updateMutation = useAdminUpdateCategory()
@@ -24,7 +27,7 @@ export default function AdminCategoryPage() {
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<any | null>(null)
+  const [editingCategory, setEditingCategory] = useState<CategoryRow | null>(null)
 
   // Form states
   const [name, setName] = useState('')
@@ -47,7 +50,7 @@ export default function AdminCategoryPage() {
     setIsOpen(true)
   }
 
-  const handleOpenEdit = (cat: any) => {
+  const handleOpenEdit = (cat: CategoryRow) => {
     setEditingCategory(cat)
     setName(cat.name || '')
     setSlug(cat.slug || '')
@@ -72,7 +75,7 @@ export default function AdminCategoryPage() {
     }
   }
 
-  const handleToggleActive = async (cat: any) => {
+  const handleToggleActive = async (cat: CategoryRow) => {
     try {
       const { error } = await supabase
         .from('categories')
@@ -129,9 +132,10 @@ export default function AdminCategoryPage() {
       }
       setIsOpen(false)
       refetch()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal menyimpan kategori')
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan kategori'
+      toast.error(message)
     }
   }
 
@@ -158,6 +162,13 @@ export default function AdminCategoryPage() {
         {isLoading ? (
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat kategori...</p>
+          </div>
+        ) : isError ? (
+          <div className="py-24 text-center">
+            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat kategori dari server</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+              Coba Lagi
+            </Button>
           </div>
         ) : categories.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
@@ -308,8 +319,9 @@ export default function AdminCategoryPage() {
                     const publicUrl = await uploadImage(file, 'products')
                     setImageUrl(publicUrl)
                     toast.success('Gambar kategori berhasil diunggah!', { id: toastId })
-                  } catch (err: any) {
-                    toast.error(err.message || 'Gagal mengunggah gambar kategori', { id: toastId })
+                  } catch (err: unknown) {
+                    const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar kategori'
+                    toast.error(message, { id: toastId })
                   }
                 }}
               />

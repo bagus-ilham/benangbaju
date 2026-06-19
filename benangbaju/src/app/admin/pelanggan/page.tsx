@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
 import { motion } from 'framer-motion'
 
-export default function AdminCustomersPage() {
+export default function AdminCustomersPage() : React.JSX.Element {
   const { data: customers, isLoading, isError, refetch } = useAdminCustomers()
   const toggleStatusMutation = useAdminToggleCustomerStatus()
   
@@ -25,9 +25,10 @@ export default function AdminCustomersPage() {
     try {
       await toggleStatusMutation.mutateAsync({ customerId, isActive: nextStatus })
       toast.success(`Akun ${customerName} berhasil ${nextStatus ? 'diaktifkan' : 'dinonaktifkan'}`)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal mengubah status akun')
+      const message = err instanceof Error ? err.message : 'Gagal mengubah status akun'
+      toast.error(message)
     }
   }
 
@@ -83,6 +84,7 @@ export default function AdminCustomersPage() {
             placeholder="Cari pelanggan berdasarkan nama, email, atau telepon..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Cari pelanggan berdasarkan nama, email, atau telepon"
           />
           <Search size={14} className="absolute left-3.5 top-3.5 text-neutral-400" />
         </div>

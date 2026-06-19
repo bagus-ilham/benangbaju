@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import type { Database } from '@/types/database'
 import {
   useAdminBanners,
   useAdminCreateBanner,
@@ -16,8 +17,10 @@ import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
-export default function AdminBannersPage() {
-  const { data: banners = [], isLoading, refetch } = useAdminBanners()
+type BannerRow = Database['public']['Tables']['banners']['Row']
+
+export default function AdminBannersPage() : React.JSX.Element {
+  const { data: banners = [], isLoading, isError, refetch } = useAdminBanners()
 
   const createMutation = useAdminCreateBanner()
   const updateMutation = useAdminUpdateBanner()
@@ -25,7 +28,7 @@ export default function AdminBannersPage() {
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
-  const [editingBanner, setEditingBanner] = useState<any | null>(null)
+  const [editingBanner, setEditingBanner] = useState<BannerRow | null>(null)
 
   // Form states
   const [title, setTitle] = useState('')
@@ -54,7 +57,7 @@ export default function AdminBannersPage() {
     setIsOpen(true)
   }
 
-  const handleOpenEdit = (b: any) => {
+  const handleOpenEdit = (b: BannerRow) => {
     setEditingBanner(b)
     setTitle(b.title || '')
     setSubtitle(b.subtitle || '')
@@ -69,7 +72,7 @@ export default function AdminBannersPage() {
     setIsOpen(true)
   }
 
-  const handleToggleActive = async (b: any) => {
+  const handleToggleActive = async (b: BannerRow) => {
     try {
       const { error } = await supabase
         .from('banners')
@@ -134,9 +137,10 @@ export default function AdminBannersPage() {
       }
       setIsOpen(false)
       refetch()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal menyimpan banner')
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan banner'
+      toast.error(message)
     }
   }
 
@@ -157,6 +161,13 @@ export default function AdminBannersPage() {
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat banner...</p>
           </div>
+        ) : isError ? (
+          <div className="py-24 text-center">
+            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat banner dari server</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+              Coba Lagi
+            </Button>
+          </div>
         ) : banners.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
             Belum ada banner promosi ditambahkan.
@@ -175,17 +186,17 @@ export default function AdminBannersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {banners.map((b: any) => (
+                {banners.map((b: BannerRow) => (
                   <tr key={b.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5 flex items-center space-x-3.5">
                       <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={b.image_url}
+                          src={b.image_url || ''}
                           alt={b.title}
                           className="object-cover w-full h-full"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://placehold.co/600x300?text=No+Image'
+                            e.currentTarget.src = 'https://placehold.co/600x300?text=No+Image'
                           }}
                         />
                       </div>
@@ -290,7 +301,7 @@ export default function AdminBannersPage() {
                       alt="Desktop Preview"
                       className="object-cover w-full h-full"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                        e.currentTarget.src = 'https://placehold.co/150?text=Error'
                       }}
                     />
                   ) : (
@@ -321,8 +332,9 @@ export default function AdminBannersPage() {
                           const publicUrl = await uploadImage(file, 'banners')
                           setImageUrl(publicUrl)
                           toast.success('Gambar desktop berhasil diunggah!', { id: toastId })
-                        } catch (err: any) {
-                          toast.error(err.message || 'Gagal mengunggah gambar desktop', { id: toastId })
+                        } catch (err: unknown) {
+                          const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar desktop'
+                          toast.error(message, { id: toastId })
                         }
                       }}
                     />
@@ -351,7 +363,7 @@ export default function AdminBannersPage() {
                       alt="Mobile Preview"
                       className="object-cover w-full h-full"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                        e.currentTarget.src = 'https://placehold.co/150?text=Error'
                       }}
                     />
                   ) : (
@@ -381,8 +393,9 @@ export default function AdminBannersPage() {
                           const publicUrl = await uploadImage(file, 'banners')
                           setImageMobileUrl(publicUrl)
                           toast.success('Gambar mobile berhasil diunggah!', { id: toastId })
-                        } catch (err: any) {
-                          toast.error(err.message || 'Gagal mengunggah gambar mobile', { id: toastId })
+                        } catch (err: unknown) {
+                          const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar mobile'
+                          toast.error(message, { id: toastId })
                         }
                       }}
                     />

@@ -1,6 +1,6 @@
 import React from 'react'
 import { AuthLoading } from '@/components/shared/AuthLoading'
 
-export default function CustomerLoading() {
+export default function CustomerLoading() : React.JSX.Element {
   return <AuthLoading message="Memuat belanjaan Anda..." />
 }

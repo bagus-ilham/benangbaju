@@ -19,7 +19,10 @@ function CatalogContent() {
 
   // 1. Read filters from URL params
   const categorySlug = searchParams.get('kategori') || undefined
-  const sortBy = (searchParams.get('urutkan') as any) || 'newest'
+  const sortParam = searchParams.get('urutkan')
+  const sortBy = sortParam === 'price-low' || sortParam === 'price-high' || sortParam === 'popular' || sortParam === 'featured'
+    ? sortParam
+    : 'newest'
   const searchQuery = searchParams.get('q') || undefined
   const page = Number(searchParams.get('halaman')) || 1
   const limit = 12
@@ -28,7 +31,7 @@ function CatalogContent() {
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   // 3. Fetch products using React Query hook
-  const { data, isLoading } = useProducts({
+  const { data, isLoading, isError } = useProducts({
     categorySlug,
     searchQuery,
     sortBy,
@@ -39,10 +42,33 @@ function CatalogContent() {
   const { products = [], totalCount = 0 } = data || {}
 
   // 4. Fetch all active categories for the sidebar filter
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isError: isCategoriesError } = useQuery({
     queryKey: ['categories'],
     queryFn: () => getActiveCategories(supabase),
   })
+
+  if (isError || isCategoriesError) {
+    return (
+      <div className="bg-white min-h-screen">
+        <PageHero
+          eyebrow="Katalog Busana"
+          title="Semua Produk"
+          subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
+        />
+        <PageContainer className="py-10 page-content">
+          <EmptyState
+            icon="PackageSearch"
+            title="Gagal Memuat Produk"
+            description="Terjadi kesalahan saat memuat produk atau kategori dari server. Silakan coba kembali."
+            action={{
+              label: "Coba Lagi",
+              onClick: () => window.location.reload()
+            }}
+          />
+        </PageContainer>
+      </div>
+    )
+  }
 
   // 5. Update URL search params helpers
   const updateFilters = (newParams: Record<string, string | null>) => {
@@ -187,6 +213,7 @@ function CatalogContent() {
                   <button
                     onClick={() => setShowMobileFilters(false)}
                     className="text-neutral-400 hover:text-brand-black p-1"
+                    aria-label="Tutup filter"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -308,7 +335,7 @@ function CatalogContent() {
   )
 }
 
-export default function CatalogPage() {
+export default function CatalogPage() : React.JSX.Element {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center text-xs text-neutral-400 uppercase tracking-widest font-heading">

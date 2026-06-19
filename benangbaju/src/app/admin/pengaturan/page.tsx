@@ -8,11 +8,12 @@ import {
   useAdminCollections,
   useAdminUpsertSettings,
 } from '@/hooks/useAdmin'
-import { Button, Input, AdminPageHeader } from '@/components/shared'
+import type { SiteSetting } from '@/services/settings'
+import { Button, Input, AdminPageHeader, ClientDateTime } from '@/components/shared'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-const DEFAULT_SETTINGS = [
+const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
   { key: 'store_tagline', value: 'Fashion Muslim Premium Indonesia', type: 'text', group: 'general', label: 'Slogan Toko' },
   { key: 'homepage_spotlight_collection_1', value: '', type: 'text', group: 'general', label: 'Koleksi Beranda Utama (Spotlight 1)' },
@@ -23,9 +24,9 @@ const DEFAULT_SETTINGS = [
   { key: 'whatsapp_number', value: '6281234567890', type: 'text', group: 'social', label: 'Nomor WhatsApp Chat' },
   { key: 'instagram_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username Instagram' },
   { key: 'tiktok_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username TikTok' },
-] as const
+]
 
-export default function AdminSettingsPage() {
+export default function AdminSettingsPage() : React.JSX.Element {
   const [activeSubTab, setActiveSubTab] = useState<'settings' | 'logs'>('settings')
 
   // Queries
@@ -45,7 +46,7 @@ export default function AdminSettingsPage() {
       if (settingsList.length === 0) {
         const seedSettings = async () => {
           try {
-            await upsertMutation.mutateAsync(DEFAULT_SETTINGS as any)
+            await upsertMutation.mutateAsync(DEFAULT_SETTINGS)
             refetchSettings()
           } catch (err) {
             console.error('Failed to seed default settings:', err)
@@ -54,13 +55,13 @@ export default function AdminSettingsPage() {
         seedSettings()
       } else {
         const dict: Record<string, string> = {}
-        settingsList.forEach((s: any) => {
+        settingsList.forEach((s) => {
           dict[s.key] = s.value || ''
         })
         setFields(dict)
       }
     }
-  }, [settingsList, settingsLoading])
+  }, [settingsList, settingsLoading, refetchSettings, upsertMutation])
 
   const handleFieldChange = (key: string, value: string) => {
     setFields((prev) => ({
@@ -82,7 +83,7 @@ export default function AdminSettingsPage() {
   }
 
   // Group settings
-  const settingsByGroup = settingsList.reduce((acc: any, s: any) => {
+  const settingsByGroup = settingsList.reduce<Record<string, SiteSetting[]>>((acc, s) => {
     if (!acc[s.group]) acc[s.group] = []
     acc[s.group].push(s)
     return acc
@@ -133,14 +134,14 @@ export default function AdminSettingsPage() {
           </div>
         ) : (
           <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl">
-            {Object.entries(settingsByGroup).map(([group, list]: any) => (
+            {Object.entries(settingsByGroup).map(([group, list]) => (
               <div key={group} className="border border-neutral-200 bg-white p-5 rounded-none space-y-4">
                 <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
                   {groupLabels[group] || group}
                 </h3>
 
                 <div className="space-y-4">
-                  {list.map((setting: any) => (
+                  {list.map((setting) => (
                     <div key={setting.key} className="space-y-1">
                       <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
                         {setting.label || setting.key}
@@ -153,8 +154,8 @@ export default function AdminSettingsPage() {
                         >
                           <option value="">Pilih Koleksi (Gunakan Urutan Default)</option>
                           {collections
-                            .filter((col: any) => col.is_active)
-                            .map((col: any) => (
+                            .filter((col) => col.is_active)
+                            .map((col) => (
                               <option key={col.id} value={col.slug}>
                                 {col.name} ({col.slug})
                               </option>
@@ -221,14 +222,17 @@ export default function AdminSettingsPage() {
                   {logsList.map((log) => (
                     <tr key={log.id} className="hover:bg-neutral-50/20 transition">
                       <td className="py-3 px-5 text-neutral-500 whitespace-nowrap">
-                        {new Date(log.created_at).toLocaleString('id-ID', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })}
+                        <ClientDateTime
+                          date={log.created_at}
+                          options={{
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                          }}
+                        />
                       </td>
                       <td className="py-3 px-4">
                         <p>{log.profiles?.name || 'Administrator'}</p>

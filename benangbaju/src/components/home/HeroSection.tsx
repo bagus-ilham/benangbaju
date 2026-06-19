@@ -13,7 +13,7 @@ interface HeroSectionProps {
   banners: Banner[]
 }
 
-export function HeroSection({ banners }: HeroSectionProps) {
+export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {

@@ -12,7 +12,7 @@ interface CollectionSectionProps {
   collections: Collection[]
 }
 
-export function CollectionSection({ collections }: CollectionSectionProps) {
+export function CollectionSection({ collections }: CollectionSectionProps) : React.JSX.Element | null {
   if (collections.length === 0) return null
 
   const topCollections = collections.slice(0, 2)

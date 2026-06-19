@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Informasi lengkap tarif, jadwal, cakupan daerah, ekspedisi pengiriman, dan kebijakan berat paket Benangbaju.',
 }
 
-export default function PengirimanPage() {
+export default function PengirimanPage() : React.JSX.Element {
   const deliveryPartners = [
     { name: 'JNE (Reguler / Oke / Yes)', area: 'Seluruh Indonesia', timeline: '1 – 3 hari kerja (YES), 2 – 5 hari kerja (REG)' },
     { name: 'J&T Express', area: 'Seluruh Indonesia', timeline: '2 – 4 hari kerja' },

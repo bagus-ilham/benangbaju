@@ -27,7 +27,7 @@ export function ProductGridSection({
   viewAllLabel = 'Lihat Semua',
   variant = 'default',
   align = 'center',
-}: ProductGridSectionProps) {
+}: ProductGridSectionProps) : React.JSX.Element | null {
   if (products.length === 0) return null
 
   const bgClass =

@@ -13,16 +13,17 @@ import { cn, formatIDR } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Input } from '@/components/shared'
-import { SOCIAL_LINKS } from '@/lib/constants'
-import { getProducts } from '@/services/products'
 import { MiniCartDrawer } from './MiniCartDrawer'
+import { Footer } from './Footer'
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary'
+import { getProducts, type ProductListItem } from '@/services/products'
 
 
 interface CustomerLayoutProps {
   children: React.ReactNode
 }
 
-export function CustomerLayout({ children }: { children: React.ReactNode }) {
+export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.Element {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createBrowserClient()
@@ -35,13 +36,14 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [instantResults, setInstantResults] = useState<any[]>([])
+  const [instantResults, setInstantResults] = useState<ProductListItem[]>([])
   const [isSearchingInstant, setIsSearchingInstant] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [animateCart, setAnimateCart] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
     if (!isSearchOpen || searchQuery.trim().length < 2) {
@@ -66,6 +68,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
   }, [searchQuery, isSearchOpen, supabase])
 
   useEffect(() => {
+    setIsMounted(true)
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
       
@@ -82,7 +85,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const scrollToTop = () => {
+  const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -209,7 +212,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                 aria-label="Wishlist"
               >
                 <Heart className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
-                {wishlistCount > 0 && (
+                {isMounted && wishlistCount > 0 && (
                   <motion.span
                     key={`wishlist-badge-${wishlistCount}`}
                     initial={{ scale: 0.6, opacity: 0 }}
@@ -235,7 +238,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                 >
                   <ShoppingBag className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
                 </motion.div>
-                {totalQuantity > 0 && (
+                {isMounted && totalQuantity > 0 && (
                   <motion.span
                     key={`cart-badge-${totalQuantity}`}
                     initial={{ scale: 0.6, opacity: 0 }}
@@ -251,7 +254,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
 
               {/* User Account / Menu */}
               <div className="relative">
-                {isAuthenticated ? (
+                {isMounted && isAuthenticated ? (
                   <div>
                     <button
                       onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -403,11 +406,11 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                     {instantResults.length > 0 ? (
                       <div className="space-y-3">
                         {instantResults.map((product) => {
-                          const primaryImg = product.product_images?.find((img: any) => img.is_primary)?.url 
+                          const primaryImg = product.product_images?.find((img) => img.is_primary)?.url 
                             || product.product_images?.[0]?.url 
                             || null;
 
-                          const prices = product.product_variants?.map((v: any) => Number(v.price)) || [];
+                          const prices = product.product_variants?.map((v) => Number(v.price)) || [];
                           const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
 
                           return (
@@ -535,7 +538,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
                     </Link>
                   ))}
                   
-                  {!isAuthenticated && (
+                  {isMounted && !isAuthenticated && (
                     <Link
                       href="/masuk"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -554,160 +557,12 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main Page Area */}
       <main id="main-content" className="flex-1 flex flex-col">
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </main>
 
-      {/* Footer — spacious editorial footer */}
-      <footer className="bg-brand-cream border-t border-neutral-200">
-        {/* Newsletter CTA band */}
-        <div className="border-b border-neutral-200 bg-brand-black py-12 md:py-14">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-4">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-gold-light">
-              Tetap Terhubung
-            </span>
-            <h3 className="text-lg md:text-xl font-heading font-light uppercase tracking-wider text-white">
-              Dapatkan Info Koleksi Terbaru
-            </h3>
-            <p className="text-xs text-neutral-400 font-sans max-w-md mx-auto">
-              Berlangganan newsletter untuk promo eksklusif dan akses early ke koleksi baru.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                toast.success('Terima kasih! Fitur newsletter segera hadir.')
-              }}
-              className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2"
-            >
-              <Input
-                type="email"
-                label="Email"
-                placeholder="Email Anda"
-                required
-                className="flex-1 [&_input]:bg-white/10 [&_input]:border-white/20 [&_input]:text-white [&_input]:placeholder:text-neutral-500 [&_label]:text-neutral-400"
-              />
-              <Button type="submit" variant="primary" size="sm" className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-gold hover:text-white hover:border-brand-gold transition-all duration-300">
-                Daftar
-              </Button>
-            </form>
-          </div>
-        </div>
-
-        <div className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
-            {/* Col 1: Brand Info */}
-            <div className="flex flex-col space-y-4">
-              <span className="font-heading text-base font-bold tracking-[0.2em] text-brand-black uppercase">
-                BENANGBAJU
-              </span>
-              <p className="text-[11px] text-neutral-500 leading-relaxed max-w-xs font-sans">
-                Benangbaju menghadirkan fashion muslim premium modern untuk wanita Indonesia dengan desain minimalis, bahan berkualitas, dan kenyamanan terbaik.
-              </p>
-            </div>
-
-            {/* Col 2: Pelayanan Pelanggan */}
-            <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
-                Pelayanan
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/cara-belanja" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Cara Belanja
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/pengiriman" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Informasi Pengiriman
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/retur" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Kebijakan Pengembalian (Retur)
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kontak" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Hubungi Kami
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Col 3: Kebijakan & Hukum */}
-            <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
-                Informasi
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/syarat-ketentuan" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Syarat & Ketentuan
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kebijakan-privasi" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Kebijakan Privasi
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/tentang" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
-                    Tentang Kami
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Col 4: Social */}
-            <div className="flex flex-col space-y-4">
-              <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
-                Ikuti Kami
-              </h4>
-              <p className="text-[11px] text-neutral-500 font-sans">
-                Temukan inspirasi gaya modest di media sosial kami.
-              </p>
-              <div className="flex space-x-3 pt-1">
-                <a
-                  href={SOCIAL_LINKS.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-2 border border-neutral-200 text-[10px] font-heading uppercase tracking-wider text-neutral-500 hover:border-brand-gold hover:text-brand-gold transition-all duration-200"
-                >
-                  IG
-                </a>
-                <a
-                  href={SOCIAL_LINKS.tiktok}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-2 border border-neutral-200 text-[10px] font-heading uppercase tracking-wider text-neutral-500 hover:border-brand-gold hover:text-brand-gold transition-all duration-200"
-                >
-                  TT
-                </a>
-                <a
-                  href={SOCIAL_LINKS.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-2 border border-neutral-200 text-[10px] font-heading uppercase tracking-wider text-neutral-500 hover:border-brand-gold hover:text-brand-gold transition-all duration-200"
-                >
-                  WA
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-neutral-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-[10px] text-neutral-400 font-sans">
-              &copy; {new Date().getFullYear()} Benangbaju Store. All rights reserved.
-            </p>
-            <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
-              <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">Syarat</Link>
-              <Link href="/kebijakan-privasi" className="hover:text-brand-gold transition-colors">Privasi</Link>
-              <Link href="/kontak" className="hover:text-brand-gold transition-colors">Kontak</Link>
-            </div>
-          </div>
-        </div>
-        </div>
-      </footer>
+      <Footer />
       <MiniCartDrawer />
 
       {/* Scroll-to-Top Floating Button */}
@@ -717,7 +572,7 @@ export function CustomerLayout({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            onClick={scrollToTop}
+            onClick={handleScrollToTop}
             className="fixed bottom-6 right-6 z-40 p-3 bg-white text-brand-black shadow-lg border border-neutral-100 flex items-center justify-center cursor-pointer hover:border-brand-gold transition-colors group rounded-none"
             aria-label="Kembali ke atas"
           >

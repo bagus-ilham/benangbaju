@@ -21,7 +21,7 @@ export function PageHero({
   variant = 'cream',
   className,
   children,
-}: PageHeroProps) {
+}: PageHeroProps) : React.JSX.Element {
   const variantClasses = {
     light: 'bg-white border-neutral-100',
     cream: 'bg-brand-cream section-texture border-neutral-200',

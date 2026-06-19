@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query'
 import { createBrowserClient } from '@/lib/supabase/client'
 import {
   getUserNotifications,
@@ -7,16 +7,9 @@ import {
   markAllNotificationsRead,
 } from '@/services/notifications'
 
-const supabase = new Proxy({} as any, {
-  get(target, prop) {
-    const client = createBrowserClient()
-    const value = Reflect.get(client, prop)
-    return typeof value === 'function' ? value.bind(client) : value
-  },
-})
-
-export function useUserNotifications(userId: string) {
+export function useUserNotifications(userId: string) : import("@tanstack/react-query").UseQueryResult<import("@/services/notifications").UserNotification[], Error> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
 
   useEffect(() => {
     if (!userId) return
@@ -40,7 +33,7 @@ export function useUserNotifications(userId: string) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [userId, queryClient])
+  }, [userId, queryClient, supabase])
 
   return useQuery({
     queryKey: ['notifications', userId],
@@ -49,8 +42,14 @@ export function useUserNotifications(userId: string) {
   })
 }
 
-export function useMarkNotificationRead(userId: string) {
+export function useMarkNotificationRead(userId: string) : UseMutationResult<
+  Awaited<ReturnType<typeof markNotificationRead>>,
+  Error,
+  string,
+  unknown
+> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: (notificationId: string) => markNotificationRead(supabase, notificationId),
     onSuccess: () => {
@@ -59,8 +58,14 @@ export function useMarkNotificationRead(userId: string) {
   })
 }
 
-export function useMarkAllNotificationsRead(userId: string) {
+export function useMarkAllNotificationsRead(userId: string) : UseMutationResult<
+  Awaited<ReturnType<typeof markAllNotificationsRead>>,
+  Error,
+  void,
+  unknown
+> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: () => markAllNotificationsRead(supabase, userId),
     onSuccess: () => {
@@ -68,3 +73,4 @@ export function useMarkAllNotificationsRead(userId: string) {
     },
   })
 }
+

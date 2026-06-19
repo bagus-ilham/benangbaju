@@ -1,16 +1,21 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useRecentlyViewedStore } from '@/stores/recentlyViewedStore'
 import { ProductCard } from '@/components/product/ProductCard'
 import { ProductListItem } from '@/services/products'
 import { PageContainer, SectionHeader } from '@/components/shared'
 
-export function RecentlyViewedSection() {
+export function RecentlyViewedSection() : React.JSX.Element | null {
   const { products } = useRecentlyViewedStore()
+  const [isMounted, setIsMounted] = useState(false)
 
-  if (products.length === 0) return null
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted || products.length === 0) return null
 
   const mappedProducts: ProductListItem[] = products.map((p) => ({
     id: p.id,

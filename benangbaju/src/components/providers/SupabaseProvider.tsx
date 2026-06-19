@@ -6,7 +6,9 @@ import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useWishlistStore } from '@/stores/wishlistStore'
 
-export function SupabaseProvider({ children }: { children: React.ReactNode }) {
+import { AuthChangeEvent, Session } from '@supabase/supabase-js'
+
+export function SupabaseProvider({ children }: { children: React.ReactNode }) : React.JSX.Element {
   const supabase = createBrowserClient()
   const { setUser, setProfile, setLoading, clearAuth } = useAuthStore()
 
@@ -30,9 +32,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
             .single()
 
           if (profile) {
+            const role = profile.role === 'admin' ? 'admin' : 'customer'
             setProfile({
               ...profile,
-              role: profile.role as 'customer' | 'admin',
+              role,
             })
           }
 
@@ -56,7 +59,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     // 2. Set up auth state change listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       if (session?.user) {
         setUser(session.user)
         
@@ -68,9 +71,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
           .single()
 
         if (profile) {
+          const role = profile.role === 'admin' ? 'admin' : 'customer'
           setProfile({
             ...profile,
-            role: profile.role as 'customer' | 'admin',
+            role,
           })
         }
 

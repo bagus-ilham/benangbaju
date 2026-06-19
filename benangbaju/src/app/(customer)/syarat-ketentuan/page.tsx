@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Syarat dan ketentuan umum penggunaan situs, pendaftaran akun, pembelian produk, keamanan transaksi, dan kebijakan pembatalan di Benangbaju.',
 }
 
-export default function SyaratKetentuanPage() {
+export default function SyaratKetentuanPage() : React.JSX.Element {
   const sections = [
     {
       title: '1. Ketentuan Umum',

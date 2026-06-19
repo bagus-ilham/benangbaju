@@ -12,7 +12,7 @@ const fadeUp = {
   transition: { duration: 0.6, ease: EASE_PREMIUM },
 }
 
-export function TentangClient() {
+export function TentangClient() : React.JSX.Element {
   return (
     <div className="min-h-screen bg-white font-sans">
       <PageHero

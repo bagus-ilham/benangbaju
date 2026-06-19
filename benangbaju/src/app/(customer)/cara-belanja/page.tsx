@@ -37,7 +37,7 @@ const steps = [
   },
 ]
 
-export default function CaraBelanjaPage() {
+export default function CaraBelanjaPage() : React.JSX.Element {
   return (
     <div className="min-h-screen bg-white font-sans">
       <PageHero

@@ -7,16 +7,77 @@ import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Plus, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { ProductImageManager } from './ProductImageManager'
+import { ProductMarketplaceLinks } from './ProductMarketplaceLinks'
+import { ProductSeoFields } from './ProductSeoFields'
+
 import { uploadImage } from '@/lib/supabase/storage'
 
+import type { ProductPayload, ProductVariantPayload, ProductImagePayload, ProductLinkPayload } from '@/types/product'
+
+interface InitialProductVariantAttr {
+  attr_name: string
+  attr_value: string
+}
+
+interface InitialProductVariant {
+  id: string
+  sku: string | null
+  name: string | null
+  price: number | string
+  compare_price: number | string | null
+  stock: number
+  weight_gram: number | null
+  is_active: boolean
+  product_variant_attrs?: InitialProductVariantAttr[]
+}
+
+interface InitialProductImage {
+  id: string
+  url: string
+  alt_text: string | null
+  sort_order: number
+  is_primary: boolean
+  variant_id: string | null
+}
+
+interface InitialProductLink {
+  platform: string
+  url: string
+  label: string | null
+  sort_order: number
+}
+
+interface InitialCollectionProduct {
+  collection_id: string
+}
+
+interface InitialProductData {
+  id: string
+  name: string
+  slug: string
+  category_id: string
+  description: string | null
+  short_description: string | null
+  weight_gram: number
+  is_active: boolean
+  is_featured: boolean
+  meta_title: string | null
+  meta_description: string | null
+  product_variants?: InitialProductVariant[]
+  product_images?: InitialProductImage[]
+  product_marketplace_links?: InitialProductLink[]
+  collection_products?: InitialCollectionProduct[]
+}
+
 interface ProductFormProps {
-  initialData?: any
-  onSubmit: (data: any) => Promise<void>
+  initialData?: InitialProductData
+  onSubmit: (data: ProductPayload) => Promise<void>
   isSubmitting: boolean
   title: string
 }
 
-export function ProductForm({ initialData, onSubmit, isSubmitting, title }: ProductFormProps) {
+export function ProductForm({ initialData, onSubmit, isSubmitting, title }: ProductFormProps) : React.JSX.Element {
   const router = useRouter()
   const { data: categories, isLoading: catsLoading } = useAdminCategories()
   const { data: collections, isLoading: colsLoading } = useAdminCollections()
@@ -34,13 +95,13 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
   const [meta_description, setMetaDescription] = useState('')
 
   // Variants state
-  const [variants, setVariants] = useState<any[]>([])
+  const [variants, setVariants] = useState<ProductVariantPayload[]>([])
 
   // Images state (multiple URLs)
-  const [images, setImages] = useState<any[]>([])
+  const [images, setImages] = useState<ProductImagePayload[]>([])
 
   // Marketplace links state
-  const [marketplaceLinks, setMarketplaceLinks] = useState<any[]>([])
+  const [marketplaceLinks, setMarketplaceLinks] = useState<ProductLinkPayload[]>([])
 
   // Selected collections state
   const [selectedCollections, setSelectedCollections] = useState<string[]>([])
@@ -62,7 +123,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       // Map variants
       if (initialData.product_variants) {
         setVariants(
-          initialData.product_variants.map((v: any) => ({
+          initialData.product_variants.map((v: InitialProductVariant) => ({
             id: v.id,
             sku: v.sku || '',
             name: v.name || '',
@@ -72,7 +133,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
             weight_gram: v.weight_gram || null,
             is_active: v.is_active !== false,
             // Parse attributes
-            attrs: v.product_variant_attrs?.map((a: any) => ({
+            attrs: v.product_variant_attrs?.map((a: InitialProductVariantAttr) => ({
               attr_name: a.attr_name,
               attr_value: a.attr_value,
             })) || [],
@@ -83,7 +144,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       // Map images
       if (initialData.product_images) {
         setImages(
-          initialData.product_images.map((img: any) => ({
+          initialData.product_images.map((img: InitialProductImage) => ({
             url: img.url || '',
             alt_text: img.alt_text || '',
             sort_order: img.sort_order || 0,
@@ -96,7 +157,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       // Map marketplace links
       if (initialData.product_marketplace_links) {
         setMarketplaceLinks(
-          initialData.product_marketplace_links.map((link: any) => ({
+          initialData.product_marketplace_links.map((link: InitialProductLink) => ({
             platform: link.platform || 'shopee',
             url: link.url || '',
             label: link.label || '',
@@ -108,7 +169,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       // Map collections
       if (initialData.collection_products) {
         setSelectedCollections(
-          initialData.collection_products.map((cp: any) => cp.collection_id)
+          initialData.collection_products.map((cp: InitialCollectionProduct) => cp.collection_id)
         )
       } else {
         setSelectedCollections([])
@@ -134,7 +195,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
           alt_text: '',
           sort_order: 0,
           is_primary: true,
-          variant_id: '',
+          variant_id: null,
         },
       ])
       setSelectedCollections([])
@@ -173,7 +234,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     ])
   }
 
-  const handleUpdateVariantField = (idx: number, field: string, value: any) => {
+  const handleUpdateVariantField = (idx: number, field: string, value: string | number | boolean | null | Array<{ attr_name: string; attr_value: string }>) => {
     setVariants((prev) =>
       prev.map((v, i) => (i === idx ? { ...v, [field]: value } : v))
     )
@@ -203,7 +264,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
         i === vIdx
           ? {
               ...v,
-              attrs: v.attrs.map((attr: any, j: number) =>
+              attrs: v.attrs.map((attr, j: number) =>
                 j === aIdx ? { ...attr, [field]: value } : attr
               ),
             }
@@ -218,14 +279,13 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
         i === vIdx
           ? {
               ...v,
-              attrs: v.attrs.filter((_: any, j: number) => j !== aIdx),
+              attrs: v.attrs.filter((_, j: number) => j !== aIdx),
             }
           : v
       )
     )
   }
 
-  // Images handlers
   const handleAddImage = () => {
     setImages((prev) => [
       ...prev,
@@ -234,12 +294,12 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
         alt_text: '',
         sort_order: prev.length,
         is_primary: prev.length === 0,
-        variant_id: '',
+        variant_id: null,
       },
     ])
   }
 
-  const handleUpdateImageField = (idx: number, field: string, value: any) => {
+  const handleUpdateImageField = (idx: number, field: string, value: string | number | boolean | null) => {
     setImages((prev) =>
       prev.map((img, i) => {
         if (field === 'is_primary' && value === true) {
@@ -267,7 +327,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     ])
   }
 
-  const handleUpdateLinkField = (idx: number, field: string, value: any) => {
+  const handleUpdateLinkField = (idx: number, field: string, value: string | number | null) => {
     setMarketplaceLinks((prev) =>
       prev.map((link, i) => (i === idx ? { ...link, [field]: value } : link))
     )
@@ -331,9 +391,10 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     try {
       await onSubmit(payload)
       router.push('/admin/produk')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal menyimpan produk')
+      const errorMessage = err instanceof Error ? err.message : 'Gagal menyimpan produk'
+      toast.error(errorMessage)
     }
   }
 
@@ -619,7 +680,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                               alt_text: '',
                               sort_order: prev.length,
                               is_primary: false,
-                              variant_id: v.id,
+                              variant_id: v.id || null,
                             },
                           ])
                         }}
@@ -644,7 +705,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                                     alt={img.alt_text || 'Preview'}
                                     className="object-cover w-full h-full"
                                     onError={(e) => {
-                                      (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
+                                      e.currentTarget.src = 'https://placehold.co/150?text=Error'
                                     }}
                                   />
                                 ) : (
@@ -677,8 +738,9 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                                     const publicUrl = await uploadImage(file, 'products')
                                     handleUpdateImageField(imgIdx, 'url', publicUrl)
                                     toast.success('Gambar berhasil diunggah!', { id: toastId })
-                                  } catch (err: any) {
-                                    toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
+                                  } catch (err: unknown) {
+                                    const errorMessage = err instanceof Error ? err.message : 'Gagal mengunggah gambar'
+                                    toast.error(errorMessage, { id: toastId })
                                   }
                                 }}
                               />
@@ -719,7 +781,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
 
                     {v.attrs.length > 0 && (
                       <div className="space-y-2">
-                        {v.attrs.map((attr: any, aIdx: number) => (
+                        {v.attrs.map((attr, aIdx: number) => (
                           <div key={aIdx} className="flex items-center space-x-2">
                             <input
                               type="text"
@@ -755,257 +817,27 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
 
         {/* Right Side: Images & Platform links & SEO */}
         <div className="space-y-8">
-          {/* Images Section */}
-          <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-4">
-            <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
-              <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
-                Daftar URL Gambar
-              </h3>
-              <Button
-                type="button"
-                onClick={handleAddImage}
-                variant="outline"
-                className="text-[9px] font-bold uppercase py-0.5 px-2 border-neutral-850"
-              >
-                + Tambah URL
-              </Button>
-            </div>
+          <ProductImageManager
+            images={images}
+            variants={variants}
+            onAddImage={handleAddImage}
+            onRemoveImage={handleRemoveImage}
+            onUpdateImageField={handleUpdateImageField}
+          />
 
-            {!images.some((img) => !img.variant_id) ? (
-              <p className="text-[11px] text-neutral-400 italic">Belum ada gambar ditambahkan. Silakan tambah url gambar.</p>
-            ) : (
-              <div className="space-y-4">
-                {images.map((img, idx) => {
-                  if (img.variant_id) return null
-                  return (
-                    <div key={idx} className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(idx)}
-                        className="absolute right-2 top-2 text-neutral-400 hover:text-red-600 p-1"
-                      >
-                        <Trash2 size={12} />
-                      </button>
+          <ProductMarketplaceLinks
+            marketplaceLinks={marketplaceLinks}
+            onAddLink={handleAddLink}
+            onRemoveLink={handleRemoveLink}
+            onUpdateLinkField={handleUpdateLinkField}
+          />
 
-                      <div className="flex gap-3 items-start w-full">
-                        {/* Thumbnail Preview */}
-                        <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
-                          {img.url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={img.url}
-                              alt={img.alt_text || 'Preview'}
-                              className="object-cover w-full h-full"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = 'https://placehold.co/150?text=Error'
-                              }}
-                            />
-                          ) : (
-                            <span className="text-[9px] text-neutral-400 uppercase font-semibold">No Image</span>
-                          )}
-                        </div>
-
-                        {/* URL input and upload button */}
-                        <div className="flex-1 space-y-2">
-                          <div className="space-y-1">
-                            <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Gambar</label>
-                            <input
-                              type="text"
-                              className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
-                              value={img.url}
-                              onChange={(e) => handleUpdateImageField(idx, 'url', e.target.value)}
-                              placeholder="https://... atau unggah gambar"
-                              required
-                            />
-                          </div>
-
-                          {/* File Upload Button */}
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="file"
-                              id={`file-upload-${idx}`}
-                              accept="image/*"
-                              className="hidden"
-                              onChange={async (e) => {
-                                const file = e.target.files?.[0]
-                                if (!file) return
-                                
-                                const toastId = toast.loading('Mengunggah gambar...')
-                                try {
-                                  const publicUrl = await uploadImage(file, 'products')
-                                  handleUpdateImageField(idx, 'url', publicUrl)
-                                  toast.success('Gambar berhasil diunggah!', { id: toastId })
-                                } catch (err: any) {
-                                  toast.error(err.message || 'Gagal mengunggah gambar', { id: toastId })
-                                }
-                              }}
-                            />
-                            <label
-                              htmlFor={`file-upload-${idx}`}
-                              className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
-                            >
-                              Unggah File
-                            </label>
-                            <span className="text-[9px] text-neutral-400 font-medium">
-                              Format: JPG, PNG, WEBP (Max 2MB)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-[10px]">
-                        <div>
-                          <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Alt Text</label>
-                          <input
-                            type="text"
-                            className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white"
-                            value={img.alt_text}
-                            onChange={(e) => handleUpdateImageField(idx, 'alt_text', e.target.value)}
-                            placeholder="Keterangan foto"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[9px] font-semibold text-neutral-400 uppercase">No. Urut</label>
-                          <input
-                            type="number"
-                            className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white text-center"
-                            value={img.sort_order}
-                            onChange={(e) => handleUpdateImageField(idx, 'sort_order', parseInt(e.target.value) || 0)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Tautkan ke Varian</label>
-                        <select
-                          className="w-full px-2 py-1.5 border border-neutral-200 bg-white text-[11px] font-medium"
-                          value={img.variant_id || ''}
-                          onChange={(e) => handleUpdateImageField(idx, 'variant_id', e.target.value || null)}
-                        >
-                          <option value="">Semua Varian (Gambar Umum)</option>
-                          {variants.map((v, vIdx) => (
-                            <option key={v.id || vIdx} value={v.id || `temp-${vIdx}`}>
-                              {v.name || `Varian #${vIdx + 1}`} ({v.sku || 'Tanpa SKU'})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="flex items-center space-x-1.5 pt-1">
-                        <input
-                          type="checkbox"
-                          id={`img-primary-${idx}`}
-                          checked={img.is_primary}
-                          onChange={(e) => handleUpdateImageField(idx, 'is_primary', e.target.checked)}
-                          className="w-3.5 h-3.5 border-neutral-300 accent-neutral-900 rounded-none"
-                        />
-                        <label htmlFor={`img-primary-${idx}`} className="select-none text-[10px] text-neutral-600 font-bold uppercase">
-                          Gambar Utama
-                        </label>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Marketplace Links Section */}
-          <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-4">
-            <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
-              <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
-                Platform Marketplace (E-Commerce)
-              </h3>
-              <Button
-                type="button"
-                onClick={handleAddLink}
-                variant="outline"
-                className="text-[9px] font-bold uppercase py-0.5 px-2 border-neutral-850"
-              >
-                + Tambah Link
-              </Button>
-            </div>
-
-            {marketplaceLinks.length === 0 ? (
-              <p className="text-[11px] text-neutral-400 italic">Belum ada link marketplace.</p>
-            ) : (
-              <div className="space-y-4">
-                {marketplaceLinks.map((link, idx) => (
-                  <div key={idx} className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveLink(idx)}
-                      className="absolute right-2 top-2 text-neutral-400 hover:text-red-600 p-1"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Platform</label>
-                        <select
-                          className="w-full px-2 py-1.5 border border-neutral-200 bg-white"
-                          value={link.platform}
-                          onChange={(e) => handleUpdateLinkField(idx, 'platform', e.target.value)}
-                        >
-                          <option value="shopee">Shopee</option>
-                          <option value="tiktok">TikTok Shop</option>
-                          <option value="tokopedia">Tokopedia</option>
-                        </select>
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Label Tombol</label>
-                        <input
-                          type="text"
-                          className="w-full px-2 py-1.5 border border-neutral-200 bg-white"
-                          value={link.label}
-                          onChange={(e) => handleUpdateLinkField(idx, 'label', e.target.value)}
-                          placeholder="Cek di Shopee"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Link</label>
-                      <input
-                        type="text"
-                        className="w-full px-2 py-1.5 border border-neutral-200 bg-white"
-                        value={link.url}
-                        onChange={(e) => handleUpdateLinkField(idx, 'url', e.target.value)}
-                        placeholder="https://shopee.co.id/..."
-                        required
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* SEO Details Box */}
-          <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-4">
-            <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2.5">
-              Meta SEO Tags (Opsional)
-            </h3>
-            <Input
-              label="Meta Title (SEO)"
-              value={meta_title}
-              onChange={(e) => setMetaTitle(e.target.value)}
-              placeholder="SEO Title produk"
-            />
-            <div className="space-y-1">
-              <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Meta Description (SEO)
-              </label>
-              <textarea
-                value={meta_description}
-                onChange={(e) => setMetaDescription(e.target.value)}
-                placeholder="SEO Description untuk mesin pencarian..."
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-20 resize-none"
-              />
-            </div>
-          </div>
+          <ProductSeoFields
+            metaTitle={meta_title}
+            setMetaTitle={setMetaTitle}
+            metaDescription={meta_description}
+            setMetaDescription={setMetaDescription}
+          />
         </div>
       </div>
     </form>

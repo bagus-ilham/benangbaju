@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function AdminLoading() {
+export default function AdminLoading() : React.JSX.Element {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 font-sans">
       <div className="flex flex-col items-center space-y-4">

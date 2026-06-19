@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Informasi mengenai bagaimana Benangbaju mengumpulkan, menyimpan, menggunakan, dan melindungi data pribadi Anda selaku pelanggan.',
 }
 
-export default function KebijakanPrivasiPage() {
+export default function KebijakanPrivasiPage() : React.JSX.Element {
   const sections = [
     {
       title: '1. Pengumpulan Informasi Pribadi',

@@ -6,6 +6,7 @@ import {
   useAdminReturnRequests,
   useAdminUpdateReturnRequest,
 } from '@/hooks/useAdmin'
+import type { AdminReturnRequestListItem } from '@/services/orders'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Search, Eye, AlertTriangle, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
@@ -21,29 +22,29 @@ const TABS = [
   { id: 'returns', label: 'Pengajuan Retur' },
 ]
 
-export default function AdminOrdersPage() {
+export default function AdminOrdersPage() : React.JSX.Element {
   const [activeTab, setActiveTab] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const limit = 10
 
   // Queries
-  const { data: ordersData, isLoading: ordersLoading, refetch: refetchOrders } = useAdminOrders(
+  const { data: ordersData, isLoading: ordersLoading, isError: ordersError, refetch: refetchOrders } = useAdminOrders(
     activeTab === 'returns' ? 'all' : activeTab,
     search,
     page,
     limit
   )
-  const { data: returnsData = [], isLoading: returnsLoading, refetch: refetchReturns } = useAdminReturnRequests()
+  const { data: returnsData = [], isLoading: returnsLoading, isError: returnsError, refetch: refetchReturns } = useAdminReturnRequests()
 
   const updateReturnMutation = useAdminUpdateReturnRequest()
 
   // Return request Modal control
-  const [selectedReturn, setSelectedReturn] = useState<any | null>(null)
+  const [selectedReturn, setSelectedReturn] = useState<AdminReturnRequestListItem | null>(null)
   const [adminNotes, setAdminNotes] = useState('')
   const [refundAmount, setRefundAmount] = useState(0)
 
-  const handleOpenReturnModal = (ret: any) => {
+  const handleOpenReturnModal = (ret: AdminReturnRequestListItem) => {
     setSelectedReturn(ret)
     setAdminNotes(ret.admin_notes || '')
     setRefundAmount(ret.refund_amount || ret.orders?.total_amount || 0)
@@ -98,7 +99,7 @@ export default function AdminOrdersPage() {
             {tab.label}
             {tab.id === 'returns' && returnsData.length > 0 && (
               <span className="ml-1.5 bg-red-500 text-white font-bold px-1.5 py-0.5 text-[9px] rounded-full">
-                {returnsData.filter((r: any) => r.status === 'pending').length}
+                {returnsData.filter((r) => r.status === 'pending').length}
               </span>
             )}
           </button>
@@ -119,6 +120,7 @@ export default function AdminOrdersPage() {
                 setPage(1)
               }}
               className="w-full pl-10 pr-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none transition"
+              aria-label="Cari No. Pesanan atau nama penerima"
             />
           </div>
         </div>
@@ -131,6 +133,13 @@ export default function AdminOrdersPage() {
           returnsLoading ? (
             <div className="py-24 text-center">
               <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat retur...</p>
+            </div>
+          ) : returnsError ? (
+            <div className="py-24 text-center">
+              <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat pengajuan retur</p>
+              <Button onClick={() => refetchReturns()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+                Coba Lagi
+              </Button>
             </div>
           ) : returnsData.length === 0 ? (
             <div className="py-24 text-center text-neutral-400 italic text-xs">
@@ -150,7 +159,7 @@ export default function AdminOrdersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                  {returnsData.map((ret: any) => (
+                  {returnsData.map((ret: AdminReturnRequestListItem) => (
                     <tr key={ret.id} className="hover:bg-neutral-50/20 transition">
                       <td className="py-4 px-5">
                         <span className="font-semibold text-neutral-900 block">{ret.orders?.order_number}</span>
@@ -222,6 +231,13 @@ export default function AdminOrdersPage() {
             <div className="py-24 text-center">
               <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat pesanan...</p>
             </div>
+          ) : ordersError ? (
+            <div className="py-24 text-center">
+              <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat daftar pesanan</p>
+              <Button onClick={() => refetchOrders()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+                Coba Lagi
+              </Button>
+            </div>
           ) : orders.length === 0 ? (
             <div className="py-24 text-center text-neutral-400 italic text-xs">
               Tidak ada pesanan ditemukan.
@@ -239,7 +255,7 @@ export default function AdminOrdersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                  {orders.map((o: any) => (
+                  {orders.map((o) => (
                     <tr key={o.id} className="hover:bg-neutral-50/20 transition duration-150">
                       <td className="py-4 px-5">
                         <span className="font-semibold text-neutral-900 block">{o.order_number}</span>
@@ -364,7 +380,7 @@ export default function AdminOrdersPage() {
             <div className="space-y-2">
               <p className="text-[10px] uppercase font-bold text-neutral-400">Daftar Item Retur:</p>
               <div className="border border-neutral-200 divide-y divide-neutral-100 p-3 bg-white max-h-36 overflow-y-auto rounded-none">
-                {selectedReturn.return_items?.map((item: any) => (
+                {selectedReturn.return_items?.map((item) => (
                   <div key={item.id} className="py-2.5 flex justify-between items-center text-[11px]">
                     <div>
                       <p className="font-semibold text-neutral-800">{item.order_items?.product_name}</p>

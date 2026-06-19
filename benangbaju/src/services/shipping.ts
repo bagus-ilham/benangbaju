@@ -41,6 +41,10 @@ export interface ShippingCalculationResult {
   data?: ShippingOption[]
 }
 
+function isObject(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null && !Array.isArray(val)
+}
+
 // 1. Fetch user addresses
 export async function getUserAddresses(
   supabase: SupabaseClient<Database>,
@@ -58,7 +62,23 @@ export async function getUserAddresses(
     return []
   }
 
-  return data as UserAddress[]
+  if (!data) return []
+
+  return data.map(row => ({
+    id: row.id,
+    user_id: row.user_id,
+    label: row.label,
+    recipient_name: row.recipient_name,
+    phone: row.phone,
+    province_name: row.province_name,
+    city_name: row.city_name,
+    district_name: row.district_name,
+    postal_code: row.postal_code,
+    full_address: row.full_address,
+    zone_id: row.zone_id,
+    is_default: row.is_default,
+    created_at: row.created_at,
+  }))
 }
 
 // 2. Add user address
@@ -77,7 +97,24 @@ export async function addUserAddress(
     return { data: null, error: new Error(error.message) }
   }
 
-  return { data: data as UserAddress, error: null }
+  return {
+    data: {
+      id: data.id,
+      user_id: data.user_id,
+      label: data.label,
+      recipient_name: data.recipient_name,
+      phone: data.phone,
+      province_name: data.province_name,
+      city_name: data.city_name,
+      district_name: data.district_name,
+      postal_code: data.postal_code,
+      full_address: data.full_address,
+      zone_id: data.zone_id,
+      is_default: data.is_default,
+      created_at: data.created_at,
+    },
+    error: null,
+  }
 }
 
 // 3. Update user address
@@ -98,7 +135,24 @@ export async function updateUserAddress(
     return { data: null, error: new Error(error.message) }
   }
 
-  return { data: data as UserAddress, error: null }
+  return {
+    data: {
+      id: data.id,
+      user_id: data.user_id,
+      label: data.label,
+      recipient_name: data.recipient_name,
+      phone: data.phone,
+      province_name: data.province_name,
+      city_name: data.city_name,
+      district_name: data.district_name,
+      postal_code: data.postal_code,
+      full_address: data.full_address,
+      zone_id: data.zone_id,
+      is_default: data.is_default,
+      created_at: data.created_at,
+    },
+    error: null,
+  }
 }
 
 // 4. Delete user address
@@ -168,7 +222,16 @@ export async function searchDistricts(
     return []
   }
 
-  return data as District[]
+  if (!data) return []
+
+  return data.map(row => ({
+    id: row.id,
+    province_name: row.province_name,
+    city_name: row.city_name,
+    district_name: row.district_name,
+    postal_code: row.postal_code,
+    zone_id: row.zone_id,
+  }))
 }
 
 // 7. Calculate shipping rates options
@@ -190,7 +253,37 @@ export async function calculateShippingRates(
     }
   }
 
-  return data as unknown as ShippingCalculationResult
+  if (data && isObject(data)) {
+    const success = typeof data['success'] === 'boolean' ? data['success'] : false
+    const message = typeof data['message'] === 'string' ? data['message'] : undefined
+    const rawOptions = data['data']
+    const optionsList = Array.isArray(rawOptions) ? rawOptions : []
+    const options: ShippingOption[] = []
+
+    for (const opt of optionsList) {
+      if (opt && isObject(opt)) {
+        options.push({
+          id: typeof opt['id'] === 'string' ? opt['id'] : '',
+          courier_name: typeof opt['courier_name'] === 'string' ? opt['courier_name'] : '',
+          price: typeof opt['price'] === 'number' ? opt['price'] : 0,
+          etd_min: typeof opt['etd_min'] === 'number' ? opt['etd_min'] : 0,
+          etd_max: typeof opt['etd_max'] === 'number' ? opt['etd_max'] : 0,
+          weight_used_gram: typeof opt['weight_used_gram'] === 'number' ? opt['weight_used_gram'] : 0,
+        })
+      }
+    }
+
+    return {
+      success,
+      message,
+      data: options,
+    }
+  }
+
+  return {
+    success: false,
+    message: 'Respon dari sistem pengiriman tidak valid.',
+  }
 }
 
 // =============================================================
@@ -222,17 +315,32 @@ export interface ShippingRate {
 export async function adminGetShippingZones(
   supabase: SupabaseClient<Database>
 ): Promise<ShippingZone[]> {
-  const { data, error } = await (supabase
+  const { data, error } = await supabase
     .from('shipping_zones')
     .select('*, shipping_zone_coverage(province_name)')
-    .order('name', { ascending: true }) as any)
+    .order('name', { ascending: true })
 
   if (error) {
     console.error('Error fetching admin shipping zones:', error)
     throw error
   }
 
-  return (data || []) as unknown as ShippingZone[]
+  if (!data) return []
+
+  return data.map(row => {
+    const rawCoverage = row.shipping_zone_coverage
+    const coverageList = Array.isArray(rawCoverage) ? rawCoverage : []
+    const shipping_zone_coverage = coverageList.map(c => ({
+      province_name: c.province_name,
+    }))
+    return {
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      is_active: row.is_active,
+      shipping_zone_coverage,
+    }
+  })
 }
 
 // 9. Create shipping zone
@@ -267,7 +375,12 @@ export async function adminCreateShippingZone(
     }
   }
 
-  return newZone as ShippingZone
+  return {
+    id: newZone.id,
+    name: newZone.name,
+    description: newZone.description,
+    is_active: newZone.is_active,
+  }
 }
 
 // 10. Update shipping zone
@@ -346,7 +459,29 @@ export async function adminGetShippingRates(
     throw error
   }
 
-  return (data || []) as unknown as ShippingRate[]
+  if (!data) return []
+
+  return data.map(row => {
+    const rawZones = row.shipping_zones
+    let shipping_zones: { name: string } | null = null
+    if (rawZones && !Array.isArray(rawZones)) {
+      shipping_zones = {
+        name: rawZones.name,
+      }
+    }
+    return {
+      id: row.id,
+      zone_id: row.zone_id,
+      courier_name: row.courier_name,
+      price_per_kg: row.price_per_kg,
+      min_weight_gram: row.min_weight_gram,
+      base_price: row.base_price,
+      etd_days_min: row.etd_days_min,
+      etd_days_max: row.etd_days_max,
+      is_active: row.is_active,
+      shipping_zones,
+    }
+  })
 }
 
 // 13. Create shipping rate
@@ -365,7 +500,17 @@ export async function adminCreateShippingRate(
     throw error
   }
 
-  return data as unknown as ShippingRate
+  return {
+    id: data.id,
+    zone_id: data.zone_id,
+    courier_name: data.courier_name,
+    price_per_kg: data.price_per_kg,
+    min_weight_gram: data.min_weight_gram,
+    base_price: data.base_price,
+    etd_days_min: data.etd_days_min,
+    etd_days_max: data.etd_days_max,
+    is_active: data.is_active,
+  }
 }
 
 // 14. Update shipping rate
@@ -400,4 +545,3 @@ export async function adminDeleteShippingRate(
     throw error
   }
 }
-

@@ -1,6 +1,6 @@
 import type { Variants } from 'framer-motion'
 
-export const EASE_PREMIUM = [0.16, 1, 0.3, 1] as [number, number, number, number]
+export const EASE_PREMIUM: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 export const staggerContainer: Variants = {
   hidden: {},

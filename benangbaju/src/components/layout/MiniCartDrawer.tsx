@@ -9,7 +9,7 @@ import { useCart } from '@/hooks/useCart'
 import { Button } from '@/components/shared/Button'
 import { formatIDR } from '@/lib/utils'
 
-export function MiniCartDrawer() {
+export function MiniCartDrawer() : React.JSX.Element {
   const {
     items,
     isCartDrawerOpen,

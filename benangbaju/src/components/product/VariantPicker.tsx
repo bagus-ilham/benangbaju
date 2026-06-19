@@ -16,7 +16,7 @@ export function VariantPicker({
   variants,
   selectedVariantId,
   onVariantSelect,
-}: VariantPickerProps) {
+}: VariantPickerProps) : React.JSX.Element | null {
   // 1. Group attributes from variants
   // Find all unique attributes and values
   // e.g. Warna: ["Hitam", "Milo"], Ukuran: ["S", "M", "L"]

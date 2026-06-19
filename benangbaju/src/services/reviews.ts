@@ -50,14 +50,103 @@ export async function getApprovedReviews(
     return []
   }
 
-  return data as unknown as ReviewDetail[]
+  if (!data) return []
+
+  return data.map(item => {
+    const rawProfile = item.profiles
+    let profiles: { name: string; avatar_url: string | null } | null = null
+    if (rawProfile && !Array.isArray(rawProfile)) {
+      profiles = {
+        name: rawProfile.name,
+        avatar_url: rawProfile.avatar_url,
+      }
+    }
+
+    const rawMedia = item.review_media
+    const mediaList = Array.isArray(rawMedia) ? rawMedia : []
+    const review_media = mediaList.map(m => ({
+      id: m.id,
+      url: m.url,
+      type: m.type,
+    }))
+
+    const rawReplies = item.review_replies
+    const repliesList = Array.isArray(rawReplies) ? rawReplies : []
+    const review_replies = repliesList.map(r => {
+      const rawRProfile = r.profiles
+      let rProfiles: { name: string } | null = null
+      if (rawRProfile && !Array.isArray(rawRProfile)) {
+        rProfiles = { name: rawRProfile.name }
+      }
+      return {
+        id: r.id,
+        body: r.body,
+        created_at: r.created_at,
+        profiles: rProfiles,
+      }
+    })
+
+    return {
+      id: item.id,
+      rating: item.rating,
+      title: item.title,
+      body: item.body,
+      is_anonymous: item.is_anonymous,
+      is_verified_purchase: item.is_verified_purchase,
+      created_at: item.created_at,
+      helpful_count: item.helpful_count,
+      profiles,
+      review_media,
+      review_replies,
+    }
+  })
 }
 
-export async function adminGetReviews(supabase: SupabaseClient<Database>) {
+export interface AdminReviewListItem {
+  id: string
+  order_item_id: string
+  product_id: string
+  variant_id: string | null
+  user_id: string
+  rating: number
+  title: string | null
+  body: string
+  is_anonymous: boolean
+  is_verified_purchase: boolean
+  is_pinned: boolean
+  status: string
+  helpful_count: number
+  created_at: string
+  profiles: {
+    name: string
+    email: string | null
+  } | null
+  products: {
+    name: string
+  } | null
+  review_media: {
+    id: string
+    url: string
+    type: string
+  }[]
+  review_replies: {
+    id: string
+    body: string
+    created_at: string
+    profiles: {
+      name: string
+    } | null
+  }[]
+}
+
+export async function adminGetReviews(
+  supabase: SupabaseClient<Database>
+): Promise<AdminReviewListItem[]> {
   const { data, error } = await supabase
     .from('product_reviews')
     .select(`
-      *,
+      id, order_item_id, product_id, variant_id, user_id, rating, title, body,
+      is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at,
       profiles (name, email),
       products (name),
       review_media (id, url, type),
@@ -70,14 +159,78 @@ export async function adminGetReviews(supabase: SupabaseClient<Database>) {
     throw error
   }
 
-  return data || []
+  if (!data) return []
+
+  return data.map(item => {
+    const rawProfile = item.profiles
+    let profiles: { name: string; email: string | null } | null = null
+    if (rawProfile && !Array.isArray(rawProfile)) {
+      profiles = {
+        name: rawProfile.name,
+        email: rawProfile.email,
+      }
+    }
+
+    const rawProduct = item.products
+    let products: { name: string } | null = null
+    if (rawProduct && !Array.isArray(rawProduct)) {
+      products = {
+        name: rawProduct.name,
+      }
+    }
+
+    const rawMedia = item.review_media
+    const mediaList = Array.isArray(rawMedia) ? rawMedia : []
+    const review_media = mediaList.map(m => ({
+      id: m.id,
+      url: m.url,
+      type: m.type,
+    }))
+
+    const rawReplies = item.review_replies
+    const repliesList = Array.isArray(rawReplies) ? rawReplies : []
+    const review_replies = repliesList.map(r => {
+      const rawRProfile = r.profiles
+      let rProfiles: { name: string } | null = null
+      if (rawRProfile && !Array.isArray(rawRProfile)) {
+        rProfiles = { name: rawRProfile.name }
+      }
+      return {
+        id: r.id,
+        body: r.body,
+        created_at: r.created_at,
+        profiles: rProfiles,
+      }
+    })
+
+    return {
+      id: item.id,
+      order_item_id: item.order_item_id,
+      product_id: item.product_id,
+      variant_id: item.variant_id,
+      user_id: item.user_id,
+      rating: item.rating,
+      title: item.title,
+      body: item.body,
+      is_anonymous: item.is_anonymous,
+      is_verified_purchase: item.is_verified_purchase,
+      is_pinned: item.is_pinned,
+      status: item.status,
+      helpful_count: item.helpful_count,
+      created_at: item.created_at,
+      profiles,
+      products,
+      review_media,
+      review_replies,
+    }
+  })
 }
 
 export async function adminUpdateReviewStatus(
   supabase: SupabaseClient<Database>,
   reviewId: string,
   status: 'pending' | 'approved' | 'rejected' | 'hidden'
-) {
+) : Promise<{ id: string; order_item_id: string; product_id: string; variant_id: string | null; user_id: string; rating: number; title: string | null; body: string; is_anonymous: boolean; is_verified_purchase: boolean; is_pinned: boolean; status: string; helpful_count: number; created_at: string; }> {
   const { data, error } = await supabase
     .from('product_reviews')
     .update({ status })
@@ -94,7 +247,7 @@ export async function adminReplyToReview(
   reviewId: string,
   body: string,
   adminId: string
-) {
+) : Promise<{ id: string; review_id: string; admin_id: string; body: string; created_at: string; }> {
   const { data, error } = await supabase
     .from('review_replies')
     .upsert(
@@ -128,7 +281,7 @@ export interface SubmitReviewParams {
 export async function customerSubmitReview(
   supabase: SupabaseClient<Database>,
   params: SubmitReviewParams
-) {
+) : Promise<{ id: string; order_item_id: string; product_id: string; variant_id: string | null; user_id: string; rating: number; title: string | null; body: string; is_anonymous: boolean; is_verified_purchase: boolean; is_pinned: boolean; status: string; helpful_count: number; created_at: string; }> {
   // 1. Insert review into product_reviews
   const { data: review, error: reviewErr } = await supabase
     .from('product_reviews')

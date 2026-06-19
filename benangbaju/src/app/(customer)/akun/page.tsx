@@ -31,7 +31,7 @@ const itemVariants = {
   }
 }
 
-export default function AkunPage() {
+export default function AkunPage() : React.JSX.Element {
   const router = useRouter()
   const { user, profile, setProfile, clearAuth, isAuthenticated, isLoading: authLoading } = useAuthStore()
 
@@ -85,15 +85,17 @@ export default function AkunPage() {
       if (error) throw error
 
       if (data) {
+        const role = data.role === 'admin' ? 'admin' : 'customer';
         setProfile({
           ...data,
-          role: data.role as 'customer' | 'admin',
+          role,
         })
         toast.success('Profil berhasil diperbarui')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating profile:', err)
-      toast.error(err.message || 'Gagal memperbarui profil')
+      const message = err instanceof Error ? err.message : 'Gagal memperbarui profil'
+      toast.error(message)
     } finally {
       setIsSaving(false)
     }
@@ -125,9 +127,10 @@ export default function AkunPage() {
       toast.success('Kata sandi berhasil diperbarui')
       setNewPassword('')
       setConfirmNewPassword('')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating password:', err)
-      toast.error(err.message || 'Gagal memperbarui kata sandi')
+      const message = err instanceof Error ? err.message : 'Gagal memperbarui kata sandi'
+      toast.error(message)
     } finally {
       setIsSavingPassword(false)
     }

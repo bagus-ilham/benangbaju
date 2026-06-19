@@ -10,7 +10,7 @@ interface RelatedProductsProps {
   products: ProductListItem[]
 }
 
-export function RelatedProducts({ products }: RelatedProductsProps) {
+export function RelatedProducts({ products }: RelatedProductsProps) : React.JSX.Element | null {
   if (products.length === 0) return null
 
   const containerVariants = {

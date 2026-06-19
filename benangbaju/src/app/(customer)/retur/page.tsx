@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Syarat dan panduan pengajuan retur barang, tukar ukuran, klaim produk cacat, dan proses pengembalian dana (refund) di Benangbaju.',
 }
 
-export default function ReturPage() {
+export default function ReturPage() : React.JSX.Element {
   const steps = [
     {
       title: '1. Ajukan Form Retur',

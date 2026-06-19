@@ -12,7 +12,7 @@ interface ProductGalleryProps {
   selectedVariantId?: string | null
 }
 
-export function ProductGallery({ images, productName, selectedVariantId }: ProductGalleryProps) {
+export function ProductGallery({ images, productName, selectedVariantId }: ProductGalleryProps) : React.JSX.Element {
   const [activeImage, setActiveImage] = useState<string | null>(
     images.find((img) => img.is_primary)?.url || images[0]?.url || null
   )

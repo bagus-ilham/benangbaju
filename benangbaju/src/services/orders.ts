@@ -89,6 +89,103 @@ export interface OrderRpcResponse {
   }
 }
 
+function isObject(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null && !Array.isArray(val)
+}
+
+function mapOrder(row: Database['public']['Tables']['orders']['Row'] & {
+  order_items: Database['public']['Tables']['order_items']['Row'][]
+  order_shipping: Database['public']['Tables']['order_shipping']['Row'] | null
+  payments?: Database['public']['Tables']['payments']['Row'][]
+}): Order {
+  const order_items: OrderItem[] = row.order_items.map(item => ({
+    id: item.id,
+    order_id: item.order_id,
+    variant_id: item.variant_id,
+    flash_sale_item_id: item.flash_sale_item_id,
+    product_name: item.product_name,
+    variant_name: item.variant_name,
+    sku: item.sku,
+    price: item.price,
+    quantity: item.quantity,
+    subtotal: item.subtotal,
+  }))
+
+  const rawShipping = row.order_shipping
+  let order_shipping: OrderShipping | null = null
+  if (rawShipping) {
+    order_shipping = {
+      id: rawShipping.id,
+      order_id: rawShipping.order_id,
+      recipient_name: rawShipping.recipient_name,
+      phone: rawShipping.phone,
+      full_address: rawShipping.full_address,
+      province_name: rawShipping.province_name,
+      city_name: rawShipping.city_name,
+      district_name: rawShipping.district_name,
+      postal_code: rawShipping.postal_code,
+      courier_name: rawShipping.courier_name,
+      tracking_number: rawShipping.tracking_number,
+      shipped_at: rawShipping.shipped_at,
+      delivered_at: rawShipping.delivered_at,
+    }
+  }
+
+  const rawPayments = row.payments
+  const paymentsList = Array.isArray(rawPayments) ? rawPayments : []
+  const payments = paymentsList.map(p => {
+    const paymentStatusMap: Record<string, PaymentInfo['status']> = {
+      pending: 'pending',
+      success: 'success',
+      failed: 'failed',
+      expired: 'expired',
+      refunded: 'refunded',
+    }
+    return {
+      id: p.id,
+      order_id: p.order_id,
+      midtrans_order_id: p.midtrans_order_id,
+      status: paymentStatusMap[p.status] || 'pending',
+      amount: p.amount,
+      payment_type: p.payment_type,
+      va_number: p.va_number,
+      biller_code: p.biller_code,
+      payment_code: p.payment_code,
+      qr_url: p.qr_url,
+      snap_token: p.snap_token,
+      created_at: p.created_at,
+      updated_at: p.updated_at,
+    }
+  })
+
+  const statusMap: Record<string, Order['status']> = {
+    pending_payment: 'pending_payment',
+    processing: 'processing',
+    shipped: 'shipped',
+    completed: 'completed',
+    cancelled: 'cancelled',
+  }
+
+  return {
+    id: row.id,
+    order_number: row.order_number,
+    user_id: row.user_id,
+    voucher_id: row.voucher_id,
+    status: statusMap[row.status] || 'pending_payment',
+    subtotal: row.subtotal,
+    shipping_cost: row.shipping_cost,
+    discount_amount: row.discount_amount,
+    total_amount: row.total_amount,
+    notes: row.notes,
+    cancel_reason: row.cancel_reason,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+    order_items,
+    order_shipping,
+    payments,
+  }
+}
+
 // 1. Get order history
 export async function getOrders(
   supabase: SupabaseClient<Database>,
@@ -121,8 +218,23 @@ export async function getOrders(
     return { orders: [], totalCount: 0 }
   }
 
+  if (!data) return { orders: [], totalCount: 0 }
+
+  const orders = data.map((row) => {
+    const rawItems = row.order_items
+    const order_items = Array.isArray(rawItems) ? rawItems : []
+    const rawShipping = row.order_shipping
+    const order_shipping = Array.isArray(rawShipping) ? null : rawShipping
+    
+    return mapOrder({
+      ...row,
+      order_items,
+      order_shipping: order_shipping || null,
+    })
+  })
+
   return {
-    orders: (data as any) || [],
+    orders,
     totalCount: count || 0,
   }
 }
@@ -143,7 +255,21 @@ export async function getOrderDetail(
     return null
   }
 
-  return data as any as Order | null
+  if (!data) return null
+
+  const rawItems = data.order_items
+  const order_items = Array.isArray(rawItems) ? rawItems : []
+  const rawShipping = data.order_shipping
+  const order_shipping = Array.isArray(rawShipping) ? null : rawShipping
+  const rawPayments = data.payments
+  const payments = Array.isArray(rawPayments) ? rawPayments : []
+
+  return mapOrder({
+    ...data,
+    order_items,
+    order_shipping: order_shipping || null,
+    payments,
+  })
 }
 
 // 3. Create order (Atomic Checkout RPC)
@@ -168,7 +294,36 @@ export async function createOrder(
     }
   }
 
-  return data as unknown as OrderRpcResponse
+  if (data && isObject(data)) {
+    const success = typeof data['success'] === 'boolean' ? data['success'] : false
+    const message = typeof data['message'] === 'string' ? data['message'] : undefined
+    const code = typeof data['code'] === 'string' ? data['code'] : undefined
+    const rawInnerData = data['data']
+    let innerData: OrderRpcResponse['data'] = undefined
+    if (rawInnerData && isObject(rawInnerData)) {
+      innerData = {
+        order_id: typeof rawInnerData['order_id'] === 'string' ? rawInnerData['order_id'] : '',
+        order_number: typeof rawInnerData['order_number'] === 'string' ? rawInnerData['order_number'] : '',
+        subtotal: typeof rawInnerData['subtotal'] === 'number' ? rawInnerData['subtotal'] : 0,
+        shipping_cost: typeof rawInnerData['shipping_cost'] === 'number' ? rawInnerData['shipping_cost'] : 0,
+        discount_amount: typeof rawInnerData['discount_amount'] === 'number' ? rawInnerData['discount_amount'] : 0,
+        total_amount: typeof rawInnerData['total_amount'] === 'number' ? rawInnerData['total_amount'] : 0,
+        status: typeof rawInnerData['status'] === 'string' ? rawInnerData['status'] : '',
+      }
+    }
+
+    return {
+      success,
+      message,
+      code,
+      data: innerData,
+    }
+  }
+
+  return {
+    success: false,
+    message: 'Format respon buat pesanan tidak valid.',
+  }
 }
 
 // 4. Cancel unpaid order
@@ -187,11 +342,14 @@ export async function cancelOrder(
     return { success: false, message: error.message }
   }
 
-  const res = data as any
-  return {
-    success: res.success,
-    message: res.message,
+  if (data && isObject(data)) {
+    return {
+      success: typeof data['success'] === 'boolean' ? data['success'] : false,
+      message: typeof data['message'] === 'string' ? data['message'] : undefined,
+    }
   }
+
+  return { success: false, message: 'Format respon pembatalan tidak valid.' }
 }
 
 // 5. Confirm delivery (complete order status)
@@ -208,11 +366,14 @@ export async function confirmDelivery(
     return { success: false, message: error.message }
   }
 
-  const res = data as any
-  return {
-    success: res.success,
-    message: res.message,
+  if (data && isObject(data)) {
+    return {
+      success: typeof data['success'] === 'boolean' ? data['success'] : false,
+      message: typeof data['message'] === 'string' ? data['message'] : undefined,
+    }
   }
+
+  return { success: false, message: 'Format respon konfirmasi pengiriman tidak valid.' }
 }
 
 // 6. Lazy cancel expired orders
@@ -249,10 +410,32 @@ export async function generatePaymentToken(
   return data
 }
 
+export interface AdminOrderListItem {
+  id: string
+  order_number: string
+  user_id: string
+  voucher_id: string | null
+  status: string
+  subtotal: number
+  shipping_cost: number
+  discount_amount: number
+  total_amount: number
+  notes: string | null
+  cancel_reason: string | null
+  created_at: string
+  updated_at: string
+  order_items: OrderItem[]
+  order_shipping: OrderShipping | null
+  profiles: {
+    name: string
+    email: string | null
+  } | null
+}
+
 export async function adminGetOrders(
   supabase: SupabaseClient<Database>,
   params: { status?: string; search?: string; page?: number; limit?: number } = {}
-) {
+): Promise<{ orders: AdminOrderListItem[]; totalCount: number }> {
   const { status = 'all', search = '', page = 1, limit = 20 } = params
   const offset = (page - 1) * limit
 
@@ -292,9 +475,76 @@ export async function adminGetOrders(
     throw error
   }
 
+  if (!data) return { orders: [], totalCount: 0 }
+
+  const orders: AdminOrderListItem[] = data.map(row => {
+    const rawCat = row.profiles
+    let profiles: { name: string; email: string | null } | null = null
+    if (rawCat && !Array.isArray(rawCat)) {
+      profiles = {
+        name: rawCat.name,
+        email: rawCat.email,
+      }
+    }
+
+    const rawItems = row.order_items
+    const itemsList = Array.isArray(rawItems) ? rawItems : []
+    const order_items = itemsList.map(item => ({
+      id: item.id,
+      order_id: item.order_id,
+      variant_id: item.variant_id,
+      flash_sale_item_id: item.flash_sale_item_id,
+      product_name: item.product_name,
+      variant_name: item.variant_name,
+      sku: item.sku,
+      price: item.price,
+      quantity: item.quantity,
+      subtotal: item.subtotal,
+    }))
+
+    const rawShipping = row.order_shipping
+    let order_shipping: OrderShipping | null = null
+    if (rawShipping && !Array.isArray(rawShipping)) {
+      order_shipping = {
+        id: rawShipping.id,
+        order_id: rawShipping.order_id,
+        recipient_name: rawShipping.recipient_name,
+        phone: rawShipping.phone,
+        full_address: rawShipping.full_address,
+        province_name: rawShipping.province_name,
+        city_name: rawShipping.city_name,
+        district_name: rawShipping.district_name,
+        postal_code: rawShipping.postal_code,
+        courier_name: rawShipping.courier_name,
+        tracking_number: rawShipping.tracking_number,
+        shipped_at: rawShipping.shipped_at,
+        delivered_at: rawShipping.delivered_at,
+      }
+    }
+
+    return {
+      id: row.id,
+      order_number: row.order_number,
+      user_id: row.user_id,
+      voucher_id: row.voucher_id,
+      status: row.status,
+      subtotal: row.subtotal,
+      shipping_cost: row.shipping_cost,
+      discount_amount: row.discount_amount,
+      total_amount: row.total_amount,
+      notes: row.notes,
+      cancel_reason: row.cancel_reason,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+      order_items,
+      order_shipping,
+      profiles,
+    }
+  })
+
   return {
-    orders: (data || []) as any[],
-    totalCount: count || 0
+    orders,
+    totalCount: count || 0,
   }
 }
 
@@ -333,14 +583,62 @@ export async function adminUpdateOrderStatus(
   return { success: true }
 }
 
-export async function adminGetReturnRequests(supabase: SupabaseClient<Database>) {
+export interface AdminReturnRequestListItem {
+  id: string
+  order_id: string
+  user_id: string
+  status: string
+  reason: string
+  customer_notes: string | null
+  admin_notes: string | null
+  refund_amount: number | null
+  refund_bank_name: string | null
+  refund_account_number: string | null
+  refund_account_name: string | null
+  refund_transferred_at: string | null
+  approved_at: string | null
+  rejected_at: string | null
+  completed_at: string | null
+  created_at: string
+  updated_at: string
+  profiles: {
+    name: string
+    email: string | null
+  } | null
+  orders: {
+    order_number: string
+    total_amount: number
+  } | null
+  return_items: Array<{
+    id: string
+    return_request_id: string
+    order_item_id: string
+    quantity: number
+    reason: string | null
+    order_items: {
+      product_name: string
+      variant_name: string
+      price: number
+      sku: string
+    } | null
+  }>
+}
+
+export async function adminGetReturnRequests(
+  supabase: SupabaseClient<Database>
+): Promise<AdminReturnRequestListItem[]> {
   const { data, error } = await supabase
     .from('return_requests')
     .select(`
-      *,
+      id, order_id, user_id, status, reason, customer_notes, admin_notes,
+      refund_amount, refund_bank_name, refund_account_number, refund_account_name,
+      refund_transferred_at, approved_at, rejected_at, completed_at, created_at, updated_at,
       profiles (name, email),
       orders (order_number, total_amount),
-      return_items (*, order_items (*))
+      return_items (
+        id, return_request_id, order_item_id, quantity, reason,
+        order_items (product_name, variant_name, price, sku)
+      )
     `)
     .order('created_at', { ascending: false })
 
@@ -349,7 +647,73 @@ export async function adminGetReturnRequests(supabase: SupabaseClient<Database>)
     throw error
   }
 
-  return data || []
+  if (!data) return []
+
+  return data.map(row => {
+    const rawProfile = row.profiles
+    let profiles: { name: string; email: string | null } | null = null
+    if (rawProfile && !Array.isArray(rawProfile)) {
+      profiles = {
+        name: rawProfile.name,
+        email: rawProfile.email,
+      }
+    }
+
+    const rawOrder = row.orders
+    let orders: { order_number: string; total_amount: number } | null = null
+    if (rawOrder && !Array.isArray(rawOrder)) {
+      orders = {
+        order_number: rawOrder.order_number,
+        total_amount: rawOrder.total_amount,
+      }
+    }
+
+    const rawItems = row.return_items
+    const itemsList = Array.isArray(rawItems) ? rawItems : []
+    const return_items = itemsList.map(item => {
+      const rawOrderItem = item.order_items
+      let order_items: { product_name: string; variant_name: string; price: number; sku: string } | null = null
+      if (rawOrderItem && !Array.isArray(rawOrderItem)) {
+        order_items = {
+          product_name: rawOrderItem.product_name,
+          variant_name: rawOrderItem.variant_name,
+          price: rawOrderItem.price,
+          sku: rawOrderItem.sku,
+        }
+      }
+      return {
+        id: item.id,
+        return_request_id: item.return_request_id,
+        order_item_id: item.order_item_id,
+        quantity: item.quantity,
+        reason: item.reason,
+        order_items,
+      }
+    })
+
+    return {
+      id: row.id,
+      order_id: row.order_id,
+      user_id: row.user_id,
+      status: row.status,
+      reason: row.reason,
+      customer_notes: row.customer_notes,
+      admin_notes: row.admin_notes,
+      refund_amount: row.refund_amount,
+      refund_bank_name: row.refund_bank_name,
+      refund_account_number: row.refund_account_number,
+      refund_account_name: row.refund_account_name,
+      refund_transferred_at: row.refund_transferred_at,
+      approved_at: row.approved_at,
+      rejected_at: row.rejected_at,
+      completed_at: row.completed_at,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+      profiles,
+      orders,
+      return_items,
+    }
+  })
 }
 
 export async function adminUpdateReturnRequest(
@@ -364,7 +728,7 @@ export async function adminUpdateReturnRequest(
   const { status, adminNotes, refundAmount } = params
   const now = new Date().toISOString()
   
-  const updateData: any = {
+  const updateData: Database['public']['Tables']['return_requests']['Update'] = {
     status,
     admin_notes: adminNotes,
     refund_amount: refundAmount,

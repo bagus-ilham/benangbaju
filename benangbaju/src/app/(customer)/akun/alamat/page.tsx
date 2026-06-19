@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserAddresses, useDeleteUserAddress, useSetDefaultAddress } from '@/hooks/useShipping'
+import { UserAddress } from '@/services/shipping'
 import { AddressCard } from '@/components/customer/AddressCard'
 import { AddressModal } from '@/components/customer/AddressModal'
 import { AuthLoading, Button, PageContainer, PageHero } from '@/components/shared'
@@ -11,11 +12,11 @@ import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
-export default function AlamatPage() {
+export default function AlamatPage() : React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [modalOpen, setModalOpen] = useState(false)
-  const [addressToEdit, setAddressToEdit] = useState<any | null>(null)
+  const [addressToEdit, setAddressToEdit] = useState<UserAddress | null>(null)
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function AlamatPage() {
   const deleteMutation = useDeleteUserAddress()
   const setDefaultMutation = useSetDefaultAddress()
 
-  const handleEdit = (address: any) => {
+  const handleEdit = (address: UserAddress) => {
     setAddressToEdit(address)
     setModalOpen(true)
   }

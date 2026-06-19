@@ -7,6 +7,7 @@ import {
   useAdminUpdateFlashSale,
   useAdminDeleteFlashSale,
 } from '@/hooks/useAdmin'
+import type { AdminFlashSaleListItem } from '@/services/flashSales'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
 import { Plus, Edit2, Trash2, Search } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -16,7 +17,27 @@ import { formatLocalISO } from '@/lib/utils/format'
 
 const supabase = createBrowserClient()
 
-export default function AdminFlashSalesPage() {
+interface FlashSaleFormItem {
+  variant_id: string
+  original_price: number
+  sale_price: number
+  quota: number
+  name: string
+  prodName: string
+}
+
+interface VariantSimple {
+  id: string
+  name: string
+  price: number
+  stock: number
+  sku: string
+  products: {
+    name: string
+  } | null
+}
+
+export default function AdminFlashSalesPage() : React.JSX.Element {
   const { data: campaigns = [], isLoading, refetch } = useAdminFlashSales()
 
   const createMutation = useAdminCreateFlashSale()
@@ -39,7 +60,7 @@ export default function AdminFlashSalesPage() {
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
-  const [editingCampaign, setEditingCampaign] = useState<any | null>(null)
+  const [editingCampaign, setEditingCampaign] = useState<AdminFlashSaleListItem | null>(null)
 
   // Form states
   const [name, setName] = useState('')
@@ -50,7 +71,7 @@ export default function AdminFlashSalesPage() {
   const [is_active, setIsActive] = useState(true)
 
   // Campaign items state
-  const [items, setItems] = useState<any[]>([])
+  const [items, setItems] = useState<FlashSaleFormItem[]>([])
 
   // Search simple state inside modal
   const [variantSearch, setVariantSearch] = useState('')
@@ -68,7 +89,7 @@ export default function AdminFlashSalesPage() {
     setIsOpen(true)
   }
 
-  const handleOpenEdit = (camp: any) => {
+  const handleOpenEdit = (camp: AdminFlashSaleListItem) => {
     setEditingCampaign(camp)
     setName(camp.name || '')
     setDescription(camp.description || '')
@@ -80,7 +101,7 @@ export default function AdminFlashSalesPage() {
     // Map items
     if (camp.flash_sale_items) {
       setItems(
-        camp.flash_sale_items.map((i: any) => ({
+        camp.flash_sale_items.map((i) => ({
           variant_id: i.variant_id,
           original_price: Number(i.original_price) || 0,
           sale_price: Number(i.sale_price) || 0,
@@ -96,7 +117,7 @@ export default function AdminFlashSalesPage() {
     setIsOpen(true)
   }
 
-  const handleAddVariantItem = (v: any) => {
+  const handleAddVariantItem = (v: VariantSimple) => {
     // Avoid duplicate
     if (items.some((item) => item.variant_id === v.id)) {
       toast.error('Varian ini sudah ditambahkan ke daftar')
@@ -118,7 +139,7 @@ export default function AdminFlashSalesPage() {
     setVariantSearch('')
   }
 
-  const handleUpdateItemField = (idx: number, field: string, value: any) => {
+  const handleUpdateItemField = (idx: number, field: keyof FlashSaleFormItem, value: number | string) => {
     setItems((prev) =>
       prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item))
     )
@@ -128,7 +149,7 @@ export default function AdminFlashSalesPage() {
     setItems((prev) => prev.filter((_, i) => i !== idx))
   }
 
-  const handleToggleActive = async (camp: any) => {
+  const handleToggleActive = async (camp: AdminFlashSaleListItem) => {
     try {
       const { error } = await supabase
         .from('flash_sales')
@@ -204,14 +225,15 @@ export default function AdminFlashSalesPage() {
       }
       setIsOpen(false)
       refetch()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      toast.error(err.message || 'Gagal menyimpan Flash Sale')
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan Flash Sale'
+      toast.error(message)
     }
   }
 
   // Filter variant search list
-  const filteredVariants = allVariants.filter((v: any) => {
+  const filteredVariants = allVariants.filter((v) => {
     const term = variantSearch.toLowerCase()
     return (
       v.sku?.toLowerCase().includes(term) ||
@@ -255,7 +277,7 @@ export default function AdminFlashSalesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {campaigns.map((camp: any) => {
+                {campaigns.map((camp: AdminFlashSaleListItem) => {
                   const now = new Date()
                   const start = new Date(camp.starts_at)
                   const end = new Date(camp.ends_at)
@@ -394,7 +416,7 @@ export default function AdminFlashSalesPage() {
                   {filteredVariants.length === 0 ? (
                     <div className="px-4 py-3 text-neutral-400 italic">Varian tidak ditemukan</div>
                   ) : (
-                    filteredVariants.map((v: any) => (
+                    filteredVariants.map((v) => (
                       <button
                         key={v.id}
                         type="button"

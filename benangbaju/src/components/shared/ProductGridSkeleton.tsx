@@ -6,7 +6,7 @@ interface ProductGridSkeletonProps {
   className?: string
 }
 
-export function ProductGridSkeleton({ count = 8, className }: ProductGridSkeletonProps) {
+export function ProductGridSkeleton({ count = 8, className }: ProductGridSkeletonProps) : React.JSX.Element {
   return (
     <div
       className={cn(

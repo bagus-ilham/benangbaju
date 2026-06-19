@@ -21,7 +21,7 @@ export function PageHeader({
   className,
   animated = true,
   children,
-}: PageHeaderProps) {
+}: PageHeaderProps) : React.JSX.Element {
   const content = (
     <div
       className={cn(

@@ -10,19 +10,20 @@ import { Button, Modal, AdminPageHeader } from '@/components/shared'
 import { Star, MessageSquare } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import toast from 'react-hot-toast'
+import type { AdminReviewListItem } from '@/services/reviews'
 
-export default function AdminReviewsPage() {
-  const { data: reviews = [], isLoading, refetch } = useAdminReviews()
+export default function AdminReviewsPage() : React.JSX.Element {
+  const { data: reviews = [], isLoading, isError, refetch } = useAdminReviews()
   const { user } = useAuthStore()
 
   const updateStatusMutation = useAdminUpdateReviewStatus()
   const replyMutation = useAdminReplyToReview()
 
   // Reply Modal Control
-  const [selectedReview, setSelectedReview] = useState<any | null>(null)
+  const [selectedReview, setSelectedReview] = useState<AdminReviewListItem | null>(null)
   const [replyText, setReplyText] = useState('')
 
-  const handleOpenReplyModal = (rev: any) => {
+  const handleOpenReplyModal = (rev: AdminReviewListItem) => {
     setSelectedReview(rev)
     const existingReply = rev.review_replies?.[0]?.body || ''
     setReplyText(existingReply)
@@ -75,6 +76,13 @@ export default function AdminReviewsPage() {
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat ulasan...</p>
           </div>
+        ) : isError ? (
+          <div className="py-24 text-center">
+            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat ulasan dari server</p>
+            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+              Coba Lagi
+            </Button>
+          </div>
         ) : reviews.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
             Belum ada ulasan produk masuk.
@@ -92,7 +100,7 @@ export default function AdminReviewsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {reviews.map((rev: any) => (
+                {reviews.map((rev: AdminReviewListItem) => (
                   <tr key={rev.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
                       <span className="font-semibold text-neutral-900 text-sm block">

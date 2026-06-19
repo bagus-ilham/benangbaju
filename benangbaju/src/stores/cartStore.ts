@@ -170,15 +170,17 @@ export const useCartStore = create<CartState>()(
 
           if (fetchError) throw fetchError
 
-          const dbItemsMap = new Map<string, any>()
-          dbItems?.forEach((item) => dbItemsMap.set(item.variant_id, item))
+          const dbItemsMap = new Map<string, NonNullable<typeof dbItems>[number]>()
+          if (dbItems) {
+            dbItems.forEach((item) => dbItemsMap.set(item.variant_id, item))
+          }
 
           if (merge) {
             // Merge Local Items -> DB (combining quantities)
             for (const localItem of localItems) {
               const dbItem = dbItemsMap.get(localItem.variantId)
               const combinedQty = dbItem 
-                ? Math.min(dbItem.quantity + localItem.quantity, localItem.stock)
+                ? Math.min(dbItem.quantity + localItem.quantity, localItem.stock || 0)
                 : localItem.quantity
 
               const { error: upsertError } = await supabase
@@ -214,10 +216,10 @@ export const useCartStore = create<CartState>()(
 
             // Delete DB items that are no longer in local items
             const localVariantIds = new Set(localItems.map(item => item.variantId))
-            const dbItemsToDelete = (dbItems || []).filter(item => !localVariantIds.has(item.variant_id))
+            const dbItemsToDelete = (dbItems || []).filter((item) => !localVariantIds.has(item.variant_id))
             
             if (dbItemsToDelete.length > 0) {
-              const idsToDelete = dbItemsToDelete.map(item => item.id)
+              const idsToDelete = dbItemsToDelete.map((item) => item.id)
               const { error: deleteError } = await supabase
                 .from('cart_items')
                 .delete()
@@ -239,26 +241,36 @@ export const useCartStore = create<CartState>()(
             .eq('cart_id', cartId)
 
           if (finalDbItems) {
-            const synchronizedItems: CartItem[] = finalDbItems.map((item: any) => {
+            const synchronizedItems: CartItem[] = finalDbItems.map((item) => {
               const pv = item.product_variants
-              const prod = pv?.products
-              const primaryImg = prod?.product_images?.find((img: any) => img.is_primary)?.url 
-                || prod?.product_images?.[0]?.url 
+              let prod = null
+              let imagesList: Array<{ url: string; is_primary: boolean }> = []
+              if (pv && !Array.isArray(pv)) {
+                prod = pv.products
+                if (prod && !Array.isArray(prod)) {
+                  imagesList = Array.isArray(prod.product_images) ? prod.product_images : []
+                }
+              }
+              const primaryImg = imagesList.find((img) => img.is_primary)?.url 
+                || imagesList[0]?.url 
                 || null
+
+              const prodObj = prod && !Array.isArray(prod) ? prod : null
+              const pvObj = pv && !Array.isArray(pv) ? pv : null
 
               return {
                 id: item.id,
                 variantId: item.variant_id,
-                productName: prod?.name || 'Produk',
-                variantName: pv?.name || 'Default',
-                name: prod?.name || pv?.name || 'Produk',
-                sku: pv?.sku || '',
-                price: Number(pv?.price || 0),
-                comparePrice: pv?.compare_price ? Number(pv.compare_price) : null,
+                productName: prodObj?.name || 'Produk',
+                variantName: pvObj?.name || 'Default',
+                name: prodObj?.name || pvObj?.name || 'Produk',
+                sku: pvObj?.sku || '',
+                price: Number(pvObj?.price || 0),
+                comparePrice: pvObj?.compare_price ? Number(pvObj.compare_price) : null,
                 quantity: item.quantity,
                 imageUrl: primaryImg,
-                slug: prod?.slug || '',
-                stock: pv?.stock || 0,
+                slug: prodObj?.slug || '',
+                stock: pvObj?.stock || 0,
               }
             })
 

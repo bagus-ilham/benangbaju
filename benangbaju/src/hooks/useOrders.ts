@@ -10,15 +10,8 @@ import {
   CreateOrderParams,
 } from '@/services/orders'
 
-const supabase = new Proxy({} as any, {
-  get(target, prop) {
-    const client = createBrowserClient()
-    const value = Reflect.get(client, prop)
-    return typeof value === 'function' ? value.bind(client) : value
-  },
-})
-
-export function useOrdersList(userId: string, status?: string, page = 1, limit = 10) {
+export function useOrdersList(userId: string, status?: string, page = 1, limit = 10) : import("@tanstack/react-query").UseQueryResult<{ orders: import("@/services/orders").Order[]; totalCount: number; }, Error> {
+  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['orders', userId, status, page, limit],
     queryFn: () => getOrders(supabase, userId, status, page, limit),
@@ -26,7 +19,8 @@ export function useOrdersList(userId: string, status?: string, page = 1, limit =
   })
 }
 
-export function useOrderDetail(orderNumber: string) {
+export function useOrderDetail(orderNumber: string) : import("@tanstack/react-query").UseQueryResult<import("@/services/orders").Order | null, Error> {
+  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['order', orderNumber],
     queryFn: () => getOrderDetail(supabase, orderNumber),
@@ -34,8 +28,9 @@ export function useOrderDetail(orderNumber: string) {
   })
 }
 
-export function useCreateOrder() {
+export function useCreateOrder() : import("@tanstack/react-query").UseMutationResult<import("@/services/orders").OrderRpcResponse, Error, CreateOrderParams, unknown> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: (params: CreateOrderParams) => createOrder(supabase, params),
     onSuccess: (_, variables) => {
@@ -45,20 +40,22 @@ export function useCreateOrder() {
   })
 }
 
-export function useCancelOrder() {
+export function useCancelOrder() : import("@tanstack/react-query").UseMutationResult<{ success: boolean; message?: string; }, Error, { orderId: string; reason?: string; }, unknown> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: ({ orderId, reason }: { orderId: string; reason?: string }) =>
       cancelOrder(supabase, orderId, reason),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['order'] })
     },
   })
 }
 
-export function useConfirmDelivery() {
+export function useConfirmDelivery() : import("@tanstack/react-query").UseMutationResult<{ success: boolean; message?: string; }, Error, string, unknown> {
   const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: (orderId: string) => confirmDelivery(supabase, orderId),
     onSuccess: () => {
@@ -68,7 +65,8 @@ export function useConfirmDelivery() {
   })
 }
 
-export function useGeneratePaymentToken() {
+export function useGeneratePaymentToken() : import("@tanstack/react-query").UseMutationResult<{ success: boolean; token?: string; redirect_url?: string; message?: string; }, Error, string, unknown> {
+  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: (orderNumber: string) => generatePaymentToken(supabase, orderNumber),
   })

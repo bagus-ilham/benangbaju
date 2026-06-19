@@ -26,10 +26,18 @@ export function AddressCard({
   isSelected = false,
   showActions = true,
   showSelectButton = false,
-}: AddressCardProps) {
+}: AddressCardProps) : React.JSX.Element {
   return (
     <div
       onClick={() => onSelect?.(address)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect?.(address)
+        }
+      }}
+      role="button"
+      tabIndex={0}
       className={`p-5 border text-sm font-sans relative transition duration-150 rounded-none cursor-pointer card-hover-lift gold-border-hover ${
         isSelected
           ? 'border-brand-gold bg-brand-gold-muted/10 ring-1 ring-brand-gold'
@@ -81,7 +89,9 @@ export function AddressCard({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation()
-                  onDelete(address.id)
+                  if (confirm('Apakah Anda yakin ingin menghapus alamat ini?')) {
+                    onDelete(address.id)
+                  }
                 }}
                 className="flex items-center text-xs text-red-500 hover:text-red-700 transition duration-100"
               >

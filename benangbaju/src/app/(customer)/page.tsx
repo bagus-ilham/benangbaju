@@ -1,5 +1,6 @@
 import React from 'react'
-import { createServerClient } from '@/lib/supabase/server'
+import { cacheLife, cacheTag } from 'next/cache'
+import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveBanners } from '@/services/banners'
 import { getActiveCategories } from '@/services/categories'
 import { getActiveCollections, getCollectionBySlug } from '@/services/collections'
@@ -20,8 +21,12 @@ import {
 
 export const revalidate = 60
 
-export default async function Homepage() {
-  const supabase = await createServerClient()
+async function getCachedHomepageData() {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('banners', 'categories', 'collections', 'flash-sales', 'products', 'settings', 'homepage-data')
+
+  const supabase = createStaticClient()
 
   const [
     banners,
@@ -71,6 +76,34 @@ export default async function Homepage() {
       : Promise.resolve({ products: [], totalCount: 0 }),
   ])
 
+  return {
+    banners,
+    categories,
+    collections,
+    flashSale,
+    featuredProducts: featuredResponse.products,
+    newestProducts: newestResponse.products,
+    col1,
+    col2,
+    collection1Products: collection1Products.products,
+    collection2Products: collection2Products.products,
+  }
+}
+
+export default async function Homepage() : Promise<React.JSX.Element> {
+  const {
+    banners,
+    categories,
+    collections,
+    flashSale,
+    featuredProducts,
+    newestProducts,
+    col1,
+    col2,
+    collection1Products,
+    collection2Products,
+  } = await getCachedHomepageData()
+
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-white">
       {/* 1. Banner */}
@@ -80,7 +113,7 @@ export default async function Homepage() {
       <TrustStrip />
 
       {/* 2. Produk Pilihan */}
-      <FeaturedProductsSection products={featuredResponse.products} />
+      <FeaturedProductsSection products={featuredProducts} />
 
       {/* 3. Collection 1 */}
       {col1 && <CollectionSpotlight collection={col1} index={0} />}
@@ -88,7 +121,7 @@ export default async function Homepage() {
       {/* 4. Produk dari Collection 1 */}
       {col1 && (
         <ProductGridSection
-          products={collection1Products.products}
+          products={collection1Products}
           eyebrow="Dari Koleksi"
           title={`Produk ${col1.name}`}
           viewAllHref={`/koleksi/${col1.slug}`}
@@ -103,7 +136,7 @@ export default async function Homepage() {
       {/* 6. Produk dari Collection 2 */}
       {col2 && (
         <ProductGridSection
-          products={collection2Products.products}
+          products={collection2Products}
           eyebrow="Dari Koleksi"
           title={`Produk ${col2.name}`}
           viewAllHref={`/koleksi/${col2.slug}`}
@@ -114,7 +147,7 @@ export default async function Homepage() {
       {/* Additional sections */}
       <FlashSaleSection flashSale={flashSale} />
       <CategorySection categories={categories} />
-      <NewArrivalsSection products={newestResponse.products} />
+      <NewArrivalsSection products={newestProducts} />
       <RecentlyViewedSection />
     </div>
   )

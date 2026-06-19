@@ -12,7 +12,7 @@ export function Badge({
   size = 'sm',
   children,
   ...props
-}: BadgeProps) {
+}: BadgeProps) : React.JSX.Element {
   return (
     <span
       className={cn(

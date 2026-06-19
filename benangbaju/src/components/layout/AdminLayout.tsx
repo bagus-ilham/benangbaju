@@ -27,12 +27,13 @@ import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary'
 
 interface AdminLayoutProps {
   children: React.ReactNode
 }
 
-export function AdminLayout({ children }: AdminLayoutProps) {
+export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createBrowserClient()
@@ -154,7 +155,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
                   BENANGBAJU <span className="text-brand-gold">CMS</span>
                 </span>
-                <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1">
+                <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1" aria-label="Tutup sidebar">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -224,7 +225,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-neutral-50">
           <div className="mx-auto max-w-7xl animate-slide-up">
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
           </div>
         </main>
       </div>

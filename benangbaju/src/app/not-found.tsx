@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { HelpCircle } from 'lucide-react'
 import { Button } from '@/components/shared'
 
-export default function RootNotFound() {
+export default function RootNotFound() : React.JSX.Element {
   return (
     <div className="flex-1 min-h-screen flex flex-col items-center justify-center text-center p-6 bg-white font-sans">
       <div className="max-w-md space-y-6 flex flex-col items-center py-12">

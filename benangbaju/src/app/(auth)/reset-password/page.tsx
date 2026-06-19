@@ -7,7 +7,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, Card } from '@/components/shared'
 import toast from 'react-hot-toast'
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordPage() : React.JSX.Element {
   const router = useRouter()
   const supabase = createBrowserClient()
 
@@ -59,8 +59,9 @@ export default function ResetPasswordPage() {
       await supabase.auth.signOut()
       
       router.push('/masuk')
-    } catch (error: any) {
-      toast.error(error.message || 'Gagal memperbarui kata sandi. Silakan coba lagi.')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Gagal memperbarui kata sandi. Silakan coba lagi.'
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }

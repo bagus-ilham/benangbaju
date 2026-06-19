@@ -1,7 +1,8 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import { createServerClient } from '@/lib/supabase/server'
+import { cacheLife, cacheTag } from 'next/cache'
+import { createStaticClient } from '@/lib/supabase/static'
 import { getCategoryBySlug } from '@/services/categories'
 import { getProducts } from '@/services/products'
 import { ProductCard } from '@/components/product/ProductCard'
@@ -13,20 +14,37 @@ interface CategoryPageProps {
   }>
 }
 
-export default async function CategoryDetailPage({ params }: CategoryPageProps) {
-  const { slug } = await params
-  const supabase = await createServerClient()
+async function getCachedCategory(slug: string) {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('categories', `category-${slug}`)
 
-  const category = await getCategoryBySlug(supabase, slug)
+  const supabase = createStaticClient()
+  return getCategoryBySlug(supabase, slug)
+}
+
+async function getCachedCategoryProducts(slug: string) {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('products', 'categories')
+
+  const supabase = createStaticClient()
+  return getProducts(supabase, {
+    categorySlug: slug,
+    limit: 40,
+  })
+}
+
+export default async function CategoryDetailPage({ params }: CategoryPageProps) : Promise<React.JSX.Element> {
+  const { slug } = await params
+
+  const category = await getCachedCategory(slug)
 
   if (!category) {
     notFound()
   }
 
-  const { products } = await getProducts(supabase, {
-    categorySlug: slug,
-    limit: 40,
-  })
+  const { products } = await getCachedCategoryProducts(slug)
 
   return (
     <div className="bg-white min-h-screen">
