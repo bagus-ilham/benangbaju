@@ -20,7 +20,11 @@ async function getCachedCollection(slug: string) {
   cacheTag('collections', `collection-${slug}`)
 
   const supabase = createStaticClient()
-  return getCollectionBySlug(supabase, slug)
+  const collection = await getCollectionBySlug(supabase, slug)
+  if (!collection) {
+    throw new Error(`Collection ${slug} not found`)
+  }
+  return collection
 }
 
 async function getCachedCollectionProducts(slug: string) {
@@ -38,9 +42,10 @@ async function getCachedCollectionProducts(slug: string) {
 export default async function CollectionDetailPage({ params }: CollectionPageProps) : Promise<React.JSX.Element> {
   const { slug } = await params
 
-  const collection = await getCachedCollection(slug)
-
-  if (!collection) {
+  let collection
+  try {
+    collection = await getCachedCollection(slug)
+  } catch (err) {
     notFound()
   }
 

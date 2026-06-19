@@ -17,7 +17,11 @@ async function getCachedProduct(slug: string) {
   cacheTag('products', `product-${slug}`)
 
   const supabase = createStaticClient()
-  return getProductBySlug(supabase, slug)
+  const product = await getProductBySlug(supabase, slug)
+  if (!product) {
+    throw new Error(`Product ${slug} not found`)
+  }
+  return product
 }
 
 async function getCachedRelatedProducts(productId: string, categoryId: string) {
@@ -33,9 +37,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
   const { slug } = await params
 
   // Fetch product detail on the server
-  const product = await getCachedProduct(slug)
-
-  if (!product) {
+  let product
+  try {
+    product = await getCachedProduct(slug)
+  } catch (err) {
     notFound()
   }
 

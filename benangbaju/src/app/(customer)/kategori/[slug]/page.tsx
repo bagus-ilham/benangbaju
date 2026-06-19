@@ -20,7 +20,11 @@ async function getCachedCategory(slug: string) {
   cacheTag('categories', `category-${slug}`)
 
   const supabase = createStaticClient()
-  return getCategoryBySlug(supabase, slug)
+  const category = await getCategoryBySlug(supabase, slug)
+  if (!category) {
+    throw new Error(`Category ${slug} not found`)
+  }
+  return category
 }
 
 async function getCachedCategoryProducts(slug: string) {
@@ -38,9 +42,10 @@ async function getCachedCategoryProducts(slug: string) {
 export default async function CategoryDetailPage({ params }: CategoryPageProps) : Promise<React.JSX.Element> {
   const { slug } = await params
 
-  const category = await getCachedCategory(slug)
-
-  if (!category) {
+  let category
+  try {
+    category = await getCachedCategory(slug)
+  } catch (err) {
     notFound()
   }
 
