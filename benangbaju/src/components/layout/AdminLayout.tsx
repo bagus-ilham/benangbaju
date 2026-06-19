@@ -57,9 +57,9 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Pesanan', href: '/admin/pesanan', icon: ShoppingBag },
-    { name: 'Produk', href: '/admin/produk', icon: Package },
     { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
     { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
+    { name: 'Produk', href: '/admin/produk', icon: Package },
     { name: 'Voucher', href: '/admin/voucher', icon: Ticket },
     { name: 'Flash Sale', href: '/admin/flash-sale', icon: Percent },
     { name: 'Banner Promo', href: '/admin/banner', icon: Image },
