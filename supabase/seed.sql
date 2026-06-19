@@ -263,25 +263,10 @@ INSERT INTO shipping_rates (zone_id, courier_name, price_per_kg, min_weight_gram
 ON CONFLICT DO NOTHING;
 
 -- -------------------------------------------------------
--- 6. Sample Districts (minimal for development)
+-- 6. Districts (full Indonesia data)
+-- Loaded from supabase/seeds/seed_districts.sql via config.toml
+-- Regenerate: node scripts/generate-districts-seed.mjs
 -- -------------------------------------------------------
-INSERT INTO districts (province_name, city_name, district_name, postal_code, zone_id) VALUES
-  ('DKI Jakarta', 'Jakarta Selatan', 'Kebayoran Baru', '12110', 'e1000000-0000-0000-0000-000000000001'),
-  ('DKI Jakarta', 'Jakarta Selatan', 'Tebet', '12810', 'e1000000-0000-0000-0000-000000000001'),
-  ('DKI Jakarta', 'Jakarta Pusat', 'Menteng', '10310', 'e1000000-0000-0000-0000-000000000001'),
-  ('DKI Jakarta', 'Jakarta Pusat', 'Tanah Abang', '10250', 'e1000000-0000-0000-0000-000000000001'),
-  ('Jawa Barat', 'Bandung', 'Coblong', '40132', 'e1000000-0000-0000-0000-000000000001'),
-  ('Jawa Barat', 'Bandung', 'Lengkong', '40261', 'e1000000-0000-0000-0000-000000000001'),
-  ('Jawa Barat', 'Bogor', 'Bogor Tengah', '16124', 'e1000000-0000-0000-0000-000000000001'),
-  ('Jawa Tengah', 'Semarang', 'Semarang Tengah', '50136', 'e1000000-0000-0000-0000-000000000001'),
-  ('Jawa Timur', 'Surabaya', 'Gubeng', '60281', 'e1000000-0000-0000-0000-000000000001'),
-  ('DI Yogyakarta', 'Yogyakarta', 'Gondokusuman', '55225', 'e1000000-0000-0000-0000-000000000001'),
-  ('Sumatera Utara', 'Medan', 'Medan Kota', '20111', 'e1000000-0000-0000-0000-000000000002'),
-  ('Sumatera Barat', 'Padang', 'Padang Barat', '25118', 'e1000000-0000-0000-0000-000000000002'),
-  ('Bali', 'Denpasar', 'Denpasar Selatan', '80228', 'e1000000-0000-0000-0000-000000000004'),
-  ('Sulawesi Selatan', 'Makassar', 'Makassar', '90111', 'e1000000-0000-0000-0000-000000000004'),
-  ('Kalimantan Timur', 'Samarinda', 'Samarinda Kota', '75112', 'e1000000-0000-0000-0000-000000000003')
-ON CONFLICT DO NOTHING;
 
 -- -------------------------------------------------------
 -- 7. Site Settings

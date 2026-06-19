@@ -34,7 +34,7 @@ interface AppliedVoucher {
 export default function CheckoutPage() : React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
-  const { items: cartItems, clearCart } = useCartStore()
+  const { items: cartItems, clearCart, isSyncing, hasSynced } = useCartStore()
 
   // Modal State
   const [addressModalOpen, setAddressModalOpen] = useState(false)
@@ -72,11 +72,12 @@ export default function CheckoutPage() : React.JSX.Element {
   useEffect(() => {
     if (!isMounted) return
     if (!useCartStore.persist.hasHydrated()) return
+    if (isSyncing || !hasSynced) return
     if (!authLoading && isAuthenticated && cartItems.length === 0 && !orderPlaced) {
       toast.error('Keranjang belanja Anda kosong')
       router.push('/produk')
     }
-  }, [isMounted, cartItems, authLoading, isAuthenticated, orderPlaced, router])
+  }, [isMounted, cartItems, authLoading, isAuthenticated, orderPlaced, router, isSyncing, hasSynced])
 
   // 3. Load Midtrans Snap.js Script
   useEffect(() => {
@@ -322,7 +323,7 @@ export default function CheckoutPage() : React.JSX.Element {
 
   const isCheckoutProcessing = createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
-  if (authLoading || !isAuthenticated || (cartItems.length === 0 && !orderPlaced)) {
+  if (authLoading || !isAuthenticated || isSyncing || !hasSynced || (cartItems.length === 0 && !orderPlaced)) {
     return <AuthLoading message="Memuat Checkout..." />
   }
 

@@ -45,6 +45,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) : 
         } else {
           clearAuth()
           useWishlistStore.getState().clearWishlist()
+          useCartStore.getState().resetCart()
         }
       } catch (error) {
         console.error('Error syncing Supabase session:', error)
@@ -84,6 +85,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) : 
       } else {
         clearAuth()
         useWishlistStore.getState().clearWishlist()
+        useCartStore.getState().resetCart()
       }
       setLoading(false)
     })

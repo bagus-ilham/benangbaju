@@ -23,12 +23,15 @@ interface CartState {
   items: CartItem[]
   sessionId: string
   isCartDrawerOpen: boolean
+  isSyncing: boolean
+  hasSynced: boolean
   setCartDrawerOpen: (open: boolean) => void
   addItem: (item: Omit<CartItem, 'quantity'>, qty?: number) => Promise<void>
   updateQuantity: (variantId: string, quantity: number) => Promise<void>
   removeItem: (variantId: string) => Promise<void>
   clearCart: () => Promise<void>
   syncCart: (userId: string | null, merge?: boolean) => Promise<void>
+  resetCart: () => void
 }
 
 let syncTimeout: ReturnType<typeof setTimeout> | null = null
@@ -51,6 +54,8 @@ export const useCartStore = create<CartState>()(
       items: [],
       sessionId: generateSessionId(),
       isCartDrawerOpen: false,
+      isSyncing: false,
+      hasSynced: false,
       setCartDrawerOpen: (open) => set({ isCartDrawerOpen: open }),
       
       addItem: async (newItem, qty = 1) => {
@@ -129,9 +134,19 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      syncCart: async (userId, merge = false) => {
-        if (!userId) return
+      resetCart: () => {
+        set({ items: [], isSyncing: false, hasSynced: false })
+      },
 
+      syncCart: async (userId, merge = false) => {
+        if (!userId) {
+          set({ isSyncing: false, hasSynced: false })
+          return
+        }
+
+        if (get().isSyncing) return
+
+        set({ isSyncing: true })
         const supabase = createBrowserClient()
         const localItems = get().items
 
@@ -274,10 +289,14 @@ export const useCartStore = create<CartState>()(
               }
             })
 
-            set({ items: synchronizedItems })
+            set({ items: synchronizedItems, hasSynced: true })
+          } else {
+            set({ hasSynced: true })
           }
         } catch (error) {
           console.error('Error syncing cart with Supabase:', error)
+        } finally {
+          set({ isSyncing: false })
         }
       },
     }),
