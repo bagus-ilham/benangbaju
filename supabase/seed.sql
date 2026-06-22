@@ -279,8 +279,8 @@ INSERT INTO site_settings (key, value, type, "group", label) VALUES
   ('store_phone', '08123456789', 'text', 'general', 'Nomor Telepon'),
   ('store_email', 'cs@benangbaju.com', 'text', 'general', 'Email'),
   ('store_whatsapp', '628123456789', 'text', 'general', 'WhatsApp'),
-  ('store_logo_url', '/images/logo.png', 'image', 'general', 'Logo'),
-  ('store_favicon_url', '/images/favicon.ico', 'image', 'general', 'Favicon'),
+  ('store_logo_url', '/logo.PNG', 'image', 'general', 'Logo'),
+  ('store_favicon_url', '/logo_favicon.PNG', 'image', 'general', 'Favicon'),
   -- SEO
   ('seo_title', 'Benangbaju — Fashion Muslim Premium Indonesia', 'text', 'seo', 'SEO Title'),
   ('seo_description', 'Belanja hijab, gamis, mukena, dan aksesori muslim premium dengan harga terbaik. Gratis ongkir Pulau Jawa.', 'text', 'seo', 'SEO Description'),

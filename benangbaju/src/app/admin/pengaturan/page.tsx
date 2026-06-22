@@ -25,7 +25,7 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'instagram_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username Instagram' },
   { key: 'tiktok_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username TikTok' },
   { key: 'social_shopee', value: 'https://shopee.co.id/benangbaju', type: 'text', group: 'social', label: 'Link Shopee' },
-  { key: 'store_logo_url', value: '/images/logo.png', type: 'image', group: 'general', label: 'URL Logo Toko' },
+  { key: 'store_logo_url', value: '/logo.PNG', type: 'image', group: 'general', label: 'URL Logo Toko' },
 ]
 
 export default function AdminSettingsPage() : React.JSX.Element {

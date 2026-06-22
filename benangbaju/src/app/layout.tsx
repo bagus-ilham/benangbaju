@@ -19,6 +19,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Benangbaju — Fashion Muslim Premium Indonesia',
   description: 'Temukan koleksi busana muslim wanita premium, modern, dan elegan hanya di Benangbaju.',
+  icons: {
+    icon: '/logo_favicon.PNG',
+  },
 }
 
 export default function RootLayout({
