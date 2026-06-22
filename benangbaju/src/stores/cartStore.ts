@@ -165,8 +165,18 @@ export const useCartStore = create<CartState>()(
               .select('id')
               .single()
             
-            if (createError) throw createError
-            cart = newCart
+            if (createError) {
+              const { data: retryCart } = await supabase
+                .from('carts')
+                .select('id')
+                .eq('user_id', userId)
+                .maybeSingle()
+              
+              if (!retryCart) throw createError
+              cart = retryCart
+            } else {
+              cart = newCart
+            }
           }
 
           const cartId = cart.id
