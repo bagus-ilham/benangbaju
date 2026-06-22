@@ -40,7 +40,8 @@ async function getCachedCategoryProducts(slug: string) {
 }
 
 export default async function CategoryDetailPage({ params }: CategoryPageProps) : Promise<React.JSX.Element> {
-  const { slug } = await params
+  const { slug: rawSlug } = await params
+  const slug = decodeURIComponent(rawSlug)
 
   let category
   try {

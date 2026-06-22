@@ -40,7 +40,8 @@ async function getCachedCollectionProducts(slug: string) {
 }
 
 export default async function CollectionDetailPage({ params }: CollectionPageProps) : Promise<React.JSX.Element> {
-  const { slug } = await params
+  const { slug: rawSlug } = await params
+  const slug = decodeURIComponent(rawSlug)
 
   let collection
   try {

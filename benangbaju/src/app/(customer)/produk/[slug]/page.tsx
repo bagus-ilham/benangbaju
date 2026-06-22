@@ -34,7 +34,8 @@ async function getCachedRelatedProducts(productId: string, categoryId: string) {
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) : Promise<React.JSX.Element> {
-  const { slug } = await params
+  const { slug: rawSlug } = await params
+  const slug = decodeURIComponent(rawSlug)
 
   // Fetch product detail on the server
   let product

@@ -51,6 +51,7 @@ export default function CheckoutPage() : React.JSX.Element {
   const [orderSnapshot, setOrderSnapshot] = useState<CartItem[]>([])
   const [isMounted, setIsMounted] = useState(false)
   const checkoutInitiated = useRef(false)
+  const hasCheckedEmptyCart = useRef(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -69,16 +70,23 @@ export default function CheckoutPage() : React.JSX.Element {
     }
   }, [isMounted, isAuthenticated, authLoading, router])
 
-  // 2. Redirect if cart is empty
+  // 2. Redirect if cart is empty (checked once after hydration and sync)
   useEffect(() => {
     if (!isMounted) return
     if (!useCartStore.persist.hasHydrated()) return
     if (isSyncing || !hasSynced) return
-    if (!authLoading && isAuthenticated && cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current) {
-      toast.error('Keranjang belanja Anda kosong')
-      router.push('/produk')
+    if (hasCheckedEmptyCart.current) return
+
+    if (!authLoading && isAuthenticated) {
+      if (cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current) {
+        hasCheckedEmptyCart.current = true
+        toast.error('Keranjang belanja Anda kosong')
+        router.push('/produk')
+      } else if (cartItems.length > 0) {
+        hasCheckedEmptyCart.current = true
+      }
     }
-  }, [isMounted, cartItems, authLoading, isAuthenticated, orderPlaced, router, isSyncing, hasSynced])
+  }, [isMounted, cartItems.length, authLoading, isAuthenticated, orderPlaced, router, isSyncing, hasSynced])
 
   // 3. Load Midtrans Snap.js Script
   useEffect(() => {
@@ -325,7 +333,7 @@ export default function CheckoutPage() : React.JSX.Element {
 
   const isCheckoutProcessing = createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
-  if (authLoading || !isAuthenticated || isSyncing || !hasSynced || (cartItems.length === 0 && !orderPlaced)) {
+  if (authLoading || !isAuthenticated || isSyncing || !hasSynced || (cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current)) {
     return <AuthLoading message="Memuat Checkout..." />
   }
 
