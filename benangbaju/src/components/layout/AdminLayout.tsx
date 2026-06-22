@@ -28,6 +28,8 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary'
+import { useQuery } from '@tanstack/react-query'
+import { getSiteSettings } from '@/services/settings'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -40,6 +42,14 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
   const { user, profile, clearAuth } = useAuthStore()
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  const { data: settings = [] } = useQuery({
+    queryKey: ['site-settings'],
+    queryFn: () => getSiteSettings(supabase),
+  })
+
+  const logoSetting = settings.find((s) => s.key === 'store_logo_url')
+  const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null
 
   const handleLogout = async () => {
     try {
@@ -104,9 +114,22 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
       {/* Sidebar for Desktop */}
       <aside className="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 border-r border-neutral-200 bg-white">
         <div className="flex h-16 items-center px-6 border-b border-neutral-200">
-          <Link href="/admin" className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-            BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
-          </Link>
+          {logoUrl ? (
+            <Link href="/admin" className="flex items-center space-x-2">
+              <img
+                src={logoUrl}
+                alt="Logo"
+                className="h-8 w-auto object-contain max-w-[120px]"
+              />
+              <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
+                CMS
+              </span>
+            </Link>
+          ) : (
+            <Link href="/admin" className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+              BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
+            </Link>
+          )}
         </div>
 
         <div className="flex flex-col flex-1 overflow-y-auto pt-5 pb-4">
@@ -152,9 +175,22 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
               className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white shadow-xl"
             >
               <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200">
-                <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-                  BENANGBAJU <span className="text-brand-gold">CMS</span>
-                </span>
+                {logoUrl ? (
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={logoUrl}
+                      alt="Logo"
+                      className="h-8 w-auto object-contain max-w-[120px]"
+                    />
+                    <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
+                      CMS
+                    </span>
+                  </div>
+                ) : (
+                  <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+                    BENANGBAJU <span className="text-brand-gold">CMS</span>
+                  </span>
+                )}
                 <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1" aria-label="Tutup sidebar">
                   <X className="h-5 w-5" />
                 </button>
