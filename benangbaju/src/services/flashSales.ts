@@ -242,13 +242,11 @@ export async function adminCreateFlashSale(
 
   if (items && items.length > 0) {
     const itemsData = items.map(item => {
-      const discountPercent = ((item.original_price - item.sale_price) / item.original_price) * 100
       return {
         flash_sale_id: flashSaleId,
         variant_id: item.variant_id,
         original_price: item.original_price,
         sale_price: item.sale_price,
-        discount_percent: Math.max(0, parseFloat(discountPercent.toFixed(2))),
         quota: item.quota
       }
     })

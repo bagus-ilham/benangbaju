@@ -24,6 +24,8 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'whatsapp_number', value: '6281234567890', type: 'text', group: 'social', label: 'Nomor WhatsApp Chat' },
   { key: 'instagram_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username Instagram' },
   { key: 'tiktok_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username TikTok' },
+  { key: 'social_shopee', value: 'https://shopee.co.id/benangbaju', type: 'text', group: 'social', label: 'Link Shopee' },
+  { key: 'store_logo_url', value: '/images/logo.png', type: 'image', group: 'general', label: 'URL Logo Toko' },
 ]
 
 export default function AdminSettingsPage() : React.JSX.Element {
@@ -42,26 +44,28 @@ export default function AdminSettingsPage() : React.JSX.Element {
 
   // Auto-seed settings if empty, otherwise initialize fields
   useEffect(() => {
-    if (!settingsLoading) {
-      if (settingsList.length === 0) {
-        const seedSettings = async () => {
-          try {
-            await upsertMutation.mutateAsync(DEFAULT_SETTINGS)
-            refetchSettings()
-          } catch (err) {
-            console.error('Failed to seed default settings:', err)
-          }
+    if (settingsLoading) return
+    if (settingsList.length === 0) {
+      const seedSettings = async () => {
+        try {
+          await upsertMutation.mutateAsync(DEFAULT_SETTINGS)
+          refetchSettings()
+        } catch (err) {
+          console.error('Failed to seed default settings:', err)
         }
-        seedSettings()
-      } else {
+      }
+      seedSettings()
+    } else {
+      setFields((prev) => {
+        if (Object.keys(prev).length > 0) return prev
         const dict: Record<string, string> = {}
         settingsList.forEach((s) => {
           dict[s.key] = s.value || ''
         })
-        setFields(dict)
-      }
+        return dict
+      })
     }
-  }, [settingsList, settingsLoading, refetchSettings, upsertMutation])
+  }, [settingsList, settingsLoading])
 
   const handleFieldChange = (key: string, value: string) => {
     setFields((prev) => ({
@@ -76,7 +80,14 @@ export default function AdminSettingsPage() : React.JSX.Element {
     try {
       await updateMutation.mutateAsync(fields)
       toast.success('Pengaturan berhasil disimpan!', { id: 'save-settings' })
-      refetchSettings()
+      const updated = await refetchSettings()
+      if (updated.data) {
+        const dict: Record<string, string> = {}
+        updated.data.forEach((s) => {
+          dict[s.key] = s.value || ''
+        })
+        setFields(dict)
+      }
     } catch (err) {
       toast.error('Gagal menyimpan pengaturan', { id: 'save-settings' })
     }

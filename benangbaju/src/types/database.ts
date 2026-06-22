@@ -128,7 +128,7 @@ interface RawDatabase {
       banners: {
         Row: {
           id: string
-          title: string
+          title: string | null
           subtitle: string | null
           image_url: string
           image_mobile_url: string | null
@@ -141,7 +141,7 @@ interface RawDatabase {
         }
         Insert: {
           id?: string
-          title: string
+          title?: string | null
           subtitle?: string | null
           image_url: string
           image_mobile_url?: string | null
@@ -153,7 +153,7 @@ interface RawDatabase {
           ends_at?: string | null
         }
         Update: {
-          title?: string
+          title?: string | null
           subtitle?: string | null
           image_url?: string
           image_mobile_url?: string | null
@@ -180,6 +180,8 @@ interface RawDatabase {
           meta_description: string | null
           created_at: string
           updated_at: string
+          size_guide: string | null
+          care_guide: string | null
         }
         Insert: {
           id?: string
@@ -193,6 +195,8 @@ interface RawDatabase {
           is_featured?: boolean
           meta_title?: string | null
           meta_description?: string | null
+          size_guide?: string | null
+          care_guide?: string | null
         }
         Update: {
           category_id?: string
@@ -205,6 +209,8 @@ interface RawDatabase {
           is_featured?: boolean
           meta_title?: string | null
           meta_description?: string | null
+          size_guide?: string | null
+          care_guide?: string | null
         }
       }
       product_variants: {

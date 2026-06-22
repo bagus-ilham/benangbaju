@@ -39,7 +39,7 @@ export async function adminGetBanners(supabase: SupabaseClient<Database>): Promi
 export async function adminCreateBanner(
   supabase: SupabaseClient<Database>,
   bannerData: {
-    title: string
+    title: string | null
     subtitle: string | null
     image_url: string
     image_mobile_url: string | null
@@ -50,7 +50,7 @@ export async function adminCreateBanner(
     starts_at: string | null
     ends_at: string | null
   }
-) : Promise<{ id: string; title: string; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
+) : Promise<{ id: string; title: string | null; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
   const { data, error } = await supabase
     .from('banners')
     .insert(bannerData)
@@ -65,7 +65,7 @@ export async function adminUpdateBanner(
   supabase: SupabaseClient<Database>,
   bannerId: string,
   bannerData: {
-    title: string
+    title: string | null
     subtitle: string | null
     image_url: string
     image_mobile_url: string | null
@@ -76,7 +76,7 @@ export async function adminUpdateBanner(
     starts_at: string | null
     ends_at: string | null
   }
-) : Promise<{ id: string; title: string; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
+) : Promise<{ id: string; title: string | null; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
   const { data, error } = await supabase
     .from('banners')
     .update(bannerData)

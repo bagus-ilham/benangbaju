@@ -72,6 +72,8 @@ export interface ProductListItem {
 export interface ProductDetailItem extends ProductListItem {
   product_marketplace_links: ProductMarketplaceLink[]
   product_rating_summary: ProductRatingSummary | null
+  size_guide: string | null
+  care_guide: string | null
 }
 
 export async function getProducts(
@@ -117,7 +119,18 @@ export async function getProducts(
       .single()
     
     if (category) {
-      query = query.eq('category_id', category.id)
+      // Fetch subcategories
+      const { data: subCategories } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('parent_id', category.id)
+      
+      const categoryIds = [category.id]
+      if (subCategories && subCategories.length > 0) {
+        categoryIds.push(...subCategories.map((c) => c.id))
+      }
+      
+      query = query.in('category_id', categoryIds)
     } else {
       return { products: [], totalCount: 0 }
     }
@@ -281,7 +294,7 @@ export async function getProductBySlug(
     .from('products')
     .select(
       `
-        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at,
+        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at, size_guide, care_guide,
         categories (name, slug),
         product_variants (*, product_variant_attrs(*)),
         product_images (*),
@@ -376,6 +389,8 @@ export async function getProductBySlug(
     product_images: sortedImages,
     product_marketplace_links,
     product_rating_summary,
+    size_guide: data.size_guide,
+    care_guide: data.care_guide,
   }
 }
 
@@ -576,6 +591,8 @@ export async function adminCreateProduct(
     is_active: boolean
     meta_title?: string | null
     meta_description?: string | null
+    size_guide?: string | null
+    care_guide?: string | null
   },
   variants: {
     id?: string
@@ -706,6 +723,8 @@ export async function adminUpdateProduct(
     is_active: boolean
     meta_title?: string | null
     meta_description?: string | null
+    size_guide?: string | null
+    care_guide?: string | null
   },
   variants: {
     id?: string

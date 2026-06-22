@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
@@ -50,6 +50,7 @@ export default function CheckoutPage() : React.JSX.Element {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [orderSnapshot, setOrderSnapshot] = useState<CartItem[]>([])
   const [isMounted, setIsMounted] = useState(false)
+  const checkoutInitiated = useRef(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -73,7 +74,7 @@ export default function CheckoutPage() : React.JSX.Element {
     if (!isMounted) return
     if (!useCartStore.persist.hasHydrated()) return
     if (isSyncing || !hasSynced) return
-    if (!authLoading && isAuthenticated && cartItems.length === 0 && !orderPlaced) {
+    if (!authLoading && isAuthenticated && cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current) {
       toast.error('Keranjang belanja Anda kosong')
       router.push('/produk')
     }
@@ -251,6 +252,7 @@ export default function CheckoutPage() : React.JSX.Element {
       return
     }
 
+    checkoutInitiated.current = true
     try {
       // 1. Create order in database
       const orderRes = await createOrderMutation.mutateAsync({

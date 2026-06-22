@@ -365,6 +365,7 @@ input:focus, textarea:focus, select:focus {
   position: absolute;
   inset: 0;
   border: 1px solid transparent;
+  border-radius: inherit;
   transition: border-color 0.4s ease;
   pointer-events: none;
   z-index: 1;

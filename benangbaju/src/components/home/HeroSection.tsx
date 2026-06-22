@@ -77,7 +77,7 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
           <div className="hidden sm:block absolute inset-0 w-full h-full">
             <Image
               src={currentBanner.image_url}
-              alt={currentBanner.title}
+              alt={currentBanner.title || ''}
               fill
               priority
               className="object-cover"
@@ -89,7 +89,7 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
           <div className="sm:hidden absolute inset-0 w-full h-full">
             <Image
               src={currentBanner.image_mobile_url || currentBanner.image_url}
-              alt={currentBanner.title}
+              alt={currentBanner.title || ''}
               fill
               priority
               className="object-cover"

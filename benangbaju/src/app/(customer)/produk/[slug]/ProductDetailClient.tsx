@@ -588,24 +588,40 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                   >
                     {activeTab === 'details' && (
                       <div className="space-y-2">
-                        <p>{product.description || 'Tidak ada deskripsi tambahan.'}</p>
+                        <p className="whitespace-pre-line">
+                          {product.description
+                            ? product.description.replace(/<br\s*\/?>/gi, '\n')
+                            : 'Tidak ada deskripsi tambahan.'}
+                        </p>
                         {selectedVariant && (
                           <p className="text-[10px] text-neutral-400 font-sans">SKU: {selectedVariant.sku}</p>
                         )}
                       </div>
                     )}
                     {activeTab === 'shipping' && (
-                      <div className="space-y-1">
-                        <p><strong>Pengiriman:</strong> Pesanan dikirimkan dalam 1-2 hari kerja setelah pembayaran dikonfirmasi.</p>
-                        <p><strong>Ukuran:</strong> Pastikan mengukur detail ukuran badan sebelum membeli.</p>
+                      <div className="space-y-1 whitespace-pre-line">
+                        {product.size_guide ? (
+                          product.size_guide.replace(/<br\s*\/?>/gi, '\n')
+                        ) : (
+                          <>
+                            <p><strong>Pengiriman:</strong> Pesanan dikirimkan dalam 1-2 hari kerja setelah pembayaran dikonfirmasi.</p>
+                            <p><strong>Ukuran:</strong> Pastikan mengukur detail ukuran badan sebelum membeli.</p>
+                          </>
+                        )}
                       </div>
                     )}
                     {activeTab === 'care' && (
-                      <ul className="list-disc pl-4 space-y-1">
-                        <li>Cuci dengan suhu dingin menggunakan warna senada</li>
-                        <li>Hindari pemutih pakaian</li>
-                        <li>Setrika dengan suhu rendah jika diperlukan</li>
-                      </ul>
+                      <div className="space-y-1 whitespace-pre-line">
+                        {product.care_guide ? (
+                          product.care_guide.replace(/<br\s*\/?>/gi, '\n')
+                        ) : (
+                          <ul className="list-disc pl-4 space-y-1">
+                            <li>Cuci dengan suhu dingin menggunakan warna senada</li>
+                            <li>Hindari pemutih pakaian</li>
+                            <li>Setrika dengan suhu rendah jika diperlukan</li>
+                          </ul>
+                        )}
+                      </div>
                     )}
                   </motion.div>
                 </AnimatePresence>

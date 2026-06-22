@@ -64,6 +64,8 @@ interface InitialProductData {
   is_featured: boolean
   meta_title: string | null
   meta_description: string | null
+  size_guide?: string | null
+  care_guide?: string | null
   product_variants?: InitialProductVariant[]
   product_images?: InitialProductImage[]
   product_marketplace_links?: InitialProductLink[]
@@ -93,6 +95,8 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
   const [is_featured, setIsFeatured] = useState(false)
   const [meta_title, setMetaTitle] = useState('')
   const [meta_description, setMetaDescription] = useState('')
+  const [size_guide, setSizeGuide] = useState('')
+  const [care_guide, setCareGuide] = useState('')
 
   // Variants state
   const [variants, setVariants] = useState<ProductVariantPayload[]>([])
@@ -119,6 +123,8 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       setIsFeatured(!!initialData.is_featured)
       setMetaTitle(initialData.meta_title || '')
       setMetaDescription(initialData.meta_description || '')
+      setSizeGuide(initialData.size_guide || '')
+      setCareGuide(initialData.care_guide || '')
 
       // Map variants
       if (initialData.product_variants) {
@@ -199,6 +205,8 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
         },
       ])
       setSelectedCollections([])
+      setSizeGuide('')
+      setCareGuide('')
     }
   }, [initialData])
 
@@ -381,6 +389,8 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
         is_featured,
         meta_title: meta_title.trim() || null,
         meta_description: meta_description.trim() || null,
+        size_guide: size_guide.trim() || null,
+        care_guide: care_guide.trim() || null,
       },
       variants,
       images: cleanedImages,
@@ -538,6 +548,30 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Tulis spesifikasi lengkap, bahan, dan cara perawatan..."
                 className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-32 resize-none"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
+                Panduan Ukuran (Size Guide)
+              </label>
+              <textarea
+                value={size_guide}
+                onChange={(e) => setSizeGuide(e.target.value)}
+                placeholder="Tulis panduan ukuran produk..."
+                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-24 resize-none"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
+                Panduan Perawatan (Care Guide)
+              </label>
+              <textarea
+                value={care_guide}
+                onChange={(e) => setCareGuide(e.target.value)}
+                placeholder="Tulis petunjuk perawatan produk..."
+                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-24 resize-none"
               />
             </div>
 

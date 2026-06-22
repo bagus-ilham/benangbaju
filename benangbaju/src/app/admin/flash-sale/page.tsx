@@ -14,6 +14,7 @@ import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 import { formatLocalISO } from '@/lib/utils/format'
+import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
@@ -371,20 +372,74 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="URL Banner"
-              value={banner_url}
-              onChange={(e) => setBannerUrl(e.target.value)}
-              placeholder="https://..."
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            {/* Banner Image Uploader & Preview */}
+            <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10">
+              <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+                Gambar Banner Flash Sale (Opsional)
+              </span>
+              <div className="flex gap-3 items-start">
+                <div className="w-20 h-10 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                  {banner_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={banner_url}
+                      alt="Banner Preview"
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/150?text=Error'
+                      }}
+                    />
+                  ) : (
+                    <span className="text-[8px] text-neutral-400 uppercase font-semibold">No Image</span>
+                  )}
+                </div>
+                <div className="flex-1 space-y-2">
+                  <input
+                    type="text"
+                    className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                    value={banner_url}
+                    onChange={(e) => setBannerUrl(e.target.value)}
+                    placeholder="https://... atau unggah gambar"
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      id="flash-sale-upload-banner"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        
+                        const toastId = toast.loading('Mengunggah gambar banner...')
+                        try {
+                          const publicUrl = await uploadImage(file, 'banners')
+                          setBannerUrl(publicUrl)
+                          toast.success('Gambar banner berhasil diunggah!', { id: toastId })
+                        } catch (err: unknown) {
+                          const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar banner'
+                          toast.error(message, { id: toastId })
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="flash-sale-upload-banner"
+                      className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                    >
+                      Unggah Banner
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
                 Deskripsi Singkat
               </label>
               <input
                 type="text"
-                className="w-full px-4 py-3 border border-neutral-200 outline-none"
+                className="w-full px-4 py-3.5 border border-neutral-200 outline-none text-xs bg-white focus:border-neutral-800"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="cth: Promo kilat diskon hingga 50%"

@@ -101,8 +101,8 @@ export default function AdminBannersPage() : React.JSX.Element {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title.trim() || !image_url.trim()) {
-      toast.error('Judul dan URL Gambar Desktop wajib diisi')
+    if (!image_url.trim()) {
+      toast.error('URL Gambar Desktop wajib diisi')
       return
     }
 
@@ -112,7 +112,7 @@ export default function AdminBannersPage() : React.JSX.Element {
     }
 
     const payload = {
-      title: title.trim(),
+      title: title.trim() || null,
       subtitle: subtitle.trim() || null,
       image_url: image_url.trim(),
       image_mobile_url: image_mobile_url.trim() || null,
@@ -193,7 +193,7 @@ export default function AdminBannersPage() : React.JSX.Element {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={b.image_url || ''}
-                          alt={b.title}
+                          alt={b.title || undefined}
                           className="object-cover w-full h-full"
                           onError={(e) => {
                             e.currentTarget.src = 'https://placehold.co/600x300?text=No+Image'
@@ -202,7 +202,7 @@ export default function AdminBannersPage() : React.JSX.Element {
                       </div>
                       <div>
                         <span className="font-semibold text-neutral-900 text-sm block">
-                          {b.title}
+                          {b.title || 'Untitled Banner'}
                         </span>
                         {b.subtitle && (
                           <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
@@ -272,11 +272,10 @@ export default function AdminBannersPage() : React.JSX.Element {
         <form onSubmit={handleSubmit} className="space-y-5 text-xs font-sans">
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Judul Banner*"
+              label="Judul Banner"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="cth: New Collection Edisi Summer"
-              required
             />
             <Input
               label="Sub-judul Banner"

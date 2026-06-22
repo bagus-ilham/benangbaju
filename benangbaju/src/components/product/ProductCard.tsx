@@ -142,7 +142,7 @@ export function ProductCard({ product, className }: ProductCardProps) : React.JS
 
   return (
     <div
-      className={cn('group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] gold-border-hover', className)}
+      className={cn('group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] gold-border-hover rounded-xl overflow-hidden', className)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
