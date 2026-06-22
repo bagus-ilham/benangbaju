@@ -201,11 +201,11 @@ export const useCartStore = create<CartState>()(
           }
 
           if (merge) {
-            // Merge Local Items -> DB (combining quantities)
+            // Merge Local Items -> DB (taking maximum of both to prevent self-incrementing/accumulation)
             for (const localItem of localItems) {
               const dbItem = dbItemsMap.get(localItem.variantId)
               const combinedQty = dbItem 
-                ? Math.min(dbItem.quantity + localItem.quantity, localItem.stock || 0)
+                ? Math.min(Math.max(dbItem.quantity, localItem.quantity), localItem.stock || 9999)
                 : localItem.quantity
 
               const { error: upsertError } = await supabase
