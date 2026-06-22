@@ -407,7 +407,27 @@ export async function generatePaymentToken(
     }
   }
 
-  return data
+  const res = data as {
+    success: boolean
+    message?: string
+    data?: {
+      token: string
+      redirect_url: string
+    }
+  } | null
+
+  if (!res || !res.success || !res.data) {
+    return {
+      success: false,
+      message: res?.message || 'Gagal memproses pembayaran.',
+    }
+  }
+
+  return {
+    success: true,
+    token: res.data.token,
+    redirect_url: res.data.redirect_url,
+  }
 }
 
 export interface AdminOrderListItem {
