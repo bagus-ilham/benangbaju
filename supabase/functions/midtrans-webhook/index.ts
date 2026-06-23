@@ -35,7 +35,16 @@ Deno.serve(async (req: Request) => {
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
-    const signatureInput = `${midtransOrderId}${statusCode}${grossAmount}${serverKey}`;
+    
+    // Normalize gross_amount to always have two decimal places (e.g. "150000.00") for signature verification
+    let grossAmountStr = String(grossAmount);
+    if (typeof grossAmount === "number") {
+      grossAmountStr = grossAmount.toFixed(2);
+    } else if (grossAmountStr && !grossAmountStr.includes(".")) {
+      grossAmountStr = Number(grossAmountStr).toFixed(2);
+    }
+
+    const signatureInput = `${midtransOrderId}${statusCode}${grossAmountStr}${serverKey}`;
     const encoder = new TextEncoder();
     const data = encoder.encode(signatureInput);
     const hashBuffer = await crypto.subtle.digest("SHA-512", data);
@@ -45,6 +54,9 @@ Deno.serve(async (req: Request) => {
 
     if (signatureKey !== expectedSignature) {
       console.error("Invalid signature for order:", midtransOrderId);
+      console.error("Received signature_key:", signatureKey);
+      console.error("Expected signature:", expectedSignature);
+      console.error("Signature input string:", signatureInput);
       return new Response(
         JSON.stringify({ success: false, message: "Invalid signature" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -64,12 +76,20 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // ========== IDEMPOTENCY CHECK ==========
-    const { data: existingLog } = await supabase
+    const { data: existingLog, error: logFetchError } = await supabase
       .from("payment_logs")
       .select("id")
       .eq("midtrans_order_id", midtransOrderId)
       .eq("event_type", transactionStatus)
       .maybeSingle();
+
+    if (logFetchError) {
+      console.error("Error checking payment logs idempotency:", logFetchError);
+      return new Response(
+        JSON.stringify({ success: false, message: "Database query error during idempotency check" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     if (existingLog) {
       console.log("Duplicate webhook, skipping:", midtransOrderId, transactionStatus);
@@ -80,11 +100,19 @@ Deno.serve(async (req: Request) => {
     }
 
     // ========== LOG WEBHOOK ==========
-    await supabase.from("payment_logs").insert({
+    const { error: logInsertError } = await supabase.from("payment_logs").insert({
       midtrans_order_id: midtransOrderId,
       event_type: transactionStatus,
       raw_payload: payload,
     });
+
+    if (logInsertError) {
+      console.error("Error inserting payment log:", logInsertError);
+      return new Response(
+        JSON.stringify({ success: false, message: "Database query error during log insert" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // ========== MAP STATUS ==========
     let orderStatus: string | null = null;
@@ -111,14 +139,14 @@ Deno.serve(async (req: Request) => {
     }
 
     // ========== GET ORDER ==========
-    const { data: order } = await supabase
+    const { data: order, error: orderFetchError } = await supabase
       .from("orders")
       .select("id, order_number, user_id, status, voucher_id, total_amount")
       .eq("order_number", midtransOrderId)
       .single();
 
-    if (!order) {
-      console.error("Order not found:", midtransOrderId);
+    if (orderFetchError || !order) {
+      console.error("Order not found or fetch error:", orderFetchError, midtransOrderId);
       return new Response(
         JSON.stringify({ success: false, message: "Order not found" }),
         { status: 404, headers: { "Content-Type": "application/json" } }
@@ -143,43 +171,73 @@ Deno.serve(async (req: Request) => {
     }
 
     // Update payment_logs with payment_id
-    const { data: payment } = await supabase
+    const { data: payment, error: paymentFetchError } = await supabase
       .from("payments")
       .select("id")
       .eq("order_id", order.id)
       .single();
 
-    if (payment) {
-      await supabase
-        .from("payments")
-        .update(paymentUpdate)
-        .eq("id", payment.id);
+    if (paymentFetchError || !payment) {
+      console.error("Payment not found or fetch error:", paymentFetchError, order.id);
+      return new Response(
+        JSON.stringify({ success: false, message: "Payment record not found" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-      // Link log to payment
-      await supabase
-        .from("payment_logs")
-        .update({ payment_id: payment.id })
-        .eq("midtrans_order_id", midtransOrderId)
-        .eq("event_type", transactionStatus);
+    const { error: paymentUpdateError } = await supabase
+      .from("payments")
+      .update(paymentUpdate)
+      .eq("id", payment.id);
+
+    if (paymentUpdateError) {
+      console.error("Error updating payment:", paymentUpdateError);
+      return new Response(
+        JSON.stringify({ success: false, message: "Payment update failure" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Link log to payment
+    const { error: logUpdateError } = await supabase
+      .from("payment_logs")
+      .update({ payment_id: payment.id })
+      .eq("midtrans_order_id", midtransOrderId)
+      .eq("event_type", transactionStatus);
+
+    if (logUpdateError) {
+      console.error("Error updating payment log link:", logUpdateError);
     }
 
     // ========== UPDATE ORDER STATUS ==========
     if (orderStatus && order.status === "pending_payment") {
       if (orderStatus === "processing") {
         // Payment success → update order
-        await supabase
+        const { error: orderUpdateError } = await supabase
           .from("orders")
           .update({ status: "processing" })
           .eq("id", order.id);
 
+        if (orderUpdateError) {
+          console.error("Error updating order status to processing:", orderUpdateError);
+          return new Response(
+            JSON.stringify({ success: false, message: "Order status update failure" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+          );
+        }
+
         // Create notification for customer
-        await supabase.from("notifications").insert({
+        const { error: notifError } = await supabase.from("notifications").insert({
           user_id: order.user_id,
           type: "payment_success",
           title: "Pembayaran Berhasil!",
           message: `Pembayaran untuk pesanan ${order.order_number} berhasil. Pesanan sedang diproses.`,
           data: { order_id: order.id, order_number: order.order_number },
         });
+
+        if (notifError) {
+          console.error("Error inserting success notification:", notifError);
+        }
 
         // Trigger generate-invoice Edge Function
         try {
@@ -195,14 +253,20 @@ Deno.serve(async (req: Request) => {
 
         // Trigger send-email Edge Function (payment success notification)
         try {
-          const { data: userData } = await supabase.auth.admin.getUserById(order.user_id);
+          const { data: userData, error: authGetError } = await supabase.auth.admin.getUserById(order.user_id);
+          if (authGetError) {
+            console.error("Error fetching user email from auth:", authGetError);
+          }
           const userEmail = userData?.user?.email;
 
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileGetError } = await supabase
             .from("profiles")
             .select("name")
             .eq("id", order.user_id)
             .single();
+          if (profileGetError) {
+            console.error("Error fetching profile name:", profileGetError);
+          }
           const customerName = profileData?.name || "Pelanggan";
 
           if (userEmail) {
@@ -227,7 +291,7 @@ Deno.serve(async (req: Request) => {
 
       } else if (orderStatus === "cancelled") {
         // Payment failed/expired → cancel order and restore stock
-        await supabase.rpc("cancel_order", {
+        const { error: cancelError } = await supabase.rpc("cancel_order", {
           p_order_id: order.id,
           p_cancel_reason:
             transactionStatus === "expire"
@@ -235,8 +299,16 @@ Deno.serve(async (req: Request) => {
               : "Pembayaran ditolak",
         });
 
+        if (cancelError) {
+          console.error("Error calling cancel_order RPC:", cancelError);
+          return new Response(
+            JSON.stringify({ success: false, message: "RPC cancel_order failure" }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+          );
+        }
+
         // Create notification for customer
-        await supabase.from("notifications").insert({
+        const { error: notifError } = await supabase.from("notifications").insert({
           user_id: order.user_id,
           type: "payment_failed",
           title: "Pembayaran Gagal",
@@ -245,6 +317,10 @@ Deno.serve(async (req: Request) => {
           }. Silakan buat pesanan baru.`,
           data: { order_id: order.id, order_number: order.order_number },
         });
+
+        if (notifError) {
+          console.error("Error inserting failure notification:", notifError);
+        }
 
         // Trigger send-email Edge Function (order_cancelled)
         try {

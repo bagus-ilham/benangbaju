@@ -360,6 +360,8 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
                 <>
                   <Button
                     onClick={handlePayOrder}
+                    isLoading={generatePaymentTokenMutation.isPending}
+                    disabled={generatePaymentTokenMutation.isPending}
                     className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
                   >
                     Bayar Sekarang
