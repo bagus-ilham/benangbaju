@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
         *,
         profiles!inner(name, phone),
         order_items(*),
-        payments(id, status, snap_token, midtrans_response)
+        payments(id, status, midtrans_response)
       `)
       .eq("order_number", order_number)
       .single();
@@ -109,32 +109,34 @@ Deno.serve(async (req: Request) => {
       payment = newPayment;
     }
 
-    if (payment.snap_token && payment.status === "pending") {
-      let redirectUrl = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${payment.snap_token}`;
-      if (payment.midtrans_response) {
-        try {
-          const responseObj = typeof payment.midtrans_response === "string"
-            ? JSON.parse(payment.midtrans_response)
-            : payment.midtrans_response;
-          if (responseObj && responseObj.redirect_url) {
-            redirectUrl = responseObj.redirect_url;
-          }
-        } catch (e) {
-          console.error("Error parsing midtrans_response:", e);
+    if (payment.status === "pending" && payment.midtrans_response) {
+      let snapToken = null;
+      let redirectUrl = "";
+      try {
+        const responseObj = typeof payment.midtrans_response === "string"
+          ? JSON.parse(payment.midtrans_response)
+          : payment.midtrans_response;
+        if (responseObj && responseObj.token) {
+          snapToken = responseObj.token;
+          redirectUrl = responseObj.redirect_url || `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}`;
         }
+      } catch (e) {
+        console.error("Error parsing midtrans_response:", e);
       }
 
-      console.log(`Reusing existing Snap token for order ${order.order_number}`);
-      return new Response(
-        JSON.stringify({
-          success: true,
-          data: {
-            token: payment.snap_token,
-            redirect_url: redirectUrl,
-          },
-        }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      if (snapToken) {
+        console.log(`Reusing existing Snap token for order ${order.order_number}`);
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: {
+              token: snapToken,
+              redirect_url: redirectUrl,
+            },
+          }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Build Midtrans Snap parameters
@@ -211,17 +213,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Save token to payments table
+    // Save token response to payments table (in midtrans_response)
     const { error: updatePaymentError } = await supabase
       .from("payments")
       .update({
-        snap_token: midtransData.token,
         midtrans_response: midtransData,
       })
       .eq("id", payment.id);
 
     if (updatePaymentError) {
-      console.error("Error saving snap_token to database:", updatePaymentError);
+      console.error("Error saving midtrans_response to database:", updatePaymentError);
     }
 
     return new Response(
