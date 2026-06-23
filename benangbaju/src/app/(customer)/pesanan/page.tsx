@@ -61,6 +61,19 @@ export default function PesananPage() : React.JSX.Element {
   const confirmMutation = useConfirmDelivery()
   const generatePaymentTokenMutation = useGeneratePaymentToken()
 
+  // Load Midtrans Snap.js Script dynamically
+  useEffect(() => {
+    const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
+    const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
+    if (!existingScript) {
+      const script = document.createElement('script')
+      script.src = snapScriptUrl
+      script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '')
+      script.async = true
+      document.body.appendChild(script)
+    }
+  }, [])
+
   // Reset page when tab changes
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId)

@@ -90,7 +90,7 @@ export default function CheckoutPage() : React.JSX.Element {
 
   // 3. Load Midtrans Snap.js Script
   useEffect(() => {
-    const snapScriptUrl = 'https://app.sandbox.midtrans.com/snap/snap.js'
+    const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
     const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
     if (!existingScript) {
       const script = document.createElement('script')
