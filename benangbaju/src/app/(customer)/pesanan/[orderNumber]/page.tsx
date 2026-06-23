@@ -3,7 +3,7 @@
 import React, { use, useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
-import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/hooks/useOrders'
+import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken, useCheckPaymentStatus } from '@/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/components/shared/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState } from '@/components/shared'
@@ -51,6 +51,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const cancelMutation = useCancelOrder()
   const confirmMutation = useConfirmDelivery()
   const generatePaymentTokenMutation = useGeneratePaymentToken()
+  const checkPaymentMutation = useCheckPaymentStatus()
 
   // Load Midtrans Snap.js Script dynamically
   useEffect(() => {
@@ -153,12 +154,58 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     }
   }
 
-  // Start payment verification polling
+  // Start payment verification — actively check with Midtrans API
+  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
   const startPaymentVerification = useCallback(() => {
     setIsVerifyingPayment(true)
-    // Initial refetch with a small delay to give webhook time to process
-    setTimeout(() => refetch(), 2000)
-  }, [refetch])
+
+    // Immediately check after 3 seconds (give Midtrans time)
+    const doCheck = async () => {
+      try {
+        const result = await checkPaymentMutation.mutateAsync(orderNumber)
+        console.log('Payment status check result:', result)
+        if (result.success && result.order_status && result.order_status !== 'pending_payment') {
+          // Status changed! Refetch order data and stop verifying
+          setIsVerifyingPayment(false)
+          refetch()
+          return true // signal to stop
+        }
+      } catch (err) {
+        console.error('Error checking payment status:', err)
+      }
+      // Also refetch order data in case webhook already updated it
+      refetch()
+      return false
+    }
+
+    // First check after 3s
+    setTimeout(async () => {
+      const done = await doCheck()
+      if (done) return
+
+      // Then check every 5 seconds
+      checkIntervalRef.current = setInterval(async () => {
+        const done = await doCheck()
+        if (done && checkIntervalRef.current) {
+          clearInterval(checkIntervalRef.current)
+        }
+      }, 5000)
+    }, 3000)
+  }, [orderNumber, checkPaymentMutation, refetch])
+
+  // Cleanup interval on unmount or when verification stops
+  useEffect(() => {
+    if (!isVerifyingPayment && checkIntervalRef.current) {
+      clearInterval(checkIntervalRef.current)
+      checkIntervalRef.current = null
+    }
+    return () => {
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current)
+      }
+    }
+  }, [isVerifyingPayment])
 
   // Handle Pay Action (Retry Payment)
   const handlePayOrder = async () => {

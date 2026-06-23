@@ -7,6 +7,7 @@ import {
   cancelOrder,
   confirmDelivery,
   generatePaymentToken,
+  checkPaymentStatus,
   CreateOrderParams,
 } from '@/services/orders'
 
@@ -70,5 +71,19 @@ export function useGeneratePaymentToken() : import("@tanstack/react-query").UseM
   const supabase = createBrowserClient()
   return useMutation({
     mutationFn: (orderNumber: string) => generatePaymentToken(supabase, orderNumber),
+  })
+}
+
+export function useCheckPaymentStatus() : import("@tanstack/react-query").UseMutationResult<{ success: boolean; order_status?: string; payment_status?: string; message?: string; }, Error, string, unknown> {
+  const queryClient = useQueryClient()
+  const supabase = createBrowserClient()
+  return useMutation({
+    mutationFn: (orderNumber: string) => checkPaymentStatus(supabase, orderNumber),
+    onSuccess: (data) => {
+      if (data.success && data.order_status !== 'pending_payment') {
+        queryClient.invalidateQueries({ queryKey: ['orders'] })
+        queryClient.invalidateQueries({ queryKey: ['order'] })
+      }
+    },
   })
 }

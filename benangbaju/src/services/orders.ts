@@ -430,6 +430,47 @@ export async function generatePaymentToken(
   }
 }
 
+// 8. Check payment status directly with Midtrans API (fallback for webhook)
+export async function checkPaymentStatus(
+  supabase: SupabaseClient<Database>,
+  orderNumber: string
+): Promise<{ success: boolean; order_status?: string; payment_status?: string; message?: string }> {
+  const { data, error } = await supabase.functions.invoke('check-payment-status', {
+    body: { order_number: orderNumber },
+  })
+
+  if (error) {
+    console.error('Error invoking check-payment-status function:', error)
+    return {
+      success: false,
+      message: 'Gagal mengecek status pembayaran.',
+    }
+  }
+
+  const res = data as {
+    success: boolean
+    message?: string
+    data?: {
+      order_status: string
+      payment_status: string
+      transaction_status?: string
+    }
+  } | null
+
+  if (!res || !res.success || !res.data) {
+    return {
+      success: false,
+      message: res?.message || 'Gagal mengecek status pembayaran.',
+    }
+  }
+
+  return {
+    success: true,
+    order_status: res.data.order_status,
+    payment_status: res.data.payment_status,
+  }
+}
+
 export interface AdminOrderListItem {
   id: string
   order_number: string
