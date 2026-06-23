@@ -12,6 +12,11 @@ export interface OrderItem {
   price: number
   quantity: number
   subtotal: number
+  product_reviews?: {
+    id: string
+    rating: number
+    body: string
+  } | null
 }
 
 export interface OrderShipping {
@@ -98,18 +103,32 @@ function mapOrder(row: Database['public']['Tables']['orders']['Row'] & {
   order_shipping: Database['public']['Tables']['order_shipping']['Row'] | null
   payments?: Database['public']['Tables']['payments']['Row'][]
 }): Order {
-  const order_items: OrderItem[] = row.order_items.map(item => ({
-    id: item.id,
-    order_id: item.order_id,
-    variant_id: item.variant_id,
-    flash_sale_item_id: item.flash_sale_item_id,
-    product_name: item.product_name,
-    variant_name: item.variant_name,
-    sku: item.sku,
-    price: item.price,
-    quantity: item.quantity,
-    subtotal: item.subtotal,
-  }))
+  const order_items: OrderItem[] = row.order_items.map(item => {
+    const rawReview = (item as any).product_reviews
+    const review = Array.isArray(rawReview)
+      ? rawReview[0]
+      : rawReview
+        ? rawReview
+        : null
+
+    return {
+      id: item.id,
+      order_id: item.order_id,
+      variant_id: item.variant_id,
+      flash_sale_item_id: item.flash_sale_item_id,
+      product_name: item.product_name,
+      variant_name: item.variant_name,
+      sku: item.sku,
+      price: item.price,
+      quantity: item.quantity,
+      subtotal: item.subtotal,
+      product_reviews: review ? {
+        id: review.id,
+        rating: review.rating,
+        body: review.body,
+      } : null,
+    }
+  })
 
   const rawShipping = row.order_shipping
   let order_shipping: OrderShipping | null = null
@@ -246,7 +265,7 @@ export async function getOrderDetail(
 ): Promise<Order | null> {
   const { data, error } = await supabase
     .from('orders')
-    .select('*, order_items(*), order_shipping(*), payments(*)')
+    .select('*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*)')
     .eq('order_number', orderNumber)
     .maybeSingle()
 

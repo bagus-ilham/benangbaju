@@ -1,7 +1,7 @@
 // @ts-nocheck
 // =============================================================
 // Edge Function: generate-invoice
-// Generates PDF invoice after payment success
+// Generates HTML invoice after payment success
 // =============================================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -52,20 +52,15 @@ Deno.serve(async (req: Request) => {
       user = authUser;
     }
 
-    // Fetch order data
-    const { data: order, error } = await supabase
+    // Fetch order data - separate queries for robustness
+    const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select(`
-        *,
-        profiles!inner(name, phone),
-        order_items(*),
-        order_shipping(*),
-        payments!inner(id, paid_at, payment_type)
-      `)
+      .select("*")
       .eq("order_number", order_number)
       .single();
 
-    if (error || !order) {
+    if (orderError || !order) {
+      console.error("Fetch order error:", orderError);
       return new Response(
         JSON.stringify({ success: false, message: "Pesanan tidak ditemukan" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -80,6 +75,32 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Fetch related profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name, phone")
+      .eq("id", order.user_id)
+      .maybeSingle();
+
+    // Fetch related order items
+    const { data: orderItems } = await supabase
+      .from("order_items")
+      .select("*")
+      .eq("order_id", order.id);
+
+    // Fetch related order shipping
+    const { data: orderShipping } = await supabase
+      .from("order_shipping")
+      .select("*")
+      .eq("order_id", order.id)
+      .maybeSingle();
+
+    // Fetch related payments
+    const { data: payments } = await supabase
+      .from("payments")
+      .select("*")
+      .eq("order_id", order.id);
+
     // Fetch store settings
     const { data: settings } = await supabase
       .from("site_settings")
@@ -92,7 +113,7 @@ Deno.serve(async (req: Request) => {
     });
 
     // Build invoice HTML
-    const shipping = order.order_shipping;
+    const shipping = orderShipping;
     const invoiceHtml = `
 <!DOCTYPE html>
 <html>
@@ -132,8 +153,8 @@ Deno.serve(async (req: Request) => {
   <div class="info-grid">
     <div class="info-box">
       <h3>Informasi Pelanggan</h3>
-      <p><strong>${order.profiles.name}</strong></p>
-      <p>${order.profiles.phone || "-"}</p>
+      <p><strong>${profile?.name || "Pelanggan"}</strong></p>
+      <p>${profile?.phone || "-"}</p>
     </div>
     <div class="info-box">
       <h3>Alamat Pengiriman</h3>
@@ -155,7 +176,7 @@ Deno.serve(async (req: Request) => {
       </tr>
     </thead>
     <tbody>
-      ${order.order_items.map((item: Record<string, unknown>) => `
+      ${(orderItems || []).map((item: Record<string, unknown>) => `
       <tr>
         <td>${item.product_name} - ${item.variant_name}</td>
         <td>${item.sku}</td>
@@ -181,7 +202,6 @@ Deno.serve(async (req: Request) => {
 </body>
 </html>`;
 
-    // For MVP: store HTML invoice (PDF generation can be added later)
     // Upload as HTML file to Supabase Storage
     const invoicePath = `invoices/${order_number}.html`;
     const blob = new Blob([invoiceHtml], { type: "text/html" });
@@ -201,11 +221,13 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Update payment with invoice URL
-    await supabase
-      .from("payments")
-      .update({ invoice_url: invoicePath })
-      .eq("order_id", order.id);
+    // Update payment with invoice URL if record exists
+    if (payments && payments.length > 0) {
+      await supabase
+        .from("payments")
+        .update({ invoice_url: invoicePath })
+        .eq("order_id", order.id);
+    }
 
     console.log(
       JSON.stringify({

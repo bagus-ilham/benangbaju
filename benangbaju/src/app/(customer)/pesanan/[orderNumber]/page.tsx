@@ -4,9 +4,10 @@ import React, { use, useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken, useCheckPaymentStatus } from '@/hooks/useOrders'
+import { useSubmitReview } from '@/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/components/shared/AuthLoading'
-import { Button, PageHero, PageContainer, EmptyState } from '@/components/shared'
+import { Button, PageHero, PageContainer, EmptyState, Modal } from '@/components/shared'
 import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, FileText, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -24,6 +25,13 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const searchParams = useSearchParams()
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
+  const [receiptConfirmOpen, setReceiptConfirmOpen] = useState(false)
+  const [selectedReviewItem, setSelectedReviewItem] = useState<any | null>(null)
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewBody, setReviewBody] = useState('')
+  const [reviewTitle, setReviewTitle] = useState('')
+  const [reviewAnonymous, setReviewAnonymous] = useState(false)
   const [isVerifyingPayment, setIsVerifyingPayment] = useState(() => searchParams.get('verifying') === '1')
   const verifyTimeoutsRef = useRef<NodeJS.Timeout[]>([])
   const hasTriggeredVerification = useRef(false)
@@ -51,6 +59,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const confirmMutation = useConfirmDelivery()
   const generatePaymentTokenMutation = useGeneratePaymentToken()
   const checkPaymentMutation = useCheckPaymentStatus()
+  const submitReviewMutation = useSubmitReview()
 
   // Start payment verification — actively check with Midtrans API in 3 attempts (3s, 10s, 25s)
   const startPaymentVerification = useCallback(() => {
@@ -119,6 +128,71 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     }
   }
 
+  // Review handlers
+  const handleOpenReviewModal = (item: any) => {
+    setSelectedReviewItem(item)
+    setReviewRating(5)
+    setReviewTitle('')
+    setReviewBody('')
+    setReviewAnonymous(false)
+  }
+
+  const handleCloseReviewModal = () => {
+    setSelectedReviewItem(null)
+  }
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedReviewItem || !user?.id) return
+    if (!reviewBody.trim()) {
+      toast.error('Silakan isi ulasan Anda')
+      return
+    }
+
+    try {
+      let finalProductId = selectedReviewItem.product_id
+
+      // If product_id is not directly on item, fetch it from variant
+      if (!finalProductId && selectedReviewItem.variant_id) {
+        const { data: variantData } = await supabase
+          .from('product_variants')
+          .select('product_id')
+          .eq('id', selectedReviewItem.variant_id)
+          .single()
+        if (variantData) {
+          finalProductId = variantData.product_id
+        }
+      }
+
+      if (!finalProductId) {
+        toast.error('Gagal memverifikasi informasi produk')
+        return
+      }
+
+      const res = await submitReviewMutation.mutateAsync({
+        orderItemId: selectedReviewItem.id,
+        productId: finalProductId,
+        variantId: selectedReviewItem.variant_id || null,
+        userId: user.id,
+        rating: reviewRating,
+        title: reviewTitle || undefined,
+        body: reviewBody,
+        isAnonymous: reviewAnonymous,
+      })
+
+      if (res && res.id) {
+        toast.success('Ulasan berhasil dikirim!')
+        refetch()
+        handleCloseReviewModal()
+      } else {
+        toast.error('Gagal mengirimkan ulasan')
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Terjadi kesalahan saat mengirimkan ulasan')
+    }
+  }
+
   // Load Midtrans Snap.js Script dynamically
   useEffect(() => {
     const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
@@ -155,39 +229,47 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     }
   }, [])
 
-  // Handle Cancel Action
-  const handleCancelOrder = async () => {
+  // Handle Cancel Action (open custom confirmation modal)
+  const handleCancelOrder = () => {
+    setCancelConfirmOpen(true)
+  }
+
+  const executeCancelOrder = async () => {
     if (!order) return
-    if (confirm(`Apakah Anda yakin ingin membatalkan pesanan ini?`)) {
-      try {
-        const res = await cancelMutation.mutateAsync({ orderId: order.id, reason: 'Dibatalkan oleh customer' })
-        if (res.success) {
-          toast.success('Pesanan berhasil dibatalkan')
-          refetch()
-        } else {
-          toast.error(res.message || 'Gagal membatalkan pesanan')
-        }
-      } catch (err) {
-        toast.error('Terjadi kesalahan saat membatalkan pesanan')
+    try {
+      const res = await cancelMutation.mutateAsync({ orderId: order.id, reason: 'Dibatalkan oleh customer' })
+      if (res.success) {
+        toast.success('Pesanan berhasil dibatalkan')
+        refetch()
+      } else {
+        toast.error(res.message || 'Gagal membatalkan pesanan')
       }
+    } catch (err) {
+      toast.error('Terjadi kesalahan saat membatalkan pesanan')
+    } finally {
+      setCancelConfirmOpen(false)
     }
   }
 
-  // Handle Confirm Receipt Action
-  const handleConfirmDelivery = async () => {
+  // Handle Confirm Receipt Action (open custom confirmation modal)
+  const handleConfirmDelivery = () => {
+    setReceiptConfirmOpen(true)
+  }
+
+  const executeConfirmDelivery = async () => {
     if (!order) return
-    if (confirm(`Apakah Anda sudah menerima barang untuk pesanan ini?`)) {
-      try {
-        const res = await confirmMutation.mutateAsync(order.id)
-        if (res.success) {
-          toast.success('Pesanan berhasil diselesaikan!')
-          refetch()
-        } else {
-          toast.error(res.message || 'Gagal menyelesaikan pesanan')
-        }
-      } catch (err) {
-        toast.error('Terjadi kesalahan saat menyelesaikan pesanan')
+    try {
+      const res = await confirmMutation.mutateAsync(order.id)
+      if (res.success) {
+        toast.success('Pesanan berhasil diselesaikan!')
+        refetch()
+      } else {
+        toast.error(res.message || 'Gagal menyelesaikan pesanan')
       }
+    } catch (err) {
+      toast.error('Terjadi kesalahan saat menyelesaikan pesanan')
+    } finally {
+      setReceiptConfirmOpen(false)
     }
   }
 
@@ -544,7 +626,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
           </h2>
           <div className="divide-y divide-neutral-100">
             {order.order_items.map((item) => (
-              <div key={item.id} className="py-4 flex items-center justify-between text-sm gap-4">
+              <div key={item.id} className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-4">
                 <div className="min-w-0">
                   <p className="font-semibold text-neutral-800 truncate">{item.product_name}</p>
                   <p className="text-xs text-neutral-500 mt-1">
@@ -553,8 +635,25 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
                   <p className="text-xs text-neutral-400 mt-0.5">
                     {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
                   </p>
+                  {order.status === 'completed' && (
+                    <div className="mt-2">
+                      {item.product_reviews ? (
+                        <div className="text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 border border-green-200 inline-block">
+                          Ulasan Anda ({item.product_reviews.rating}⭐): "{item.product_reviews.body}"
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => handleOpenReviewModal(item)}
+                          variant="outline"
+                          className="text-[10px] py-1 px-3 h-fit uppercase tracking-wider font-semibold border-neutral-300 hover:bg-neutral-50"
+                        >
+                          Tulis Ulasan
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <div className="text-right whitespace-nowrap">
+                <div className="text-left sm:text-right whitespace-nowrap">
                   <p className="font-bold text-neutral-900">
                     Rp {item.subtotal.toLocaleString('id-ID')}
                   </p>
@@ -564,6 +663,169 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
           </div>
         </div>
       </PageContainer>
+
+      {/* Modal Konfirmasi Batal */}
+      <Modal
+        isOpen={cancelConfirmOpen}
+        onClose={() => setCancelConfirmOpen(false)}
+        title="Batalkan Pesanan"
+        size="sm"
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-neutral-600">
+            Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setCancelConfirmOpen(false)}
+              variant="outline"
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+            >
+              Kembali
+            </Button>
+            <Button
+              onClick={executeCancelOrder}
+              isLoading={cancelMutation.isPending}
+              disabled={cancelMutation.isPending}
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold bg-red-600 border-red-600 text-white hover:bg-red-700 hover:border-red-700"
+            >
+              Batalkan
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Konfirmasi Penerimaan */}
+      <Modal
+        isOpen={receiptConfirmOpen}
+        onClose={() => setReceiptConfirmOpen(false)}
+        title="Selesaikan Pesanan"
+        size="sm"
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-neutral-600">
+            Apakah Anda sudah menerima barang untuk pesanan ini dan yakin ingin menyelesaikannya?
+          </p>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setReceiptConfirmOpen(false)}
+              variant="outline"
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+            >
+              Kembali
+            </Button>
+            <Button
+              onClick={executeConfirmDelivery}
+              isLoading={confirmMutation.isPending}
+              disabled={confirmMutation.isPending}
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold"
+            >
+              Konfirmasi
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Tulis Ulasan */}
+      <Modal
+        isOpen={selectedReviewItem !== null}
+        onClose={handleCloseReviewModal}
+        title="Tulis Ulasan Produk"
+        size="md"
+      >
+        {selectedReviewItem && (
+          <form onSubmit={handleSubmitReview} className="space-y-6">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-brand-gold font-semibold mb-1">Nama Produk</p>
+              <h4 className="text-sm font-semibold text-neutral-800 font-heading">
+                {selectedReviewItem.product_name}
+              </h4>
+              {selectedReviewItem.variant_name && (
+                <p className="text-xs text-neutral-500 mt-0.5">Varian: {selectedReviewItem.variant_name}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-2">
+                Rating Produk
+              </label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setReviewRating(star)}
+                    className="focus:outline-none transition-transform hover:scale-110"
+                  >
+                    <span className={`text-2xl ${star <= reviewRating ? 'text-amber-400' : 'text-neutral-200'}`}>
+                      ★
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold">
+                Judul Ulasan (Opsional)
+              </label>
+              <input
+                type="text"
+                value={reviewTitle}
+                onChange={(e) => setReviewTitle(e.target.value)}
+                placeholder="Contoh: Kualitas sangat baik!"
+                className="w-full border border-neutral-200 px-3 py-2 text-xs focus:outline-none focus:border-brand-gold"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold">
+                Isi Ulasan
+              </label>
+              <textarea
+                value={reviewBody}
+                onChange={(e) => setReviewBody(e.target.value)}
+                rows={4}
+                required
+                placeholder="Tulis pendapat Anda tentang produk ini..."
+                className="w-full border border-neutral-200 px-3 py-2 text-xs focus:outline-none focus:border-brand-gold resize-none"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is-anonymous"
+                checked={reviewAnonymous}
+                onChange={(e) => setReviewAnonymous(e.target.checked)}
+                className="rounded border-neutral-300 text-brand-gold focus:ring-brand-gold"
+              />
+              <label htmlFor="is-anonymous" className="text-xs text-neutral-600 select-none">
+                Kirim sebagai Anonim (Sembunyikan nama Anda)
+              </label>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="button"
+                onClick={handleCloseReviewModal}
+                variant="outline"
+                className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                isLoading={submitReviewMutation.isPending}
+                disabled={submitReviewMutation.isPending}
+                className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold"
+              >
+                Kirim Ulasan
+              </Button>
+            </div>
+          </form>
+        )}
+      </Modal>
     </div>
   )
 }

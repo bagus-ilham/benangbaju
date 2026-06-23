@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useOrdersList, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { lazyCancelExpiredOrders } from '@/services/orders'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, Badge, AuthLoading, EmptyState, PageContainer, PageHero } from '@/components/shared'
+import { Button, Badge, AuthLoading, EmptyState, PageContainer, PageHero, Modal } from '@/components/shared'
 import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, ClipboardList } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -29,6 +29,8 @@ export default function PesananPage() : React.JSX.Element {
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [activeTab, setActiveTab] = useState('all')
   const [page, setPage] = useState(1)
+  const [cancelOrderInfo, setCancelOrderInfo] = useState<{ id: string, number: string } | null>(null)
+  const [receiptOrderInfo, setReceiptOrderInfo] = useState<{ id: string, number: string } | null>(null)
   const limit = 8
 
   // 1. Redirect if not authenticated
@@ -81,36 +83,46 @@ export default function PesananPage() : React.JSX.Element {
   }
 
   // Handle Cancel Action
-  const handleCancelOrder = async (orderId: string, orderNumber: string) => {
-    if (confirm(`Apakah Anda yakin ingin membatalkan pesanan ${orderNumber}?`)) {
-      try {
-        const res = await cancelMutation.mutateAsync({ orderId, reason: 'Dibatalkan oleh customer' })
-        if (res.success) {
-          toast.success('Pesanan berhasil dibatalkan')
-          refetch()
-        } else {
-          toast.error(res.message || 'Gagal membatalkan pesanan')
-        }
-      } catch (err) {
-        toast.error('Terjadi kesalahan saat membatalkan pesanan')
+  const handleCancelOrder = (orderId: string, orderNumber: string) => {
+    setCancelOrderInfo({ id: orderId, number: orderNumber })
+  }
+
+  const executeCancelOrder = async () => {
+    if (!cancelOrderInfo) return
+    try {
+      const res = await cancelMutation.mutateAsync({ orderId: cancelOrderInfo.id, reason: 'Dibatalkan oleh customer' })
+      if (res.success) {
+        toast.success('Pesanan berhasil dibatalkan')
+        refetch()
+      } else {
+        toast.error(res.message || 'Gagal membatalkan pesanan')
       }
+    } catch (err) {
+      toast.error('Terjadi kesalahan saat membatalkan pesanan')
+    } finally {
+      setCancelOrderInfo(null)
     }
   }
 
   // Handle Confirm Receipt Action
-  const handleConfirmDelivery = async (orderId: string, orderNumber: string) => {
-    if (confirm(`Apakah Anda sudah menerima barang untuk pesanan ${orderNumber}?`)) {
-      try {
-        const res = await confirmMutation.mutateAsync(orderId)
-        if (res.success) {
-          toast.success('Pesanan berhasil diselesaikan!')
-          refetch()
-        } else {
-          toast.error(res.message || 'Gagal menyelesaikan pesanan')
-        }
-      } catch (err) {
-        toast.error('Terjadi kesalahan saat menyelesaikan pesanan')
+  const handleConfirmDelivery = (orderId: string, orderNumber: string) => {
+    setReceiptOrderInfo({ id: orderId, number: orderNumber })
+  }
+
+  const executeConfirmDelivery = async () => {
+    if (!receiptOrderInfo) return
+    try {
+      const res = await confirmMutation.mutateAsync(receiptOrderInfo.id)
+      if (res.success) {
+        toast.success('Pesanan berhasil diselesaikan!')
+        refetch()
+      } else {
+        toast.error(res.message || 'Gagal menyelesaikan pesanan')
       }
+    } catch (err) {
+      toast.error('Terjadi kesalahan saat menyelesaikan pesanan')
+    } finally {
+      setReceiptOrderInfo(null)
     }
   }
 
@@ -383,6 +395,68 @@ export default function PesananPage() : React.JSX.Element {
           </Link>
         </div>
       </PageContainer>
+
+      {/* Modal Konfirmasi Batal */}
+      <Modal
+        isOpen={cancelOrderInfo !== null}
+        onClose={() => setCancelOrderInfo(null)}
+        title="Batalkan Pesanan"
+        size="sm"
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-neutral-600">
+            Apakah Anda yakin ingin membatalkan pesanan {cancelOrderInfo?.number}? Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setCancelOrderInfo(null)}
+              variant="outline"
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+            >
+              Kembali
+            </Button>
+            <Button
+              onClick={executeCancelOrder}
+              isLoading={cancelMutation.isPending}
+              disabled={cancelMutation.isPending}
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold bg-red-600 border-red-600 text-white hover:bg-red-700 hover:border-red-700"
+            >
+              Batalkan
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Konfirmasi Penerimaan */}
+      <Modal
+        isOpen={receiptOrderInfo !== null}
+        onClose={() => setReceiptOrderInfo(null)}
+        title="Selesaikan Pesanan"
+        size="sm"
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-neutral-600">
+            Apakah Anda sudah menerima barang untuk pesanan {receiptOrderInfo?.number} dan yakin ingin menyelesaikannya?
+          </p>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setReceiptOrderInfo(null)}
+              variant="outline"
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+            >
+              Kembali
+            </Button>
+            <Button
+              onClick={executeConfirmDelivery}
+              isLoading={confirmMutation.isPending}
+              disabled={confirmMutation.isPending}
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold"
+            >
+              Konfirmasi
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
