@@ -84,7 +84,15 @@ Deno.serve(async (req: Request) => {
 
     // Check if there is an existing pending snap token to reuse
     const payment = Array.isArray(order.payments) ? order.payments[0] : order.payments;
-    if (payment && payment.snap_token && payment.status === "pending") {
+    if (!payment) {
+      console.error("No payment record found for order:", order.id);
+      return new Response(
+        JSON.stringify({ success: false, message: "Data pembayaran tidak ditemukan", code: "PAYMENT_RECORD_NOT_FOUND" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (payment.snap_token && payment.status === "pending") {
       let redirectUrl = `https://app.sandbox.midtrans.com/snap/v2/vtweb/${payment.snap_token}`;
       if (payment.midtrans_response) {
         try {
@@ -159,7 +167,7 @@ Deno.serve(async (req: Request) => {
       },
       item_details: itemDetails,
       callbacks: {
-        finish: `${Deno.env.get("APP_URL")}/pesanan/${order.order_number}`,
+        finish: `${Deno.env.get("APP_URL") || "http://localhost:3000"}/pesanan/${order.order_number}`,
       },
     };
 
