@@ -25,12 +25,10 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const searchParams = useSearchParams()
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const [isVerifyingPayment, setIsVerifyingPayment] = useState(() => searchParams.get('verifying') === '1')
-  const verifyTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const verifyTimeoutsRef = useRef<NodeJS.Timeout[]>([])
 
-  // 1. Fetch Order Details — poll every 3s while verifying payment
-  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber, {
-    refetchInterval: isVerifyingPayment ? 3000 : false,
-  })
+  // 1. Fetch Order Details
+  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber)
 
   const [formattedDate, setFormattedDate] = useState('')
 
@@ -53,6 +51,73 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const generatePaymentTokenMutation = useGeneratePaymentToken()
   const checkPaymentMutation = useCheckPaymentStatus()
 
+  // Start payment verification — actively check with Midtrans API in 3 attempts (3s, 10s, 25s)
+  const startPaymentVerification = useCallback(() => {
+    setIsVerifyingPayment(true)
+
+    // Clear any existing timeouts first
+    verifyTimeoutsRef.current.forEach(clearTimeout)
+    verifyTimeoutsRef.current = []
+
+    const doCheck = async (attempt: number) => {
+      try {
+        console.log(`Checking payment status (Attempt ${attempt})...`)
+        const result = await checkPaymentMutation.mutateAsync(orderNumber)
+        console.log(`Payment status check result (Attempt ${attempt}):`, result)
+        if (result.success && result.order_status && result.order_status !== 'pending_payment') {
+          setIsVerifyingPayment(false)
+          refetch()
+          toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+          return true // Status updated
+        }
+      } catch (err) {
+        console.error(`Error checking payment status on attempt ${attempt}:`, err)
+      }
+      refetch()
+      return false
+    }
+
+    // Schedule 3 attempts: 3s, 10s, 25s
+    const delays = [3000, 10000, 25000]
+    
+    delays.forEach((delay, index) => {
+      const timeoutId = setTimeout(async () => {
+        const done = await doCheck(index + 1)
+        if (done) {
+          verifyTimeoutsRef.current.forEach(clearTimeout)
+          verifyTimeoutsRef.current = []
+        } else if (index === delays.length - 1) {
+          setIsVerifyingPayment(false)
+          toast('Verifikasi otomatis selesai. Jika pembayaran belum terupdate, silakan gunakan tombol cek manual.', { icon: 'ℹ️' })
+        }
+      }, delay)
+      verifyTimeoutsRef.current.push(timeoutId)
+    })
+  }, [orderNumber, checkPaymentMutation, refetch])
+
+  // Handle Manual Status Check
+  const handleManualCheckStatus = async () => {
+    try {
+      toast.loading('Mengecek status pembayaran...', { id: 'manual-check' })
+      const result = await checkPaymentMutation.mutateAsync(orderNumber)
+      toast.dismiss('manual-check')
+      
+      if (result.success && result.order_status) {
+        if (result.order_status !== 'pending_payment') {
+          toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+        } else {
+          toast('Pembayaran belum diterima/diproses. Silakan coba sesaat lagi.', { icon: 'ℹ️' })
+        }
+      } else {
+        toast.error(result.message || 'Gagal memverifikasi status pembayaran.')
+      }
+      refetch()
+    } catch (err) {
+      toast.dismiss('manual-check')
+      toast.error('Terjadi kesalahan saat memverifikasi pembayaran')
+    }
+  }
+
   // Load Midtrans Snap.js Script dynamically
   useEffect(() => {
     const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
@@ -66,57 +131,19 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     }
   }, [])
 
-  // Subscribe to Supabase Realtime for order status changes
+  // Trigger verification if page is loaded with verifying query param
   useEffect(() => {
-    if (!orderNumber) return
+    if (searchParams.get('verifying') === '1') {
+      startPaymentVerification()
+    }
+  }, [searchParams, startPaymentVerification])
 
-    const channel = supabase
-      .channel(`order-status-${orderNumber}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'orders',
-          filter: `order_number=eq.${orderNumber}`,
-        },
-        (payload) => {
-          console.log('Realtime order update received:', payload)
-          refetch()
-          // If status changed from pending_payment, stop verifying
-          if (payload.new && (payload.new as Record<string, unknown>).status !== 'pending_payment') {
-            setIsVerifyingPayment(false)
-          }
-        }
-      )
-      .subscribe()
-
+  // Cleanup timeouts on unmount
+  useEffect(() => {
     return () => {
-      supabase.removeChannel(channel)
+      verifyTimeoutsRef.current.forEach(clearTimeout)
     }
-  }, [orderNumber, refetch])
-
-  // Stop verification polling when order status changes from pending_payment
-  useEffect(() => {
-    if (order && order.status !== 'pending_payment' && isVerifyingPayment) {
-      setIsVerifyingPayment(false)
-      toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
-    }
-  }, [order?.status, isVerifyingPayment])
-
-  // Auto-stop verification after 120 seconds to prevent infinite polling
-  useEffect(() => {
-    if (isVerifyingPayment) {
-      verifyTimeoutRef.current = setTimeout(() => {
-        setIsVerifyingPayment(false)
-      }, 120000) // 2 minutes max
-    }
-    return () => {
-      if (verifyTimeoutRef.current) {
-        clearTimeout(verifyTimeoutRef.current)
-      }
-    }
-  }, [isVerifyingPayment])
+  }, [])
 
   // Handle Cancel Action
   const handleCancelOrder = async () => {
@@ -154,58 +181,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     }
   }
 
-  // Start payment verification — actively check with Midtrans API
-  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const startPaymentVerification = useCallback(() => {
-    setIsVerifyingPayment(true)
-
-    // Immediately check after 3 seconds (give Midtrans time)
-    const doCheck = async () => {
-      try {
-        const result = await checkPaymentMutation.mutateAsync(orderNumber)
-        console.log('Payment status check result:', result)
-        if (result.success && result.order_status && result.order_status !== 'pending_payment') {
-          // Status changed! Refetch order data and stop verifying
-          setIsVerifyingPayment(false)
-          refetch()
-          return true // signal to stop
-        }
-      } catch (err) {
-        console.error('Error checking payment status:', err)
-      }
-      // Also refetch order data in case webhook already updated it
-      refetch()
-      return false
-    }
-
-    // First check after 3s
-    setTimeout(async () => {
-      const done = await doCheck()
-      if (done) return
-
-      // Then check every 5 seconds
-      checkIntervalRef.current = setInterval(async () => {
-        const done = await doCheck()
-        if (done && checkIntervalRef.current) {
-          clearInterval(checkIntervalRef.current)
-        }
-      }, 5000)
-    }, 3000)
-  }, [orderNumber, checkPaymentMutation, refetch])
-
-  // Cleanup interval on unmount or when verification stops
-  useEffect(() => {
-    if (!isVerifyingPayment && checkIntervalRef.current) {
-      clearInterval(checkIntervalRef.current)
-      checkIntervalRef.current = null
-    }
-    return () => {
-      if (checkIntervalRef.current) {
-        clearInterval(checkIntervalRef.current)
-      }
-    }
-  }, [isVerifyingPayment])
 
   // Handle Pay Action (Retry Payment)
   const handlePayOrder = async () => {
@@ -493,14 +469,25 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
                       <span>Memverifikasi pembayaran...</span>
                     </div>
                   ) : (
-                    <Button
-                      onClick={handlePayOrder}
-                      isLoading={generatePaymentTokenMutation.isPending}
-                      disabled={generatePaymentTokenMutation.isPending}
-                      className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
-                    >
-                      Bayar Sekarang
-                    </Button>
+                    <>
+                      <Button
+                        onClick={handlePayOrder}
+                        isLoading={generatePaymentTokenMutation.isPending}
+                        disabled={generatePaymentTokenMutation.isPending}
+                        className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
+                      >
+                        Bayar Sekarang
+                      </Button>
+                      <Button
+                        onClick={handleManualCheckStatus}
+                        isLoading={checkPaymentMutation.isPending}
+                        disabled={checkPaymentMutation.isPending}
+                        variant="outline"
+                        className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+                      >
+                        Cek Status Pembayaran
+                      </Button>
+                    </>
                   )}
                   <Button
                     onClick={handleCancelOrder}
