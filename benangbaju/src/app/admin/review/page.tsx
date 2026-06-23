@@ -154,9 +154,17 @@ export default function AdminReviewsPage() : React.JSX.Element {
                       {rev.status !== 'approved' && (
                         <Button
                           onClick={() => handleUpdateStatus(rev.id, 'approved')}
-                          className="bg-green-650 hover:bg-green-700 text-white border-green-650 text-[10px] py-1.5 px-2.5 font-bold uppercase"
+                          className="bg-green-600 hover:bg-green-700 text-white border-green-600 text-[10px] py-1.5 px-2.5 font-bold uppercase"
                         >
                           Setujui
+                        </Button>
+                      )}
+                      {rev.status !== 'rejected' && (
+                        <Button
+                          onClick={() => handleUpdateStatus(rev.id, 'rejected')}
+                          className="bg-red-600 hover:bg-red-700 text-white border-red-600 text-[10px] py-1.5 px-2.5 font-bold uppercase"
+                        >
+                          Tolak
                         </Button>
                       )}
                       {rev.status !== 'hidden' && (

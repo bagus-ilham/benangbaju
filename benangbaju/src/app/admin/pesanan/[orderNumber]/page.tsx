@@ -293,7 +293,7 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
               {Number(order.discount_amount) > 0 && (
                 <div className="flex justify-between font-semibold">
                   <span>Voucher Diskon</span>
-                  <span className="text-red-650">- Rp {order.discount_amount.toLocaleString('id-ID')}</span>
+                  <span className="text-red-600">- Rp {order.discount_amount.toLocaleString('id-ID')}</span>
                 </div>
               )}
               <div className="flex justify-between">

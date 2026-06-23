@@ -450,14 +450,14 @@ export default function AdminOrdersPage() : React.JSX.Element {
                   <Button
                     type="button"
                     onClick={() => handleUpdateReturnStatus('rejected')}
-                    className="bg-red-650 hover:bg-red-700 text-white border-red-650"
+                    className="bg-red-600 hover:bg-red-700 text-white border-red-600"
                   >
                     Tolak Retur
                   </Button>
                   <Button
                     type="button"
                     onClick={() => handleUpdateReturnStatus('approved')}
-                    className="bg-blue-650 hover:bg-blue-700 text-white border-blue-650"
+                    className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                   >
                     Setujui Retur
                   </Button>
