@@ -1,12 +1,13 @@
 'use client'
 
-import React, { use, useState, useEffect } from 'react'
+import React, { use, useState, useEffect, useCallback, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/components/shared/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState } from '@/components/shared'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, FileText, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, FileText, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
@@ -21,10 +22,15 @@ interface OrderDetailPageProps {
 export default function OrderDetailPage({ params }: OrderDetailPageProps) : React.JSX.Element | null {
   const { orderNumber } = use(params)
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
+  const searchParams = useSearchParams()
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(() => searchParams.get('verifying') === '1')
+  const verifyTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // 1. Fetch Order Details
-  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber)
+  // 1. Fetch Order Details — poll every 3s while verifying payment
+  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber, {
+    refetchInterval: isVerifyingPayment ? 3000 : false,
+  })
 
   const [formattedDate, setFormattedDate] = useState('')
 
@@ -58,6 +64,58 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
       document.body.appendChild(script)
     }
   }, [])
+
+  // Subscribe to Supabase Realtime for order status changes
+  useEffect(() => {
+    if (!orderNumber) return
+
+    const channel = supabase
+      .channel(`order-status-${orderNumber}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `order_number=eq.${orderNumber}`,
+        },
+        (payload) => {
+          console.log('Realtime order update received:', payload)
+          refetch()
+          // If status changed from pending_payment, stop verifying
+          if (payload.new && (payload.new as Record<string, unknown>).status !== 'pending_payment') {
+            setIsVerifyingPayment(false)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [orderNumber, refetch])
+
+  // Stop verification polling when order status changes from pending_payment
+  useEffect(() => {
+    if (order && order.status !== 'pending_payment' && isVerifyingPayment) {
+      setIsVerifyingPayment(false)
+      toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+    }
+  }, [order?.status, isVerifyingPayment])
+
+  // Auto-stop verification after 120 seconds to prevent infinite polling
+  useEffect(() => {
+    if (isVerifyingPayment) {
+      verifyTimeoutRef.current = setTimeout(() => {
+        setIsVerifyingPayment(false)
+      }, 120000) // 2 minutes max
+    }
+    return () => {
+      if (verifyTimeoutRef.current) {
+        clearTimeout(verifyTimeoutRef.current)
+      }
+    }
+  }, [isVerifyingPayment])
 
   // Handle Cancel Action
   const handleCancelOrder = async () => {
@@ -95,6 +153,13 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     }
   }
 
+  // Start payment verification polling
+  const startPaymentVerification = useCallback(() => {
+    setIsVerifyingPayment(true)
+    // Initial refetch with a small delay to give webhook time to process
+    setTimeout(() => refetch(), 2000)
+  }, [refetch])
+
   // Handle Pay Action (Retry Payment)
   const handlePayOrder = async () => {
     if (!order) return
@@ -111,15 +176,19 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
       if (window.snap) {
         window.snap.pay(paymentRes.token, {
           onSuccess: () => {
-            toast.success('Pembayaran berhasil!')
-            refetch()
+            toast.success('Pembayaran berhasil! Memverifikasi...')
+            startPaymentVerification()
           },
           onPending: () => {
             toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-            refetch()
+            startPaymentVerification()
           },
           onError: () => {
             toast.error('Pembayaran gagal! Coba lagi.')
+          },
+          onClose: () => {
+            // User closed Snap popup — start verifying in case payment was made
+            startPaymentVerification()
           },
         })
       } else {
@@ -371,17 +440,25 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
             <div className="pt-2 flex flex-col gap-2">
               {order.status === 'pending_payment' && (
                 <>
-                  <Button
-                    onClick={handlePayOrder}
-                    isLoading={generatePaymentTokenMutation.isPending}
-                    disabled={generatePaymentTokenMutation.isPending}
-                    className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
-                  >
-                    Bayar Sekarang
-                  </Button>
+                  {isVerifyingPayment ? (
+                    <div className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold uppercase tracking-wider">
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Memverifikasi pembayaran...</span>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={handlePayOrder}
+                      isLoading={generatePaymentTokenMutation.isPending}
+                      disabled={generatePaymentTokenMutation.isPending}
+                      className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
+                    >
+                      Bayar Sekarang
+                    </Button>
+                  )}
                   <Button
                     onClick={handleCancelOrder}
                     variant="outline"
+                    disabled={isVerifyingPayment}
                     className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-red-200 text-red-500 hover:bg-red-50"
                   >
                     Batalkan Pesanan

@@ -19,12 +19,13 @@ export function useOrdersList(userId: string, status?: string, page = 1, limit =
   })
 }
 
-export function useOrderDetail(orderNumber: string) : import("@tanstack/react-query").UseQueryResult<import("@/services/orders").Order | null, Error> {
+export function useOrderDetail(orderNumber: string, options?: { refetchInterval?: number | false }) : import("@tanstack/react-query").UseQueryResult<import("@/services/orders").Order | null, Error> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['order', orderNumber],
     queryFn: () => getOrderDetail(supabase, orderNumber),
     enabled: !!orderNumber,
+    refetchInterval: options?.refetchInterval ?? false,
   })
 }
 

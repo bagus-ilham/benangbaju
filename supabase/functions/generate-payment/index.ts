@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
         *,
         profiles!inner(name, phone),
         order_items(*),
-        payments(id, status, midtrans_response)
+        payments(id, status, midtrans_response, updated_at, created_at)
       `)
       .eq("order_number", order_number)
       .single();
@@ -117,8 +117,20 @@ Deno.serve(async (req: Request) => {
           ? JSON.parse(payment.midtrans_response)
           : payment.midtrans_response;
         if (responseObj && responseObj.token) {
-          snapToken = responseObj.token;
-          redirectUrl = responseObj.redirect_url || `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}`;
+          // Check if the token is still fresh (less than 20 minutes old)
+          // Midtrans Snap tokens can expire, so we use a conservative TTL
+          const paymentUpdatedAt = payment.updated_at || payment.created_at;
+          const tokenAge = paymentUpdatedAt 
+            ? Date.now() - new Date(paymentUpdatedAt).getTime()
+            : Infinity;
+          const TOKEN_TTL_MS = 20 * 60 * 1000; // 20 minutes
+
+          if (tokenAge < TOKEN_TTL_MS) {
+            snapToken = responseObj.token;
+            redirectUrl = responseObj.redirect_url || `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}`;
+          } else {
+            console.log(`Snap token for order ${order.order_number} is stale (${Math.round(tokenAge / 60000)}min old), generating new one`);
+          }
         }
       } catch (e) {
         console.error("Error parsing midtrans_response:", e);

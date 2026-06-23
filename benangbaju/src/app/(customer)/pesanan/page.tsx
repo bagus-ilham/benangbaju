@@ -126,18 +126,29 @@ export default function PesananPage() : React.JSX.Element {
         return
       }
 
+      // Delayed refetch to give webhook time to process
+      const scheduleRefetches = () => {
+        setTimeout(() => refetch(), 2000)
+        setTimeout(() => refetch(), 5000)
+        setTimeout(() => refetch(), 10000)
+      }
+
       if (window.snap) {
         window.snap.pay(paymentRes.token, {
           onSuccess: () => {
-            toast.success('Pembayaran berhasil!')
-            refetch()
+            toast.success('Pembayaran berhasil! Memverifikasi...')
+            scheduleRefetches()
           },
           onPending: () => {
             toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-            refetch()
+            scheduleRefetches()
           },
           onError: () => {
             toast.error('Pembayaran gagal! Coba lagi.')
+          },
+          onClose: () => {
+            // User closed Snap popup — refetch in case payment was made
+            scheduleRefetches()
           },
         })
       } else {

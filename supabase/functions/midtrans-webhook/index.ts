@@ -210,9 +210,10 @@ Deno.serve(async (req: Request) => {
     }
 
     // ========== UPDATE ORDER STATUS ==========
-    if (orderStatus && order.status === "pending_payment") {
+    if (orderStatus && (order.status === "pending_payment" || order.status === "paid")) {
       if (orderStatus === "processing") {
         // Payment success → update order
+        console.log(`Updating order ${order.order_number} status from ${order.status} to processing`);
         const { error: orderUpdateError } = await supabase
           .from("orders")
           .update({ status: "processing" })

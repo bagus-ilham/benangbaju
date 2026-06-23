@@ -300,8 +300,8 @@ export default function CheckoutPage() : React.JSX.Element {
       if (window.snap) {
         window.snap.pay(paymentRes.token, {
           onSuccess: () => {
-            toast.success('Pembayaran berhasil!')
-            router.push(`/pesanan/${orderNumber}`)
+            toast.success('Pembayaran berhasil! Memverifikasi...')
+            router.push(`/pesanan/${orderNumber}?verifying=1`)
           },
           onPending: () => {
             toast.success('Pesanan disimpan, silakan selesaikan pembayaran.')
