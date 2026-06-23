@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
         *,
         profiles!inner(name, phone),
         order_items(*),
-        payments!inner(id, status, snap_token, midtrans_response)
+        payments(id, status, snap_token, midtrans_response)
       `)
       .eq("order_number", order_number)
       .single();
@@ -83,13 +83,30 @@ Deno.serve(async (req: Request) => {
     }
 
     // Check if there is an existing pending snap token to reuse
-    const payment = Array.isArray(order.payments) ? order.payments[0] : order.payments;
+    let payment = Array.isArray(order.payments) ? order.payments[0] : order.payments;
+    
+    // If no payment record exists, dynamically create one (self-healing)
     if (!payment) {
-      console.error("No payment record found for order:", order.id);
-      return new Response(
-        JSON.stringify({ success: false, message: "Data pembayaran tidak ditemukan", code: "PAYMENT_RECORD_NOT_FOUND" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      console.log(`Creating missing payment record for order ${order.order_number}`);
+      const { data: newPayment, error: insertPayError } = await supabase
+        .from("payments")
+        .insert({
+          order_id: order.id,
+          midtrans_order_id: order.order_number,
+          status: "pending",
+          amount: order.total_amount,
+        })
+        .select("id, status, snap_token, midtrans_response")
+        .single();
+
+      if (insertPayError || !newPayment) {
+        console.error("Failed to create missing payment record:", insertPayError);
+        return new Response(
+          JSON.stringify({ success: false, message: "Gagal membuat data pembayaran", code: "PAYMENT_CREATE_ERROR" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      payment = newPayment;
     }
 
     if (payment.snap_token && payment.status === "pending") {
