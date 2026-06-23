@@ -26,6 +26,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const [isVerifyingPayment, setIsVerifyingPayment] = useState(() => searchParams.get('verifying') === '1')
   const verifyTimeoutsRef = useRef<NodeJS.Timeout[]>([])
+  const hasTriggeredVerification = useRef(false)
 
   // 1. Fetch Order Details
   const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber)
@@ -133,7 +134,16 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
 
   // Trigger verification if page is loaded with verifying query param
   useEffect(() => {
-    if (searchParams.get('verifying') === '1') {
+    if (searchParams.get('verifying') === '1' && !hasTriggeredVerification.current) {
+      hasTriggeredVerification.current = true
+
+      // Clean up URL parameter to prevent looping or accidental re-trigger on reload
+      const url = new URL(window.location.href)
+      if (url.searchParams.has('verifying')) {
+        url.searchParams.delete('verifying')
+        window.history.replaceState({}, '', url.pathname + url.search)
+      }
+
       startPaymentVerification()
     }
   }, [searchParams, startPaymentVerification])
