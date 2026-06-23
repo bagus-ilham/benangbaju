@@ -21,7 +21,7 @@ import { useCart } from '@/hooks/useCart'
 import { useWishlist } from '@/hooks/useWishlist'
 import { useRecentlyViewedStore, RecentlyViewedState } from '@/stores/recentlyViewedStore'
 import { RelatedProducts } from './RelatedProducts' // Similar products slider
-import { formatIDR, cn } from '@/lib/utils'
+import { formatIDR, cn, formatProductDescription } from '@/lib/utils'
 import { Heart, Plus, Minus, Shield, RefreshCw, Truck, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -377,7 +377,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
 
             {/* Description intro */}
             {product.short_description && (
-              <motion.p variants={itemVariants} className="text-xs text-neutral-500 font-sans leading-relaxed">
+              <motion.p variants={itemVariants} className="text-xs text-neutral-500 font-sans leading-relaxed whitespace-pre-line">
                 {product.short_description}
               </motion.p>
             )}
@@ -589,9 +589,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                     {activeTab === 'details' && (
                       <div className="space-y-2">
                         <p className="whitespace-pre-line">
-                          {product.description
-                            ? product.description.replace(/<br\s*\/?>/gi, '\n')
-                            : 'Tidak ada deskripsi tambahan.'}
+                          {formatProductDescription(product.description)}
                         </p>
                         {selectedVariant && (
                           <p className="text-[10px] text-neutral-400 font-sans">SKU: {selectedVariant.sku}</p>

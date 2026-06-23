@@ -37,6 +37,8 @@ export interface ProductPayload {
     is_featured: boolean
     meta_title: string | null
     meta_description: string | null
+    size_guide: string | null
+    care_guide: string | null
   }
   variants: ProductVariantPayload[]
   images: ProductImagePayload[]
