@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { ProductVariant } from '@/services/products'
@@ -20,20 +20,24 @@ export function VariantPicker({
   // 1. Group attributes from variants
   // Find all unique attributes and values
   // e.g. Warna: ["Hitam", "Milo"], Ukuran: ["S", "M", "L"]
-  const attributeGroups: Record<string, string[]> = {}
+  const attributeGroups = useMemo(() => {
+    const groups: Record<string, string[]> = {}
 
-  variants.forEach((v) => {
-    v.product_variant_attrs?.forEach((attr) => {
-      const name = attr.attr_name
-      const val = attr.attr_value
-      if (!attributeGroups[name]) {
-        attributeGroups[name] = []
-      }
-      if (!attributeGroups[name].includes(val)) {
-        attributeGroups[name].push(val)
-      }
+    variants.forEach((v) => {
+      v.product_variant_attrs?.forEach((attr) => {
+        const name = attr.attr_name
+        const val = attr.attr_value
+        if (!groups[name]) {
+          groups[name] = []
+        }
+        if (!groups[name].includes(val)) {
+          groups[name].push(val)
+        }
+      })
     })
-  })
+
+    return groups
+  }, [variants])
 
   // 2. Track selected values for each attribute name
   // Pre-select any attribute groups that have only one unique value across all variants
@@ -88,23 +92,32 @@ export function VariantPicker({
     setSelectedValues((prev) => ({ ...prev, [attrName]: value }))
   }
 
-  // Helper to determine if a variant value is disabled (has no stock anywhere or is invalid combination)
-  const isOptionDisabled = (attrName: string, value: string) => {
-    // Check if there is AT LEAST one active variant with this attribute value that has stock
-    const matchingVariants = variants.filter((v) => {
-      return (
-        v.is_active &&
-        v.product_variant_attrs?.some(
-          (attr) => attr.attr_name === attrName && attr.attr_value === value
-        )
-      )
+  const attributeKeys = useMemo(() => Object.keys(attributeGroups), [attributeGroups])
+
+  // Pre-calculate disabled options map to avoid O(N*M) lookups during render
+  const disabledOptionsMap = useMemo(() => {
+    const disabledMap: Record<string, Record<string, boolean>> = {}
+
+    attributeKeys.forEach((attrName) => {
+      disabledMap[attrName] = {}
+      attributeGroups[attrName].forEach((value) => {
+        // Check if there is AT LEAST one active variant with this attribute value that has stock
+        const matchingVariants = variants.filter((v) => {
+          return (
+            v.is_active &&
+            v.product_variant_attrs?.some(
+              (attr) => attr.attr_name === attrName && attr.attr_value === value
+            )
+          )
+        })
+
+        const totalStock = matchingVariants.reduce((sum, v) => sum + v.stock, 0)
+        disabledMap[attrName][value] = totalStock <= 0
+      })
     })
 
-    const totalStock = matchingVariants.reduce((sum, v) => sum + v.stock, 0)
-    return totalStock <= 0
-  }
-
-  const attributeKeys = Object.keys(attributeGroups)
+    return disabledMap
+  }, [attributeKeys, attributeGroups, variants])
 
   if (attributeKeys.length === 0) {
     return null
@@ -120,7 +133,7 @@ export function VariantPicker({
           <div className="flex flex-wrap gap-2">
             {attributeGroups[name].map((val) => {
               const isSelected = selectedValues[name] === val
-              const disabled = isOptionDisabled(name, val)
+              const disabled = disabledOptionsMap[name]?.[val] ?? false
               return (
                 <motion.button
                   key={val}
