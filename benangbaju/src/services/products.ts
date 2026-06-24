@@ -620,40 +620,51 @@ export async function adminCreateProduct(
 
   const idMap = new Map<string, string>()
 
-  for (let i = 0; i < variants.length; i++) {
-    const v = variants[i]
-    const { data: variant, error: variantErr } = await supabase
+  if (variants.length > 0) {
+    const variantInserts = variants.map(v => ({
+      product_id: productId,
+      sku: v.sku,
+      name: v.name,
+      price: v.price,
+      compare_price: v.compare_price,
+      stock: v.stock,
+      weight_gram: v.weight_gram,
+      is_active: v.is_active
+    }))
+
+    const { data: insertedVariants, error: variantErr } = await supabase
       .from('product_variants')
-      .insert({
-        product_id: productId,
-        sku: v.sku,
-        name: v.name,
-        price: v.price,
-        compare_price: v.compare_price,
-        stock: v.stock,
-        weight_gram: v.weight_gram,
-        is_active: v.is_active
-      })
+      .insert(variantInserts)
       .select('id')
-      .single()
 
     if (variantErr) throw variantErr
 
-    if (v.id) {
-      idMap.set(v.id, variant.id)
-    }
-    idMap.set(String(i), variant.id)
+    const allAttrsData: { variant_id: string; attr_name: string; attr_value: string }[] = []
 
-    if (v.attrs && v.attrs.length > 0) {
-      const attrsData = v.attrs.map(a => ({
-        variant_id: variant.id,
-        attr_name: a.attr_name,
-        attr_value: a.attr_value
-      }))
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i]
+      const variantId = insertedVariants[i].id
+
+      if (v.id) {
+        idMap.set(v.id, variantId)
+      }
+      idMap.set(String(i), variantId)
+
+      if (v.attrs && v.attrs.length > 0) {
+        v.attrs.forEach(a => {
+          allAttrsData.push({
+            variant_id: variantId,
+            attr_name: a.attr_name,
+            attr_value: a.attr_value
+          })
+        })
+      }
+    }
+
+    if (allAttrsData.length > 0) {
       const { error: attrsErr } = await supabase
         .from('product_variant_attrs')
-        .insert(attrsData)
-
+        .insert(allAttrsData)
       if (attrsErr) throw attrsErr
     }
   }
@@ -789,6 +800,11 @@ export async function adminUpdateProduct(
 
   const idMap = new Map<string, string>()
 
+  const allAttrsData: { variant_id: string; attr_name: string; attr_value: string }[] = []
+  const newVariantsToInsert: { product_id: string; sku: string; name: string; price: number; compare_price: number | null; stock: number; weight_gram: number | null; is_active: boolean }[] = []
+  const newVariantsIndices: number[] = []
+
+  // 1. Process existing variants (Updates & Delete old attrs)
   for (let i = 0; i < variants.length; i++) {
     const v = variants[i]
     if (v.id && !v.id.startsWith('temp-')) {
@@ -815,50 +831,67 @@ export async function adminUpdateProduct(
       if (deleteAttrsErr) throw deleteAttrsErr
 
       if (v.attrs && v.attrs.length > 0) {
-        const attrsData = v.attrs.map(a => ({
-          variant_id: v.id!,
-          attr_name: a.attr_name,
-          attr_value: a.attr_value
-        }))
-        const { error: attrsErr } = await supabase
-          .from('product_variant_attrs')
-          .insert(attrsData)
-        if (attrsErr) throw attrsErr
+        v.attrs.forEach(a => {
+          allAttrsData.push({
+            variant_id: v.id!,
+            attr_name: a.attr_name,
+            attr_value: a.attr_value
+          })
+        })
       }
     } else {
-      const { data: newVariant, error: variantErr } = await supabase
-        .from('product_variants')
-        .insert({
-          product_id: productId,
-          sku: v.sku,
-          name: v.name,
-          price: v.price,
-          compare_price: v.compare_price,
-          stock: v.stock,
-          weight_gram: v.weight_gram,
-          is_active: v.is_active
-        })
-        .select('id')
-        .single()
+      // Collect new variants to insert
+      newVariantsToInsert.push({
+        product_id: productId,
+        sku: v.sku,
+        name: v.name,
+        price: v.price,
+        compare_price: v.compare_price,
+        stock: v.stock,
+        weight_gram: v.weight_gram,
+        is_active: v.is_active
+      })
+      newVariantsIndices.push(i)
+    }
+  }
 
-      if (variantErr) throw variantErr
+  // 2. Process new variants (Bulk Insert)
+  if (newVariantsToInsert.length > 0) {
+    const { data: insertedVariants, error: variantErr } = await supabase
+      .from('product_variants')
+      .insert(newVariantsToInsert)
+      .select('id')
+
+    if (variantErr) throw variantErr
+
+    for (let k = 0; k < insertedVariants.length; k++) {
+      const originalIndex = newVariantsIndices[k]
+      const v = variants[originalIndex]
+      const variantId = insertedVariants[k].id
+
       if (v.id) {
-        idMap.set(v.id, newVariant.id)
+        idMap.set(v.id, variantId)
       }
-      idMap.set(String(i), newVariant.id)
+      idMap.set(String(originalIndex), variantId)
 
       if (v.attrs && v.attrs.length > 0) {
-        const attrsData = v.attrs.map(a => ({
-          variant_id: newVariant.id,
-          attr_name: a.attr_name,
-          attr_value: a.attr_value
-        }))
-        const { error: attrsErr } = await supabase
-          .from('product_variant_attrs')
-          .insert(attrsData)
-        if (attrsErr) throw attrsErr
+        v.attrs.forEach(a => {
+          allAttrsData.push({
+            variant_id: variantId,
+            attr_name: a.attr_name,
+            attr_value: a.attr_value
+          })
+        })
       }
     }
+  }
+
+  // 3. Bulk insert all new attrs (for both updated existing and newly created variants)
+  if (allAttrsData.length > 0) {
+    const { error: attrsErr } = await supabase
+      .from('product_variant_attrs')
+      .insert(allAttrsData)
+    if (attrsErr) throw attrsErr
   }
 
   const { error: deleteImgErr } = await supabase
