@@ -45,7 +45,7 @@ const debouncedSyncCart = (userId: string) => {
 
 // Helper to generate a random session ID for guests
 const generateSessionId = () => {
-  return 'sess_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  return 'sess_' + crypto.randomUUID()
 }
 
 export const useCartStore = create<CartState>()(
