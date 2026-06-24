@@ -10,7 +10,7 @@ import {
   useAdminDeleteBanner,
 } from '@/hooks/useAdmin'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
@@ -61,6 +61,21 @@ export default function AdminBannersPage() : React.JSX.Element {
   const handleOpenEdit = (b: BannerRow) => {
     setEditingBanner(b)
     setTitle(b.title || '')
+    setSubtitle(b.subtitle || '')
+    setImageUrl(b.image_url || '')
+    setImageMobileUrl(b.image_mobile_url || '')
+    setLinkUrl(b.link_url || '')
+    setPosition(b.position || 'homepage_hero')
+    setSortOrder(b.sort_order || 0)
+    setStartsAt(formatLocalISO(b.starts_at))
+    setEndsAt(formatLocalISO(b.ends_at))
+    setIsActive(b.is_active !== false)
+    setIsOpen(true)
+  }
+
+  const handleDuplicate = (b: BannerRow) => {
+    setEditingBanner(null)
+    setTitle((b.title || 'Untitled Banner') + ' (Copy)')
     setSubtitle(b.subtitle || '')
     setImageUrl(b.image_url || '')
     setImageMobileUrl(b.image_mobile_url || '')
@@ -245,9 +260,18 @@ export default function AdminBannersPage() : React.JSX.Element {
                     </td>
                     <td className="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
                       <Button
+                        onClick={() => handleDuplicate(b)}
+                        variant="outline"
+                        className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                        title="Duplikat Banner"
+                      >
+                        <Copy size={13} />
+                      </Button>
+                      <Button
                         onClick={() => handleOpenEdit(b)}
                         variant="outline"
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                        title="Edit Banner"
                       >
                         <Edit2 size={13} />
                       </Button>

@@ -1,13 +1,61 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ProductForm } from '@/components/admin/ProductForm'
 import { useAdminCreateProduct } from '@/hooks/useAdmin'
 import type { ProductPayload } from '@/types/product'
+import { useQuery } from '@tanstack/react-query'
+import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 
+const supabase = createBrowserClient()
+
 export default function AdminProductTambahPage() : React.JSX.Element {
+  const searchParams = useSearchParams()
+  const duplicateId = searchParams.get('duplicate')
   const createMutation = useAdminCreateProduct()
+
+  const { data: duplicateProduct, isLoading } = useQuery({
+    queryKey: ['admin', 'product-duplicate', duplicateId],
+    queryFn: async () => {
+      if (!duplicateId) return null
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          product_variants (*, product_variant_attrs(*)),
+          product_images (*),
+          product_marketplace_links (*),
+          collection_products (*)
+        `)
+        .eq('id', duplicateId)
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    enabled: !!duplicateId
+  })
+
+  const initialData = useMemo(() => {
+    if (!duplicateProduct) return undefined
+    
+    // Create a copy and clean up specific fields
+    const copy = { ...duplicateProduct }
+    copy.name = `${copy.name} (Copy)`
+    copy.slug = `${copy.slug}-copy`
+    
+    if (copy.product_variants) {
+      copy.product_variants = copy.product_variants.map((v: any) => ({
+        ...v,
+        id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        sku: v.sku ? `${v.sku}-COPY` : ''
+      }))
+    }
+    
+    return copy
+  }, [duplicateProduct])
 
   const handleCreateProduct = async (payload: ProductPayload) => {
     toast.loading('Menambahkan produk...', { id: 'create-product' })
@@ -22,11 +70,21 @@ export default function AdminProductTambahPage() : React.JSX.Element {
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat data duplikasi...</p>
+      </div>
+    )
+  }
+
   return (
     <ProductForm
-      title="Tambah Produk Baru"
+      title={duplicateId ? "Duplikat Produk" : "Tambah Produk Baru"}
+      initialData={initialData}
       onSubmit={handleCreateProduct}
       isSubmitting={createMutation.isPending}
     />
   )
 }
+

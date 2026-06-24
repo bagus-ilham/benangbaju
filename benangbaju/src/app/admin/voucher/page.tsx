@@ -8,7 +8,7 @@ import {
   useAdminDeleteVoucher,
 } from '@/hooks/useAdmin'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
@@ -76,6 +76,22 @@ interface AdminVoucherItem {
     setEditingVoucher(v)
     setCode(v.code || '')
     setName(v.name || '')
+    setDiscountType(v.discount_type === 'percentage' || v.discount_type === 'fixed' ? v.discount_type : 'percentage')
+    setValue(Number(v.value) || 0)
+    setMinPurchase(Number(v.min_purchase) || 0)
+    setMaxDiscount(v.max_discount ? Number(v.max_discount) : null)
+    setUsageLimit(v.usage_limit ? Number(v.usage_limit) : null)
+    setUsagePerUser(v.usage_per_user || 1)
+    setStartsAt(formatLocalISO(v.starts_at))
+    setExpiresAt(formatLocalISO(v.expires_at))
+    setIsActive(v.is_active !== false)
+    setIsOpen(true)
+  }
+
+  const handleDuplicate = (v: AdminVoucherItem) => {
+    setEditingVoucher(null)
+    setCode((v.code || '') + '_COPY')
+    setName((v.name || '') + ' (Copy)')
     setDiscountType(v.discount_type === 'percentage' || v.discount_type === 'fixed' ? v.discount_type : 'percentage')
     setValue(Number(v.value) || 0)
     setMinPurchase(Number(v.min_purchase) || 0)
@@ -244,9 +260,18 @@ interface AdminVoucherItem {
                     </td>
                     <td className="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
                       <Button
+                        onClick={() => handleDuplicate(v)}
+                        variant="outline"
+                        className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                        title="Duplikat Voucher"
+                      >
+                        <Copy size={13} />
+                      </Button>
+                      <Button
                         onClick={() => handleOpenEdit(v)}
                         variant="outline"
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                        title="Edit Voucher"
                       >
                         <Edit2 size={13} />
                       </Button>

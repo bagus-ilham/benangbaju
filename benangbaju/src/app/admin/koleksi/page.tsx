@@ -10,7 +10,7 @@ import {
 } from '@/hooks/useAdmin'
 import type { AdminCollectionItem } from '@/services/collections'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
@@ -73,6 +73,26 @@ export default function AdminCollectionPage() : React.JSX.Element {
     setEditingCollection(col)
     setName(col.name || '')
     setSlug(col.slug || '')
+    setDescription(col.description || '')
+    setImageUrl(col.image_url || '')
+    setSortOrder(col.sort_order || 0)
+    setStartsAt(formatLocalISO(col.starts_at))
+    setEndsAt(formatLocalISO(col.ends_at))
+    setIsActive(col.is_active !== false)
+
+    // Map selected products
+    const initialSelected: Record<string, boolean> = {}
+    col.product_ids?.forEach((pid: string) => {
+      initialSelected[pid] = true
+    })
+    setSelectedProductIds(initialSelected)
+    setIsOpen(true)
+  }
+
+  const handleDuplicate = (col: AdminCollectionItem) => {
+    setEditingCollection(null)
+    setName((col.name || '') + ' (Copy)')
+    setSlug((col.slug || '') + '-copy')
     setDescription(col.description || '')
     setImageUrl(col.image_url || '')
     setSortOrder(col.sort_order || 0)
@@ -263,9 +283,18 @@ export default function AdminCollectionPage() : React.JSX.Element {
                     </td>
                     <td className="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
                       <Button
+                        onClick={() => handleDuplicate(col)}
+                        variant="outline"
+                        className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                        title="Duplikat Koleksi"
+                      >
+                        <Copy size={13} />
+                      </Button>
+                      <Button
                         onClick={() => handleOpenEdit(col)}
                         variant="outline"
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                        title="Edit Koleksi"
                       >
                         <Edit2 size={13} />
                       </Button>

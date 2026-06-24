@@ -9,7 +9,7 @@ import {
   useAdminDeleteCategory,
 } from '@/hooks/useAdmin'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -54,6 +54,18 @@ export default function AdminCategoryPage() : React.JSX.Element {
     setEditingCategory(cat)
     setName(cat.name || '')
     setSlug(cat.slug || '')
+    setParentId(cat.parent_id || '')
+    setDescription(cat.description || '')
+    setImageUrl(cat.image_url || '')
+    setSortOrder(cat.sort_order || 0)
+    setIsActive(cat.is_active !== false)
+    setIsOpen(true)
+  }
+
+  const handleDuplicate = (cat: CategoryRow) => {
+    setEditingCategory(null)
+    setName((cat.name || '') + ' (Copy)')
+    setSlug((cat.slug || '') + '-copy')
     setParentId(cat.parent_id || '')
     setDescription(cat.description || '')
     setImageUrl(cat.image_url || '')
@@ -222,9 +234,18 @@ export default function AdminCategoryPage() : React.JSX.Element {
                       </td>
                       <td className="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
                         <Button
+                          onClick={() => handleDuplicate(cat)}
+                          variant="outline"
+                          className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                          title="Duplikat Kategori"
+                        >
+                          <Copy size={13} />
+                        </Button>
+                        <Button
                           onClick={() => handleOpenEdit(cat)}
                           variant="outline"
                           className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                          title="Edit Kategori"
                         >
                           <Edit2 size={13} />
                         </Button>

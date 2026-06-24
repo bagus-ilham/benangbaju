@@ -10,7 +10,7 @@ import {
 } from '@/hooks/useAdmin'
 import type { AdminFlashSaleListItem } from '@/services/flashSales'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2, Search } from 'lucide-react'
+import { Plus, Edit2, Trash2, Search, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
@@ -94,6 +94,34 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
   const handleOpenEdit = (camp: AdminFlashSaleListItem) => {
     setEditingCampaign(camp)
     setName(camp.name || '')
+    setDescription(camp.description || '')
+    setBannerUrl(camp.banner_url || '')
+    setStartsAt(formatLocalISO(camp.starts_at))
+    setEndsAt(formatLocalISO(camp.ends_at))
+    setIsActive(camp.is_active !== false)
+
+    // Map items
+    if (camp.flash_sale_items) {
+      setItems(
+        camp.flash_sale_items.map((i) => ({
+          variant_id: i.variant_id,
+          original_price: Number(i.original_price) || 0,
+          sale_price: Number(i.sale_price) || 0,
+          quota: i.quota || 0,
+          // metadata for label
+          name: i.product_variants?.name || '',
+          prodName: i.product_variants?.products?.name || '',
+        }))
+      )
+    } else {
+      setItems([])
+    }
+    setIsOpen(true)
+  }
+
+  const handleDuplicate = (camp: AdminFlashSaleListItem) => {
+    setEditingCampaign(null)
+    setName((camp.name || '') + ' (Copy)')
     setDescription(camp.description || '')
     setBannerUrl(camp.banner_url || '')
     setStartsAt(formatLocalISO(camp.starts_at))
@@ -318,9 +346,18 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
                       </td>
                       <td className="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
                         <Button
+                          onClick={() => handleDuplicate(camp)}
+                          variant="outline"
+                          className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                          title="Duplikat Flash Sale"
+                        >
+                          <Copy size={13} />
+                        </Button>
+                        <Button
                           onClick={() => handleOpenEdit(camp)}
                           variant="outline"
                           className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                          title="Edit Flash Sale"
                         >
                           <Edit2 size={13} />
                         </Button>

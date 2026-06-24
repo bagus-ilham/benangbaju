@@ -10,7 +10,7 @@ import {
 import type { AdminProductListItem } from '@/services/products'
 import { Button, AdminPageHeader } from '@/components/shared'
 import { Input } from '@/components/shared/Input'
-import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star } from 'lucide-react'
+import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star, Copy } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
  
@@ -171,8 +171,13 @@ export default function AdminProductListPage() : React.JSX.Element {
                             <Eye size={13} />
                           </Button>
                         </Link>
+                        <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
+                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900" title="Duplikat Produk">
+                            <Copy size={13} />
+                          </Button>
+                        </Link>
                         <Link href={`/admin/produk/${p.id}`}>
-                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900">
+                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900" title="Edit Produk">
                             <Edit2 size={13} />
                           </Button>
                         </Link>
