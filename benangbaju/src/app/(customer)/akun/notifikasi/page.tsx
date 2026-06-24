@@ -9,7 +9,7 @@ import {
   useMarkAllNotificationsRead,
 } from '@/hooks/useNotifications'
 import { AuthLoading, PageContainer, PageHero } from '@/components/shared'
-import { Bell, Check, ClipboardList, Heart, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
+import { Bell, ClipboardList, Heart, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
