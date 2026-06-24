@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { formatProductDescription } from './format'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { formatProductDescription, formatLocalISO } from './format'
 
 describe('formatProductDescription', () => {
   it('should return a default message for null or undefined input', () => {
@@ -50,5 +50,52 @@ describe('formatProductDescription', () => {
     // 4. (trim) Product name\nDetails:\n• High quality\n• Durable\nOptions:\n— 4 warna\n— Ukuran L
     // 5. Product name\nDetails:\n• High quality\n• Durable\nOptions:\n— 4 warna\n— Ukuran L
     expect(formatProductDescription(input)).toBe(expected)
+  })
+})
+
+describe('formatLocalISO', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('should return an empty string for null, undefined, or empty string', () => {
+    expect(formatLocalISO(null)).toBe('')
+    expect(formatLocalISO(undefined)).toBe('')
+    expect(formatLocalISO('')).toBe('')
+  })
+
+  it('should return an empty string for invalid date strings', () => {
+    expect(formatLocalISO('invalid-date')).toBe('')
+    expect(formatLocalISO('2023-13-45')).toBe('')
+  })
+
+  it('should return an empty string for invalid Date objects', () => {
+    expect(formatLocalISO(new Date('invalid-date'))).toBe('')
+  })
+
+  it('should format valid Date object to local ISO string', () => {
+    // Create a fixed date and a known timezone offset mock
+    const date = new Date('2023-10-25T14:30:00.000Z')
+
+    // Mock getTimezoneOffset to return -420 (UTC+7, e.g., Jakarta)
+    // Offset is in minutes. -420 means local time is 420 minutes ahead of UTC.
+    const spy = vi.spyOn(Date.prototype, 'getTimezoneOffset')
+    spy.mockReturnValue(-420)
+
+    // If UTC is 14:30, and local is UTC+7, local time is 21:30
+    expect(formatLocalISO(date)).toBe('2023-10-25T21:30')
+
+    // Mock getTimezoneOffset to return 300 (UTC-5, e.g., EST)
+    // Local time is 300 minutes behind UTC.
+    spy.mockReturnValue(300)
+    expect(formatLocalISO(date)).toBe('2023-10-25T09:30')
+  })
+
+  it('should format valid date string to local ISO string', () => {
+    const spy = vi.spyOn(Date.prototype, 'getTimezoneOffset')
+    spy.mockReturnValue(0) // UTC
+
+    // Use an ISO string
+    expect(formatLocalISO('2023-10-25T14:30:00.000Z')).toBe('2023-10-25T14:30')
   })
 })
