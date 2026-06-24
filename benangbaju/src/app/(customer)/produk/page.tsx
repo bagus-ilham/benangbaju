@@ -8,7 +8,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 import { getActiveCategories } from '@/services/categories'
 import { ProductCard } from '@/components/product/ProductCard'
-import { Button, PageContainer, PageHeader, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
+import { Button, PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
 import { SlidersHorizontal, ChevronLeft, ChevronRight, X, PackageSearch } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
