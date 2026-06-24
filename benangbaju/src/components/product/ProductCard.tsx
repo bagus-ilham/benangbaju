@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Heart } from 'lucide-react'
@@ -25,43 +25,69 @@ export function ProductCard({ product, className }: ProductCardProps) : React.JS
 
   const liked = isLiked(product.id)
 
-  // Get active pricing (minimum price from variants)
-  const activeVariants = product.product_variants.filter((v) => v.is_active)
-  const prices = activeVariants.map((v) => Number(v.price))
-  
-  const minPrice = prices.length > 0 ? Math.min(...prices) : 0
-  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0
-  
-  // Find compare price matching the min price variant
-  const minPriceVariant = activeVariants.find((v) => Number(v.price) === minPrice)
-  const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
+  const {
+    activeVariants,
+    prices,
+    minPrice,
+    maxPrice,
+    comparePrice,
+    discountPercent,
+    primaryImage,
+    hoverImage,
+    hasMultipleColors,
+    sizeVariants
+  } = useMemo(() => {
+    // Get active pricing (minimum price from variants)
+    const activeVariants = product.product_variants.filter((v) => v.is_active)
+    const prices = activeVariants.map((v) => Number(v.price))
 
-  const discountPercent =
-    comparePrice && comparePrice > minPrice
-      ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
-      : null
+    const minPrice = prices.length > 0 ? Math.min(...prices) : 0
+    const maxPrice = prices.length > 0 ? Math.max(...prices) : 0
 
-  // Images swap layout
-  const primaryImage = product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || null
-  const hoverImage = product.product_images.find((img) => !img.is_primary && img.sort_order > 0)?.url || product.product_images[1]?.url || primaryImage
+    // Find compare price matching the min price variant
+    const minPriceVariant = activeVariants.find((v) => Number(v.price) === minPrice)
+    const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
+
+    const discountPercent =
+      comparePrice && comparePrice > minPrice
+        ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
+        : null
+
+    // Images swap layout
+    const primaryImage = product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || null
+    const hoverImage = product.product_images.find((img) => !img.is_primary && img.sort_order > 0)?.url || product.product_images[1]?.url || primaryImage
+
+    // Check if variants only vary by size (no color differences, or only one color)
+    const colorAttributes = new Set(
+      activeVariants.flatMap((v) =>
+        v.product_variant_attrs
+          ?.filter((a) => a.attr_name.toLowerCase().includes('warna'))
+          .map((a) => a.attr_value) || []
+      )
+    )
+    const hasMultipleColors = colorAttributes.size > 1
+
+    // Extract all sizes in variants that have stock
+    const sizeVariants = activeVariants.filter((v) =>
+      v.stock > 0 &&
+      v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
+    )
+
+    return {
+      activeVariants,
+      prices,
+      minPrice,
+      maxPrice,
+      comparePrice,
+      discountPercent,
+      primaryImage,
+      hoverImage,
+      hasMultipleColors,
+      sizeVariants
+    }
+  }, [product])
 
   const displayAltImage = isHovered || showAltImage
-
-  // Check if variants only vary by size (no color differences, or only one color)
-  const colorAttributes = new Set(
-    activeVariants.flatMap((v) => 
-      v.product_variant_attrs
-        ?.filter((a) => a.attr_name.toLowerCase().includes('warna'))
-        .map((a) => a.attr_value) || []
-    )
-  )
-  const hasMultipleColors = colorAttributes.size > 1
-
-  // Extract all sizes in variants that have stock
-  const sizeVariants = activeVariants.filter((v) => 
-    v.stock > 0 && 
-    v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
-  )
 
   const handleQuickAdd = async (e: React.MouseEvent, variant: ProductVariant) => {
     e.preventDefault()
