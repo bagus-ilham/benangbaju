@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useWishlist } from '@/hooks/useWishlist'
 import { useProducts } from '@/hooks/useProducts'
 import { ProductCard } from '@/components/product/ProductCard'
-import { PageContainer, PageHeader, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
+import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
 import { Heart } from 'lucide-react'
 
 export default function WishlistPage() : React.JSX.Element {
