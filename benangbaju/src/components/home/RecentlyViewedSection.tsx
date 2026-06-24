@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useRecentlyViewedStore } from '@/stores/recentlyViewedStore'
 import { ProductCard } from '@/components/product/ProductCard'
@@ -11,49 +11,50 @@ export function RecentlyViewedSection() : React.JSX.Element | null {
   const { products } = useRecentlyViewedStore()
   const [isMounted, setIsMounted] = useState(false)
 
+  const displayProducts = useMemo(() => {
+    const mappedProducts: ProductListItem[] = products.map((p) => ({
+      id: p.id,
+      category_id: '',
+      name: p.name,
+      slug: p.slug,
+      description: null,
+      short_description: null,
+      weight_gram: 1000,
+      is_featured: false,
+      created_at: new Date().toISOString(),
+      categories: null,
+      product_variants: [
+        {
+          id: '',
+          sku: '',
+          name: '',
+          price: p.price,
+          compare_price: null,
+          stock: 99,
+          weight_gram: null,
+          is_active: true,
+        },
+      ],
+      product_images: p.imageUrl
+        ? [
+            {
+              id: 'primary',
+              url: p.imageUrl,
+              alt_text: p.name,
+              sort_order: 0,
+              is_primary: true,
+            },
+          ]
+        : [],
+    }))
+    return mappedProducts.slice(0, 4)
+  }, [products])
+
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
   if (!isMounted || products.length === 0) return null
-
-  const mappedProducts: ProductListItem[] = products.map((p) => ({
-    id: p.id,
-    category_id: '',
-    name: p.name,
-    slug: p.slug,
-    description: null,
-    short_description: null,
-    weight_gram: 1000,
-    is_featured: false,
-    created_at: new Date().toISOString(),
-    categories: null,
-    product_variants: [
-      {
-        id: '',
-        sku: '',
-        name: '',
-        price: p.price,
-        compare_price: null,
-        stock: 99,
-        weight_gram: null,
-        is_active: true,
-      },
-    ],
-    product_images: p.imageUrl
-      ? [
-          {
-            id: 'primary',
-            url: p.imageUrl,
-            alt_text: p.name,
-            sort_order: 0,
-            is_primary: true,
-          },
-        ]
-      : [],
-  }))
-
-  const displayProducts = mappedProducts.slice(0, 4)
 
   return (
     <section className="bg-white py-16">

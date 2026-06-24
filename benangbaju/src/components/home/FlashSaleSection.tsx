@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/services/flashSales'
@@ -18,6 +18,48 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
     minutes: number
     seconds: number
   } | null>(null)
+
+  const mappedProducts: ProductListItem[] = useMemo(() => {
+    if (!flashSale) return []
+    return flashSale.flash_sale_items.map((item) => {
+      const pv = item.product_variants
+      const prod = pv?.products
+
+      const images = prod?.product_images?.map((img: { url: string; alt_text?: string | null; is_primary?: boolean }, idx: number) => ({
+        id: String(idx),
+        url: img.url,
+        alt_text: img.alt_text || prod.name,
+        sort_order: idx,
+        is_primary: img.is_primary ?? false,
+      })) || []
+
+      return {
+        id: prod?.id || '',
+        category_id: '',
+        name: prod?.name || 'Produk Flash Sale',
+        slug: prod?.slug || '',
+        description: null,
+        short_description: null,
+        weight_gram: 1000,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        categories: null,
+        product_variants: [
+          {
+            id: pv?.id || '',
+            sku: pv?.sku || '',
+            name: pv?.name || '',
+            price: Number(item.sale_price),
+            compare_price: Number(item.original_price),
+            stock: pv?.stock || 0,
+            weight_gram: null,
+            is_active: true,
+          },
+        ],
+        product_images: images,
+      }
+    })
+  }, [flashSale])
 
   useEffect(() => {
     if (!flashSale) return
@@ -44,45 +86,6 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
   }, [flashSale])
 
   if (!flashSale || !timeLeft) return null
-
-  const mappedProducts: ProductListItem[] = flashSale.flash_sale_items.map((item) => {
-    const pv = item.product_variants
-    const prod = pv?.products
-
-    const images = prod?.product_images?.map((img: { url: string; alt_text?: string | null; is_primary?: boolean }, idx: number) => ({
-      id: String(idx),
-      url: img.url,
-      alt_text: img.alt_text || prod.name,
-      sort_order: idx,
-      is_primary: img.is_primary ?? false,
-    })) || []
-
-    return {
-      id: prod?.id || '',
-      category_id: '',
-      name: prod?.name || 'Produk Flash Sale',
-      slug: prod?.slug || '',
-      description: null,
-      short_description: null,
-      weight_gram: 1000,
-      is_featured: false,
-      created_at: new Date().toISOString(),
-      categories: null,
-      product_variants: [
-        {
-          id: pv?.id || '',
-          sku: pv?.sku || '',
-          name: pv?.name || '',
-          price: Number(item.sale_price),
-          compare_price: Number(item.original_price),
-          stock: pv?.stock || 0,
-          weight_gram: null,
-          is_active: true,
-        },
-      ],
-      product_images: images,
-    }
-  })
 
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 
