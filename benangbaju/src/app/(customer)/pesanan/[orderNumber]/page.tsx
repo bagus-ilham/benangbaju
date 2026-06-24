@@ -8,7 +8,7 @@ import { useSubmitReview } from '@/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/components/shared/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState, Modal } from '@/components/shared'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, FileText, AlertCircle, Loader2 } from 'lucide-react'
+import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
