@@ -202,39 +202,41 @@ export const useCartStore = create<CartState>()(
 
           if (merge) {
             // Merge Local Items -> DB (taking maximum of both to prevent self-incrementing/accumulation)
-            for (const localItem of localItems) {
-              const dbItem = dbItemsMap.get(localItem.variantId)
-              const combinedQty = dbItem 
-                ? Math.min(Math.max(dbItem.quantity, localItem.quantity), localItem.stock || 9999)
-                : localItem.quantity
+            // ⚡ Bolt: Bulk upsert for performance improvement
+            if (localItems.length > 0) {
+              const upsertData = localItems.map((localItem) => {
+                const dbItem = dbItemsMap.get(localItem.variantId)
+                const combinedQty = dbItem
+                  ? Math.min(Math.max(dbItem.quantity, localItem.quantity), localItem.stock || 9999)
+                  : localItem.quantity
+
+                return {
+                  cart_id: cartId,
+                  variant_id: localItem.variantId,
+                  quantity: combinedQty,
+                }
+              })
 
               const { error: upsertError } = await supabase
                 .from('cart_items')
-                .upsert(
-                  {
-                    cart_id: cartId,
-                    variant_id: localItem.variantId,
-                    quantity: combinedQty,
-                  },
-                  { onConflict: 'cart_id,variant_id' }
-                )
+                .upsert(upsertData, { onConflict: 'cart_id,variant_id' })
 
               if (upsertError) throw upsertError
             }
           } else {
             // Overwrite DB with Local Items
             // Upsert all local items with exact local quantity
-            for (const localItem of localItems) {
+            // ⚡ Bolt: Bulk upsert for performance improvement
+            if (localItems.length > 0) {
+              const upsertData = localItems.map((localItem) => ({
+                cart_id: cartId,
+                variant_id: localItem.variantId,
+                quantity: localItem.quantity,
+              }))
+
               const { error: upsertError } = await supabase
                 .from('cart_items')
-                .upsert(
-                  {
-                    cart_id: cartId,
-                    variant_id: localItem.variantId,
-                    quantity: localItem.quantity,
-                  },
-                  { onConflict: 'cart_id,variant_id' }
-                )
+                .upsert(upsertData, { onConflict: 'cart_id,variant_id' })
 
               if (upsertError) throw upsertError
             }
