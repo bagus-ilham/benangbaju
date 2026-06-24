@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/shared'
 import { Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -56,11 +57,13 @@ export function ProductImageManager({
                   {/* Thumbnail Preview */}
                   <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                     {img.url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={img.url}
                         alt={img.alt_text || 'Preview'}
-                        className="object-cover w-full h-full"
+                        fill
+                        sizes="64px"
+                        unoptimized
+                        className="object-cover"
                         onError={(e) => {
                           e.currentTarget.src = 'https://placehold.co/150?text=Error'
                         }}

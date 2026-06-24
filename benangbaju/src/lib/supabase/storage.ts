@@ -21,20 +21,8 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
     })
 
   if (error) {
-    console.error('Storage upload error details:', error)
-    // Check for common errors like missing bucket or permission issues
-    const status = 'status' in error ? error['status'] : undefined
-    if (error.message.includes('Bucket not found') || status === 404) {
-      throw new Error(
-        `Bucket "${targetBucket}" tidak ditemukan. Silakan buat bucket bernama "${targetBucket}" (dengan centang "Public") di dashboard Supabase Anda terlebih dahulu.`
-      )
-    }
-    if (error.message.includes('row-level security') || error.message.includes('policy')) {
-      throw new Error(
-        `Gagal mengunggah. Pastikan bucket "${targetBucket}" memiliki policy RLS yang mengizinkan unggah (insert/select) untuk pengguna anonim/terautentikasi.`
-      )
-    }
-    throw new Error(error.message || 'Gagal mengunggah gambar.')
+    console.error('Storage upload error')
+    throw new Error('Gagal mengunggah gambar. Silakan periksa ukuran dan format gambar atau coba lagi nanti.')
   }
 
   const { data: urlData } = supabase.storage

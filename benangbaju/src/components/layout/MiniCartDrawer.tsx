@@ -123,8 +123,16 @@ export function MiniCartDrawer() : React.JSX.Element {
                             {item.productName || item.name}
                           </h4>
                         </Link>
+                        {/* 🎨 PALETTE ENHANCEMENT
+                        Problem: Tidak ada konfirmasi sebelum menghapus item dari keranjang (rentan terhapus tidak sengaja).
+                        Fix: Ditambahkan window.confirm
+                        Impact: Mencegah penghapusan item keranjang yang tidak disengaja */}
                         <button
-                          onClick={() => removeItem(item.variantId)}
+                          onClick={() => {
+                            if (window.confirm('Hapus item ini dari keranjang?')) {
+                              removeItem(item.variantId)
+                            }
+                          }}
                           className="text-neutral-400 hover:text-red-500 p-0.5 transition-colors cursor-pointer"
                           aria-label="Hapus item"
                         >

@@ -9,7 +9,10 @@ export function formatIDR(amount: number | string): string {
     currency: 'IDR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(numericAmount)
+  })
+    .format(numericAmount)
+    .replace(/^Rp/i, 'Rp ') // Ensure space after Rp
+    .replace(/Rp\s+/i, 'Rp ') // Ensure exactly one space
 }
 
 /**

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import type { Database } from '@/types/database'
 import {
   useAdminBanners,
@@ -191,10 +192,13 @@ export default function AdminBannersPage() : React.JSX.Element {
                     <td className="py-4 px-5 flex items-center space-x-3.5">
                       <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={b.image_url || ''}
-                          alt={b.title || undefined}
-                          className="object-cover w-full h-full"
+                          alt={b.title || ''}
+                          fill
+                          sizes="96px"
+                          unoptimized
+                          className="object-cover"
                           onError={(e) => {
                             e.currentTarget.src = 'https://placehold.co/600x300?text=No+Image'
                           }}
@@ -295,10 +299,13 @@ export default function AdminBannersPage() : React.JSX.Element {
                 <div className="w-20 h-10 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                   {image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={image_url}
                       alt="Desktop Preview"
-                      className="object-cover w-full h-full"
+                      fill
+                      sizes="80px"
+                      unoptimized
+                      className="object-cover"
                       onError={(e) => {
                         e.currentTarget.src = 'https://placehold.co/150?text=Error'
                       }}
@@ -357,10 +364,13 @@ export default function AdminBannersPage() : React.JSX.Element {
                 <div className="w-12 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                   {image_mobile_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={image_mobile_url}
                       alt="Mobile Preview"
-                      className="object-cover w-full h-full"
+                      fill
+                      sizes="40px"
+                      unoptimized
+                      className="object-cover"
                       onError={(e) => {
                         e.currentTarget.src = 'https://placehold.co/150?text=Error'
                       }}

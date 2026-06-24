@@ -14,7 +14,7 @@ export default function RootError({
   reset: () => void
 }) : React.JSX.Element {
   useEffect(() => {
-    console.error('Root application error:', error)
+    console.error('Root application error:', error.digest || 'unknown')
   }, [error])
 
   return (

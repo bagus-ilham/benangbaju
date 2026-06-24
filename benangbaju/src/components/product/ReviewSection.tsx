@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { Star, CheckCircle, ThumbsUp } from 'lucide-react'
 import { useReviews } from '@/hooks/useReviews'
 import { ProductRatingSummary } from '@/services/products'
@@ -125,10 +126,12 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
                           key={media.id}
                           className="relative aspect-square w-16 bg-neutral-100 border border-neutral-100 overflow-hidden"
                         >
-                          <img
+                          <Image
                             src={media.url}
                             alt="Media review"
-                            className="object-cover w-full h-full"
+                            fill
+                            sizes="64px"
+                            className="object-cover"
                           />
                         </div>
                       ))}

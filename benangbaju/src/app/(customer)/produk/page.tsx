@@ -280,12 +280,18 @@ function CatalogContent() {
             {isLoading ? (
               <ProductGridSkeleton count={6} />
             ) : products.length === 0 ? (
-              <EmptyState
-                icon={PackageSearch}
-                title="Produk Tidak Ditemukan"
-                description="Tidak ditemukan produk yang cocok dengan kriteria filter Anda."
-                action={{ label: 'Reset Filter', onClick: handleClearAll, variant: 'outline' }}
-              />
+              <React.Fragment>
+                {/* 🎨 PALETTE ENHANCEMENT
+                Problem: Tidak ada empty state yang jelas saat filter produk (kategori/harga) menghasilkan 0 produk.
+                Fix: Diperjelas deskripsi empty state untuk filter dan ditambahkan tombol reset filter.
+                Impact: Membantu user kembali ke katalog utama dengan cepat */}
+                <EmptyState
+                  icon={PackageSearch}
+                  title="Produk Tidak Ditemukan"
+                  description="Maaf, tidak ada produk yang cocok dengan filter atau pencarian Anda. Silakan ubah kriteria pencarian."
+                  action={{ label: 'Tampilkan Semua Produk', onClick: handleClearAll, variant: 'primary' }}
+                />
+              </React.Fragment>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
                 {products.map((product, index) => (

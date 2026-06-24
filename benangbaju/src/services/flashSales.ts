@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -70,7 +71,7 @@ export async function getActiveFlashSale(
     .maybeSingle()
 
   if (error) {
-    console.error('Error fetching active flash sale:', error)
+    safeLogError('Error fetching active flash sale:', error)
     return null
   }
 
@@ -175,7 +176,7 @@ export async function adminGetFlashSales(
     .order('starts_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching admin flash sales:', error)
+    safeLogError('Error fetching admin flash sales:', error)
     throw error
   }
 

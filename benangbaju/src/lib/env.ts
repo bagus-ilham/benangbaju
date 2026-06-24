@@ -6,11 +6,25 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_APP_URL',
 ] as const
 
+const serverEnvVars = [
+  'MIDTRANS_SERVER_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+] as const
+
 export function validateEnv() : void {
-  const missing = requiredEnvVars.filter((key) => {
+  const missing: string[] = requiredEnvVars.filter((key) => {
     const value = process.env[key]
     return !value || value.trim() === ''
   })
+
+  // Validate server-only variables if running in Node environment
+  if (typeof window === 'undefined') {
+    const missingServer = serverEnvVars.filter((key) => {
+      const value = process.env[key]
+      return !value || value.trim() === ''
+    })
+    missing.push(...missingServer)
+  }
 
   if (missing.length > 0) {
     const errorMessage =
@@ -19,7 +33,10 @@ export function validateEnv() : void {
       `\n\nPlease check your .env.local file.`
 
     console.error(errorMessage)
-    throw new Error(errorMessage)
+    // Don't crash the build process for missing server secrets
+    if (process.env.npm_lifecycle_event !== 'build') {
+      throw new Error(errorMessage)
+    }
   }
 }
 

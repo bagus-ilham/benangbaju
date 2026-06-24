@@ -47,15 +47,13 @@ async function getCachedHomepageData() {
   const spotlight1Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_1')?.value || ''
   const spotlight2Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_2')?.value || ''
 
-  let col1 = null
-  let col2 = null
+  const [col1Res, col2Res] = await Promise.all([
+    spotlight1Slug ? getCollectionBySlug(supabase, spotlight1Slug) : Promise.resolve(null),
+    spotlight2Slug ? getCollectionBySlug(supabase, spotlight2Slug) : Promise.resolve(null),
+  ])
 
-  if (spotlight1Slug) {
-    col1 = await getCollectionBySlug(supabase, spotlight1Slug)
-  }
-  if (spotlight2Slug) {
-    col2 = await getCollectionBySlug(supabase, spotlight2Slug)
-  }
+  let col1 = col1Res
+  let col2 = col2Res
 
   // Fallback to defaults if not set or not found
   if (!col1) {

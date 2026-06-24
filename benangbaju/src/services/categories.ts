@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -6,12 +7,12 @@ export type Category = Database['public']['Tables']['categories']['Row']
 export async function getActiveCategories(supabase: SupabaseClient<Database>): Promise<Category[]> {
   const { data, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
 
   if (error) {
-    console.error('Error fetching categories:', error)
+    safeLogError('Error fetching categories:', error)
     return []
   }
 
@@ -24,13 +25,13 @@ export async function getCategoryBySlug(
 ): Promise<Category | null> {
   const { data, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .eq('slug', slug)
     .eq('is_active', true)
     .single()
 
   if (error) {
-    console.error(`Error fetching category for slug ${slug}:`, error)
+    safeLogError(`Error fetching category for slug ${slug}:`, error)
     return null
   }
 
@@ -40,11 +41,11 @@ export async function getCategoryBySlug(
 export async function adminGetCategories(supabase: SupabaseClient<Database>): Promise<Category[]> {
   const { data, error } = await supabase
     .from('categories')
-    .select('*')
+    .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .order('sort_order', { ascending: true })
 
   if (error) {
-    console.error('Error in adminGetCategories:', error)
+    safeLogError('Error in adminGetCategories:', error)
     throw error
   }
 
@@ -66,7 +67,7 @@ export async function adminCreateCategory(
   const { data, error } = await supabase
     .from('categories')
     .insert(categoryData)
-    .select('*')
+    .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .single()
 
   if (error) throw error
@@ -90,7 +91,7 @@ export async function adminUpdateCategory(
     .from('categories')
     .update(categoryData)
     .eq('id', categoryId)
-    .select('*')
+    .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .single()
 
   if (error) throw error

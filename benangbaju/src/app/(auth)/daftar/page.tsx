@@ -33,8 +33,8 @@ export default function RegisterPage() : React.JSX.Element {
       return
     }
 
-    if (password.length < 6) {
-      toast.error('Kata sandi harus minimal 6 karakter.')
+    if (password.length < 8) {
+      toast.error('Kata sandi harus minimal 8 karakter.')
       return
     }
 
@@ -149,7 +149,7 @@ export default function RegisterPage() : React.JSX.Element {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minimal 6 karakter"
+                  placeholder="Minimal 8 karakter"
                   required
                   autoComplete="new-password"
                 />

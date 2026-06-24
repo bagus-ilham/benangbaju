@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -19,12 +20,13 @@ export async function adminGetCustomers(
 ): Promise<CustomerProfile[]> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
     .eq('role', 'customer')
     .order('created_at', { ascending: false })
+    .limit(500)
 
   if (error) {
-    console.error('Error fetching admin customers:', error)
+    safeLogError('Error fetching admin customers:', error)
     throw error
   }
 
@@ -56,8 +58,8 @@ export async function adminToggleCustomerStatus(
     .eq('role', 'customer') // Security guard: only toggle customer role profiles
 
   if (error) {
-    console.error('Error toggling customer status:', error)
-    return { success: false, error: new Error(error.message) }
+    safeLogError('Error toggling customer status:', error)
+    return { success: false, error: new Error('Gagal mengubah status pelanggan.') }
   }
 
   return { success: true, error: null }

@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Json } from '@/types/database'
 
@@ -19,12 +20,13 @@ export async function getUserNotifications(
 ): Promise<UserNotification[]> {
   const { data, error } = await supabase
     .from('notifications')
-    .select('*')
+    .select('id, user_id, type, title, message, is_read, data, created_at')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
+    .limit(50)
 
   if (error) {
-    console.error('Error fetching user notifications:', error)
+    safeLogError('Error fetching user notifications:', error)
     return []
   }
 
@@ -45,15 +47,17 @@ export async function getUserNotifications(
 // 2. Mark single notification as read
 export async function markNotificationRead(
   supabase: SupabaseClient<Database>,
-  notificationId: string
+  notificationId: string,
+  userId: string
 ): Promise<{ success: boolean; error: Error | null }> {
   const { error } = await supabase
     .from('notifications')
     .update({ is_read: true })
     .eq('id', notificationId)
+    .eq('user_id', userId)
 
   if (error) {
-    console.error('Error marking notification read:', error)
+    safeLogError('Error marking notification read:', error)
     return { success: false, error: new Error(error.message) }
   }
 
@@ -72,7 +76,7 @@ export async function markAllNotificationsRead(
     .eq('is_read', false)
 
   if (error) {
-    console.error('Error marking all notifications read:', error)
+    safeLogError('Error marking all notifications read:', error)
     return { success: false, error: new Error(error.message) }
   }
 

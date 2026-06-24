@@ -34,14 +34,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    // Fetch dynamic products
-    const { data: products } = await supabase
-      .from('products')
-      .select('slug, updated_at')
-      .eq('is_active', true)
+    const [productsRes, categoriesRes, collectionsRes] = await Promise.all([
+      supabase.from('products').select('slug, updated_at').eq('is_active', true),
+      supabase.from('categories').select('slug').eq('is_active', true),
+      supabase.from('collections').select('slug').eq('is_active', true)
+    ])
 
-    if (products) {
-      products.forEach((product) => {
+    if (productsRes.data) {
+      productsRes.data.forEach((product) => {
         sitemapEntries.push({
           url: `${baseUrl}/produk/${product.slug}`,
           lastModified: new Date(product.updated_at),
@@ -51,14 +51,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     }
 
-    // Fetch dynamic categories
-    const { data: categories } = await supabase
-      .from('categories')
-      .select('slug')
-      .eq('is_active', true)
-
-    if (categories) {
-      categories.forEach((category) => {
+    if (categoriesRes.data) {
+      categoriesRes.data.forEach((category) => {
         sitemapEntries.push({
           url: `${baseUrl}/kategori/${category.slug}`,
           lastModified: new Date(),
@@ -68,14 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     }
 
-    // Fetch dynamic collections
-    const { data: collections } = await supabase
-      .from('collections')
-      .select('slug')
-      .eq('is_active', true)
-
-    if (collections) {
-      collections.forEach((collection) => {
+    if (collectionsRes.data) {
+      collectionsRes.data.forEach((collection) => {
         sitemapEntries.push({
           url: `${baseUrl}/koleksi/${collection.slug}`,
           lastModified: new Date(),

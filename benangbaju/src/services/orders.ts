@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -215,7 +216,7 @@ export async function getOrders(
 ): Promise<{ orders: Order[]; totalCount: number }> {
   let query = supabase
     .from('orders')
-    .select('*, order_items(*), order_shipping(*)', { count: 'exact' })
+    .select('id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal, product_reviews(id, rating, body)), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)', { count: 'exact' })
     .eq('user_id', userId)
 
   if (status && status !== 'all') {
@@ -233,7 +234,7 @@ export async function getOrders(
   const { data, count, error } = await query
 
   if (error) {
-    console.error('Error fetching orders:', error)
+    safeLogError('Error fetching orders:', error)
     return { orders: [], totalCount: 0 }
   }
 
@@ -261,16 +262,27 @@ export async function getOrders(
 // 2. Get order details by order number
 export async function getOrderDetail(
   supabase: SupabaseClient<Database>,
-  orderNumber: string
+  orderNumber: string,
+  userId?: string
 ): Promise<Order | null> {
-  const { data, error } = await supabase
+  // 🛡️ SENTINEL FIX
+  // Vulnerability: IDOR on order details
+  // Severity: Critical
+  // Fix: Added userId parameter to verify order ownership. Admin skips this by passing undefined.
+  // Impact: Prevents unauthenticated/unauthorized users from viewing other user's order details.
+  let query = supabase
     .from('orders')
     .select('*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*)')
     .eq('order_number', orderNumber)
-    .maybeSingle()
+
+  if (userId) {
+    query = query.eq('user_id', userId)
+  }
+
+  const { data, error } = await query.maybeSingle()
 
   if (error) {
-    console.error('Error fetching order detail:', error)
+    safeLogError('Error fetching order detail:', error)
     return null
   }
 
@@ -306,7 +318,7 @@ export async function createOrder(
   })
 
   if (error) {
-    console.error('Error calling create_order:', error)
+    safeLogError('Error calling create_order:', error)
     return {
       success: false,
       message: 'Gagal membuat pesanan. Silakan coba lagi.',
@@ -357,8 +369,8 @@ export async function cancelOrder(
   })
 
   if (error) {
-    console.error('Error calling cancel_order:', error)
-    return { success: false, message: error.message }
+    safeLogError('Error calling cancel_order:', error)
+    return { success: false, message: 'Terjadi kesalahan saat membatalkan pesanan.' }
   }
 
   if (data && isObject(data)) {
@@ -381,8 +393,8 @@ export async function confirmDelivery(
   })
 
   if (error) {
-    console.error('Error calling confirm_delivery:', error)
-    return { success: false, message: error.message }
+    safeLogError('Error calling confirm_delivery:', error)
+    return { success: false, message: 'Terjadi kesalahan saat mengkonfirmasi pesanan.' }
   }
 
   if (data && isObject(data)) {
@@ -405,7 +417,7 @@ export async function lazyCancelExpiredOrders(
   })
 
   if (error) {
-    console.error('Error calling lazy_cancel_expired_orders:', error)
+    safeLogError('Error calling lazy_cancel_expired_orders:', error)
   }
 }
 
@@ -419,7 +431,7 @@ export async function generatePaymentToken(
   })
 
   if (error) {
-    console.error('Error invoking generate-payment function:', error)
+    safeLogError('Error invoking generate-payment function:', error)
     return {
       success: false,
       message: 'Gagal menghubungi server pembayaran. Silakan coba lagi.',
@@ -459,7 +471,7 @@ export async function checkPaymentStatus(
   })
 
   if (error) {
-    console.error('Error invoking check-payment-status function:', error)
+    safeLogError('Error invoking check-payment-status function:', error)
     return {
       success: false,
       message: 'Gagal mengecek status pembayaran.',
@@ -523,9 +535,9 @@ export async function adminGetOrders(
     .from('orders')
     .select(
       `
-        *,
-        order_items (*),
-        order_shipping (*),
+        id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at,
+        order_items (id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal),
+        order_shipping (id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at),
         profiles (name, email)
       `,
       { count: 'exact' }
@@ -551,7 +563,7 @@ export async function adminGetOrders(
     .range(offset, offset + limit - 1)
 
   if (error) {
-    console.error('Error fetching admin orders:', error)
+    safeLogError('Error fetching admin orders:', error)
     throw error
   }
 
@@ -634,6 +646,18 @@ export async function adminUpdateOrderStatus(
   status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled',
   trackingNumber?: string
 ): Promise<{ success: boolean; message?: string }> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, message: 'Unauthorized' }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'admin') {
+    return { success: false, message: 'Forbidden: Admin access required' }
+  }
   if (status === 'cancelled') {
     return await cancelOrder(supabase, orderId, 'Dibatalkan oleh Admin')
   }
@@ -723,7 +747,7 @@ export async function adminGetReturnRequests(
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching admin return requests:', error)
+    safeLogError('Error fetching admin return requests:', error)
     throw error
   }
 
@@ -830,7 +854,7 @@ export async function adminUpdateReturnRequest(
     .eq('id', requestId)
 
   if (error) {
-    console.error('Error updating return request:', error)
+    safeLogError('Error updating return request:', error)
     throw error
   }
 

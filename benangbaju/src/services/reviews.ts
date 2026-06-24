@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -44,9 +45,10 @@ export async function getApprovedReviews(
     .eq('product_id', productId)
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
+    .limit(50)
 
   if (error) {
-    console.error('Error fetching reviews:', error)
+    safeLogError('Error fetching reviews:', error)
     return []
   }
 
@@ -155,7 +157,7 @@ export async function adminGetReviews(
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching admin reviews:', error)
+    safeLogError('Error fetching admin reviews:', error)
     throw error
   }
 
@@ -235,7 +237,7 @@ export async function adminUpdateReviewStatus(
     .from('product_reviews')
     .update({ status })
     .eq('id', reviewId)
-    .select('*')
+    .select('id, order_item_id, product_id, variant_id, user_id, rating, title, body, is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at')
     .single()
 
   if (error) throw error
@@ -259,7 +261,7 @@ export async function adminReplyToReview(
       },
       { onConflict: 'review_id' }
     )
-    .select('*')
+    .select('id, review_id, admin_id, body, created_at')
     .single()
 
   if (error) throw error
@@ -297,7 +299,7 @@ export async function customerSubmitReview(
       status: 'pending',
       is_verified_purchase: true,
     })
-    .select('*')
+    .select('id, order_item_id, product_id, variant_id, user_id, rating, title, body, is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at')
     .single()
 
   if (reviewErr) throw reviewErr

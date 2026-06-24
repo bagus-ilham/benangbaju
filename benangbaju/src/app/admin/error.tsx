@@ -11,7 +11,7 @@ export default function AdminError({
   reset: () => void
 }) : React.JSX.Element {
   useEffect(() => {
-    console.error('Admin panel error:', error)
+    console.error('Admin panel error:', error.digest || 'unknown')
   }, [error])
 
   return (

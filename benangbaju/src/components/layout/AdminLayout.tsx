@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import NextImage from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
@@ -116,11 +117,15 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
         <div className="flex h-16 items-center px-6 border-b border-neutral-200">
           {logoUrl ? (
             <Link href="/admin" className="flex items-center space-x-2">
-              <img
-                src={logoUrl}
-                alt="Logo"
-                className="h-8 w-auto object-contain max-w-[120px]"
-              />
+              <div className="relative h-8 w-24">
+                <NextImage
+                  src={logoUrl}
+                  alt="Logo"
+                  fill
+                  sizes="96px"
+                  className="object-contain object-left"
+                />
+              </div>
               <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
                 CMS
               </span>
@@ -177,11 +182,15 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
               <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200">
                 {logoUrl ? (
                   <div className="flex items-center space-x-2">
-                    <img
-                      src={logoUrl}
-                      alt="Logo"
-                      className="h-8 w-auto object-contain max-w-[120px]"
-                    />
+                    <div className="relative h-6 w-20">
+                      <NextImage
+                        src={logoUrl}
+                        alt="Logo"
+                        fill
+                        sizes="80px"
+                        className="object-contain object-left"
+                      />
+                    </div>
                     <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
                       CMS
                     </span>

@@ -51,7 +51,7 @@ export function useMarkNotificationRead(userId: string) : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: (notificationId: string) => markNotificationRead(supabase, notificationId),
+    mutationFn: (notificationId: string) => markNotificationRead(supabase, notificationId, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
     },

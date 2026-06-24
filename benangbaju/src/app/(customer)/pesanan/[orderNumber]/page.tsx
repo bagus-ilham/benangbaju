@@ -37,7 +37,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const hasTriggeredVerification = useRef(false)
 
   // 1. Fetch Order Details
-  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber)
+  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber, user?.id)
 
   const [formattedDate, setFormattedDate] = useState('')
 
@@ -71,9 +71,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
 
     const doCheck = async (attempt: number) => {
       try {
-        console.log(`Checking payment status (Attempt ${attempt})...`)
         const result = await checkPaymentMutation.mutateAsync(orderNumber)
-        console.log(`Payment status check result (Attempt ${attempt}):`, result)
         if (result.success && result.order_status && result.order_status !== 'pending_payment') {
           setIsVerifyingPayment(false)
           refetch()

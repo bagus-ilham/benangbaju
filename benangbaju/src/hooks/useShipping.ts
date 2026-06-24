@@ -52,12 +52,13 @@ export function useUpdateUserAddress() : UseMutationResult<
   return useMutation({
     mutationFn: ({
       addressId,
+      userId,
       address,
     }: {
       addressId: string
       userId: string
       address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
-    }) => updateUserAddress(supabase, addressId, address),
+    }) => updateUserAddress(supabase, addressId, userId, address),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.userId] })
     },
@@ -73,8 +74,8 @@ export function useDeleteUserAddress() : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: ({ addressId }: { addressId: string; userId: string }) =>
-      deleteUserAddress(supabase, addressId),
+    mutationFn: ({ addressId, userId }: { addressId: string; userId: string }) =>
+      deleteUserAddress(supabase, addressId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.userId] })
     },

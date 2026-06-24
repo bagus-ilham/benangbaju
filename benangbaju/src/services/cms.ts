@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Json } from '@/types/database'
 
@@ -29,11 +30,11 @@ export interface LandingPage {
 export async function adminGetRedirects(supabase: SupabaseClient<Database>): Promise<RedirectRule[]> {
   const { data, error } = await supabase
     .from('redirects')
-    .select('*')
+    .select('id, from_path, to_path, status_code, is_active, created_at')
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching redirects:', error)
+    safeLogError('Error fetching redirects:', error)
     throw error
   }
 
@@ -59,7 +60,7 @@ export async function adminCreateRedirect(
     .single()
 
   if (error) {
-    console.error('Error creating redirect:', error)
+    safeLogError('Error creating redirect:', error)
     throw error
   }
 
@@ -84,7 +85,7 @@ export async function adminUpdateRedirect(
     .eq('id', redirectId)
 
   if (error) {
-    console.error('Error updating redirect:', error)
+    safeLogError('Error updating redirect:', error)
     throw error
   }
 }
@@ -99,7 +100,7 @@ export async function adminDeleteRedirect(
     .eq('id', redirectId)
 
   if (error) {
-    console.error('Error deleting redirect:', error)
+    safeLogError('Error deleting redirect:', error)
     throw error
   }
 }
@@ -111,11 +112,11 @@ export async function adminDeleteRedirect(
 export async function adminGetLandingPages(supabase: SupabaseClient<Database>): Promise<LandingPage[]> {
   const { data, error } = await supabase
     .from('landing_pages')
-    .select('*')
+    .select('id, slug, title, content, meta_title, meta_description, is_active, created_at, updated_at')
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching landing pages:', error)
+    safeLogError('Error fetching landing pages:', error)
     throw error
   }
 
@@ -144,7 +145,7 @@ export async function adminCreateLandingPage(
     .single()
 
   if (error) {
-    console.error('Error creating landing page:', error)
+    safeLogError('Error creating landing page:', error)
     throw error
   }
 
@@ -172,7 +173,7 @@ export async function adminUpdateLandingPage(
     .eq('id', landingPageId)
 
   if (error) {
-    console.error('Error updating landing page:', error)
+    safeLogError('Error updating landing page:', error)
     throw error
   }
 }
@@ -187,7 +188,7 @@ export async function adminDeleteLandingPage(
     .eq('id', landingPageId)
 
   if (error) {
-    console.error('Error deleting landing page:', error)
+    safeLogError('Error deleting landing page:', error)
     throw error
   }
 }

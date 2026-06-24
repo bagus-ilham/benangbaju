@@ -14,7 +14,7 @@ export default function CustomerError({
   reset: () => void
 }) : React.JSX.Element {
   useEffect(() => {
-    console.error('Customer section error:', error)
+    console.error('Customer section error:', error.digest || 'unknown')
   }, [error])
 
   return (

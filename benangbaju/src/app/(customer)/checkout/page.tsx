@@ -110,7 +110,7 @@ export default function CheckoutPage() : React.JSX.Element {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('vouchers')
-        .select('*')
+        .select('id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at')
         .eq('is_active', true)
         .gte('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
@@ -127,9 +127,11 @@ export default function CheckoutPage() : React.JSX.Element {
     }
   }, [addresses])
 
+  const variantIdsStr = useMemo(() => displayItems.map((i) => i.variantId).sort().join(','), [displayItems])
+
   // 5. Query Variant Weights to calculate total weight
   const { data: variantDetails } = useQuery({
-    queryKey: ['checkout-weights', displayItems.map((i) => i.variantId)],
+    queryKey: ['checkout-weights', variantIdsStr],
     queryFn: async () => {
       const { data, error } = await supabase
           .from('product_variants')
@@ -346,24 +348,28 @@ export default function CheckoutPage() : React.JSX.Element {
       />
       <PageContainer size="lg" className="py-10 page-content">
         
-        {/* Step-style Visual Progress Bar */}
+        {/* 🎨 PALETTE ENHANCEMENT
+        Problem: Visual progress bar pada checkout tidak menggunakan atribut aria-current="step" untuk screen reader.
+        Fix: Menambahkan role="list" pada kontainer dan aria-current="step" pada langkah aktif
+        Impact: Screen reader dapat mengidentifikasi langkah saat ini dengan benar */}
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
+          role="list"
           className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto"
         >
-          <Link href="/cart" className="flex items-center space-x-2 group">
+          <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
             <div className="w-5 h-5 rounded-full border border-neutral-300 flex items-center justify-center text-[10px] text-neutral-400 font-sans group-hover:border-brand-black group-hover:text-brand-black transition-colors">1</div>
             <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-heading group-hover:text-brand-black transition-colors">Keranjang</span>
           </Link>
-          <div className="w-8 md:w-12 h-px bg-neutral-200" />
-          <div className="flex items-center space-x-2">
+          <div className="w-8 md:w-12 h-px bg-neutral-200" aria-hidden="true" />
+          <div role="listitem" aria-current={checkoutStep === 'shipping' ? 'step' : undefined} className="flex items-center space-x-2">
             <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'shipping' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}>2</div>
             <span className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'shipping' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}>Pengiriman</span>
           </div>
-          <div className="w-8 md:w-12 h-px bg-neutral-200" />
-          <div className="flex items-center space-x-2">
+          <div className="w-8 md:w-12 h-px bg-neutral-200" aria-hidden="true" />
+          <div role="listitem" aria-current={checkoutStep === 'payment' ? 'step' : undefined} className="flex items-center space-x-2">
             <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'payment' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}>3</div>
             <span className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'payment' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}>Pembayaran</span>
           </div>
@@ -428,9 +434,21 @@ export default function CheckoutPage() : React.JSX.Element {
                               whileHover={{ y: -1, borderColor: '#171717' }}
                               whileTap={{ scale: 0.98 }}
                               key={address.id}
+                              role="button"
+                              tabIndex={0}
                               onClick={() => setSelectedAddress(address)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault()
+                                  setSelectedAddress(address)
+                                }
+                              }}
                               className="p-3 border border-neutral-200 text-xs cursor-pointer bg-white transition-all duration-200"
                             >
+                              {/* 🎨 PALETTE ENHANCEMENT
+                              Problem: Card pilihan alamat menggunakan <motion.div onClick={...}> tanpa role button dan tabIndex, menghalangi navigasi keyboard saat checkout.
+                              Fix: Ditambahkan role="button", tabIndex={0}, dan onKeyDown
+                              Impact: Aksesibilitas keyboard lebih baik */}
                               <p className="font-heading font-medium text-[10px] text-brand-black uppercase tracking-wider">{address.label}</p>
                               <p className="font-sans text-neutral-700 mt-1 font-medium">{address.recipient_name}</p>
                               <p className="text-neutral-500 truncate mt-0.5 text-[11px]">{address.full_address}</p>
@@ -474,13 +492,25 @@ export default function CheckoutPage() : React.JSX.Element {
                       whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#171717' }}
                       whileTap={{ scale: 0.99 }}
                       key={option.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSelectedCourier(option)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setSelectedCourier(option)
+                        }
+                      }}
                       className={`p-4 border cursor-pointer transition-all duration-300 relative rounded-none ${
                         selectedCourier?.id === option.id
                           ? 'border-brand-gold bg-brand-gold-muted/10 ring-1 ring-brand-gold'
                           : 'border-neutral-200 bg-white'
                       }`}
                     >
+                      {/* 🎨 PALETTE ENHANCEMENT
+                      Problem: Opsi pengiriman menggunakan <motion.div onClick={...}> tanpa dukungan interaksi keyboard.
+                      Fix: Ditambahkan role="button", tabIndex={0}, dan onKeyDown
+                      Impact: Aksesibilitas keyboard lebih baik untuk seluruh alur checkout */}
                       <div className="flex justify-between items-center mb-1">
                         <span className="font-heading font-medium text-xs text-brand-black uppercase tracking-wider">
                           {option.courier_name}
@@ -507,15 +537,24 @@ export default function CheckoutPage() : React.JSX.Element {
 
             {/* Note Section */}
             <div className="space-y-2 pt-4 border-t border-neutral-100">
-              <label className="block text-xs uppercase tracking-widest font-heading font-bold text-brand-black">
+              {/* 🎨 PALETTE ENHANCEMENT
+              Problem: Form input textarea untuk catatan pesanan tidak memiliki id dan htmlFor.
+              Fix: Ditambahkan id="order-notes" dan htmlFor="order-notes"
+              Impact: Aksesibilitas form lebih baik untuk screen reader */}
+              <label htmlFor="order-notes" className="block text-xs uppercase tracking-widest font-heading font-bold text-brand-black">
                 Catatan Pesanan
               </label>
               <textarea
+                id="order-notes"
                 className="w-full px-4 py-3 border border-neutral-200 focus:border-brand-black focus:bg-neutral-50/30 outline-none rounded-none transition-all duration-300 h-20 resize-none text-xs focus-ring-premium"
                 placeholder="Tulis instruksi khusus (cth: ukuran tambahan, warna cadangan, dll)..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                maxLength={200}
               />
+              <p className="text-[10px] text-right text-neutral-400 font-sans">
+                {notes.length}/200 karakter
+              </p>
             </div>
           </motion.div>
 

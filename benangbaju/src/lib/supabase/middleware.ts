@@ -55,7 +55,15 @@ export async function updateSession(request: NextRequest) : Promise<NextResponse
         .maybeSingle()
 
       if (redirectCache.size > 1000) {
-        redirectCache.clear()
+        const now = Date.now()
+        for (const [key, val] of redirectCache.entries()) {
+          if (val.expiresAt < now) {
+            redirectCache.delete(key)
+          }
+        }
+        if (redirectCache.size > 1000) {
+          redirectCache.clear()
+        }
       }
 
       if (redirectData) {

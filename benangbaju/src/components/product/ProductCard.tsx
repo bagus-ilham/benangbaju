@@ -16,12 +16,13 @@ interface ProductCardProps {
   className?: string
 }
 
-export function ProductCard({ product, className }: ProductCardProps) : React.JSX.Element {
+export const ProductCard = React.memo(function ProductCard({ product, className }: ProductCardProps) : React.JSX.Element {
   const { isLiked, toggleWishlist } = useWishlist()
   const { addItem, setCartDrawerOpen } = useCart()
   const [isHovered, setIsHovered] = useState(false)
   const [showAltImage, setShowAltImage] = useState(false)
   const [isAdding, setIsAdding] = useState<string | null>(null)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   const liked = isLiked(product.id)
 
@@ -184,7 +185,7 @@ export function ProductCard({ product, className }: ProductCardProps) : React.JS
           }}
         >
           {primaryImage ? (
-            <div className="relative w-full h-full">
+            <div className={cn("relative w-full h-full", !imageLoaded && "animate-pulse bg-neutral-200")}>
               {/* Primary Image */}
               <Image
                 src={primaryImage}
@@ -196,6 +197,7 @@ export function ProductCard({ product, className }: ProductCardProps) : React.JS
                   displayAltImage && hoverImage !== primaryImage ? 'opacity-0' : 'opacity-100'
                 )}
                 priority={false}
+                onLoad={() => setImageLoaded(true)}
               />
               {/* Hover Swap Image */}
               {hoverImage && hoverImage !== primaryImage && (
@@ -236,15 +238,24 @@ export function ProductCard({ product, className }: ProductCardProps) : React.JS
           </div>
         )}
 
-        {/* Wishlist Toggle Button (Top-Right overlay) */}
+        {/* 🎨 PALETTE ENHANCEMENT
+        Problem: Tombol Wishlist pada product card membutuhkan aria-pressed state dan visual feedback.
+        Fix: Menambahkan aria-pressed={liked} dan toast notification.
+        Impact: Aksesibilitas interaksi toggle lebih baik untuk screen reader dan feedback visual yang jelas */}
         <button
           onClick={(e) => {
             e.preventDefault()
             e.stopPropagation()
             toggleWishlist(product.id)
+            if (liked) {
+              toast.success('Dihapus dari wishlist', { icon: '🤍' })
+            } else {
+              toast.success('Ditambahkan ke wishlist', { icon: '❤️' })
+            }
           }}
           className="absolute top-3 right-3 p-1.5 bg-white/85 hover:bg-white border border-neutral-100 transition-all rounded-none duration-300 hover:scale-110 active:scale-90 z-10"
           aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
+          aria-pressed={liked}
         >
           <Heart
             className={cn(
@@ -333,4 +344,4 @@ export function ProductCard({ product, className }: ProductCardProps) : React.JS
       </div>
     </div>
   )
-}
+})

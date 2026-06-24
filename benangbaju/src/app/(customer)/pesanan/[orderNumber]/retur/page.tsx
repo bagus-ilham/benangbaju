@@ -51,7 +51,7 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
   }, [isAuthenticated, authLoading, router])
 
   // 2. Fetch Order Details
-  const { data: order, isLoading: orderLoading } = useOrderDetail(orderNumber)
+  const { data: order, isLoading: orderLoading } = useOrderDetail(orderNumber, user?.id)
 
   // 3. Check if order has existing return requests
   const { data: existingReturn, isLoading: checkReturnLoading } = useQuery({
@@ -59,7 +59,7 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
     queryFn: async () => {
       const { data } = await supabase
         .from('return_requests')
-        .select('*')
+        .select('id, order_id, user_id, status, reason, customer_notes, admin_notes, refund_amount, refund_bank_name, refund_account_number, refund_account_name, refund_transferred_at, approved_at, rejected_at, completed_at, created_at, updated_at')
         .eq('order_id', order!.id)
         .maybeSingle()
       return data
@@ -152,8 +152,7 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
       router.push(`/pesanan/${order.order_number}`)
     } catch (err: unknown) {
       console.error('Error submitting return:', err)
-      const message = err instanceof Error ? err.message : 'Gagal mengirim pengajuan retur'
-      toast.error(message)
+      toast.error('Gagal mengirim pengajuan retur. Silakan coba lagi.')
     } finally {
       setIsSubmitting(false)
     }

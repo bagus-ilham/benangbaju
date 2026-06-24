@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -8,14 +9,14 @@ export async function getActiveCollections(supabase: SupabaseClient<Database>): 
   
   const { data, error } = await supabase
     .from('collections')
-    .select('*')
+    .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
     .eq('is_active', true)
     .or(`starts_at.is.null,starts_at.lte.${now}`)
     .or(`ends_at.is.null,ends_at.gte.${now}`)
     .order('sort_order', { ascending: true })
 
   if (error) {
-    console.error('Error fetching collections:', error)
+    safeLogError('Error fetching collections:', error)
     return []
   }
 
@@ -28,13 +29,13 @@ export async function getCollectionBySlug(
 ): Promise<Collection | null> {
   const { data, error } = await supabase
     .from('collections')
-    .select('*')
+    .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
     .eq('slug', slug)
     .eq('is_active', true)
     .single()
 
   if (error) {
-    console.error(`Error fetching collection for slug ${slug}:`, error)
+    safeLogError(`Error fetching collection for slug ${slug}:`, error)
     return null
   }
 
@@ -63,7 +64,7 @@ export async function adminGetCollections(
     .order('sort_order', { ascending: true })
 
   if (error) {
-    console.error('Error in adminGetCollections:', error)
+    safeLogError('Error in adminGetCollections:', error)
     throw error
   }
 

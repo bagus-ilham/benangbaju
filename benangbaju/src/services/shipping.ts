@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -52,13 +53,13 @@ export async function getUserAddresses(
 ): Promise<UserAddress[]> {
   const { data, error } = await supabase
     .from('user_addresses')
-    .select('*')
+    .select('id, user_id, label, recipient_name, phone, province_name, city_name, district_name, postal_code, full_address, zone_id, is_default, created_at')
     .eq('user_id', userId)
     .order('is_default', { ascending: false })
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching user addresses:', error)
+    safeLogError('Error fetching user addresses:', error)
     return []
   }
 
@@ -93,8 +94,8 @@ export async function addUserAddress(
     .single()
 
   if (error) {
-    console.error('Error adding user address:', error)
-    return { data: null, error: new Error(error.message) }
+    safeLogError('Error adding user address:', error)
+    return { data: null, error: new Error('Gagal menambahkan alamat.') }
   }
 
   return {
@@ -121,18 +122,20 @@ export async function addUserAddress(
 export async function updateUserAddress(
   supabase: SupabaseClient<Database>,
   addressId: string,
+  userId: string,
   address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
 ): Promise<{ data: UserAddress | null; error: Error | null }> {
   const { data, error } = await supabase
     .from('user_addresses')
     .update(address)
     .eq('id', addressId)
+    .eq('user_id', userId)
     .select()
     .single()
 
   if (error) {
-    console.error('Error updating user address:', error)
-    return { data: null, error: new Error(error.message) }
+    safeLogError('Error updating user address:', error)
+    return { data: null, error: new Error('Gagal memperbarui alamat.') }
   }
 
   return {
@@ -158,16 +161,18 @@ export async function updateUserAddress(
 // 4. Delete user address
 export async function deleteUserAddress(
   supabase: SupabaseClient<Database>,
-  addressId: string
+  addressId: string,
+  userId: string
 ): Promise<{ success: boolean; error: Error | null }> {
   const { error } = await supabase
     .from('user_addresses')
     .delete()
     .eq('id', addressId)
+    .eq('user_id', userId)
 
   if (error) {
-    console.error('Error deleting user address:', error)
-    return { success: false, error: new Error(error.message) }
+    safeLogError('Error deleting user address:', error)
+    return { success: false, error: new Error('Gagal menghapus alamat.') }
   }
 
   return { success: true, error: null }
@@ -188,8 +193,8 @@ export async function setDefaultAddress(
     .eq('user_id', userId)
 
   if (error) {
-    console.error('Error setting default address:', error)
-    return { success: false, error: new Error(error.message) }
+    safeLogError('Error setting default address:', error)
+    return { success: false, error: new Error('Gagal mengatur alamat utama.') }
   }
 
   return { success: true, error: null }
@@ -213,12 +218,12 @@ export async function searchDistricts(
 
   const { data, error } = await supabase
     .from('districts')
-    .select('*')
+    .select('id, province_name, city_name, district_name, postal_code, zone_id')
     .or(`district_name.ilike.${formattedQuery},city_name.ilike.${formattedQuery}`)
     .limit(15)
 
   if (error) {
-    console.error('Error searching districts:', error)
+    safeLogError('Error searching districts:', error)
     return []
   }
 
@@ -246,7 +251,7 @@ export async function calculateShippingRates(
   })
 
   if (error) {
-    console.error('Error calculating shipping:', error)
+    safeLogError('Error calculating shipping:', error)
     return {
       success: false,
       message: 'Gagal menghitung ongkos kirim. Silakan coba lagi.',
@@ -321,7 +326,7 @@ export async function adminGetShippingZones(
     .order('name', { ascending: true })
 
   if (error) {
-    console.error('Error fetching admin shipping zones:', error)
+    safeLogError('Error fetching admin shipping zones:', error)
     throw error
   }
 
@@ -356,7 +361,7 @@ export async function adminCreateShippingZone(
     .single()
 
   if (zoneErr) {
-    console.error('Error creating shipping zone:', zoneErr)
+    safeLogError('Error creating shipping zone:', zoneErr)
     throw zoneErr
   }
 
@@ -370,7 +375,7 @@ export async function adminCreateShippingZone(
       .insert(coverageRows)
 
     if (covErr) {
-      console.error('Error adding zone coverages:', covErr)
+      safeLogError('Error adding zone coverages:', covErr)
       throw covErr
     }
   }
@@ -396,7 +401,7 @@ export async function adminUpdateShippingZone(
     .eq('id', zoneId)
 
   if (zoneErr) {
-    console.error('Error updating shipping zone:', zoneErr)
+    safeLogError('Error updating shipping zone:', zoneErr)
     throw zoneErr
   }
 
@@ -408,7 +413,7 @@ export async function adminUpdateShippingZone(
       .eq('zone_id', zoneId)
 
     if (delErr) {
-      console.error('Error clearing old zone coverages:', delErr)
+      safeLogError('Error clearing old zone coverages:', delErr)
       throw delErr
     }
 
@@ -422,7 +427,7 @@ export async function adminUpdateShippingZone(
         .insert(coverageRows)
 
       if (covErr) {
-        console.error('Error updating zone coverages:', covErr)
+        safeLogError('Error updating zone coverages:', covErr)
         throw covErr
       }
     }
@@ -440,7 +445,7 @@ export async function adminDeleteShippingZone(
     .eq('id', zoneId)
 
   if (error) {
-    console.error('Error deleting shipping zone:', error)
+    safeLogError('Error deleting shipping zone:', error)
     throw error
   }
 }
@@ -455,7 +460,7 @@ export async function adminGetShippingRates(
     .order('courier_name', { ascending: true })
 
   if (error) {
-    console.error('Error fetching admin shipping rates:', error)
+    safeLogError('Error fetching admin shipping rates:', error)
     throw error
   }
 
@@ -496,7 +501,7 @@ export async function adminCreateShippingRate(
     .single()
 
   if (error) {
-    console.error('Error creating shipping rate:', error)
+    safeLogError('Error creating shipping rate:', error)
     throw error
   }
 
@@ -525,7 +530,7 @@ export async function adminUpdateShippingRate(
     .eq('id', rateId)
 
   if (error) {
-    console.error('Error updating shipping rate:', error)
+    safeLogError('Error updating shipping rate:', error)
     throw error
   }
 }
@@ -541,7 +546,7 @@ export async function adminDeleteShippingRate(
     .eq('id', rateId)
 
   if (error) {
-    console.error('Error deleting shipping rate:', error)
+    safeLogError('Error deleting shipping rate:', error)
     throw error
   }
 }

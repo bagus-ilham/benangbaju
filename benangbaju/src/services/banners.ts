@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -8,14 +9,14 @@ export async function getActiveBanners(supabase: SupabaseClient<Database>): Prom
   
   const { data, error } = await supabase
     .from('banners')
-    .select('*')
+    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
     .eq('is_active', true)
     .or(`starts_at.is.null,starts_at.lte.${now}`)
     .or(`ends_at.is.null,ends_at.gte.${now}`)
     .order('sort_order', { ascending: true })
 
   if (error) {
-    console.error('Error fetching banners:', error)
+    safeLogError('Error fetching banners:', error)
     return []
   }
 
@@ -25,11 +26,11 @@ export async function getActiveBanners(supabase: SupabaseClient<Database>): Prom
 export async function adminGetBanners(supabase: SupabaseClient<Database>): Promise<Banner[]> {
   const { data, error } = await supabase
     .from('banners')
-    .select('*')
+    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
     .order('sort_order', { ascending: true })
 
   if (error) {
-    console.error('Error fetching admin banners:', error)
+    safeLogError('Error fetching admin banners:', error)
     throw error
   }
 
@@ -54,7 +55,7 @@ export async function adminCreateBanner(
   const { data, error } = await supabase
     .from('banners')
     .insert(bannerData)
-    .select('*')
+    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
     .single()
 
   if (error) throw error
@@ -81,7 +82,7 @@ export async function adminUpdateBanner(
     .from('banners')
     .update(bannerData)
     .eq('id', bannerId)
-    .select('*')
+    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
     .single()
 
   if (error) throw error

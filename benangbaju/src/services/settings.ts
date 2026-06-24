@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Json } from '@/types/database'
 
@@ -51,10 +52,10 @@ function mapSiteSetting(row: Database['public']['Tables']['site_settings']['Row'
 export async function adminGetSettings(supabase: SupabaseClient<Database>): Promise<SiteSetting[]> {
   const { data, error } = await supabase
     .from('site_settings')
-    .select('*')
+    .select('key, value, type, group, label')
 
   if (error) {
-    console.error('Error fetching site settings:', error)
+    safeLogError('Error fetching site settings:', error)
     throw error
   }
 
@@ -87,7 +88,7 @@ export async function adminUpdateSettings(
     .upsert(settingsToUpsert, { onConflict: 'key' })
 
   if (error) {
-    console.error('Error updating site settings:', error)
+    safeLogError('Error updating site settings:', error)
     throw error
   }
 }
@@ -100,7 +101,7 @@ export async function adminGetActivityLogs(supabase: SupabaseClient<Database>): 
     .limit(100)
 
   if (error) {
-    console.error('Error fetching admin activity logs:', error)
+    safeLogError('Error fetching admin activity logs:', error)
     throw error
   }
 
@@ -139,7 +140,7 @@ export async function adminUpsertSettings(
     .upsert(settings, { onConflict: 'key' })
 
   if (error) {
-    console.error('Error upserting settings:', error)
+    safeLogError('Error upserting settings:', error)
     throw error
   }
 }
@@ -149,10 +150,10 @@ export async function getSiteSettings(
 ): Promise<SiteSetting[]> {
   const { data, error } = await supabase
     .from('site_settings')
-    .select('*')
+    .select('key, value, type, group, label')
 
   if (error) {
-    console.error('Error fetching site settings:', error)
+    safeLogError('Error fetching site settings:', error)
     return []
   }
 

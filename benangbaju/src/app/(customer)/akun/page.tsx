@@ -111,8 +111,8 @@ export default function AkunPage() : React.JSX.Element {
       toast.error('Konfirmasi kata sandi baru tidak cocok')
       return
     }
-    if (newPassword.length < 6) {
-      toast.error('Kata sandi baru harus minimal 6 karakter')
+    if (newPassword.length < 8) {
+      toast.error('Kata sandi baru harus minimal 8 karakter')
       return
     }
 
@@ -253,6 +253,7 @@ export default function AkunPage() : React.JSX.Element {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nama lengkap Anda"
+                  maxLength={100}
                   required
                 />
 
@@ -260,6 +261,7 @@ export default function AkunPage() : React.JSX.Element {
                   label="Nomor Telepon"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  maxLength={20}
                   placeholder="cth: 08123456789"
                 />
 
@@ -295,7 +297,7 @@ export default function AkunPage() : React.JSX.Element {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Minimal 6 karakter"
+                  placeholder="Minimal 8 karakter"
                   required
                 />
 

@@ -6,6 +6,7 @@ import { useAdminCategories, useAdminCollections } from '@/hooks/useAdmin'
 import { Button, Input, AdminPageHeader } from '@/components/shared'
 import { Plus, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { ProductImageManager } from './ProductImageManager'
 import { ProductMarketplaceLinks } from './ProductMarketplaceLinks'
@@ -733,11 +734,13 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                               {/* Thumbnail preview */}
                               <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                                 {img.url ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
+                                  <Image
                                     src={img.url}
                                     alt={img.alt_text || 'Preview'}
-                                    className="object-cover w-full h-full"
+                                    fill
+                                    sizes="40px"
+                                    unoptimized
+                                    className="object-cover"
                                     onError={(e) => {
                                       e.currentTarget.src = 'https://placehold.co/150?text=Error'
                                     }}

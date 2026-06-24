@@ -80,11 +80,15 @@ export function Footer(): React.JSX.Element {
             {/* Col 1: Brand Info */}
             <div className="flex flex-col space-y-4">
               {logoUrl ? (
-                <img
-                  src={logoUrl}
-                  alt="Benangbaju Logo"
-                  className="h-10 md:h-14 w-auto object-contain max-w-[200px] object-left animate-fade-in"
-                />
+                <div className="relative h-10 md:h-14 w-full max-w-[200px] animate-fade-in">
+                  <Image
+                    src={logoUrl}
+                    alt="Benangbaju Logo"
+                    fill
+                    sizes="200px"
+                    className="object-contain object-left"
+                  />
+                </div>
               ) : (
                 <span className="font-heading text-base font-bold tracking-[0.2em] text-brand-black uppercase">
                   BENANGBAJU

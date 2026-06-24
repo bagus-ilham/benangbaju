@@ -27,7 +27,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) : 
           // Fetch profile details
           const { data: profile } = await supabase
             .from('profiles')
-            .select('*')
+            .select('id, name, phone, avatar_url, role, is_active, created_at, updated_at')
             .eq('id', user.id)
             .single()
 
@@ -67,7 +67,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) : 
         // Fetch profile
         const { data: profile } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, name, phone, avatar_url, role, is_active, created_at, updated_at')
           .eq('id', session.user.id)
           .single()
 

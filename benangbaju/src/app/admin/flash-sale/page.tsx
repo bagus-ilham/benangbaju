@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import {
   useAdminFlashSales,
   useAdminCreateFlashSale,
@@ -381,11 +382,13 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
               <div className="flex gap-3 items-start">
                 <div className="w-20 h-10 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                   {banner_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={banner_url}
                       alt="Banner Preview"
-                      className="object-cover w-full h-full"
+                      fill
+                      sizes="80px"
+                      unoptimized
+                      className="object-cover"
                       onError={(e) => {
                         e.currentTarget.src = 'https://placehold.co/150?text=Error'
                       }}

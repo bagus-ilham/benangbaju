@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -30,7 +31,7 @@ export async function validateVoucher(
   })
 
   if (error) {
-    console.error('Error validating voucher:', error)
+    safeLogError('Error validating voucher:', error)
     return {
       success: false,
       valid: false,
@@ -72,11 +73,11 @@ export async function validateVoucher(
 export async function adminGetVouchers(supabase: SupabaseClient<Database>) : Promise<{ id: string; code: string; name: string; discount_type: string; value: number; max_discount: number | null; min_purchase: number; starts_at: string; expires_at: string; usage_limit: number | null; usage_per_user: number; used_count: number; is_active: boolean; created_at: string; }[]> {
   const { data, error } = await supabase
     .from('vouchers')
-    .select('*')
+    .select('id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at')
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching admin vouchers:', error)
+    safeLogError('Error fetching admin vouchers:', error)
     throw error
   }
 
@@ -102,7 +103,7 @@ export async function adminCreateVoucher(
   const { data, error } = await supabase
     .from('vouchers')
     .insert(voucherData)
-    .select('*')
+    .select('id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at')
     .single()
 
   if (error) throw error
@@ -130,7 +131,7 @@ export async function adminUpdateVoucher(
     .from('vouchers')
     .update(voucherData)
     .eq('id', voucherId)
-    .select('*')
+    .select('id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at')
     .single()
 
   if (error) throw error

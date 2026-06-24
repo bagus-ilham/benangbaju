@@ -1,3 +1,4 @@
+import { safeLogError } from '@/lib/logger'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -109,27 +110,21 @@ export async function getProducts(
     .eq('is_active', true)
     .eq('product_variants.is_active', true)
 
+  // 1b. Fetch categories and collections in parallel if needed
+  const [categoriesRes, collectionRes] = await Promise.all([
+    categorySlug ? supabase.from('categories').select('id, slug, parent_id') : Promise.resolve(null),
+    collectionSlug ? supabase.from('collections').select('id').eq('slug', collectionSlug).single() : Promise.resolve(null)
+  ])
+
   // 2. Filter by Category
-  if (categorySlug) {
-    // We filter using an inner join simulation
-    const { data: category } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('slug', categorySlug)
-      .single()
-    
+  if (categorySlug && categoriesRes) {
+    const { data: categories } = categoriesRes
+    const category = categories?.find((c) => c.slug === categorySlug)
     if (category) {
-      // Fetch subcategories
-      const { data: subCategories } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('parent_id', category.id)
-      
-      const categoryIds = [category.id]
-      if (subCategories && subCategories.length > 0) {
-        categoryIds.push(...subCategories.map((c) => c.id))
-      }
-      
+      const categoryIds = [
+        category.id,
+        ...(categories?.filter((c) => c.parent_id === category.id).map((c) => c.id) || []),
+      ]
       query = query.in('category_id', categoryIds)
     } else {
       return { products: [], totalCount: 0 }
@@ -137,13 +132,8 @@ export async function getProducts(
   }
 
   // 3. Filter by Collection
-  if (collectionSlug) {
-    const { data: collection } = await supabase
-      .from('collections')
-      .select('id')
-      .eq('slug', collectionSlug)
-      .single()
-
+  if (collectionSlug && collectionRes) {
+    const { data: collection } = collectionRes
     if (collection) {
       // Fetch junction keys
       const { data: junction } = await supabase
@@ -151,9 +141,9 @@ export async function getProducts(
         .select('product_id')
         .eq('collection_id', collection.id)
       
-      const productIds = junction?.map((j) => j.product_id) || []
-      if (productIds.length > 0) {
-        query = query.in('id', productIds)
+      const pIds = junction?.map((j) => j.product_id) || []
+      if (pIds.length > 0) {
+        query = query.in('id', pIds)
       } else {
         return { products: [], totalCount: 0 }
       }
@@ -183,11 +173,18 @@ export async function getProducts(
     query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false })
   }
 
+  const requiresClientFiltering = minPrice !== undefined || maxPrice !== undefined || sortBy === 'price-low' || sortBy === 'price-high' || sortBy === 'popular'
+
+  // If we don't need client-side filtering/sorting, we can paginate directly in the database
+  if (!requiresClientFiltering) {
+    query = query.range(offset, offset + limit - 1)
+  }
+
   // 6. Execute Query
-  const { data, error } = await query
+  const { data, count, error } = await query
 
   if (error) {
-    console.error('Error fetching products:', error)
+    safeLogError('Error fetching products:', error)
     return { products: [], totalCount: 0 }
   }
 
@@ -282,8 +279,10 @@ export async function getProducts(
     results.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
   }
 
-  const paginatedResults = results.slice(offset, offset + limit)
-  return { products: paginatedResults, totalCount: results.length }
+  const totalCount = requiresClientFiltering ? results.length : (count || 0)
+  const paginatedResults = requiresClientFiltering ? results.slice(offset, offset + limit) : results
+
+  return { products: paginatedResults, totalCount }
 }
 
 export async function getProductBySlug(
@@ -308,7 +307,7 @@ export async function getProductBySlug(
     .single()
 
   if (error) {
-    console.error(`Error fetching product details for slug ${slug}:`, error)
+    safeLogError(`Error fetching product details for slug ${slug}:`, error)
     return null
   }
 
@@ -417,7 +416,7 @@ export async function getRelatedProducts(
     .limit(limit)
 
   if (error) {
-    console.error('Error fetching related products:', error)
+    safeLogError('Error fetching related products:', error)
     return []
   }
 
@@ -529,7 +528,7 @@ export async function adminGetProducts(
     .range(offset, offset + limit - 1)
 
   if (error) {
-    console.error('Error in adminGetProducts:', error)
+    safeLogError('Error in adminGetProducts:', error)
     throw error
   }
 
@@ -665,6 +664,7 @@ export async function adminCreateProduct(
       const { error: attrsErr } = await supabase
         .from('product_variant_attrs')
         .insert(allAttrsData)
+
       if (attrsErr) throw attrsErr
     }
   }
@@ -823,6 +823,7 @@ export async function adminUpdateProduct(
 
       if (variantErr) throw variantErr
       idMap.set(v.id, v.id)
+      idMap.set(String(i), v.id)
 
       const { error: deleteAttrsErr } = await supabase
         .from('product_variant_attrs')

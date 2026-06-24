@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
+        hostname: 'jwvbzuoatffoxaahdwdx.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
     ],
@@ -37,6 +37,18 @@ const nextConfig: NextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://jwvbzuoatffoxaahdwdx.supabase.co https://lh3.googleusercontent.com; connect-src 'self' https://jwvbzuoatffoxaahdwdx.supabase.co wss://jwvbzuoatffoxaahdwdx.supabase.co https://app.sandbox.midtrans.com https://app.midtrans.com; frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com;"
           },
         ],
       },

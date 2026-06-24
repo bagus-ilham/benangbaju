@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { Search, Heart, ShoppingBag, User, LogOut, Menu, X, ChevronRight } from 'lucide-react'
+import { Search, Heart, ShoppingBag, User, LogOut, Menu, X, ChevronRight, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useCart } from '@/hooks/useCart'
@@ -29,11 +29,12 @@ interface CustomerLayoutProps {
 export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.Element {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createBrowserClient()
+  const [supabase] = useState(() => createBrowserClient())
 
   const { data: settings = [] } = useQuery({
     queryKey: ['site-settings'],
     queryFn: () => getSiteSettings(supabase),
+    staleTime: 1000 * 60 * 10, // 10 minutes
   })
 
   const logoSetting = settings.find((s) => s.key === 'store_logo_url')
@@ -85,15 +86,22 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
 
   useEffect(() => {
     setIsMounted(true)
+    let ticking = false
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-      
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight
-      if (totalScroll > 0) {
-        const currentProgress = (window.scrollY / totalScroll) * 100
-        setScrollProgress(currentProgress)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10)
+          
+          const totalScroll = document.documentElement.scrollHeight - window.innerHeight
+          if (totalScroll > 0) {
+            const currentProgress = (window.scrollY / totalScroll) * 100
+            setScrollProgress(currentProgress)
+          }
+          setShowScrollTop(window.scrollY > 400)
+          ticking = false
+        })
+        ticking = true
       }
-      setShowScrollTop(window.scrollY > 400)
     }
 
     handleScroll()
@@ -206,11 +214,15 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
                 className="font-heading text-base md:text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none hover:text-brand-gold transition-colors duration-300 flex items-center justify-center"
               >
                 {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt="Benangbaju Logo"
-                    className="h-10 md:h-14 w-auto object-contain max-w-[200px]"
-                  />
+                  <div className="relative h-10 md:h-14 w-full max-w-[200px]">
+                    <Image
+                      src={logoUrl}
+                      alt="Benangbaju Logo"
+                      fill
+                      sizes="200px"
+                      className="object-contain"
+                    />
+                  </div>
                 ) : (
                   'BENANGBAJU'
                 )}
@@ -421,9 +433,16 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
                         Hasil Pencarian Instan
                       </span>
                       {isSearchingInstant && (
-                        <span className="text-[8px] font-heading font-semibold uppercase tracking-wider text-brand-gold animate-pulse">
-                          Mencari...
-                        </span>
+                        // 🎨 PALETTE ENHANCEMENT
+                        // Problem: Search input tidak memiliki debounce indicator berupa spinner loader yang jelas.
+                        // Fix: Menambahkan ikon Loader2 berputar bersama teks "Mencari...".
+                        // Impact: Indikator loading pencarian yang lebih jelas bagi user.
+                        <div className="flex items-center space-x-1.5 text-brand-gold">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          <span className="text-[8px] font-heading font-semibold uppercase tracking-wider">
+                            Mencari...
+                          </span>
+                        </div>
                       )}
                     </div>
 
