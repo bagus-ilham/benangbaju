@@ -100,6 +100,25 @@ export async function adminDeleteBanner(
   supabase: SupabaseClient<Database>,
   bannerId: string
 ) : Promise<{ success: boolean; }> {
+  // 1. Fetch images associated with this banner to clean up storage
+  const { data: banner } = await supabase
+    .from('banners')
+    .select('image_url, image_mobile_url')
+    .eq('id', bannerId)
+    .single()
+
+  // 2. Delete the physical images from Supabase Storage
+  if (banner) {
+    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+    const cleanupPromises = []
+    if (banner.image_url) cleanupPromises.push(deleteImageByUrl(supabase, banner.image_url, 'banners'))
+    if (banner.image_mobile_url) cleanupPromises.push(deleteImageByUrl(supabase, banner.image_mobile_url, 'banners'))
+    if (cleanupPromises.length > 0) {
+      await Promise.all(cleanupPromises)
+    }
+  }
+
+  // 3. Delete banner record
   const { error } = await supabase
     .from('banners')
     .delete()

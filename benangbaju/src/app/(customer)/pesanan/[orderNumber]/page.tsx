@@ -8,9 +8,11 @@ import { useSubmitReview } from '@/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/components/shared/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState, Modal } from '@/components/shared'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, AlertCircle, Loader2 } from 'lucide-react'
+import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, Download, AlertCircle, Loader2, Image as ImageIcon, X } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import Image from 'next/image'
+import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
@@ -32,6 +34,8 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
   const [reviewBody, setReviewBody] = useState('')
   const [reviewTitle, setReviewTitle] = useState('')
   const [reviewAnonymous, setReviewAnonymous] = useState(false)
+  const [reviewFiles, setReviewFiles] = useState<File[]>([])
+  const [isUploading, setIsUploading] = useState(false)
   const [isVerifyingPayment, setIsVerifyingPayment] = useState(() => searchParams.get('verifying') === '1')
   const verifyTimeoutsRef = useRef<NodeJS.Timeout[]>([])
   const hasTriggeredVerification = useRef(false)
@@ -133,10 +137,38 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
     setReviewTitle('')
     setReviewBody('')
     setReviewAnonymous(false)
+    setReviewFiles([])
   }
 
   const handleCloseReviewModal = () => {
     setSelectedReviewItem(null)
+    setReviewFiles([])
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selected = Array.from(e.target.files)
+      if (reviewFiles.length + selected.length > 2) {
+        toast.error('Maksimal hanya 2 foto yang diperbolehkan')
+        return
+      }
+      
+      const validFiles = selected.filter(f => f.type.startsWith('image/'))
+      if (validFiles.length !== selected.length) {
+        toast.error('Hanya file gambar yang diperbolehkan')
+      }
+      
+      const smallFiles = validFiles.filter(f => f.size <= 2 * 1024 * 1024)
+      if (smallFiles.length !== validFiles.length) {
+        toast.error('Ukuran maksimal per foto adalah 2MB')
+      }
+
+      setReviewFiles(prev => [...prev, ...smallFiles].slice(0, 2))
+    }
+  }
+
+  const removeFile = (idx: number) => {
+    setReviewFiles(prev => prev.filter((_, i) => i !== idx))
   }
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -167,6 +199,20 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
         return
       }
 
+      setIsUploading(true)
+      const mediaUrls: string[] = []
+      
+      try {
+        for (const file of reviewFiles) {
+          const url = await uploadImage(file, 'products')
+          mediaUrls.push(url)
+        }
+      } catch (uploadErr: any) {
+        toast.error(uploadErr.message || 'Gagal mengunggah foto review')
+        setIsUploading(false)
+        return
+      }
+
       const res = await submitReviewMutation.mutateAsync({
         orderItemId: selectedReviewItem.id,
         productId: finalProductId,
@@ -176,7 +222,10 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
         title: reviewTitle || undefined,
         body: reviewBody,
         isAnonymous: reviewAnonymous,
+        mediaUrls: mediaUrls.length > 0 ? mediaUrls : undefined,
       })
+
+      setIsUploading(false)
 
       if (res && res.id) {
         toast.success('Ulasan berhasil dikirim!')
@@ -187,6 +236,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
       }
     } catch (err) {
       console.error(err)
+      setIsUploading(false)
       toast.error('Terjadi kesalahan saat mengirimkan ulasan')
     }
   }
@@ -803,6 +853,45 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
               </label>
             </div>
 
+            <div className="space-y-2">
+              <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold">
+                Lampirkan Foto (Maks 2 Foto, 2MB/Foto)
+              </label>
+              
+              <div className="flex flex-wrap gap-3">
+                {reviewFiles.map((file, idx) => (
+                  <div key={idx} className="relative w-20 h-20 border border-neutral-200">
+                    <img 
+                      src={URL.createObjectURL(file)} 
+                      alt={`Preview ${idx}`} 
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeFile(idx)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 shadow-sm"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                
+                {reviewFiles.length < 2 && (
+                  <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-gold hover:border-brand-gold cursor-pointer transition-colors">
+                    <ImageIcon size={20} className="mb-1" />
+                    <span className="text-[9px] uppercase tracking-wider font-semibold">Tambah</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+
             <div className="flex gap-3 pt-2">
               <Button
                 type="button"
@@ -814,11 +903,11 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
               </Button>
               <Button
                 type="submit"
-                isLoading={submitReviewMutation.isPending}
-                disabled={submitReviewMutation.isPending}
+                isLoading={submitReviewMutation.isPending || isUploading}
+                disabled={submitReviewMutation.isPending || isUploading}
                 className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold"
               >
-                Kirim Ulasan
+                {isUploading ? 'Mengunggah...' : 'Kirim Ulasan'}
               </Button>
             </div>
           </form>

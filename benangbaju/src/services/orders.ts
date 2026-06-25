@@ -729,6 +729,11 @@ export interface AdminReturnRequestListItem {
       sku: string
     } | null
   }>
+  return_media: Array<{
+    id: string
+    url: string
+    sort_order: number
+  }>
 }
 
 export async function adminGetReturnRequests(
@@ -745,6 +750,9 @@ export async function adminGetReturnRequests(
       return_items (
         id, return_request_id, order_item_id, quantity, reason,
         order_items (product_name, variant_name, price, sku)
+      ),
+      return_media (
+        id, url, sort_order
       )
     `)
     .order('created_at', { ascending: false })
@@ -798,6 +806,14 @@ export async function adminGetReturnRequests(
       }
     })
 
+    const rawMedia = row.return_media
+    const mediaList = Array.isArray(rawMedia) ? rawMedia : []
+    const return_media = mediaList.map(m => ({
+      id: m.id,
+      url: m.url,
+      sort_order: m.sort_order,
+    }))
+
     return {
       id: row.id,
       order_id: row.order_id,
@@ -819,6 +835,7 @@ export async function adminGetReturnRequests(
       profiles,
       orders,
       return_items,
+      return_media,
     }
   })
 }
@@ -862,6 +879,39 @@ export async function adminUpdateReturnRequest(
   }
 
   await insertAdminActivityLog(supabase, 'update', 'return_request', requestId, `Updated return request status to ${status}`)
+
+  return { success: true }
+}
+
+export async function adminUpdateTrackingNumber(
+  supabase: SupabaseClient<Database>,
+  orderId: string,
+  trackingNumber: string
+): Promise<{ success: boolean; message?: string }> {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, message: 'Unauthorized' }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.role !== 'admin') {
+    return { success: false, message: 'Forbidden: Admin access required' }
+  }
+
+  const { error } = await supabase
+    .from('order_shipping')
+    .update({ tracking_number: trackingNumber })
+    .eq('order_id', orderId)
+
+  if (error) {
+    safeLogError('Error updating tracking number:', error)
+    throw error
+  }
+
+  await insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated tracking number`)
 
   return { success: true }
 }

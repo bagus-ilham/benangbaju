@@ -5,10 +5,11 @@ import {
   useAdminOrders,
   useAdminReturnRequests,
   useAdminUpdateReturnRequest,
+  useAdminUpdateOrderStatus,
 } from '@/hooks/useAdmin'
-import type { AdminReturnRequestListItem } from '@/services/orders'
+import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/services/orders'
 import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Search, Eye, AlertTriangle, ShieldCheck } from 'lucide-react'
+import { Search, Eye, AlertTriangle, ShieldCheck, Truck } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
@@ -38,11 +39,44 @@ export default function AdminOrdersPage() : React.JSX.Element {
   const { data: returnsData = [], isLoading: returnsLoading, isError: returnsError, refetch: refetchReturns } = useAdminReturnRequests()
 
   const updateReturnMutation = useAdminUpdateReturnRequest()
+  const updateOrderStatusMutation = useAdminUpdateOrderStatus()
 
   // Return request Modal control
   const [selectedReturn, setSelectedReturn] = useState<AdminReturnRequestListItem | null>(null)
   const [adminNotes, setAdminNotes] = useState('')
   const [refundAmount, setRefundAmount] = useState(0)
+
+  // Quick Resi Modal control
+  const [quickResiOrder, setQuickResiOrder] = useState<AdminOrderListItem | null>(null)
+  const [quickResiNumber, setQuickResiNumber] = useState('')
+
+  const handleOpenQuickResi = (order: AdminOrderListItem) => {
+    setQuickResiOrder(order)
+    setQuickResiNumber(order.order_shipping?.tracking_number || '')
+  }
+
+  const handleUpdateQuickResi = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!quickResiOrder) return
+    if (!quickResiNumber.trim()) {
+      toast.error('Nomor resi tidak boleh kosong')
+      return
+    }
+
+    toast.loading('Mengirim pesanan...', { id: 'quick-resi' })
+    try {
+      await updateOrderStatusMutation.mutateAsync({
+        orderId: quickResiOrder.id,
+        status: 'shipped',
+        trackingNumber: quickResiNumber.trim()
+      })
+      toast.success('Resi diinput dan pesanan dikirim!', { id: 'quick-resi' })
+      setQuickResiOrder(null)
+      refetchOrders()
+    } catch (err) {
+      toast.error('Gagal menginput resi', { id: 'quick-resi' })
+    }
+  }
 
   const handleOpenReturnModal = (ret: AdminReturnRequestListItem) => {
     setSelectedReturn(ret)
@@ -293,7 +327,17 @@ export default function AdminOrdersPage() : React.JSX.Element {
                             : 'Batal'}
                         </span>
                       </td>
-                      <td className="py-4 px-5 text-right">
+                      <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
+                        {o.status === 'processing' && (
+                          <Button 
+                            onClick={() => handleOpenQuickResi(o)}
+                            className="p-2 border-neutral-800 text-neutral-800 hover:bg-neutral-50 mr-1" 
+                            variant="outline"
+                            title="Input Resi & Kirim"
+                          >
+                            <Truck size={13} className="mr-1 inline" /> Kirim
+                          </Button>
+                        )}
                         <Link href={`/admin/pesanan/${o.order_number}`}>
                           <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900">
                             <Eye size={13} className="mr-1 inline" /> Detail
@@ -372,6 +416,24 @@ export default function AdminOrdersPage() : React.JSX.Element {
                 <div className="pt-2 border-t border-neutral-100">
                   <p className="text-[10px] uppercase font-bold text-neutral-400">Catatan Pelanggan:</p>
                   <p className="text-neutral-600 mt-1 italic leading-relaxed">{selectedReturn.customer_notes}</p>
+                </div>
+              )}
+              {selectedReturn.return_media && selectedReturn.return_media.length > 0 && (
+                <div className="pt-2 border-t border-neutral-100">
+                  <p className="text-[10px] uppercase font-bold text-neutral-400 mb-2">Bukti Foto Retur:</p>
+                  <div className="flex gap-2">
+                    {selectedReturn.return_media.map(media => (
+                      <a 
+                        key={media.id} 
+                        href={media.url} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="block w-16 h-16 border border-neutral-200 overflow-hidden hover:border-brand-gold transition-colors"
+                      >
+                        <img src={media.url} alt="Bukti Retur" className="w-full h-full object-cover" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -473,6 +535,53 @@ export default function AdminOrdersPage() : React.JSX.Element {
               )}
             </div>
           </div>
+        </Modal>
+      )}
+
+      {/* Quick Resi Modal */}
+      {quickResiOrder && (
+        <Modal
+          isOpen={!!quickResiOrder}
+          onClose={() => setQuickResiOrder(null)}
+          title="Input Resi & Kirim Pesanan"
+          size="sm"
+        >
+          <form onSubmit={handleUpdateQuickResi} className="space-y-6 text-xs font-sans">
+            <div className="bg-neutral-50/50 p-4 border border-neutral-200">
+              <div className="flex justify-between mb-1">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider">Pesanan</span>
+                <span className="font-bold">{quickResiOrder.order_number}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-500 font-semibold uppercase tracking-wider">Kurir</span>
+                <span className="font-bold uppercase">{quickResiOrder.order_shipping?.courier_name}</span>
+              </div>
+            </div>
+
+            <Input
+              label="Nomor Resi Pengiriman*"
+              value={quickResiNumber}
+              onChange={(e) => setQuickResiNumber(e.target.value)}
+              placeholder="Masukkan no resi dari kurir..."
+              required
+            />
+
+            <div className="flex justify-end space-x-2 pt-3 border-t border-neutral-100">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setQuickResiOrder(null)}
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                isLoading={updateOrderStatusMutation.isPending}
+              >
+                Kirim Pesanan
+              </Button>
+            </div>
+          </form>
         </Modal>
       )}
     </div>

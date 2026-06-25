@@ -109,6 +109,20 @@ export async function adminDeleteCategory(
   supabase: SupabaseClient<Database>,
   categoryId: string
 ) : Promise<{ success: boolean; }> {
+  // 1. Fetch images associated with this category to clean up storage
+  const { data: category } = await supabase
+    .from('categories')
+    .select('image_url')
+    .eq('id', categoryId)
+    .single()
+
+  // 2. Delete the physical image from Supabase Storage
+  if (category && category.image_url) {
+    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+    await deleteImageByUrl(supabase, category.image_url, 'categories')
+  }
+
+  // 3. Delete category record
   const { error } = await supabase
     .from('categories')
     .delete()

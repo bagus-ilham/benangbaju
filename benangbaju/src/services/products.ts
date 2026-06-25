@@ -985,7 +985,21 @@ export async function adminDeleteProduct(
   supabase: SupabaseClient<Database>,
   productId: string
 ) : Promise<{ success: boolean; }> {
-  // Hard delete: akan benar-benar menghapus data dari tabel 'products'
+  // 1. Fetch images associated with this product to clean up storage
+  const { data: images } = await supabase
+    .from('product_images')
+    .select('url')
+    .eq('product_id', productId)
+
+  // 2. Delete the physical images from Supabase Storage
+  if (images && images.length > 0) {
+    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+    await Promise.all(
+      images.map(img => deleteImageByUrl(supabase, img.url, 'products'))
+    )
+  }
+
+  // 3. Hard delete from database
   // Bergantung pada konfigurasi ON DELETE CASCADE di database untuk menghapus relasi (variants, images, dll)
   const { error } = await supabase
     .from('products')

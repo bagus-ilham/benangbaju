@@ -115,5 +115,6 @@ export function useShippingRates(zoneId: string | null, weightGram: number) : im
     queryKey: ['shipping-rates', zoneId, weightGram],
     queryFn: () => calculateShippingRates(supabase, zoneId!, weightGram),
     enabled: !!zoneId && weightGram > 0,
+    staleTime: 1000 * 60 * 15, // Cache for 15 minutes
   })
 }

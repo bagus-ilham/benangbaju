@@ -184,6 +184,20 @@ export async function adminDeleteCollection(
   supabase: SupabaseClient<Database>,
   collectionId: string
 ) : Promise<{ success: boolean; }> {
+  // 1. Fetch images associated with this collection to clean up storage
+  const { data: collection } = await supabase
+    .from('collections')
+    .select('image_url')
+    .eq('id', collectionId)
+    .single()
+
+  // 2. Delete the physical image from Supabase Storage
+  if (collection && collection.image_url) {
+    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+    await deleteImageByUrl(supabase, collection.image_url, 'collections')
+  }
+
+  // 3. Delete collection record
   const { error } = await supabase
     .from('collections')
     .delete()

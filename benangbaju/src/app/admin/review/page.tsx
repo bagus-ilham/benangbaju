@@ -126,6 +126,17 @@ export default function AdminReviewsPage() : React.JSX.Element {
                       {rev.title && <p className="font-bold text-neutral-800">{rev.title}</p>}
                       <p className="text-neutral-600 leading-relaxed font-normal">{rev.body}</p>
                       
+                      {/* Review Media Previews */}
+                      {rev.review_media && rev.review_media.length > 0 && (
+                        <div className="flex gap-2 mt-2">
+                          {rev.review_media.map((media) => (
+                            <a key={media.id} href={media.url} target="_blank" rel="noopener noreferrer" className="block border border-neutral-200 hover:border-brand-gold transition-colors">
+                              <img src={media.url} alt="Review attachment" className="w-12 h-12 object-cover" />
+                            </a>
+                          ))}
+                        </div>
+                      )}
+
                       {rev.review_replies?.length > 0 && (
                         <div className="bg-neutral-55 bg-neutral-100/60 p-2 border-l-2 border-neutral-900 mt-2 font-normal text-[11px]">
                           <span className="font-bold text-neutral-800 text-[10px] uppercase block">Balasan Admin:</span>

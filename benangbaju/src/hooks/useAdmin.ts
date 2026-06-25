@@ -40,6 +40,7 @@ import {
   adminUpdateOrderStatus,
   adminGetReturnRequests,
   adminUpdateReturnRequest,
+  adminUpdateTrackingNumber,
   AdminOrderListItem,
   AdminReturnRequestListItem,
 } from '@/services/orders'
@@ -518,6 +519,18 @@ export function useAdminUpdateOrderStatus() : UseMutationResult<{ success: boole
   return useMutation({
     mutationFn: ({ orderId, status, trackingNumber }: AdminUpdateOrderStatusInput) =>
       adminUpdateOrderStatus(supabase, orderId, status, trackingNumber),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })
+    }
+  })
+}
+
+export function useAdminUpdateTrackingNumber() : UseMutationResult<{ success: boolean; message?: string; }, Error, { orderId: string, trackingNumber: string }, unknown> {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ orderId, trackingNumber }: { orderId: string, trackingNumber: string }) =>
+      adminUpdateTrackingNumber(supabase, orderId, trackingNumber),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })

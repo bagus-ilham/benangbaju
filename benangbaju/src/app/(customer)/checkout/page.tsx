@@ -737,6 +737,7 @@ export default function CheckoutPage() : React.JSX.Element {
                 variant="primary"
                 onClick={handlePlaceOrder}
                 isLoading={isCheckoutProcessing}
+                loadingText={generatePaymentTokenMutation.isPending ? "Menghubungi Midtrans..." : "Memproses Pesanan..."}
                 className="w-full py-4 text-xs uppercase tracking-widest font-semibold"
                 disabled={!selectedAddress || !selectedCourier}
               >

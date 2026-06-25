@@ -3,10 +3,10 @@
 import React, { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrderDetail } from '@/hooks/useOrders'
-import { useAdminUpdateOrderStatus } from '@/hooks/useAdmin'
+import { useAdminUpdateOrderStatus, useAdminUpdateTrackingNumber } from '@/hooks/useAdmin'
 import { Button, Input, AdminPageHeader, AdminPanel } from '@/components/shared'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle, FileText, Download } from 'lucide-react'
+import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle, FileText, Download, Edit2, X, Check } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
@@ -24,8 +24,11 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
 
   const { data: order, isLoading, isError, refetch } = useOrderDetail(orderNumber)
   const updateStatusMutation = useAdminUpdateOrderStatus()
+  const updateTrackingMutation = useAdminUpdateTrackingNumber()
 
   const [trackingNumber, setTrackingNumber] = useState('')
+  const [isEditingResi, setIsEditingResi] = useState(false)
+  const [editResiNumber, setEditResiNumber] = useState('')
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const [formattedDate, setFormattedDate] = useState('')
 
@@ -65,6 +68,27 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
         const errorMessage = err instanceof Error ? err.message : 'Gagal mengubah status'
         toast.error(errorMessage, { id: 'status-update' })
       }
+    }
+  }
+
+  const handleUpdateResi = async () => {
+    if (!order) return
+    if (!editResiNumber.trim()) {
+      toast.error('Nomor resi tidak boleh kosong')
+      return
+    }
+
+    toast.loading('Menyimpan resi...', { id: 'resi-update' })
+    try {
+      await updateTrackingMutation.mutateAsync({
+        orderId: order.id,
+        trackingNumber: editResiNumber.trim()
+      })
+      toast.success('Resi berhasil diperbarui', { id: 'resi-update' })
+      setIsEditingResi(false)
+      refetch()
+    } catch (err: unknown) {
+      toast.error('Gagal memperbarui resi', { id: 'resi-update' })
     }
   }
 
@@ -178,7 +202,42 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
                 <div className="pt-2 border-t border-neutral-100 mt-2 space-y-1 text-neutral-500 text-xs">
                   <p>Kurir: <span className="font-bold text-neutral-700 uppercase">{order.order_shipping.courier_name}</span></p>
                   {order.order_shipping.tracking_number && (
-                    <p>No. Resi: <span className="font-bold text-neutral-900 bg-neutral-100 px-1.5 py-0.5 select-all">{order.order_shipping.tracking_number}</span></p>
+                    <div className="flex items-center gap-2">
+                      <p>No. Resi: </p>
+                      {isEditingResi ? (
+                        <div className="flex items-center gap-1">
+                          <input 
+                            type="text" 
+                            value={editResiNumber}
+                            onChange={(e) => setEditResiNumber(e.target.value)}
+                            className="border border-neutral-300 px-2 py-0.5 text-xs focus:outline-none focus:border-brand-gold w-32"
+                            autoFocus
+                          />
+                          <button onClick={handleUpdateResi} disabled={updateTrackingMutation.isPending} className="text-green-600 hover:text-green-700 p-0.5" title="Simpan">
+                            <Check size={14} />
+                          </button>
+                          <button onClick={() => setIsEditingResi(false)} className="text-red-500 hover:text-red-600 p-0.5" title="Batal">
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-neutral-900 bg-neutral-100 px-1.5 py-0.5 select-all">
+                            {order.order_shipping.tracking_number}
+                          </span>
+                          <button 
+                            onClick={() => {
+                              setEditResiNumber(order.order_shipping!.tracking_number!)
+                              setIsEditingResi(true)
+                            }} 
+                            className="text-neutral-400 hover:text-brand-gold transition"
+                            title="Edit Resi"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

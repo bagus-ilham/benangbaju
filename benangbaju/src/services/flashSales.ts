@@ -347,6 +347,20 @@ export async function adminDeleteFlashSale(
   supabase: SupabaseClient<Database>,
   saleId: string
 ) : Promise<{ success: boolean; }> {
+  // 1. Fetch banner image associated with this flash sale to clean up storage
+  const { data: sale } = await supabase
+    .from('flash_sales')
+    .select('banner_url')
+    .eq('id', saleId)
+    .single()
+
+  // 2. Delete the physical image from Supabase Storage
+  if (sale && sale.banner_url) {
+    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+    await deleteImageByUrl(supabase, sale.banner_url, 'flash-sales')
+  }
+
+  // 3. Delete flash sale record
   const { error } = await supabase
     .from('flash_sales')
     .delete()

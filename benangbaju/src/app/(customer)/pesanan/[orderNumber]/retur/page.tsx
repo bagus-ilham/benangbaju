@@ -6,10 +6,11 @@ import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail } from '@/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, PageHero, PageContainer, EmptyState, AuthLoading } from '@/components/shared'
-import { ArrowLeft, AlertTriangle, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, ShieldCheck, Image as ImageIcon, X } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
+import { uploadImage } from '@/lib/supabase/storage'
 
 const supabase = createBrowserClient()
 
@@ -41,6 +42,7 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
   const [bankName, setBankName] = useState('')
   const [accountNumber, setAccountNumber] = useState('')
   const [accountName, setAccountName] = useState('')
+  const [returnFiles, setReturnFiles] = useState<File[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // 1. Redirect if not authenticated
@@ -99,6 +101,30 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
     }))
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return
+    const newFiles = Array.from(e.target.files)
+    
+    // Validate max 2 files total
+    if (returnFiles.length + newFiles.length > 2) {
+      toast.error('Maksimal 2 foto retur diperbolehkan')
+      return
+    }
+
+    // Validate size (max 2MB per file)
+    const invalidFile = newFiles.find(f => f.size > 2 * 1024 * 1024)
+    if (invalidFile) {
+      toast.error(`Ukuran file ${invalidFile.name} melebihi batas 2MB`)
+      return
+    }
+
+    setReturnFiles(prev => [...prev, ...newFiles])
+  }
+
+  const handleRemoveFile = (index: number) => {
+    setReturnFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
   const handleSubmitReturn = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !order) return
@@ -147,6 +173,37 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
         .insert(returnItemsData)
 
       if (itemsError) throw itemsError
+
+      // 3. Upload and insert return media
+      if (returnFiles.length > 0) {
+        toast.loading('Mengunggah foto bukti...', { id: 'return-media' })
+        const mediaUrls: string[] = []
+        for (const file of returnFiles) {
+          try {
+            // Upload to 'products' bucket to save quota/configuration
+            const url = await uploadImage(file, 'products')
+            if (url) mediaUrls.push(url)
+          } catch (uploadErr) {
+            console.error('Failed to upload a return file:', uploadErr)
+            // continue with others
+          }
+        }
+
+        if (mediaUrls.length > 0) {
+          const mediaData = mediaUrls.map((url, idx) => ({
+            return_request_id: returnReq.id,
+            url: url,
+            sort_order: idx
+          }))
+
+          const { error: mediaError } = await supabase
+            .from('return_media')
+            .insert(mediaData)
+
+          if (mediaError) console.error('Error inserting return media:', mediaError)
+        }
+        toast.dismiss('return-media')
+      }
 
       toast.success('Pengajuan retur berhasil dikirim!')
       router.push(`/pesanan/${order.order_number}`)
@@ -288,6 +345,47 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
                 placeholder="Tuliskan alasan detail retur Anda..."
                 className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none rounded-none text-sm transition h-28 resize-none"
               />
+            </div>
+
+            {/* Media Upload */}
+            <div className="space-y-3 pt-4 border-t border-neutral-100">
+              <label className="block text-xs uppercase tracking-widest font-semibold text-neutral-500">
+                Lampirkan Bukti Foto (Opsional, Maks 2 Foto)
+              </label>
+              
+              <div className="flex flex-wrap gap-4">
+                {returnFiles.map((file, idx) => (
+                  <div key={idx} className="relative w-24 h-24 border border-neutral-200 group">
+                    <img 
+                      src={URL.createObjectURL(file)} 
+                      alt={`Preview ${idx}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile(idx)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                
+                {returnFiles.length < 2 && (
+                  <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-gold hover:text-brand-gold transition group">
+                    <ImageIcon size={20} className="mb-1 group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Tambah</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      multiple 
+                      className="hidden" 
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                )}
+              </div>
+              <p className="text-[10px] text-neutral-400">Format: JPG/PNG, maks 2MB per foto.</p>
             </div>
           </div>
 
