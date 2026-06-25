@@ -55,8 +55,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     viewTransition: true,
-    // @ts-expect-error - dynamicIO is valid in Next.js 15+ but might be missing in older types
-    dynamicIO: true,
+    cacheComponents: true,
   }
 };
 
