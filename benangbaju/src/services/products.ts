@@ -614,7 +614,7 @@ export async function adminCreateProduct(
     .select('id')
     .single()
 
-  if (productErr) throw productErr
+  if (productErr) throw new Error(`Product error: ${JSON.stringify(productErr)}`)
   const productId = product.id
 
   const idMap = new Map<string, string>()
@@ -636,7 +636,7 @@ export async function adminCreateProduct(
       .insert(variantInserts)
       .select('id')
 
-    if (variantErr) throw variantErr
+    if (variantErr) throw new Error(`Variant error: ${JSON.stringify(variantErr)}`)
 
     const allAttrsData: { variant_id: string; attr_name: string; attr_value: string }[] = []
 
@@ -665,7 +665,7 @@ export async function adminCreateProduct(
         .from('product_variant_attrs')
         .insert(allAttrsData)
 
-      if (attrsErr) throw attrsErr
+      if (attrsErr) throw new Error(`Attrs error: ${JSON.stringify(attrsErr)}`)
     }
   }
 
@@ -687,7 +687,7 @@ export async function adminCreateProduct(
     const { error: imgErr } = await supabase
       .from('product_images')
       .insert(imagesData)
-    if (imgErr) throw imgErr
+    if (imgErr) throw new Error(`Image error: ${JSON.stringify(imgErr)}`)
   }
 
   if (marketplaceLinks && marketplaceLinks.length > 0) {
@@ -701,7 +701,7 @@ export async function adminCreateProduct(
     const { error: linkErr } = await supabase
       .from('product_marketplace_links')
       .insert(linksData)
-    if (linkErr) throw linkErr
+    if (linkErr) throw new Error(`Link error: ${JSON.stringify(linkErr)}`)
   }
 
   // Save collections mapping
@@ -714,7 +714,7 @@ export async function adminCreateProduct(
     const { error: collErr } = await supabase
       .from('collection_products')
       .insert(collData)
-    if (collErr) throw collErr
+    if (collErr) throw new Error(`Collection error: ${JSON.stringify(collErr)}`)
   }
 
   return { id: productId }
@@ -757,14 +757,14 @@ export async function adminUpdateProduct(
     .update(productData)
     .eq('id', productId)
 
-  if (productErr) throw productErr
+  if (productErr) throw new Error(`Product update error: ${JSON.stringify(productErr)}`)
 
   const { data: dbVariants, error: dbVariantsErr } = await supabase
     .from('product_variants')
     .select('id')
     .eq('product_id', productId)
 
-  if (dbVariantsErr) throw dbVariantsErr
+  if (dbVariantsErr) throw new Error(`DB variants error: ${JSON.stringify(dbVariantsErr)}`)
   const dbVariantIds = dbVariants.map(v => v.id)
 
   const updatedVariantIds: string[] = []
