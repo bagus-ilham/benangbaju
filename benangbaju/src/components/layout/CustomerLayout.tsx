@@ -214,12 +214,13 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
                 className="font-heading text-base md:text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none hover:text-brand-gold transition-colors duration-300 flex items-center justify-center"
               >
                 {logoUrl ? (
-                  <div className="relative h-10 md:h-14 w-full max-w-[200px]">
+                  <div className="relative h-10 md:h-14 w-[150px] md:w-[200px]">
                     <Image
                       src={logoUrl}
                       alt="Benangbaju Logo"
                       fill
-                      sizes="200px"
+                      priority
+                      sizes="(max-width: 768px) 150px, 200px"
                       className="object-contain"
                     />
                   </div>
