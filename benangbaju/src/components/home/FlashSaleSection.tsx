@@ -120,10 +120,11 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
           </div>
         </SectionHeader>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
+        <div className="flex md:grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 overflow-x-auto pb-4 md:pb-0 scrollbar-hide snap-x">
           {mappedProducts.slice(0, 4).map((product, index) => (
             <motion.div
               key={product.id}
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}

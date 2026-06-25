@@ -28,7 +28,7 @@ export function NewArrivalsSection({ products }: NewArrivalsSectionProps) : Reac
           className="flex md:grid md:grid-cols-4 gap-x-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory w-full"
         >
           {products.slice(0, 4).map((product) => (
-            <motion.div key={product.id} variants={fadeUpItem} className="w-[75vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-start">
+            <motion.div key={product.id} variants={fadeUpItem} className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start">
               <ProductCard product={product} />
             </motion.div>
           ))}

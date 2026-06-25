@@ -37,7 +37,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
 
-  // Fetch product detail on the server
+  // Fetch product detail on the server (awaited because it is required for first paint)
   let product
   try {
     product = await getCachedProduct(slug)
@@ -45,15 +45,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
     notFound()
   }
 
-  // Fetch related products from the same category
-  const relatedProducts = product.categories && product.category_id
-    ? await getCachedRelatedProducts(product.id, product.category_id)
-    : []
+  // Fetch related products from the same category WITHOUT AWAITING to prevent blocking page load
+  const relatedProductsPromise = product.categories && product.category_id
+    ? getCachedRelatedProducts(product.id, product.category_id)
+    : Promise.resolve([])
 
   return (
     <ProductDetailClient
       product={product}
-      relatedProducts={relatedProducts}
+      relatedProductsPromise={relatedProductsPromise}
     />
   )
 }

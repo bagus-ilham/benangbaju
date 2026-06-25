@@ -70,7 +70,7 @@ export function RecentlyViewedSection() : React.JSX.Element | null {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="min-w-[45%] sm:min-w-[35%] md:min-w-0 snap-start flex-shrink-0"
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start"
             >
               <ProductCard product={product} />
             </motion.div>

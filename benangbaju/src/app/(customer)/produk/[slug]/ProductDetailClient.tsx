@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense, use } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -27,7 +27,12 @@ import toast from 'react-hot-toast'
 
 interface ProductDetailClientProps {
   product: ProductDetailItem
-  relatedProducts: ProductListItem[]
+  relatedProductsPromise: Promise<ProductListItem[]>
+}
+
+function RelatedProductsWrapper({ promise }: { promise: Promise<ProductListItem[]> }) {
+  const products = use(promise)
+  return <RelatedProducts products={products} />
 }
 
 const itemVariants = {
@@ -40,7 +45,7 @@ const itemVariants = {
 }
 
 
-export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) : React.JSX.Element {
+export function ProductDetailClient({ product, relatedProductsPromise }: ProductDetailClientProps) : React.JSX.Element {
   const { addItem, setCartDrawerOpen } = useCart()
   const { isLiked, toggleWishlist } = useWishlist()
   const addProductToRecentlyViewed = useRecentlyViewedStore((s: RecentlyViewedState) => s.addProduct)
@@ -632,8 +637,20 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
         {/* Reviews Section at the bottom */}
         <ReviewSection productId={product.id} ratingSummary={product.product_rating_summary} />
 
-        {/* Related Products Section */}
-        <RelatedProducts products={relatedProducts} />
+        {/* Related Products Section (Loaded asynchronously) */}
+        <Suspense fallback={
+          <div className="py-12 border-t border-neutral-100">
+            <div className="h-8 w-48 bg-neutral-100 mx-auto mb-8 skeleton-shimmer rounded-md" />
+            <div className="flex md:grid md:grid-cols-4 gap-x-4">
+              <div className="w-[45vw] sm:w-[35vw] md:w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
+              <div className="w-[45vw] sm:w-[35vw] md:w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
+              <div className="hidden md:block w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
+              <div className="hidden md:block w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
+            </div>
+          </div>
+        }>
+          <RelatedProductsWrapper promise={relatedProductsPromise} />
+        </Suspense>
       </PageContainer>
 
       {/* Dynamic Premium Sticky Bar (Desktop & Mobile) */}

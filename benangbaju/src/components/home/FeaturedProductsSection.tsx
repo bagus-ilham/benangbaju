@@ -34,7 +34,7 @@ export function FeaturedProductsSection({ products }: FeaturedProductsSectionPro
             <motion.div
               key={product.id}
               variants={fadeUpItem}
-              className="w-[75vw] sm:w-[45vw] md:w-auto flex-shrink-0 snap-start"
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start"
             >
               <ProductCard product={product} />
             </motion.div>
