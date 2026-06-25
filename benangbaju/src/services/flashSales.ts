@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -259,6 +260,8 @@ export async function adminCreateFlashSale(
     if (itemsErr) throw itemsErr
   }
 
+  await insertAdminActivityLog(supabase, 'create', 'flash_sale', flashSaleId, `Created flash sale ${saleData.name}`)
+
   return { id: flashSaleId }
 }
 
@@ -335,6 +338,8 @@ export async function adminUpdateFlashSale(
     if (itemsErr) throw itemsErr
   }
 
+  await insertAdminActivityLog(supabase, 'update', 'flash_sale', saleId, `Updated flash sale ${saleData.name}`)
+
   return { id: saleId }
 }
 
@@ -348,5 +353,8 @@ export async function adminDeleteFlashSale(
     .eq('id', saleId)
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'delete', 'flash_sale', saleId, `Deleted flash sale ${saleId}`)
+  
   return { success: true }
 }

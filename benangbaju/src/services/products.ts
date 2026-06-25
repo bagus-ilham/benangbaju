@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -717,6 +718,8 @@ export async function adminCreateProduct(
     if (collErr) throw new Error(`Collection error: ${JSON.stringify(collErr)}`)
   }
 
+  await insertAdminActivityLog(supabase, 'create', 'product', productId, `Created product ${productData.name}`)
+
   return { id: productId }
 }
 
@@ -961,6 +964,8 @@ export async function adminUpdateProduct(
     if (collErr) throw collErr
   }
 
+  await insertAdminActivityLog(supabase, 'update', 'product', productId, `Updated product ${productData.name}`)
+
   return { id: productId }
 }
 
@@ -976,5 +981,8 @@ export async function adminDeleteProduct(
     .eq('id', productId)
 
   if (error) throw new Error(`Delete error: ${JSON.stringify(error)}`)
+  
+  await insertAdminActivityLog(supabase, 'delete', 'product', productId, `Deleted product ${productId}`)
+  
   return { success: true }
 }

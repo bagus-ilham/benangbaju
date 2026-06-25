@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -59,6 +60,9 @@ export async function adminCreateBanner(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'create', 'banner', data.id, `Created banner ${bannerData.title || 'Untitled'}`)
+  
   return data
 }
 
@@ -86,6 +90,9 @@ export async function adminUpdateBanner(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'update', 'banner', bannerId, `Updated banner ${bannerData.title || 'Untitled'}`)
+  
   return data
 }
 
@@ -99,5 +106,8 @@ export async function adminDeleteBanner(
     .eq('id', bannerId)
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'delete', 'banner', bannerId, `Deleted banner ${bannerId}`)
+  
   return { success: true }
 }

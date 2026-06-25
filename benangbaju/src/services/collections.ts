@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -126,6 +127,8 @@ export async function adminCreateCollection(
     if (juncErr) throw juncErr
   }
 
+  await insertAdminActivityLog(supabase, 'create', 'collection', collectionId, `Created collection ${collectionData.name}`)
+
   return { id: collectionId }
 }
 
@@ -172,6 +175,8 @@ export async function adminUpdateCollection(
     if (juncErr) throw juncErr
   }
 
+  await insertAdminActivityLog(supabase, 'update', 'collection', collectionId, `Updated collection ${collectionData.name}`)
+
   return { id: collectionId }
 }
 
@@ -185,5 +190,8 @@ export async function adminDeleteCollection(
     .eq('id', collectionId)
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'delete', 'collection', collectionId, `Deleted collection ${collectionId}`)
+  
   return { success: true }
 }

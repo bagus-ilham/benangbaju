@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Json } from '@/types/database'
 
@@ -91,6 +92,8 @@ export async function adminUpdateSettings(
     safeLogError('Error updating site settings:', error)
     throw error
   }
+
+  await insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Updated site settings')
 }
 
 export async function adminGetActivityLogs(supabase: SupabaseClient<Database>): Promise<ActivityLog[]> {
@@ -143,6 +146,8 @@ export async function adminUpsertSettings(
     safeLogError('Error upserting settings:', error)
     throw error
   }
+
+  await insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Upserted site settings')
 }
 
 export async function getSiteSettings(

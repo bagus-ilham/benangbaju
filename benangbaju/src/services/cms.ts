@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Json } from '@/types/database'
 
@@ -64,7 +65,7 @@ export async function adminCreateRedirect(
     throw error
   }
 
-  return {
+  const result = {
     id: data.id,
     from_path: data.from_path,
     to_path: data.to_path,
@@ -72,6 +73,10 @@ export async function adminCreateRedirect(
     is_active: data.is_active,
     created_at: data.created_at,
   }
+
+  await insertAdminActivityLog(supabase, 'create', 'redirect', data.id, `Created redirect from ${data.from_path}`)
+
+  return result
 }
 
 export async function adminUpdateRedirect(
@@ -88,6 +93,8 @@ export async function adminUpdateRedirect(
     safeLogError('Error updating redirect:', error)
     throw error
   }
+  
+  await insertAdminActivityLog(supabase, 'update', 'redirect', redirectId, `Updated redirect ${redirectId}`)
 }
 
 export async function adminDeleteRedirect(
@@ -103,6 +110,8 @@ export async function adminDeleteRedirect(
     safeLogError('Error deleting redirect:', error)
     throw error
   }
+  
+  await insertAdminActivityLog(supabase, 'delete', 'redirect', redirectId, `Deleted redirect ${redirectId}`)
 }
 
 // =============================================================
@@ -149,7 +158,7 @@ export async function adminCreateLandingPage(
     throw error
   }
 
-  return {
+  const result = {
     id: data.id,
     slug: data.slug,
     title: data.title,
@@ -160,6 +169,10 @@ export async function adminCreateLandingPage(
     created_at: data.created_at,
     updated_at: data.updated_at,
   }
+
+  await insertAdminActivityLog(supabase, 'create', 'landing_page', data.id, `Created landing page ${data.slug}`)
+
+  return result
 }
 
 export async function adminUpdateLandingPage(
@@ -176,6 +189,8 @@ export async function adminUpdateLandingPage(
     safeLogError('Error updating landing page:', error)
     throw error
   }
+  
+  await insertAdminActivityLog(supabase, 'update', 'landing_page', landingPageId, `Updated landing page ${landingPageId}`)
 }
 
 export async function adminDeleteLandingPage(
@@ -191,4 +206,6 @@ export async function adminDeleteLandingPage(
     safeLogError('Error deleting landing page:', error)
     throw error
   }
+  
+  await insertAdminActivityLog(supabase, 'delete', 'landing_page', landingPageId, `Deleted landing page ${landingPageId}`)
 }

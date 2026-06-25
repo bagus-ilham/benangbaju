@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -71,6 +72,9 @@ export async function adminCreateCategory(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'create', 'category', data.id, `Created category ${categoryData.name}`)
+  
   return data
 }
 
@@ -95,6 +99,9 @@ export async function adminUpdateCategory(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'update', 'category', categoryId, `Updated category ${categoryData.name}`)
+  
   return data
 }
 
@@ -108,5 +115,8 @@ export async function adminDeleteCategory(
     .eq('id', categoryId)
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'delete', 'category', categoryId, `Deleted category ${categoryId}`)
+  
   return { success: true }
 }

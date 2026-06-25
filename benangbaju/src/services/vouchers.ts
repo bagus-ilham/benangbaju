@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -107,6 +108,9 @@ export async function adminCreateVoucher(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'create', 'voucher', data.id, `Created voucher ${voucherData.code}`)
+
   return data
 }
 
@@ -135,6 +139,9 @@ export async function adminUpdateVoucher(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'update', 'voucher', voucherId, `Updated voucher ${voucherData.code}`)
+
   return data
 }
 
@@ -148,5 +155,8 @@ export async function adminDeleteVoucher(
     .eq('id', voucherId)
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'delete', 'voucher', voucherId, `Deleted voucher ${voucherId}`)
+
   return { success: true }
 }

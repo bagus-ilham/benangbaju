@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -241,6 +242,9 @@ export async function adminUpdateReviewStatus(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'update', 'review', reviewId, `Updated review status to ${status}`)
+  
   return data
 }
 
@@ -265,6 +269,9 @@ export async function adminReplyToReview(
     .single()
 
   if (error) throw error
+  
+  await insertAdminActivityLog(supabase, 'create', 'review_reply', data.id, `Replied to review ${reviewId}`)
+  
   return data
 }
 

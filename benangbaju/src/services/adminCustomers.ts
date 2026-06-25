@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -61,6 +62,8 @@ export async function adminToggleCustomerStatus(
     safeLogError('Error toggling customer status:', error)
     return { success: false, error: new Error('Gagal mengubah status pelanggan.') }
   }
+
+  await insertAdminActivityLog(supabase, 'update', 'customer', customerId, `Toggled customer ${customerId} status to ${isActive}`)
 
   return { success: true, error: null }
 }

@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -684,6 +685,8 @@ export async function adminUpdateOrderStatus(
     if (shippingErr) throw shippingErr
   }
 
+  await insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated order status to ${status}`)
+
   return { success: true }
 }
 
@@ -857,6 +860,8 @@ export async function adminUpdateReturnRequest(
     safeLogError('Error updating return request:', error)
     throw error
   }
+
+  await insertAdminActivityLog(supabase, 'update', 'return_request', requestId, `Updated return request status to ${status}`)
 
   return { success: true }
 }

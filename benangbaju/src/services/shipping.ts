@@ -1,4 +1,5 @@
 import { safeLogError } from '@/lib/logger'
+import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
@@ -380,12 +381,16 @@ export async function adminCreateShippingZone(
     }
   }
 
-  return {
+  const result = {
     id: newZone.id,
     name: newZone.name,
     description: newZone.description,
     is_active: newZone.is_active,
   }
+
+  await insertAdminActivityLog(supabase, 'create', 'shipping_zone', newZone.id, `Created shipping zone ${newZone.name}`)
+
+  return result
 }
 
 // 10. Update shipping zone
@@ -432,6 +437,8 @@ export async function adminUpdateShippingZone(
       }
     }
   }
+
+  await insertAdminActivityLog(supabase, 'update', 'shipping_zone', zoneId, `Updated shipping zone ${zoneId}`)
 }
 
 // 11. Delete shipping zone
@@ -448,6 +455,8 @@ export async function adminDeleteShippingZone(
     safeLogError('Error deleting shipping zone:', error)
     throw error
   }
+
+  await insertAdminActivityLog(supabase, 'delete', 'shipping_zone', zoneId, `Deleted shipping zone ${zoneId}`)
 }
 
 // 12. Get all shipping rates
@@ -505,7 +514,7 @@ export async function adminCreateShippingRate(
     throw error
   }
 
-  return {
+  const result = {
     id: data.id,
     zone_id: data.zone_id,
     courier_name: data.courier_name,
@@ -516,6 +525,10 @@ export async function adminCreateShippingRate(
     etd_days_max: data.etd_days_max,
     is_active: data.is_active,
   }
+
+  await insertAdminActivityLog(supabase, 'create', 'shipping_rate', data.id, `Created shipping rate for courier ${data.courier_name}`)
+
+  return result
 }
 
 // 14. Update shipping rate
@@ -533,6 +546,8 @@ export async function adminUpdateShippingRate(
     safeLogError('Error updating shipping rate:', error)
     throw error
   }
+
+  await insertAdminActivityLog(supabase, 'update', 'shipping_rate', rateId, `Updated shipping rate ${rateId}`)
 }
 
 // 15. Delete shipping rate
@@ -549,4 +564,6 @@ export async function adminDeleteShippingRate(
     safeLogError('Error deleting shipping rate:', error)
     throw error
   }
+
+  await insertAdminActivityLog(supabase, 'delete', 'shipping_rate', rateId, `Deleted shipping rate ${rateId}`)
 }
