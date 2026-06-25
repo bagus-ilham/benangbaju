@@ -3,6 +3,18 @@ import { insertAdminActivityLog } from './adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
+function handleProductSupabaseError(err: any, context: string): never {
+  if (err?.code === '23505') {
+    if (err.message?.includes('products_slug_key')) {
+      throw new Error('Slug URL sudah digunakan oleh produk lain. Silakan ubah Slug URL.')
+    }
+    if (err.message?.includes('product_variants_sku_key')) {
+      throw new Error('Terdapat SKU Varian yang sudah terdaftar. Pastikan semua SKU unik.')
+    }
+  }
+  throw new Error(`${context}: ${err?.message || JSON.stringify(err)}`)
+}
+
 export interface ProductFilters {
   categorySlug?: string
   collectionSlug?: string
@@ -615,7 +627,7 @@ export async function adminCreateProduct(
     .select('id')
     .single()
 
-  if (productErr) throw new Error(`Product error: ${JSON.stringify(productErr)}`)
+  if (productErr) handleProductSupabaseError(productErr, 'Gagal membuat produk')
   const productId = product.id
 
   const idMap = new Map<string, string>()
@@ -637,7 +649,7 @@ export async function adminCreateProduct(
       .insert(variantInserts)
       .select('id')
 
-    if (variantErr) throw new Error(`Variant error: ${JSON.stringify(variantErr)}`)
+    if (variantErr) handleProductSupabaseError(variantErr, 'Gagal menyimpan varian')
 
     const allAttrsData: { variant_id: string; attr_name: string; attr_value: string }[] = []
 
@@ -666,7 +678,7 @@ export async function adminCreateProduct(
         .from('product_variant_attrs')
         .insert(allAttrsData)
 
-      if (attrsErr) throw new Error(`Attrs error: ${JSON.stringify(attrsErr)}`)
+      if (attrsErr) handleProductSupabaseError(attrsErr, 'Gagal menyimpan atribut varian')
     }
   }
 
@@ -688,7 +700,7 @@ export async function adminCreateProduct(
     const { error: imgErr } = await supabase
       .from('product_images')
       .insert(imagesData)
-    if (imgErr) throw new Error(`Image error: ${JSON.stringify(imgErr)}`)
+    if (imgErr) handleProductSupabaseError(imgErr, 'Gagal menyimpan gambar produk')
   }
 
   if (marketplaceLinks && marketplaceLinks.length > 0) {
@@ -702,7 +714,7 @@ export async function adminCreateProduct(
     const { error: linkErr } = await supabase
       .from('product_marketplace_links')
       .insert(linksData)
-    if (linkErr) throw new Error(`Link error: ${JSON.stringify(linkErr)}`)
+    if (linkErr) handleProductSupabaseError(linkErr, 'Gagal menyimpan link marketplace')
   }
 
   // Save collections mapping
@@ -715,7 +727,7 @@ export async function adminCreateProduct(
     const { error: collErr } = await supabase
       .from('collection_products')
       .insert(collData)
-    if (collErr) throw new Error(`Collection error: ${JSON.stringify(collErr)}`)
+    if (collErr) handleProductSupabaseError(collErr, 'Gagal menyematkan produk ke koleksi')
   }
 
   await insertAdminActivityLog(supabase, 'create', 'product', productId, `Created product ${productData.name}`)
@@ -760,7 +772,7 @@ export async function adminUpdateProduct(
     .update(productData)
     .eq('id', productId)
 
-  if (productErr) throw new Error(`Product update error: ${JSON.stringify(productErr)}`)
+  if (productErr) handleProductSupabaseError(productErr, 'Gagal memperbarui produk')
 
   const { data: dbVariants, error: dbVariantsErr } = await supabase
     .from('product_variants')
@@ -797,7 +809,7 @@ export async function adminUpdateProduct(
         .from('product_variants')
         .update({ is_active: false })
         .in('id', idsToDelete)
-      if (deacErr) throw deacErr
+      if (deacErr) handleProductSupabaseError(deacErr, 'Gagal menonaktifkan varian')
     }
   }
 
@@ -824,7 +836,7 @@ export async function adminUpdateProduct(
         })
         .eq('id', v.id)
 
-      if (variantErr) throw variantErr
+      if (variantErr) handleProductSupabaseError(variantErr, 'Gagal memperbarui varian')
       idMap.set(v.id, v.id)
       idMap.set(String(i), v.id)
 
@@ -832,7 +844,7 @@ export async function adminUpdateProduct(
         .from('product_variant_attrs')
         .delete()
         .eq('variant_id', v.id)
-      if (deleteAttrsErr) throw deleteAttrsErr
+      if (deleteAttrsErr) handleProductSupabaseError(deleteAttrsErr, 'Gagal menghapus atribut varian')
 
       if (v.attrs && v.attrs.length > 0) {
         v.attrs.forEach(a => {
@@ -866,7 +878,7 @@ export async function adminUpdateProduct(
       .insert(newVariantsToInsert)
       .select('id')
 
-    if (variantErr) throw variantErr
+    if (variantErr) handleProductSupabaseError(variantErr, 'Gagal menambah varian baru')
 
     for (let k = 0; k < insertedVariants.length; k++) {
       const originalIndex = newVariantsIndices[k]
@@ -895,14 +907,14 @@ export async function adminUpdateProduct(
     const { error: attrsErr } = await supabase
       .from('product_variant_attrs')
       .insert(allAttrsData)
-    if (attrsErr) throw attrsErr
+    if (attrsErr) handleProductSupabaseError(attrsErr, 'Gagal menyisipkan atribut varian baru')
   }
 
   const { error: deleteImgErr } = await supabase
     .from('product_images')
     .delete()
     .eq('product_id', productId)
-  if (deleteImgErr) throw deleteImgErr
+  if (deleteImgErr) handleProductSupabaseError(deleteImgErr, 'Gagal mereset gambar produk')
 
   if (images && images.length > 0) {
     const imagesData = images.map(img => {
@@ -922,14 +934,14 @@ export async function adminUpdateProduct(
     const { error: imgErr } = await supabase
       .from('product_images')
       .insert(imagesData)
-    if (imgErr) throw imgErr
+    if (imgErr) handleProductSupabaseError(imgErr, 'Gagal menyimpan gambar')
   }
 
   const { error: deleteLinksErr } = await supabase
     .from('product_marketplace_links')
     .delete()
     .eq('product_id', productId)
-  if (deleteLinksErr) throw deleteLinksErr
+  if (deleteLinksErr) handleProductSupabaseError(deleteLinksErr, 'Gagal mereset link marketplace')
 
   if (marketplaceLinks && marketplaceLinks.length > 0) {
     const linksData = marketplaceLinks.map(link => ({
@@ -942,7 +954,7 @@ export async function adminUpdateProduct(
     const { error: linkErr } = await supabase
       .from('product_marketplace_links')
       .insert(linksData)
-    if (linkErr) throw linkErr
+    if (linkErr) handleProductSupabaseError(linkErr, 'Gagal menyimpan link')
   }
 
   // Update collections mapping: delete first then insert new ones
@@ -950,7 +962,7 @@ export async function adminUpdateProduct(
     .from('collection_products')
     .delete()
     .eq('product_id', productId)
-  if (delCollErr) throw delCollErr
+  if (delCollErr) handleProductSupabaseError(delCollErr, 'Gagal mereset koleksi')
 
   if (collectionIds && collectionIds.length > 0) {
     const collData = collectionIds.map((cid, idx) => ({
@@ -961,7 +973,7 @@ export async function adminUpdateProduct(
     const { error: collErr } = await supabase
       .from('collection_products')
       .insert(collData)
-    if (collErr) throw collErr
+    if (collErr) handleProductSupabaseError(collErr, 'Gagal menautkan koleksi')
   }
 
   await insertAdminActivityLog(supabase, 'update', 'product', productId, `Updated product ${productData.name}`)

@@ -382,6 +382,11 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     // Clean marketplace links
     const cleanedLinks = marketplaceLinks.filter((link) => link.url.trim() !== '')
 
+    const cleanedVariants = variants.map(v => ({
+      ...v,
+      attrs: v.attrs.filter(a => a.attr_name.trim() !== '' && a.attr_value.trim() !== '')
+    }))
+
     const payload = {
       productData: {
         category_id,
@@ -397,7 +402,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
         size_guide: size_guide.trim() || null,
         care_guide: care_guide.trim() || null,
       },
-      variants,
+      variants: cleanedVariants,
       images: cleanedImages,
       links: cleanedLinks,
       collectionIds: selectedCollections,
