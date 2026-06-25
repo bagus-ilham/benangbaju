@@ -53,9 +53,9 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  cacheComponents: true,
   experimental: {
     viewTransition: true,
-    cacheComponents: true,
   }
 };
 

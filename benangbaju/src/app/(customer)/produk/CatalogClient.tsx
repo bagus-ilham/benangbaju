@@ -9,6 +9,7 @@ import { ProductCard } from '@/components/product/ProductCard'
 import { PageContainer, PageHero } from '@/components/shared'
 import { SlidersHorizontal, ChevronLeft, ChevronRight, X, PackageSearch } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTransition } from 'react'
 
 interface CatalogClientProps {
   initialProducts: ProductListItem[]
@@ -35,6 +36,7 @@ export function CatalogClient({
 
   // Local filter UI states
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   // Update URL search params helpers
   const updateFilters = (newParams: Record<string, string | null>) => {
@@ -62,7 +64,9 @@ export function CatalogClient({
     }
 
     const query = searchParams.toString()
-    router.push(`/produk${query ? `?${query}` : ''}`)
+    startTransition(() => {
+      router.push(`/produk${query ? `?${query}` : ''}`)
+    })
   }
 
   const handleCategorySelect = (slug: string | null) => {
@@ -90,7 +94,7 @@ export function CatalogClient({
         title="Semua Produk"
         subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
       />
-      <PageContainer className="py-10 page-content">
+      <PageContainer className={cn("py-10 page-content transition-opacity duration-300", isPending && "opacity-50 pointer-events-none")}>
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
             Hasil pencarian untuk: <strong className="text-brand-black">"{searchQuery}"</strong> ({totalCount} produk)
