@@ -968,11 +968,13 @@ export async function adminDeleteProduct(
   supabase: SupabaseClient<Database>,
   productId: string
 ) : Promise<{ success: boolean; }> {
+  // Hard delete: akan benar-benar menghapus data dari tabel 'products'
+  // Bergantung pada konfigurasi ON DELETE CASCADE di database untuk menghapus relasi (variants, images, dll)
   const { error } = await supabase
     .from('products')
-    .update({ is_active: false })
+    .delete()
     .eq('id', productId)
 
-  if (error) throw error
+  if (error) throw new Error(`Delete error: ${JSON.stringify(error)}`)
   return { success: true }
 }
