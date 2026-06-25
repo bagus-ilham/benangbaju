@@ -181,7 +181,7 @@ export async function adminDeleteCollection(
 ) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('collections')
-    .update({ is_active: false })
+    .delete()
     .eq('id', collectionId)
 
   if (error) throw error

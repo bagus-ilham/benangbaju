@@ -344,7 +344,7 @@ export async function adminDeleteFlashSale(
 ) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('flash_sales')
-    .update({ is_active: false })
+    .delete()
     .eq('id', saleId)
 
   if (error) throw error

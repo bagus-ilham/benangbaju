@@ -95,7 +95,7 @@ export async function adminDeleteBanner(
 ) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('banners')
-    .update({ is_active: false })
+    .delete()
     .eq('id', bannerId)
 
   if (error) throw error

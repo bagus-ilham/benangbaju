@@ -104,7 +104,7 @@ export async function adminDeleteCategory(
 ) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('categories')
-    .update({ is_active: false })
+    .delete()
     .eq('id', categoryId)
 
   if (error) throw error

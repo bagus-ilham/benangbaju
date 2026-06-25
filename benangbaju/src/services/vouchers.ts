@@ -144,7 +144,7 @@ export async function adminDeleteVoucher(
 ) : Promise<{ success: boolean; }> {
   const { error } = await supabase
     .from('vouchers')
-    .update({ is_active: false })
+    .delete()
     .eq('id', voucherId)
 
   if (error) throw error
