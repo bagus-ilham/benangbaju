@@ -39,6 +39,12 @@ async function getCachedCollectionProducts(slug: string) {
   })
 }
 
+export async function generateStaticParams() {
+  const supabase = createStaticClient()
+  const { data } = await supabase.from('collections').select('slug').eq('is_active', true)
+  return (data || []).map((c) => ({ slug: c.slug }))
+}
+
 export default async function CollectionDetailPage({ params }: CollectionPageProps) : Promise<React.JSX.Element> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)

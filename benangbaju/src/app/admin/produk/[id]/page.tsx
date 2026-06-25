@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use } from 'react'
+import React, { use, Suspense } from 'react'
 import { ProductForm } from '@/components/admin/ProductForm'
 import { useAdminUpdateProduct } from '@/hooks/useAdmin'
 import { useQuery } from '@tanstack/react-query'
@@ -19,7 +19,7 @@ interface EditProductPageProps {
   }>
 }
 
-export default function AdminProductEditPage({ params }: EditProductPageProps) : React.JSX.Element {
+function AdminProductEditContent({ params }: EditProductPageProps) : React.JSX.Element {
   const { id: productId } = use(params)
   const updateMutation = useAdminUpdateProduct()
 
@@ -94,5 +94,13 @@ export default function AdminProductEditPage({ params }: EditProductPageProps) :
       onSubmit={handleUpdateProduct}
       isSubmitting={updateMutation.isPending}
     />
+  )
+}
+
+export default function AdminProductEditPage({ params }: EditProductPageProps) : React.JSX.Element {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Memuat produk...</div>}>
+      <AdminProductEditContent params={params} />
+    </Suspense>
   )
 }

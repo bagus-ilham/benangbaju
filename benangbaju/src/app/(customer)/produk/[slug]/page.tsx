@@ -39,6 +39,12 @@ async function RelatedProductsServer({ productId, categoryId }: { productId: str
   return <RelatedProducts products={relatedProducts} />
 }
 
+export async function generateStaticParams() {
+  const supabase = createStaticClient()
+  const { data } = await supabase.from('products').select('slug').eq('is_active', true)
+  return (data || []).map((p) => ({ slug: p.slug }))
+}
+
 export default async function ProductDetailPage({ params }: ProductPageProps) : Promise<React.JSX.Element> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)

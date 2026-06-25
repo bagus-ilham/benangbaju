@@ -27,7 +27,10 @@ interface CustomerLayoutProps {
 }
 
 export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.Element {
-  const pathname = usePathname()
+  const [pathname, setPathname] = useState('')
+  useEffect(() => {
+    setPathname(window.location.pathname)
+  }, [])
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
 

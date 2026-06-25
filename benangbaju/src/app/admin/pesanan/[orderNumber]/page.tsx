@@ -18,7 +18,7 @@ interface AdminOrderDetailPageProps {
   }>
 }
 
-export default function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) : React.JSX.Element {
+function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.JSX.Element {
   const { orderNumber } = use(params)
   const router = useRouter()
 
@@ -370,5 +370,13 @@ export default function AdminOrderDetailPage({ params }: AdminOrderDetailPagePro
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) : React.JSX.Element {
+  return (
+    <React.Suspense fallback={<div className="p-8 text-center">Memuat data pesanan...</div>}>
+      <AdminOrderDetailContent params={params} />
+    </React.Suspense>
   )
 }

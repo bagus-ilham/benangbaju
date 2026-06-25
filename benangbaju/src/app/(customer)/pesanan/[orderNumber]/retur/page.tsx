@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use, useState, useEffect } from 'react'
+import React, { use, useState, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail } from '@/hooks/useOrders'
@@ -29,7 +29,7 @@ interface ReturnPageProps {
   }>
 }
 
-export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Element | null {
+function ReturnPageContent({ params }: ReturnPageProps) : React.JSX.Element | null {
   const { orderNumber } = use(params)
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
@@ -440,5 +440,13 @@ export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Elem
         </form>
       </PageContainer>
     </div>
+  )
+}
+
+export default function ReturnPage({ params }: ReturnPageProps) : React.JSX.Element {
+  return (
+    <Suspense fallback={<AuthLoading message="Memuat form retur..." />}>
+      <ReturnPageContent params={params} />
+    </Suspense>
   )
 }

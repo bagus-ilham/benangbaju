@@ -41,7 +41,7 @@ async function getCachedCatalogData(
   }
 }
 
-export default async function CatalogPage({ searchParams }: CatalogPageProps) : Promise<React.JSX.Element> {
+async function CatalogContent({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const params = await searchParams
 
   const categorySlug = typeof params.kategori === 'string' ? params.kategori : undefined
@@ -86,23 +86,36 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) : 
   }
 
   return (
+    <CatalogClient
+      initialProducts={data.products}
+      totalCount={data.totalCount}
+      categories={data.categories}
+      filters={{
+        categorySlug,
+        sortBy,
+        searchQuery,
+        page,
+        limit,
+      }}
+    />
+  )
+}
+
+export default function CatalogPage({ searchParams }: CatalogPageProps) : React.JSX.Element {
+  return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center text-xs text-neutral-400 uppercase tracking-widest font-heading">
-        Memuat katalog...
+      <div className="bg-white min-h-screen">
+        <PageHero
+          eyebrow="Katalog Busana"
+          title="Semua Produk"
+          subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
+        />
+        <div className="min-h-[50vh] flex items-center justify-center text-xs text-neutral-400 uppercase tracking-widest font-heading">
+          Memuat katalog...
+        </div>
       </div>
     }>
-      <CatalogClient
-        initialProducts={data.products}
-        totalCount={data.totalCount}
-        categories={data.categories}
-        filters={{
-          categorySlug,
-          sortBy,
-          searchQuery,
-          page,
-          limit,
-        }}
-      />
+      <CatalogContent searchParams={searchParams} />
     </Suspense>
   )
 }

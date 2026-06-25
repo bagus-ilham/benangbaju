@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use, useState, useEffect, useCallback, useRef } from 'react'
+import React, { use, useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken, useCheckPaymentStatus } from '@/hooks/useOrders'
@@ -22,7 +22,7 @@ interface OrderDetailPageProps {
   }>
 }
 
-export default function OrderDetailPage({ params }: OrderDetailPageProps) : React.JSX.Element | null {
+function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Element | null {
   const { orderNumber } = use(params)
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const searchParams = useSearchParams()
@@ -914,5 +914,13 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) : Reac
         )}
       </Modal>
     </div>
+  )
+}
+
+export default function OrderDetailPage({ params }: OrderDetailPageProps) : React.JSX.Element {
+  return (
+    <Suspense fallback={<AuthLoading message="Memuat pesanan..." />}>
+      <OrderDetailContent params={params} />
+    </Suspense>
   )
 }

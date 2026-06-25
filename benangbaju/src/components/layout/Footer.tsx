@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Button, Input } from '@/components/shared'
+import { Button, Input, CurrentYear } from '@/components/shared'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -221,7 +221,7 @@ export function Footer(): React.JSX.Element {
 
           <div className="border-t border-neutral-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-[10px] text-neutral-400 font-sans">
-              &copy; {new Date().getFullYear()} Benangbaju Store. All rights reserved.
+              &copy; <CurrentYear /> Benangbaju Store. All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
               <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">Syarat</Link>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ProductForm } from '@/components/admin/ProductForm'
 import { useAdminCreateProduct } from '@/hooks/useAdmin'
@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()
 
-export default function AdminProductTambahPage() : React.JSX.Element {
+function AdminProductTambahContent() : React.JSX.Element {
   const searchParams = useSearchParams()
   const duplicateId = searchParams.get('duplicate')
   const createMutation = useAdminCreateProduct()
@@ -101,6 +101,14 @@ export default function AdminProductTambahPage() : React.JSX.Element {
       onSubmit={handleCreateProduct}
       isSubmitting={createMutation.isPending}
     />
+  )
+}
+
+export default function AdminProductTambahPage() : React.JSX.Element {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Memuat form...</div>}>
+      <AdminProductTambahContent />
+    </Suspense>
   )
 }
 
