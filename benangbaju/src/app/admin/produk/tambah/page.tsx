@@ -47,11 +47,27 @@ export default function AdminProductTambahPage() : React.JSX.Element {
     copy.slug = `${copy.slug}-copy`
     
     if (copy.product_variants) {
-      copy.product_variants = copy.product_variants.map((v: any) => ({
-        ...v,
-        id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        sku: v.sku ? `${v.sku}-COPY` : ''
-      }))
+      const oldToNewIdMap = new Map<string, string>()
+      copy.product_variants = copy.product_variants.map((v: any) => {
+        const newId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+        oldToNewIdMap.set(v.id, newId)
+        return {
+          ...v,
+          id: newId,
+          sku: v.sku ? `${v.sku}-COPY` : ''
+        }
+      })
+      if (copy.product_images) {
+        copy.product_images = copy.product_images.map((img: any) => {
+          if (img.variant_id && oldToNewIdMap.has(img.variant_id)) {
+            return {
+              ...img,
+              variant_id: oldToNewIdMap.get(img.variant_id)
+            }
+          }
+          return img
+        })
+      }
     }
     
     return copy

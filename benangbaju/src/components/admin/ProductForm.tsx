@@ -250,7 +250,11 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
   }
 
   const handleRemoveVariant = (idx: number) => {
+    const variantToRemove = variants[idx]
     setVariants((prev) => prev.filter((_, i) => i !== idx))
+    if (variantToRemove?.id) {
+      setImages((prev) => prev.filter((img) => img.variant_id !== variantToRemove.id))
+    }
   }
 
   // Variant attributes handlers
