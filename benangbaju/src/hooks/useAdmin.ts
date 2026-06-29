@@ -3,6 +3,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { revalidateCacheTag } from '@/app/actions/revalidate'
+import { getAdminCustomersAction, toggleAdminCustomerStatusAction } from '@/actions/admin'
 import {
   adminGetProducts,
   adminCreateProduct,
@@ -768,16 +769,18 @@ export function useAdminActivityLogs() : import("@tanstack/react-query").UseQuer
   })
 }
 
+
+
 // --- 11. Customer Management Hooks ---
 export function useAdminCustomers() : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/adminCustomers").CustomerProfile[]>, Error> {
   return useQuery({
     queryKey: ['admin', 'customers'],
-    queryFn: () => adminGetCustomers(supabase)
+    queryFn: () => getAdminCustomersAction()
   })
 }
 
 export function useAdminToggleCustomerStatus() : UseMutationResult<
-  Awaited<ReturnType<typeof adminToggleCustomerStatus>>,
+  Awaited<ReturnType<typeof toggleAdminCustomerStatusAction>>,
   Error,
   { customerId: string; isActive: boolean },
   unknown
@@ -785,7 +788,7 @@ export function useAdminToggleCustomerStatus() : UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ customerId, isActive }: { customerId: string; isActive: boolean }) =>
-      adminToggleCustomerStatus(supabase, customerId, isActive),
+      toggleAdminCustomerStatusAction(customerId, isActive),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })

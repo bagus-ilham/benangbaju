@@ -32,7 +32,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
     supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true })
-      .eq('role', 'customer'),
+      .neq('role', 'admin'),
     supabase
       .from('product_variants')
       .select('id, name, sku, stock, products(name)')
@@ -111,4 +111,20 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
     recentOrders,
     recentLogs
   }
+}
+
+export async function getAdminCustomersAction() {
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const { adminGetCustomers } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
+  
+  const supabaseAdmin = createAdminClient()
+  return adminGetCustomers(supabaseAdmin)
+}
+
+export async function toggleAdminCustomerStatusAction(customerId: string, isActive: boolean) {
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const { adminToggleCustomerStatus } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
+  
+  const supabaseAdmin = createAdminClient()
+  return adminToggleCustomerStatus(supabaseAdmin, customerId, isActive)
 }

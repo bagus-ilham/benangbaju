@@ -11,7 +11,7 @@ export async function adminGetCustomers(
   const { data, error } = await supabase
     .from('profiles')
     .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
-    .eq('role', 'customer')
+    .neq('role', 'admin')
     .order('created_at', { ascending: false })
     .limit(500)
 
@@ -45,7 +45,7 @@ export async function adminToggleCustomerStatus(
     .from('profiles')
     .update({ is_active: isActive, updated_at: new Date().toISOString() })
     .eq('id', customerId)
-    .eq('role', 'customer') // Security guard: only toggle customer role profiles
+    .neq('role', 'admin') // Security guard: only toggle non-admin role profiles
 
   if (error) {
     safeLogError('Error toggling customer status:', error)
