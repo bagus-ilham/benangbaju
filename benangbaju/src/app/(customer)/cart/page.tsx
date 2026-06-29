@@ -4,22 +4,25 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useCart } from '@/hooks/useCart'
+import { useCartStore } from '@/stores/cartStore'
 import { Button, Card, PageContainer, EmptyState, PageHero } from '@/components/shared'
 import { formatIDR } from '@/lib/utils'
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function CartPage() : React.JSX.Element {
-  const {
-    items,
-    updateQuantity,
-    removeItem,
-    subtotal,
-    totalQuantity,
-    originalSubtotal,
-    totalDiscount,
-  } = useCart()
+  const items = useCartStore((state) => state.items)
+  const updateQuantity = useCartStore((state) => state.updateQuantity)
+  const removeItem = useCartStore((state) => state.removeItem)
+
+  const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+  const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
+  
+  const originalSubtotal = items.reduce((acc, item) => {
+    const basePrice = item.comparePrice || item.price
+    return acc + (basePrice * item.quantity)
+  }, 0)
+  const totalDiscount = originalSubtotal - subtotal
 
   const [isMounted, setIsMounted] = useState(false)
 

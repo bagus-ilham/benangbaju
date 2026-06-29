@@ -33,32 +33,46 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
         is_primary: img.is_primary ?? false,
       })) || []
 
+      const price = Number(item.sale_price)
+      const comparePrice = Number(item.original_price)
+      const discountPercent = comparePrice && comparePrice > price
+        ? Math.round(((comparePrice - price) / comparePrice) * 100)
+        : null
+
+      const primaryImage = images.find(img => img.is_primary)?.url || images[0]?.url || null
+      const hoverImage = images.find(img => !img.is_primary && img.sort_order > 0)?.url || images[1]?.url || primaryImage
+
+      const variantList = [
+        {
+          id: pv?.id || '',
+          sku: pv?.sku || '',
+          name: pv?.name || '',
+          price: price,
+          compare_price: comparePrice,
+          stock: pv?.stock || 0,
+          weight_gram: null,
+          is_active: true,
+        },
+      ]
+
       return {
         id: prod?.id || '',
         category_id: '',
         name: prod?.name || 'Produk Flash Sale',
         slug: prod?.slug || '',
-        description: null,
-        short_description: null,
-        meta_title: null,
-        meta_description: null,
-        weight_gram: 1000,
         is_featured: false,
         created_at: new Date().toISOString(),
         categories: null,
-        product_variants: [
-          {
-            id: pv?.id || '',
-            sku: pv?.sku || '',
-            name: pv?.name || '',
-            price: Number(item.sale_price),
-            compare_price: Number(item.original_price),
-            stock: pv?.stock || 0,
-            weight_gram: null,
-            is_active: true,
-          },
-        ],
+        product_variants: variantList,
         product_images: images,
+        minPrice: price,
+        maxPrice: price,
+        comparePrice: comparePrice,
+        discountPercent: discountPercent,
+        primaryImage: primaryImage,
+        hoverImage: hoverImage,
+        hasMultipleColors: false,
+        sizeVariants: variantList,
       }
     })
   }, [flashSale])

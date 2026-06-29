@@ -1,132 +1,48 @@
-import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from './adminLogs'
-import { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/database'
+import { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
+import { BannerService } from "@/modules/banner/application/banner.service";
+import * as types from "@/modules/banner/domain/banner.types";
 
-export type Banner = Database['public']['Tables']['banners']['Row']
+export type { Banner } from "@/modules/banner/domain/banner.types";
 
-export async function getActiveBanners(supabase: SupabaseClient<Database>): Promise<Banner[]> {
-  const now = new Date().toISOString()
-  
-  const { data, error } = await supabase
-    .from('banners')
-    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
-    .eq('is_active', true)
-    .or(`starts_at.is.null,starts_at.lte.${now}`)
-    .or(`ends_at.is.null,ends_at.gte.${now}`)
-    .order('sort_order', { ascending: true })
-
-  if (error) {
-    safeLogError('Error fetching banners:', error)
-    return []
-  }
-
-  return data || []
+export async function getActiveBanners(supabase: SupabaseClient<Database>) {
+    return new BannerService(supabase).getActiveBanners();
 }
 
-export async function adminGetBanners(supabase: SupabaseClient<Database>): Promise<Banner[]> {
-  const { data, error } = await supabase
-    .from('banners')
-    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
-    .order('sort_order', { ascending: true })
-
-  if (error) {
-    safeLogError('Error fetching admin banners:', error)
-    throw error
-  }
-
-  return data || []
+export async function adminGetBanners(supabase: SupabaseClient<Database>) {
+    return new BannerService(supabase).adminGetBanners();
 }
 
-export async function adminCreateBanner(
-  supabase: SupabaseClient<Database>,
-  bannerData: {
-    title: string | null
-    subtitle: string | null
-    image_url: string
-    image_mobile_url: string | null
-    link_url: string | null
-    position: string
-    sort_order: number
-    is_active: boolean
-    starts_at: string | null
-    ends_at: string | null
-  }
-) : Promise<{ id: string; title: string | null; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
-  const { data, error } = await supabase
-    .from('banners')
-    .insert(bannerData)
-    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
-    .single()
-
-  if (error) throw error
-  
-  await insertAdminActivityLog(supabase, 'create', 'banner', data.id, `Created banner ${bannerData.title || 'Untitled'}`)
-  
-  return data
+export async function adminCreateBanner(supabase: SupabaseClient<Database>, bannerData: {
+        title: string | null
+        subtitle: string | null
+        image_url: string
+        image_mobile_url: string | null
+        link_url: string | null
+        position: string
+        sort_order: number
+        is_active: boolean
+        starts_at: string | null
+        ends_at: string | null
+      }) {
+    return new BannerService(supabase).adminCreateBanner(bannerData);
 }
 
-export async function adminUpdateBanner(
-  supabase: SupabaseClient<Database>,
-  bannerId: string,
-  bannerData: {
-    title: string | null
-    subtitle: string | null
-    image_url: string
-    image_mobile_url: string | null
-    link_url: string | null
-    position: string
-    sort_order: number
-    is_active: boolean
-    starts_at: string | null
-    ends_at: string | null
-  }
-) : Promise<{ id: string; title: string | null; subtitle: string | null; image_url: string; image_mobile_url: string | null; link_url: string | null; position: string; sort_order: number; is_active: boolean; starts_at: string | null; ends_at: string | null; }> {
-  const { data, error } = await supabase
-    .from('banners')
-    .update(bannerData)
-    .eq('id', bannerId)
-    .select('id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at')
-    .single()
-
-  if (error) throw error
-  
-  await insertAdminActivityLog(supabase, 'update', 'banner', bannerId, `Updated banner ${bannerData.title || 'Untitled'}`)
-  
-  return data
+export async function adminUpdateBanner(supabase: SupabaseClient<Database>, bannerId: string, bannerData: {
+        title: string | null
+        subtitle: string | null
+        image_url: string
+        image_mobile_url: string | null
+        link_url: string | null
+        position: string
+        sort_order: number
+        is_active: boolean
+        starts_at: string | null
+        ends_at: string | null
+      }) {
+    return new BannerService(supabase).adminUpdateBanner(bannerId, bannerData);
 }
 
-export async function adminDeleteBanner(
-  supabase: SupabaseClient<Database>,
-  bannerId: string
-) : Promise<{ success: boolean; }> {
-  // 1. Fetch images associated with this banner to clean up storage
-  const { data: banner } = await supabase
-    .from('banners')
-    .select('image_url, image_mobile_url')
-    .eq('id', bannerId)
-    .single()
-
-  // 2. Delete the physical images from Supabase Storage
-  if (banner) {
-    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-    const cleanupPromises = []
-    if (banner.image_url) cleanupPromises.push(deleteImageByUrl(supabase, banner.image_url, 'banners'))
-    if (banner.image_mobile_url) cleanupPromises.push(deleteImageByUrl(supabase, banner.image_mobile_url, 'banners'))
-    if (cleanupPromises.length > 0) {
-      await Promise.all(cleanupPromises)
-    }
-  }
-
-  // 3. Delete banner record
-  const { error } = await supabase
-    .from('banners')
-    .delete()
-    .eq('id', bannerId)
-
-  if (error) throw error
-  
-  await insertAdminActivityLog(supabase, 'delete', 'banner', bannerId, `Deleted banner ${bannerId}`)
-  
-  return { success: true }
+export async function adminDeleteBanner(supabase: SupabaseClient<Database>, bannerId: string) {
+    return new BannerService(supabase).adminDeleteBanner(bannerId);
 }

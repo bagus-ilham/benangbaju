@@ -17,8 +17,8 @@ import {
   ReviewSection
 } from '@/components/product'
 import { Button, PageContainer } from '@/components/shared'
-import { useCart } from '@/hooks/useCart'
-import { useWishlist } from '@/hooks/useWishlist'
+import { useCartStore } from '@/stores/cartStore'
+import { useWishlistStore } from '@/stores/wishlistStore'
 import { useRecentlyViewedStore, RecentlyViewedState } from '@/stores/recentlyViewedStore'
 import { RelatedProducts } from './RelatedProducts' // Similar products slider
 import { formatIDR, cn, formatProductDescription } from '@/lib/utils'
@@ -41,8 +41,12 @@ const itemVariants = {
 
 
 export function ProductDetailClient({ product, relatedProductsNode }: ProductDetailClientProps) : React.JSX.Element {
-  const { addItem, setCartDrawerOpen } = useCart()
-  const { isLiked, toggleWishlist } = useWishlist()
+  const addItem = useCartStore(state => state.addItem)
+  const setCartDrawerOpen = useCartStore(state => state.setCartDrawerOpen)
+  
+  const liked = useWishlistStore(state => state.productIds.includes(product.id))
+  const toggleWishlist = useWishlistStore(state => state.toggleWishlist)
+  
   const addProductToRecentlyViewed = useRecentlyViewedStore((s: RecentlyViewedState) => s.addProduct)
   const router = useRouter()
 
@@ -117,7 +121,6 @@ export function ProductDetailClient({ product, relatedProductsNode }: ProductDet
     }
   }
 
-  const liked = isLiked(product.id)
 
   useEffect(() => {
     const handleScroll = () => {

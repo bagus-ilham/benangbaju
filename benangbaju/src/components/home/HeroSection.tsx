@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -62,6 +62,26 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
     setCurrentIndex((prev) => (prev + 1) % banners.length)
   }
 
+
+  const commonProps = {
+    alt: currentBanner.title || '',
+    fill: true,
+    sizes: '100vw',
+    priority: true,
+    className: 'object-cover',
+    style: { animation: 'ken-burns 8s ease-out forwards', width: '100%', height: '100%', position: 'absolute' as const, inset: 0 }
+  }
+
+  const { props: { srcSet: desktopSrcSet } } = getImageProps({
+    ...commonProps,
+    src: currentBanner.image_url
+  })
+
+  const { props: { srcSet: mobileSrcSet, ...restMobile } } = getImageProps({
+    ...commonProps,
+    src: currentBanner.image_mobile_url || currentBanner.image_url
+  })
+
   return (
     <div className="relative h-[70vh] md:h-[90vh] w-full overflow-hidden bg-brand-black">
       {/* Banner Slide */}
@@ -73,29 +93,10 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
           exit={{ opacity: 0, transition: { duration: 0.5 } }}
           className="relative w-full h-full"
         >
-          {/* Desktop Image */}
-          <div className="hidden sm:block absolute inset-0 w-full h-full">
-            <Image
-              src={currentBanner.image_url}
-              alt={currentBanner.title || ''}
-              fill
-              priority
-              className="object-cover"
-              style={{ animation: 'ken-burns 8s ease-out forwards' }}
-            />
-          </div>
-          
-          {/* Mobile Image */}
-          <div className="sm:hidden absolute inset-0 w-full h-full">
-            <Image
-              src={currentBanner.image_mobile_url || currentBanner.image_url}
-              alt={currentBanner.title || ''}
-              fill
-              priority
-              className="object-cover"
-              style={{ animation: 'ken-burns 8s ease-out forwards' }}
-            />
-          </div>
+          <picture className="absolute inset-0 w-full h-full block">
+            <source media="(min-width: 640px)" srcSet={desktopSrcSet} />
+            <img srcSet={mobileSrcSet} {...restMobile} />
+          </picture>
 
           {/* Elegant overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/60 via-neutral-900/25 to-transparent" />

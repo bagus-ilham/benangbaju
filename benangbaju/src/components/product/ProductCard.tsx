@@ -4,8 +4,8 @@ import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Heart } from 'lucide-react'
-import { useWishlist } from '@/hooks/useWishlist'
-import { useCart } from '@/hooks/useCart'
+import { useWishlistStore } from '@/stores/wishlistStore'
+import { useCartStore } from '@/stores/cartStore'
 import { ProductListItem, ProductVariant } from '@/services/products'
 import { cn, formatIDR } from '@/lib/utils'
 import { Badge } from '@/components/shared/Badge'
@@ -17,18 +17,18 @@ interface ProductCardProps {
 }
 
 export const ProductCard = React.memo(function ProductCard({ product, className }: ProductCardProps) : React.JSX.Element {
-  const { isLiked, toggleWishlist } = useWishlist()
-  const { addItem, setCartDrawerOpen } = useCart()
+  const isLiked = useWishlistStore(state => state.productIds.includes(product.id))
+  const toggleWishlist = useWishlistStore(state => state.toggleWishlist)
+  const addItem = useCartStore(state => state.addItem)
+  const setCartDrawerOpen = useCartStore(state => state.setCartDrawerOpen)
   const [isHovered, setIsHovered] = useState(false)
   const [showAltImage, setShowAltImage] = useState(false)
   const [isAdding, setIsAdding] = useState<string | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
 
-  const liked = isLiked(product.id)
+  const liked = isLiked
 
   const {
-    activeVariants,
-    prices,
     minPrice,
     maxPrice,
     comparePrice,
@@ -37,56 +37,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
     hoverImage,
     hasMultipleColors,
     sizeVariants
-  } = useMemo(() => {
-    // Get active pricing (minimum price from variants)
-    const activeVariants = product.product_variants.filter((v) => v.is_active)
-    const prices = activeVariants.map((v) => Number(v.price))
-
-    const minPrice = prices.length > 0 ? Math.min(...prices) : 0
-    const maxPrice = prices.length > 0 ? Math.max(...prices) : 0
-
-    // Find compare price matching the min price variant
-    const minPriceVariant = activeVariants.find((v) => Number(v.price) === minPrice)
-    const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
-
-    const discountPercent =
-      comparePrice && comparePrice > minPrice
-        ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
-        : null
-
-    // Images swap layout
-    const primaryImage = product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || null
-    const hoverImage = product.product_images.find((img) => !img.is_primary && img.sort_order > 0)?.url || product.product_images[1]?.url || primaryImage
-
-    // Check if variants only vary by size (no color differences, or only one color)
-    const colorAttributes = new Set(
-      activeVariants.flatMap((v) =>
-        v.product_variant_attrs
-          ?.filter((a) => a.attr_name.toLowerCase().includes('warna'))
-          .map((a) => a.attr_value) || []
-      )
-    )
-    const hasMultipleColors = colorAttributes.size > 1
-
-    // Extract all sizes in variants that have stock
-    const sizeVariants = activeVariants.filter((v) =>
-      v.stock > 0 &&
-      v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
-    )
-
-    return {
-      activeVariants,
-      prices,
-      minPrice,
-      maxPrice,
-      comparePrice,
-      discountPercent,
-      primaryImage,
-      hoverImage,
-      hasMultipleColors,
-      sizeVariants
-    }
-  }, [product])
+  } = product
 
   const displayAltImage = isHovered || showAltImage
 
@@ -266,7 +217,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
         </button>
 
         {/* Special Out of Stock overlay */}
-        {activeVariants.every((v) => v.stock === 0) && (
+        {product.product_variants.every((v) => v.stock === 0) && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center pointer-events-none">
             <Badge variant="brand" size="md">
               Habis Terjual
@@ -331,7 +282,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
         {/* Price Tag */}
         <div className="flex items-center space-x-2 pt-0.5">
           <span className="text-xs font-sans font-semibold text-brand-black">
-            {prices.length > 1 && minPrice !== maxPrice
+            {minPrice !== maxPrice
               ? `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`
               : formatIDR(minPrice)}
           </span>
@@ -345,3 +296,4 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
     </div>
   )
 })
+

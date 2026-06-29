@@ -1,211 +1,48 @@
-import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from './adminLogs'
-import { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/database'
+import { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
+import { CollectionService } from "@/modules/collection/application/collection.service";
+import * as types from "@/modules/collection/domain/collection.types";
 
-export type Collection = Database['public']['Tables']['collections']['Row']
+export type { AdminCollectionItem, Collection } from "@/modules/collection/domain/collection.types";
 
-export async function getActiveCollections(supabase: SupabaseClient<Database>): Promise<Collection[]> {
-  const now = new Date().toISOString()
-  
-  const { data, error } = await supabase
-    .from('collections')
-    .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
-    .eq('is_active', true)
-    .or(`starts_at.is.null,starts_at.lte.${now}`)
-    .or(`ends_at.is.null,ends_at.gte.${now}`)
-    .order('sort_order', { ascending: true })
-
-  if (error) {
-    safeLogError('Error fetching collections:', error)
-    return []
-  }
-
-  return data || []
+export async function getActiveCollections(supabase: SupabaseClient<Database>) {
+    return new CollectionService(supabase).getActiveCollections();
 }
 
-export async function getCollectionBySlug(
-  supabase: SupabaseClient<Database>,
-  slug: string
-): Promise<Collection | null> {
-  const { data, error } = await supabase
-    .from('collections')
-    .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .single()
-
-  if (error) {
-    safeLogError(`Error fetching collection for slug ${slug}:`, error)
-    return null
-  }
-
-  return data
+export async function getCollectionBySlug(supabase: SupabaseClient<Database>, slug: string) {
+    return new CollectionService(supabase).getCollectionBySlug(slug);
 }
 
-export interface AdminCollectionItem {
-  id: string
-  name: string
-  slug: string
-  description: string | null
-  image_url: string | null
-  sort_order: number
-  is_active: boolean
-  starts_at: string | null
-  ends_at: string | null
-  product_ids: string[]
+export async function adminGetCollections(supabase: SupabaseClient<Database>) {
+    return new CollectionService(supabase).adminGetCollections();
 }
 
-export async function adminGetCollections(
-  supabase: SupabaseClient<Database>
-): Promise<AdminCollectionItem[]> {
-  const { data, error } = await supabase
-    .from('collections')
-    .select('*, collection_products(product_id)')
-    .order('sort_order', { ascending: true })
-
-  if (error) {
-    safeLogError('Error in adminGetCollections:', error)
-    throw error
-  }
-
-  if (!data) return []
-
-  return data.map(col => {
-    const products = col.collection_products
-    const product_ids = Array.isArray(products)
-      ? products.map(cp => cp.product_id)
-      : []
-    return {
-      id: col.id,
-      name: col.name,
-      slug: col.slug,
-      description: col.description,
-      image_url: col.image_url,
-      sort_order: col.sort_order,
-      is_active: col.is_active,
-      starts_at: col.starts_at,
-      ends_at: col.ends_at,
-      product_ids,
-    }
-  })
+export async function adminCreateCollection(supabase: SupabaseClient<Database>, collectionData: {
+        name: string
+        slug: string
+        description: string | null
+        image_url: string | null
+        sort_order: number
+        is_active: boolean
+        starts_at: string | null
+        ends_at: string | null
+      }, productIds: string[]) {
+    return new CollectionService(supabase).adminCreateCollection(collectionData, productIds);
 }
 
-export async function adminCreateCollection(
-  supabase: SupabaseClient<Database>,
-  collectionData: {
-    name: string
-    slug: string
-    description: string | null
-    image_url: string | null
-    sort_order: number
-    is_active: boolean
-    starts_at: string | null
-    ends_at: string | null
-  },
-  productIds: string[]
-) : Promise<{ id: string; }> {
-  const { data: col, error: colErr } = await supabase
-    .from('collections')
-    .insert(collectionData)
-    .select('id')
-    .single()
-
-  if (colErr) throw colErr
-  const collectionId = col.id
-
-  if (productIds && productIds.length > 0) {
-    const junctionData = productIds.map((pid, idx) => ({
-      collection_id: collectionId,
-      product_id: pid,
-      sort_order: idx
-    }))
-    const { error: juncErr } = await supabase
-      .from('collection_products')
-      .insert(junctionData)
-
-    if (juncErr) throw juncErr
-  }
-
-  await insertAdminActivityLog(supabase, 'create', 'collection', collectionId, `Created collection ${collectionData.name}`)
-
-  return { id: collectionId }
+export async function adminUpdateCollection(supabase: SupabaseClient<Database>, collectionId: string, collectionData: {
+        name: string
+        slug: string
+        description: string | null
+        image_url: string | null
+        sort_order: number
+        is_active: boolean
+        starts_at: string | null
+        ends_at: string | null
+      }, productIds: string[]) {
+    return new CollectionService(supabase).adminUpdateCollection(collectionId, collectionData, productIds);
 }
 
-export async function adminUpdateCollection(
-  supabase: SupabaseClient<Database>,
-  collectionId: string,
-  collectionData: {
-    name: string
-    slug: string
-    description: string | null
-    image_url: string | null
-    sort_order: number
-    is_active: boolean
-    starts_at: string | null
-    ends_at: string | null
-  },
-  productIds: string[]
-) : Promise<{ id: string; }> {
-  const { error: colErr } = await supabase
-    .from('collections')
-    .update(collectionData)
-    .eq('id', collectionId)
-
-  if (colErr) throw colErr
-
-  // delete current links
-  const { error: delErr } = await supabase
-    .from('collection_products')
-    .delete()
-    .eq('collection_id', collectionId)
-
-  if (delErr) throw delErr
-
-  if (productIds && productIds.length > 0) {
-    const junctionData = productIds.map((pid, idx) => ({
-      collection_id: collectionId,
-      product_id: pid,
-      sort_order: idx
-    }))
-    const { error: juncErr } = await supabase
-      .from('collection_products')
-      .insert(junctionData)
-
-    if (juncErr) throw juncErr
-  }
-
-  await insertAdminActivityLog(supabase, 'update', 'collection', collectionId, `Updated collection ${collectionData.name}`)
-
-  return { id: collectionId }
-}
-
-export async function adminDeleteCollection(
-  supabase: SupabaseClient<Database>,
-  collectionId: string
-) : Promise<{ success: boolean; }> {
-  // 1. Fetch images associated with this collection to clean up storage
-  const { data: collection } = await supabase
-    .from('collections')
-    .select('image_url')
-    .eq('id', collectionId)
-    .single()
-
-  // 2. Delete the physical image from Supabase Storage
-  if (collection && collection.image_url) {
-    const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-    await deleteImageByUrl(supabase, collection.image_url, 'collections')
-  }
-
-  // 3. Delete collection record
-  const { error } = await supabase
-    .from('collections')
-    .delete()
-    .eq('id', collectionId)
-
-  if (error) throw error
-  
-  await insertAdminActivityLog(supabase, 'delete', 'collection', collectionId, `Deleted collection ${collectionId}`)
-  
-  return { success: true }
+export async function adminDeleteCollection(supabase: SupabaseClient<Database>, collectionId: string) {
+    return new CollectionService(supabase).adminDeleteCollection(collectionId);
 }

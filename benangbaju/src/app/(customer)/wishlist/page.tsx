@@ -2,14 +2,14 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useWishlist } from '@/hooks/useWishlist'
+import { useWishlistStore } from '@/stores/wishlistStore'
 import { useProducts } from '@/hooks/useProducts'
 import { ProductCard } from '@/components/product/ProductCard'
 import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
 import { Heart } from 'lucide-react'
 
 export default function WishlistPage() : React.JSX.Element {
-  const { productIds } = useWishlist()
+  const productIds = useWishlistStore((state) => state.productIds)
 
   const { data, isLoading, isError } = useProducts({
     productIds: productIds.length > 0 ? productIds : ['00000000-0000-0000-0000-000000000000'],

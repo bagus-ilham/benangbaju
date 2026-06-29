@@ -7,8 +7,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Search, Heart, ShoppingBag, User, LogOut, Menu, X, ChevronRight, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { useCart } from '@/hooks/useCart'
-import { useWishlist } from '@/hooks/useWishlist'
+import { useCartStore } from '@/stores/cartStore'
+import { useWishlistStore } from '@/stores/wishlistStore'
 import { cn, formatIDR } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -46,9 +46,9 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
     : SOCIAL_LINKS.whatsapp
   
   const { user, profile, isAuthenticated, clearAuth } = useAuthStore()
-  const { totalQuantity, setCartDrawerOpen } = useCart()
-  const { productIds } = useWishlist()
-  const wishlistCount = productIds.length
+  const totalQuantity = useCartStore((state) => state.items.reduce((qty, item) => qty + item.quantity, 0))
+  const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
+  const wishlistCount = useWishlistStore((state) => state.productIds.length)
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)

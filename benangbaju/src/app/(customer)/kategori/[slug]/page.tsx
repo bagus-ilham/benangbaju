@@ -111,7 +111,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
           />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
-            {products.map((product) => (
+            {products.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

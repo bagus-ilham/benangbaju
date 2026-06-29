@@ -12,20 +12,8 @@ export function RecentlyViewedSection() : React.JSX.Element | null {
   const [isMounted, setIsMounted] = useState(false)
 
   const displayProducts = useMemo(() => {
-    const mappedProducts: ProductListItem[] = products.map((p) => ({
-      id: p.id,
-      category_id: '',
-      name: p.name,
-      slug: p.slug,
-      description: null,
-      short_description: null,
-      meta_title: null,
-      meta_description: null,
-      weight_gram: 1000,
-      is_featured: false,
-      created_at: new Date().toISOString(),
-      categories: null,
-      product_variants: [
+    const mappedProducts: ProductListItem[] = products.map((p) => {
+      const variantList = [
         {
           id: '',
           sku: '',
@@ -36,19 +24,38 @@ export function RecentlyViewedSection() : React.JSX.Element | null {
           weight_gram: null,
           is_active: true,
         },
-      ],
-      product_images: p.imageUrl
-        ? [
-            {
-              id: 'primary',
-              url: p.imageUrl,
-              alt_text: p.name,
-              sort_order: 0,
-              is_primary: true,
-            },
-          ]
-        : [],
-    }))
+      ]
+      
+      const imagesList = p.imageUrl ? [
+        {
+          id: 'primary',
+          url: p.imageUrl,
+          alt_text: p.name,
+          sort_order: 0,
+          is_primary: true,
+        },
+      ] : []
+
+      return {
+        id: p.id,
+        category_id: '',
+        name: p.name,
+        slug: p.slug,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        categories: null,
+        product_variants: variantList,
+        product_images: imagesList,
+        minPrice: p.price,
+        maxPrice: p.price,
+        comparePrice: null,
+        discountPercent: null,
+        primaryImage: p.imageUrl || null,
+        hoverImage: p.imageUrl || null,
+        hasMultipleColors: false,
+        sizeVariants: variantList,
+      }
+    })
     return mappedProducts.slice(0, 4)
   }, [products])
 

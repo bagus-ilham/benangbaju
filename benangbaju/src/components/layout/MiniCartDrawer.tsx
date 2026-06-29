@@ -5,20 +5,19 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, X, Trash2, Plus, Minus, ArrowRight } from 'lucide-react'
-import { useCart } from '@/hooks/useCart'
+import { useCartStore } from '@/stores/cartStore'
 import { Button } from '@/components/shared/Button'
 import { formatIDR } from '@/lib/utils'
 
 export function MiniCartDrawer() : React.JSX.Element {
-  const {
-    items,
-    isCartDrawerOpen,
-    setCartDrawerOpen,
-    updateQuantity,
-    removeItem,
-    subtotal,
-    totalQuantity,
-  } = useCart()
+  const items = useCartStore((state) => state.items)
+  const isCartDrawerOpen = useCartStore((state) => state.isCartDrawerOpen)
+  const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
+  const updateQuantity = useCartStore((state) => state.updateQuantity)
+  const removeItem = useCartStore((state) => state.removeItem)
+  
+  const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+  const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
 
   const handleQtyChange = async (variantId: string, currentQty: number, change: number, stock: number) => {
     const newQty = currentQty + change
