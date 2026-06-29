@@ -32,9 +32,9 @@ export default function AdminCustomersPage() : React.JSX.Element {
     }
   }
 
-  // Filter customers based on search query
   const filteredCustomers = (customers || []).filter((customer) => {
-    const nameMatch = customer.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const safeName = customer.name || 'User'
+    const nameMatch = safeName.toLowerCase().includes(searchQuery.toLowerCase())
     const emailMatch = customer.email?.toLowerCase().includes(searchQuery.toLowerCase()) || false
     const phoneMatch = customer.phone?.includes(searchQuery) || false
     return nameMatch || emailMatch || phoneMatch
@@ -120,10 +120,10 @@ export default function AdminCustomersPage() : React.JSX.Element {
                     <td className="py-4 px-6">
                       <div className="flex items-center space-x-3">
                         <div className="h-9 w-9 rounded-none bg-neutral-900 text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
-                          {customer.name.substring(0, 2)}
+                          {(customer.name || 'U').substring(0, 2)}
                         </div>
                         <div>
-                          <p className="text-neutral-900 font-bold text-sm">{customer.name}</p>
+                          <p className="text-neutral-900 font-bold text-sm">{customer.name || 'No Name'}</p>
                           <p className="text-[10px] text-neutral-400 font-mono mt-0.5">{customer.id}</p>
                         </div>
                       </div>

@@ -18,8 +18,10 @@ export function formatIDR(amount: number | string): string {
 /**
  * Formats a date into a readable Indonesian date string.
  */
-export function formatDate(date: string | Date): string {
+export function formatDate(date: string | Date | null | undefined): string {
+  if (!date) return '-'
   const d = typeof date === 'string' ? new Date(date) : date
+  if (isNaN(d.getTime())) return '-'
   return new Intl.DateTimeFormat('id-ID', {
     dateStyle: 'long',
     timeStyle: 'short',
