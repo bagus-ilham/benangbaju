@@ -50,13 +50,18 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
   const slug = decodeURIComponent(rawSlug)
 
   let category
+  let products
+
   try {
-    category = await getCachedCategory(slug)
+    const [catRes, prodRes] = await Promise.all([
+      getCachedCategory(slug),
+      getCachedCategoryProducts(slug)
+    ])
+    category = catRes
+    products = prodRes.products
   } catch (err) {
     notFound()
   }
-
-  const { products } = await getCachedCategoryProducts(slug)
 
   return (
     <div className="bg-white min-h-screen">

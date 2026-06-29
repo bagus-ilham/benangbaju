@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input } from '@/components/shared'
+import { Input, Textarea } from '@/components/shared'
 
 interface ProductSeoFieldsProps {
   metaTitle: string
@@ -26,14 +26,12 @@ export function ProductSeoFields({
         placeholder="SEO Title produk"
       />
       <div className="space-y-1">
-        <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-          Meta Description (SEO)
-        </label>
-        <textarea
+        <Textarea
+          label="Meta Description (SEO)"
           value={metaDescription}
           onChange={(e) => setMetaDescription(e.target.value)}
           placeholder="SEO Description untuk mesin pencarian..."
-          className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-20 resize-none"
+          rows={3}
         />
       </div>
     </div>

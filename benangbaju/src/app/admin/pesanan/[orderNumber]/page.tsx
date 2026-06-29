@@ -206,11 +206,10 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
                       <p>No. Resi: </p>
                       {isEditingResi ? (
                         <div className="flex items-center gap-1">
-                          <input 
-                            type="text" 
+                          <Input 
                             value={editResiNumber}
                             onChange={(e) => setEditResiNumber(e.target.value)}
-                            className="border border-neutral-300 px-2 py-0.5 text-xs focus:outline-none focus:border-brand-gold w-32"
+                            className="w-32 py-1"
                             autoFocus
                           />
                           <button onClick={handleUpdateResi} disabled={updateTrackingMutation.isPending} className="text-green-600 hover:text-green-700 p-0.5" title="Simpan">

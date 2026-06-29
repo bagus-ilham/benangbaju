@@ -123,6 +123,8 @@ export interface RecentActivityLog {
   profiles: { name: string | null; email: string | null } | null
 }
 
+import { getAdminDashboardStatsAction } from '@/actions/admin'
+
 export interface AdminDashboardData {
   totalRevenue: number
   activeOrdersCount: number
@@ -191,71 +193,7 @@ export function useAdminDashboard() : UseQueryResult<AdminDashboardData, Error> 
   return useQuery({
     queryKey: ['admin', 'dashboard'],
     queryFn: async () => {
-      const [
-        revRes,
-        activeRes,
-        completedRes,
-        custRes,
-        stockRes,
-        ordersRes,
-        logsRes
-      ] = await Promise.all([
-        supabase
-          .from('orders')
-          .select('total_amount')
-          .neq('status', 'cancelled')
-          .neq('status', 'pending_payment')
-          .neq('status', 'refunded'),
-        supabase
-          .from('orders')
-          .select('*', { count: 'exact', head: true })
-          .in('status', ['processing', 'shipped']),
-        supabase
-          .from('orders')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'completed'),
-        supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .eq('role', 'customer'),
-        supabase
-          .from('product_variants')
-          .select('id, name, sku, stock, products(name)')
-          .eq('is_active', true)
-          .lt('stock', 5)
-          .order('stock', { ascending: true })
-          .limit(10),
-        supabase
-          .from('orders')
-          .select('id, order_number, total_amount, status, created_at, order_shipping(recipient_name)')
-          .order('created_at', { ascending: false })
-          .limit(5),
-        supabase
-          .from('admin_activity_logs')
-          .select('*, profiles(name, email)')
-          .order('created_at', { ascending: false })
-          .limit(5)
-      ])
-
-      if (revRes.error) throw revRes.error
-      if (activeRes.error) throw activeRes.error
-      if (completedRes.error) throw completedRes.error
-      if (custRes.error) throw custRes.error
-      if (stockRes.error) throw stockRes.error
-      if (ordersRes.error) throw ordersRes.error
-      if (logsRes.error) throw logsRes.error
-
-      const totalRevenue = (revRes.data || []).reduce((sum: number, o) => sum + Number(o.total_amount), 0)
-
-      return {
-        totalRevenue,
-        activeOrdersCount: activeRes.count || 0,
-        completedOrdersCount: completedRes.count || 0,
-        customersCount: custRes.count || 0,
-        lowStockVariants: getLowStockVariants(stockRes.data || []),
-        recentOrders: getRecentOrders(ordersRes.data || []),
-        recentLogs: getRecentActivityLogs(logsRes.data || [])
-      }
+      return await getAdminDashboardStatsAction()
     }
   })
 }

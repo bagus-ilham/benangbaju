@@ -7,11 +7,24 @@ import {
   useAdminUpdateVoucher,
   useAdminDeleteVoucher,
 } from '@/hooks/useAdmin'
-import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
+import { 
+  Button, 
+  Input, 
+  Modal, 
+  AdminPageHeader,
+  DataTable,
+  Select,
+  Switch,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/shared'
+import { Plus, Edit2, Trash2, Copy, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
+import type { Column } from '@/components/shared/DataTable'
 
 const supabase = createBrowserClient()
 
@@ -317,23 +330,20 @@ interface AdminVoucherItem {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Tipe Potongan*
-              </label>
-              <select
+              <Select
+                label="Tipe Potongan*"
+                required
                 value={discount_type}
-                onChange={(e) => {
-                  const val = e.target.value
+                onChange={(val) => {
                   if (val === 'percentage' || val === 'fixed') {
                     setDiscountType(val)
                   }
                 }}
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
-                required
-              >
-                <option value="percentage">Persentase (%)</option>
-                <option value="fixed">Nominal Flat (Rp)</option>
-              </select>
+                options={[
+                  { label: 'Persentase (%)', value: 'percentage' },
+                  { label: 'Nominal Flat (Rp)', value: 'fixed' }
+                ]}
+              />
             </div>
 
             <Input
@@ -398,14 +408,12 @@ interface AdminVoucherItem {
           </div>
 
           <div className="flex items-center space-x-2 py-1">
-            <input
-              type="checkbox"
+            <Switch
               id="voucher_is_active"
               checked={is_active}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
             />
-            <label htmlFor="voucher_is_active" className="select-none text-neutral-700 font-semibold uppercase tracking-wider">
+            <label htmlFor="voucher_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
               Voucher Aktif & Dapat Digunakan
             </label>
           </div>

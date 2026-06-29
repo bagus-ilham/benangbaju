@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import { Button } from '@/components/shared'
+import { Button, Select, Input, Checkbox } from '@/components/shared'
 import { Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -76,10 +76,9 @@ export function ProductImageManager({
                   {/* URL input and upload button */}
                   <div className="flex-1 space-y-2">
                     <div className="space-y-1">
-                      <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Gambar</label>
-                      <input
+                      <Input
+                        label="URL Gambar"
                         type="text"
-                        className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
                         value={img.url}
                         onChange={(e) => onUpdateImageField(idx, 'url', e.target.value)}
                         placeholder="https://... atau unggah gambar"
@@ -124,51 +123,46 @@ export function ProductImageManager({
 
                 <div className="grid grid-cols-2 gap-2 text-[10px]">
                   <div>
-                    <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Alt Text</label>
-                    <input
+                    <Input
+                      label="Alt Text"
                       type="text"
-                      className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white"
                       value={img.alt_text || ''}
                       onChange={(e) => onUpdateImageField(idx, 'alt_text', e.target.value)}
                       placeholder="Keterangan foto"
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-semibold text-neutral-400 uppercase">No. Urut</label>
-                    <input
+                    <Input
+                      label="No. Urut"
                       type="number"
-                      className="w-full px-2 py-1 border border-neutral-200 outline-none bg-white text-center"
-                      value={img.sort_order}
+                      value={img.sort_order.toString()}
                       onChange={(e) => onUpdateImageField(idx, 'sort_order', parseInt(e.target.value) || 0)}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Tautkan ke Varian</label>
-                  <select
-                    className="w-full px-2 py-1.5 border border-neutral-200 bg-white text-[11px] font-medium"
+                  <Select
+                    label="Tautkan ke Varian"
                     value={img.variant_id || ''}
-                    onChange={(e) => onUpdateImageField(idx, 'variant_id', e.target.value || null)}
-                  >
-                    <option value="">Semua Varian (Gambar Umum)</option>
-                    {variants.map((v, vIdx) => (
-                      <option key={v.id || vIdx} value={v.id || `temp-${vIdx}`}>
-                        {v.name || `Varian #${vIdx + 1}`} ({v.sku || 'Tanpa SKU'})
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(val) => onUpdateImageField(idx, 'variant_id', val || null)}
+                    options={[
+                      { label: 'Semua Varian (Gambar Umum)', value: '' },
+                      ...variants.map((v, vIdx) => ({
+                        label: `${v.name || `Varian #${vIdx + 1}`} (${v.sku || 'Tanpa SKU'})`,
+                        value: v.id || `temp-${vIdx}`
+                      }))
+                    ]}
+                  />
                 </div>
 
                 <div className="flex items-center space-x-1.5 pt-1">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     id={`img-primary-${idx}`}
                     checked={img.is_primary}
                     onChange={(e) => onUpdateImageField(idx, 'is_primary', e.target.checked)}
-                    className="w-3.5 h-3.5 border-neutral-300 accent-neutral-900 rounded-none"
                   />
-                  <label htmlFor={`img-primary-${idx}`} className="select-none text-[10px] text-neutral-600 font-bold uppercase">
+                  <label htmlFor={`img-primary-${idx}`} className="select-none text-[10px] text-neutral-600 font-bold uppercase cursor-pointer">
                     Gambar Utama
                   </label>
                 </div>

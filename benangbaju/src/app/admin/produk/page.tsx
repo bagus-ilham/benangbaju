@@ -8,11 +8,19 @@ import {
   useAdminUpdateProductFeaturedStatus
 } from '@/hooks/useAdmin'
 import type { AdminProductListItem } from '@/services/products'
-import { Button, AdminPageHeader } from '@/components/shared'
-import { Input } from '@/components/shared/Input'
-import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star, Copy } from 'lucide-react'
+import { 
+  Button, 
+  AdminPageHeader, 
+  DataTable, 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from '@/components/shared'
+import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star, Copy, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import type { Column } from '@/components/shared/DataTable'
  
 export default function AdminProductListPage() : React.JSX.Element {
   const [search, setSearch] = useState('')
@@ -60,6 +68,109 @@ export default function AdminProductListPage() : React.JSX.Element {
   const totalCount = data?.totalCount || 0
   const totalPages = Math.ceil(totalCount / limit)
 
+  const columns: Column<AdminProductListItem>[] = [
+    {
+      key: 'name',
+      header: 'Nama Produk',
+      render: (p) => (
+        <div>
+          <span className="font-semibold text-neutral-900 text-sm block hover:text-neutral-600 transition">
+            {p.name}
+          </span>
+          <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block font-mono uppercase">
+            Slug: {p.slug}
+          </span>
+        </div>
+      )
+    },
+    {
+      key: 'categories',
+      header: 'Kategori',
+      render: (p) => p.categories?.name || '-'
+    },
+    {
+      key: 'stock',
+      header: <div className="text-center w-full">Total Stok</div>,
+      className: 'text-center',
+      render: (p) => {
+        const totalStock = p.product_variants?.reduce((sum: number, v) => sum + v.stock, 0) || 0
+        return (
+          <span className={totalStock === 0 ? 'text-red-500 bg-red-50 px-2 py-0.5 font-bold' : 'font-bold'}>
+            {totalStock}
+          </span>
+        )
+      }
+    },
+    {
+      key: 'featured',
+      header: <div className="text-center w-full">Unggulan</div>,
+      className: 'text-center',
+      render: (p) => (
+        <button
+          onClick={() => handleToggleFeatured(p.id, p.is_featured)}
+          className={`inline-flex items-center justify-center p-1.5 transition ${
+            p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
+          }`}
+        >
+          <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
+        </button>
+      )
+    },
+    {
+      key: 'status',
+      header: <div className="text-center w-full">Status</div>,
+      className: 'text-center',
+      render: (p) => (
+        <button
+          onClick={() => handleToggleActive(p.id, p.is_active)}
+          className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
+            p.is_active
+              ? 'bg-neutral-900 text-white border border-neutral-900'
+              : 'bg-white text-neutral-400 border border-neutral-200'
+          }`}
+        >
+          {p.is_active ? 'Aktif' : 'Nonaktif'}
+        </button>
+      )
+    },
+    {
+      key: 'actions',
+      header: <div className="text-right w-full">Aksi</div>,
+      className: 'text-right',
+      render: (p) => (
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900" title="Opsi">
+                <MoreHorizontal size={14} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="right">
+              <Link href={`/produk/${p.slug}`} target="_blank">
+                <DropdownMenuItem>
+                  <Eye size={14} className="text-neutral-500" /> Lihat di Web
+                </DropdownMenuItem>
+              </Link>
+              <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
+                <DropdownMenuItem>
+                  <Copy size={14} className="text-neutral-500" /> Duplikat
+                </DropdownMenuItem>
+              </Link>
+              <Link href={`/admin/produk/${p.id}`}>
+                <DropdownMenuItem>
+                  <Edit2 size={14} className="text-neutral-500" /> Edit
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem destructive onClick={() => handleDeleteProduct(p.id)}>
+                <Trash2 size={14} /> Nonaktifkan
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )
+    }
+  ]
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
@@ -93,108 +204,22 @@ export default function AdminProductListPage() : React.JSX.Element {
 
       {/* Main Table */}
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
-        {isLoading ? (
-          <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat produk...</p>
-          </div>
-        ) : isError ? (
+        {isError ? (
           <div className="py-24 text-center">
             <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat produk dari server</p>
             <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
               Coba Lagi
             </Button>
           </div>
-        ) : products.length === 0 ? (
-          <div className="py-24 text-center text-neutral-400 italic text-xs">
-            Tidak ada produk ditemukan.
-          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-sans">
-              <thead>
-                <tr className="bg-neutral-50/50 border-b border-neutral-200 text-neutral-400 uppercase tracking-widest font-bold text-[10px]">
-                  <th className="py-3 px-5">Nama Produk</th>
-                  <th className="py-3 px-4">Kategori</th>
-                  <th className="py-3 px-4 text-center">Total Stok</th>
-                  <th className="py-3 px-4 text-center">Unggulan</th>
-                  <th className="py-3 px-4 text-center">Status</th>
-                  <th className="py-3 px-5 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {products.map((p: AdminProductListItem) => {
-                  const totalStock = p.product_variants?.reduce((sum: number, v) => sum + v.stock, 0) || 0
-                  
-                  return (
-                    <tr key={p.id} className="hover:bg-neutral-50/20 transition duration-150">
-                      <td className="py-4 px-5">
-                        <span className="font-semibold text-neutral-900 text-sm block hover:text-neutral-600 transition">
-                          {p.name}
-                        </span>
-                        <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block font-mono uppercase">
-                          Slug: {p.slug}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-neutral-600">
-                        {p.categories?.name || '-'}
-                      </td>
-                      <td className="py-4 px-4 text-center font-bold">
-                        <span className={totalStock === 0 ? 'text-red-500 bg-red-50 px-2 py-0.5 font-bold' : ''}>
-                          {totalStock}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-center">
-                        <button
-                          onClick={() => handleToggleFeatured(p.id, p.is_featured)}
-                          className={`inline-flex items-center justify-center p-1.5 transition ${
-                            p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
-                          }`}
-                        >
-                          <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
-                        </button>
-                      </td>
-                      <td className="py-4 px-4 text-center">
-                        <button
-                          onClick={() => handleToggleActive(p.id, p.is_active)}
-                          className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
-                            p.is_active
-                              ? 'bg-neutral-900 text-white border border-neutral-900'
-                              : 'bg-white text-neutral-400 border border-neutral-200'
-                          }`}
-                        >
-                          {p.is_active ? 'Aktif' : 'Nonaktif'}
-                        </button>
-                      </td>
-                      <td className="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
-                        <Link href={`/produk/${p.slug}`} target="_blank">
-                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900">
-                            <Eye size={13} />
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
-                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900" title="Duplikat Produk">
-                            <Copy size={13} />
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/produk/${p.id}`}>
-                          <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900" title="Edit Produk">
-                            <Edit2 size={13} />
-                          </Button>
-                        </Link>
-                        <Button
-                          onClick={() => handleDeleteProduct(p.id)}
-                          variant="outline"
-                          className="p-2 border-red-100 text-red-400 hover:text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 size={13} />
-                        </Button>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+          <DataTable 
+            columns={columns}
+            data={products}
+            isLoading={isLoading}
+            emptyTitle="Tidak ada produk ditemukan"
+            emptyDescription={search ? "Coba gunakan kata kunci pencarian yang berbeda." : "Katalog produk masih kosong."}
+            className="border-0"
+          />
         )}
 
         {/* Pagination */}

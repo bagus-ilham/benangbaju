@@ -52,13 +52,13 @@ export default function AkunPage() : React.JSX.Element {
     }
   }, [isAuthenticated, authLoading, router])
 
-  // Initialize form
-  useEffect(() => {
-    if (profile) {
-      setName(profile.name || '')
-      setPhone(profile.phone || '')
-    }
-  }, [profile])
+  // Initialize form using render-phase derived state (avoids cascading render)
+  const [prevProfileId, setPrevProfileId] = useState<string | null>(null)
+  if (profile && profile.id !== prevProfileId) {
+    setPrevProfileId(profile.id)
+    setName(profile.name || '')
+    setPhone(profile.phone || '')
+  }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -181,33 +181,26 @@ export const useCartStore = create<CartState>()(
 
           const cartId = cart.id
 
-          // 2. Fetch existing DB items
-          const { data: dbItems, error: fetchError } = await supabase
-            .from('cart_items')
-            .select(`
-              id, variant_id, quantity,
-              product_variants (
-                id, sku, name, price, compare_price, stock,
-                products (name, slug, product_images (url, is_primary))
-              )
-            `)
-            .eq('cart_id', cartId)
-
-          if (fetchError) throw fetchError
-
-          const dbItemsMap = new Map<string, NonNullable<typeof dbItems>[number]>()
-          if (dbItems) {
-            dbItems.forEach((item) => dbItemsMap.set(item.variant_id, item))
-          }
-
           if (merge) {
-            // Merge Local Items -> DB (taking maximum of both to prevent self-incrementing/accumulation)
-            // ⚡ Bolt: Bulk upsert for performance improvement
+            // MERGE = TRUE (e.g. Login sync)
+            // Needs to read DB to merge quantities, then write, then read back full product details
+            const { data: dbItems, error: fetchError } = await supabase
+              .from('cart_items')
+              .select('id, variant_id, quantity')
+              .eq('cart_id', cartId)
+            
+            if (fetchError) throw fetchError
+
+            const dbItemsMap = new Map<string, number>()
+            if (dbItems) {
+              dbItems.forEach((item) => dbItemsMap.set(item.variant_id, item.quantity))
+            }
+
             if (localItems.length > 0) {
               const upsertData = localItems.map((localItem) => {
-                const dbItem = dbItemsMap.get(localItem.variantId)
-                const combinedQty = dbItem
-                  ? Math.min(Math.max(dbItem.quantity, localItem.quantity), localItem.stock || 9999)
+                const dbQty = dbItemsMap.get(localItem.variantId)
+                const combinedQty = dbQty
+                  ? Math.min(Math.max(dbQty, localItem.quantity), localItem.stock || 9999)
                   : localItem.quantity
 
                 return {
@@ -223,10 +216,62 @@ export const useCartStore = create<CartState>()(
 
               if (upsertError) throw upsertError
             }
+
+            // Read back the final merged cart from database to synchronize Zustand state
+            const { data: finalDbItems } = await supabase
+              .from('cart_items')
+              .select(`
+                id, variant_id, quantity,
+                product_variants (
+                  id, sku, name, price, compare_price, stock,
+                  products (name, slug, product_images (url, is_primary))
+                )
+              `)
+              .eq('cart_id', cartId)
+
+            if (finalDbItems) {
+              const synchronizedItems: CartItem[] = finalDbItems.map((item) => {
+                const pv = item.product_variants
+                let prod = null
+                let imagesList: Array<{ url: string; is_primary: boolean }> = []
+                if (pv && !Array.isArray(pv)) {
+                  prod = pv.products
+                  if (prod && !Array.isArray(prod)) {
+                    imagesList = Array.isArray(prod.product_images) ? prod.product_images : []
+                  }
+                }
+                const primaryImg = imagesList.find((img) => img.is_primary)?.url 
+                  || imagesList[0]?.url 
+                  || null
+
+                const prodObj = prod && !Array.isArray(prod) ? prod : null
+                const pvObj = pv && !Array.isArray(pv) ? pv : null
+
+                return {
+                  id: item.id,
+                  variantId: item.variant_id,
+                  productName: prodObj?.name || 'Produk',
+                  variantName: pvObj?.name || 'Default',
+                  name: prodObj?.name || pvObj?.name || 'Produk',
+                  sku: pvObj?.sku || '',
+                  price: Number(pvObj?.price || 0),
+                  comparePrice: pvObj?.compare_price ? Number(pvObj.compare_price) : null,
+                  quantity: item.quantity,
+                  imageUrl: primaryImg,
+                  slug: prodObj?.slug || '',
+                  stock: pvObj?.stock || 0,
+                }
+              })
+
+              set({ items: synchronizedItems, hasSynced: true })
+            } else {
+              set({ hasSynced: true })
+            }
           } else {
-            // Overwrite DB with Local Items
-            // Upsert all local items with exact local quantity
-            // ⚡ Bolt: Bulk upsert for performance improvement
+            // MERGE = FALSE (Standard debounced update from Cart Drawer)
+            // FAST PATH: Fire-and-forget UPSERT, no heavy SELECT needed
+            
+            // 1. Upsert all local items with exact local quantity
             if (localItems.length > 0) {
               const upsertData = localItems.map((localItem) => ({
                 cart_id: cartId,
@@ -241,68 +286,18 @@ export const useCartStore = create<CartState>()(
               if (upsertError) throw upsertError
             }
 
-            // Delete DB items that are no longer in local items
-            const localVariantIds = new Set(localItems.map(item => item.variantId))
-            const dbItemsToDelete = (dbItems || []).filter((item) => !localVariantIds.has(item.variant_id))
+            // 2. Delete DB items that are no longer in local items
+            const localVariantIds = localItems.map(item => item.variantId)
+            let deleteQuery = supabase.from('cart_items').delete().eq('cart_id', cartId)
             
-            if (dbItemsToDelete.length > 0) {
-              const idsToDelete = dbItemsToDelete.map((item) => item.id)
-              const { error: deleteError } = await supabase
-                .from('cart_items')
-                .delete()
-                .in('id', idsToDelete)
-              if (deleteError) throw deleteError
+            if (localVariantIds.length > 0) {
+              deleteQuery = deleteQuery.not('variant_id', 'in', `(${localVariantIds.join(',')})`)
             }
-          }
+            
+            const { error: deleteError } = await deleteQuery
+            if (deleteError) throw deleteError
 
-          // 4. Read back the final merged cart from database to synchronize Zustand state
-          const { data: finalDbItems } = await supabase
-            .from('cart_items')
-            .select(`
-              id, variant_id, quantity,
-              product_variants (
-                id, sku, name, price, compare_price, stock,
-                products (name, slug, product_images (url, is_primary))
-              )
-            `)
-            .eq('cart_id', cartId)
-
-          if (finalDbItems) {
-            const synchronizedItems: CartItem[] = finalDbItems.map((item) => {
-              const pv = item.product_variants
-              let prod = null
-              let imagesList: Array<{ url: string; is_primary: boolean }> = []
-              if (pv && !Array.isArray(pv)) {
-                prod = pv.products
-                if (prod && !Array.isArray(prod)) {
-                  imagesList = Array.isArray(prod.product_images) ? prod.product_images : []
-                }
-              }
-              const primaryImg = imagesList.find((img) => img.is_primary)?.url 
-                || imagesList[0]?.url 
-                || null
-
-              const prodObj = prod && !Array.isArray(prod) ? prod : null
-              const pvObj = pv && !Array.isArray(pv) ? pv : null
-
-              return {
-                id: item.id,
-                variantId: item.variant_id,
-                productName: prodObj?.name || 'Produk',
-                variantName: pvObj?.name || 'Default',
-                name: prodObj?.name || pvObj?.name || 'Produk',
-                sku: pvObj?.sku || '',
-                price: Number(pvObj?.price || 0),
-                comparePrice: pvObj?.compare_price ? Number(pvObj.compare_price) : null,
-                quantity: item.quantity,
-                imageUrl: primaryImg,
-                slug: prodObj?.slug || '',
-                stock: pvObj?.stock || 0,
-              }
-            })
-
-            set({ items: synchronizedItems, hasSynced: true })
-          } else {
+            // We are done! Local state is already accurate.
             set({ hasSynced: true })
           }
         } catch (error) {

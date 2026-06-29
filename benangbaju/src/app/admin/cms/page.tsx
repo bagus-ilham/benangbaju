@@ -13,11 +13,24 @@ import {
 } from '@/hooks/useAdmin'
 import type { RedirectRule, LandingPage } from '@/services/cms'
 import type { Json } from '@/types/database'
-import { Button, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit, Trash2, Link2, FileCode, RefreshCw, X, Eye, Check, AlertTriangle } from 'lucide-react'
+import { 
+  Button, 
+  Input, 
+  Modal, 
+  AdminPageHeader,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  DataTable,
+  Select,
+  Textarea,
+  Switch
+} from '@/components/shared'
+import { Plus, Edit, Trash2, Link2, FileCode, RefreshCw, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
+import type { Column } from '@/components/shared/DataTable'
 
 export default function AdminCmsPage() : React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'redirects' | 'landing_pages'>('redirects')
@@ -430,54 +443,48 @@ export default function AdminCmsPage() : React.JSX.Element {
             </div>
             
             <form onSubmit={handleSaveRedirect} className="space-y-4">
-              <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Jalur Asal (From Path)*</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="cth: /promo-lama"
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black font-mono"
-                  value={fromPath}
-                  onChange={(e) => setFromPath(e.target.value)}
-                />
-                <p className="text-[10px] text-neutral-400">Harus diawali dengan tanda garis miring (/).</p>
-              </div>
+              <Input
+                label="Jalur Asal (From Path)*"
+                required
+                placeholder="cth: /promo-lama"
+                className="font-mono"
+                value={fromPath}
+                onChange={(e) => setFromPath(e.target.value)}
+                helperText="Harus diawali dengan tanda garis miring (/)."
+              />
+
+              <Input
+                label="Jalur Tujuan (To Path)*"
+                required
+                placeholder="cth: /produk/baru"
+                className="font-mono"
+                value={toPath}
+                onChange={(e) => setToPath(e.target.value)}
+                helperText="Dapat berupa internal path atau URL eksternal lengkap."
+              />
 
               <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Jalur Tujuan (To Path)*</label>
-                <input
-                  type="text"
+                <Select
+                  label="Status Code*"
                   required
-                  placeholder="cth: /produk/baru"
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black font-mono"
-                  value={toPath}
-                  onChange={(e) => setToPath(e.target.value)}
+                  value={statusCode.toString()}
+                  onChange={(val) => setStatusCode(Number(val))}
+                  options={[
+                    { label: '301 (Permanent Redirect)', value: '301' },
+                    { label: '302 (Temporary Redirect)', value: '302' }
+                  ]}
                 />
-                <p className="text-[10px] text-neutral-400">Dapat berupa internal path atau URL eksternal lengkap.</p>
-              </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Status Code*</label>
-                <select
-                  required
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black bg-white font-mono"
-                  value={statusCode}
-                  onChange={(e) => setStatusCode(Number(e.target.value))}
-                >
-                  <option value={301}>301 (Permanent Redirect)</option>
-                  <option value={302}>302 (Temporary Redirect)</option>
-                </select>
               </div>
 
               <div className="flex items-center space-x-2 pt-2">
-                <input
-                  type="checkbox"
+                <Switch
                   id="redirectActive"
                   checked={redirectActive}
                   onChange={(e) => setRedirectActive(e.target.checked)}
-                  className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
                 />
-                <label htmlFor="redirectActive" className="font-bold text-neutral-700">Aktifkan pengalihan ini</label>
+                <label htmlFor="redirectActive" className="text-[10px] font-bold uppercase tracking-wider text-neutral-700 cursor-pointer">
+                  Aktifkan pengalihan ini
+                </label>
               </div>
 
               <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
@@ -506,75 +513,60 @@ export default function AdminCmsPage() : React.JSX.Element {
             
             <form onSubmit={handleSavePage} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Judul Halaman*</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="cth: Promo Ramadhan"
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={pageTitle}
-                    onChange={(e) => setPageTitle(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Slug Path*</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="cth: promo-ramadhan"
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black font-mono"
-                    value={pageSlug}
-                    onChange={(e) => setPageSlug(e.target.value)}
-                  />
-                </div>
+                <Input
+                  label="Judul Halaman*"
+                  required
+                  placeholder="cth: Promo Ramadhan"
+                  value={pageTitle}
+                  onChange={(e) => setPageTitle(e.target.value)}
+                />
+                <Input
+                  label="Slug Path*"
+                  required
+                  placeholder="cth: promo-ramadhan"
+                  className="font-mono"
+                  value={pageSlug}
+                  onChange={(e) => setPageSlug(e.target.value)}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Meta Title (SEO)</label>
-                  <input
-                    type="text"
-                    placeholder="Meta Title halaman"
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={metaTitle}
-                    onChange={(e) => setMetaTitle(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <label className="font-bold text-neutral-500 uppercase tracking-wider">Meta Description (SEO)</label>
-                  <input
-                    type="text"
-                    placeholder="Deskripsi pencarian Google..."
-                    className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                    value={metaDesc}
-                    onChange={(e) => setMetaDesc(e.target.value)}
-                  />
-                </div>
+                <Input
+                  label="Meta Title (SEO)"
+                  placeholder="Meta Title halaman"
+                  value={metaTitle}
+                  onChange={(e) => setMetaTitle(e.target.value)}
+                />
+                <Input
+                  label="Meta Description (SEO)"
+                  placeholder="Deskripsi pencarian Google..."
+                  value={metaDesc}
+                  onChange={(e) => setMetaDesc(e.target.value)}
+                />
               </div>
 
               <div className="flex flex-col space-y-1">
-                <label className="font-bold text-neutral-500 uppercase tracking-wider">Konten JSON Halaman (Dynamic Content)*</label>
-                <textarea
+                <Textarea
+                  label="Konten JSON Halaman (Dynamic Content)*"
                   required
                   rows={6}
                   placeholder={'{\n  "heading": "Promo Terbaik"\n}'}
-                  className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black font-mono resize-none h-40"
+                  className="font-mono"
                   value={jsonContent}
                   onChange={(e) => setJsonContent(e.target.value)}
+                  helperText="Wajib dalam format JSON valid."
                 />
-                <p className="text-[10px] text-neutral-400">Wajib dalam format JSON valid.</p>
               </div>
 
               <div className="flex items-center space-x-2 pt-2">
-                <input
-                  type="checkbox"
+                <Switch
                   id="pageActive"
                   checked={pageActive}
                   onChange={(e) => setPageActive(e.target.checked)}
-                  className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
                 />
-                <label htmlFor="pageActive" className="font-bold text-neutral-700">Aktifkan halaman ini</label>
+                <label htmlFor="pageActive" className="text-[10px] font-bold uppercase tracking-wider text-neutral-700 cursor-pointer">
+                  Aktifkan halaman ini
+                </label>
               </div>
 
               <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">

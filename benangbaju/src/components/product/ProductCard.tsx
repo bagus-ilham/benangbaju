@@ -194,7 +194,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
                 sizes="(max-w-7xl) 33vw, 50vw"
                 className={cn(
                   'object-cover transition-opacity duration-700 ease-in-out',
-                  displayAltImage && hoverImage !== primaryImage ? 'opacity-0' : 'opacity-100'
+                  !imageLoaded ? 'opacity-0' : (displayAltImage && hoverImage !== primaryImage ? 'opacity-0' : 'opacity-100')
                 )}
                 priority={false}
                 onLoad={() => setImageLoaded(true)}

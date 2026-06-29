@@ -12,8 +12,7 @@ import { useCreateOrder, useGeneratePaymentToken } from '@/hooks/useOrders'
 import { validateVoucher } from '@/services/vouchers'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AddressModal } from '@/components/customer/AddressModal'
-import { Input } from '@/components/shared/Input'
-import { Button, AuthLoading, PageContainer, PageHero } from '@/components/shared'
+import { Button, AuthLoading, PageContainer, PageHero, Input, Textarea } from '@/components/shared'
 import { Plus, MapPin, Tag, ShoppingBag, Truck, Check } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -541,20 +540,16 @@ export default function CheckoutPage() : React.JSX.Element {
               Problem: Form input textarea untuk catatan pesanan tidak memiliki id dan htmlFor.
               Fix: Ditambahkan id="order-notes" dan htmlFor="order-notes"
               Impact: Aksesibilitas form lebih baik untuk screen reader */}
-              <label htmlFor="order-notes" className="block text-xs uppercase tracking-widest font-heading font-bold text-brand-black">
-                Catatan Pesanan
-              </label>
-              <textarea
+              <Textarea
+                label="Catatan Pesanan"
                 id="order-notes"
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-brand-black focus:bg-neutral-50/30 outline-none rounded-none transition-all duration-300 h-20 resize-none text-xs focus-ring-premium"
                 placeholder="Tulis instruksi khusus (cth: ukuran tambahan, warna cadangan, dll)..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 maxLength={200}
+                rows={3}
+                helperText={`${notes.length}/200 karakter`}
               />
-              <p className="text-[10px] text-right text-neutral-400 font-sans">
-                {notes.length}/200 karakter
-              </p>
             </div>
           </motion.div>
 

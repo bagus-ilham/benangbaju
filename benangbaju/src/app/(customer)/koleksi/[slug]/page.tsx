@@ -50,13 +50,18 @@ export default async function CollectionDetailPage({ params }: CollectionPagePro
   const slug = decodeURIComponent(rawSlug)
 
   let collection
+  let products
+
   try {
-    collection = await getCachedCollection(slug)
+    const [colRes, prodRes] = await Promise.all([
+      getCachedCollection(slug),
+      getCachedCollectionProducts(slug)
+    ])
+    collection = colRes
+    products = prodRes.products
   } catch (err) {
     notFound()
   }
-
-  const { products } = await getCachedCollectionProducts(slug)
 
   return (
     <div className="bg-white min-h-screen">

@@ -9,9 +9,20 @@ import {
   useAdminUpsertSettings,
 } from '@/hooks/useAdmin'
 import type { SiteSetting } from '@/services/settings'
-import { Button, Input, AdminPageHeader, ClientDateTime } from '@/components/shared'
+import { 
+  Button, 
+  Input, 
+  AdminPageHeader, 
+  ClientDateTime,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  DataTable,
+  Select
+} from '@/components/shared'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
+import type { Column } from '@/components/shared/DataTable'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
@@ -154,40 +165,38 @@ export default function AdminSettingsPage() : React.JSX.Element {
                 <div className="space-y-4">
                   {list.map((setting) => (
                     <div key={setting.key} className="space-y-1">
-                      <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                        {setting.label || setting.key}
-                      </label>
                       {setting.key === 'homepage_spotlight_collection_1' || setting.key === 'homepage_spotlight_collection_2' ? (
-                        <select
+                        <Select
+                          label={setting.label || setting.key}
                           value={fields[setting.key] || ''}
-                          onChange={(e) => handleFieldChange(setting.key, e.target.value)}
-                          className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
-                        >
-                          <option value="">Pilih Koleksi (Gunakan Urutan Default)</option>
-                          {collections
-                            .filter((col) => col.is_active)
-                            .map((col) => (
-                              <option key={col.id} value={col.slug}>
-                                {col.name} ({col.slug})
-                              </option>
-                            ))}
-                        </select>
+                          onChange={(val) => handleFieldChange(setting.key, val)}
+                          options={[
+                            { label: 'Pilih Koleksi (Gunakan Urutan Default)', value: '' },
+                            ...collections
+                              .filter((col) => col.is_active)
+                              .map((col) => ({
+                                label: `${col.name} (${col.slug})`,
+                                value: col.slug
+                              }))
+                          ]}
+                        />
                       ) : setting.type === 'boolean' ? (
-                        <select
+                        <Select
+                          label={setting.label || setting.key}
                           value={fields[setting.key] || 'false'}
-                          onChange={(e) => handleFieldChange(setting.key, e.target.value)}
-                          className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
-                        >
-                          <option value="true">Aktif (True)</option>
-                          <option value="false">Nonaktif (False)</option>
-                        </select>
+                          onChange={(val) => handleFieldChange(setting.key, val)}
+                          options={[
+                            { label: 'Aktif (True)', value: 'true' },
+                            { label: 'Nonaktif (False)', value: 'false' }
+                          ]}
+                        />
                       ) : (
-                        <input
+                        <Input
+                          label={setting.label || setting.key}
                           type={setting.type === 'number' ? 'number' : 'text'}
                           value={fields[setting.key] || ''}
                           onChange={(e) => handleFieldChange(setting.key, e.target.value)}
                           placeholder={`Masukkan ${setting.label || setting.key}`}
-                          className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none transition"
                         />
                       )}
                     </div>

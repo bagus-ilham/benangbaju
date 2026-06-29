@@ -9,7 +9,7 @@ import {
   useAdminUpdateBanner,
   useAdminDeleteBanner,
 } from '@/hooks/useAdmin'
-import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
+import { Button, Input, Modal, AdminPageHeader, Select, Switch } from '@/components/shared'
 import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -446,18 +446,16 @@ export default function AdminBannersPage() : React.JSX.Element {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1 col-span-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Posisi Tampil*
-              </label>
-              <select
+              <Select
+                label="Posisi Tampil*"
                 value={position}
-                onChange={(e) => setPosition(e.target.value)}
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
+                onChange={setPosition}
+                options={[
+                  { label: 'Hero Slider Depan', value: 'homepage_hero' },
+                  { label: 'Banner Tengah Halaman', value: 'mid_banner' }
+                ]}
                 required
-              >
-                <option value="homepage_hero">Hero Slider Depan</option>
-                <option value="mid_banner">Banner Tengah Halaman</option>
-              </select>
+              />
             </div>
 
             <Input
@@ -492,14 +490,12 @@ export default function AdminBannersPage() : React.JSX.Element {
           </div>
 
           <div className="flex items-center space-x-2 py-1">
-            <input
-              type="checkbox"
+            <Switch
               id="banner_is_active"
               checked={is_active}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
             />
-            <label htmlFor="banner_is_active" className="select-none text-neutral-700 font-semibold uppercase tracking-wider">
+            <label htmlFor="banner_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
               Banner Aktif & Ditampilkan
             </label>
           </div>

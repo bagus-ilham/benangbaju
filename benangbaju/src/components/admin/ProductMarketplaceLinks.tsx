@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@/components/shared'
+import { Button, Select, Input } from '@/components/shared'
 import { Trash2 } from 'lucide-react'
 import type { ProductLinkPayload } from '@/types/product'
 
@@ -48,23 +48,22 @@ export function ProductMarketplaceLinks({
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Platform</label>
-                  <select
-                    className="w-full px-2 py-1.5 border border-neutral-200 bg-white"
+                  <Select
+                    label="Platform"
                     value={link.platform}
-                    onChange={(e) => onUpdateLinkField(idx, 'platform', e.target.value)}
-                  >
-                    <option value="shopee">Shopee</option>
-                    <option value="tiktok">TikTok Shop</option>
-                    <option value="tokopedia">Tokopedia</option>
-                  </select>
+                    onChange={(val) => onUpdateLinkField(idx, 'platform', val)}
+                    options={[
+                      { label: 'Shopee', value: 'shopee' },
+                      { label: 'TikTok Shop', value: 'tiktok' },
+                      { label: 'Tokopedia', value: 'tokopedia' },
+                    ]}
+                  />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[9px] font-semibold text-neutral-400 uppercase">Label Tombol</label>
-                  <input
+                  <Input
+                    label="Label Tombol"
                     type="text"
-                    className="w-full px-2 py-1.5 border border-neutral-200 bg-white"
                     value={link.label || ''}
                     onChange={(e) => onUpdateLinkField(idx, 'label', e.target.value)}
                     placeholder="Cek di Shopee"
@@ -73,10 +72,9 @@ export function ProductMarketplaceLinks({
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[9px] font-semibold text-neutral-400 uppercase">URL Link</label>
-                <input
+                <Input
+                  label="URL Link"
                   type="text"
-                  className="w-full px-2 py-1.5 border border-neutral-200 bg-white"
                   value={link.url}
                   onChange={(e) => onUpdateLinkField(idx, 'url', e.target.value)}
                   placeholder="https://shopee.co.id/..."

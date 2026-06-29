@@ -11,18 +11,23 @@ export async function insertAdminActivityLog(
   action: string,
   resourceType: string,
   resourceId?: string | null,
-  details?: string | null
+  details?: string | null,
+  adminId?: string
 ): Promise<void> {
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    let currentAdminId = adminId
     
-    if (userError || !user) {
-      safeLogError('Failed to get user for activity log', userError)
-      return // Silently fail if no user is found, to not break main operations
+    if (!currentAdminId) {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session?.user) {
+        safeLogError('Failed to get user for activity log', sessionError)
+        return // Silently fail if no user is found
+      }
+      currentAdminId = session.user.id
     }
 
     const { error } = await supabase.from('admin_activity_logs').insert({
-      admin_id: user.id,
+      admin_id: currentAdminId,
       action,
       resource_type: resourceType,
       resource_id: resourceId || null,

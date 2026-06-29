@@ -40,6 +40,8 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
         slug: prod?.slug || '',
         description: null,
         short_description: null,
+        meta_title: null,
+        meta_description: null,
         weight_gram: 1000,
         is_featured: false,
         created_at: new Date().toISOString(),

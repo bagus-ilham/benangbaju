@@ -8,11 +8,26 @@ import {
   useAdminUpdateCategory,
   useAdminDeleteCategory,
 } from '@/hooks/useAdmin'
-import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
+import { 
+  Button, 
+  Input, 
+  Modal, 
+  AdminPageHeader,
+  DataTable,
+  Select,
+  Textarea,
+  Switch,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  TableSkeleton
+} from '@/components/shared'
+import { Plus, Edit2, Trash2, Copy, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { uploadImage } from '@/lib/supabase/storage'
+import type { Column } from '@/components/shared/DataTable'
 
 const supabase = createBrowserClient()
 
@@ -172,8 +187,8 @@ export default function AdminCategoryPage() : React.JSX.Element {
       {/* Main Table */}
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
         {isLoading ? (
-          <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat kategori...</p>
+          <div className="py-8 bg-white border border-neutral-200">
+            <TableSkeleton columns={5} rows={5} />
           </div>
         ) : isError ? (
           <div className="py-24 text-center">
@@ -292,21 +307,15 @@ export default function AdminCategoryPage() : React.JSX.Element {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Kategori Induk (Parent)
-              </label>
-              <select
+              <Select
+                label="Kategori Induk (Parent)"
                 value={parent_id || ''}
-                onChange={(e) => setParentId(e.target.value || null)}
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
-              >
-                <option value="">Tidak ada (Kategori Utama)</option>
-                {parentOptions.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setParentId(val || null)}
+                options={[
+                  { label: 'Tidak ada (Kategori Utama)', value: '' },
+                  ...parentOptions.map((c) => ({ label: c.name, value: c.id }))
+                ]}
+              />
             </div>
 
             <Input
@@ -356,26 +365,22 @@ export default function AdminCategoryPage() : React.JSX.Element {
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-              Deskripsi Kategori
-            </label>
-            <textarea
+            <Textarea
+              label="Deskripsi Kategori"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tulis deskripsi singkat..."
-              className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-20 resize-none"
+              rows={3}
             />
           </div>
 
           <div className="flex items-center space-x-2 py-1">
-            <input
-              type="checkbox"
+            <Switch
               id="cat_is_active"
               checked={is_active}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
             />
-            <label htmlFor="cat_is_active" className="select-none text-neutral-700 font-semibold uppercase tracking-wider">
+            <label htmlFor="cat_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
               Kategori Aktif
             </label>
           </div>

@@ -45,6 +45,47 @@ export async function generateStaticParams() {
   return (data || []).map((p) => ({ slug: p.slug }))
 }
 
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { slug: rawSlug } = await params
+  const slug = decodeURIComponent(rawSlug)
+
+  try {
+    const product = await getCachedProduct(slug)
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
+
+    // Determine primary image
+    let imageUrl = ''
+    if (product.product_images && product.product_images.length > 0) {
+      const primaryImg = product.product_images.find(img => img.is_primary) || product.product_images[0]
+      imageUrl = primaryImg.url
+    }
+
+    return {
+      title: product.meta_title || `${product.name} | Benangbaju`,
+      description: product.meta_description || product.short_description || product.description || `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
+      openGraph: {
+        title: product.meta_title || `${product.name} | Benangbaju`,
+        description: product.meta_description || product.short_description || `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
+        url: `${baseUrl}/produk/${slug}`,
+        images: imageUrl ? [{ url: imageUrl }] : [],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: product.meta_title || `${product.name} | Benangbaju`,
+        description: product.meta_description || product.short_description || '',
+        images: imageUrl ? [imageUrl] : [],
+      }
+    }
+  } catch (e) {
+    return {
+      title: 'Produk Tidak Ditemukan | Benangbaju'
+    }
+  }
+}
+
 export default async function ProductDetailPage({ params }: ProductPageProps) : Promise<React.JSX.Element> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
@@ -75,10 +116,51 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
     </Suspense>
   ) : null
 
+  // Generate JSON-LD
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
+  let primaryImageUrl = ''
+  if (product.product_images && product.product_images.length > 0) {
+    const primaryImg = product.product_images.find(img => img.is_primary) || product.product_images[0]
+    primaryImageUrl = primaryImg.url
+  }
+  
+  // Find cheapest price for Offer
+  let price = 0
+  if (product.product_variants && product.product_variants.length > 0) {
+    price = Math.min(...product.product_variants.map(v => Number(v.price)))
+  }
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: primaryImageUrl ? [primaryImageUrl] : [],
+    description: product.meta_description || product.short_description || product.description || `Beli ${product.name} dari Benangbaju.`,
+    sku: product.product_variants?.[0]?.sku || '',
+    brand: {
+      '@type': 'Brand',
+      name: 'Benangbaju'
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/produk/${slug}`,
+      priceCurrency: 'IDR',
+      price: price,
+      availability: product.product_variants?.some(v => v.stock > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition'
+    }
+  }
+
   return (
-    <ProductDetailClient
-      product={product}
-      relatedProductsNode={relatedNode}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductDetailClient
+        product={product}
+        relatedProductsNode={relatedNode}
+      />
+    </>
   )
 }

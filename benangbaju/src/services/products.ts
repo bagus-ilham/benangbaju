@@ -72,6 +72,8 @@ export interface ProductListItem {
   slug: string
   description: string | null
   short_description: string | null
+  meta_title: string | null
+  meta_description: string | null
   weight_gram: number
   is_featured: boolean
   created_at: string
@@ -113,7 +115,7 @@ export async function getProducts(
     .from('products')
     .select(
       `
-        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at,
+        id, category_id, name, slug, description, short_description, meta_title, meta_description, weight_gram, is_featured, created_at,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active),
         product_images (id, url, alt_text, sort_order, is_primary)
@@ -243,6 +245,8 @@ export async function getProducts(
       slug: p.slug,
       description: p.description,
       short_description: p.short_description,
+      meta_title: p.meta_title,
+      meta_description: p.meta_description,
       weight_gram: p.weight_gram,
       is_featured: p.is_featured,
       created_at: p.created_at,
@@ -306,7 +310,7 @@ export async function getProductBySlug(
     .from('products')
     .select(
       `
-        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at, size_guide, care_guide,
+        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at, size_guide, care_guide, meta_title, meta_description,
         categories (name, slug),
         product_variants (*, product_variant_attrs(*)),
         product_images (*),
@@ -393,6 +397,8 @@ export async function getProductBySlug(
     slug: data.slug,
     description: data.description,
     short_description: data.short_description,
+    meta_title: data.meta_title,
+    meta_description: data.meta_description,
     weight_gram: data.weight_gram,
     is_featured: data.is_featured,
     created_at: data.created_at,
@@ -416,7 +422,7 @@ export async function getRelatedProducts(
     .from('products')
     .select(
       `
-        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at,
+        id, category_id, name, slug, description, short_description, meta_title, meta_description, weight_gram, is_featured, created_at,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active),
         product_images (id, url, alt_text, sort_order, is_primary)
@@ -475,6 +481,8 @@ export async function getRelatedProducts(
       slug: p.slug,
       description: p.description,
       short_description: p.short_description,
+      meta_title: p.meta_title,
+      meta_description: p.meta_description,
       weight_gram: p.weight_gram,
       is_featured: p.is_featured,
       created_at: p.created_at,

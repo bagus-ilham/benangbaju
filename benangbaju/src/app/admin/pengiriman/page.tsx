@@ -12,7 +12,7 @@ import {
   useAdminDeleteShippingRate,
 } from '@/hooks/useAdmin'
 import type { ShippingZone, ShippingRate } from '@/services/shipping'
-import { Button, AdminPageHeader, Modal } from '@/components/shared'
+import { Button, AdminPageHeader, Modal, Input, Textarea, Select, Switch } from '@/components/shared'
 import { Plus, Edit, Trash2, MapPin, Truck, RefreshCw, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatIDR } from '@/lib/utils/format'
@@ -427,24 +427,23 @@ export default function AdminShippingPage() : React.JSX.Element {
       >
         <form onSubmit={handleSaveZone} className="space-y-4">
           <div className="flex flex-col space-y-1">
-            <label className="font-bold text-neutral-500 uppercase tracking-wider">Nama Zona*</label>
-            <input
+            <Input
+              label="Nama Zona*"
               type="text"
               required
               placeholder="cth: Pulau Jawa"
-              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
               value={zoneName}
               onChange={(e) => setZoneName(e.target.value)}
             />
           </div>
 
           <div className="flex flex-col space-y-1">
-            <label className="font-bold text-neutral-500 uppercase tracking-wider">Deskripsi</label>
-            <textarea
+            <Textarea
+              label="Deskripsi"
               placeholder="Deskripsi wilayah cakupan..."
-              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black h-16 resize-none"
               value={zoneDesc}
               onChange={(e) => setZoneDesc(e.target.value)}
+              rows={3}
             />
           </div>
 
@@ -472,14 +471,12 @@ export default function AdminShippingPage() : React.JSX.Element {
           </div>
 
           <div className="flex items-center space-x-2 pt-2">
-            <input
-              type="checkbox"
+            <Switch
               id="zoneActive"
               checked={zoneActive}
               onChange={(e) => setZoneActive(e.target.checked)}
-              className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
             />
-            <label htmlFor="zoneActive" className="font-bold text-neutral-700">Aktifkan Zona ini</label>
+            <label htmlFor="zoneActive" className="font-bold text-[10px] uppercase tracking-wider text-neutral-700 cursor-pointer">Aktifkan Zona ini</label>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
@@ -498,26 +495,21 @@ export default function AdminShippingPage() : React.JSX.Element {
       >
         <form onSubmit={handleSaveRate} className="space-y-4">
           <div className="flex flex-col space-y-1">
-            <label className="font-bold text-neutral-500 uppercase tracking-wider">Pilih Zona Pengiriman*</label>
-            <select
+            <Select
+              label="Pilih Zona Pengiriman*"
               required
-              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black bg-white"
               value={rateZoneId}
-              onChange={(e) => setRateZoneId(e.target.value)}
-            >
-              {zones?.map((z) => (
-                <option key={z.id} value={z.id}>{z.name}</option>
-              ))}
-            </select>
+              onChange={setRateZoneId}
+              options={zones?.map(z => ({ label: z.name, value: z.id })) || []}
+            />
           </div>
 
           <div className="flex flex-col space-y-1">
-            <label className="font-bold text-neutral-500 uppercase tracking-wider">Nama Ekspedisi / Layanan*</label>
-            <input
+            <Input
+              label="Nama Ekspedisi / Layanan*"
               type="text"
               required
               placeholder="cth: JNE REG"
-              className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
               value={rateCourier}
               onChange={(e) => setRateCourier(e.target.value)}
             />
@@ -525,24 +517,22 @@ export default function AdminShippingPage() : React.JSX.Element {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col space-y-1">
-              <label className="font-bold text-neutral-500 uppercase tracking-wider">Biaya Minimum (Rp)*</label>
-              <input
+              <Input
+                label="Biaya Minimum (Rp)*"
                 type="number"
                 required
                 min={0}
-                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                value={rateBasePrice}
+                value={rateBasePrice.toString()}
                 onChange={(e) => setRateBasePrice(Math.max(0, parseInt(e.target.value) || 0))}
               />
             </div>
             <div className="flex flex-col space-y-1">
-              <label className="font-bold text-neutral-500 uppercase tracking-wider">Tarif Per Kg (Rp)*</label>
-              <input
+              <Input
+                label="Tarif Per Kg (Rp)*"
                 type="number"
                 required
                 min={0}
-                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                value={ratePricePerKg}
+                value={ratePricePerKg.toString()}
                 onChange={(e) => setRatePricePerKg(Math.max(0, parseInt(e.target.value) || 0))}
               />
             </div>
@@ -550,38 +540,34 @@ export default function AdminShippingPage() : React.JSX.Element {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col space-y-1">
-              <label className="font-bold text-neutral-500 uppercase tracking-wider">Est. Tiba Min (Hari)*</label>
-              <input
+              <Input
+                label="Est. Tiba Min (Hari)*"
                 type="number"
                 required
                 min={1}
-                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                value={rateEtdMin}
+                value={rateEtdMin.toString()}
                 onChange={(e) => setRateEtdMin(Math.max(1, parseInt(e.target.value) || 1))}
               />
             </div>
             <div className="flex flex-col space-y-1">
-              <label className="font-bold text-neutral-500 uppercase tracking-wider">Est. Tiba Max (Hari)*</label>
-              <input
+              <Input
+                label="Est. Tiba Max (Hari)*"
                 type="number"
                 required
                 min={rateEtdMin}
-                className="px-3 py-2 border border-neutral-200 outline-none focus:border-brand-black"
-                value={rateEtdMax}
+                value={rateEtdMax.toString()}
                 onChange={(e) => setRateEtdMax(Math.max(rateEtdMin, parseInt(e.target.value) || rateEtdMin))}
               />
             </div>
           </div>
 
           <div className="flex items-center space-x-2 pt-2">
-            <input
-              type="checkbox"
+            <Switch
               id="rateActive"
               checked={rateActive}
               onChange={(e) => setRateActive(e.target.checked)}
-              className="w-4 h-4 accent-neutral-950 border-neutral-200 rounded-none focus:ring-0"
             />
-            <label htmlFor="rateActive" className="font-bold text-neutral-700">Aktifkan Layanan Kurir ini</label>
+            <label htmlFor="rateActive" className="font-bold text-[10px] uppercase tracking-wider text-neutral-700 cursor-pointer">Aktifkan Layanan Kurir ini</label>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">

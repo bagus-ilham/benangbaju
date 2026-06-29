@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAdminCategories, useAdminCollections } from '@/hooks/useAdmin'
-import { Button, Input, AdminPageHeader } from '@/components/shared'
+import { Button, Input, AdminPageHeader, Textarea, Select, Checkbox, Switch } from '@/components/shared'
 import { Plus, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -111,8 +111,10 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
   // Selected collections state
   const [selectedCollections, setSelectedCollections] = useState<string[]>([])
 
-  // Populate data on edit mode
-  useEffect(() => {
+  // Populate data on edit mode (using derived state to avoid cascading renders)
+  const [prevInitialData, setPrevInitialData] = useState<InitialProductData | undefined>(undefined)
+  if (initialData !== prevInitialData) {
+    setPrevInitialData(initialData)
     if (initialData) {
       setName(initialData.name || '')
       setSlug(initialData.slug || '')
@@ -209,7 +211,7 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       setSizeGuide('')
       setCareGuide('')
     }
-  }, [initialData])
+  }
 
   // Helper auto-generate slug
   const handleNameChange = (val: string) => {
@@ -465,28 +467,14 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                  Kategori*
-                </label>
-                <select
-                  value={category_id}
-                  onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none bg-white font-medium"
-                  required
-                >
-                  <option value="">Pilih Kategori</option>
-                  {catsLoading ? (
-                    <option disabled>Memuat kategori...</option>
-                  ) : (
-                    categories?.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
+              <Select
+                label="Kategori*"
+                value={category_id}
+                onChange={(val) => setCategoryId(val)}
+                options={catsLoading ? [] : (categories?.map((cat) => ({ label: cat.name, value: cat.id })) || [])}
+                placeholder={catsLoading ? "Memuat kategori..." : "Pilih Kategori"}
+                required
+              />
 
               <Input
                 label="Berat Default (Gram)*"
@@ -510,107 +498,67 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                   {collections.map((col) => {
                     const isChecked = selectedCollections.includes(col.id)
                     return (
-                      <div key={col.id} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={`col-select-${col.id}`}
-                          checked={isChecked}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedCollections((prev) => [...prev, col.id])
-                            } else {
-                              setSelectedCollections((prev) => prev.filter((id) => id !== col.id))
-                            }
-                          }}
-                          className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0 cursor-pointer"
-                        />
-                        <label
-                          htmlFor={`col-select-${col.id}`}
-                          className="select-none text-neutral-700 font-semibold cursor-pointer text-xs animate-none"
-                        >
-                          {col.name}
-                        </label>
-                      </div>
+                      <Checkbox
+                        key={col.id}
+                        label={col.name}
+                        checked={isChecked}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCollections((prev) => [...prev, col.id])
+                          } else {
+                            setSelectedCollections((prev) => prev.filter((id) => id !== col.id))
+                          }
+                        }}
+                      />
                     )
                   })}
                 </div>
               )}
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Deskripsi Singkat
-              </label>
-              <textarea
-                value={short_description}
-                onChange={(e) => setShortDescription(e.target.value)}
-                placeholder="Tulis deskripsi singkat..."
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-16 resize-none"
-              />
-            </div>
+            <Textarea
+              label="Deskripsi Singkat"
+              value={short_description}
+              onChange={(e) => setShortDescription(e.target.value)}
+              placeholder="Tulis deskripsi singkat..."
+              rows={2}
+            />
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Deskripsi Lengkap
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Tulis spesifikasi lengkap, bahan, dan cara perawatan..."
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-32 resize-none"
-              />
-            </div>
+            <Textarea
+              label="Deskripsi Lengkap"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Tulis spesifikasi lengkap, bahan, dan cara perawatan..."
+              rows={5}
+            />
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Panduan Ukuran (Size Guide)
-              </label>
-              <textarea
-                value={size_guide}
-                onChange={(e) => setSizeGuide(e.target.value)}
-                placeholder="Tulis panduan ukuran produk..."
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-24 resize-none"
-              />
-            </div>
+            <Textarea
+              label="Panduan Ukuran (Size Guide)"
+              value={size_guide}
+              onChange={(e) => setSizeGuide(e.target.value)}
+              placeholder="Tulis panduan ukuran produk..."
+              rows={3}
+            />
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Panduan Perawatan (Care Guide)
-              </label>
-              <textarea
-                value={care_guide}
-                onChange={(e) => setCareGuide(e.target.value)}
-                placeholder="Tulis petunjuk perawatan produk..."
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-24 resize-none"
-              />
-            </div>
+            <Textarea
+              label="Panduan Perawatan (Care Guide)"
+              value={care_guide}
+              onChange={(e) => setCareGuide(e.target.value)}
+              placeholder="Tulis petunjuk perawatan produk..."
+              rows={3}
+            />
 
             <div className="flex items-center space-x-6 pt-2">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="product_is_active"
-                  checked={is_active}
-                  onChange={(e) => setIsActive(e.target.checked)}
-                  className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
-                />
-                <label htmlFor="product_is_active" className="select-none text-neutral-700 font-semibold uppercase tracking-wider">
-                  Aktifkan Katalog
-                </label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="product_is_featured"
-                  checked={is_featured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
-                  className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
-                />
-                <label htmlFor="product_is_featured" className="select-none text-neutral-700 font-semibold uppercase tracking-wider">
-                  Produk Unggulan (Featured)
-                </label>
-              </div>
+              <Switch
+                label="Aktifkan Katalog"
+                checked={is_active}
+                onChange={(e) => setIsActive(e.target.checked)}
+              />
+              <Switch
+                label="Produk Unggulan (Featured)"
+                checked={is_featured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+              />
             </div>
           </div>
 
@@ -693,22 +641,12 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
                     />
                   </div>
 
-                  {/* Status checkbox for variant */}
-                  <div className="flex items-center space-x-2 pt-1 pb-1">
-                    <input
-                      type="checkbox"
-                      id={`variant-active-${vIdx}`}
-                      checked={v.is_active}
-                      onChange={(e) => handleUpdateVariantField(vIdx, 'is_active', e.target.checked)}
-                      className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0 cursor-pointer"
-                    />
-                    <label
-                      htmlFor={`variant-active-${vIdx}`}
-                      className="select-none text-neutral-700 font-bold uppercase cursor-pointer tracking-wider text-[10px]"
-                    >
-                      Aktifkan Varian
-                    </label>
-                  </div>
+                  <Switch
+                    label="Aktifkan Varian"
+                    checked={v.is_active}
+                    onChange={(e) => handleUpdateVariantField(vIdx, 'is_active', e.target.checked)}
+                    className="pt-1 pb-1"
+                  />
 
                   {/* Variant Images Sub-section */}
                   <div className="space-y-3 pt-2 border-t border-neutral-100">

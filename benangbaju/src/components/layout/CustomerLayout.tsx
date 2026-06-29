@@ -27,10 +27,7 @@ interface CustomerLayoutProps {
 }
 
 export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.Element {
-  const [pathname, setPathname] = useState('')
-  useEffect(() => {
-    setPathname(window.location.pathname)
-  }, [])
+  const pathname = usePathname()
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
 
@@ -67,12 +64,14 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
 
   useEffect(() => {
     if (!isSearchOpen || searchQuery.trim().length < 2) {
-      setInstantResults([])
-      setIsSearchingInstant(false)
-      return
+      const t = setTimeout(() => {
+        setInstantResults([])
+        setIsSearchingInstant(false)
+      }, 0)
+      return () => clearTimeout(t)
     }
 
-    setIsSearchingInstant(true)
+    const startTimer = setTimeout(() => setIsSearchingInstant(true), 0)
     const delayDebounceFn = setTimeout(async () => {
       try {
         const { products } = await getProducts(supabase, { searchQuery: searchQuery.trim(), limit: 3 })
@@ -84,11 +83,12 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
       }
     }, 300)
 
-    return () => clearTimeout(delayDebounceFn)
+    return () => {
+      clearTimeout(startTimer)
+      clearTimeout(delayDebounceFn)
+    }
   }, [searchQuery, isSearchOpen, supabase])
-
   useEffect(() => {
-    setIsMounted(true)
     let ticking = false
     const handleScroll = () => {
       if (!ticking) {
@@ -107,9 +107,15 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
       }
     }
 
-    handleScroll()
+    const initTimer = setTimeout(() => {
+      setIsMounted(true)
+      handleScroll()
+    }, 0)
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      clearTimeout(initTimer)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   const handleScrollToTop = () => {
@@ -118,9 +124,12 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
 
   useEffect(() => {
     if (totalQuantity > 0) {
-      setAnimateCart(true)
+      const initTimer = setTimeout(() => setAnimateCart(true), 0)
       const timer = setTimeout(() => setAnimateCart(false), 500)
-      return () => clearTimeout(timer)
+      return () => {
+        clearTimeout(initTimer)
+        clearTimeout(timer)
+      }
     }
   }, [totalQuantity])
 

@@ -1,13 +1,30 @@
 import React from 'react'
 
+import { Skeleton } from '@/components/shared/Skeleton'
+
 export default function AdminLoading() : React.JSX.Element {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 font-sans">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="w-8 h-8 border-2 border-brand-gold-muted border-t-brand-gold rounded-full animate-spin" />
-        <p className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 animate-pulse font-heading">
-          Memuat data admin...
-        </p>
+    <div className="p-8 space-y-8 bg-neutral-50/50 min-h-full">
+      {/* Header Skeleton */}
+      <div className="flex justify-between items-start">
+        <div className="space-y-2 w-1/3">
+          <Skeleton className="h-6 w-3/4 rounded-none" />
+          <Skeleton className="h-4 w-1/2 rounded-none" />
+        </div>
+        <Skeleton className="h-9 w-32 rounded-none" />
+      </div>
+
+      {/* Stats/Metrics Skeleton Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-28 w-full rounded-none" />
+        ))}
+      </div>
+
+      {/* Main Table/Content Skeleton */}
+      <div className="space-y-4">
+        <Skeleton className="h-12 w-full rounded-none" />
+        <Skeleton className="h-[400px] w-full rounded-none" />
       </div>
     </div>
   )

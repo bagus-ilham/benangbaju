@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   useAdminOrders,
   useAdminReturnRequests,
@@ -8,9 +9,10 @@ import {
   useAdminUpdateOrderStatus,
 } from '@/hooks/useAdmin'
 import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/services/orders'
-import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
+import { Button, Input, Textarea, Modal, AdminPageHeader, TableSkeleton } from '@/components/shared'
 import { Search, Eye, AlertTriangle, ShieldCheck, Truck } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import toast from 'react-hot-toast'
 
 const TABS = [
@@ -165,8 +167,8 @@ export default function AdminOrdersPage() : React.JSX.Element {
         {activeTab === 'returns' ? (
           // Returns Table
           returnsLoading ? (
-            <div className="py-24 text-center">
-              <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat retur...</p>
+            <div className="py-8 bg-white border border-neutral-200">
+              <TableSkeleton columns={6} rows={3} />
             </div>
           ) : returnsError ? (
             <div className="py-24 text-center">
@@ -262,8 +264,8 @@ export default function AdminOrdersPage() : React.JSX.Element {
         ) : (
           // Orders Table
           ordersLoading ? (
-            <div className="py-24 text-center">
-              <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat pesanan...</p>
+            <div className="py-8 bg-white border border-neutral-200">
+              <TableSkeleton columns={6} rows={5} />
             </div>
           ) : ordersError ? (
             <div className="py-24 text-center">
@@ -428,9 +430,9 @@ export default function AdminOrdersPage() : React.JSX.Element {
                         href={media.url} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="block w-16 h-16 border border-neutral-200 overflow-hidden hover:border-brand-gold transition-colors"
+                        className="block w-16 h-16 border border-neutral-200 overflow-hidden hover:border-brand-gold transition-colors relative"
                       >
-                        <img src={media.url} alt="Bukti Retur" className="w-full h-full object-cover" />
+                        <Image src={media.url} alt="Bukti Retur" fill sizes="64px" className="object-cover" />
                       </a>
                     ))}
                   </div>
@@ -478,14 +480,12 @@ export default function AdminOrdersPage() : React.JSX.Element {
                 />
                 
                 <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                    Catatan Internal Admin (Alasan tolak/setuju)
-                  </label>
-                  <textarea
+                  <Textarea
+                    label="Catatan Internal Admin (Alasan tolak/setuju)"
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}
                     placeholder="Tulis catatan admin..."
-                    className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-16 resize-none"
+                    rows={3}
                   />
                 </div>
               </div>

@@ -2,13 +2,29 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import React, { useState, useEffect, useRef } from 'react'
-import { Modal } from '@/components/shared/Modal'
-import { Button } from '@/components/shared/Button'
-import { Input } from '@/components/shared/Input'
+import { Modal, Button, Input, Textarea, Select, Checkbox } from '@/components/shared'
 import { useAddUserAddress, useUpdateUserAddress, useDistrictSearch } from '@/hooks/useShipping'
 import type { UserAddress } from '@/services/shipping'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
+import { z } from 'zod'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+const addressSchema = z.object({
+  label: z.string().min(1, 'Label alamat wajib diisi (cth: Rumah)'),
+  recipient_name: z.string().min(3, 'Nama penerima minimal 3 karakter'),
+  phone: z.string().min(9, 'Nomor telepon minimal 9 digit').regex(/^[0-9+]+$/, 'Hanya angka yang diperbolehkan'),
+  province_name: z.string().min(1, 'Provinsi wajib dipilih'),
+  city_name: z.string().min(1, 'Kota wajib diisi'),
+  district_name: z.string().min(1, 'Kecamatan wajib diisi'),
+  postal_code: z.string().min(5, 'Kode pos harus 5 digit').regex(/^[0-9]+$/, 'Hanya angka yang diperbolehkan').optional().or(z.literal('')),
+  full_address: z.string().min(10, 'Alamat lengkap minimal 10 karakter'),
+  zone_id: z.string().nullable(),
+  is_default: z.boolean(),
+})
+
+type AddressFormValues = z.infer<typeof addressSchema>
 
 interface AddressModalProps {
   isOpen: boolean
@@ -31,17 +47,30 @@ const PROVINCES = [
 export function AddressModal({ isOpen, onClose, userId, addressToEdit }: AddressModalProps) : React.JSX.Element {
   const isEdit = !!addressToEdit
 
-  // Form states
-  const [label, setLabel] = useState('')
-  const [recipientName, setRecipientName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [provinceName, setProvinceName] = useState('')
-  const [cityName, setCityName] = useState('')
-  const [districtName, setDistrictName] = useState('')
-  const [postalCode, setPostalCode] = useState('')
-  const [fullAddress, setFullAddress] = useState('')
-  const [zoneId, setZoneId] = useState<string | null>(null)
-  const [isDefault, setIsDefault] = useState(false)
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<AddressFormValues>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      label: '',
+      recipient_name: '',
+      phone: '',
+      province_name: '',
+      city_name: '',
+      district_name: '',
+      postal_code: '',
+      full_address: '',
+      zone_id: null,
+      is_default: false,
+    },
+  })
+
+  const provinceName = watch('province_name')
 
   const [searchQuery, setSearchQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -55,38 +84,44 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
 
   // Initialize fields on open/edit change
   useEffect(() => {
-    if (addressToEdit) {
-      setLabel(addressToEdit.label)
-      setRecipientName(addressToEdit.recipient_name)
-      setPhone(addressToEdit.phone)
-      setProvinceName(addressToEdit.province_name)
-      setCityName(addressToEdit.city_name)
-      setDistrictName(addressToEdit.district_name)
-      setPostalCode(addressToEdit.postal_code)
-      setFullAddress(addressToEdit.full_address)
-      setZoneId(addressToEdit.zone_id)
-      setIsDefault(addressToEdit.is_default)
-      setSearchQuery(addressToEdit.district_name ? `${addressToEdit.district_name}, ${addressToEdit.city_name}` : '')
-      setShowSuggestions(false)
-      if (addressToEdit.province_name) {
-        justInitializedRef.current = true
+    if (isOpen) {
+      if (addressToEdit) {
+        reset({
+          label: addressToEdit.label,
+          recipient_name: addressToEdit.recipient_name,
+          phone: addressToEdit.phone,
+          province_name: addressToEdit.province_name,
+          city_name: addressToEdit.city_name,
+          district_name: addressToEdit.district_name,
+          postal_code: addressToEdit.postal_code || '',
+          full_address: addressToEdit.full_address,
+          zone_id: addressToEdit.zone_id,
+          is_default: addressToEdit.is_default,
+        })
+        setSearchQuery(addressToEdit.district_name ? `${addressToEdit.district_name}, ${addressToEdit.city_name}` : '')
+        setShowSuggestions(false)
+        if (addressToEdit.province_name) {
+          justInitializedRef.current = true
+        }
+      } else {
+        reset({
+          label: '',
+          recipient_name: '',
+          phone: '',
+          province_name: '',
+          city_name: '',
+          district_name: '',
+          postal_code: '',
+          full_address: '',
+          zone_id: null,
+          is_default: false,
+        })
+        setSearchQuery('')
+        setShowSuggestions(false)
+        justInitializedRef.current = false
       }
-    } else {
-      setLabel('')
-      setRecipientName('')
-      setPhone('')
-      setProvinceName('')
-      setCityName('')
-      setDistrictName('')
-      setPostalCode('')
-      setFullAddress('')
-      setZoneId(null)
-      setIsDefault(false)
-      setSearchQuery('')
-      setShowSuggestions(false)
-      justInitializedRef.current = false
     }
-  }, [addressToEdit, isOpen])
+  }, [addressToEdit, isOpen, reset])
 
   // Fetch zone_id when provinceName changes
   useEffect(() => {
@@ -96,7 +131,7 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
     }
 
     if (!provinceName) {
-      setZoneId(null)
+      setValue('zone_id', null)
       justInitializedRef.current = false
       return
     }
@@ -106,51 +141,39 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
       return
     }
 
-    const fetchZoneId = async () => {
+    const fetchZone = async () => {
       try {
         const { data, error } = await supabase
-          .from('shipping_zone_coverage')
-          .select('zone_id')
-          .eq('province_name', provinceName)
-          .maybeSingle()
-
-        if (error) {
-          console.error('Error fetching zone for province:', error)
-          setZoneId(null)
-        } else if (data) {
-          setZoneId(data.zone_id)
+          .from('shipping_zones')
+          .select('id')
+          .ilike('name', provinceName)
+          .single()
+        
+        if (data) {
+          setValue('zone_id', data.id)
         } else {
-          setZoneId(null)
+          setValue('zone_id', null)
         }
       } catch (err) {
-        console.error('Error fetching zone for province:', err)
-        setZoneId(null)
+        setValue('zone_id', null)
       }
     }
+    fetchZone()
+  }, [provinceName, setValue])
 
-    fetchZoneId()
-  }, [provinceName])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!label || !recipientName || !phone || !districtName || !provinceName || !cityName || !fullAddress) {
-      toast.error('Harap isi semua kolom wajib')
-      return
-    }
-
+  const onSubmitForm = async (data: AddressFormValues) => {
     const addressData = {
       user_id: userId,
-      label,
-      recipient_name: recipientName,
-      phone,
-      province_name: provinceName,
-      city_name: cityName,
-      district_name: districtName,
-      postal_code: postalCode,
-      full_address: fullAddress,
-      zone_id: zoneId,
-      is_default: isDefault,
+      label: data.label,
+      recipient_name: data.recipient_name,
+      phone: data.phone,
+      province_name: data.province_name,
+      city_name: data.city_name,
+      district_name: data.district_name,
+      postal_code: data.postal_code || '',
+      full_address: data.full_address,
+      zone_id: data.zone_id,
+      is_default: data.is_default,
     }
 
     try {
@@ -176,30 +199,45 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? 'Ubah Alamat' : 'Tambah Alamat Baru'}>
-      <form onSubmit={handleSubmit} className="space-y-5 text-sm font-sans">
+      <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5 text-sm font-sans">
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Label Alamat (cth: Rumah, Kantor)*"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            placeholder="cth: Rumah"
-            required
+          <Controller
+            control={control}
+            name="label"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Label Alamat (cth: Rumah, Kantor)*"
+                placeholder="cth: Rumah"
+                error={errors.label?.message}
+              />
+            )}
           />
-          <Input
-            label="Nama Penerima*"
-            value={recipientName}
-            onChange={(e) => setRecipientName(e.target.value)}
-            placeholder="Nama lengkap penerima"
-            required
+          <Controller
+            control={control}
+            name="recipient_name"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Nama Penerima*"
+                placeholder="Nama lengkap penerima"
+                error={errors.recipient_name?.message}
+              />
+            )}
           />
         </div>
 
-        <Input
-          label="Nomor Telepon Penerima*"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="cth: 08123456789"
-          required
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Nomor Telepon Penerima*"
+              placeholder="cth: 08123456789"
+              error={errors.phone?.message}
+            />
+          )}
         />
 
         {/* Autocomplete district search */}
@@ -225,11 +263,11 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
                   key={district.id}
                   onClick={() => {
                     skipProvinceFetchRef.current = true
-                    setProvinceName(district.province_name)
-                    setCityName(district.city_name)
-                    setDistrictName(district.district_name)
-                    setPostalCode(district.postal_code || '')
-                    setZoneId(district.zone_id)
+                    setValue('province_name', district.province_name)
+                    setValue('city_name', district.city_name)
+                    setValue('district_name', district.district_name)
+                    setValue('postal_code', district.postal_code || '')
+                    setValue('zone_id', district.zone_id)
                     setSearchQuery(`${district.district_name}, ${district.city_name}`)
                     setShowSuggestions(false)
                   }}
@@ -248,83 +286,95 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
         </div>
 
         {/* Province Select Dropdown */}
-        <div className="flex flex-col space-y-1">
-          <label className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70 transition-colors duration-200">
-            Provinsi*
-          </label>
-          <select
-            className="w-full bg-white text-xs px-4 py-3 border border-neutral-200 rounded-none text-brand-black transition-all duration-300 focus:border-brand-black focus:bg-neutral-50/50 outline-none focus:ring-1 focus:ring-brand-black"
-            value={provinceName}
-            onChange={(e) => setProvinceName(e.target.value)}
-            required
-          >
-            <option value="">Pilih Provinsi</option>
-            {PROVINCES.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Controller
+          control={control}
+          name="province_name"
+          render={({ field }) => (
+            <Select
+              label="Provinsi*"
+              value={field.value}
+              onChange={field.onChange}
+              options={PROVINCES.map((p) => ({ label: p, value: p }))}
+              placeholder="Pilih Provinsi"
+              error={errors.province_name?.message}
+            />
+          )}
+        />
 
         {/* City and District inputs */}
         <div className="grid grid-cols-2 gap-4">
-          <Input
-            label="Kota/Kabupaten*"
-            value={cityName}
-            onChange={(e) => setCityName(e.target.value)}
-            placeholder="cth: Jakarta Barat"
-            required
+          <Controller
+            control={control}
+            name="city_name"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Kota/Kabupaten*"
+                placeholder="cth: Jakarta Barat"
+                error={errors.city_name?.message}
+              />
+            )}
           />
-          <Input
-            label="Kecamatan*"
-            value={districtName}
-            onChange={(e) => setDistrictName(e.target.value)}
-            placeholder="cth: Kebayoran Baru"
-            required
+          <Controller
+            control={control}
+            name="district_name"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Kecamatan*"
+                placeholder="cth: Kebayoran Baru"
+                error={errors.district_name?.message}
+              />
+            )}
           />
         </div>
 
         {/* Postal Code input */}
-        <Input
-          label="Kode Pos"
-          value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
-          placeholder="cth: 12110"
+        <Controller
+          control={control}
+          name="postal_code"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Kode Pos"
+              placeholder="cth: 12110"
+              error={errors.postal_code?.message}
+            />
+          )}
         />
 
-        <div className="space-y-1">
-          <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-            Alamat Lengkap (Jalan, No. Rumah, RT/RW, Blok, Gg)*
-          </label>
-          <textarea
-            className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none rounded-none transition duration-150 h-24 resize-none"
-            placeholder="Tulis alamat detail..."
-            value={fullAddress}
-            onChange={(e) => setFullAddress(e.target.value)}
-            required
-          />
-        </div>
+        <Controller
+          control={control}
+          name="full_address"
+          render={({ field }) => (
+            <Textarea
+              {...field}
+              label="Alamat Lengkap (Jalan, No. Rumah, RT/RW, Blok, Gg)*"
+              placeholder="Tulis alamat detail..."
+              error={errors.full_address?.message}
+            />
+          )}
+        />
 
-        <div className="flex items-center space-x-2 py-1">
-          <input
-            type="checkbox"
-            id="isDefault"
-            checked={isDefault}
-            onChange={(e) => setIsDefault(e.target.checked)}
-            className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
-          />
-          <label htmlFor="isDefault" className="select-none text-neutral-700">
-            Jadikan alamat utama (default)
-          </label>
-        </div>
+        <Controller
+          control={control}
+          name="is_default"
+          render={({ field: { value, onChange } }) => (
+            <Checkbox
+              label="Jadikan alamat utama (default)"
+              checked={value}
+              onChange={(e) => onChange(e.target.checked)}
+              className="py-1"
+            />
+          )}
+        />
 
         <div className="flex justify-end space-x-3 pt-3 border-t border-neutral-100">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
             Batal
           </Button>
-          <Button type="submit" variant="primary" isLoading={isSaving}>
-            Simpan
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? 'Menyimpan...' : 'Simpan Alamat'}
           </Button>
         </div>
       </form>

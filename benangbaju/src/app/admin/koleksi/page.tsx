@@ -9,8 +9,21 @@ import {
   useAdminDeleteCollection,
 } from '@/hooks/useAdmin'
 import type { AdminCollectionItem } from '@/services/collections'
-import { Button, Input, Modal, AdminPageHeader } from '@/components/shared'
-import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
+import { 
+  Button, 
+  Input, 
+  Modal, 
+  AdminPageHeader,
+  DataTable,
+  Textarea,
+  Checkbox,
+  Switch,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/shared'
+import { Plus, Edit2, Trash2, Copy, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
@@ -401,14 +414,12 @@ export default function AdminCollectionPage() : React.JSX.Element {
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-              Deskripsi Koleksi
-            </label>
-            <textarea
+            <Textarea
+              label="Deskripsi Koleksi"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tulis deskripsi singkat tentang koleksi..."
-              className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-16 resize-none"
+              rows={3}
             />
           </div>
 
@@ -423,12 +434,10 @@ export default function AdminCollectionPage() : React.JSX.Element {
               ) : (
                 allProducts.map((p) => (
                   <div key={p.id} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       id={`link-prod-${p.id}`}
                       checked={!!selectedProductIds[p.id]}
                       onChange={() => handleToggleProduct(p.id)}
-                      className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
                     />
                     <label htmlFor={`link-prod-${p.id}`} className="select-none text-neutral-700 cursor-pointer">
                       {p.name}
@@ -440,14 +449,12 @@ export default function AdminCollectionPage() : React.JSX.Element {
           </div>
 
           <div className="flex items-center space-x-2 py-1">
-            <input
-              type="checkbox"
+            <Switch
               id="col_is_active"
               checked={is_active}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="w-4 h-4 border-neutral-300 accent-neutral-900 rounded-none focus:ring-0"
             />
-            <label htmlFor="col_is_active" className="select-none text-neutral-700 font-semibold uppercase tracking-wider">
+            <label htmlFor="col_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
               Koleksi Aktif
             </label>
           </div>

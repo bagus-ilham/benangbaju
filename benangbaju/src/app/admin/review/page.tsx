@@ -6,12 +6,12 @@ import {
   useAdminUpdateReviewStatus,
   useAdminReplyToReview,
 } from '@/hooks/useAdmin'
-import { Button, Modal, AdminPageHeader } from '@/components/shared'
+import { Button, Modal, AdminPageHeader, Textarea } from '@/components/shared'
 import { Star, MessageSquare } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/services/reviews'
-
+import Image from 'next/image'
 export default function AdminReviewsPage() : React.JSX.Element {
   const { data: reviews = [], isLoading, isError, refetch } = useAdminReviews()
   const { user } = useAuthStore()
@@ -130,8 +130,8 @@ export default function AdminReviewsPage() : React.JSX.Element {
                       {rev.review_media && rev.review_media.length > 0 && (
                         <div className="flex gap-2 mt-2">
                           {rev.review_media.map((media) => (
-                            <a key={media.id} href={media.url} target="_blank" rel="noopener noreferrer" className="block border border-neutral-200 hover:border-brand-gold transition-colors">
-                              <img src={media.url} alt="Review attachment" className="w-12 h-12 object-cover" />
+                            <a key={media.id} href={media.url} target="_blank" rel="noopener noreferrer" className="block border border-neutral-200 hover:border-brand-gold transition-colors relative w-12 h-12">
+                              <Image src={media.url} alt="Review attachment" fill sizes="48px" className="object-cover" />
                             </a>
                           ))}
                         </div>
@@ -216,18 +216,14 @@ export default function AdminReviewsPage() : React.JSX.Element {
               <span className="italic block mt-1">"{selectedReview.body}"</span>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2">
-                Tulis Balasan Admin
-              </label>
-              <textarea
+              <Textarea
+                label="Tulis Balasan Admin"
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Terima kasih atas ulasan positif Anda!..."
-                className="w-full px-4 py-3 border border-neutral-200 focus:border-neutral-800 outline-none text-xs rounded-none h-24 resize-none"
                 required
+                rows={4}
               />
-            </div>
 
             <div className="flex justify-end space-x-2 pt-3 border-t border-neutral-100">
               <Button

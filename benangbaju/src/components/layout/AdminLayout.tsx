@@ -37,10 +37,7 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element {
-  const [pathname, setPathname] = useState('')
-  useEffect(() => {
-    setPathname(window.location.pathname)
-  }, [])
+  const pathname = usePathname()
   const router = useRouter()
   const supabase = createBrowserClient()
   const { user, profile, clearAuth } = useAuthStore()

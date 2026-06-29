@@ -1,13 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
-export function CurrentYear() {
-  const [year, setYear] = useState<number>(2026)
-  
-  useEffect(() => {
-    setYear(new Date().getFullYear())
-  }, [])
+export function CurrentYear() : React.JSX.Element {
+  const [year] = useState(() => new Date().getFullYear())
   
   return <>{year}</>
 }

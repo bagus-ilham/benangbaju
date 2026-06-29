@@ -6,10 +6,18 @@ import { motion } from 'framer-motion'
 import { ProductListItem } from '@/services/products'
 import { Category } from '@/services/categories'
 import { ProductCard } from '@/components/product/ProductCard'
-import { PageContainer, PageHero } from '@/components/shared'
-import { SlidersHorizontal, ChevronLeft, ChevronRight, X, PackageSearch } from 'lucide-react'
+import { PageContainer, PageHero, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/shared'
+import { SlidersHorizontal, ChevronLeft, ChevronRight, X, PackageSearch, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTransition } from 'react'
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Terkini' },
+  { value: 'featured', label: 'Pilihan' },
+  { value: 'price-low', label: 'Harga Terendah' },
+  { value: 'price-high', label: 'Harga Tertinggi' },
+  { value: 'popular', label: 'Terpopuler' },
+]
 
 interface CatalogClientProps {
   initialProducts: ProductListItem[]
@@ -118,17 +126,25 @@ export function CatalogClient({
             <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400">
               Urutkan:
             </span>
-            <select
-              value={sortBy}
-              onChange={(e) => handleSortSelect(e.target.value)}
-              className="bg-transparent text-xs font-heading font-medium uppercase tracking-wider border-none focus:ring-0 py-1 pl-0 pr-8 text-brand-black cursor-pointer outline-none"
-            >
-              <option value="newest">Terkini</option>
-              <option value="featured">Pilihan</option>
-              <option value="price-low">Harga Terendah</option>
-              <option value="price-high">Harga Tertinggi</option>
-              <option value="popular">Terpopuler</option>
-            </select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-heading font-bold uppercase tracking-wider text-brand-black hover:text-brand-gold transition-colors p-1">
+                  <span>{SORT_OPTIONS.find(opt => opt.value === sortBy)?.label || 'Urutkan'}</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="right" className="w-48">
+                {SORT_OPTIONS.map((opt) => (
+                  <DropdownMenuItem
+                    key={opt.value}
+                    onClick={() => handleSortSelect(opt.value)}
+                    className={cn(sortBy === opt.value && "font-bold text-brand-black bg-neutral-50")}
+                  >
+                    {opt.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
