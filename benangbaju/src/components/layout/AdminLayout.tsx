@@ -22,7 +22,8 @@ import {
   Menu,
   X,
   Globe,
-  Layers
+  Layers,
+  TrendingUp
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -67,6 +68,7 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Analitik Penjualan', href: '/admin/analytics', icon: TrendingUp },
     { name: 'Pesanan', href: '/admin/pesanan', icon: ShoppingBag },
     { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
     { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },

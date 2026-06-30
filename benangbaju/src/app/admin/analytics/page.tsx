@@ -71,7 +71,7 @@ export default function AdminAnalyticsPage() {
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Keranjang Ditinggalkan</h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">{analytics.abandonedCartsCount}</p>
-          <p className="text-[10px] text-neutral-400 mt-1">Total Abandoned Carts (>24j)</p>
+          <p className="text-[10px] text-neutral-400 mt-1">Total Abandoned Carts (&gt;24j)</p>
         </div>
 
         <div className="bg-white border border-neutral-200 p-4 rounded-none">
