@@ -3,7 +3,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { revalidateCacheTag } from '@/app/actions/revalidate'
-import { getAdminCustomersAction, toggleAdminCustomerStatusAction, getAdminCustomerDetailAction, getAdminDashboardStatsAction } from '@/actions/admin'
+import { getAdminCustomersAction, toggleAdminCustomerStatusAction, getAdminCustomerDetailAction } from '@/actions/admin'
 import { getAdminAnalyticsAction } from '@/actions/analytics'
 import {
   adminGetProducts,

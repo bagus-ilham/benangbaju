@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useAdminAnalytics } from '@/hooks/useAdmin'
 import { AdminPageHeader } from '@/components/shared'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
-import { formatCurrency } from '@/lib/utils/format'
+import { formatIDR } from '@/lib/utils/format'
 import { TrendingUp, ShoppingBag, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
 
 export default function AdminAnalyticsPage() {
@@ -52,7 +52,7 @@ export default function AdminAnalyticsPage() {
             <TrendingUp size={16} className="mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pendapatan</h3>
           </div>
-          <p className="text-2xl font-bold text-neutral-900">{formatCurrency(analytics.totalRevenue)}</p>
+          <p className="text-2xl font-bold text-neutral-900">{formatIDR(analytics.totalRevenue)}</p>
           <p className="text-[10px] text-neutral-400 mt-1">Dalam {days} hari terakhir</p>
         </div>
 
@@ -102,7 +102,7 @@ export default function AdminAnalyticsPage() {
                   tickFormatter={(val) => `Rp${(val / 1000000).toFixed(0)}M`}
                 />
                 <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), 'Pendapatan']}
+                  formatter={(value: any) => [formatIDR(Number(value) || 0), 'Pendapatan']}
                   contentStyle={{ fontSize: '12px', border: '1px solid #e5e5e5', borderRadius: '0' }}
                 />
                 <Line type="monotone" dataKey="revenue" stroke="#171717" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
@@ -156,7 +156,7 @@ export default function AdminAnalyticsPage() {
                 <tr key={i} className="hover:bg-neutral-50/50">
                   <td className="py-3 px-6 font-mono text-xs">{v.code}</td>
                   <td className="py-3 px-6 text-right font-medium">{v.count}</td>
-                  <td className="py-3 px-6 text-right">{formatCurrency(v.totalDiscount)}</td>
+                  <td className="py-3 px-6 text-right">{formatIDR(v.totalDiscount)}</td>
                 </tr>
               ))}
             </tbody>
