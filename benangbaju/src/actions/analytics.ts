@@ -47,7 +47,7 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
   const { count: abandonedCartsCount, error: cartsError } = await supabase
     .from('carts')
     .select('*', { count: 'exact', head: true })
-    .lte('updated_at', yesterdayStr);
+    .lte('created_at', yesterdayStr);
     
   if (cartsError) throw new Error(cartsError.message);
 
