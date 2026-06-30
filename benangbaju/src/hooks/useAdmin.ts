@@ -3,7 +3,8 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { revalidateCacheTag } from '@/app/actions/revalidate'
-import { getAdminCustomersAction, toggleAdminCustomerStatusAction } from '@/actions/admin'
+import { getAdminCustomersAction, toggleAdminCustomerStatusAction, getAdminCustomerDetailAction, getAdminDashboardStatsAction } from '@/actions/admin'
+import { getAdminAnalyticsAction } from '@/actions/analytics'
 import {
   adminGetProducts,
   adminCreateProduct,
@@ -779,6 +780,20 @@ export function useAdminCustomers() : import("@tanstack/react-query").UseQueryRe
   })
 }
 
+export function useAdminDashboardStats() {
+  return useQuery({
+    queryKey: ['admin', 'dashboard'],
+    queryFn: () => getAdminDashboardStatsAction()
+  })
+}
+
+export function useAdminAnalytics(days: number = 30) {
+  return useQuery({
+    queryKey: ['admin', 'analytics', days],
+    queryFn: () => getAdminAnalyticsAction(days)
+  })
+}
+
 export function useAdminToggleCustomerStatus() : UseMutationResult<
   Awaited<ReturnType<typeof toggleAdminCustomerStatusAction>>,
   Error,
@@ -793,6 +808,14 @@ export function useAdminToggleCustomerStatus() : UseMutationResult<
       queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })
     }
+  })
+}
+
+export function useAdminCustomerDetail(customerId: string) : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/adminCustomers").CustomerDetail | null>, Error> {
+  return useQuery({
+    queryKey: ['admin', 'customer', customerId],
+    queryFn: () => getAdminCustomerDetailAction(customerId),
+    enabled: !!customerId,
   })
 }
 

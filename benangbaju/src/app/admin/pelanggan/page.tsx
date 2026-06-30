@@ -3,7 +3,8 @@
 import React, { useState } from 'react'
 import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/hooks/useAdmin'
 import { Button, AdminPageHeader } from '@/components/shared'
-import { Search, UserCheck, UserX, RefreshCw, Mail, Phone, Calendar } from 'lucide-react'
+import { Search, UserCheck, UserX, RefreshCw, Mail, Phone, Calendar, Eye } from 'lucide-react'
+import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
 import { motion } from 'framer-motion'
@@ -153,7 +154,15 @@ export default function AdminCustomersPage() : React.JSX.Element {
                         {customer.is_active ? 'Aktif' : 'Diblokir'}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-4 px-6 text-right flex items-center justify-end space-x-2">
+                      <Link href={`/admin/pelanggan/${customer.id}`}>
+                        <Button
+                          variant="outline"
+                          className="text-[10px] py-1.5 px-3 font-bold uppercase border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                        >
+                          <Eye size={12} className="mr-1" /> Detail
+                        </Button>
+                      </Link>
                       {customer.is_active ? (
                         <Button
                           onClick={() => handleToggleStatus(customer.id, customer.is_active, customer.name)}

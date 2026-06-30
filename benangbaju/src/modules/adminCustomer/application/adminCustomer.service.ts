@@ -14,4 +14,8 @@ export class AdminCustomerService {
     async adminToggleCustomerStatus(customerId: string, isActive: boolean) {
         return repo.adminToggleCustomerStatus(this.supabase, customerId, isActive);
     }
+
+    async adminGetCustomerDetail(customerId: string) {
+        return repo.adminGetCustomerDetail(this.supabase, customerId);
+    }
 }

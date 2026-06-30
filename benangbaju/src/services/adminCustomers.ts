@@ -3,7 +3,7 @@ import type { Database } from "@/types/database";
 import { AdminCustomerService } from "@/modules/adminCustomer/application/adminCustomer.service";
 import * as types from "@/modules/adminCustomer/domain/adminCustomer.types";
 
-export type { CustomerProfile } from "@/modules/adminCustomer/domain/adminCustomer.types";
+export type { CustomerProfile, CustomerDetail } from "@/modules/adminCustomer/domain/adminCustomer.types";
 
 export async function adminGetCustomers(supabase: SupabaseClient<Database>) {
     return new AdminCustomerService(supabase).adminGetCustomers();
@@ -11,4 +11,8 @@ export async function adminGetCustomers(supabase: SupabaseClient<Database>) {
 
 export async function adminToggleCustomerStatus(supabase: SupabaseClient<Database>, customerId: string, isActive: boolean) {
     return new AdminCustomerService(supabase).adminToggleCustomerStatus(customerId, isActive);
+}
+
+export async function adminGetCustomerDetail(supabase: SupabaseClient<Database>, customerId: string) {
+    return new AdminCustomerService(supabase).adminGetCustomerDetail(customerId);
 }

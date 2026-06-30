@@ -2,6 +2,8 @@ import '@/lib/env'
 import type { Metadata } from 'next'
 import { Outfit, Inter } from 'next/font/google'
 import { Providers } from '@/components/providers'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 const outfit = Outfit({
@@ -42,6 +44,15 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+
+        {/* Phase 1: Vercel Web Analytics & Speed Insights */}
+        <Analytics />
+        <SpeedInsights />
+
+        {/* TODO: Phase 2 & 3 - Google Analytics (GA4) & Google Tag Manager (GTM)
+            Menunggu User membuat akun dan memberikan Measurement ID (G-XXXX) serta GTM ID (GTM-XXXX).
+            Instalasi dilakukan menggunakan paket resmi @next/third-parties.
+        */}
       </body>
     </html>
   )

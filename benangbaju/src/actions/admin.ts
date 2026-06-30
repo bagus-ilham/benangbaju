@@ -128,3 +128,11 @@ export async function toggleAdminCustomerStatusAction(customerId: string, isActi
   const supabaseAdmin = createAdminClient()
   return adminToggleCustomerStatus(supabaseAdmin, customerId, isActive)
 }
+
+export async function getAdminCustomerDetailAction(customerId: string) {
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const { adminGetCustomerDetail } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
+  
+  const supabaseAdmin = createAdminClient()
+  return adminGetCustomerDetail(supabaseAdmin, customerId)
+}
