@@ -2,6 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import * as repo from '../infrastructure/product.repository'
 import { ProductFilters } from '../domain/product.types'
+import { ProductPayload } from '@/types/product'
 
 export class ProductService {
   constructor(private supabase: SupabaseClient<Database>) {}
@@ -22,11 +23,11 @@ export class ProductService {
     return repo.adminGetProducts(this.supabase, params)
   }
 
-  async adminCreateProduct(productData: any, variants: any, images: any, marketplaceLinks: any, collectionIds: any = []) {
+  async adminCreateProduct(productData: ProductPayload['productData'], variants: ProductPayload['variants'], images: ProductPayload['images'], marketplaceLinks: ProductPayload['links'], collectionIds: string[] = []) {
     return repo.adminCreateProduct(this.supabase, productData, variants, images, marketplaceLinks, collectionIds)
   }
 
-  async adminUpdateProduct(productId: string, productData: any, variants: any, images: any, marketplaceLinks: any, collectionIds: any = []) {
+  async adminUpdateProduct(productId: string, productData: ProductPayload['productData'], variants: ProductPayload['variants'], images: ProductPayload['images'], marketplaceLinks: ProductPayload['links'], collectionIds: string[] = []) {
     return repo.adminUpdateProduct(this.supabase, productId, productData, variants, images, marketplaceLinks, collectionIds)
   }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminDashboard, LowStockVariant, RecentOrder, RecentActivityLog } from '@/hooks/useAdmin'
+import { useAdminDashboardStats, LowStockVariant, RecentOrder, RecentActivityLog } from '@/hooks/useAdmin'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, AdminPageHeader, AdminStatCard, AdminPanel, ClientDateTime } from '@/components/shared'
 import { TrendingUp, ShoppingBag, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 const supabase = createBrowserClient()
 
 export default function AdminDashboardPage() : React.JSX.Element {
-  const { data: stats, isLoading, isError, refetch } = useAdminDashboard()
+  const { data: stats, isLoading, isError, refetch } = useAdminDashboardStats()
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null)
   const [newStockVal, setNewStockVal] = useState<number>(0)
 

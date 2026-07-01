@@ -1,6 +1,6 @@
 'use server'
 
-import { createServerClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/auth-guard'
 
 export interface RevenueData {
   date: string;
@@ -23,19 +23,21 @@ export interface AnalyticsData {
 }
 
 export async function getAdminAnalyticsAction(days: number = 30): Promise<AnalyticsData> {
-  const supabase = await createServerClient()
+  const { supabase } = await requireAdmin()
   
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
   const startDateStr = startDate.toISOString();
 
   // 1. Fetch completed orders in the last N days
+  // TODO: Move this aggregation to SQL RPC for scalability
   const { data: orders, error: ordersError } = await supabase
     .from('orders')
     .select('id, created_at, total_amount, discount_amount, voucher_id, order_items(product_name, quantity, subtotal)')
     .eq('status', 'completed')
     .gte('created_at', startDateStr)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .limit(1000);
 
   if (ordersError) throw new Error(ordersError.message);
 
@@ -57,7 +59,7 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
   const voucherMap = new Map<string, { count: number, totalDiscount: number }>();
 
   let totalRevenue = 0;
-  let totalOrders = orders?.length || 0;
+  const totalOrders = orders?.length || 0;
 
   orders?.forEach(order => {
     // Revenue Trends

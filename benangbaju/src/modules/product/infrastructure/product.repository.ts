@@ -7,40 +7,52 @@ import {
   ProductFilters, ProductVariant, ProductImage, ProductMarketplaceLink, 
   ProductRatingSummary, ProductListItem, ProductDetailItem, AdminProductListItem 
 } from '../domain/product.types'
+import { ProductPayload } from '@/types/product'
 
-export function mapProductListItem(p: any): ProductListItem {
-  const rawCat = p.categories
-  let categories: { name: string; slug: string } | null = null
+export function mapCategory(rawCat: any): { name: string; slug: string } | null {
   if (rawCat && !Array.isArray(rawCat)) {
-    categories = {
-      name: rawCat.name,
-      slug: rawCat.slug,
-    }
+    return { name: rawCat.name, slug: rawCat.slug }
   }
+  return null
+}
 
-  const rawVariants = p.product_variants
+export function mapVariants(rawVariants: any, includeAttrs = true): ProductVariant[] {
   const variantsList = Array.isArray(rawVariants) ? rawVariants : []
-  const product_variants: ProductVariant[] = variantsList.map((v: any) => ({
+  return variantsList.map((v: any) => ({
     id: v.id,
     sku: v.sku,
     name: v.name,
     price: v.price,
     compare_price: v.compare_price,
     stock: v.stock,
-    weight_gram: null,
+    weight_gram: v.weight_gram || null,
     is_active: v.is_active,
-    product_variant_attrs: v.product_variant_attrs || []
+    ...(includeAttrs && {
+      product_variant_attrs: (v.product_variant_attrs || []).map((attr: any) => ({
+        id: attr.id,
+        attr_name: attr.attr_name,
+        attr_value: attr.attr_value,
+      }))
+    })
   }))
+}
 
-  const rawImages = p.product_images
+export function mapImages(rawImages: any): ProductImage[] {
   const imagesList = Array.isArray(rawImages) ? rawImages : []
-  const product_images = imagesList.map((img: any) => ({
+  return imagesList.map((img: any) => ({
     id: img.id,
     url: img.url,
     alt_text: img.alt_text,
     sort_order: img.sort_order,
     is_primary: img.is_primary,
+    variant_id: img.variant_id,
   })).sort((a: any, b: any) => a.sort_order - b.sort_order)
+}
+
+export function mapProductListItem(p: any): ProductListItem {
+  const categories = mapCategory(p.categories)
+  const product_variants = mapVariants(p.product_variants)
+  const product_images = mapImages(p.product_images)
 
   const activeVariants = product_variants.filter((v) => v.is_active)
   const prices = activeVariants.map((v) => Number(v.price))
@@ -260,48 +272,9 @@ export async function getProductBySlug(
 
   if (!data) return null
 
-  const rawCat = data.categories
-  let categories: { name: string; slug: string } | null = null
-  if (rawCat && !Array.isArray(rawCat)) {
-    categories = {
-      name: rawCat.name,
-      slug: rawCat.slug,
-    }
-  }
-
-  const rawVariants = data.product_variants
-  const variantsList = Array.isArray(rawVariants) ? rawVariants : []
-  const product_variants: ProductVariant[] = variantsList.map(v => {
-    const rawAttrs = v.product_variant_attrs
-    const attrsList = Array.isArray(rawAttrs) ? rawAttrs : []
-    const product_variant_attrs = attrsList.map(attr => ({
-      id: attr.id,
-      attr_name: attr.attr_name,
-      attr_value: attr.attr_value,
-    }))
-    return {
-      id: v.id,
-      sku: v.sku,
-      name: v.name,
-      price: v.price,
-      compare_price: v.compare_price,
-      stock: v.stock,
-      weight_gram: v.weight_gram,
-      is_active: v.is_active,
-      product_variant_attrs,
-    }
-  })
-
-  const rawImages = data.product_images
-  const imagesList = Array.isArray(rawImages) ? rawImages : []
-  const sortedImages = imagesList.map(img => ({
-    id: img.id,
-    url: img.url,
-    alt_text: img.alt_text,
-    sort_order: img.sort_order,
-    is_primary: img.is_primary,
-    variant_id: img.variant_id,
-  })).sort((a, b) => a.sort_order - b.sort_order)
+  const categories = mapCategory(data.categories)
+  const product_variants = mapVariants(data.product_variants)
+  const sortedImages = mapImages(data.product_images)
 
   const rawLinks = data.product_marketplace_links
   const linksList = Array.isArray(rawLinks) ? rawLinks : []
@@ -413,26 +386,8 @@ export async function adminGetProducts(
   if (!data) return { products: [], totalCount: 0 }
 
   const products: AdminProductListItem[] = data.map(p => {
-    const rawCat = p.categories
-    let categories: { name: string; slug: string } | null = null
-    if (rawCat && !Array.isArray(rawCat)) {
-      categories = {
-        name: rawCat.name,
-        slug: rawCat.slug,
-      }
-    }
-
-    const rawVariants = p.product_variants
-    const variantsList = Array.isArray(rawVariants) ? rawVariants : []
-    const product_variants = variantsList.map(v => ({
-      id: v.id,
-      sku: v.sku,
-      name: v.name,
-      price: v.price,
-      compare_price: v.compare_price,
-      stock: v.stock,
-      is_active: v.is_active,
-    }))
+    const categories = mapCategory(p.categories)
+    const product_variants = mapVariants(p.product_variants, false)
 
     return {
       id: p.id,
@@ -457,33 +412,10 @@ export async function adminGetProducts(
 
 export async function adminCreateProduct(
   supabase: SupabaseClient<Database>,
-  productData: {
-    category_id: string
-    name: string
-    slug: string
-    description: string | null
-    short_description: string | null
-    weight_gram: number
-    is_featured: boolean
-    is_active: boolean
-    meta_title?: string | null
-    meta_description?: string | null
-    size_guide?: string | null
-    care_guide?: string | null
-  },
-  variants: {
-    id?: string
-    sku: string
-    name: string
-    price: number
-    compare_price: number | null
-    stock: number
-    weight_gram: number | null
-    is_active: boolean
-    attrs: { attr_name: string; attr_value: string }[]
-  }[],
-  images: { url: string; alt_text: string | null; sort_order: number; is_primary: boolean; variant_id?: string | null }[],
-  marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[],
+  productData: ProductPayload['productData'],
+  variants: ProductPayload['variants'],
+  images: ProductPayload['images'],
+  marketplaceLinks: ProductPayload['links'],
   collectionIds: string[] = []
 ) : Promise<{ id: string; }> {
   const { data: product, error: productErr } = await supabase
@@ -603,33 +535,10 @@ export async function adminCreateProduct(
 export async function adminUpdateProduct(
   supabase: SupabaseClient<Database>,
   productId: string,
-  productData: {
-    category_id: string
-    name: string
-    slug: string
-    description: string | null
-    short_description: string | null
-    weight_gram: number
-    is_featured: boolean
-    is_active: boolean
-    meta_title?: string | null
-    meta_description?: string | null
-    size_guide?: string | null
-    care_guide?: string | null
-  },
-  variants: {
-    id?: string
-    sku: string
-    name: string
-    price: number
-    compare_price: number | null
-    stock: number
-    weight_gram: number | null
-    is_active: boolean
-    attrs: { attr_name: string; attr_value: string }[]
-  }[],
-  images: { url: string; alt_text: string | null; sort_order: number; is_primary: boolean; variant_id?: string | null }[],
-  marketplaceLinks: { platform: string; url: string; label: string | null; sort_order: number }[],
+  productData: ProductPayload['productData'],
+  variants: ProductPayload['variants'],
+  images: ProductPayload['images'],
+  marketplaceLinks: ProductPayload['links'],
   collectionIds: string[] = []
 ) : Promise<{ id: string; }> {
   const { error: productErr } = await supabase

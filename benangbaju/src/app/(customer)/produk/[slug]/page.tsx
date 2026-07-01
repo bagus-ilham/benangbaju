@@ -151,11 +151,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
     }
   }
 
+  const safeJsonLd = JSON.stringify(jsonLd)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd }}
       />
       <ProductDetailClient
         product={product}

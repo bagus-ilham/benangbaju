@@ -334,6 +334,7 @@ export default function CheckoutPage() : React.JSX.Element {
 
   const isCheckoutProcessing = createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
+  // eslint-disable-next-line react-hooks/refs
   if (authLoading || !isAuthenticated || isSyncing || !hasSynced || (cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current)) {
     return <AuthLoading message="Memuat Checkout..." />
   }

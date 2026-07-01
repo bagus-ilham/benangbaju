@@ -13,6 +13,7 @@ export type {
   ProductDetailItem, 
   AdminProductListItem 
 } from '@/modules/product/domain/product.types'
+import { ProductPayload } from '@/types/product'
 
 export async function getProducts(supabase: SupabaseClient<Database>, filters: types.ProductFilters = {}) {
   return new ProductService(supabase).getProducts(filters)
@@ -32,11 +33,11 @@ export async function adminGetProducts(supabase: SupabaseClient<Database>, param
 
 export async function adminCreateProduct(
   supabase: SupabaseClient<Database>, 
-  productData: any, 
-  variants: any, 
-  images: any, 
-  marketplaceLinks: any, 
-  collectionIds: any = []
+  productData: ProductPayload['productData'], 
+  variants: ProductPayload['variants'], 
+  images: ProductPayload['images'], 
+  marketplaceLinks: ProductPayload['links'], 
+  collectionIds: string[] = []
 ) {
   return new ProductService(supabase).adminCreateProduct(productData, variants, images, marketplaceLinks, collectionIds)
 }
@@ -44,11 +45,11 @@ export async function adminCreateProduct(
 export async function adminUpdateProduct(
   supabase: SupabaseClient<Database>, 
   productId: string, 
-  productData: any, 
-  variants: any, 
-  images: any, 
-  marketplaceLinks: any, 
-  collectionIds: any = []
+  productData: ProductPayload['productData'], 
+  variants: ProductPayload['variants'], 
+  images: ProductPayload['images'], 
+  marketplaceLinks: ProductPayload['links'], 
+  collectionIds: string[] = []
 ) {
   return new ProductService(supabase).adminUpdateProduct(productId, productData, variants, images, marketplaceLinks, collectionIds)
 }

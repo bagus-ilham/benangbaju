@@ -72,31 +72,35 @@ export async function adminGetCustomerDetail(
     return null;
   }
 
-  const { data: addresses } = await supabase
-    .from('user_addresses')
-    .select('*')
-    .eq('user_id', customerId);
-
-  const { data: wishlist } = await supabase
-    .from('wishlist_items')
-    .select(`
-      id,
-      products (
+  const [
+    { data: addresses },
+    { data: wishlist },
+    { data: cart }
+  ] = await Promise.all([
+    supabase
+      .from('user_addresses')
+      .select('*')
+      .eq('user_id', customerId),
+    supabase
+      .from('wishlist_items')
+      .select(`
         id,
-        name,
-        product_variants ( price ),
-        product_images ( url )
-      )
-    `)
-    .eq('user_id', customerId);
-
-  const { data: cart } = await supabase
-    .from('carts')
-    .select('id')
-    .eq('user_id', customerId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+        products (
+          id,
+          name,
+          product_variants ( price ),
+          product_images ( url )
+        )
+      `)
+      .eq('user_id', customerId),
+    supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', customerId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+  ]);
 
   let cartItems: any[] = [];
   if (cart?.id) {

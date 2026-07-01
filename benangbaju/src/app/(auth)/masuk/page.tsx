@@ -20,7 +20,10 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)
 
   // Redirect parameter
-  const redirectPath = searchParams.get('redirect') || '/'
+  let redirectPath = searchParams.get('redirect') || '/'
+  if (!redirectPath.startsWith('/') || redirectPath.startsWith('//')) {
+    redirectPath = '/'
+  }
 
   // Detect OAuth error
   useEffect(() => {

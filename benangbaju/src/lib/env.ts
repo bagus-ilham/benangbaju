@@ -33,9 +33,14 @@ export function validateEnv() : void {
       `\n\nPlease check your .env.local file.`
 
     console.error(errorMessage)
-    // Don't crash the build process for missing server secrets
-    if (process.env.npm_lifecycle_event !== 'build') {
+    const hasMissingServer = serverEnvVars.some(key => missing.includes(key))
+    if (hasMissingServer) {
+      // Throw error if server secrets are missing even during build
       throw new Error(errorMessage)
+    } else {
+      if (process.env.npm_lifecycle_event !== 'build') {
+        throw new Error(errorMessage)
+      }
     }
   }
 }

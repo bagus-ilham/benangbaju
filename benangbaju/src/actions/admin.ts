@@ -1,7 +1,43 @@
 'use server'
 
 import { createServerClient } from '@/lib/supabase/server'
-import type { AdminDashboardData } from '@/hooks/useAdmin'
+import { requireAdmin } from '@/lib/auth-guard'
+export interface LowStockVariant {
+  id: string
+  name: string
+  sku: string
+  stock: number
+  products: { name: string } | null
+}
+
+export interface RecentOrder {
+  id: string
+  order_number: string
+  total_amount: number
+  status: string
+  created_at: string
+  order_shipping: { recipient_name: string } | null
+}
+
+export interface RecentActivityLog {
+  id: string
+  action: string
+  resource_type: string
+  resource_id: string | null
+  details: string | null
+  created_at: string
+  profiles: { name: string | null; email: string | null } | null
+}
+
+export interface AdminDashboardData {
+  totalRevenue: number
+  activeOrdersCount: number
+  completedOrdersCount: number
+  customersCount: number
+  lowStockVariants: LowStockVariant[]
+  recentOrders: RecentOrder[]
+  recentLogs: RecentActivityLog[]
+}
 
 export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData> {
   const supabase = await createServerClient()
@@ -114,6 +150,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
 }
 
 export async function getAdminCustomersAction() {
+  await requireAdmin()
   const { createAdminClient } = await import('@/lib/supabase/admin')
   const { adminGetCustomers } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
   
@@ -122,6 +159,7 @@ export async function getAdminCustomersAction() {
 }
 
 export async function toggleAdminCustomerStatusAction(customerId: string, isActive: boolean) {
+  await requireAdmin()
   const { createAdminClient } = await import('@/lib/supabase/admin')
   const { adminToggleCustomerStatus } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
   
@@ -130,9 +168,28 @@ export async function toggleAdminCustomerStatusAction(customerId: string, isActi
 }
 
 export async function getAdminCustomerDetailAction(customerId: string) {
+  await requireAdmin()
   const { createAdminClient } = await import('@/lib/supabase/admin')
   const { adminGetCustomerDetail } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
   
   const supabaseAdmin = createAdminClient()
   return adminGetCustomerDetail(supabaseAdmin, customerId)
+}
+
+export async function updateProductActiveStatusAction(productId: string, isActive: boolean) {
+  const { supabase } = await requireAdmin()
+  const { error } = await supabase
+    .from('products')
+    .update({ is_active: isActive })
+    .eq('id', productId)
+  if (error) throw new Error(error.message)
+}
+
+export async function updateProductFeaturedStatusAction(productId: string, isFeatured: boolean) {
+  const { supabase } = await requireAdmin()
+  const { error } = await supabase
+    .from('products')
+    .update({ is_featured: isFeatured })
+    .eq('id', productId)
+  if (error) throw new Error(error.message)
 }

@@ -3,13 +3,13 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import {
   getOrders,
   getOrderDetail,
-  createOrder,
   cancelOrder,
   confirmDelivery,
   generatePaymentToken,
   checkPaymentStatus,
   CreateOrderParams,
 } from '@/services/orders'
+import { createSecureOrderAction } from '@/actions/checkout'
 
 export function useOrdersList(userId: string, status?: string, page = 1, limit = 10) : import("@tanstack/react-query").UseQueryResult<{ orders: import("@/services/orders").Order[]; totalCount: number; }, Error> {
   const supabase = createBrowserClient()
@@ -34,7 +34,7 @@ export function useCreateOrder() : import("@tanstack/react-query").UseMutationRe
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: (params: CreateOrderParams) => createOrder(supabase, params),
+    mutationFn: (params: CreateOrderParams) => createSecureOrderAction(params),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['orders', variables.userId] })
       queryClient.invalidateQueries({ queryKey: ['cart', variables.userId] })

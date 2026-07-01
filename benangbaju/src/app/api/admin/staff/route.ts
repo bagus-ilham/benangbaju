@@ -24,8 +24,15 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { email, password, name, role } = body
 
-    if (!email || !name || !role) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    if (!email || !name || !role || !password) {
+      return NextResponse.json({ error: 'All fields including password are required' }, { status: 400 })
+    }
+
+    if (password.length < 12 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return NextResponse.json(
+        { error: 'Password must be at least 12 characters with uppercase and digits' },
+        { status: 400 }
+      )
     }
 
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -42,7 +49,7 @@ export async function POST(req: Request) {
     // 1. Create auth user securely on the server
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
-      password: password || 'DefaultPass123!',
+      password: password,
       email_confirm: true,
       user_metadata: {
         name,
@@ -51,7 +58,11 @@ export async function POST(req: Request) {
     })
 
     if (authError) {
-      return NextResponse.json({ error: authError.message }, { status: 400 })
+      console.error('Staff creation auth error:', authError)
+      return NextResponse.json(
+        { error: 'Failed to create staff account. Please check the email and try again.' },
+        { status: 400 }
+      )
     }
 
     const newUserId = authData.user.id
@@ -79,6 +90,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ data: profileData }, { status: 201 })
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 })
+    console.error('Unexpected staff creation error:', err)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
