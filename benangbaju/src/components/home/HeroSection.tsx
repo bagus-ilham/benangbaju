@@ -83,7 +83,12 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
   })
 
   return (
-    <div className="relative h-[70vh] md:h-[90vh] w-full overflow-hidden bg-brand-black">
+    <div 
+      className="relative h-[70vh] md:h-[90vh] w-full overflow-hidden bg-brand-black"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Koleksi Banner Utama"
+    >
       {/* Banner Slide */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -92,6 +97,9 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
           animate={{ opacity: 1, transition: { duration: 0.8 } }}
           exit={{ opacity: 0, transition: { duration: 0.5 } }}
           className="relative w-full h-full"
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`Slide ${currentIndex + 1} dari ${banners.length}`}
         >
           <picture className="absolute inset-0 w-full h-full block">
             <source media="(min-width: 640px)" srcSet={desktopSrcSet} />
@@ -148,7 +156,7 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
             className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-none hidden md:block"
             aria-label="Slide sebelumnya"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           
           <button
@@ -156,7 +164,7 @@ export function HeroSection({ banners }: HeroSectionProps) : React.JSX.Element {
             className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-none hidden md:block"
             aria-label="Slide berikutnya"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
           </button>
 
           {/* Dots */}

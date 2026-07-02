@@ -70,7 +70,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
             <div className="flex items-start">
               <div className="flex-shrink-0 pt-0.5">
                 {primaryImage ? (
-                  <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
+                  <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden" aria-hidden="true">
                     <Image
                       className="object-cover"
                       src={primaryImage}
@@ -80,7 +80,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
                     />
                   </div>
                 ) : (
-                  <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">
+                  <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans" aria-hidden="true">
                     No Img
                   </div>
                 )}
@@ -213,6 +213,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
               'h-3.5 w-3.5 transition-colors duration-300',
               liked ? 'fill-red-500 text-red-500' : 'text-neutral-500 hover:text-brand-black'
             )}
+            aria-hidden="true"
           />
         </button>
 
@@ -242,11 +243,13 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
                       key={v.id}
                       type="button"
                       disabled={isAdding !== null}
+                      aria-busy={isCurrentAdding}
+                      aria-label={`Tambah ukuran ${sizeLabel} ke keranjang`}
                       onClick={(e) => handleQuickAdd(e, v)}
                       className="px-2 py-0.5 bg-white hover:bg-brand-gold hover:text-white text-[9px] font-heading font-bold uppercase tracking-wider text-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] border border-neutral-100 flex items-center justify-center cursor-pointer"
                     >
                       {isCurrentAdding ? (
-                        <div className="w-2.5 h-2.5 border border-brand-black border-t-transparent animate-spin rounded-full" />
+                        <div className="w-2.5 h-2.5 border border-brand-black border-t-transparent animate-spin rounded-full" aria-hidden="true" />
                       ) : (
                         sizeLabel
                       )}

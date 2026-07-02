@@ -35,21 +35,25 @@ export function Modal({
   const previousFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
+    let originalOverflow = ''
     if (isOpen) {
+      originalOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       if (document.activeElement instanceof HTMLElement) {
         previousFocusRef.current = document.activeElement
       } else {
         previousFocusRef.current = null
       }
-      dialogRef.current?.focus()
+      // Small timeout to ensure DOM is ready for focus
+      setTimeout(() => dialogRef.current?.focus(), 10)
     } else {
-      document.body.style.overflow = 'unset'
       previousFocusRef.current?.focus()
     }
 
     return () => {
-      document.body.style.overflow = 'unset'
+      if (isOpen) {
+        document.body.style.overflow = originalOverflow
+      }
     }
   }, [isOpen])
 
@@ -67,9 +71,14 @@ export function Modal({
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       )
-      const focusableList = Array.from(focusable).filter((el) => !el.hasAttribute('disabled'))
+      const focusableList = Array.from(focusable).filter((el) => {
+        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
+      })
 
-      if (focusableList.length === 0) return
+      if (focusableList.length === 0) {
+        event.preventDefault()
+        return
+      }
 
       const first = focusableList[0]
       const last = focusableList[focusableList.length - 1]

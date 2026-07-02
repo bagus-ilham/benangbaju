@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -19,6 +19,9 @@ export function MiniCartDrawer() : React.JSX.Element {
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
 
+  const drawerRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
+
   const handleQtyChange = async (variantId: string, currentQty: number, change: number, stock: number) => {
     const newQty = currentQty + change
     if (newQty <= 0) {
@@ -28,6 +31,68 @@ export function MiniCartDrawer() : React.JSX.Element {
     if (newQty > stock) return
     await updateQuantity(variantId, newQty)
   }
+
+  // Focus trap logic
+  useEffect(() => {
+    let originalOverflow = ''
+    if (isCartDrawerOpen) {
+      originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      if (document.activeElement instanceof HTMLElement) {
+        previousFocusRef.current = document.activeElement
+      } else {
+        previousFocusRef.current = null
+      }
+      setTimeout(() => drawerRef.current?.focus(), 10)
+    } else {
+      previousFocusRef.current?.focus()
+    }
+
+    return () => {
+      if (isCartDrawerOpen) {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [isCartDrawerOpen])
+
+  useEffect(() => {
+    if (!isCartDrawerOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setCartDrawerOpen(false)
+        return
+      }
+
+      if (event.key !== 'Tab' || !drawerRef.current) return
+
+      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      const focusableList = Array.from(focusable).filter((el) => {
+        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
+      })
+
+      if (focusableList.length === 0) {
+        event.preventDefault()
+        return
+      }
+
+      const first = focusableList[0]
+      const last = focusableList[focusableList.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isCartDrawerOpen, setCartDrawerOpen])
 
   return (
     <AnimatePresence>
@@ -40,23 +105,29 @@ export function MiniCartDrawer() : React.JSX.Element {
             exit={{ opacity: 0 }}
             onClick={() => setCartDrawerOpen(false)}
             className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm"
+            aria-hidden="true"
           />
 
           {/* Drawer Panel */}
           <motion.div
+            ref={drawerRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="relative w-full max-w-md bg-white/95 backdrop-blur-md shadow-2xl h-full flex flex-col z-10 border-l border-neutral-100"
+            className="relative w-full max-w-md bg-white/95 backdrop-blur-md shadow-2xl h-full flex flex-col z-10 border-l border-neutral-100 outline-none"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Keranjang Belanja"
+            tabIndex={-1}
           >
             {/* Top gold accent line */}
-            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold to-brand-gold-light" aria-hidden="true" />
 
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-neutral-100 mt-[3px]">
               <div className="flex items-center space-x-2">
-                <ShoppingBag className="h-4 w-4 text-brand-gold" />
+                <ShoppingBag className="h-4 w-4 text-brand-gold" aria-hidden="true" />
                 <span className="font-heading text-sm font-bold tracking-[0.15em] text-brand-black uppercase">
                   KERANJANG ({totalQuantity})
                 </span>
@@ -66,7 +137,7 @@ export function MiniCartDrawer() : React.JSX.Element {
                 className="text-neutral-400 hover:text-brand-black p-1 transition-colors cursor-pointer"
                 aria-label="Tutup keranjang"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -74,7 +145,7 @@ export function MiniCartDrawer() : React.JSX.Element {
             <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                  <div className="relative p-4 bg-brand-cream border border-brand-gold/10 rounded-none animate-gentle-float">
+                  <div className="relative p-4 bg-brand-cream border border-brand-gold/10 rounded-none animate-gentle-float" aria-hidden="true">
                     <ShoppingBag className="h-8 w-8 text-brand-gold" strokeWidth={1.5} />
                   </div>
                   <div className="space-y-1">
@@ -98,11 +169,11 @@ export function MiniCartDrawer() : React.JSX.Element {
                 items.map((item) => (
                   <div key={item.variantId} className="flex space-x-4 py-4 border-b border-neutral-100 last:border-0 items-start">
                     {/* Item Image */}
-                    <div className="relative aspect-[3/4] w-16 bg-neutral-100 border border-neutral-100 overflow-hidden flex-shrink-0">
+                    <div className="relative aspect-[3/4] w-16 bg-neutral-100 border border-neutral-100 overflow-hidden flex-shrink-0" aria-hidden="true">
                       {item.imageUrl ? (
                         <Image
                           src={item.imageUrl}
-                          alt={item.productName || item.name}
+                          alt=""
                           fill
                           sizes="80px"
                           className="object-cover"
@@ -135,7 +206,7 @@ export function MiniCartDrawer() : React.JSX.Element {
                           className="text-neutral-400 hover:text-red-500 p-0.5 transition-colors cursor-pointer"
                           aria-label="Hapus item"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
 
@@ -149,17 +220,19 @@ export function MiniCartDrawer() : React.JSX.Element {
                           <button
                             onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
                             className="p-1.5 text-neutral-500 hover:text-brand-black transition-colors cursor-pointer"
+                            aria-label="Kurangi jumlah"
                           >
-                            <Minus className="h-2.5 w-2.5" />
+                            <Minus className="h-2.5 w-2.5" aria-hidden="true" />
                           </button>
-                          <span className="px-2 text-[10px] font-sans font-semibold text-brand-black w-6 text-center select-none">
+                          <span className="px-2 text-[10px] font-sans font-semibold text-brand-black w-6 text-center select-none" aria-live="polite">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
                             className="p-1.5 text-neutral-500 hover:text-brand-black transition-colors cursor-pointer"
+                            aria-label="Tambah jumlah"
                           >
-                            <Plus className="h-2.5 w-2.5" />
+                            <Plus className="h-2.5 w-2.5" aria-hidden="true" />
                           </button>
                         </div>
 
@@ -195,7 +268,7 @@ export function MiniCartDrawer() : React.JSX.Element {
                   <Link href="/checkout" onClick={() => setCartDrawerOpen(false)} className="w-full">
                     <Button variant="primary" className="w-full text-[10px] uppercase font-bold py-3.5 flex items-center justify-center space-x-1.5">
                       <span>Checkout</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
                   </Link>
                 </div>

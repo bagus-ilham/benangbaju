@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import NextImage from 'next/image'
@@ -44,6 +44,8 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
   const { user, profile, clearAuth } = useAuthStore()
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const sidebarRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   const { data: settingsResponse } = useQuery({
     queryKey: ['site-settings'],
@@ -66,6 +68,68 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
       toast.error(errMsg)
     }
   }
+
+  // Mobile sidebar focus trap
+  useEffect(() => {
+    let originalOverflow = ''
+    if (isSidebarOpen && window.innerWidth < 1024) { // lg breakpoint is 1024px
+      originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      if (document.activeElement instanceof HTMLElement) {
+        previousFocusRef.current = document.activeElement
+      } else {
+        previousFocusRef.current = null
+      }
+      setTimeout(() => sidebarRef.current?.focus(), 10)
+    } else if (!isSidebarOpen) {
+      previousFocusRef.current?.focus()
+    }
+
+    return () => {
+      if (isSidebarOpen && window.innerWidth < 1024) {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [isSidebarOpen])
+
+  useEffect(() => {
+    if (!isSidebarOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsSidebarOpen(false)
+        return
+      }
+
+      if (event.key !== 'Tab' || !sidebarRef.current) return
+
+      const focusable = sidebarRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      const focusableList = Array.from(focusable).filter((el) => {
+        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
+      })
+
+      if (focusableList.length === 0) {
+        event.preventDefault()
+        return
+      }
+
+      const first = focusableList[0]
+      const last = focusableList[focusableList.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isSidebarOpen])
 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -104,10 +168,11 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
             'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
             isActive ? 'text-brand-gold-light' : 'text-neutral-400 group-hover:text-brand-gold'
           )}
+          aria-hidden="true"
         />
         {item.name}
         {isActive && (
-          <span className="ml-auto w-1 h-1 bg-brand-gold-light rounded-full" />
+          <span className="ml-auto w-1 h-1 bg-brand-gold-light rounded-full" aria-hidden="true" />
         )}
       </Link>
     )
@@ -151,14 +216,14 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
             href="/"
             className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-black transition-colors"
           >
-            <ExternalLink className="mr-3 h-4 w-4 text-neutral-400" />
+            <ExternalLink className="mr-3 h-4 w-4 text-neutral-400" aria-hidden="true" />
             Ke Halaman Toko
           </Link>
           <button
             onClick={handleLogout}
             className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
           >
-            <LogOut className="mr-3 h-4 w-4" />
+            <LogOut className="mr-3 h-4 w-4" aria-hidden="true" />
             Keluar
           </button>
         </div>
@@ -174,13 +239,19 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm"
               onClick={() => setIsSidebarOpen(false)}
+              aria-hidden="true"
             />
             <motion.div
+              ref={sidebarRef}
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-              className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white shadow-xl"
+              className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white shadow-xl outline-none"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu Admin"
+              tabIndex={-1}
             >
               <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200">
                 {logoUrl ? (
@@ -204,7 +275,7 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
                   </span>
                 )}
                 <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1" aria-label="Tutup sidebar">
-                  <X className="h-5 w-5" />
+                  <X className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -220,7 +291,7 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
                   onClick={() => setIsSidebarOpen(false)}
                   className="flex items-center px-3 py-2 text-xs font-medium text-neutral-600"
                 >
-                  <ExternalLink className="mr-3 h-4 w-4" />
+                  <ExternalLink className="mr-3 h-4 w-4" aria-hidden="true" />
                   Ke Halaman Toko
                 </Link>
                 <button
@@ -230,7 +301,7 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
                   }}
                   className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600"
                 >
-                  <LogOut className="mr-3 h-4 w-4" />
+                  <LogOut className="mr-3 h-4 w-4" aria-hidden="true" />
                   Keluar
                 </button>
               </div>
@@ -245,9 +316,10 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-black lg:hidden"
-            aria-label="Buka menu"
+            aria-label="Buka menu admin"
+            aria-expanded={isSidebarOpen}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
 
           <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
@@ -259,7 +331,7 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
 
             <div className="ml-4 flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 bg-brand-black text-brand-gold-light flex items-center justify-center text-xs font-heading font-bold uppercase">
+                <div className="h-8 w-8 bg-brand-black text-brand-gold-light flex items-center justify-center text-xs font-heading font-bold uppercase" aria-hidden="true">
                   {profile?.name?.substring(0, 2) || user?.email?.substring(0, 2) || 'AD'}
                 </div>
                 <div className="hidden md:block">

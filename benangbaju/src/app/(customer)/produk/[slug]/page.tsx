@@ -5,6 +5,7 @@ import { createStaticClient } from '@/lib/supabase/static'
 import { getProductBySlug, getRelatedProducts } from '@/services/products'
 import { ProductDetailClient } from './ProductDetailClient'
 import { RelatedProducts } from './RelatedProducts'
+import { ProductGridSkeleton } from '@/components/shared'
 
 interface ProductPageProps {
   params: Promise<{
@@ -105,12 +106,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
     <Suspense fallback={
       <div className="py-12 border-t border-neutral-100">
         <div className="h-8 w-48 bg-neutral-100 mx-auto mb-8 skeleton-shimmer rounded-md" />
-        <div className="flex md:grid md:grid-cols-4 gap-x-4">
-          <div className="w-[45vw] sm:w-[35vw] md:w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
-          <div className="w-[45vw] sm:w-[35vw] md:w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
-          <div className="hidden md:block w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
-          <div className="hidden md:block w-auto aspect-[3/4] bg-neutral-50 skeleton-shimmer rounded-xl" />
-        </div>
+        <ProductGridSkeleton count={4} />
       </div>
     }>
       <RelatedProductsServer productId={product.id} categoryId={product.category_id} />

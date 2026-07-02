@@ -13,6 +13,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type = 'text', label, error, helperText, leftIcon, rightIcon, id: idProp, ...props }, ref) => {
     const generatedId = useId()
     const inputId = idProp ?? generatedId
+    const errorId = `${inputId}-error`
+    const helperId = `${inputId}-helper`
+
+    const describedBy = [
+      error ? errorId : null,
+      helperText && !error ? helperId : null
+    ].filter(Boolean).join(' ') || undefined
 
     return (
       <div className="w-full flex flex-col space-y-1">
@@ -27,7 +34,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         
         <div className="relative flex items-center group">
           {leftIcon && (
-            <div className="absolute left-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-black">
+            <div 
+              className="absolute left-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-black"
+              aria-hidden="true"
+            >
               {leftIcon}
             </div>
           )}
@@ -46,6 +56,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               },
               className
             )}
+            aria-invalid={!!error}
+            aria-describedby={describedBy}
             {...props}
           />
 
@@ -53,20 +65,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-black transform scale-x-0 transition-transform duration-300 origin-left group-focus-within:scale-x-100" />
           
           {rightIcon && (
-            <div className="absolute right-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-black">
+            <div 
+              className="absolute right-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-black"
+              aria-hidden="true"
+            >
               {rightIcon}
             </div>
           )}
         </div>
 
         {error && (
-          <span className="text-[10px] text-red-500 tracking-wide font-sans">
+          <span id={errorId} className="text-[10px] text-red-500 tracking-wide font-sans">
             {error}
           </span>
         )}
         
         {!error && helperText && (
-          <span className="text-[10px] text-neutral-500 tracking-wide font-sans">
+          <span id={helperId} className="text-[10px] text-neutral-500 tracking-wide font-sans">
             {helperText}
           </span>
         )}

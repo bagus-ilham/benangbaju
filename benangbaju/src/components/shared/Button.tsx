@@ -13,7 +13,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
+        type={props.type || 'button'}
         disabled={disabled || isLoading}
+        aria-disabled={disabled || isLoading}
+        aria-busy={isLoading}
         className={cn(
           // Base styles — THENBLANK premium minimalist design (sharp corners, elegant transitions)
           'inline-flex items-center justify-center font-heading font-medium tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] active:translate-y-[1px] focus-ring-premium',
@@ -41,6 +44,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <circle
                 className="opacity-25"

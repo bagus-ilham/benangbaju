@@ -19,6 +19,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'),
   title: 'Benangbaju — Fashion Muslim Premium Indonesia',
   description: 'Temukan koleksi busana muslim wanita premium, modern, dan elegan hanya di Benangbaju.',
   icons: {

@@ -127,10 +127,17 @@ export function VariantPicker({
     <div className="space-y-6 py-4 border-t border-b border-neutral-100">
       {attributeKeys.map((name) => (
         <div key={name} className="flex flex-col space-y-2">
-          <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+          <span 
+            id={`label-variant-${name}`}
+            className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70"
+          >
             Pilih {name}
           </span>
-          <div className="flex flex-wrap gap-2">
+          <div 
+            className="flex flex-wrap gap-2"
+            role="radiogroup"
+            aria-labelledby={`label-variant-${name}`}
+          >
             {attributeGroups[name].map((val) => {
               const isSelected = selectedValues[name] === val
               const disabled = disabledOptionsMap[name]?.[val] ?? false
@@ -138,7 +145,10 @@ export function VariantPicker({
                 <motion.button
                   key={val}
                   type="button"
+                  role="radio"
+                  aria-checked={isSelected}
                   disabled={disabled}
+                  aria-label={`${val}${disabled ? ' - Habis Terjual' : ''}`}
                   onClick={() => handleSelect(name, val)}
                   whileHover={!disabled ? { y: -1 } : {}}
                   whileTap={!disabled ? { scale: 0.97 } : {}}
@@ -157,6 +167,7 @@ export function VariantPicker({
                       layoutId={`active-indicator-${name}`}
                       className="absolute inset-0 border border-brand-black pointer-events-none"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      aria-hidden="true"
                     />
                   )}
                 </motion.button>
@@ -168,4 +179,3 @@ export function VariantPicker({
     </div>
   )
 }
-

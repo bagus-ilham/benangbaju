@@ -1,7 +1,7 @@
 'use client'
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useId, useCallback } from 'react'
 import { Modal, Button, Input, Textarea, Select, Checkbox } from '@/components/shared'
 import { useAddUserAddress, useUpdateUserAddress, useDistrictSearch } from '@/hooks/useShipping'
 import type { UserAddress } from '@/services/shipping'
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { cn } from '@/lib/utils'
 
 const addressSchema = z.object({
   label: z.string().min(1, 'Label alamat wajib diisi (cth: Rumah)'),
@@ -74,9 +75,16 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
 
   const [searchQuery, setSearchQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [focusedIndex, setFocusedIndex] = useState(-1)
+  
   const { data: searchResultsRes } = useDistrictSearch(searchQuery)
   const searchResults = searchResultsRes?.data || []
+  
   const skipProvinceFetchRef = useRef(false)
+  const listboxRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  
+  const listboxId = useId()
 
   const addAddressMutation = useAddUserAddress()
   const updateAddressMutation = useUpdateUserAddress()
@@ -121,6 +129,7 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
         setShowSuggestions(false)
         justInitializedRef.current = false
       }
+      setFocusedIndex(-1)
     }
   }, [addressToEdit, isOpen, reset])
 
@@ -144,7 +153,7 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
 
     const fetchZone = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('shipping_zones')
           .select('id')
           .ilike('name', provinceName)
@@ -196,6 +205,63 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
     }
   }
 
+  const handleSelectDistrict = useCallback((district: typeof searchResults[0]) => {
+    skipProvinceFetchRef.current = true
+    setValue('province_name', district.province_name)
+    setValue('city_name', district.city_name)
+    setValue('district_name', district.district_name)
+    setValue('postal_code', district.postal_code || '')
+    setValue('zone_id', district.zone_id)
+    setSearchQuery(`${district.district_name}, ${district.city_name}`)
+    setShowSuggestions(false)
+    setFocusedIndex(-1)
+  }, [setValue])
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || searchResults.length === 0) return
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        setFocusedIndex((prev) => (prev < searchResults.length - 1 ? prev + 1 : prev))
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        setFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev))
+        break
+      case 'Enter':
+        e.preventDefault()
+        if (focusedIndex >= 0 && focusedIndex < searchResults.length) {
+          handleSelectDistrict(searchResults[focusedIndex])
+        }
+        break
+      case 'Escape':
+        e.preventDefault()
+        setShowSuggestions(false)
+        setFocusedIndex(-1)
+        break
+    }
+  }
+
+  useEffect(() => {
+    if (showSuggestions && focusedIndex >= 0 && listboxRef.current) {
+      const optionEl = listboxRef.current.children[focusedIndex] as HTMLElement
+      if (optionEl) {
+        const listbox = listboxRef.current
+        const optionTop = optionEl.offsetTop
+        const optionBottom = optionTop + optionEl.offsetHeight
+        const listboxTop = listbox.scrollTop
+        const listboxBottom = listboxTop + listbox.clientHeight
+
+        if (optionTop < listboxTop) {
+          listbox.scrollTop = optionTop
+        } else if (optionBottom > listboxBottom) {
+          listbox.scrollTop = optionBottom - listbox.clientHeight
+        }
+      }
+    }
+  }, [focusedIndex, showSuggestions])
+
   const isSaving = addAddressMutation.isPending || updateAddressMutation.isPending
 
   return (
@@ -244,35 +310,49 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
         {/* Autocomplete district search */}
         <div className="relative">
           <Input
+            ref={inputRef}
             label="Cari Kota / Kecamatan (Ketik min. 2 karakter)*"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value)
               setShowSuggestions(true)
+              setFocusedIndex(-1)
             }}
-            onFocus={() => setShowSuggestions(true)}
+            onFocus={() => {
+              if (searchQuery.length >= 2) setShowSuggestions(true)
+            }}
             onBlur={() => {
+              // Delay to allow click on suggestion to register
               setTimeout(() => setShowSuggestions(false), 200)
             }}
+            onKeyDown={handleKeyDown}
             placeholder="Cari cth: Kebayoran Baru atau Bandung..."
             helperText="Pencarian otomatis untuk provinsi, kota, kecamatan, dan kode pos."
+            aria-expanded={showSuggestions && searchResults.length > 0}
+            aria-autocomplete="list"
+            aria-controls={showSuggestions ? listboxId : undefined}
+            aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-opt-${focusedIndex}` : undefined}
+            role="combobox"
           />
-          {showSuggestions && searchResults && searchResults.length > 0 && (
-            <div className="absolute z-10 w-full bg-white border border-neutral-200 shadow-lg max-h-48 overflow-y-auto mt-1 font-sans text-xs">
-              {searchResults.map((district) => (
+          {showSuggestions && searchResults.length > 0 && (
+            <div 
+              ref={listboxRef}
+              id={listboxId}
+              role="listbox"
+              className="absolute z-10 w-full bg-white border border-neutral-200 shadow-lg max-h-48 overflow-y-auto mt-1 font-sans text-xs outline-none"
+            >
+              {searchResults.map((district, index) => (
                 <div
                   key={district.id}
-                  onClick={() => {
-                    skipProvinceFetchRef.current = true
-                    setValue('province_name', district.province_name)
-                    setValue('city_name', district.city_name)
-                    setValue('district_name', district.district_name)
-                    setValue('postal_code', district.postal_code || '')
-                    setValue('zone_id', district.zone_id)
-                    setSearchQuery(`${district.district_name}, ${district.city_name}`)
-                    setShowSuggestions(false)
-                  }}
-                  className="p-2.5 hover:bg-neutral-50 cursor-pointer border-b border-neutral-100 last:border-0"
+                  id={`${listboxId}-opt-${index}`}
+                  role="option"
+                  aria-selected={focusedIndex === index}
+                  onClick={() => handleSelectDistrict(district)}
+                  onMouseMove={() => setFocusedIndex(index)}
+                  className={cn(
+                    "p-2.5 cursor-pointer border-b border-neutral-100 last:border-0 transition-colors",
+                    focusedIndex === index ? "bg-neutral-50" : ""
+                  )}
                 >
                   <p className="font-bold text-neutral-800">
                     {district.district_name}, {district.city_name}
@@ -284,6 +364,10 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
               ))}
             </div>
           )}
+          {/* Invisible ARIA live region to announce results to screen readers */}
+          <div aria-live="polite" className="sr-only">
+            {showSuggestions ? `${searchResults.length} hasil ditemukan.` : ''}
+          </div>
         </div>
 
         {/* Province Select Dropdown */}
