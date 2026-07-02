@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { createClient } from '@supabase/supabase-js'
+import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function POST(req: Request) {
   try {
@@ -8,7 +9,10 @@ export async function POST(req: Request) {
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json(
+        { success: false, error: { code: ApiErrorCode.UNAUTHORIZED, message: 'Unauthorized' } },
+        { status: 401 }
+      )
     }
 
     const { data: profile } = await supabase
@@ -18,26 +22,35 @@ export async function POST(req: Request) {
       .single()
 
     if (profile?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      return NextResponse.json(
+        { success: false, error: { code: ApiErrorCode.FORBIDDEN, message: 'Forbidden' } },
+        { status: 403 }
+      )
     }
 
     const body = await req.json()
     const { email, password, name, role } = body
 
     if (!email || !name || !role || !password) {
-      return NextResponse.json({ error: 'All fields including password are required' }, { status: 400 })
+      return NextResponse.json(
+        { success: false, error: { code: ApiErrorCode.VALIDATION_ERROR, message: 'All fields including password are required' } },
+        { status: 400 }
+      )
     }
 
     if (password.length < 12 || !/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
       return NextResponse.json(
-        { error: 'Password must be at least 12 characters with uppercase and digits' },
+        { success: false, error: { code: ApiErrorCode.VALIDATION_ERROR, message: 'Password must be at least 12 characters with uppercase and digits' } },
         { status: 400 }
       )
     }
 
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     if (!serviceRoleKey) {
-      return NextResponse.json({ error: 'Server misconfiguration: missing service role key' }, { status: 500 })
+      return NextResponse.json(
+        { success: false, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Server misconfiguration: missing service role key' } },
+        { status: 500 }
+      )
     }
 
     // Initialize Supabase admin client with service role key
@@ -60,7 +73,7 @@ export async function POST(req: Request) {
     if (authError) {
       console.error('Staff creation auth error:', authError)
       return NextResponse.json(
-        { error: 'Failed to create staff account. Please check the email and try again.' },
+        { success: false, error: { code: ApiErrorCode.VALIDATION_ERROR, message: 'Failed to create staff account. Please check the email and try again.' } },
         { status: 400 }
       )
     }
@@ -85,12 +98,18 @@ export async function POST(req: Request) {
       .single()
 
     if (profileError) {
-      return NextResponse.json({ error: 'Failed to update user profile' }, { status: 500 })
+      return NextResponse.json(
+        { success: false, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Failed to update user profile' } },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ data: profileData }, { status: 201 })
+    return NextResponse.json({ success: true, data: profileData }, { status: 201 })
   } catch (err: any) {
     console.error('Unexpected staff creation error:', err)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Internal Server Error' } },
+      { status: 500 }
+    )
   }
 }

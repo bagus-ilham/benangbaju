@@ -16,7 +16,9 @@ export interface AdminUpdateBannerInput {
   bannerData: Parameters<typeof adminUpdateBanner>[2]
 }
 
-export function useAdminBanners() : UseQueryResult<Banner[], Error> {
+import { ApiListResponse, ApiResponse } from '@/lib/api-response'
+
+export function useAdminBanners() : UseQueryResult<ApiListResponse<Banner>, Error> {
   return useQuery({
     queryKey: ['admin', 'banners'],
     queryFn: () => adminGetBanners(getAdminSupabase())
@@ -31,7 +33,11 @@ export function useAdminCreateBanner() : UseMutationResult<
 > {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (bannerData: AdminCreateBannerInput) => adminCreateBanner(getAdminSupabase(), bannerData),
+    mutationFn: async (bannerData: AdminCreateBannerInput) => {
+      const res = await adminCreateBanner(getAdminSupabase(), bannerData)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal membuat banner')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['banners'], ['banners', 'homepage-data'])
       queryClient.invalidateQueries({ queryKey: ['banners'] })
@@ -47,7 +53,11 @@ export function useAdminUpdateBanner() : UseMutationResult<
 > {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ bannerId, bannerData }: AdminUpdateBannerInput) => adminUpdateBanner(getAdminSupabase(), bannerId, bannerData),
+    mutationFn: async ({ bannerId, bannerData }: AdminUpdateBannerInput) => {
+      const res = await adminUpdateBanner(getAdminSupabase(), bannerId, bannerData)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui banner')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['banners'], ['banners', 'homepage-data'])
       queryClient.invalidateQueries({ queryKey: ['banners'] })
@@ -55,10 +65,14 @@ export function useAdminUpdateBanner() : UseMutationResult<
   })
 }
 
-export function useAdminDeleteBanner() : UseMutationResult<{ success: boolean; }, Error, string, unknown> {
+export function useAdminDeleteBanner() : UseMutationResult<ApiResponse<void>, Error, string, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (bannerId: string) => adminDeleteBanner(getAdminSupabase(), bannerId),
+    mutationFn: async (bannerId: string) => {
+      const res = await adminDeleteBanner(getAdminSupabase(), bannerId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus banner')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['banners'], ['banners', 'homepage-data'])
       queryClient.invalidateQueries({ queryKey: ['banners'] })

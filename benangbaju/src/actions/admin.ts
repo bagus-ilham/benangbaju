@@ -51,12 +51,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
     ordersRes,
     logsRes
   ] = await Promise.all([
-    supabase
-      .from('orders')
-      .select('total_amount')
-      .neq('status', 'cancelled')
-      .neq('status', 'pending_payment')
-      .neq('status', 'refunded'),
+    supabase.rpc('get_dashboard_revenue'),
     supabase
       .from('orders')
       .select('*', { count: 'exact', head: true })
@@ -96,7 +91,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
   if (ordersRes.error) throw new Error(ordersRes.error.message)
   if (logsRes.error) throw new Error(logsRes.error.message)
 
-  const totalRevenue = (revRes.data || []).reduce((sum: number, o: any) => sum + Number(o.total_amount), 0)
+  const totalRevenue = Number(revRes.data || 0)
 
   // Explicit type mapping to match AdminDashboardData
   const lowStockVariants = (stockRes.data || []).map((v: any) => ({
@@ -149,13 +144,13 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
   }
 }
 
-export async function getAdminCustomersAction() {
+export async function getAdminCustomersAction(page = 1, limit = 20) {
   await requireAdmin()
   const { createAdminClient } = await import('@/lib/supabase/admin')
   const { adminGetCustomers } = await import('@/modules/adminCustomer/infrastructure/adminCustomer.repository')
   
   const supabaseAdmin = createAdminClient()
-  return adminGetCustomers(supabaseAdmin)
+  return adminGetCustomers(supabaseAdmin, page, limit)
 }
 
 export async function toggleAdminCustomerStatusAction(customerId: string, isActive: boolean) {
@@ -192,4 +187,15 @@ export async function updateProductFeaturedStatusAction(productId: string, isFea
     .update({ is_featured: isFeatured })
     .eq('id', productId)
   if (error) throw new Error(error.message)
+}
+export async function adminUpdateOrderStatusAction(orderId: string, status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled', trackingNumber?: string) {
+  const { supabase } = await requireAdmin()
+  const { adminUpdateOrderStatus } = await import('@/modules/order/infrastructure/order.repository')
+  return adminUpdateOrderStatus(supabase, orderId, status, trackingNumber)
+}
+
+export async function adminUpdateTrackingNumberAction(orderId: string, trackingNumber: string) {
+  const { supabase } = await requireAdmin()
+  const { adminUpdateTrackingNumber } = await import('@/modules/order/infrastructure/order.repository')
+  return adminUpdateTrackingNumber(supabase, orderId, trackingNumber)
 }

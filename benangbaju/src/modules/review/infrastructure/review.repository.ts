@@ -2,33 +2,39 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
-import { ReviewDetail, AdminReviewListItem, SubmitReviewParams } from "../domain/review.types";
+import { ReviewDetail, AdminReviewListItem, SubmitReviewParams, ProductReview, ReviewReply } from "../domain/review.types";
+import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function getApprovedReviews(
   supabase: SupabaseClient<Database>,
-  productId: string
-): Promise<ReviewDetail[]> {
-  const { data, error } = await supabase
+  productId: string,
+  page = 1,
+  limit = 20
+): Promise<ApiListResponse<ReviewDetail>> {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  const { data, error, count } = await supabase
     .from('product_reviews')
     .select(`
       id, rating, title, body, is_anonymous, is_verified_purchase, created_at, helpful_count,
       profiles (name, avatar_url),
       review_media (id, url, type),
       review_replies (id, body, created_at, profiles (name))
-    `)
+    `, { count: 'exact' })
     .eq('product_id', productId)
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
-    .limit(50)
+    .range(from, to)
 
   if (error) {
     safeLogError('Error fetching reviews:', error)
-    return []
+    return paginated([], page, limit, 0)
   }
 
-  if (!data) return []
+  if (!data) return paginated([], page, limit, 0)
 
-  return data.map(item => {
+  const result = data.map(item => {
     const rawProfile = item.profiles
     let profiles: { name: string; avatar_url: string | null } | null = null
     if (rawProfile && !Array.isArray(rawProfile)) {
@@ -76,12 +82,18 @@ export async function getApprovedReviews(
       review_replies,
     }
   })
+
+  return paginated(result, page, limit, count || 0)
 }
 
 export async function adminGetReviews(
-  supabase: SupabaseClient<Database>
-): Promise<AdminReviewListItem[]> {
-  const { data, error } = await supabase
+  supabase: SupabaseClient<Database>,
+  page = 1,
+  limit = 20
+): Promise<ApiListResponse<AdminReviewListItem>> {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  const { data, error, count } = await supabase
     .from('product_reviews')
     .select(`
       id, order_item_id, product_id, variant_id, user_id, rating, title, body,
@@ -90,17 +102,18 @@ export async function adminGetReviews(
       products (name),
       review_media (id, url, type),
       review_replies (id, body, created_at, profiles (name))
-    `)
+    `, { count: 'exact' })
     .order('created_at', { ascending: false })
+    .range(from, to)
 
   if (error) {
     safeLogError('Error fetching admin reviews:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar ulasan')
   }
 
-  if (!data) return []
+  if (!data) return paginated([], page, limit, count || 0)
 
-  return data.map(item => {
+  const result = data.map(item => {
     const rawProfile = item.profiles
     let profiles: { name: string; email: string | null } | null = null
     if (rawProfile && !Array.isArray(rawProfile)) {
@@ -163,13 +176,15 @@ export async function adminGetReviews(
       review_replies,
     }
   })
+
+  return paginated(result, page, limit, count || 0)
 }
 
 export async function adminUpdateReviewStatus(
   supabase: SupabaseClient<Database>,
   reviewId: string,
   status: 'pending' | 'approved' | 'rejected' | 'hidden'
-) : Promise<{ id: string; order_item_id: string; product_id: string; variant_id: string | null; user_id: string; rating: number; title: string | null; body: string; is_anonymous: boolean; is_verified_purchase: boolean; is_pinned: boolean; status: string; helpful_count: number; created_at: string; }> {
+) : Promise<ApiResponse<ProductReview>> {
   const { data, error } = await supabase
     .from('product_reviews')
     .update({ status })
@@ -177,11 +192,14 @@ export async function adminUpdateReviewStatus(
     .select('id, order_item_id, product_id, variant_id, user_id, rating, title, body, is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at')
     .single()
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error updating review status:', error)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui status review')
+  }
   
   await insertAdminActivityLog(supabase, 'update', 'review', reviewId, `Updated review status to ${status}`)
   
-  return data
+  return ok(data as ProductReview)
 }
 
 export async function adminReplyToReview(
@@ -189,7 +207,7 @@ export async function adminReplyToReview(
   reviewId: string,
   body: string,
   adminId: string
-) : Promise<{ id: string; review_id: string; admin_id: string; body: string; created_at: string; }> {
+) : Promise<ApiResponse<ReviewReply>> {
   const { data, error } = await supabase
     .from('review_replies')
     .upsert(
@@ -204,17 +222,20 @@ export async function adminReplyToReview(
     .select('id, review_id, admin_id, body, created_at')
     .single()
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error replying to review:', error)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membalas review')
+  }
   
   await insertAdminActivityLog(supabase, 'create', 'review_reply', data.id, `Replied to review ${reviewId}`)
   
-  return data
+  return ok(data as ReviewReply)
 }
 
 export async function customerSubmitReview(
   supabase: SupabaseClient<Database>,
   params: SubmitReviewParams
-) : Promise<{ id: string; order_item_id: string; product_id: string; variant_id: string | null; user_id: string; rating: number; title: string | null; body: string; is_anonymous: boolean; is_verified_purchase: boolean; is_pinned: boolean; status: string; helpful_count: number; created_at: string; }> {
+) : Promise<ApiResponse<ProductReview>> {
   // 1. Insert review into product_reviews
   const { data: review, error: reviewErr } = await supabase
     .from('product_reviews')
@@ -233,7 +254,10 @@ export async function customerSubmitReview(
     .select('id, order_item_id, product_id, variant_id, user_id, rating, title, body, is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at')
     .single()
 
-  if (reviewErr) throw reviewErr
+  if (reviewErr) {
+    safeLogError('Error submitting review:', reviewErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengirim ulasan')
+  }
 
   // 2. Insert media if present
   if (params.mediaUrls && params.mediaUrls.length > 0) {
@@ -248,8 +272,11 @@ export async function customerSubmitReview(
       .from('review_media')
       .insert(mediaData)
 
-    if (mediaErr) throw mediaErr
+    if (mediaErr) {
+      safeLogError('Error submitting review media:', mediaErr)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengirim gambar/video ulasan')
+    }
   }
 
-  return review
+  return ok(review as ProductReview)
 }

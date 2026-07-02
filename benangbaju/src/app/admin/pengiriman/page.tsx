@@ -32,8 +32,10 @@ export default function AdminShippingPage() : React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'zones' | 'rates'>('zones')
   
   // Queries
-  const { data: zones, isLoading: zonesLoading, isError: zonesError, refetch: refetchZones } = useAdminShippingZones()
-  const { data: rates, isLoading: ratesLoading, isError: ratesError, refetch: refetchRates } = useAdminShippingRates()
+  const { data: zonesRes, isLoading: zonesLoading, isError: zonesError, refetch: refetchZones } = useAdminShippingZones()
+  const zones = zonesRes?.data || []
+  const { data: ratesRes, isLoading: ratesLoading, isError: ratesError, refetch: refetchRates } = useAdminShippingRates()
+  const rates = ratesRes?.data || []
 
   // Mutations
   const createZoneMutation = useAdminCreateShippingZone()

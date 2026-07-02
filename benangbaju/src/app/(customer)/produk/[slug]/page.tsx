@@ -18,11 +18,11 @@ async function getCachedProduct(slug: string) {
   cacheTag('products', `product-${slug}`)
 
   const supabase = createStaticClient()
-  const product = await getProductBySlug(supabase, slug)
-  if (!product) {
+  const res = await getProductBySlug(supabase, slug)
+  if (!res.success || !res.data) {
     throw new Error(`Product ${slug} not found`)
   }
-  return product
+  return res.data
 }
 
 async function getCachedRelatedProducts(productId: string, categoryId: string) {
@@ -31,7 +31,8 @@ async function getCachedRelatedProducts(productId: string, categoryId: string) {
   cacheTag('products')
 
   const supabase = createStaticClient()
-  return getRelatedProducts(supabase, productId, categoryId, 4)
+  const res = await getRelatedProducts(supabase, productId, categoryId, 4)
+  return res.success ? res.data : []
 }
 
 async function RelatedProductsServer({ productId, categoryId }: { productId: string, categoryId: string }) {

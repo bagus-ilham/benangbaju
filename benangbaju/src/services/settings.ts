@@ -13,8 +13,8 @@ export async function adminUpdateSettings(supabase: SupabaseClient<Database>, se
     return new SettingService(supabase).adminUpdateSettings(settings);
 }
 
-export async function adminGetActivityLogs(supabase: SupabaseClient<Database>) {
-    return new SettingService(supabase).adminGetActivityLogs();
+export async function adminGetActivityLogs(supabase: SupabaseClient<Database>, page = 1, limit = 100) {
+    return new SettingService(supabase).adminGetActivityLogs(page, limit);
 }
 
 export async function adminUpsertSettings(supabase: SupabaseClient<Database>, settings: types.SiteSetting[]) {

@@ -3,6 +3,7 @@ import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { Category } from "../domain/category.types";
+import { InternalError } from '@/lib/api-errors'
 
 export async function getActiveCategories(supabase: SupabaseClient<Database>): Promise<Category[]> {
   const { data, error } = await supabase
@@ -45,8 +46,7 @@ export async function adminGetCategories(supabase: SupabaseClient<Database>): Pr
     .order('sort_order', { ascending: true })
 
   if (error) {
-    safeLogError('Error in adminGetCategories:', error)
-    throw error
+    throw new InternalError('Gagal memuat daftar kategori')
   }
 
   return data || []
@@ -70,7 +70,10 @@ export async function adminCreateCategory(
     .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .single()
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error in adminCreateCategory:', error)
+    throw new InternalError('Gagal membuat kategori')
+  }
   
   await insertAdminActivityLog(supabase, 'create', 'category', data.id, `Created category ${categoryData.name}`)
   
@@ -97,7 +100,10 @@ export async function adminUpdateCategory(
     .select('id, parent_id, name, slug, description, image_url, sort_order, is_active')
     .single()
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error in adminUpdateCategory:', error)
+    throw new InternalError('Gagal memperbarui kategori')
+  }
   
   await insertAdminActivityLog(supabase, 'update', 'category', categoryId, `Updated category ${categoryData.name}`)
   
@@ -127,7 +133,10 @@ export async function adminDeleteCategory(
     .delete()
     .eq('id', categoryId)
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error in adminDeleteCategory:', error)
+    throw new InternalError('Gagal menghapus kategori')
+  }
   
   await insertAdminActivityLog(supabase, 'delete', 'category', categoryId, `Deleted category ${categoryId}`)
   

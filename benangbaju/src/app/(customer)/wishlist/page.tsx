@@ -11,12 +11,12 @@ import { Heart } from 'lucide-react'
 export default function WishlistPage() : React.JSX.Element {
   const productIds = useWishlistStore((state) => state.productIds)
 
-  const { data, isLoading, isError } = useProducts({
+  const { data: dataRes, isLoading, isError } = useProducts({
     productIds: productIds.length > 0 ? productIds : ['00000000-0000-0000-0000-000000000000'],
     limit: 40,
   })
 
-  const { products = [] } = data || {}
+  const products = dataRes?.data || []
   const hasItems = productIds.length > 0 && products.length > 0
 
   if (isError) {

@@ -40,7 +40,8 @@ interface VariantSimple {
 }
 
 export default function AdminFlashSalesPage() : React.JSX.Element {
-  const { data: campaigns = [], isLoading, refetch } = useAdminFlashSales()
+  const { data: campaignsRes, isLoading, refetch } = useAdminFlashSales()
+  const campaigns = campaignsRes?.data || []
 
   const createMutation = useAdminCreateFlashSale()
   const updateMutation = useAdminUpdateFlashSale()

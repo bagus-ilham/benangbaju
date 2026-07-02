@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getProducts, getProductBySlug, getRelatedProducts, ProductFilters } from '@/services/products'
 import { createBrowserClient } from '@/lib/supabase/client'
 
-export function useProducts(filters: ProductFilters = {}) : import("@tanstack/react-query").UseQueryResult<NoInfer<{ products: import("@/services/products").ProductListItem[]; totalCount: number; }>, Error> {
+export function useProducts(filters: ProductFilters = {}) {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['products', filters],
@@ -10,7 +10,7 @@ export function useProducts(filters: ProductFilters = {}) : import("@tanstack/re
   })
 }
 
-export function useProduct(slug: string) : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/products").ProductDetailItem | null>, Error> {
+export function useProduct(slug: string) {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['product', slug],
@@ -19,7 +19,7 @@ export function useProduct(slug: string) : import("@tanstack/react-query").UseQu
   })
 }
 
-export function useRelatedProducts(productId: string, categoryId: string, limit = 4) : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/products").ProductListItem[]>, Error> {
+export function useRelatedProducts(productId: string, categoryId: string, limit = 4) {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['related-products', productId, categoryId, limit],

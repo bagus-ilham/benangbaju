@@ -3,30 +3,40 @@ import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { AdminCollectionItem, Collection } from "../domain/collection.types";
+import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 
-export async function getActiveCollections(supabase: SupabaseClient<Database>): Promise<Collection[]> {
+export async function getActiveCollections(
+  supabase: SupabaseClient<Database>,
+  page = 1,
+  limit = 20
+): Promise<ApiListResponse<Collection>> {
   const now = new Date().toISOString()
   
-  const { data, error } = await supabase
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+
+  const { data, error, count } = await supabase
     .from('collections')
-    .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
+    .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at', { count: 'exact' })
     .eq('is_active', true)
     .or(`starts_at.is.null,starts_at.lte.${now}`)
     .or(`ends_at.is.null,ends_at.gte.${now}`)
     .order('sort_order', { ascending: true })
+    .range(from, to)
 
   if (error) {
     safeLogError('Error fetching collections:', error)
-    return []
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar koleksi')
   }
 
-  return data || []
+  return paginated(data || [], page, limit, count || 0)
 }
 
 export async function getCollectionBySlug(
   supabase: SupabaseClient<Database>,
   slug: string
-): Promise<Collection | null> {
+): Promise<ApiResponse<Collection | null>> {
   const { data, error } = await supabase
     .from('collections')
     .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
@@ -36,28 +46,33 @@ export async function getCollectionBySlug(
 
   if (error) {
     safeLogError(`Error fetching collection for slug ${slug}:`, error)
-    return null
+    return fail(ApiErrorCode.NOT_FOUND, 'Koleksi tidak ditemukan')
   }
 
-  return data
+  return ok(data)
 }
 
 export async function adminGetCollections(
-  supabase: SupabaseClient<Database>
-): Promise<AdminCollectionItem[]> {
-  const { data, error } = await supabase
+  supabase: SupabaseClient<Database>,
+  page = 1,
+  limit = 20
+): Promise<ApiListResponse<AdminCollectionItem>> {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  const { data, error, count } = await supabase
     .from('collections')
-    .select('*, collection_products(product_id)')
+    .select('*, collection_products(product_id)', { count: 'exact' })
     .order('sort_order', { ascending: true })
+    .range(from, to)
 
   if (error) {
     safeLogError('Error in adminGetCollections:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar koleksi')
   }
 
-  if (!data) return []
+  if (!data) return paginated([], page, limit, count || 0)
 
-  return data.map(col => {
+  const list = data.map(col => {
     const products = col.collection_products
     const product_ids = Array.isArray(products)
       ? products.map(cp => cp.product_id)
@@ -75,6 +90,8 @@ export async function adminGetCollections(
       product_ids,
     }
   })
+  
+  return paginated(list, page, limit, count || 0)
 }
 
 export async function adminCreateCollection(
@@ -90,14 +107,17 @@ export async function adminCreateCollection(
     ends_at: string | null
   },
   productIds: string[]
-) : Promise<{ id: string; }> {
+) : Promise<ApiResponse<{ id: string; }>> {
   const { data: col, error: colErr } = await supabase
     .from('collections')
     .insert(collectionData)
     .select('id')
     .single()
 
-  if (colErr) throw colErr
+  if (colErr) {
+    safeLogError('Error creating collection:', colErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat koleksi')
+  }
   const collectionId = col.id
 
   if (productIds && productIds.length > 0) {
@@ -110,12 +130,15 @@ export async function adminCreateCollection(
       .from('collection_products')
       .insert(junctionData)
 
-    if (juncErr) throw juncErr
+    if (juncErr) {
+      safeLogError('Error linking products to collection:', juncErr)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghubungkan produk ke koleksi')
+    }
   }
 
   await insertAdminActivityLog(supabase, 'create', 'collection', collectionId, `Created collection ${collectionData.name}`)
 
-  return { id: collectionId }
+  return ok({ id: collectionId })
 }
 
 export async function adminUpdateCollection(
@@ -132,13 +155,16 @@ export async function adminUpdateCollection(
     ends_at: string | null
   },
   productIds: string[]
-) : Promise<{ id: string; }> {
+) : Promise<ApiResponse<{ id: string; }>> {
   const { error: colErr } = await supabase
     .from('collections')
     .update(collectionData)
     .eq('id', collectionId)
 
-  if (colErr) throw colErr
+  if (colErr) {
+    safeLogError('Error updating collection:', colErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui koleksi')
+  }
 
   // delete current links
   const { error: delErr } = await supabase
@@ -146,7 +172,10 @@ export async function adminUpdateCollection(
     .delete()
     .eq('collection_id', collectionId)
 
-  if (delErr) throw delErr
+  if (delErr) {
+    safeLogError('Error deleting collection products:', delErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui produk koleksi')
+  }
 
   if (productIds && productIds.length > 0) {
     const junctionData = productIds.map((pid, idx) => ({
@@ -158,18 +187,21 @@ export async function adminUpdateCollection(
       .from('collection_products')
       .insert(junctionData)
 
-    if (juncErr) throw juncErr
+    if (juncErr) {
+      safeLogError('Error linking products to collection:', juncErr)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghubungkan produk ke koleksi')
+    }
   }
 
   await insertAdminActivityLog(supabase, 'update', 'collection', collectionId, `Updated collection ${collectionData.name}`)
 
-  return { id: collectionId }
+  return ok({ id: collectionId })
 }
 
 export async function adminDeleteCollection(
   supabase: SupabaseClient<Database>,
   collectionId: string
-) : Promise<{ success: boolean; }> {
+) : Promise<ApiResponse<void>> {
   // 1. Fetch images associated with this collection to clean up storage
   const { data: collection } = await supabase
     .from('collections')
@@ -189,9 +221,12 @@ export async function adminDeleteCollection(
     .delete()
     .eq('id', collectionId)
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error deleting collection:', error)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus koleksi')
+  }
   
   await insertAdminActivityLog(supabase, 'delete', 'collection', collectionId, `Deleted collection ${collectionId}`)
   
-  return { success: true }
+  return ok()
 }

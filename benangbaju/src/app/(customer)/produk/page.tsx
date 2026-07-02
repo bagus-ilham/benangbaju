@@ -34,8 +34,8 @@ async function getCachedCatalogData(
   ])
 
   return {
-    products: productsRes.products,
-    totalCount: productsRes.totalCount,
+    products: productsRes.data || [],
+    totalCount: productsRes.pagination?.total_count || 0,
     categories
   }
 }

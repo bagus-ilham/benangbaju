@@ -20,8 +20,9 @@ async function getCachedCollection(slug: string) {
   cacheTag('collections', `collection-${slug}`)
 
   const supabase = createStaticClient()
-  const collection = await getCollectionBySlug(supabase, slug)
-  if (!collection) {
+  const res = await getCollectionBySlug(supabase, slug)
+  const collection = res.data
+  if (!res.success || !collection) {
     throw new Error(`Collection ${slug} not found`)
   }
   return collection
@@ -58,7 +59,7 @@ export default async function CollectionDetailPage({ params }: CollectionPagePro
       getCachedCollectionProducts(slug)
     ])
     collection = colRes
-    products = prodRes.products
+    products = prodRes.data || []
   } catch (err) {
     notFound()
   }

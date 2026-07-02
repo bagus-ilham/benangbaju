@@ -35,8 +35,8 @@ export class ShippingService {
         return repo.calculateShippingRates(this.supabase, zoneId, weightGram);
     }
 
-    async adminGetShippingZones() {
-        return repo.adminGetShippingZones(this.supabase);
+    async adminGetShippingZones(page = 1, limit = 20) {
+        return repo.adminGetShippingZones(this.supabase, page, limit);
     }
 
     async adminCreateShippingZone(zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>, provinces: string[]) {
@@ -51,8 +51,8 @@ export class ShippingService {
         return repo.adminDeleteShippingZone(this.supabase, zoneId);
     }
 
-    async adminGetShippingRates() {
-        return repo.adminGetShippingRates(this.supabase);
+    async adminGetShippingRates(page = 1, limit = 20) {
+        return repo.adminGetShippingRates(this.supabase, page, limit);
     }
 
     async adminCreateShippingRate(rate: Omit<ShippingRate, 'id' | 'shipping_zones'>) {

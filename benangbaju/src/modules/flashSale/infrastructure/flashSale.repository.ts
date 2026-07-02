@@ -3,10 +3,12 @@ import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { FlashSaleItemDetail, FlashSaleDetail, AdminFlashSaleListItem } from "../domain/flashSale.types";
+import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function getActiveFlashSale(
   supabase: SupabaseClient<Database>
-): Promise<FlashSaleDetail | null> {
+): Promise<ApiResponse<FlashSaleDetail | null>> {
   const now = new Date().toISOString()
 
   // Fetch active flash sale that is currently running
@@ -35,10 +37,10 @@ export async function getActiveFlashSale(
 
   if (error) {
     safeLogError('Error fetching active flash sale:', error)
-    return null
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil flash sale aktif')
   }
 
-  if (!data) return null
+  if (!data) return ok(null)
 
   const rawItems = data.flash_sale_items
   const itemsList = Array.isArray(rawItems) ? rawItems : []
@@ -85,7 +87,7 @@ export async function getActiveFlashSale(
     })
   }
 
-  return {
+  return ok({
     id: data.id,
     name: data.name,
     description: data.description,
@@ -94,13 +96,17 @@ export async function getActiveFlashSale(
     ends_at: data.ends_at,
     is_active: data.is_active,
     flash_sale_items,
-  }
+  })
 }
 
 export async function adminGetFlashSales(
-  supabase: SupabaseClient<Database>
-): Promise<AdminFlashSaleListItem[]> {
-  const { data, error } = await supabase
+  supabase: SupabaseClient<Database>,
+  page = 1,
+  limit = 20
+): Promise<ApiListResponse<AdminFlashSaleListItem>> {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  const { data, error, count } = await supabase
     .from('flash_sales')
     .select(`
       id, name, description, banner_url, starts_at, ends_at, is_active,
@@ -111,17 +117,18 @@ export async function adminGetFlashSales(
           products (name)
         )
       )
-    `)
+    `, { count: 'exact' })
     .order('starts_at', { ascending: false })
+    .range(from, to)
 
   if (error) {
     safeLogError('Error fetching admin flash sales:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil data flash sale')
   }
 
-  if (!data) return []
+  if (!data) return paginated([], page, limit, count || 0)
 
-  return data.map(sale => {
+  const result = data.map(sale => {
     const rawItems = sale.flash_sale_items
     const itemsList = Array.isArray(rawItems) ? rawItems : []
     const flash_sale_items = itemsList.map(item => {
@@ -152,6 +159,8 @@ export async function adminGetFlashSales(
       flash_sale_items,
     }
   })
+
+  return paginated(result, page, limit, count || 0)
 }
 
 export async function adminCreateFlashSale(
@@ -170,37 +179,28 @@ export async function adminCreateFlashSale(
     sale_price: number
     quota: number
   }[]
-) : Promise<{ id: string; }> {
-  const { data: sale, error: saleErr } = await supabase
-    .from('flash_sales')
-    .insert(saleData)
-    .select('id')
-    .single()
+) : Promise<ApiResponse<{ id: string; }>> {
+  const { data: result, error: rpcErr } = await supabase.rpc('admin_create_flash_sale', {
+    p_flash_sale: saleData as any,
+    p_items: items as any
+  })
 
-  if (saleErr) throw saleErr
-  const flashSaleId = sale.id
-
-  if (items && items.length > 0) {
-    const itemsData = items.map(item => {
-      return {
-        flash_sale_id: flashSaleId,
-        variant_id: item.variant_id,
-        original_price: item.original_price,
-        sale_price: item.sale_price,
-        quota: item.quota
-      }
-    })
-
-    const { error: itemsErr } = await supabase
-      .from('flash_sale_items')
-      .insert(itemsData)
-
-    if (itemsErr) throw itemsErr
+  if (rpcErr) {
+    safeLogError('Error creating flash sale (RPC):', rpcErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat flash sale')
   }
+
+  const res = result as any
+  if (res && res.success === false) {
+    safeLogError('Error creating flash sale (RPC transaction):', res.error)
+    return fail(ApiErrorCode.INTERNAL_ERROR, res.error?.message || 'Transaction failed')
+  }
+
+  const flashSaleId = res?.data?.id
 
   await insertAdminActivityLog(supabase, 'create', 'flash_sale', flashSaleId, `Created flash sale ${saleData.name}`)
 
-  return { id: flashSaleId }
+  return ok({ id: flashSaleId })
 }
 
 export async function adminUpdateFlashSale(
@@ -220,24 +220,17 @@ export async function adminUpdateFlashSale(
     sale_price: number
     quota: number
   }[]
-) : Promise<{ id: string; }> {
-  const { error: saleErr } = await supabase
-    .from('flash_sales')
-    .update(saleData)
-    .eq('id', saleId)
-
-  if (saleErr) throw saleErr
-
-  // Fetch current items to preserve sold_count and determine deletions
+) : Promise<ApiResponse<{ id: string; }>> {
+  // Fetch current items to determine deletions
   const { data: existingItems, error: fetchErr } = await supabase
     .from('flash_sale_items')
-    .select('variant_id, sold_count')
+    .select('variant_id')
     .eq('flash_sale_id', saleId)
 
-  if (fetchErr) throw fetchErr
-
-  const existingMap = new Map<string, number>()
-  existingItems?.forEach(item => existingMap.set(item.variant_id, item.sold_count || 0))
+  if (fetchErr) {
+    safeLogError('Error fetching existing flash sale items:', fetchErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil item flash sale saat ini')
+  }
 
   // Determine items to delete (those that are not in the new items list)
   const newVariantIds = new Set(items.map(item => item.variant_id))
@@ -245,46 +238,33 @@ export async function adminUpdateFlashSale(
     .filter(item => !newVariantIds.has(item.variant_id))
     .map(item => item.variant_id)
 
-  if (itemsToDelete.length > 0) {
-    const { error: delErr } = await supabase
-      .from('flash_sale_items')
-      .delete()
-      .eq('flash_sale_id', saleId)
-      .in('variant_id', itemsToDelete)
+  const { data: result, error: rpcErr } = await supabase.rpc('admin_update_flash_sale', {
+    p_flash_sale_id: saleId as any,
+    p_flash_sale: saleData as any,
+    p_items_to_upsert: items as any,
+    p_variant_ids_to_delete: itemsToDelete
+  })
 
-    if (delErr) throw delErr
+  if (rpcErr) {
+    safeLogError('Error updating flash sale (RPC):', rpcErr)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui flash sale')
   }
 
-  // Upsert items (preserving sold_count, omitting discount_percent since it is generated)
-  if (items && items.length > 0) {
-    const itemsData = items.map(item => {
-      const soldCount = existingMap.get(item.variant_id) || 0
-      return {
-        flash_sale_id: saleId,
-        variant_id: item.variant_id,
-        original_price: item.original_price,
-        sale_price: item.sale_price,
-        quota: item.quota,
-        sold_count: soldCount
-      }
-    })
-
-    const { error: itemsErr } = await supabase
-      .from('flash_sale_items')
-      .upsert(itemsData, { onConflict: 'flash_sale_id,variant_id' })
-
-    if (itemsErr) throw itemsErr
+  const res = result as any
+  if (res && res.success === false) {
+    safeLogError('Error updating flash sale (RPC transaction):', res.error)
+    return fail(ApiErrorCode.INTERNAL_ERROR, res.error?.message || 'Transaction failed')
   }
 
   await insertAdminActivityLog(supabase, 'update', 'flash_sale', saleId, `Updated flash sale ${saleData.name}`)
 
-  return { id: saleId }
+  return ok({ id: saleId })
 }
 
 export async function adminDeleteFlashSale(
   supabase: SupabaseClient<Database>,
   saleId: string
-) : Promise<{ success: boolean; }> {
+) : Promise<ApiResponse<void>> {
   // 1. Fetch banner image associated with this flash sale to clean up storage
   const { data: sale } = await supabase
     .from('flash_sales')
@@ -304,9 +284,12 @@ export async function adminDeleteFlashSale(
     .delete()
     .eq('id', saleId)
 
-  if (error) throw error
+  if (error) {
+    safeLogError('Error deleting flash sale:', error)
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus flash sale')
+  }
   
   await insertAdminActivityLog(supabase, 'delete', 'flash_sale', saleId, `Deleted flash sale ${saleId}`)
   
-  return { success: true }
+  return ok()
 }

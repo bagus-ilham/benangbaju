@@ -58,7 +58,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
       getCachedCategoryProducts(slug)
     ])
     category = catRes
-    products = prodRes.products
+    products = prodRes.data || []
   } catch (err) {
     notFound()
   }

@@ -5,8 +5,8 @@ import * as types from "@/modules/adminCustomer/domain/adminCustomer.types";
 
 export type { CustomerProfile, CustomerDetail } from "@/modules/adminCustomer/domain/adminCustomer.types";
 
-export async function adminGetCustomers(supabase: SupabaseClient<Database>) {
-    return new AdminCustomerService(supabase).adminGetCustomers();
+export async function adminGetCustomers(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new AdminCustomerService(supabase).adminGetCustomers(page, limit);
 }
 
 export async function adminToggleCustomerStatus(supabase: SupabaseClient<Database>, customerId: string, isActive: boolean) {

@@ -5,8 +5,8 @@ import * as types from "@/modules/cms/domain/cms.types";
 
 export type { RedirectRule, LandingPage } from "@/modules/cms/domain/cms.types";
 
-export async function adminGetRedirects(supabase: SupabaseClient<Database>) {
-    return new CmsService(supabase).adminGetRedirects();
+export async function adminGetRedirects(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new CmsService(supabase).adminGetRedirects(page, limit);
 }
 
 export async function adminCreateRedirect(supabase: SupabaseClient<Database>, redirect: Omit<types.RedirectRule, 'id' | 'created_at'>) {
@@ -21,8 +21,8 @@ export async function adminDeleteRedirect(supabase: SupabaseClient<Database>, re
     return new CmsService(supabase).adminDeleteRedirect(redirectId);
 }
 
-export async function adminGetLandingPages(supabase: SupabaseClient<Database>) {
-    return new CmsService(supabase).adminGetLandingPages();
+export async function adminGetLandingPages(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new CmsService(supabase).adminGetLandingPages(page, limit);
 }
 
 export async function adminCreateLandingPage(supabase: SupabaseClient<Database>, landingPage: Omit<types.LandingPage, 'id' | 'created_at' | 'updated_at'>) {

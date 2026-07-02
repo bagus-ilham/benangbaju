@@ -101,7 +101,8 @@ export default function CheckoutPage() : React.JSX.Element {
   }, [])
 
   // 4. Fetch Addresses
-  const { data: addresses, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
+  const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
+  const addresses = addressesRes?.data || []
 
   // Fetch available active vouchers
   const { data: availableVouchers } = useQuery({
@@ -176,12 +177,12 @@ export default function CheckoutPage() : React.JSX.Element {
   }, [displayItems, variantDetails])
 
   // 6. Fetch Shipping Rates for selected zone
-  const { data: shippingData, isLoading: shippingLoading } = useShippingRates(
+  const { data: shippingDataRes, isLoading: shippingLoading } = useShippingRates(
     selectedAddress?.zone_id || null,
     totalWeight
   )
 
-  const shippingOptions = shippingData?.data || []
+  const shippingOptions = shippingDataRes?.data || []
 
   // Reset courier selection if address changes
   useEffect(() => {
@@ -269,17 +270,13 @@ export default function CheckoutPage() : React.JSX.Element {
         addressId: selectedAddress.id,
         voucherCode: appliedVoucher?.code || undefined,
         courierName: `${selectedCourier.courier_name} (${selectedCourier.etd_min}-${selectedCourier.etd_max} hari)`,
+        shippingRateId: selectedCourier.id,
         shippingCost: selectedCourier.price,
         notes: notes.trim() || undefined,
       })
 
-      if (!orderRes.success || !orderRes.data) {
-        toast.error(orderRes.message || 'Gagal membuat pesanan')
-        return
-      }
-
-      const orderNumber = orderRes.data.order_number
-      const orderId = orderRes.data.order_id
+      const orderNumber = orderRes.order_number
+      const orderId = orderRes.order_id
 
       toast.success('Pesanan berhasil dibuat, memproses pembayaran...')
       setOrderSnapshot(cartItems)
@@ -288,10 +285,10 @@ export default function CheckoutPage() : React.JSX.Element {
       setCheckoutStep('payment')
 
       // 2. Generate Midtrans payment token
-      const paymentRes = await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
 
-      if (!paymentRes.success || !paymentRes.token) {
-        toast.error(paymentRes.message || 'Gagal mendapatkan token pembayaran. Silakan coba di halaman riwayat pesanan.')
+      if (!token) {
+        toast.error('Gagal mendapatkan token pembayaran. Silakan coba di halaman riwayat pesanan.')
         clearCart()
         router.push(`/pesanan/${orderNumber}`)
         return
@@ -299,36 +296,33 @@ export default function CheckoutPage() : React.JSX.Element {
 
       // 3. Open Midtrans Snap pop-up
       if (window.snap) {
-        window.snap.pay(paymentRes.token, {
+        window.snap.pay(token, {
           onSuccess: () => {
             toast.success('Pembayaran berhasil! Memverifikasi...')
             router.push(`/pesanan/${orderNumber}?verifying=1`)
           },
-          onPending: () => {
-            toast.success('Pesanan disimpan, silakan selesaikan pembayaran.')
+
+          onPending: function (result: any) {
+            toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
             router.push(`/pesanan/${orderNumber}`)
           },
-          onError: () => {
-            toast.error('Pembayaran gagal! Silakan coba lagi.')
+          onError: function (result: any) {
+            toast.error('Pembayaran gagal! Silakan coba lagi nanti.')
             router.push(`/pesanan/${orderNumber}`)
           },
-          onClose: () => {
-            toast('Menunggu pembayaran Anda.', { icon: 'ℹ️' })
+          onClose: function () {
             router.push(`/pesanan/${orderNumber}`)
           },
         })
       } else {
-        // Fallback to redirect URL
-        if (paymentRes.redirect_url) {
-          window.location.href = paymentRes.redirect_url
-        } else {
-          clearCart()
-          router.push(`/pesanan/${orderNumber}`)
+        if (redirect_url) {
+          window.location.href = redirect_url
         }
       }
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error(err)
-      toast.error('Terjadi kesalahan saat membuat pesanan')
+      toast.error(err.message || 'Terjadi kesalahan saat memproses pesanan')
+      checkoutInitiated.current = false
     }
   }
 

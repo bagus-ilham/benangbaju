@@ -27,13 +27,13 @@ async function getCachedHomepageData() {
   const supabase = createStaticClient()
 
   const [
-    banners,
+    bannersRes,
     categories,
-    collections,
-    flashSale,
+    collectionsRes,
+    flashSaleRes,
     featuredResponse,
     newestResponse,
-    settings,
+    settingsRes,
   ] = await Promise.all([
     getActiveBanners(supabase),
     getActiveCategories(supabase),
@@ -44,6 +44,9 @@ async function getCachedHomepageData() {
     getSiteSettings(supabase),
   ])
 
+  const settings = settingsRes.data || []
+  const collections = collectionsRes.data || []
+  const flashSale = flashSaleRes.data || null
   const spotlight1Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_1')?.value || ''
   const spotlight2Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_2')?.value || ''
 
@@ -52,37 +55,30 @@ async function getCachedHomepageData() {
     spotlight2Slug ? getCollectionBySlug(supabase, spotlight2Slug) : Promise.resolve(null),
   ])
 
-  let col1 = col1Res
-  let col2 = col2Res
+  let col1 = col1Res?.data || collections[0] || null
+  let col2 = col2Res?.data || collections[1] || null
 
-  // Fallback to defaults if not set or not found
-  if (!col1) {
-    col1 = collections[0] ?? null
-  }
-  if (!col2) {
-    col2 = collections[1] ?? null
-  }
 
   const [collection1Products, collection2Products] = await Promise.all([
     col1
       ? getProducts(supabase, { collectionSlug: col1.slug, limit: 4 })
-      : Promise.resolve({ products: [], totalCount: 0 }),
+      : Promise.resolve({ data: [], success: true }),
     col2
       ? getProducts(supabase, { collectionSlug: col2.slug, limit: 4 })
-      : Promise.resolve({ products: [], totalCount: 0 }),
+      : Promise.resolve({ data: [], success: true }),
   ])
 
   return {
-    banners,
+    banners: bannersRes.data || [],
     categories,
     collections,
     flashSale,
-    featuredProducts: featuredResponse.products,
-    newestProducts: newestResponse.products,
+    featuredProducts: featuredResponse.data || [],
+    newestProducts: newestResponse.data || [],
     col1,
     col2,
-    collection1Products: collection1Products.products,
-    collection2Products: collection2Products.products,
+    collection1Products: collection1Products.data || [],
+    collection2Products: collection2Products.data || [],
   }
 }
 

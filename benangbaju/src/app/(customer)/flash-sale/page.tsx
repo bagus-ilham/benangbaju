@@ -15,7 +15,8 @@ async function getCachedFlashSale() {
 }
 
 export default async function FlashSalePage() : Promise<React.JSX.Element> {
-  const flashSale = await getCachedFlashSale()
+  const flashSaleResponse = await getCachedFlashSale()
+  const flashSale = flashSaleResponse.data
 
   return (
     <div className="bg-white min-h-screen">

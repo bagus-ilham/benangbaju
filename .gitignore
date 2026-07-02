@@ -41,3 +41,8 @@ desktop.ini
 # TypeScript build info
 *.tsbuildinfo
 next-env.d.ts
+
+#md
+ai_finish.md
+ai_mid.md
+ai_start.md

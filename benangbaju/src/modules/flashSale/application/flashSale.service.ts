@@ -11,8 +11,8 @@ export class FlashSaleService {
         return repo.getActiveFlashSale(this.supabase);
     }
 
-    async adminGetFlashSales() {
-        return repo.adminGetFlashSales(this.supabase);
+    async adminGetFlashSales(page = 1, limit = 20) {
+        return repo.adminGetFlashSales(this.supabase, page, limit);
     }
 
     async adminCreateFlashSale(saleData: {

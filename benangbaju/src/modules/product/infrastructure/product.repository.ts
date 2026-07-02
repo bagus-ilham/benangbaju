@@ -54,33 +54,86 @@ export function mapProductListItem(p: any): ProductListItem {
   const product_variants = mapVariants(p.product_variants)
   const product_images = mapImages(p.product_images)
 
-  const activeVariants = product_variants.filter((v) => v.is_active)
-  const prices = activeVariants.map((v) => Number(v.price))
-  const minPrice = prices.length > 0 ? Math.min(...prices) : 0
-  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0
+  // Fast CPU paths: avoid allocating arrays in tight loops
+  let minPrice = 0
+  let maxPrice = 0
+  let minPriceVariant = null
+  let activeVariantsCount = 0
 
-  const minPriceVariant = activeVariants.find((v) => Number(v.price) === minPrice)
+  for (let i = 0; i < product_variants.length; i++) {
+    const v = product_variants[i]
+    if (v.is_active) {
+      activeVariantsCount++
+      const price = Number(v.price)
+      if (activeVariantsCount === 1) {
+        minPrice = price
+        maxPrice = price
+        minPriceVariant = v
+      } else {
+        if (price < minPrice) {
+          minPrice = price
+          minPriceVariant = v
+        }
+        if (price > maxPrice) {
+          maxPrice = price
+        }
+      }
+    }
+  }
+
   const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
   const discountPercent = comparePrice && comparePrice > minPrice
     ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
     : null
 
-  const primaryImage = product_images.find((img) => img.is_primary)?.url || product_images[0]?.url || null
-  const hoverImage = product_images.find((img) => !img.is_primary && img.sort_order > 0)?.url || product_images[1]?.url || primaryImage
+  let primaryImage = null
+  let hoverImage = null
+  let foundPrimary = false
+  let foundHover = false
 
-  const colorAttributes = new Set(
-    activeVariants.flatMap((v) =>
-      v.product_variant_attrs
-        ?.filter((a) => a.attr_name.toLowerCase().includes('warna'))
-        .map((a) => a.attr_value) || []
-    )
-  )
-  const hasMultipleColors = colorAttributes.size > 1
+  for (let i = 0; i < product_images.length; i++) {
+    const img = product_images[i]
+    if (img.is_primary && !foundPrimary) {
+      primaryImage = img.url
+      foundPrimary = true
+    } else if (!img.is_primary && img.sort_order > 0 && !foundHover) {
+      hoverImage = img.url
+      foundHover = true
+    }
+  }
+  
+  // Fallbacks
+  if (!primaryImage && product_images.length > 0) primaryImage = product_images[0].url
+  if (!hoverImage && product_images.length > 1) hoverImage = product_images[1].url
+  if (!hoverImage) hoverImage = primaryImage
 
-  const sizeVariants = activeVariants.filter((v) =>
-    v.stock > 0 &&
-    v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
-  )
+  // Check for colors and sizes without creating intermediate arrays
+  let hasMultipleColors = false
+  const colorSet = new Set<string>()
+  const sizeVariants: any[] = []
+
+  for (let i = 0; i < product_variants.length; i++) {
+    const v = product_variants[i]
+    if (!v.is_active) continue
+    
+    let hasSize = false
+    if (v.product_variant_attrs) {
+      for (let j = 0; j < v.product_variant_attrs.length; j++) {
+        const attr = v.product_variant_attrs[j]
+        const nameLower = attr.attr_name.toLowerCase()
+        if (nameLower.includes('warna')) {
+          colorSet.add(attr.attr_value)
+          if (colorSet.size > 1) hasMultipleColors = true
+        } else if (nameLower.includes('ukuran')) {
+          hasSize = true
+        }
+      }
+    }
+    
+    if (hasSize && v.stock > 0) {
+      sizeVariants.push(v)
+    }
+  }
 
   return {
     id: p.id,
@@ -107,7 +160,7 @@ export function mapProductListItem(p: any): ProductListItem {
 export async function getProducts(
   supabase: SupabaseClient<Database>,
   filters: ProductFilters = {}
-): Promise<{ products: ProductListItem[]; totalCount: number }> {
+): Promise<ApiListResponse<ProductListItem>> {
   const {
     categorySlug,
     collectionSlug,
@@ -127,7 +180,7 @@ export async function getProducts(
     .from('products')
     .select(
       `
-        id, category_id, name, slug, is_featured, created_at,
+        id, category_id, name, slug, is_featured, created_at, min_price, max_price,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active, product_variant_attrs(id, attr_name, attr_value)),
         product_images (id, url, alt_text, sort_order, is_primary)
@@ -154,7 +207,7 @@ export async function getProducts(
       ]
       query = query.in('category_id', categoryIds)
     } else {
-      return { products: [], totalCount: 0 }
+      return paginated([], 0, page, limit)
     }
   }
 
@@ -172,10 +225,10 @@ export async function getProducts(
       if (pIds.length > 0) {
         query = query.in('id', pIds)
       } else {
-        return { products: [], totalCount: 0 }
+        return paginated([], 0, page, limit)
       }
     } else {
-      return { products: [], totalCount: 0 }
+      return paginated([], 0, page, limit)
     }
   }
 
@@ -193,61 +246,49 @@ export async function getProducts(
     query = query.ilike('name', `%${escapedSearch}%`)
   }
 
-  // 5. Apply Sorting (We order products, and will filter client prices later if needed)
+  // Apply DB-level price filtering
+  if (minPrice !== undefined) {
+    query = query.gte('min_price', minPrice)
+  }
+  if (maxPrice !== undefined) {
+    query = query.lte('min_price', maxPrice)
+  }
+
+  // 5. Apply Sorting
   if (sortBy === 'newest') {
     query = query.order('created_at', { ascending: false })
   } else if (sortBy === 'featured') {
     query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false })
+  } else if (sortBy === 'price-low') {
+    query = query.order('min_price', { ascending: true })
+  } else if (sortBy === 'price-high') {
+    query = query.order('min_price', { ascending: false })
+  } else if (sortBy === 'popular') {
+    query = query.order('is_featured', { ascending: false })
   }
 
-  const requiresClientFiltering = minPrice !== undefined || maxPrice !== undefined || sortBy === 'price-low' || sortBy === 'price-high' || sortBy === 'popular'
-
-  // If we don't need client-side filtering/sorting, we can paginate directly in the database
-  if (!requiresClientFiltering) {
-    query = query.range(offset, offset + limit - 1)
-  }
+  // Always use DB pagination now
+  query = query.range(offset, offset + limit - 1)
 
   // 6. Execute Query
   const { data, count, error } = await query
 
   if (error) {
     safeLogError('Error fetching products:', error)
-    return { products: [], totalCount: 0 }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat produk')
   }
 
-  if (!data) return { products: [], totalCount: 0 }
+  if (!data) return paginated([], 0, page, limit)
 
   let results: ProductListItem[] = data.map(mapProductListItem)
 
-  // 7. Client-side price filters (Supabase doesn't easily allow filtering by child min/max price inside one complex query)
-  if (minPrice !== undefined || maxPrice !== undefined) {
-    results = results.filter((p) => {
-      const matchMin = minPrice !== undefined ? p.minPrice >= minPrice : true
-      const matchMax = maxPrice !== undefined ? p.maxPrice <= maxPrice : true
-      return matchMin && matchMax
-    })
-  }
-
-  // 8. Client-side sorting for prices
-  if (sortBy === 'price-low') {
-    results.sort((a, b) => a.minPrice - b.minPrice)
-  } else if (sortBy === 'price-high') {
-    results.sort((a, b) => b.minPrice - a.minPrice)
-  } else if (sortBy === 'popular') {
-    // fallback popular to featured/newest for now
-    results.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
-  }
-
-  const totalCount = requiresClientFiltering ? results.length : (count || 0)
-  const paginatedResults = requiresClientFiltering ? results.slice(offset, offset + limit) : results
-
-  return { products: paginatedResults, totalCount }
+  return paginated(results, count || 0, page, limit)
 }
 
 export async function getProductBySlug(
   supabase: SupabaseClient<Database>,
   slug: string
-): Promise<ProductDetailItem | null> {
+): Promise<ApiResponse<ProductDetailItem | null>> {
   const { data, error } = await supabase
     .from('products')
     .select(
@@ -267,10 +308,10 @@ export async function getProductBySlug(
 
   if (error) {
     safeLogError(`Error fetching product details for slug ${slug}:`, error)
-    return null
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat detail produk')
   }
 
-  if (!data) return null
+  if (!data) return ok(null)
 
   const categories = mapCategory(data.categories)
   const product_variants = mapVariants(data.product_variants)
@@ -293,7 +334,7 @@ export async function getProductBySlug(
     total_reviews: firstSummary.total_reviews,
   } : null
 
-  return {
+  return ok({
     id: data.id,
     category_id: data.category_id,
     name: data.name,
@@ -312,7 +353,7 @@ export async function getProductBySlug(
     product_rating_summary,
     size_guide: data.size_guide,
     care_guide: data.care_guide,
-  }
+  })
 }
 
 
@@ -321,7 +362,7 @@ export async function getRelatedProducts(
   productId: string,
   categoryId: string,
   limit = 4
-): Promise<ProductListItem[]> {
+): Promise<ApiListResponse<ProductListItem>> {
   const { data, error } = await supabase
     .from('products')
     .select(
@@ -340,18 +381,21 @@ export async function getRelatedProducts(
 
   if (error) {
     safeLogError('Error fetching related products:', error)
-    return []
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat produk terkait')
   }
 
-  if (!data) return []
+  if (!data) return paginated([], 0, 1, limit)
 
-  return data.map(mapProductListItem)
+  return paginated(data.map(mapProductListItem), data.length, 1, limit)
 }
+
+import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function adminGetProducts(
   supabase: SupabaseClient<Database>,
   params: { page?: number; limit?: number; search?: string } = {}
-): Promise<{ products: AdminProductListItem[]; totalCount: number }> {
+): Promise<ApiListResponse<AdminProductListItem>> {
   const { page = 1, limit = 20, search = '' } = params
   const offset = (page - 1) * limit
 
@@ -380,10 +424,10 @@ export async function adminGetProducts(
 
   if (error) {
     safeLogError('Error in adminGetProducts:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat daftar produk')
   }
 
-  if (!data) return { products: [], totalCount: 0 }
+  if (!data) return paginated([], 0, page, limit)
 
   const products: AdminProductListItem[] = data.map(p => {
     const categories = mapCategory(p.categories)
@@ -404,10 +448,7 @@ export async function adminGetProducts(
     }
   })
 
-  return {
-    products,
-    totalCount: count || 0,
-  }
+  return paginated(products, count || 0, page, limit)
 }
 
 export async function adminCreateProduct(
@@ -417,119 +458,31 @@ export async function adminCreateProduct(
   images: ProductPayload['images'],
   marketplaceLinks: ProductPayload['links'],
   collectionIds: string[] = []
-) : Promise<{ id: string; }> {
-  const { data: product, error: productErr } = await supabase
-    .from('products')
-    .insert(productData)
-    .select('id')
-    .single()
+) : Promise<ApiResponse<{ id: string; }>> {
+  const { data: result, error: rpcErr } = await supabase.rpc('admin_create_product', {
+    p_product: productData as any,
+    p_variants: variants as any,
+    p_images: images as any,
+    p_links: marketplaceLinks as any,
+    p_collections: collectionIds
+  })
 
-  if (productErr) handleProductSupabaseError(productErr, 'Gagal membuat produk')
-  const productId = product.id
-
-  const idMap = new Map<string, string>()
-
-  if (variants.length > 0) {
-    const variantInserts = variants.map(v => ({
-      product_id: productId,
-      sku: v.sku,
-      name: v.name,
-      price: v.price,
-      compare_price: v.compare_price,
-      stock: v.stock,
-      weight_gram: v.weight_gram,
-      is_active: v.is_active
-    }))
-
-    const { data: insertedVariants, error: variantErr } = await supabase
-      .from('product_variants')
-      .insert(variantInserts)
-      .select('id')
-
-    if (variantErr) handleProductSupabaseError(variantErr, 'Gagal menyimpan varian')
-
-    const allAttrsData: { variant_id: string; attr_name: string; attr_value: string }[] = []
-
-    for (let i = 0; i < variants.length; i++) {
-      const v = variants[i]
-      const variantId = insertedVariants[i].id
-
-      if (v.id) {
-        idMap.set(v.id, variantId)
-      }
-      idMap.set(String(i), variantId)
-
-      if (v.attrs && v.attrs.length > 0) {
-        v.attrs.forEach(a => {
-          allAttrsData.push({
-            variant_id: variantId,
-            attr_name: a.attr_name,
-            attr_value: a.attr_value
-          })
-        })
-      }
-    }
-
-    if (allAttrsData.length > 0) {
-      const { error: attrsErr } = await supabase
-        .from('product_variant_attrs')
-        .insert(allAttrsData)
-
-      if (attrsErr) handleProductSupabaseError(attrsErr, 'Gagal menyimpan atribut varian')
-    }
+  if (rpcErr) {
+    safeLogError('Gagal membuat produk (RPC)', rpcErr)
+    return fail('Gagal membuat produk', rpcErr.message)
+  }
+  
+  const res = result as any
+  if (res && res.success === false) {
+    safeLogError('Gagal membuat produk (RPC transaction)', res.error)
+    return fail('Gagal membuat produk', res.error?.message || 'Transaction failed')
   }
 
-  if (images && images.length > 0) {
-    const imagesData = images.map(img => {
-      let resolvedVariantId: string | null = null
-      if (img.variant_id) {
-        resolvedVariantId = idMap.get(img.variant_id) || img.variant_id
-      }
-      return {
-        product_id: productId,
-        url: img.url,
-        alt_text: img.alt_text,
-        sort_order: img.sort_order,
-        is_primary: img.is_primary,
-        variant_id: resolvedVariantId
-      }
-    })
-    const { error: imgErr } = await supabase
-      .from('product_images')
-      .insert(imagesData)
-    if (imgErr) handleProductSupabaseError(imgErr, 'Gagal menyimpan gambar produk')
-  }
-
-  if (marketplaceLinks && marketplaceLinks.length > 0) {
-    const linksData = marketplaceLinks.map(link => ({
-      product_id: productId,
-      platform: link.platform,
-      url: link.url,
-      label: link.label,
-      sort_order: link.sort_order
-    }))
-    const { error: linkErr } = await supabase
-      .from('product_marketplace_links')
-      .insert(linksData)
-    if (linkErr) handleProductSupabaseError(linkErr, 'Gagal menyimpan link marketplace')
-  }
-
-  // Save collections mapping
-  if (collectionIds && collectionIds.length > 0) {
-    const collData = collectionIds.map((cid, idx) => ({
-      collection_id: cid,
-      product_id: productId,
-      sort_order: idx
-    }))
-    const { error: collErr } = await supabase
-      .from('collection_products')
-      .insert(collData)
-    if (collErr) handleProductSupabaseError(collErr, 'Gagal menyematkan produk ke koleksi')
-  }
+  const productId = res?.data?.id
 
   await insertAdminActivityLog(supabase, 'create', 'product', productId, `Created product ${productData.name}`)
 
-  return { id: productId }
+  return ok({ id: productId })
 }
 
 export async function adminUpdateProduct(
@@ -540,225 +493,76 @@ export async function adminUpdateProduct(
   images: ProductPayload['images'],
   marketplaceLinks: ProductPayload['links'],
   collectionIds: string[] = []
-) : Promise<{ id: string; }> {
-  const { error: productErr } = await supabase
-    .from('products')
-    .update(productData)
-    .eq('id', productId)
+) : Promise<ApiResponse<{ id: string; }>> {
 
-  if (productErr) handleProductSupabaseError(productErr, 'Gagal memperbarui produk')
+  // We need to determine which variants/images/links to delete vs upsert
+  // The RPC handles this by receiving the items to upsert and the IDs to delete.
+  
+  // Variants
+  const variantsToUpsert = variants.map(v => ({
+    ...v,
+    id: v.id?.startsWith('temp-') ? null : v.id
+  }))
 
-  const { data: dbVariants, error: dbVariantsErr } = await supabase
-    .from('product_variants')
-    .select('id')
-    .eq('product_id', productId)
+  const { data: dbVariants } = await supabase.from('product_variants').select('id').eq('product_id', productId)
+  const dbVariantIds = (dbVariants || []).map(v => v.id)
+  const incomingVariantIds = variantsToUpsert.map(v => v.id).filter(id => id) as string[]
+  const variantIdsToDelete = dbVariantIds.filter(id => !incomingVariantIds.includes(id))
 
-  if (dbVariantsErr) throw new Error(`DB variants error: ${JSON.stringify(dbVariantsErr)}`)
-  const dbVariantIds = dbVariants.map(v => v.id)
+  // Images
+  const imagesToUpsert = images.map(img => ({
+    ...img,
+    id: (img as any).id?.startsWith('temp-') ? null : (img as any).id
+  }))
 
-  const updatedVariantIds: string[] = []
-  variants.forEach(v => {
-    if (v.id && !v.id.startsWith('temp-')) {
-      updatedVariantIds.push(v.id)
-    }
+  const { data: dbImages } = await supabase.from('product_images').select('id').eq('product_id', productId)
+  const dbImageIds = (dbImages || []).map(i => i.id)
+  const incomingImageIds = imagesToUpsert.map(i => (i as any).id).filter(id => id) as string[]
+  const imageIdsToDelete = dbImageIds.filter(id => !incomingImageIds.includes(id))
+
+  // Links
+  const linksToUpsert = marketplaceLinks.map(link => ({
+    ...link,
+    id: (link as any).id?.startsWith('temp-') ? null : (link as any).id
+  }))
+
+  const { data: dbLinks } = await supabase.from('product_marketplace_links').select('id').eq('product_id', productId)
+  const dbLinkIds = (dbLinks || []).map(l => l.id)
+  const incomingLinkIds = linksToUpsert.map(l => (l as any).id).filter(id => id) as string[]
+  const linkIdsToDelete = dbLinkIds.filter(id => !incomingLinkIds.includes(id))
+
+  const { data: result, error: rpcErr } = await supabase.rpc('admin_update_product', {
+    p_product_id: productId as any,
+    p_product: productData as any,
+    p_variants_to_upsert: variantsToUpsert as any,
+    p_variant_ids_to_delete: variantIdsToDelete,
+    p_images_to_upsert: imagesToUpsert as any,
+    p_image_ids_to_delete: imageIdsToDelete,
+    p_links_to_upsert: linksToUpsert as any,
+    p_link_ids_to_delete: linkIdsToDelete,
+    p_collections: collectionIds
   })
 
-  const idsToDelete = dbVariantIds.filter(id => !updatedVariantIds.includes(id))
-  if (idsToDelete.length > 0) {
-    // 1. Delete attributes first to avoid constraint issues
-    await supabase
-      .from('product_variant_attrs')
-      .delete()
-      .in('variant_id', idsToDelete)
-
-    // 2. Try to hard delete the variants
-    const { error: deleteErr } = await supabase
-      .from('product_variants')
-      .delete()
-      .in('id', idsToDelete)
-
-    if (deleteErr) {
-      // 3. Fallback to soft-deactivate if they are referenced in other tables (e.g. order items)
-      const { error: deacErr } = await supabase
-        .from('product_variants')
-        .update({ is_active: false })
-        .in('id', idsToDelete)
-      if (deacErr) handleProductSupabaseError(deacErr, 'Gagal menonaktifkan varian')
-    }
+  if (rpcErr) {
+    safeLogError('Gagal memperbarui produk (RPC)', rpcErr)
+    return fail('Gagal memperbarui produk', rpcErr.message)
   }
-
-  const idMap = new Map<string, string>()
-
-  const allAttrsData: { variant_id: string; attr_name: string; attr_value: string }[] = []
-  const newVariantsToInsert: { product_id: string; sku: string; name: string; price: number; compare_price: number | null; stock: number; weight_gram: number | null; is_active: boolean }[] = []
-  const newVariantsIndices: number[] = []
-
-  // 1. Process existing variants (Updates & Delete old attrs)
-  for (let i = 0; i < variants.length; i++) {
-    const v = variants[i]
-    if (v.id && !v.id.startsWith('temp-')) {
-      const { error: variantErr } = await supabase
-        .from('product_variants')
-        .update({
-          sku: v.sku,
-          name: v.name,
-          price: v.price,
-          compare_price: v.compare_price,
-          stock: v.stock,
-          weight_gram: v.weight_gram,
-          is_active: v.is_active
-        })
-        .eq('id', v.id)
-
-      if (variantErr) handleProductSupabaseError(variantErr, 'Gagal memperbarui varian')
-      idMap.set(v.id, v.id)
-      idMap.set(String(i), v.id)
-
-      const { error: deleteAttrsErr } = await supabase
-        .from('product_variant_attrs')
-        .delete()
-        .eq('variant_id', v.id)
-      if (deleteAttrsErr) handleProductSupabaseError(deleteAttrsErr, 'Gagal menghapus atribut varian')
-
-      if (v.attrs && v.attrs.length > 0) {
-        v.attrs.forEach(a => {
-          allAttrsData.push({
-            variant_id: v.id!,
-            attr_name: a.attr_name,
-            attr_value: a.attr_value
-          })
-        })
-      }
-    } else {
-      // Collect new variants to insert
-      newVariantsToInsert.push({
-        product_id: productId,
-        sku: v.sku,
-        name: v.name,
-        price: v.price,
-        compare_price: v.compare_price,
-        stock: v.stock,
-        weight_gram: v.weight_gram,
-        is_active: v.is_active
-      })
-      newVariantsIndices.push(i)
-    }
-  }
-
-  // 2. Process new variants (Bulk Insert)
-  if (newVariantsToInsert.length > 0) {
-    const { data: insertedVariants, error: variantErr } = await supabase
-      .from('product_variants')
-      .insert(newVariantsToInsert)
-      .select('id')
-
-    if (variantErr) handleProductSupabaseError(variantErr, 'Gagal menambah varian baru')
-
-    for (let k = 0; k < insertedVariants.length; k++) {
-      const originalIndex = newVariantsIndices[k]
-      const v = variants[originalIndex]
-      const variantId = insertedVariants[k].id
-
-      if (v.id) {
-        idMap.set(v.id, variantId)
-      }
-      idMap.set(String(originalIndex), variantId)
-
-      if (v.attrs && v.attrs.length > 0) {
-        v.attrs.forEach(a => {
-          allAttrsData.push({
-            variant_id: variantId,
-            attr_name: a.attr_name,
-            attr_value: a.attr_value
-          })
-        })
-      }
-    }
-  }
-
-  // 3. Bulk insert all new attrs (for both updated existing and newly created variants)
-  if (allAttrsData.length > 0) {
-    const { error: attrsErr } = await supabase
-      .from('product_variant_attrs')
-      .insert(allAttrsData)
-    if (attrsErr) handleProductSupabaseError(attrsErr, 'Gagal menyisipkan atribut varian baru')
-  }
-
-  const { error: deleteImgErr } = await supabase
-    .from('product_images')
-    .delete()
-    .eq('product_id', productId)
-  if (deleteImgErr) handleProductSupabaseError(deleteImgErr, 'Gagal mereset gambar produk')
-
-  if (images && images.length > 0) {
-    const imagesData = images.map(img => {
-      let resolvedVariantId: string | null = null
-      if (img.variant_id) {
-        resolvedVariantId = idMap.get(img.variant_id) || img.variant_id
-      }
-      return {
-        product_id: productId,
-        url: img.url,
-        alt_text: img.alt_text,
-        sort_order: img.sort_order,
-        is_primary: img.is_primary,
-        variant_id: resolvedVariantId
-      }
-    })
-    const { error: imgErr } = await supabase
-      .from('product_images')
-      .insert(imagesData)
-    if (imgErr) handleProductSupabaseError(imgErr, 'Gagal menyimpan gambar')
-  }
-
-  const { error: deleteLinksErr } = await supabase
-    .from('product_marketplace_links')
-    .delete()
-    .eq('product_id', productId)
-  if (deleteLinksErr) handleProductSupabaseError(deleteLinksErr, 'Gagal mereset link marketplace')
-
-  if (marketplaceLinks && marketplaceLinks.length > 0) {
-    const linksData = marketplaceLinks.map(link => ({
-      product_id: productId,
-      platform: link.platform,
-      url: link.url,
-      label: link.label,
-      sort_order: link.sort_order
-    }))
-    const { error: linkErr } = await supabase
-      .from('product_marketplace_links')
-      .insert(linksData)
-    if (linkErr) handleProductSupabaseError(linkErr, 'Gagal menyimpan link')
-  }
-
-  // Update collections mapping: delete first then insert new ones
-  const { error: delCollErr } = await supabase
-    .from('collection_products')
-    .delete()
-    .eq('product_id', productId)
-  if (delCollErr) handleProductSupabaseError(delCollErr, 'Gagal mereset koleksi')
-
-  if (collectionIds && collectionIds.length > 0) {
-    const collData = collectionIds.map((cid, idx) => ({
-      collection_id: cid,
-      product_id: productId,
-      sort_order: idx
-    }))
-    const { error: collErr } = await supabase
-      .from('collection_products')
-      .insert(collData)
-    if (collErr) handleProductSupabaseError(collErr, 'Gagal menautkan koleksi')
+  
+  const res = result as any
+  if (res && res.success === false) {
+    safeLogError('Gagal memperbarui produk (RPC transaction)', res.error)
+    return fail('Gagal memperbarui produk', res.error?.message || 'Transaction failed')
   }
 
   await insertAdminActivityLog(supabase, 'update', 'product', productId, `Updated product ${productData.name}`)
 
-  return { id: productId }
+  return ok({ id: productId })
 }
 
 export async function adminDeleteProduct(
   supabase: SupabaseClient<Database>,
   productId: string
-) : Promise<{ success: boolean; }> {
+) : Promise<ApiResponse<null>> {
   // 1. Fetch images associated with this product to clean up storage
   const { data: images } = await supabase
     .from('product_images')
@@ -780,11 +584,14 @@ export async function adminDeleteProduct(
     .delete()
     .eq('id', productId)
 
-  if (error) throw new Error(`Delete error: ${JSON.stringify(error)}`)
+  if (error) {
+    safeLogError('Delete error:', error)
+    return fail('Gagal menghapus produk', error.message)
+  }
   
   await insertAdminActivityLog(supabase, 'delete', 'product', productId, `Deleted product ${productId}`)
   
-  return { success: true }
+  return ok(null)
 }
 
 

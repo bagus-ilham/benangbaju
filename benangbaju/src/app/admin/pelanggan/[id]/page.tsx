@@ -15,7 +15,8 @@ interface AdminCustomerDetailPageProps {
 
 export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailPageProps) {
   const { id } = use(params)
-  const { data: customer, isLoading, isError } = useAdminCustomerDetail(id)
+  const { data: customerRes, isLoading, isError } = useAdminCustomerDetail(id)
+  const customer = customerRes?.data || null
 
   if (isLoading) {
     return (

@@ -7,16 +7,16 @@ export class CollectionService {
     constructor(private supabase: SupabaseClient<Database>) {
     }
 
-    async getActiveCollections() {
-        return repo.getActiveCollections(this.supabase);
+    async getActiveCollections(page = 1, limit = 20) {
+        return repo.getActiveCollections(this.supabase, page, limit);
     }
 
     async getCollectionBySlug(slug: string) {
         return repo.getCollectionBySlug(this.supabase, slug);
     }
 
-    async adminGetCollections() {
-        return repo.adminGetCollections(this.supabase);
+    async adminGetCollections(page = 1, limit = 20) {
+        return repo.adminGetCollections(this.supabase, page, limit);
     }
 
     async adminCreateCollection(collectionData: {

@@ -7,12 +7,12 @@ export class BannerService {
     constructor(private supabase: SupabaseClient<Database>) {
     }
 
-    async getActiveBanners() {
-        return repo.getActiveBanners(this.supabase);
+    async getActiveBanners(page = 1, limit = 20) {
+        return repo.getActiveBanners(this.supabase, page, limit);
     }
 
-    async adminGetBanners() {
-        return repo.adminGetBanners(this.supabase);
+    async adminGetBanners(page = 1, limit = 20) {
+        return repo.adminGetBanners(this.supabase, page, limit);
     }
 
     async adminCreateBanner(bannerData: {

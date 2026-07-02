@@ -9,34 +9,44 @@ import {
   SiteSetting,
 } from '@/services/settings'
 
-export function useAdminSettings() : import("@tanstack/react-query").UseQueryResult<NoInfer<SiteSetting[]>, Error> {
+import { ApiListResponse, ApiResponse } from '@/lib/api-response'
+
+export function useAdminSettings() : import("@tanstack/react-query").UseQueryResult<NoInfer<ApiListResponse<SiteSetting>>, Error> {
   return useQuery({
     queryKey: ['admin', 'settings'],
     queryFn: () => adminGetSettings(getAdminSupabase())
   })
 }
 
-export function useAdminUpdateSettings() : import("@tanstack/react-query").UseMutationResult<void, Error, Record<string, string>, unknown> {
+export function useAdminUpdateSettings() : import("@tanstack/react-query").UseMutationResult<ApiResponse<void>, Error, Record<string, string>, unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (settings: Record<string, string>) => adminUpdateSettings(getAdminSupabase(), settings),
+    mutationFn: async (settings: Record<string, string>) => {
+      const res = await adminUpdateSettings(getAdminSupabase(), settings)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui pengaturan')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['settings'], ['settings', 'homepage-data'])
     }
   })
 }
 
-export function useAdminUpsertSettings() : import("@tanstack/react-query").UseMutationResult<void, Error, SiteSetting[], unknown> {
+export function useAdminUpsertSettings() : import("@tanstack/react-query").UseMutationResult<ApiResponse<void>, Error, SiteSetting[], unknown> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (settings: SiteSetting[]) => adminUpsertSettings(getAdminSupabase(), settings),
+    mutationFn: async (settings: SiteSetting[]) => {
+      const res = await adminUpsertSettings(getAdminSupabase(), settings)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal upsert pengaturan')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['settings'], ['settings', 'homepage-data'])
     }
   })
 }
 
-export function useAdminActivityLogs() : import("@tanstack/react-query").UseQueryResult<NoInfer<import("@/services/settings").ActivityLog[]>, Error> {
+export function useAdminActivityLogs() : import("@tanstack/react-query").UseQueryResult<NoInfer<ApiListResponse<import("@/services/settings").ActivityLog>>, Error> {
   return useQuery({
     queryKey: ['admin', 'activity-logs'],
     queryFn: () => adminGetActivityLogs(getAdminSupabase())

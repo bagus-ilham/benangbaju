@@ -21,7 +21,8 @@ const supabase = createBrowserClient()
 type BannerRow = Database['public']['Tables']['banners']['Row']
 
 export default function AdminBannersPage() : React.JSX.Element {
-  const { data: banners = [], isLoading, isError, refetch } = useAdminBanners()
+  const { data: bannersRes, isLoading, isError, refetch } = useAdminBanners()
+  const banners = bannersRes?.data || []
 
   const createMutation = useAdminCreateBanner()
   const updateMutation = useAdminUpdateBanner()

@@ -53,7 +53,8 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
   }, [isAuthenticated, authLoading, router])
 
   // 2. Fetch Order Details
-  const { data: order, isLoading: orderLoading } = useOrderDetail(orderNumber, user?.id)
+  const { data: orderResponse, isLoading: orderLoading } = useOrderDetail(orderNumber, user?.id)
+  const order = orderResponse?.data
 
   // 3. Check if order has existing return requests
   const { data: existingReturn, isLoading: checkReturnLoading } = useQuery({

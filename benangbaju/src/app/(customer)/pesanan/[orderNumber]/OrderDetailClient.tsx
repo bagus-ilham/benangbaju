@@ -41,7 +41,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
   const hasTriggeredVerification = useRef(false)
 
   // 1. Fetch Order Details
-  const { data: order, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber, user?.id)
+  const { data: orderResponse, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber, user?.id)
+  const order = orderResponse?.data
 
   const [formattedDate, setFormattedDate] = useState('')
 
@@ -76,7 +77,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
     const doCheck = async (attempt: number) => {
       try {
         const result = await checkPaymentMutation.mutateAsync(orderNumber)
-        if (result.success && result.order_status && result.order_status !== 'pending_payment') {
+        if (result.order_status && result.order_status !== 'pending_payment') {
           setIsVerifyingPayment(false)
           refetch()
           toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
@@ -114,19 +115,17 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
       const result = await checkPaymentMutation.mutateAsync(orderNumber)
       toast.dismiss('manual-check')
       
-      if (result.success && result.order_status) {
+      if (result.order_status) {
         if (result.order_status !== 'pending_payment') {
           toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
         } else {
           toast('Pembayaran belum diterima/diproses. Silakan coba sesaat lagi.', { icon: 'ℹ️' })
         }
-      } else {
-        toast.error(result.message || 'Gagal memverifikasi status pembayaran.')
       }
       refetch()
-    } catch (err) {
+    } catch (err: any) {
       toast.dismiss('manual-check')
-      toast.error('Terjadi kesalahan saat memverifikasi pembayaran')
+      toast.error(err.message || 'Gagal memverifikasi status pembayaran')
     }
   }
 
@@ -227,7 +226,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
 
       setIsUploading(false)
 
-      if (res && res.id) {
+      if (res && res.success) {
         toast.success('Ulasan berhasil dikirim!')
         refetch()
         handleCloseReviewModal()
@@ -285,15 +284,11 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
   const executeCancelOrder = async () => {
     if (!order) return
     try {
-      const res = await cancelMutation.mutateAsync({ orderId: order.id, reason: 'Dibatalkan oleh customer' })
-      if (res.success) {
-        toast.success('Pesanan berhasil dibatalkan')
-        refetch()
-      } else {
-        toast.error(res.message || 'Gagal membatalkan pesanan')
-      }
-    } catch (err) {
-      toast.error('Terjadi kesalahan saat membatalkan pesanan')
+      await cancelMutation.mutateAsync({ orderId: order.id, reason: 'Dibatalkan oleh customer' })
+      toast.success('Pesanan berhasil dibatalkan')
+      refetch()
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal membatalkan pesanan')
     } finally {
       setCancelConfirmOpen(false)
     }
@@ -307,15 +302,11 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
   const executeConfirmDelivery = async () => {
     if (!order) return
     try {
-      const res = await confirmMutation.mutateAsync(order.id)
-      if (res.success) {
-        toast.success('Pesanan berhasil diselesaikan!')
-        refetch()
-      } else {
-        toast.error(res.message || 'Gagal menyelesaikan pesanan')
-      }
-    } catch (err) {
-      toast.error('Terjadi kesalahan saat menyelesaikan pesanan')
+      await confirmMutation.mutateAsync(order.id)
+      toast.success('Pesanan berhasil diselesaikan!')
+      refetch()
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal menyelesaikan pesanan')
     } finally {
       setReceiptConfirmOpen(false)
     }
@@ -328,40 +319,37 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
     if (!order) return
     try {
       toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
-      const paymentRes = await generatePaymentTokenMutation.mutateAsync(order.order_number)
+      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(order.order_number)
       toast.dismiss('payment-loading')
 
-      if (!paymentRes.success || !paymentRes.token) {
-        toast.error(paymentRes.message || 'Gagal memuat pembayaran. Coba lagi.')
-        return
-      }
-
-      if (window.snap) {
-        window.snap.pay(paymentRes.token, {
-          onSuccess: () => {
-            toast.success('Pembayaran berhasil! Memverifikasi...')
-            startPaymentVerification()
-          },
-          onPending: () => {
-            toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-            startPaymentVerification()
-          },
-          onError: () => {
-            toast.error('Pembayaran gagal! Coba lagi.')
-          },
-          onClose: () => {
-            // User closed Snap popup — start verifying in case payment was made
-            startPaymentVerification()
-          },
-        })
-      } else {
-        if (paymentRes.redirect_url) {
-          window.location.href = paymentRes.redirect_url
+      if (token) {
+        if (window.snap) {
+          window.snap.pay(token, {
+            onSuccess: () => {
+              toast.success('Pembayaran berhasil! Memverifikasi...')
+              startPaymentVerification()
+            },
+            onPending: () => {
+              toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
+              startPaymentVerification()
+            },
+            onError: () => {
+              toast.error('Pembayaran gagal! Coba lagi.')
+            },
+            onClose: () => {
+              // User closed Snap popup — start verifying in case payment was made
+              startPaymentVerification()
+            },
+          })
+        } else if (redirect_url) {
+          window.location.href = redirect_url
         }
+      } else {
+        toast.error('Gagal memuat pembayaran. Coba lagi.')
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.dismiss('payment-loading')
-      toast.error('Gagal memproses pembayaran')
+      toast.error(err.message || 'Gagal memproses pembayaran')
     }
   }
 

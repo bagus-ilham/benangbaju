@@ -6,9 +6,8 @@ import {
   OrderItem, OrderShipping, PaymentInfo, Order, CreateOrderParams, 
   OrderRpcResponse, AdminOrderListItem, AdminReturnRequestListItem 
 } from '../domain/order.types'
-
-
-
+import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 
 
 
@@ -137,7 +136,7 @@ export async function getOrders(
   status?: string,
   page = 1,
   limit = 10
-): Promise<{ orders: Order[]; totalCount: number }> {
+): Promise<ApiListResponse<Order>> {
   let query = supabase
     .from('orders')
     .select('id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal, product_reviews(id, rating, body)), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)', { count: 'exact' })
@@ -159,10 +158,10 @@ export async function getOrders(
 
   if (error) {
     safeLogError('Error fetching orders:', error)
-    return { orders: [], totalCount: 0 }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat pesanan')
   }
 
-  if (!data) return { orders: [], totalCount: 0 }
+  if (!data) return paginated([], 0, page, limit)
 
   const orders = data.map((row) => {
     const rawItems = row.order_items
@@ -177,10 +176,7 @@ export async function getOrders(
     })
   })
 
-  return {
-    orders,
-    totalCount: count || 0,
-  }
+  return paginated(orders, count || 0, page, limit)
 }
 
 // 2. Get order details by order number
@@ -188,7 +184,7 @@ export async function getOrderDetail(
   supabase: SupabaseClient<Database>,
   orderNumber: string,
   userId?: string
-): Promise<Order | null> {
+): Promise<ApiResponse<Order | null>> {
   // 🛡️ SENTINEL FIX
   // Vulnerability: IDOR on order details
   // Severity: Critical
@@ -207,10 +203,10 @@ export async function getOrderDetail(
 
   if (error) {
     safeLogError('Error fetching order detail:', error)
-    return null
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat detail pesanan')
   }
 
-  if (!data) return null
+  if (!data) return ok(null)
 
   const rawItems = data.order_items
   const order_items = Array.isArray(rawItems) ? rawItems : []
@@ -219,19 +215,19 @@ export async function getOrderDetail(
   const rawPayments = data.payments
   const payments = Array.isArray(rawPayments) ? rawPayments : []
 
-  return mapOrder({
+  return ok(mapOrder({
     ...data,
     order_items,
     order_shipping: order_shipping || null,
     payments,
-  })
+  }))
 }
 
 // 3. Create order (Atomic Checkout RPC)
 export async function createOrder(
   supabase: SupabaseClient<Database>,
   params: CreateOrderParams
-): Promise<OrderRpcResponse> {
+): Promise<ApiResponse<OrderRpcResponse['data']>> {
   const { data, error } = await supabase.rpc('create_order', {
     p_user_id: params.userId,
     p_address_id: params.addressId,
@@ -243,16 +239,15 @@ export async function createOrder(
 
   if (error) {
     safeLogError('Error calling create_order:', error)
-    return {
-      success: false,
-      message: 'Gagal membuat pesanan. Silakan coba lagi.',
-    }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat pesanan. Silakan coba lagi.')
   }
 
   if (data && isObject(data)) {
     const success = typeof data['success'] === 'boolean' ? data['success'] : false
     const message = typeof data['message'] === 'string' ? data['message'] : undefined
-    const code = typeof data['code'] === 'string' ? data['code'] : undefined
+    
+    if (!success) return fail(ApiErrorCode.INTERNAL_ERROR, message || 'Gagal membuat pesanan')
+
     const rawInnerData = data['data']
     let innerData: OrderRpcResponse['data'] = undefined
     if (rawInnerData && isObject(rawInnerData)) {
@@ -267,18 +262,10 @@ export async function createOrder(
       }
     }
 
-    return {
-      success,
-      message,
-      code,
-      data: innerData,
-    }
+    return ok(innerData)
   }
 
-  return {
-    success: false,
-    message: 'Format respon buat pesanan tidak valid.',
-  }
+  return fail(ApiErrorCode.INTERNAL_ERROR, 'Format respon buat pesanan tidak valid.')
 }
 
 // 4. Cancel unpaid order
@@ -286,7 +273,7 @@ export async function cancelOrder(
   supabase: SupabaseClient<Database>,
   orderId: string,
   reason = 'Dibatalkan oleh customer'
-): Promise<{ success: boolean; message?: string }> {
+): Promise<ApiResponse<null>> {
   const { data, error } = await supabase.rpc('cancel_order', {
     p_order_id: orderId,
     p_cancel_reason: reason,
@@ -294,41 +281,43 @@ export async function cancelOrder(
 
   if (error) {
     safeLogError('Error calling cancel_order:', error)
-    return { success: false, message: 'Terjadi kesalahan saat membatalkan pesanan.' }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Terjadi kesalahan saat membatalkan pesanan.')
   }
 
   if (data && isObject(data)) {
-    return {
-      success: typeof data['success'] === 'boolean' ? data['success'] : false,
-      message: typeof data['message'] === 'string' ? data['message'] : undefined,
+    const success = typeof data['success'] === 'boolean' ? data['success'] : false
+    if (!success) {
+      return fail(ApiErrorCode.INTERNAL_ERROR, typeof data['message'] === 'string' ? data['message'] : 'Gagal membatalkan pesanan')
     }
+    return ok(null)
   }
 
-  return { success: false, message: 'Format respon pembatalan tidak valid.' }
+  return fail(ApiErrorCode.INTERNAL_ERROR, 'Format respon pembatalan tidak valid.')
 }
 
 // 5. Confirm delivery (complete order status)
 export async function confirmDelivery(
   supabase: SupabaseClient<Database>,
   orderId: string
-): Promise<{ success: boolean; message?: string }> {
+): Promise<ApiResponse<null>> {
   const { data, error } = await supabase.rpc('confirm_delivery', {
     p_order_id: orderId,
   })
 
   if (error) {
     safeLogError('Error calling confirm_delivery:', error)
-    return { success: false, message: 'Terjadi kesalahan saat mengkonfirmasi pesanan.' }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Terjadi kesalahan saat mengkonfirmasi pesanan.')
   }
 
   if (data && isObject(data)) {
-    return {
-      success: typeof data['success'] === 'boolean' ? data['success'] : false,
-      message: typeof data['message'] === 'string' ? data['message'] : undefined,
+    const success = typeof data['success'] === 'boolean' ? data['success'] : false
+    if (!success) {
+      return fail(ApiErrorCode.INTERNAL_ERROR, typeof data['message'] === 'string' ? data['message'] : 'Gagal mengkonfirmasi pesanan')
     }
+    return ok(null)
   }
 
-  return { success: false, message: 'Format respon konfirmasi pengiriman tidak valid.' }
+  return fail(ApiErrorCode.INTERNAL_ERROR, 'Format respon konfirmasi pengiriman tidak valid.')
 }
 
 // 6. Lazy cancel expired orders
@@ -349,17 +338,14 @@ export async function lazyCancelExpiredOrders(
 export async function generatePaymentToken(
   supabase: SupabaseClient<Database>,
   orderNumber: string
-): Promise<{ success: boolean; token?: string; redirect_url?: string; message?: string }> {
+): Promise<ApiResponse<{ token?: string; redirect_url?: string; }>> {
   const { data, error } = await supabase.functions.invoke('generate-payment', {
     body: { order_number: orderNumber },
   })
 
   if (error) {
     safeLogError('Error invoking generate-payment function:', error)
-    return {
-      success: false,
-      message: 'Gagal menghubungi server pembayaran. Silakan coba lagi.',
-    }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghubungi server pembayaran. Silakan coba lagi.')
   }
 
   const res = data as {
@@ -372,34 +358,27 @@ export async function generatePaymentToken(
   } | null
 
   if (!res || !res.success || !res.data) {
-    return {
-      success: false,
-      message: res?.message || 'Gagal memproses pembayaran.',
-    }
+    return fail(ApiErrorCode.INTERNAL_ERROR, res?.message || 'Gagal memproses pembayaran.')
   }
 
-  return {
-    success: true,
+  return ok({
     token: res.data.token,
     redirect_url: res.data.redirect_url,
-  }
+  })
 }
 
 // 8. Check payment status directly with Midtrans API (fallback for webhook)
 export async function checkPaymentStatus(
   supabase: SupabaseClient<Database>,
   orderNumber: string
-): Promise<{ success: boolean; order_status?: string; payment_status?: string; message?: string }> {
+): Promise<ApiResponse<{ order_status?: string; payment_status?: string; }>> {
   const { data, error } = await supabase.functions.invoke('check-payment-status', {
     body: { order_number: orderNumber },
   })
 
   if (error) {
     safeLogError('Error invoking check-payment-status function:', error)
-    return {
-      success: false,
-      message: 'Gagal mengecek status pembayaran.',
-    }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengecek status pembayaran.')
   }
 
   const res = data as {
@@ -413,17 +392,13 @@ export async function checkPaymentStatus(
   } | null
 
   if (!res || !res.success || !res.data) {
-    return {
-      success: false,
-      message: res?.message || 'Gagal mengecek status pembayaran.',
-    }
+    return fail(ApiErrorCode.INTERNAL_ERROR, res?.message || 'Gagal mengecek status pembayaran.')
   }
 
-  return {
-    success: true,
+  return ok({
     order_status: res.data.order_status,
     payment_status: res.data.payment_status,
-  }
+  })
 }
 
 
@@ -431,7 +406,7 @@ export async function checkPaymentStatus(
 export async function adminGetOrders(
   supabase: SupabaseClient<Database>,
   params: { status?: string; search?: string; page?: number; limit?: number } = {}
-): Promise<{ orders: AdminOrderListItem[]; totalCount: number }> {
+): Promise<ApiListResponse<AdminOrderListItem>> {
   const { status = 'all', search = '', page = 1, limit = 20 } = params
   const offset = (page - 1) * limit
 
@@ -468,10 +443,10 @@ export async function adminGetOrders(
 
   if (error) {
     safeLogError('Error fetching admin orders:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar pesanan')
   }
 
-  if (!data) return { orders: [], totalCount: 0 }
+  if (!data) return paginated([], 0, page, limit)
 
   const orders: AdminOrderListItem[] = data.map(row => {
     const rawCat = row.profiles
@@ -538,10 +513,7 @@ export async function adminGetOrders(
     }
   })
 
-  return {
-    orders,
-    totalCount: count || 0,
-  }
+  return paginated(orders, count || 0, page, limit)
 }
 
 export async function adminUpdateOrderStatus(
@@ -549,19 +521,8 @@ export async function adminUpdateOrderStatus(
   orderId: string,
   status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled',
   trackingNumber?: string
-): Promise<{ success: boolean; message?: string }> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { success: false, message: 'Unauthorized' }
+): Promise<ApiResponse<null>> {
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
-    return { success: false, message: 'Forbidden: Admin access required' }
-  }
   if (status === 'cancelled') {
     return await cancelOrder(supabase, orderId, 'Dibatalkan oleh Admin')
   }
@@ -574,7 +535,7 @@ export async function adminUpdateOrderStatus(
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', orderId)
 
-  if (orderErr) throw orderErr
+  if (orderErr) return fail('Gagal mengupdate pesanan', orderErr.message)
 
   if (status === 'shipped' && trackingNumber) {
     const { error: shippingErr } = await supabase
@@ -585,19 +546,19 @@ export async function adminUpdateOrderStatus(
       })
       .eq('order_id', orderId)
 
-    if (shippingErr) throw shippingErr
+    if (shippingErr) return fail('Gagal menyimpan resi', shippingErr.message)
   }
 
   await insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated order status to ${status}`)
 
-  return { success: true }
+  return ok(null)
 }
 
 
 
 export async function adminGetReturnRequests(
   supabase: SupabaseClient<Database>
-): Promise<AdminReturnRequestListItem[]> {
+): Promise<ApiResponse<AdminReturnRequestListItem[]>> {
   const { data, error } = await supabase
     .from('return_requests')
     .select(`
@@ -618,12 +579,12 @@ export async function adminGetReturnRequests(
 
   if (error) {
     safeLogError('Error fetching admin return requests:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil pengajuan retur')
   }
 
-  if (!data) return []
+  if (!data) return ok([])
 
-  return data.map(row => {
+  return ok(data.map(row => {
     const rawProfile = row.profiles
     let profiles: { name: string; email: string | null } | null = null
     if (rawProfile && !Array.isArray(rawProfile)) {
@@ -696,7 +657,7 @@ export async function adminGetReturnRequests(
       return_items,
       return_media,
     }
-  })
+  }))
 }
 
 export async function adminUpdateReturnRequest(
@@ -707,7 +668,7 @@ export async function adminUpdateReturnRequest(
     adminNotes?: string | null
     refundAmount?: number | null
   }
-): Promise<{ success: boolean }> {
+): Promise<ApiResponse<null>> {
   const { status, adminNotes, refundAmount } = params
   const now = new Date().toISOString()
   
@@ -734,31 +695,20 @@ export async function adminUpdateReturnRequest(
 
   if (error) {
     safeLogError('Error updating return request:', error)
-    throw error
+    return fail('Gagal mengupdate permintaan retur', error.message)
   }
 
   await insertAdminActivityLog(supabase, 'update', 'return_request', requestId, `Updated return request status to ${status}`)
 
-  return { success: true }
+  return ok(null)
 }
 
 export async function adminUpdateTrackingNumber(
   supabase: SupabaseClient<Database>,
   orderId: string,
   trackingNumber: string
-): Promise<{ success: boolean; message?: string }> {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { success: false, message: 'Unauthorized' }
+): Promise<ApiResponse<null>> {
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
-    return { success: false, message: 'Forbidden: Admin access required' }
-  }
 
   const { error } = await supabase
     .from('order_shipping')
@@ -767,11 +717,11 @@ export async function adminUpdateTrackingNumber(
 
   if (error) {
     safeLogError('Error updating tracking number:', error)
-    throw error
+    return fail('Gagal menyimpan nomor resi', error.message)
   }
 
   await insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated tracking number`)
 
-  return { success: true }
+  return ok(null)
 }
 

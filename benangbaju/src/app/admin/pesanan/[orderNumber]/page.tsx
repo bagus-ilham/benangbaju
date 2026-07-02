@@ -3,7 +3,8 @@
 import React, { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrderDetail } from '@/hooks/useOrders'
-import { useAdminUpdateOrderStatus, useAdminUpdateTrackingNumber } from '@/hooks/useAdmin'
+import { useAdminUpdateOrderStatus, useAdminUpdateTrackingNumber } from '@/hooks/admin/useAdminOrders'
+
 import { Button, Input, AdminPageHeader, AdminPanel } from '@/components/shared'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle, FileText, Download, Edit2, X, Check } from 'lucide-react'
@@ -22,7 +23,8 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
   const { orderNumber } = use(params)
   const router = useRouter()
 
-  const { data: order, isLoading, isError, refetch } = useOrderDetail(orderNumber)
+  const { data: orderResponse, isLoading, isError, refetch } = useOrderDetail(orderNumber as string)
+  const order = orderResponse?.data
   const updateStatusMutation = useAdminUpdateOrderStatus()
   const updateTrackingMutation = useAdminUpdateTrackingNumber()
 

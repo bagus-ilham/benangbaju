@@ -33,7 +33,8 @@ import { uploadImage } from '@/lib/supabase/storage'
 const supabase = createBrowserClient()
 
 export default function AdminCollectionPage() : React.JSX.Element {
-  const { data: collections = [], isLoading, isError, refetch } = useAdminCollections()
+  const { data: collectionsRes, isLoading, isError, refetch } = useAdminCollections()
+  const collections = collectionsRes?.data || []
   
   const createMutation = useAdminCreateCollection()
   const updateMutation = useAdminUpdateCollection()

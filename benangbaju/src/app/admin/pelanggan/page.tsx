@@ -10,7 +10,8 @@ import { formatDate } from '@/lib/utils/format'
 import { motion } from 'framer-motion'
 
 export default function AdminCustomersPage() : React.JSX.Element {
-  const { data: customers, isLoading, isError, refetch } = useAdminCustomers()
+  const { data: customersRes, isLoading, isError, refetch } = useAdminCustomers()
+  const customers = customersRes?.data || []
   const toggleStatusMutation = useAdminToggleCustomerStatus()
   
   const [searchQuery, setSearchQuery] = useState('')

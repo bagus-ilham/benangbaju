@@ -33,8 +33,8 @@ export async function calculateShippingRates(supabase: SupabaseClient<Database>,
     return new ShippingService(supabase).calculateShippingRates(zoneId, weightGram);
 }
 
-export async function adminGetShippingZones(supabase: SupabaseClient<Database>) {
-    return new ShippingService(supabase).adminGetShippingZones();
+export async function adminGetShippingZones(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new ShippingService(supabase).adminGetShippingZones(page, limit);
 }
 
 export async function adminCreateShippingZone(supabase: SupabaseClient<Database>, zone: Omit<types.ShippingZone, 'id' | 'shipping_zone_coverage'>, provinces: string[]) {
@@ -49,8 +49,8 @@ export async function adminDeleteShippingZone(supabase: SupabaseClient<Database>
     return new ShippingService(supabase).adminDeleteShippingZone(zoneId);
 }
 
-export async function adminGetShippingRates(supabase: SupabaseClient<Database>) {
-    return new ShippingService(supabase).adminGetShippingRates();
+export async function adminGetShippingRates(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new ShippingService(supabase).adminGetShippingRates(page, limit);
 }
 
 export async function adminCreateShippingRate(supabase: SupabaseClient<Database>, rate: Omit<types.ShippingRate, 'id' | 'shipping_zones'>) {

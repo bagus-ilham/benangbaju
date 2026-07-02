@@ -13,7 +13,8 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) : React.JSX.Element {
-  const { data: reviews = [], isLoading } = useReviews(productId)
+  const { data: reviewsRes, isLoading } = useReviews(productId)
+  const reviews = reviewsRes?.data || []
 
   // Calculate default values if ratingSummary is missing
   const total = ratingSummary?.total_reviews || reviews.length

@@ -13,18 +13,23 @@ import {
 } from '@/services/shipping'
 import { ShippingZone, ShippingRate } from '@/modules/shipping/domain/shipping.types'
 
-export function useAdminShippingZones() {
+import { ApiListResponse, ApiResponse } from '@/lib/api-response'
+
+export function useAdminShippingZones(page = 1, limit = 20) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<ShippingZone>, Error> {
   return useQuery({
-    queryKey: ['admin', 'shipping-zones'],
-    queryFn: () => adminGetShippingZones(getAdminSupabase())
+    queryKey: ['admin', 'shipping-zones', page, limit],
+    queryFn: () => adminGetShippingZones(getAdminSupabase(), page, limit)
   })
 }
 
 export function useAdminCreateShippingZone() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ zone, provinces }: { zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>; provinces: string[] }) =>
-      adminCreateShippingZone(getAdminSupabase(), zone, provinces),
+    mutationFn: async ({ zone, provinces }: { zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>; provinces: string[] }) => {
+      const res = await adminCreateShippingZone(getAdminSupabase(), zone, provinces)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal membuat zona pengiriman')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-zones'])
     }
@@ -34,8 +39,11 @@ export function useAdminCreateShippingZone() {
 export function useAdminUpdateShippingZone() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ zoneId, zone, provinces }: { zoneId: string; zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>; provinces?: string[] }) =>
-      adminUpdateShippingZone(getAdminSupabase(), zoneId, zone, provinces),
+    mutationFn: async ({ zoneId, zone, provinces }: { zoneId: string; zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>; provinces?: string[] }) => {
+      const res = await adminUpdateShippingZone(getAdminSupabase(), zoneId, zone, provinces)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui zona pengiriman')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-zones'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] }) // Invalidate calculation cache too
@@ -46,24 +54,32 @@ export function useAdminUpdateShippingZone() {
 export function useAdminDeleteShippingZone() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (zoneId: string) => adminDeleteShippingZone(getAdminSupabase(), zoneId),
+    mutationFn: async (zoneId: string) => {
+      const res = await adminDeleteShippingZone(getAdminSupabase(), zoneId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus zona pengiriman')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-zones', 'shipping-rates'])
     }
   })
 }
 
-export function useAdminShippingRates() {
+export function useAdminShippingRates(page = 1, limit = 20) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<ShippingRate>, Error> {
   return useQuery({
-    queryKey: ['admin', 'shipping-rates'],
-    queryFn: () => adminGetShippingRates(getAdminSupabase())
+    queryKey: ['admin', 'shipping-rates', page, limit],
+    queryFn: () => adminGetShippingRates(getAdminSupabase(), page, limit)
   })
 }
 
 export function useAdminCreateShippingRate() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (rate: Omit<ShippingRate, 'id' | 'shipping_zones'>) => adminCreateShippingRate(getAdminSupabase(), rate),
+    mutationFn: async (rate: Omit<ShippingRate, 'id' | 'shipping_zones'>) => {
+      const res = await adminCreateShippingRate(getAdminSupabase(), rate)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal membuat tarif pengiriman')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-rates'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] })
@@ -74,8 +90,11 @@ export function useAdminCreateShippingRate() {
 export function useAdminUpdateShippingRate() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ rateId, rate }: { rateId: string; rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>> }) =>
-      adminUpdateShippingRate(getAdminSupabase(), rateId, rate),
+    mutationFn: async ({ rateId, rate }: { rateId: string; rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>> }) => {
+      const res = await adminUpdateShippingRate(getAdminSupabase(), rateId, rate)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui tarif pengiriman')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-rates'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] })
@@ -86,7 +105,11 @@ export function useAdminUpdateShippingRate() {
 export function useAdminDeleteShippingRate() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (rateId: string) => adminDeleteShippingRate(getAdminSupabase(), rateId),
+    mutationFn: async (rateId: string) => {
+      const res = await adminDeleteShippingRate(getAdminSupabase(), rateId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus tarif pengiriman')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-rates'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] })

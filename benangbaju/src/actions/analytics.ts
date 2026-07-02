@@ -29,83 +29,61 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
   startDate.setDate(startDate.getDate() - days);
   const startDateStr = startDate.toISOString();
 
-  // 1. Fetch completed orders in the last N days
-  // TODO: Move this aggregation to SQL RPC for scalability
-  const { data: orders, error: ordersError } = await supabase
-    .from('orders')
-    .select('id, created_at, total_amount, discount_amount, voucher_id, order_items(product_name, quantity, subtotal)')
-    .eq('status', 'completed')
-    .gte('created_at', startDateStr)
-    .order('created_at', { ascending: true })
-    .limit(1000);
-
-  if (ordersError) throw new Error(ordersError.message);
-
-  // 2. Fetch abandoned carts (older than 24h)
+  // 1. Fetch data from RPC and independent queries in parallel
   const yesterday = new Date();
   yesterday.setHours(yesterday.getHours() - 24);
   const yesterdayStr = yesterday.toISOString();
   
-  const { count: abandonedCartsCount, error: cartsError } = await supabase
-    .from('carts')
-    .select('*', { count: 'exact', head: true })
-    .lte('created_at', yesterdayStr);
-    
-  if (cartsError) throw new Error(cartsError.message);
+  const [rpcRes, cartsRes, voucherRes] = await Promise.all([
+    supabase.rpc('get_analytics_data', { p_start_date: startDateStr }),
+    supabase.from('carts').select('*', { count: 'exact', head: true }).lte('created_at', yesterdayStr),
+    supabase.from('orders').select('voucher_id, discount_amount, vouchers(code)').eq('status', 'completed').gte('created_at', startDateStr).not('voucher_id', 'is', null)
+  ]);
 
-  // 3. Process Data
-  const revenueMap = new Map<string, number>();
-  const productMap = new Map<string, { quantity: number, revenue: number }>();
+  if (rpcRes.error) throw new Error(rpcRes.error.message);
+  if (cartsRes.error) throw new Error(cartsRes.error.message);
+
+  const data = rpcRes.data as any || {};
+
+  // Parse dates for revenue trends if needed to match previous format
+  const revenueTrends = (data.revenue_trends || []).map((item: any) => ({
+    date: new Date(item.date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }),
+    revenue: Number(item.revenue)
+  }));
+
+  const topProducts = (data.top_products || []).map((item: any) => ({
+    name: item.name,
+    quantity: Number(item.quantity),
+    revenue: Number(item.revenue)
+  }));
+
+  // Process voucher usage
   const voucherMap = new Map<string, { count: number, totalDiscount: number }>();
-
-  let totalRevenue = 0;
-  const totalOrders = orders?.length || 0;
-
-  orders?.forEach(order => {
-    // Revenue Trends
-    const date = new Date(order.created_at).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
-    revenueMap.set(date, (revenueMap.get(date) || 0) + order.total_amount);
-    totalRevenue += order.total_amount;
-
-    // Top Products
-    if (order.order_items && Array.isArray(order.order_items)) {
-      order.order_items.forEach((item: any) => {
-        const pName = item.product_name || 'Unknown';
-        const current = productMap.get(pName) || { quantity: 0, revenue: 0 };
-        productMap.set(pName, {
-          quantity: current.quantity + item.quantity,
-          revenue: current.revenue + item.subtotal
-        });
-      });
-    }
-
-    // Voucher Usage
+  (voucherRes.data || []).forEach(order => {
     if (order.voucher_id && order.discount_amount > 0) {
-      const vId = order.voucher_id;
-      const current = voucherMap.get(vId) || { count: 0, totalDiscount: 0 };
-      voucherMap.set(vId, {
+      // Access the voucher code from the joined table
+      const voucherCode = Array.isArray(order.vouchers) 
+        ? order.vouchers[0]?.code 
+        : (order.vouchers as any)?.code || order.voucher_id;
+        
+      const current = voucherMap.get(voucherCode) || { count: 0, totalDiscount: 0 };
+      voucherMap.set(voucherCode, {
         count: current.count + 1,
         totalDiscount: current.totalDiscount + order.discount_amount
       });
     }
   });
 
-  const revenueTrends = Array.from(revenueMap.entries()).map(([date, revenue]) => ({ date, revenue }));
-  const topProducts = Array.from(productMap.entries())
-    .map(([name, data]) => ({ name, ...data }))
-    .sort((a, b) => b.quantity - a.quantity)
-    .slice(0, 10);
-    
   const voucherUsage = Array.from(voucherMap.entries())
-    .map(([code, data]) => ({ code, ...data }))
+    .map(([code, vdata]) => ({ code, ...vdata }))
     .sort((a, b) => b.count - a.count);
 
   return {
     revenueTrends,
     topProducts,
     voucherUsage,
-    abandonedCartsCount: abandonedCartsCount || 0,
-    totalRevenue,
-    totalOrders
+    abandonedCartsCount: cartsRes.count || 0,
+    totalRevenue: Number(data.total_revenue || 0),
+    totalOrders: Number(data.total_orders || 0)
   };
 }

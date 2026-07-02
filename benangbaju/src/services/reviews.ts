@@ -5,12 +5,12 @@ import * as types from "@/modules/review/domain/review.types";
 
 export type { ReviewDetail, AdminReviewListItem, SubmitReviewParams } from "@/modules/review/domain/review.types";
 
-export async function getApprovedReviews(supabase: SupabaseClient<Database>, productId: string) {
-    return new ReviewService(supabase).getApprovedReviews(productId);
+export async function getApprovedReviews(supabase: SupabaseClient<Database>, productId: string, page = 1, limit = 20) {
+    return new ReviewService(supabase).getApprovedReviews(productId, page, limit);
 }
 
-export async function adminGetReviews(supabase: SupabaseClient<Database>) {
-    return new ReviewService(supabase).adminGetReviews();
+export async function adminGetReviews(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new ReviewService(supabase).adminGetReviews(page, limit);
 }
 
 export async function adminUpdateReviewStatus(supabase: SupabaseClient<Database>, reviewId: string, status: 'pending' | 'approved' | 'rejected' | 'hidden') {

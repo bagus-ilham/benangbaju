@@ -31,12 +31,13 @@ function SearchResultsContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
 
-  const { data, isLoading, isError } = useProducts({
+  const { data: dataRes, isLoading, isError } = useProducts({
     searchQuery: query || undefined,
     limit: 40,
   })
 
-  const { products = [], totalCount = 0 } = data || {}
+  const products = dataRes?.data || []
+  const totalCount = dataRes?.pagination?.total_count || 0
 
   if (isError) {
     return (

@@ -72,6 +72,7 @@ export interface CreateOrderParams {
   addressId: string
   voucherCode?: string
   courierName?: string
+  shippingRateId?: string
   shippingCost?: number
   notes?: string
 }

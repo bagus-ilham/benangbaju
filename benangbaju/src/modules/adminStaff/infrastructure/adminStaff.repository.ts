@@ -3,6 +3,7 @@ import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { StaffProfile } from "../domain/adminStaff.types";
+import { InternalError } from '@/lib/api-errors'
 
 // 1. Get list of all admin and staff profiles
 export async function adminGetStaffs(
@@ -17,7 +18,7 @@ export async function adminGetStaffs(
 
   if (error) {
     safeLogError('Error fetching admin staffs:', error)
-    throw error
+    throw new InternalError('Gagal memuat daftar staf')
   }
 
   if (!data) return []

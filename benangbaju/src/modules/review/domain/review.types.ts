@@ -26,6 +26,31 @@ export interface ReviewDetail {
         }[];
 }
 
+export interface ProductReview {
+    id: string;
+    order_item_id: string;
+    product_id: string;
+    variant_id: string | null;
+    user_id: string;
+    rating: number;
+    title: string | null;
+    body: string;
+    is_anonymous: boolean;
+    is_verified_purchase: boolean;
+    is_pinned: boolean;
+    status: string;
+    helpful_count: number;
+    created_at: string;
+}
+
+export interface ReviewReply {
+    id: string;
+    review_id: string;
+    admin_id: string;
+    body: string;
+    created_at: string;
+}
+
 export interface AdminReviewListItem {
     id: string;
     order_item_id: string;

@@ -15,8 +15,8 @@ export class SettingService {
         return repo.adminUpdateSettings(this.supabase, settings);
     }
 
-    async adminGetActivityLogs() {
-        return repo.adminGetActivityLogs(this.supabase);
+    async adminGetActivityLogs(page = 1, limit = 100) {
+        return repo.adminGetActivityLogs(this.supabase, page, limit);
     }
 
     async adminUpsertSettings(settings: SiteSetting[]) {

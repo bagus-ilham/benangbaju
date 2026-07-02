@@ -7,7 +7,9 @@ import {
   markAllNotificationsRead,
 } from '@/services/notifications'
 
-export function useUserNotifications(userId: string) : import("@tanstack/react-query").UseQueryResult<import("@/services/notifications").UserNotification[], Error> {
+import { ApiListResponse, ApiResponse } from '@/lib/api-response'
+
+export function useUserNotifications(userId: string) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<import("@/services/notifications").UserNotification>, Error> {
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
 
@@ -51,7 +53,11 @@ export function useMarkNotificationRead(userId: string) : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: (notificationId: string) => markNotificationRead(supabase, notificationId, userId),
+    mutationFn: async (notificationId: string) => {
+      const res = await markNotificationRead(supabase, notificationId, userId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menandai notifikasi terbaca')
+      return res
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
     },
@@ -67,7 +73,11 @@ export function useMarkAllNotificationsRead(userId: string) : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: () => markAllNotificationsRead(supabase, userId),
+    mutationFn: async () => {
+      const res = await markAllNotificationsRead(supabase, userId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menandai semua notifikasi telah dibaca')
+      return res
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
     },

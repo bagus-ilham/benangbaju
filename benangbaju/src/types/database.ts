@@ -1310,6 +1310,42 @@ interface RawDatabase {
       }
     }
     Functions: {
+      get_dashboard_revenue: {
+        Args: Record<string, never>
+        Returns: number
+      }
+      get_analytics_data: {
+        Args: { p_start_date: string }
+        Returns: Json
+      }
+      admin_create_product: {
+        Args: { p_product: any; p_variants: any; p_images: any; p_links: any; p_collections: any }
+        Returns: any
+      }
+      admin_update_product: {
+        Args: { p_product_id: string; p_product: any; p_variants_to_upsert: any; p_variant_ids_to_delete: any; p_images_to_upsert: any; p_image_ids_to_delete: any; p_links_to_upsert: any; p_link_ids_to_delete: any; p_collections: any }
+        Returns: any
+      }
+      admin_create_flash_sale: {
+        Args: { p_flash_sale: any; p_items: any }
+        Returns: any
+      }
+      admin_update_flash_sale: {
+        Args: { p_flash_sale_id?: string; p_flash_sale?: any; p_items_to_upsert?: any; p_item_ids_to_delete?: any; p_variant_ids_to_delete?: any }
+        Returns: any
+      }
+      admin_create_shipping_zone: {
+        Args: { p_zone?: any; p_rates?: any; p_coverage?: any; p_provinces?: any }
+        Returns: any
+      }
+      admin_update_shipping_zone: {
+        Args: { p_zone_id?: string; p_zone?: any; p_rates?: any; p_coverage?: any; p_provinces?: any }
+        Returns: any
+      }
+      bulk_update_stock: {
+        Args: { updates: Json }
+        Returns: undefined
+      }
       calculate_shipping: {
         Args: { p_zone_id: string; p_weight_gram: number }
         Returns: Json

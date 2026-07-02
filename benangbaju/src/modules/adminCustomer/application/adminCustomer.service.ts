@@ -7,8 +7,8 @@ export class AdminCustomerService {
     constructor(private supabase: SupabaseClient<Database>) {
     }
 
-    async adminGetCustomers() {
-        return repo.adminGetCustomers(this.supabase);
+    async adminGetCustomers(page = 1, limit = 20) {
+        return repo.adminGetCustomers(this.supabase, page, limit);
     }
 
     async adminToggleCustomerStatus(customerId: string, isActive: boolean) {

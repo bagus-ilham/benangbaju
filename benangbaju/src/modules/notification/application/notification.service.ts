@@ -7,8 +7,8 @@ export class NotificationService {
     constructor(private supabase: SupabaseClient<Database>) {
     }
 
-    async getUserNotifications(userId: string) {
-        return repo.getUserNotifications(this.supabase, userId);
+    async getUserNotifications(userId: string, page = 1, limit = 20) {
+        return repo.getUserNotifications(this.supabase, userId, page, limit);
     }
 
     async markNotificationRead(notificationId: string, userId: string) {

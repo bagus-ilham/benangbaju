@@ -11,8 +11,8 @@ export class VoucherService {
         return repo.validateVoucher(this.supabase, code, subtotal, userId);
     }
 
-    async adminGetVouchers() {
-        return repo.adminGetVouchers(this.supabase);
+    async adminGetVouchers(page = 1, limit = 20) {
+        return repo.adminGetVouchers(this.supabase, page, limit);
     }
 
     async adminCreateVoucher(voucherData: {

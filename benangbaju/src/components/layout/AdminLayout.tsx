@@ -45,10 +45,11 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  const { data: settings = [] } = useQuery({
+  const { data: settingsResponse } = useQuery({
     queryKey: ['site-settings'],
     queryFn: () => getSiteSettings(supabase),
   })
+  const settings = settingsResponse?.data || []
 
   const logoSetting = settings.find((s) => s.key === 'store_logo_url')
   const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null

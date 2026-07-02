@@ -3,6 +3,8 @@ import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Json } from '@/types/database'
 import { SiteSetting, ActivityLog } from "../domain/setting.types";
+import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 
 function mapSiteSetting(row: Database['public']['Tables']['site_settings']['Row']): SiteSetting {
   const typeMap: Record<string, SiteSetting['type']> = {
@@ -27,27 +29,28 @@ function mapSiteSetting(row: Database['public']['Tables']['site_settings']['Row'
   }
 }
 
-export async function adminGetSettings(supabase: SupabaseClient<Database>): Promise<SiteSetting[]> {
+export async function adminGetSettings(supabase: SupabaseClient<Database>): Promise<ApiListResponse<SiteSetting>> {
   const { data, error } = await supabase
     .from('site_settings')
     .select('key, value, type, group, label')
 
   if (error) {
     safeLogError('Error fetching site settings:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil pengaturan')
   }
 
-  if (!data) return []
-
-  return data.map(mapSiteSetting)
+  const list = data ? data.map(mapSiteSetting) : []
+  return paginated(list)
 }
 
 export async function adminUpdateSettings(
   supabase: SupabaseClient<Database>,
   settings: Record<string, string>
-): Promise<void> {
+): Promise<ApiResponse<void>> {
   // Fetch existing settings to preserve all required fields (type, group, label) for upsert
-  const currentSettings = await adminGetSettings(supabase)
+  const res = await adminGetSettings(supabase)
+  if (!res.success) return fail(ApiErrorCode.INTERNAL_ERROR, res.error.message)
+  const currentSettings = res.data
 
   const settingsToUpsert = currentSettings
     .filter((s) => Object.prototype.hasOwnProperty.call(settings, s.key))
@@ -59,7 +62,7 @@ export async function adminUpdateSettings(
       label: s.label,
     }))
 
-  if (settingsToUpsert.length === 0) return
+  if (settingsToUpsert.length === 0) return ok()
 
   const { error } = await supabase
     .from('site_settings')
@@ -67,27 +70,34 @@ export async function adminUpdateSettings(
 
   if (error) {
     safeLogError('Error updating site settings:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui pengaturan')
   }
 
   await insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Updated site settings')
+  return ok()
 }
 
-export async function adminGetActivityLogs(supabase: SupabaseClient<Database>): Promise<ActivityLog[]> {
-  const { data, error } = await supabase
+export async function adminGetActivityLogs(
+  supabase: SupabaseClient<Database>,
+  page = 1,
+  limit = 100
+): Promise<ApiListResponse<ActivityLog>> {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  const { data, error, count } = await supabase
     .from('admin_activity_logs')
-    .select('*, profiles(name, email)')
+    .select('*, profiles(name, email)', { count: 'exact' })
     .order('created_at', { ascending: false })
-    .limit(100)
+    .range(from, to)
 
   if (error) {
     safeLogError('Error fetching admin activity logs:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil log aktivitas')
   }
 
-  if (!data) return []
+  if (!data) return paginated([], page, limit, count || 0)
 
-  return data.map(row => {
+  const list = data.map(row => {
     const rawProfiles = row.profiles
     let profiles: { name: string; email: string | null } | null = null
     if (rawProfiles && !Array.isArray(rawProfiles)) {
@@ -109,35 +119,38 @@ export async function adminGetActivityLogs(supabase: SupabaseClient<Database>): 
       profiles,
     }
   })
+  return paginated(list, page, limit, count || 0)
 }
 
 export async function adminUpsertSettings(
   supabase: SupabaseClient<Database>,
   settings: SiteSetting[]
-): Promise<void> {
+): Promise<ApiResponse<void>> {
   const { error } = await supabase
     .from('site_settings')
     .upsert(settings, { onConflict: 'key' })
 
   if (error) {
     safeLogError('Error upserting settings:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal upsert pengaturan')
   }
 
   await insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Upserted site settings')
+  return ok()
 }
 
 export async function getSiteSettings(
   supabase: SupabaseClient<Database>
-): Promise<SiteSetting[]> {
+): Promise<ApiListResponse<SiteSetting>> {
   const { data, error } = await supabase
     .from('site_settings')
     .select('key, value, type, group, label')
 
   if (error) {
     safeLogError('Error fetching site settings:', error)
-    return []
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil pengaturan')
   }
 
-  return data.map(mapSiteSetting)
+  const list = data ? data.map(mapSiteSetting) : []
+  return paginated(list)
 }

@@ -10,8 +10,9 @@ import {
   calculateShippingRates,
   UserAddress,
 } from '@/services/shipping'
+import { ApiResponse } from '@/lib/api-response'
 
-export function useUserAddresses(userId: string) : import("@tanstack/react-query").UseQueryResult<UserAddress[], Error> {
+export function useUserAddresses(userId: string) : import("@tanstack/react-query").UseQueryResult<ApiResponse<UserAddress[]>, Error> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['addresses', userId],
@@ -29,8 +30,11 @@ export function useAddUserAddress() : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: (address: Omit<UserAddress, 'id' | 'created_at'>) =>
-      addUserAddress(supabase, address),
+    mutationFn: async (address: Omit<UserAddress, 'id' | 'created_at'>) => {
+      const res = await addUserAddress(supabase, address)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menambahkan alamat')
+      return res
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.user_id] })
     },
@@ -50,7 +54,7 @@ export function useUpdateUserAddress() : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       addressId,
       userId,
       address,
@@ -58,7 +62,11 @@ export function useUpdateUserAddress() : UseMutationResult<
       addressId: string
       userId: string
       address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
-    }) => updateUserAddress(supabase, addressId, userId, address),
+    }) => {
+      const res = await updateUserAddress(supabase, addressId, userId, address)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui alamat')
+      return res
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.userId] })
     },
@@ -74,8 +82,11 @@ export function useDeleteUserAddress() : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: ({ addressId, userId }: { addressId: string; userId: string }) =>
-      deleteUserAddress(supabase, addressId, userId),
+    mutationFn: async ({ addressId, userId }: { addressId: string; userId: string }) => {
+      const res = await deleteUserAddress(supabase, addressId, userId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus alamat')
+      return res
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.userId] })
     },
@@ -91,15 +102,18 @@ export function useSetDefaultAddress() : UseMutationResult<
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
-    mutationFn: ({ addressId, userId }: { addressId: string; userId: string }) =>
-      setDefaultAddress(supabase, addressId, userId),
+    mutationFn: async ({ addressId, userId }: { addressId: string; userId: string }) => {
+      const res = await setDefaultAddress(supabase, addressId, userId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal mengatur alamat utama')
+      return res
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['addresses', variables.userId] })
     },
   })
 }
 
-export function useDistrictSearch(searchQuery: string) : import("@tanstack/react-query").UseQueryResult<import("@/services/shipping").District[], Error> {
+export function useDistrictSearch(searchQuery: string) : import("@tanstack/react-query").UseQueryResult<ApiResponse<import("@/services/shipping").District[]>, Error> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['districts-search', searchQuery],
@@ -109,7 +123,7 @@ export function useDistrictSearch(searchQuery: string) : import("@tanstack/react
   })
 }
 
-export function useShippingRates(zoneId: string | null, weightGram: number) : import("@tanstack/react-query").UseQueryResult<import("@/services/shipping").ShippingCalculationResult, Error> {
+export function useShippingRates(zoneId: string | null, weightGram: number) : import("@tanstack/react-query").UseQueryResult<ApiResponse<import("@/services/shipping").ShippingOption[]>, Error> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['shipping-rates', zoneId, weightGram],

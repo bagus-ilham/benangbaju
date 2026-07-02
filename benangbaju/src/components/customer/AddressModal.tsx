@@ -74,7 +74,8 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
 
   const [searchQuery, setSearchQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const { data: searchResults } = useDistrictSearch(searchQuery)
+  const { data: searchResultsRes } = useDistrictSearch(searchQuery)
+  const searchResults = searchResultsRes?.data || []
   const skipProvinceFetchRef = useRef(false)
 
   const addAddressMutation = useAddUserAddress()

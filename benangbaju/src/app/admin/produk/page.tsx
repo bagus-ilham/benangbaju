@@ -27,7 +27,8 @@ export default function AdminProductListPage() : React.JSX.Element {
   const [page, setPage] = useState(1)
   const limit = 10
  
-  const { data, isLoading, isError, refetch } = useAdminProducts(page, limit, search)
+  const { data: dataRes, isLoading, isError, refetch } = useAdminProducts(page, limit, search)
+  const data = dataRes?.data
   const deleteMutation = useAdminDeleteProduct()
   const updateActiveStatusMutation = useAdminUpdateProductActiveStatus()
   const updateFeaturedStatusMutation = useAdminUpdateProductFeaturedStatus()
@@ -64,8 +65,8 @@ export default function AdminProductListPage() : React.JSX.Element {
     }
   }
 
-  const products = data?.products || []
-  const totalCount = data?.totalCount || 0
+  const products = dataRes?.data || []
+  const totalCount = dataRes?.pagination?.total_count || 0
   const totalPages = Math.ceil(totalCount / limit)
 
   const columns: Column<AdminProductListItem>[] = [

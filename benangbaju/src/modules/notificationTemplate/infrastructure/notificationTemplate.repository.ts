@@ -3,6 +3,7 @@ import { insertAdminActivityLog } from '@/services/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { NotificationTemplate } from "../domain/notificationTemplate.types";
+import { InternalError } from '@/lib/api-errors'
 
 export async function adminGetNotificationTemplates(
   supabase: SupabaseClient<Database>
@@ -14,7 +15,7 @@ export async function adminGetNotificationTemplates(
 
   if (error) {
     safeLogError('Error fetching notification templates:', error)
-    throw error
+    throw new InternalError('Gagal memuat template notifikasi')
   }
 
   return data || []
@@ -37,7 +38,7 @@ export async function adminCreateNotificationTemplate(
 
   if (error) {
     safeLogError('Error creating notification template:', error)
-    throw error
+    throw new InternalError('Gagal membuat template notifikasi')
   }
 
   await insertAdminActivityLog(
@@ -70,7 +71,7 @@ export async function adminUpdateNotificationTemplate(
 
   if (error) {
     safeLogError('Error updating notification template:', error)
-    throw error
+    throw new InternalError('Gagal memperbarui template notifikasi')
   }
 
   await insertAdminActivityLog(
@@ -102,7 +103,7 @@ export async function adminDeleteNotificationTemplate(
 
   if (error) {
     safeLogError('Error deleting notification template:', error)
-    throw error
+    throw new InternalError('Gagal menghapus template notifikasi')
   }
 
   await insertAdminActivityLog(

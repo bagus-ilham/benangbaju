@@ -43,9 +43,12 @@ export default function AdminSettingsPage() : React.JSX.Element {
   const [activeSubTab, setActiveSubTab] = useState<'settings' | 'logs'>('settings')
 
   // Queries
-  const { data: settingsList = [], isLoading: settingsLoading, refetch: refetchSettings } = useAdminSettings()
-  const { data: logsList = [], isLoading: logsLoading } = useAdminActivityLogs()
-  const { data: collections = [] } = useAdminCollections()
+  const { data: settingsRes, isLoading: settingsLoading, refetch: refetchSettings } = useAdminSettings()
+  const settingsList = settingsRes?.data || []
+  const { data: logsRes, isLoading: logsLoading } = useAdminActivityLogs()
+  const logsList = logsRes?.data || []
+  const { data: collectionsRes } = useAdminCollections()
+  const collections = collectionsRes?.data || []
 
   const updateMutation = useAdminUpdateSettings()
   const upsertMutation = useAdminUpsertSettings()
@@ -92,9 +95,9 @@ export default function AdminSettingsPage() : React.JSX.Element {
       await updateMutation.mutateAsync(fields)
       toast.success('Pengaturan berhasil disimpan!', { id: 'save-settings' })
       const updated = await refetchSettings()
-      if (updated.data) {
+      if (updated.data?.success && updated.data.data) {
         const dict: Record<string, string> = {}
-        updated.data.forEach((s) => {
+        updated.data.data.forEach((s) => {
           dict[s.key] = s.value || ''
         })
         setFields(dict)

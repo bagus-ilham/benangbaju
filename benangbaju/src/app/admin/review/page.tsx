@@ -13,7 +13,8 @@ import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/services/reviews'
 import Image from 'next/image'
 export default function AdminReviewsPage() : React.JSX.Element {
-  const { data: reviews = [], isLoading, isError, refetch } = useAdminReviews()
+  const { data: reviewsRes, isLoading, isError, refetch } = useAdminReviews()
+  const reviews = reviewsRes?.data || []
   const { user } = useAuthStore()
 
   const updateStatusMutation = useAdminUpdateReviewStatus()

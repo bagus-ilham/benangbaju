@@ -7,6 +7,7 @@ import {
   adminReplyToReview,
 } from '@/services/reviews'
 import { AdminReviewListItem } from '@/modules/review/domain/review.types'
+import { ApiListResponse } from '@/lib/api-response'
 
 export interface AdminUpdateReviewStatusInput {
   reviewId: string
@@ -19,7 +20,7 @@ export interface AdminReplyToReviewInput {
   adminId: string
 }
 
-export function useAdminReviews() : UseQueryResult<AdminReviewListItem[], Error> {
+export function useAdminReviews() : UseQueryResult<ApiListResponse<AdminReviewListItem>, Error> {
   return useQuery({
     queryKey: ['admin', 'reviews'],
     queryFn: () => adminGetReviews(getAdminSupabase())
@@ -34,7 +35,11 @@ export function useAdminUpdateReviewStatus() : UseMutationResult<
 > {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ reviewId, status }: AdminUpdateReviewStatusInput) => adminUpdateReviewStatus(getAdminSupabase(), reviewId, status),
+    mutationFn: async ({ reviewId, status }: AdminUpdateReviewStatusInput) => {
+      const res = await adminUpdateReviewStatus(getAdminSupabase(), reviewId, status)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui status review')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['reviews'])
     }
@@ -49,7 +54,11 @@ export function useAdminReplyToReview() : UseMutationResult<
 > {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ reviewId, body, adminId }: AdminReplyToReviewInput) => adminReplyToReview(getAdminSupabase(), reviewId, body, adminId),
+    mutationFn: async ({ reviewId, body, adminId }: AdminReplyToReviewInput) => {
+      const res = await adminReplyToReview(getAdminSupabase(), reviewId, body, adminId)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal membalas review')
+      return res
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['reviews'])
     }

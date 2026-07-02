@@ -7,8 +7,8 @@ export class CmsService {
     constructor(private supabase: SupabaseClient<Database>) {
     }
 
-    async adminGetRedirects() {
-        return repo.adminGetRedirects(this.supabase);
+    async adminGetRedirects(page = 1, limit = 20) {
+        return repo.adminGetRedirects(this.supabase, page, limit);
     }
 
     async adminCreateRedirect(redirect: Omit<RedirectRule, 'id' | 'created_at'>) {
@@ -23,8 +23,8 @@ export class CmsService {
         return repo.adminDeleteRedirect(this.supabase, redirectId);
     }
 
-    async adminGetLandingPages() {
-        return repo.adminGetLandingPages(this.supabase);
+    async adminGetLandingPages(page = 1, limit = 20) {
+        return repo.adminGetLandingPages(this.supabase, page, limit);
     }
 
     async adminCreateLandingPage(landingPage: Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>) {

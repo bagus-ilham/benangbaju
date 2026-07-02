@@ -65,7 +65,8 @@ export default function NotifikasiPage() : React.JSX.Element {
     return <AuthLoading message="Memuat halaman..." />
   }
 
-  const hasUnread = notifications?.some((n) => !n.is_read)
+  const notificationList = notifications?.data || []
+  const hasUnread = notificationList.some((n) => !n.is_read)
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -156,9 +157,9 @@ export default function NotifikasiPage() : React.JSX.Element {
                 <div className="h-16 bg-neutral-50 animate-pulse border border-neutral-100" />
                 <div className="h-16 bg-neutral-50 animate-pulse border border-neutral-100" />
               </div>
-            ) : notifications && notifications.length > 0 ? (
+            ) : notificationList && notificationList.length > 0 ? (
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                {notifications.map((n, idx) => (
+                {notificationList.map((n, idx) => (
                   <motion.div
                     key={n.id}
                     onClick={() => handleMarkRead(n.id, n.is_read)}

@@ -25,36 +25,23 @@ import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
 import type { Column } from '@/components/shared/DataTable'
+import { Voucher } from '@/modules/voucher/domain/voucher.types'
 
 const supabase = createBrowserClient()
 
 export default function AdminVouchersPage() : React.JSX.Element {
-  const { data: vouchers = [], isLoading, isError, refetch } = useAdminVouchers()
+  const { data: vouchersRes, isLoading, isError, refetch } = useAdminVouchers()
+  const vouchers = vouchersRes?.data || []
 
   const createMutation = useAdminCreateVoucher()
   const updateMutation = useAdminUpdateVoucher()
   const deleteMutation = useAdminDeleteVoucher()
 
-interface AdminVoucherItem {
-  id: string
-  code: string
-  name: string
-  discount_type: string
-  value: number
-  max_discount: number | null
-  min_purchase: number
-  starts_at: string
-  expires_at: string
-  usage_limit: number | null
-  usage_per_user: number
-  used_count: number
-  is_active: boolean
-  created_at: string
-}
+
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
-  const [editingVoucher, setEditingVoucher] = useState<AdminVoucherItem | null>(null)
+  const [editingVoucher, setEditingVoucher] = useState<Voucher | null>(null)
 
   // Form states
   const [code, setCode] = useState('')
@@ -85,7 +72,7 @@ interface AdminVoucherItem {
     setIsOpen(true)
   }
 
-  const handleOpenEdit = (v: AdminVoucherItem) => {
+  const handleOpenEdit = (v: Voucher) => {
     setEditingVoucher(v)
     setCode(v.code || '')
     setName(v.name || '')
@@ -101,7 +88,7 @@ interface AdminVoucherItem {
     setIsOpen(true)
   }
 
-  const handleDuplicate = (v: AdminVoucherItem) => {
+  const handleDuplicate = (v: Voucher) => {
     setEditingVoucher(null)
     setCode((v.code || '') + '_COPY')
     setName((v.name || '') + ' (Copy)')
@@ -111,13 +98,13 @@ interface AdminVoucherItem {
     setMaxDiscount(v.max_discount ? Number(v.max_discount) : null)
     setUsageLimit(v.usage_limit ? Number(v.usage_limit) : null)
     setUsagePerUser(v.usage_per_user || 1)
-    setStartsAt(formatLocalISO(v.starts_at))
-    setExpiresAt(formatLocalISO(v.expires_at))
+    setStartsAt(formatLocalISO(v.starts_at || ''))
+    setExpiresAt(formatLocalISO(v.expires_at || ''))
     setIsActive(v.is_active !== false)
     setIsOpen(true)
   }
 
-  const handleToggleActive = async (v: AdminVoucherItem) => {
+  const handleToggleActive = async (v: Voucher) => {
     try {
       const { error } = await supabase
         .from('vouchers')
@@ -233,7 +220,7 @@ interface AdminVoucherItem {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                 {vouchers.map((v: AdminVoucherItem) => (
+                 {vouchers.map((v: Voucher) => (
                   <tr key={v.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
                       <span className="font-bold text-neutral-900 text-sm block font-mono select-all tracking-wider">
@@ -256,8 +243,8 @@ interface AdminVoucherItem {
                       <p className="text-[10px] text-neutral-400 font-normal">Maksimal {v.usage_per_user} per user</p>
                     </td>
                     <td className="py-4 px-4 text-center text-neutral-550 leading-relaxed">
-                      <p>{new Date(v.starts_at).toLocaleDateString()}</p>
-                      <p className="text-[10px] text-neutral-400 font-normal">s.d {new Date(v.expires_at).toLocaleDateString()}</p>
+                      <p>{v.starts_at ? new Date(v.starts_at).toLocaleDateString() : '-'}</p>
+                      <p className="text-[10px] text-neutral-400 font-normal">s.d {v.expires_at ? new Date(v.expires_at).toLocaleDateString() : '-'}</p>
                     </td>
                     <td className="py-4 px-4 text-center">
                       <button

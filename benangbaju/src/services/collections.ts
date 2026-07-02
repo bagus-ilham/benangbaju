@@ -5,16 +5,16 @@ import * as types from "@/modules/collection/domain/collection.types";
 
 export type { AdminCollectionItem, Collection } from "@/modules/collection/domain/collection.types";
 
-export async function getActiveCollections(supabase: SupabaseClient<Database>) {
-    return new CollectionService(supabase).getActiveCollections();
+export async function getActiveCollections(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new CollectionService(supabase).getActiveCollections(page, limit);
 }
 
 export async function getCollectionBySlug(supabase: SupabaseClient<Database>, slug: string) {
     return new CollectionService(supabase).getCollectionBySlug(slug);
 }
 
-export async function adminGetCollections(supabase: SupabaseClient<Database>) {
-    return new CollectionService(supabase).adminGetCollections();
+export async function adminGetCollections(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new CollectionService(supabase).adminGetCollections(page, limit);
 }
 
 export async function adminCreateCollection(supabase: SupabaseClient<Database>, collectionData: {

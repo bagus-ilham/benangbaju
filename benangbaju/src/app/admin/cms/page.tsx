@@ -36,8 +36,10 @@ export default function AdminCmsPage() : React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'redirects' | 'landing_pages'>('redirects')
 
   // Queries
-  const { data: redirects, isLoading: redirectsLoading, refetch: refetchRedirects } = useAdminRedirects()
-  const { data: landingPages, isLoading: pagesLoading, refetch: refetchPages } = useAdminLandingPages()
+  const { data: redirectsRes, isLoading: redirectsLoading, refetch: refetchRedirects } = useAdminRedirects()
+  const redirects = redirectsRes?.data || []
+  const { data: landingPagesRes, isLoading: pagesLoading, refetch: refetchPages } = useAdminLandingPages()
+  const landingPages = landingPagesRes?.data || []
 
   // Mutations
   const createRedirectMutation = useAdminCreateRedirect()

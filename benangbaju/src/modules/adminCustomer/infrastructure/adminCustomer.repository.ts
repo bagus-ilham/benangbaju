@@ -4,25 +4,30 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { CustomerProfile, CustomerDetail } from "../domain/adminCustomer.types";
 
+import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
+
 // 1. Get list of all customer profiles
 export async function adminGetCustomers(
-  supabase: SupabaseClient<Database>
-): Promise<CustomerProfile[]> {
-  const { data, error } = await supabase
+  supabase: SupabaseClient<Database>,
+  page = 1,
+  limit = 20
+): Promise<ApiListResponse<CustomerProfile>> {
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+  const { data, count, error } = await supabase
     .from('profiles')
-    .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
+    .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at', { count: 'exact' })
     .neq('role', 'admin')
     .order('created_at', { ascending: false })
-    .limit(500)
+    .range(from, to)
 
   if (error) {
     safeLogError('Error fetching admin customers:', error)
-    throw error
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat daftar pelanggan')
   }
 
-  if (!data) return []
-
-  return data.map(row => ({
+  const profiles = (data || []).map(row => ({
     id: row.id,
     name: row.name,
     email: row.email,
@@ -33,6 +38,8 @@ export async function adminGetCustomers(
     created_at: row.created_at,
     updated_at: row.updated_at,
   }))
+
+  return paginated(profiles, count || 0, page, limit)
 }
 
 // 2. Toggle customer activation status (Block / Unblock)
@@ -40,7 +47,7 @@ export async function adminToggleCustomerStatus(
   supabase: SupabaseClient<Database>,
   customerId: string,
   isActive: boolean
-): Promise<{ success: boolean; error: Error | null }> {
+): Promise<ApiResponse<null>> {
   const { error } = await supabase
     .from('profiles')
     .update({ is_active: isActive, updated_at: new Date().toISOString() })
@@ -49,34 +56,29 @@ export async function adminToggleCustomerStatus(
 
   if (error) {
     safeLogError('Error toggling customer status:', error)
-    return { success: false, error: new Error('Gagal mengubah status pelanggan.') }
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengubah status pelanggan.', { detail: [error.message] })
   }
 
   await insertAdminActivityLog(supabase, 'update', 'customer', customerId, `Toggled customer ${customerId} status to ${isActive}`)
 
-  return { success: true, error: null }
+  return ok(null)
 }
 
 export async function adminGetCustomerDetail(
   supabase: SupabaseClient<Database>,
   customerId: string
-): Promise<CustomerDetail | null> {
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
-    .eq('id', customerId)
-    .single();
-
-  if (profileError || !profile) {
-    safeLogError('Error fetching admin customer profile:', profileError);
-    return null;
-  }
-
+): Promise<ApiResponse<CustomerDetail>> {
   const [
-    { data: addresses },
-    { data: wishlist },
-    { data: cart }
+    profileRes,
+    addressesRes,
+    wishlistRes,
+    cartRes
   ] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
+      .eq('id', customerId)
+      .single(),
     supabase
       .from('user_addresses')
       .select('*')
@@ -95,35 +97,40 @@ export async function adminGetCustomerDetail(
       .eq('user_id', customerId),
     supabase
       .from('carts')
-      .select('id')
+      .select(`
+        id,
+        cart_items(
+          id,
+          quantity,
+          product_variants (
+            id,
+            name,
+            price,
+            sku,
+            products (
+              id,
+              name,
+              product_images ( url )
+            )
+          )
+        )
+      `)
       .eq('user_id', customerId)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
   ]);
 
-  let cartItems: any[] = [];
-  if (cart?.id) {
-    const { data: items } = await supabase
-      .from('cart_items')
-      .select(`
-        id,
-        quantity,
-        product_variants (
-          id,
-          name,
-          price,
-          sku,
-          products (
-            id,
-            name,
-            product_images ( url )
-          )
-        )
-      `)
-      .eq('cart_id', cart.id);
-    cartItems = items || [];
+  const profile = profileRes.data;
+  if (profileRes.error || !profile) {
+    safeLogError('Error fetching admin customer profile:', profileRes.error);
+    return fail(ApiErrorCode.NOT_FOUND, 'Pelanggan tidak ditemukan', { detail: [profileRes.error?.message || ''] });
   }
+
+  const addresses = addressesRes.data;
+  const wishlist = wishlistRes.data;
+  const cart = cartRes.data;
+  const cartItems = (cart?.cart_items && Array.isArray(cart.cart_items)) ? cart.cart_items : [];
 
   // Format data
   const formattedWishlist = (wishlist || []).map((w: any) => {
@@ -165,7 +172,7 @@ export async function adminGetCustomerDetail(
     };
   });
 
-  return {
+  return ok({
     id: profile.id,
     name: profile.name,
     email: profile.email,
@@ -178,5 +185,5 @@ export async function adminGetCustomerDetail(
     addresses: addresses || [],
     wishlist_items: formattedWishlist,
     cart_items: formattedCart,
-  };
+  });
 }

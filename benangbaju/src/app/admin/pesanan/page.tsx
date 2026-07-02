@@ -38,7 +38,8 @@ export default function AdminOrdersPage() : React.JSX.Element {
     page,
     limit
   )
-  const { data: returnsData = [], isLoading: returnsLoading, isError: returnsError, refetch: refetchReturns } = useAdminReturnRequests()
+  const { data: returnsDataResponse, isLoading: returnsLoading, isError: returnsError, refetch: refetchReturns } = useAdminReturnRequests()
+  const returnsData = returnsDataResponse?.success ? (returnsDataResponse.data || []) : []
 
   const updateReturnMutation = useAdminUpdateReturnRequest()
   const updateOrderStatusMutation = useAdminUpdateOrderStatus()
@@ -106,8 +107,8 @@ export default function AdminOrdersPage() : React.JSX.Element {
     }
   }
 
-  const orders = ordersData?.orders || []
-  const totalCount = ordersData?.totalCount || 0
+  const orders = ordersData?.success ? (ordersData.data || []) : []
+  const totalCount = ordersData?.success ? (ordersData.pagination?.total_count || 0) : 0
   const totalPages = Math.ceil(totalCount / limit)
 
   return (
@@ -133,9 +134,9 @@ export default function AdminOrdersPage() : React.JSX.Element {
             }`}
           >
             {tab.label}
-            {tab.id === 'returns' && returnsData.length > 0 && (
+              {tab.id === 'returns' && returnsData.length > 0 && (
               <span className="ml-1.5 bg-red-500 text-white font-bold px-1.5 py-0.5 text-[9px] rounded-full">
-                {returnsData.filter((r) => r.status === 'pending').length}
+                {returnsData.filter((r: AdminReturnRequestListItem) => r.status === 'pending').length}
               </span>
             )}
           </button>

@@ -5,8 +5,8 @@ import * as types from "@/modules/notification/domain/notification.types";
 
 export type { UserNotification } from "@/modules/notification/domain/notification.types";
 
-export async function getUserNotifications(supabase: SupabaseClient<Database>, userId: string) {
-    return new NotificationService(supabase).getUserNotifications(userId);
+export async function getUserNotifications(supabase: SupabaseClient<Database>, userId: string, page = 1, limit = 20) {
+    return new NotificationService(supabase).getUserNotifications(userId, page, limit);
 }
 
 export async function markNotificationRead(supabase: SupabaseClient<Database>, notificationId: string, userId: string) {

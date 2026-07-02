@@ -7,12 +7,12 @@ export class ReviewService {
     constructor(private supabase: SupabaseClient<Database>) {
     }
 
-    async getApprovedReviews(productId: string) {
-        return repo.getApprovedReviews(this.supabase, productId);
+    async getApprovedReviews(productId: string, page = 1, limit = 20) {
+        return repo.getApprovedReviews(this.supabase, productId, page, limit);
     }
 
-    async adminGetReviews() {
-        return repo.adminGetReviews(this.supabase);
+    async adminGetReviews(page = 1, limit = 20) {
+        return repo.adminGetReviews(this.supabase, page, limit);
     }
 
     async adminUpdateReviewStatus(reviewId: string, status: 'pending' | 'approved' | 'rejected' | 'hidden') {

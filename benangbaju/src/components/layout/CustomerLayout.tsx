@@ -15,6 +15,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Input } from '@/components/shared'
 import { MiniCartDrawer } from './MiniCartDrawer'
 import { Footer } from './Footer'
+import { ScrollProgressBar } from './ScrollProgressBar'
+import { ScrollToTopButton } from './ScrollToTopButton'
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary'
 import { getProducts, type ProductListItem } from '@/services/products'
 import { useQuery } from '@tanstack/react-query'
@@ -31,11 +33,12 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
 
-  const { data: settings = [] } = useQuery({
+  const { data: settingsResponse } = useQuery({
     queryKey: ['site-settings'],
     queryFn: () => getSiteSettings(supabase),
     staleTime: 1000 * 60 * 10, // 10 minutes
   })
+  const settings = settingsResponse?.data || []
 
   const logoSetting = settings.find((s) => s.key === 'store_logo_url')
   const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null
@@ -57,7 +60,6 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
   const [isSearchingInstant, setIsSearchingInstant] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [scrollProgress, setScrollProgress] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [animateCart, setAnimateCart] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
@@ -74,8 +76,8 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
     const startTimer = setTimeout(() => setIsSearchingInstant(true), 0)
     const delayDebounceFn = setTimeout(async () => {
       try {
-        const { products } = await getProducts(supabase, { searchQuery: searchQuery.trim(), limit: 3 })
-        setInstantResults(products)
+        const res = await getProducts(supabase, { searchQuery: searchQuery.trim(), limit: 3 })
+        setInstantResults(res.data || [])
       } catch (err) {
         console.error('Instant search error:', err)
       } finally {
@@ -93,14 +95,18 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 10)
+          const pastThreshold = window.scrollY > 10
+          setIsScrolled((prev) => {
+            if (prev !== pastThreshold) return pastThreshold
+            return prev
+          })
           
-          const totalScroll = document.documentElement.scrollHeight - window.innerHeight
-          if (totalScroll > 0) {
-            const currentProgress = (window.scrollY / totalScroll) * 100
-            setScrollProgress(currentProgress)
-          }
-          setShowScrollTop(window.scrollY > 400)
+          const pastScrollTopThreshold = window.scrollY > 400
+          setShowScrollTop((prev) => {
+            if (prev !== pastScrollTopThreshold) return pastScrollTopThreshold
+            return prev
+          })
+          
           ticking = false
         })
         ticking = true
@@ -117,10 +123,6 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
-
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   useEffect(() => {
     if (totalQuantity > 0) {
@@ -179,6 +181,8 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
           </Link>
         </p>
       </div>
+
+      <ScrollProgressBar />
 
       {/* Header — Sticky clean navigation with glassmorphism */}
       <header
@@ -643,45 +647,6 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
               <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.451 5.489 0 9.953-4.461 9.956-9.952.002-2.661-1.033-5.162-2.914-7.045C16.429 1.726 13.93 .689 11.27.689c-5.494 0-9.961 4.467-9.964 9.96-.001 1.93.501 3.81 1.456 5.429L1.737 22.09l6.096-1.6c1.559.851 3.018 1.251 4.6 1.251h-.002zm11.366-7.294c-.312-.156-1.848-.912-2.134-1.017-.286-.105-.495-.156-.703.156-.208.312-.807.105-.989.312-.182.208-.364.234-.676.078-.312-.156-1.318-.486-2.51-1.549-.928-.827-1.554-1.849-1.736-2.16-.182-.312-.02-.481.136-.636.14-.139.312-.364.468-.546.156-.182.208-.312.312-.52.104-.208.052-.39-.026-.546-.078-.156-.703-1.693-.963-2.319-.253-.611-.513-.53-.703-.53-.182-.01-.39-.01-.598-.01-.208 0-.546.078-.832.39-.286.312-1.092 1.066-1.092 2.6 0 1.534 1.118 3.016 1.274 3.224.156.208 2.199 3.359 5.328 4.709.745.321 1.326.513 1.778.656.75.238 1.433.205 1.973.125.602-.09 1.848-.755 2.11-1.484.26-.73.26-1.353.182-1.484-.078-.13-.286-.208-.598-.364z" />
             </svg>
           </motion.a>
-        )}
-      </AnimatePresence>
-
-      {/* Scroll-to-Top Floating Button */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            onClick={handleScrollToTop}
-            className="fixed bottom-6 right-6 z-40 p-3 bg-white text-brand-black shadow-lg border border-neutral-100 flex items-center justify-center cursor-pointer hover:border-brand-gold transition-colors group rounded-none"
-            aria-label="Kembali ke atas"
-          >
-            {/* Circular Progress Path */}
-            <svg className="absolute inset-0 w-full h-full -rotate-90 p-0.5" viewBox="0 0 36 36">
-              <path
-                className="text-neutral-100"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                fill="none"
-                d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <path
-                className="text-brand-gold transition-all duration-100"
-                strokeDasharray={`${scrollProgress}, 100`}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                stroke="currentColor"
-                fill="none"
-                d="M18 2.0845
-                  a 15.9155 15.9155 0 0 1 0 31.831
-                  a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-            </svg>
-            <ChevronRight className="h-4 w-4 -rotate-90 group-hover:-translate-y-0.5 transition-transform text-brand-black relative z-10" />
-          </motion.button>
         )}
       </AnimatePresence>
     </div>

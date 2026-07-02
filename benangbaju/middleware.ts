@@ -52,6 +52,29 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // API v1 Rate Limiting & Auth
+  if (pathname.startsWith('/api/v1/')) {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    const allowed = checkRateLimit(ip + '_v1', 60, 60) // 60 requests per minute
+    
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: { code: 'RATE_LIMITED', message: 'Terlalu banyak permintaan' } }, { status: 429 })
+    }
+
+    // specific check for M2M endpoints
+    if (pathname.startsWith('/api/v1/inventory/sync')) {
+      const apiKey = request.headers.get('x-api-key')
+      const validKey = process.env.ERP_API_KEY
+      
+      if (!validKey || apiKey !== validKey) {
+        return NextResponse.json(
+          { success: false, error: { code: 'UNAUTHORIZED', message: 'Invalid or missing API Key' } },
+          { status: 401 }
+        )
+      }
+    }
+  }
+
   return NextResponse.next()
 }
 
@@ -62,6 +85,7 @@ export const config = {
     '/daftar',
     '/lupa-password',
     '/reset-password',
-    '/api/auth/:path*'
+    '/api/auth/:path*',
+    '/api/v1/:path*'
   ],
 }

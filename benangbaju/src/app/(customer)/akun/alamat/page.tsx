@@ -25,7 +25,8 @@ export default function AlamatPage() : React.JSX.Element {
     }
   }, [isAuthenticated, authLoading, router])
 
-  const { data: addresses, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
+  const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
+  const addresses = addressesRes?.data || []
   const deleteMutation = useDeleteUserAddress()
   const setDefaultMutation = useSetDefaultAddress()
 

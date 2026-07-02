@@ -48,15 +48,15 @@ export default function PesananPage() : React.JSX.Element {
   }, [user])
 
   // 3. Fetch Orders
-  const { data, isLoading: ordersLoading, refetch } = useOrdersList(
+  const { data: ordersResponse, isLoading: ordersLoading, refetch } = useOrdersList(
     user?.id || '',
     activeTab,
     page,
     limit
   )
 
-  const orders = data?.orders || []
-  const totalCount = data?.totalCount || 0
+  const orders = Array.isArray(ordersResponse?.data) ? ordersResponse.data : []
+  const totalCount = ordersResponse?.pagination?.total_count || 0
   const totalPages = Math.ceil(totalCount / limit)
 
   const cancelMutation = useCancelOrder()
@@ -90,15 +90,11 @@ export default function PesananPage() : React.JSX.Element {
   const executeCancelOrder = async () => {
     if (!cancelOrderInfo) return
     try {
-      const res = await cancelMutation.mutateAsync({ orderId: cancelOrderInfo.id, reason: 'Dibatalkan oleh customer' })
-      if (res.success) {
-        toast.success('Pesanan berhasil dibatalkan')
-        refetch()
-      } else {
-        toast.error(res.message || 'Gagal membatalkan pesanan')
-      }
-    } catch (err) {
-      toast.error('Terjadi kesalahan saat membatalkan pesanan')
+      await cancelMutation.mutateAsync({ orderId: cancelOrderInfo.id, reason: 'Dibatalkan oleh customer' })
+      toast.success('Pesanan berhasil dibatalkan')
+      refetch()
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal membatalkan pesanan')
     } finally {
       setCancelOrderInfo(null)
     }
@@ -112,15 +108,11 @@ export default function PesananPage() : React.JSX.Element {
   const executeConfirmDelivery = async () => {
     if (!receiptOrderInfo) return
     try {
-      const res = await confirmMutation.mutateAsync(receiptOrderInfo.id)
-      if (res.success) {
-        toast.success('Pesanan berhasil diselesaikan!')
-        refetch()
-      } else {
-        toast.error(res.message || 'Gagal menyelesaikan pesanan')
-      }
-    } catch (err) {
-      toast.error('Terjadi kesalahan saat menyelesaikan pesanan')
+      await confirmMutation.mutateAsync(receiptOrderInfo.id)
+      toast.success('Pesanan berhasil dikonfirmasi')
+      refetch()
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal mengkonfirmasi pesanan')
     } finally {
       setReceiptOrderInfo(null)
     }
@@ -130,13 +122,8 @@ export default function PesananPage() : React.JSX.Element {
   const handlePayOrder = async (orderNumber: string) => {
     try {
       toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
-      const paymentRes = await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
       toast.dismiss('payment-loading')
-
-      if (!paymentRes.success || !paymentRes.token) {
-        toast.error(paymentRes.message || 'Gagal memuat pembayaran. Coba lagi.')
-        return
-      }
 
       // Delayed refetch to give webhook time to process
       const scheduleRefetches = () => {
@@ -145,28 +132,30 @@ export default function PesananPage() : React.JSX.Element {
         setTimeout(() => refetch(), 10000)
       }
 
-      if (window.snap) {
-        window.snap.pay(paymentRes.token, {
-          onSuccess: () => {
-            toast.success('Pembayaran berhasil! Memverifikasi...')
-            scheduleRefetches()
-          },
-          onPending: () => {
-            toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-            scheduleRefetches()
-          },
-          onError: () => {
-            toast.error('Pembayaran gagal! Coba lagi.')
-          },
-          onClose: () => {
-            // User closed Snap popup — refetch in case payment was made
-            scheduleRefetches()
-          },
-        })
-      } else {
-        if (paymentRes.redirect_url) {
-          window.location.href = paymentRes.redirect_url
+      if (token) {
+        if (window.snap) {
+          window.snap.pay(token, {
+            onSuccess: () => {
+              toast.success('Pembayaran berhasil! Memverifikasi...')
+              scheduleRefetches()
+            },
+            onPending: () => {
+              toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
+              scheduleRefetches()
+            },
+            onError: () => {
+              toast.error('Pembayaran gagal! Coba lagi.')
+            },
+            onClose: () => {
+              // User closed Snap popup — refetch in case payment was made
+              scheduleRefetches()
+            },
+          })
+        } else if (redirect_url) {
+          window.location.href = redirect_url
         }
+      } else {
+        toast.error('Gagal memuat pembayaran. Coba lagi.')
       }
     } catch (err) {
       toast.dismiss('payment-loading')

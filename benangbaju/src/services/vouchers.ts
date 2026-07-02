@@ -9,8 +9,8 @@ export async function validateVoucher(supabase: SupabaseClient<Database>, code: 
     return new VoucherService(supabase).validateVoucher(code, subtotal, userId);
 }
 
-export async function adminGetVouchers(supabase: SupabaseClient<Database>) {
-    return new VoucherService(supabase).adminGetVouchers();
+export async function adminGetVouchers(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new VoucherService(supabase).adminGetVouchers(page, limit);
 }
 
 export async function adminCreateVoucher(supabase: SupabaseClient<Database>, voucherData: {

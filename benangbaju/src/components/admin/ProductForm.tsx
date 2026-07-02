@@ -83,7 +83,8 @@ interface ProductFormProps {
 export function ProductForm({ initialData, onSubmit, isSubmitting, title }: ProductFormProps) : React.JSX.Element {
   const router = useRouter()
   const { data: categories, isLoading: catsLoading } = useAdminCategories()
-  const { data: collections, isLoading: colsLoading } = useAdminCollections()
+  const { data: collectionsRes, isLoading: colsLoading } = useAdminCollections()
+  const collections = collectionsRes?.data || []
 
   // Form states
   const [name, setName] = useState('')

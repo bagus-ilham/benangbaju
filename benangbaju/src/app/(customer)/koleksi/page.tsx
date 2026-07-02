@@ -16,7 +16,8 @@ async function getCachedCollections() {
 }
 
 export default async function CollectionsIndexPage() : Promise<React.JSX.Element> {
-  const collections = await getCachedCollections()
+  const collectionsRes = await getCachedCollections()
+  const collections = collectionsRes.data || []
 
   return (
     <div className="bg-white min-h-screen">

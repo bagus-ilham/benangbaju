@@ -9,8 +9,8 @@ export async function getActiveFlashSale(supabase: SupabaseClient<Database>) {
     return new FlashSaleService(supabase).getActiveFlashSale();
 }
 
-export async function adminGetFlashSales(supabase: SupabaseClient<Database>) {
-    return new FlashSaleService(supabase).adminGetFlashSales();
+export async function adminGetFlashSales(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new FlashSaleService(supabase).adminGetFlashSales(page, limit);
 }
 
 export async function adminCreateFlashSale(supabase: SupabaseClient<Database>, saleData: {

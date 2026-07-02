@@ -3,11 +3,10 @@ import { getAdminSupabase } from './supabaseClient'
 import { invalidateAdminQueries } from './invalidation'
 import {
   adminGetOrders,
-  adminUpdateOrderStatus,
-  adminUpdateTrackingNumber,
   adminGetReturnRequests,
   adminUpdateReturnRequest,
 } from '@/services/orders'
+import { adminUpdateOrderStatusAction, adminUpdateTrackingNumberAction } from '@/actions/admin'
 import { AdminOrderListItem, AdminReturnRequestListItem } from '@/modules/order/domain/order.types'
 
 export interface AdminUpdateOrderStatusInput {
@@ -23,47 +22,56 @@ export interface AdminUpdateReturnRequestInput {
   refundAmount?: number | null
 }
 
-export function useAdminOrders(status = 'all', search = '', page = 1, limit = 20) : UseQueryResult<{ orders: AdminOrderListItem[]; totalCount: number; }, Error> {
+export function useAdminOrders(status = 'all', search = '', page = 1, limit = 20) {
   return useQuery({
     queryKey: ['admin', 'orders', status, search, page, limit],
     queryFn: () => adminGetOrders(getAdminSupabase(), { status, search, page, limit })
   })
 }
 
-export function useAdminUpdateOrderStatus() : UseMutationResult<{ success: boolean; message?: string; }, Error, AdminUpdateOrderStatusInput, unknown> {
+export function useAdminUpdateOrderStatus() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ orderId, status, trackingNumber }: AdminUpdateOrderStatusInput) =>
-      adminUpdateOrderStatus(getAdminSupabase(), orderId, status, trackingNumber),
+    mutationFn: async ({ orderId, status, trackingNumber }: AdminUpdateOrderStatusInput) => {
+      const res = await adminUpdateOrderStatusAction(orderId, status, trackingNumber)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal mengupdate status pesanan')
+      return res.data!
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['orders', 'dashboard'])
     }
   })
 }
 
-export function useAdminUpdateTrackingNumber() : UseMutationResult<{ success: boolean; message?: string; }, Error, { orderId: string, trackingNumber: string }, unknown> {
+export function useAdminUpdateTrackingNumber() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ orderId, trackingNumber }: { orderId: string, trackingNumber: string }) =>
-      adminUpdateTrackingNumber(getAdminSupabase(), orderId, trackingNumber),
+    mutationFn: async ({ orderId, trackingNumber }: { orderId: string, trackingNumber: string }) => {
+      const res = await adminUpdateTrackingNumberAction(orderId, trackingNumber)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menyimpan resi')
+      return res.data!
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['orders', 'dashboard'])
     }
   })
 }
 
-export function useAdminReturnRequests() : UseQueryResult<AdminReturnRequestListItem[], Error> {
+export function useAdminReturnRequests() {
   return useQuery({
     queryKey: ['admin', 'return-requests'],
     queryFn: () => adminGetReturnRequests(getAdminSupabase())
   })
 }
 
-export function useAdminUpdateReturnRequest() : UseMutationResult<{ success: boolean; }, Error, AdminUpdateReturnRequestInput, unknown> {
+export function useAdminUpdateReturnRequest() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ requestId, status, adminNotes, refundAmount }: AdminUpdateReturnRequestInput) =>
-      adminUpdateReturnRequest(getAdminSupabase(), requestId, { status, adminNotes, refundAmount }),
+    mutationFn: async ({ requestId, status, adminNotes, refundAmount }: AdminUpdateReturnRequestInput) => {
+      const res = await adminUpdateReturnRequest(getAdminSupabase(), requestId, { status, adminNotes, refundAmount })
+      if (!res.success) throw new Error(res.error?.message || 'Gagal mengupdate permintaan retur')
+      return res.data!
+    },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['return-requests', 'orders'])
     }

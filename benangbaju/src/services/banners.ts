@@ -5,12 +5,12 @@ import * as types from "@/modules/banner/domain/banner.types";
 
 export type { Banner } from "@/modules/banner/domain/banner.types";
 
-export async function getActiveBanners(supabase: SupabaseClient<Database>) {
-    return new BannerService(supabase).getActiveBanners();
+export async function getActiveBanners(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new BannerService(supabase).getActiveBanners(page, limit);
 }
 
-export async function adminGetBanners(supabase: SupabaseClient<Database>) {
-    return new BannerService(supabase).adminGetBanners();
+export async function adminGetBanners(supabase: SupabaseClient<Database>, page = 1, limit = 20) {
+    return new BannerService(supabase).adminGetBanners(page, limit);
 }
 
 export async function adminCreateBanner(supabase: SupabaseClient<Database>, bannerData: {
