@@ -7,8 +7,9 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
+  const { slug } = await params
+
   try {
-    const { slug } = await params
     const supabase = await createServerClient()
     const result = await getProductBySlug(supabase, slug)
 

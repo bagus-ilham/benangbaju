@@ -4,15 +4,15 @@ import { getProducts } from '@/modules/product/infrastructure/product.repository
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url)
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    const limit = parseInt(searchParams.get('limit') || '20', 10)
-    const sortBy = searchParams.get('sortBy') as any || 'newest'
-    const searchQuery = searchParams.get('q') || undefined
-    const categorySlug = searchParams.get('category') || undefined
-    const collectionSlug = searchParams.get('collection') || undefined
+  const { searchParams } = new URL(req.url)
+  const page = parseInt(searchParams.get('page') || '1', 10)
+  const limit = parseInt(searchParams.get('limit') || '20', 10)
+  const sortBy = searchParams.get('sortBy') as any || 'newest'
+  const searchQuery = searchParams.get('q') || undefined
+  const categorySlug = searchParams.get('category') || undefined
+  const collectionSlug = searchParams.get('collection') || undefined
 
+  try {
     const supabase = await createServerClient()
     const result = await getProducts(supabase, {
       page,
