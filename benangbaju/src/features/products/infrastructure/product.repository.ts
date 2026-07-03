@@ -473,7 +473,7 @@ export async function adminCreateProduct(
     p_variants: variants as any,
     p_images: images as any,
     p_links: marketplaceLinks as any,
-    p_collections: collectionIds.length > 0 ? collectionIds : null as any
+    p_collections: collectionIds as any
   })
 
   if (rpcErr) {
@@ -558,12 +558,12 @@ export async function adminUpdateProduct(
     p_product_id: productId as any,
     p_product: productData as any,
     p_variants_to_upsert: variantsToUpsert as any,
-    p_variant_ids_to_delete: variantIdsToDelete.length > 0 ? variantIdsToDelete : null as any,
+    p_variant_ids_to_delete: variantIdsToDelete as any,
     p_images_to_upsert: imagesToUpsert as any,
-    p_image_ids_to_delete: imageIdsToDelete.length > 0 ? imageIdsToDelete : null as any,
+    p_image_ids_to_delete: imageIdsToDelete as any,
     p_links_to_upsert: linksToUpsert as any,
-    p_link_ids_to_delete: linkIdsToDelete.length > 0 ? linkIdsToDelete : null as any,
-    p_collections: collectionIds.length > 0 ? collectionIds : null as any,
+    p_link_ids_to_delete: linkIdsToDelete as any,
+    p_collections: collectionIds as any,
   })
 
   if (rpcErr) {
