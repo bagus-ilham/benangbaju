@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, X, Trash2, Plus, Minus, ArrowRight } from 'lucide-react'

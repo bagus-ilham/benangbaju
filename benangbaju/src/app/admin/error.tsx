@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 
 export default function AdminError({
   error,

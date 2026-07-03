@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { ProductCard } from '@/entities/product/ui/ProductCard'
 import { ProductListItem } from '@/entities/product/model/product.types'

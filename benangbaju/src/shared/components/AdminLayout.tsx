@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'

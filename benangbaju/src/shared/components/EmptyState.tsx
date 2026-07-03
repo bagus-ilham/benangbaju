@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { LucideIcon, Percent, PackageSearch, Heart, ClipboardList, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'

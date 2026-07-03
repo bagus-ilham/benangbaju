@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import { DesktopNavbar } from './DesktopNavbar'
 import { MobileMenuDrawer } from './MobileMenuDrawer'

@@ -29,7 +29,7 @@ import {
   XCircle,
   ClipboardList,
 } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatIDR } from '@/lib/utils'
 

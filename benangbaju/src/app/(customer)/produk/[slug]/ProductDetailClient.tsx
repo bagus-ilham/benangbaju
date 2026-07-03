@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ProductDetailItem, ProductVariant } from '@/features/products/services'

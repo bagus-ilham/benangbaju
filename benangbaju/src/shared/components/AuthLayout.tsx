@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import React from 'react'
 import { CurrentYear } from '@/shared/components/CurrentYear'
 

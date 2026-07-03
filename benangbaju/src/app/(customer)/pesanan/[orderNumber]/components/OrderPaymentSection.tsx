@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '@/shared/components'
 import { Loader2, CheckCircle2 } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 
 interface OrderPaymentSectionProps {
   order: any

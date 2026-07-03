@@ -16,7 +16,7 @@ import {
   ClientDateTime,
 } from '@/shared/components'
 import { TrendingUp, ShoppingBag, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()

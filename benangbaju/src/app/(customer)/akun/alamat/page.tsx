@@ -13,7 +13,7 @@ import { AddressCard } from '@/features/users/components/AddressCard'
 import { AddressModal } from '@/features/users/components/AddressModal'
 import { AuthLoading, Button, PageContainer, PageHero } from '@/shared/components'
 import { ArrowLeft, Plus } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 export default function AlamatPage(): React.JSX.Element {

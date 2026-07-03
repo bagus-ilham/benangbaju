@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { getImageProps } from 'next/image'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Banner } from '@/features/marketing/services/banners'

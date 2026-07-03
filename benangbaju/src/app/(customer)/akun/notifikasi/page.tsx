@@ -10,7 +10,7 @@ import {
 } from '@/features/core/hooks/useNotifications'
 import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
 import { Bell, ClipboardList, Heart, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
 import { createBrowserClient } from '@/lib/supabase/client'

@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveCollections } from '@/features/marketing/services/collections'

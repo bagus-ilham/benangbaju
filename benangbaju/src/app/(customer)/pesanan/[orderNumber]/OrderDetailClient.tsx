@@ -19,7 +19,7 @@ import { OrderTrackingSection } from './components/OrderTrackingSection'
 import { OrderPaymentSection } from './components/OrderPaymentSection'
 import { OrderItemsList } from './components/OrderItemsList'
 import { OrderReviewModal } from './components/OrderReviewModal'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()

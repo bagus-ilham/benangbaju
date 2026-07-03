@@ -16,7 +16,7 @@ import {
   Textarea,
 } from '@/shared/components'
 import { ArrowLeft, AlertTriangle, ShieldCheck, Image as ImageIcon, X } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { uploadImage } from '@/lib/supabase/storage'

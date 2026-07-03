@@ -29,7 +29,7 @@ import {
   Copy,
   MoreHorizontal,
 } from 'lucide-react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import type { Column } from '@/shared/components/DataTable'
 

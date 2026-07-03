@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Heart } from 'lucide-react'

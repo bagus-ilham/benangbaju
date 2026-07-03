@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { Button, Input, CurrentYear } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/features/marketing/services/flashSales'
 import { ProductCard } from '@/entities/product/ui/ProductCard'

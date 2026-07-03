@@ -1,6 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { ShoppingBag, Tag, Truck, CreditCard, ClipboardList } from 'lucide-react'
 import { PageHero, PageContainer } from '@/shared/components'
 

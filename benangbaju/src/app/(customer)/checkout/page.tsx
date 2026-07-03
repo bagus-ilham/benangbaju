@@ -14,7 +14,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { AddressModal } from '@/features/users/components/AddressModal'
 import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
 import { CheckoutAddressForm, CheckoutSummaryCard } from './components'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'

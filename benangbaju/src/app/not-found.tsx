@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { HelpCircle } from 'lucide-react'
 import { Button } from '@/shared/components'
 

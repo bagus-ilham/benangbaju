@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { useAuthStore } from '@/entities/user/model/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, AuthLoading, PageContainer, PageHero } from '@/shared/components'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { User, MapPin, ClipboardList, Heart, LogOut, Key, Bell } from 'lucide-react'
 

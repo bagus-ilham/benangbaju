@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
+import { SmartLink as Link } from '@/shared/components'
 import { Eye, Truck } from 'lucide-react'
 import { Button, TableSkeleton } from '@/shared/components'
 import type { AdminOrderListItem } from '@/features/orders/services'
