@@ -293,7 +293,7 @@ export const ProductCard = React.memo(function ProductCard({
       </div>
 
       {/* Product Information */}
-      <div className="flex flex-col pt-4 pb-2 space-y-1">
+      <div className="flex flex-col pt-4 pb-4 px-3 space-y-1">
         {/* Category Name */}
         {product.categories && (
           <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400">
