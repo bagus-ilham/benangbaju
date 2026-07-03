@@ -137,13 +137,8 @@ export const ProductCard = React.memo(function ProductCard({
         'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] rounded-xl overflow-hidden',
         className
       )}
-      onMouseEnter={() => {
-        setIsHovered(true)
-        // Smart Prefetch: Pre-load the product page data in the background instantly on hover
-        router.prefetch(productUrl)
-      }}
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={() => router.prefetch(productUrl)} // Prefetch on touch start for mobile
     >
       {/* Product Image Area */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 transition-colors duration-300">

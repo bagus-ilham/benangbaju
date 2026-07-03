@@ -70,7 +70,6 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     priority: true,
     className: 'object-cover',
     style: {
-      animation: 'ken-burns 8s ease-out forwards',
       width: '100%',
       height: '100%',
       position: 'absolute' as const,
