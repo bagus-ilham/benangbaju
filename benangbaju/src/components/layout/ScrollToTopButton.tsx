@@ -1,10 +1,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export function ScrollToTopButton() {
+  const pathname = usePathname()
   const [show, setShow] = useState(false)
 
   useEffect(() => {
@@ -35,7 +38,10 @@ export function ScrollToTopButton() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           onClick={handleScrollToTop}
-          className="fixed bottom-6 right-6 p-3 bg-brand-black text-white shadow-lg hover:bg-brand-gold hover:-translate-y-1 transition-all z-50 rounded-none group"
+          className={cn(
+            "fixed right-6 p-3 bg-brand-black text-white shadow-lg hover:bg-brand-gold hover:-translate-y-1 transition-all z-50 rounded-none group",
+            pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-6'
+          )}
           aria-label="Kembali ke atas"
         >
           <ChevronRight className="h-5 w-5 -rotate-90 group-hover:scale-110 transition-transform" />

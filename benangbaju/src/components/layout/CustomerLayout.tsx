@@ -196,7 +196,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Left side: Mobile menu toggle & Desktop links */}
-            <div className="flex items-center">
+            <div className="flex items-center md:flex-1">
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(true)}
@@ -224,13 +224,13 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
               </nav>
             </div>
 
-            <div className="flex justify-center absolute left-1/2 -translate-x-1/2">
+            <div className="flex justify-center flex-shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2">
               <Link
                 href="/"
                 className="font-heading text-base md:text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none hover:text-brand-gold transition-colors duration-300 flex items-center justify-center"
               >
                 {logoUrl ? (
-                  <div className="relative h-10 md:h-14 w-[150px] md:w-[200px]">
+                  <div className="relative h-10 md:h-14 w-[110px] sm:w-[130px] md:w-[200px]">
                     <Image
                       src={logoUrl}
                       alt="Benangbaju Logo"
@@ -247,7 +247,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
             </div>
 
             {/* Right side: Action icons */}
-            <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4 md:flex-1">
               {/* Search Toggle */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -623,6 +623,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
       </main>
 
       <Footer />
+      <ScrollToTopButton />
       <MiniCartDrawer />
 
       {/* Floating WhatsApp Bubble */}
@@ -636,7 +637,8 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "fixed bottom-6 z-45 w-11 h-11 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-350 cursor-pointer"
+              "fixed z-45 w-11 h-11 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-350 cursor-pointer",
+              pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-6'
             )}
             style={{
               right: showScrollTop ? '80px' : '24px',
