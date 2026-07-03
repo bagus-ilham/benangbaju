@@ -337,7 +337,7 @@ export function ProductForm({
         url: '',
         alt_text: '',
         sort_order: prev.length,
-        is_primary: prev.length === 0,
+        is_primary: !vId && prev.filter((i) => !i.variant_id).length === 0,
         variant_id: vId,
       },
     ])
@@ -359,7 +359,20 @@ export function ProductForm({
   }
 
   const handleRemoveImage = (idx: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== idx))
+    setImages((prev) => {
+      const isRemovingPrimary = prev[idx]?.is_primary
+      const filtered = prev.filter((_, i) => i !== idx)
+      
+      if (isRemovingPrimary) {
+        const firstMainIndex = filtered.findIndex((img) => !img.variant_id)
+        if (firstMainIndex !== -1) {
+          return filtered.map((img, i) =>
+            i === firstMainIndex ? { ...img, is_primary: true } : img
+          )
+        }
+      }
+      return filtered
+    })
   }
 
   // Marketplace links handlers

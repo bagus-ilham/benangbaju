@@ -154,20 +154,6 @@ export function ProductImageManager({
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <Select
-                    label="Tautkan ke Varian"
-                    value={img.variant_id || ''}
-                    onChange={(val) => onUpdateImageField(idx, 'variant_id', val || null)}
-                    options={[
-                      { label: 'Semua Varian (Gambar Umum)', value: '' },
-                      ...variants.map((v, vIdx) => ({
-                        label: `${v.name || `Varian #${vIdx + 1}`} (${v.sku || 'Tanpa SKU'})`,
-                        value: v.id || `temp-${vIdx}`,
-                      })),
-                    ]}
-                  />
-                </div>
 
                 <div className="flex items-center space-x-1.5 pt-1">
                   <Checkbox
