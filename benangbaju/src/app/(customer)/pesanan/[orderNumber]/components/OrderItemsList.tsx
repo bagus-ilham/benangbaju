@@ -6,7 +6,10 @@ interface OrderItemsListProps {
   onOpenReviewModal: (item: any) => void
 }
 
-export function OrderItemsList({ order, onOpenReviewModal }: OrderItemsListProps): React.JSX.Element {
+export function OrderItemsList({
+  order,
+  onOpenReviewModal,
+}: OrderItemsListProps): React.JSX.Element {
   return (
     <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
@@ -15,7 +18,10 @@ export function OrderItemsList({ order, onOpenReviewModal }: OrderItemsListProps
       </h2>
       <div className="divide-y divide-neutral-100">
         {order.order_items?.map((item: any) => (
-          <div key={item.id} className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-4">
+          <div
+            key={item.id}
+            className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-4"
+          >
             <div className="min-w-0">
               <p className="font-semibold text-neutral-800 truncate">{item.product_name}</p>
               <p className="text-xs text-neutral-500 mt-1">

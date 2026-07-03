@@ -18,17 +18,16 @@ import { Footer } from './Footer'
 import { ScrollProgressBar } from './ScrollProgressBar'
 import { ScrollToTopButton } from './ScrollToTopButton'
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary'
-import {  type ProductListItem } from '@/features/products/services'
+import { type ProductListItem } from '@/features/products/services'
 import { useQuery } from '@tanstack/react-query'
 import { getSiteSettings } from '@/features/core/services/settings'
 import { SOCIAL_LINKS } from '@/lib/constants'
-
 
 interface CustomerLayoutProps {
   children: React.ReactNode
 }
 
-export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.Element {
+export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Element {
   const pathname = usePathname()
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
@@ -43,16 +42,22 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
   const logoSetting = settings.find((s) => s.key === 'store_logo_url')
   const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null
 
-  const whatsappSetting = settings.find((s) => s.key === 'store_whatsapp' || s.key === 'whatsapp_number')
+  const whatsappSetting = settings.find(
+    (s) => s.key === 'store_whatsapp' || s.key === 'whatsapp_number'
+  )
   const whatsappUrl = whatsappSetting?.value
-    ? (whatsappSetting.value.startsWith('http') ? whatsappSetting.value : `https://wa.me/${whatsappSetting.value}`)
+    ? whatsappSetting.value.startsWith('http')
+      ? whatsappSetting.value
+      : `https://wa.me/${whatsappSetting.value}`
     : SOCIAL_LINKS.whatsapp
-  
+
   const { user, profile, isAuthenticated, clearAuth } = useAuthStore()
-  const totalQuantity = useCartStore((state) => state.items.reduce((qty, item) => qty + item.quantity, 0))
+  const totalQuantity = useCartStore((state) =>
+    state.items.reduce((qty, item) => qty + item.quantity, 0)
+  )
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
   const wishlistCount = useWishlistStore((state) => state.productIds.length)
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -70,13 +75,13 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
             if (prev !== pastThreshold) return pastThreshold
             return prev
           })
-          
+
           const pastScrollTopThreshold = window.scrollY > 400
           setShowScrollTop((prev) => {
             if (prev !== pastScrollTopThreshold) return pastScrollTopThreshold
             return prev
           })
-          
+
           ticking = false
         })
         ticking = true
@@ -105,7 +110,6 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
     }
   }, [totalQuantity])
 
-
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut()
@@ -118,7 +122,6 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
       toast.error(errMsg)
     }
   }
-
 
   const navLinks = [
     { name: 'Katalog', href: '/produk' },
@@ -140,7 +143,10 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
       <div className="bg-brand-black text-white text-center py-2 px-4">
         <p className="text-[10px] font-heading font-medium uppercase tracking-[0.15em]">
           Gratis ongkir untuk pembelian di atas Rp 500.000 &mdash;{' '}
-          <Link href="/produk" className="underline underline-offset-2 hover:text-brand-gold-light transition-colors">
+          <Link
+            href="/produk"
+            className="underline underline-offset-2 hover:text-brand-gold-light transition-colors"
+          >
             Belanja Sekarang
           </Link>
         </p>
@@ -167,10 +173,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
         onLogout={handleLogout}
       />
 
-      <SearchOverlay
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
       <MobileMenuDrawer
         isOpen={isMobileMenuOpen}
@@ -183,9 +186,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
 
       {/* Main Page Area */}
       <main id="main-content" className="flex-1 flex flex-col">
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
+        <ErrorBoundary>{children}</ErrorBoundary>
       </main>
 
       <Footer />
@@ -203,7 +204,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) : React.JSX.El
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "fixed z-45 w-11 h-11 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-350 cursor-pointer",
+              'fixed z-45 w-11 h-11 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-350 cursor-pointer',
               pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-6'
             )}
             style={{

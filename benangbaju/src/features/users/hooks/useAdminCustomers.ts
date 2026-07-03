@@ -8,10 +8,13 @@ import {
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 import { CustomerProfile, CustomerDetail } from '@/features/users/domain/adminCustomer.types'
 
-export function useAdminCustomers(page = 1, limit = 20) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<CustomerProfile>, Error> {
+export function useAdminCustomers(
+  page = 1,
+  limit = 20
+): import('@tanstack/react-query').UseQueryResult<ApiListResponse<CustomerProfile>, Error> {
   return useQuery({
     queryKey: ['admin', 'customers', page, limit],
-    queryFn: () => getAdminCustomersAction(page, limit)
+    queryFn: () => getAdminCustomersAction(page, limit),
   })
 }
 
@@ -26,11 +29,13 @@ export function useAdminToggleCustomerStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] })
-    }
+    },
   })
 }
 
-export function useAdminCustomerDetail(customerId: string) : import("@tanstack/react-query").UseQueryResult<ApiResponse<CustomerDetail>, Error> {
+export function useAdminCustomerDetail(
+  customerId: string
+): import('@tanstack/react-query').UseQueryResult<ApiResponse<CustomerDetail>, Error> {
   return useQuery({
     queryKey: ['admin', 'customer', customerId],
     queryFn: () => getAdminCustomerDetailAction(customerId),

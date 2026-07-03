@@ -6,9 +6,11 @@ import { ApiErrorCode } from '@/lib/api-errors'
 export async function POST(req: Request) {
   try {
     const supabase = await createServerClient()
-    
+
     // Auth check: mobile app users must send a valid Bearer token which Supabase middleware validates
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json(
         { success: false, error: { code: ApiErrorCode.UNAUTHORIZED, message: 'Unauthorized' } },
@@ -21,7 +23,10 @@ export async function POST(req: Request) {
 
     if (!addressId || !courierName || shippingCost === undefined) {
       return NextResponse.json(
-        { success: false, error: { code: ApiErrorCode.VALIDATION_ERROR, message: 'Missing required fields' } },
+        {
+          success: false,
+          error: { code: ApiErrorCode.VALIDATION_ERROR, message: 'Missing required fields' },
+        },
         { status: 400 }
       )
     }
@@ -43,7 +48,10 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error('Create Order API error:', err)
     return NextResponse.json(
-      { success: false, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Internal Server Error' } },
+      {
+        success: false,
+        error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Internal Server Error' },
+      },
       { status: 500 }
     )
   }

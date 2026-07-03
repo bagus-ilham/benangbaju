@@ -16,11 +16,14 @@ interface ProductCardProps {
   className?: string
 }
 
-export const ProductCard = React.memo(function ProductCard({ product, className }: ProductCardProps) : React.JSX.Element {
-  const isLiked = useWishlistStore(state => state.productIds.includes(product.id))
-  const toggleWishlist = useWishlistStore(state => state.toggleWishlist)
-  const addItem = useCartStore(state => state.addItem)
-  const setCartDrawerOpen = useCartStore(state => state.setCartDrawerOpen)
+export const ProductCard = React.memo(function ProductCard({
+  product,
+  className,
+}: ProductCardProps): React.JSX.Element {
+  const isLiked = useWishlistStore((state) => state.productIds.includes(product.id))
+  const toggleWishlist = useWishlistStore((state) => state.toggleWishlist)
+  const addItem = useCartStore((state) => state.addItem)
+  const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
   const [isHovered, setIsHovered] = useState(false)
   const [showAltImage, setShowAltImage] = useState(false)
   const [isAdding, setIsAdding] = useState<string | null>(null)
@@ -36,7 +39,7 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
     primaryImage,
     hoverImage,
     hasMultipleColors,
-    sizeVariants
+    sizeVariants,
   } = product
 
   const displayAltImage = isHovered || showAltImage
@@ -70,7 +73,10 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
             <div className="flex items-start">
               <div className="flex-shrink-0 pt-0.5">
                 {primaryImage ? (
-                  <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden" aria-hidden="true">
+                  <div
+                    className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden"
+                    aria-hidden="true"
+                  >
                     <Image
                       className="object-cover"
                       src={primaryImage}
@@ -80,7 +86,10 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
                     />
                   </div>
                 ) : (
-                  <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans" aria-hidden="true">
+                  <div
+                    className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans"
+                    aria-hidden="true"
+                  >
                     No Img
                   </div>
                 )}
@@ -120,7 +129,10 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
 
   return (
     <div
-      className={cn('group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] gold-border-hover rounded-xl overflow-hidden', className)}
+      className={cn(
+        'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] gold-border-hover rounded-xl overflow-hidden',
+        className
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -136,7 +148,12 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
           }}
         >
           {primaryImage ? (
-            <div className={cn("relative w-full h-full", !imageLoaded && "animate-pulse bg-neutral-200")}>
+            <div
+              className={cn(
+                'relative w-full h-full',
+                !imageLoaded && 'animate-pulse bg-neutral-200'
+              )}
+            >
               {/* Primary Image */}
               <Image
                 src={primaryImage}
@@ -145,7 +162,11 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
                 sizes="(max-w-7xl) 33vw, 50vw"
                 className={cn(
                   'object-cover transition-opacity duration-700 ease-in-out',
-                  !imageLoaded ? 'opacity-0' : (displayAltImage && hoverImage !== primaryImage ? 'opacity-0' : 'opacity-100')
+                  !imageLoaded
+                    ? 'opacity-0'
+                    : displayAltImage && hoverImage !== primaryImage
+                      ? 'opacity-0'
+                      : 'opacity-100'
                 )}
                 priority={false}
                 onLoad={() => setImageLoaded(true)}
@@ -235,7 +256,9 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
               </span>
               <div className="flex flex-wrap gap-1 justify-center">
                 {sizeVariants.map((v) => {
-                  const sizeAttr = v.product_variant_attrs?.find((a) => a.attr_name.toLowerCase().includes('ukuran'))
+                  const sizeAttr = v.product_variant_attrs?.find((a) =>
+                    a.attr_name.toLowerCase().includes('ukuran')
+                  )
                   const sizeLabel = sizeAttr ? sizeAttr.attr_value : v.name
                   const isCurrentAdding = isAdding === v.id
                   return (
@@ -249,7 +272,10 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
                       className="px-2 py-0.5 bg-white hover:bg-brand-gold hover:text-white text-[9px] font-heading font-bold uppercase tracking-wider text-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] border border-neutral-100 flex items-center justify-center cursor-pointer"
                     >
                       {isCurrentAdding ? (
-                        <div className="w-2.5 h-2.5 border border-brand-black border-t-transparent animate-spin rounded-full" aria-hidden="true" />
+                        <div
+                          className="w-2.5 h-2.5 border border-brand-black border-t-transparent animate-spin rounded-full"
+                          aria-hidden="true"
+                        />
                       ) : (
                         sizeLabel
                       )}
@@ -299,4 +325,3 @@ export const ProductCard = React.memo(function ProductCard({ product, className 
     </div>
   )
 })
-

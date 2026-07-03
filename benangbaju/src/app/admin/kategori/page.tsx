@@ -8,10 +8,10 @@ import {
   useAdminUpdateCategory,
   useAdminDeleteCategory,
 } from '@/shared/hooks/useAdmin'
-import { 
-  Button, 
-  Input, 
-  Modal, 
+import {
+  Button,
+  Input,
+  Modal,
   AdminPageHeader,
   DataTable,
   Select,
@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  TableSkeleton
+  TableSkeleton,
 } from '@/shared/components'
 import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -33,7 +33,7 @@ const supabase = createBrowserClient()
 
 type CategoryRow = Database['public']['Tables']['categories']['Row']
 
-export default function AdminCategoryPage() : React.JSX.Element {
+export default function AdminCategoryPage(): React.JSX.Element {
   const { data: categories = [], isLoading, isError, refetch } = useAdminCategories()
 
   const createMutation = useAdminCreateCategory()
@@ -175,11 +175,11 @@ export default function AdminCategoryPage() : React.JSX.Element {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <AdminPageHeader
-        title="Kategori Produk"
-        subtitle="Kelola hierarki kategori produk."
-      >
-        <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
+      <AdminPageHeader title="Kategori Produk" subtitle="Kelola hierarki kategori produk.">
+        <Button
+          onClick={handleOpenAdd}
+          className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
+        >
           <Plus size={14} className="mr-1.5" /> Tambah Kategori
         </Button>
       </AdminPageHeader>
@@ -192,8 +192,14 @@ export default function AdminCategoryPage() : React.JSX.Element {
           </div>
         ) : isError ? (
           <div className="py-24 text-center">
-            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat kategori dari server</p>
-            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+            <p className="text-red-500 text-xs font-semibold uppercase">
+              Gagal memuat kategori dari server
+            </p>
+            <Button
+              onClick={() => refetch()}
+              variant="outline"
+              className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+            >
               Coba Lagi
             </Button>
           </div>
@@ -216,7 +222,7 @@ export default function AdminCategoryPage() : React.JSX.Element {
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
                 {categories.map((cat) => {
                   const parent = categories.find((c) => c.id === cat.parent_id)
-                  
+
                   return (
                     <tr key={cat.id} className="hover:bg-neutral-50/20 transition duration-150">
                       <td className="py-4 px-5">
@@ -229,9 +235,7 @@ export default function AdminCategoryPage() : React.JSX.Element {
                           </span>
                         )}
                       </td>
-                      <td className="py-4 px-4 font-mono text-neutral-500">
-                        {cat.slug}
-                      </td>
+                      <td className="py-4 px-4 font-mono text-neutral-500">{cat.slug}</td>
                       <td className="py-4 px-4 text-center font-semibold text-neutral-900">
                         {cat.sort_order}
                       </td>
@@ -313,7 +317,7 @@ export default function AdminCategoryPage() : React.JSX.Element {
                 onChange={(val) => setParentId(val || null)}
                 options={[
                   { label: 'Tidak ada (Kategori Utama)', value: '' },
-                  ...parentOptions.map((c) => ({ label: c.name, value: c.id }))
+                  ...parentOptions.map((c) => ({ label: c.name, value: c.id })),
                 ]}
               />
             </div>
@@ -343,14 +347,15 @@ export default function AdminCategoryPage() : React.JSX.Element {
                 onChange={async (e) => {
                   const file = e.target.files?.[0]
                   if (!file) return
-                  
+
                   const toastId = toast.loading('Mengunggah gambar kategori...')
                   try {
                     const publicUrl = await uploadImage(file, 'products')
                     setImageUrl(publicUrl)
                     toast.success('Gambar kategori berhasil diunggah!', { id: toastId })
                   } catch (err: unknown) {
-                    const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar kategori'
+                    const message =
+                      err instanceof Error ? err.message : 'Gagal mengunggah gambar kategori'
                     toast.error(message, { id: toastId })
                   }
                 }}
@@ -380,7 +385,10 @@ export default function AdminCategoryPage() : React.JSX.Element {
               checked={is_active}
               onChange={(e) => setIsActive(e.target.checked)}
             />
-            <label htmlFor="cat_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
+            <label
+              htmlFor="cat_is_active"
+              className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
+            >
               Kategori Aktif
             </label>
           </div>
@@ -394,10 +402,7 @@ export default function AdminCategoryPage() : React.JSX.Element {
             >
               Batal
             </Button>
-            <Button
-              type="submit"
-              isLoading={createMutation.isPending || updateMutation.isPending}
-            >
+            <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
               Simpan
             </Button>
           </div>

@@ -16,7 +16,7 @@ export function VariantPicker({
   variants,
   selectedVariantId,
   onVariantSelect,
-}: VariantPickerProps) : React.JSX.Element | null {
+}: VariantPickerProps): React.JSX.Element | null {
   // 1. Group attributes from variants
   // Find all unique attributes and values
   // e.g. Warna: ["Hitam", "Milo"], Ukuran: ["S", "M", "L"]
@@ -75,7 +75,7 @@ export function VariantPicker({
   React.useEffect(() => {
     const matchedVariant = variants.find((v) => {
       if (!v.product_variant_attrs || v.product_variant_attrs.length === 0) return false
-      
+
       return v.product_variant_attrs.every((attr) => {
         return selectedValues[attr.attr_name] === attr.attr_value
       })
@@ -127,13 +127,13 @@ export function VariantPicker({
     <div className="space-y-6 py-4 border-t border-b border-neutral-100">
       {attributeKeys.map((name) => (
         <div key={name} className="flex flex-col space-y-2">
-          <span 
+          <span
             id={`label-variant-${name}`}
             className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70"
           >
             Pilih {name}
           </span>
-          <div 
+          <div
             className="flex flex-wrap gap-2"
             role="radiogroup"
             aria-labelledby={`label-variant-${name}`}

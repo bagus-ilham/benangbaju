@@ -19,7 +19,6 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 
-
 const supabase = createBrowserClient()
 
 interface AppliedVoucher {
@@ -30,7 +29,7 @@ interface AppliedVoucher {
   max_discount?: number | null
 }
 
-export default function CheckoutPage() : React.JSX.Element {
+export default function CheckoutPage(): React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const { items: cartItems, clearCart, isSyncing, hasSynced } = useCartStore()
@@ -85,11 +84,21 @@ export default function CheckoutPage() : React.JSX.Element {
         hasCheckedEmptyCart.current = true
       }
     }
-  }, [isMounted, cartItems.length, authLoading, isAuthenticated, orderPlaced, router, isSyncing, hasSynced])
+  }, [
+    isMounted,
+    cartItems.length,
+    authLoading,
+    isAuthenticated,
+    orderPlaced,
+    router,
+    isSyncing,
+    hasSynced,
+  ])
 
   // 3. Load Midtrans Snap.js Script
   useEffect(() => {
-    const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
+    const snapScriptUrl =
+      process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
     const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
     if (!existingScript) {
       const script = document.createElement('script')
@@ -110,13 +119,15 @@ export default function CheckoutPage() : React.JSX.Element {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('vouchers')
-        .select('id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at')
+        .select(
+          'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at'
+        )
         .eq('is_active', true)
         .gte('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
       if (error) throw error
       return data || []
-    }
+    },
   })
 
   // Set default address initially
@@ -127,17 +138,27 @@ export default function CheckoutPage() : React.JSX.Element {
     }
   }, [addresses])
 
-  const variantIdsStr = useMemo(() => displayItems.map((i) => i.variantId).sort().join(','), [displayItems])
+  const variantIdsStr = useMemo(
+    () =>
+      displayItems
+        .map((i) => i.variantId)
+        .sort()
+        .join(','),
+    [displayItems]
+  )
 
   // 5. Query Variant Weights to calculate total weight
   const { data: variantDetails } = useQuery({
     queryKey: ['checkout-weights', variantIdsStr],
     queryFn: async () => {
       const { data, error } = await supabase
-          .from('product_variants')
-          .select('id, weight_gram, products (weight_gram)')
-          .in('id', displayItems.map((i) => i.variantId))
-      
+        .from('product_variants')
+        .select('id, weight_gram, products (weight_gram)')
+        .in(
+          'id',
+          displayItems.map((i) => i.variantId)
+        )
+
       if (error) throw error
       return data
     },
@@ -192,7 +213,7 @@ export default function CheckoutPage() : React.JSX.Element {
   // Calculate Prices
   const subtotal = displayItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const shippingCost = selectedCourier ? selectedCourier.price : 0
-  
+
   // Calculate Discount Amount
   let discountAmount = 0
   if (appliedVoucher) {
@@ -326,10 +347,17 @@ export default function CheckoutPage() : React.JSX.Element {
     }
   }
 
-  const isCheckoutProcessing = createOrderMutation.isPending || generatePaymentTokenMutation.isPending
+  const isCheckoutProcessing =
+    createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
   // eslint-disable-next-line react-hooks/refs
-  if (authLoading || !isAuthenticated || isSyncing || !hasSynced || (cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current)) {
+  if (
+    authLoading ||
+    !isAuthenticated ||
+    isSyncing ||
+    !hasSynced ||
+    (cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current)
+  ) {
     return <AuthLoading message="Memuat Checkout..." />
   }
 
@@ -341,12 +369,11 @@ export default function CheckoutPage() : React.JSX.Element {
         subtitle="Lengkapi alamat pengiriman dan selesaikan pembayaran."
       />
       <PageContainer size="lg" className="py-10 page-content">
-        
         {/* 🎨 PALETTE ENHANCEMENT
         Problem: Visual progress bar pada checkout tidak menggunakan atribut aria-current="step" untuk screen reader.
         Fix: Menambahkan role="list" pada kontainer dan aria-current="step" pada langkah aktif
         Impact: Screen reader dapat mengidentifikasi langkah saat ini dengan benar */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -354,24 +381,52 @@ export default function CheckoutPage() : React.JSX.Element {
           className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto"
         >
           <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
-            <div className="w-5 h-5 rounded-full border border-neutral-300 flex items-center justify-center text-[10px] text-neutral-400 font-sans group-hover:border-brand-black group-hover:text-brand-black transition-colors">1</div>
-            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-heading group-hover:text-brand-black transition-colors">Keranjang</span>
+            <div className="w-5 h-5 rounded-full border border-neutral-300 flex items-center justify-center text-[10px] text-neutral-400 font-sans group-hover:border-brand-black group-hover:text-brand-black transition-colors">
+              1
+            </div>
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-heading group-hover:text-brand-black transition-colors">
+              Keranjang
+            </span>
           </Link>
           <div className="w-8 md:w-12 h-px bg-neutral-200" aria-hidden="true" />
-          <div role="listitem" aria-current={checkoutStep === 'shipping' ? 'step' : undefined} className="flex items-center space-x-2">
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'shipping' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}>2</div>
-            <span className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'shipping' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}>Pengiriman</span>
+          <div
+            role="listitem"
+            aria-current={checkoutStep === 'shipping' ? 'step' : undefined}
+            className="flex items-center space-x-2"
+          >
+            <div
+              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'shipping' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}
+            >
+              2
+            </div>
+            <span
+              className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'shipping' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}
+            >
+              Pengiriman
+            </span>
           </div>
           <div className="w-8 md:w-12 h-px bg-neutral-200" aria-hidden="true" />
-          <div role="listitem" aria-current={checkoutStep === 'payment' ? 'step' : undefined} className="flex items-center space-x-2">
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'payment' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}>3</div>
-            <span className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'payment' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}>Pembayaran</span>
+          <div
+            role="listitem"
+            aria-current={checkoutStep === 'payment' ? 'step' : undefined}
+            className="flex items-center space-x-2"
+          >
+            <div
+              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'payment' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}
+            >
+              3
+            </div>
+            <span
+              className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'payment' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}
+            >
+              Pembayaran
+            </span>
           </div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* LEFT: SHIPPING DETAILS */}
-          <motion.div 
+          {/* LEFT: SHIPPING DETAILS */}
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -393,7 +448,7 @@ export default function CheckoutPage() : React.JSX.Element {
           </motion.div>
 
           {/* RIGHT: ORDER SUMMARY */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -422,7 +477,6 @@ export default function CheckoutPage() : React.JSX.Element {
         </div>
       </PageContainer>
 
-
       <AddressModal
         isOpen={addressModalOpen}
         onClose={() => setAddressModalOpen(false)}
@@ -431,4 +485,3 @@ export default function CheckoutPage() : React.JSX.Element {
     </div>
   )
 }
-

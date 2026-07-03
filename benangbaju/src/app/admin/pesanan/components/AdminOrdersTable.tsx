@@ -19,7 +19,7 @@ export function AdminOrdersTable({
   isLoading,
   isError,
   onRefetch,
-  onOpenQuickResi
+  onOpenQuickResi,
 }: AdminOrdersTableProps) {
   if (isLoading) {
     return (
@@ -33,7 +33,11 @@ export function AdminOrdersTable({
     return (
       <div className="py-24 text-center">
         <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat daftar pesanan</p>
-        <Button onClick={onRefetch} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+        <Button
+          onClick={onRefetch}
+          variant="outline"
+          className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+        >
           Coba Lagi
         </Button>
       </div>
@@ -66,44 +70,49 @@ export function AdminOrdersTable({
               <td className="py-4 px-5">
                 <span className="font-semibold text-neutral-900 block">{o.order_number}</span>
                 <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
-                  Tgl Beli: {new Date(o.created_at).toLocaleDateString('id-ID', {
+                  Tgl Beli:{' '}
+                  {new Date(o.created_at).toLocaleDateString('id-ID', {
                     day: 'numeric',
                     month: 'short',
-                    year: 'numeric'
+                    year: 'numeric',
                   })}
                 </span>
               </td>
               <td className="py-4 px-4">
                 <p>{o.order_shipping?.recipient_name || 'Pelanggan'}</p>
-                <p className="text-[10px] text-neutral-400 font-normal">{o.order_shipping?.courier_name} | {o.order_shipping?.phone}</p>
+                <p className="text-[10px] text-neutral-400 font-normal">
+                  {o.order_shipping?.courier_name} | {o.order_shipping?.phone}
+                </p>
               </td>
               <td className="py-4 px-4 text-center font-bold text-neutral-900">
                 Rp {o.total_amount.toLocaleString('id-ID')}
               </td>
               <td className="py-4 px-4 text-center">
-                <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${
-                  o.status === 'completed'
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : o.status === 'cancelled'
-                    ? 'bg-red-50 text-red-700 border border-red-200'
-                    : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                }`}>
+                <span
+                  className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${
+                    o.status === 'completed'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : o.status === 'cancelled'
+                        ? 'bg-red-50 text-red-700 border border-red-200'
+                        : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
+                  }`}
+                >
                   {o.status === 'pending_payment'
                     ? 'Belum Bayar'
                     : o.status === 'processing'
-                    ? 'Diproses'
-                    : o.status === 'shipped'
-                    ? 'Dikirim'
-                    : o.status === 'completed'
-                    ? 'Selesai'
-                    : 'Batal'}
+                      ? 'Diproses'
+                      : o.status === 'shipped'
+                        ? 'Dikirim'
+                        : o.status === 'completed'
+                          ? 'Selesai'
+                          : 'Batal'}
                 </span>
               </td>
               <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
                 {o.status === 'processing' && (
-                  <Button 
+                  <Button
                     onClick={() => onOpenQuickResi(o)}
-                    className="p-2 border-neutral-800 text-neutral-800 hover:bg-neutral-50 mr-1" 
+                    className="p-2 border-neutral-800 text-neutral-800 hover:bg-neutral-50 mr-1"
                     variant="outline"
                     title="Input Resi & Kirim"
                   >
@@ -111,7 +120,10 @@ export function AdminOrdersTable({
                   </Button>
                 )}
                 <Link href={`/admin/pesanan/${o.order_number}`}>
-                  <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900">
+                  <Button
+                    variant="outline"
+                    className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                  >
                     <Eye size={13} className="mr-1 inline" /> Detail
                   </Button>
                 </Link>

@@ -37,7 +37,10 @@ export function ProductMarketplaceLinks({
       ) : (
         <div className="space-y-4">
           {marketplaceLinks.map((link, idx) => (
-            <div key={idx} className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10">
+            <div
+              key={idx}
+              className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10"
+            >
               <button
                 type="button"
                 onClick={() => onRemoveLink(idx)}

@@ -5,9 +5,11 @@ import { motion } from 'framer-motion'
 import { MapPin, Clock, Mail, MessageSquare } from 'lucide-react'
 import { PageContainer, PageHero } from '@/shared/components'
 
-export default function KontakPage() : React.JSX.Element {
+export default function KontakPage(): React.JSX.Element {
   const whatsappNumber = '6281234567890'
-  const whatsappMessage = encodeURIComponent('Halo Benangbaju, saya ingin bertanya tentang produk / pesanan saya.')
+  const whatsappMessage = encodeURIComponent(
+    'Halo Benangbaju, saya ingin bertanya tentang produk / pesanan saya.'
+  )
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
 
   return (
@@ -18,7 +20,6 @@ export default function KontakPage() : React.JSX.Element {
         subtitle="Tim customer service kami siap membantu informasi produk, ukuran, pengiriman, dan retur."
       />
       <PageContainer size="md" className="py-12 space-y-12 page-content">
-
         {/* Contact Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
           {/* Contact Details Card */}
@@ -32,7 +33,7 @@ export default function KontakPage() : React.JSX.Element {
             <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Layanan Pelanggan
             </h3>
-            
+
             <div className="space-y-4 text-xs font-medium text-neutral-600">
               <div className="flex items-start space-x-3">
                 <Clock className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
@@ -48,7 +49,10 @@ export default function KontakPage() : React.JSX.Element {
                 <Mail className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-semibold text-neutral-900 mb-0.5">Surel (Email)</p>
-                  <a href="mailto:support@benangbaju.com" className="hover:text-neutral-900 underline transition-colors">
+                  <a
+                    href="mailto:support@benangbaju.com"
+                    className="hover:text-neutral-900 underline transition-colors"
+                  >
                     support@benangbaju.com
                   </a>
                 </div>
@@ -79,8 +83,9 @@ export default function KontakPage() : React.JSX.Element {
                 Respon Cepat via WhatsApp
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">
-                Dapatkan bantuan langsung dari tim customer support kami terkait kendala transaksi, konfirmasi pembayaran, 
-                atau bantuan retur melalui WhatsApp chat. Kami akan membalas pesan Anda sesegera mungkin selama jam kerja.
+                Dapatkan bantuan langsung dari tim customer support kami terkait kendala transaksi,
+                konfirmasi pembayaran, atau bantuan retur melalui WhatsApp chat. Kami akan membalas
+                pesan Anda sesegera mungkin selama jam kerja.
               </p>
             </div>
 

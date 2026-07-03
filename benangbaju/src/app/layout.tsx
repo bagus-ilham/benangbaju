@@ -21,7 +21,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'),
   title: 'Benangbaju — Fashion Muslim Premium Indonesia',
-  description: 'Temukan koleksi busana muslim wanita premium, modern, dan elegan hanya di Benangbaju.',
+  description:
+    'Temukan koleksi busana muslim wanita premium, modern, dan elegan hanya di Benangbaju.',
   icons: {
     icon: '/logo_favicon.PNG',
   },
@@ -30,21 +31,19 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
-}>) : React.JSX.Element {
+  children: React.ReactNode
+}>): React.JSX.Element {
   return (
     <html
       lang="id"
       className={`${outfit.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body 
+      <body
         className="min-h-full flex flex-col font-sans bg-neutral-50 text-neutral-900 selection:bg-neutral-900 selection:text-white"
         suppressHydrationWarning
       >
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
 
         {/* Phase 1: Vercel Web Analytics & Speed Insights */}
         <Analytics />

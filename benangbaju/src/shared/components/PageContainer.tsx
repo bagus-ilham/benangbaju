@@ -20,12 +20,9 @@ export function PageContainer({
   size = 'full',
   children,
   ...props
-}: PageContainerProps) : React.JSX.Element {
+}: PageContainerProps): React.JSX.Element {
   return (
-    <div
-      className={cn('mx-auto px-4 sm:px-6 lg:px-8', sizeClasses[size], className)}
-      {...props}
-    >
+    <div className={cn('mx-auto px-4 sm:px-6 lg:px-8', sizeClasses[size], className)} {...props}>
       {children}
     </div>
   )

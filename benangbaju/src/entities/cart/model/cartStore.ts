@@ -59,7 +59,7 @@ export const useCartStore = create<CartState>()(
       hasSynced: false,
       needsResync: false,
       setCartDrawerOpen: (open) => set({ isCartDrawerOpen: open }),
-      
+
       addItem: async (newItem, qty = 1) => {
         set((state) => {
           const existingItem = state.items.find((item) => item.variantId === newItem.variantId)
@@ -67,9 +67,7 @@ export const useCartStore = create<CartState>()(
           if (existingItem) {
             const newQty = Math.min(existingItem.quantity + qty, newItem.stock)
             updatedItems = state.items.map((item) =>
-              item.variantId === newItem.variantId
-                ? { ...item, quantity: newQty }
-                : item
+              item.variantId === newItem.variantId ? { ...item, quantity: newQty } : item
             )
           } else {
             updatedItems = [...state.items, { ...newItem, quantity: Math.min(qty, newItem.stock) }]
@@ -87,9 +85,11 @@ export const useCartStore = create<CartState>()(
       updateQuantity: async (variantId, quantity) => {
         set((state) => ({
           items: state.items.map((item) =>
-            item.variantId === variantId ? { ...item, quantity: Math.max(1, Math.min(quantity, item.stock)) } : item
+            item.variantId === variantId
+              ? { ...item, quantity: Math.max(1, Math.min(quantity, item.stock)) }
+              : item
           ),
-          needsResync: state.isSyncing
+          needsResync: state.isSyncing,
         }))
 
         // DB Sync if authenticated
@@ -102,7 +102,7 @@ export const useCartStore = create<CartState>()(
       removeItem: async (variantId) => {
         set((state) => ({
           items: state.items.filter((item) => item.variantId !== variantId),
-          needsResync: state.isSyncing
+          needsResync: state.isSyncing,
         }))
 
         // DB Sync if authenticated
@@ -113,9 +113,9 @@ export const useCartStore = create<CartState>()(
       },
 
       clearCart: async () => {
-        set((state) => ({ 
+        set((state) => ({
           items: [],
-          needsResync: state.isSyncing
+          needsResync: state.isSyncing,
         }))
 
         // DB Sync if authenticated
@@ -128,7 +128,7 @@ export const useCartStore = create<CartState>()(
             .select('id')
             .eq('user_id', user.id)
             .maybeSingle()
-          
+
           if (cart) {
             await supabase.from('cart_items').delete().eq('cart_id', cart.id)
           }
@@ -169,14 +169,14 @@ export const useCartStore = create<CartState>()(
                 .insert({ user_id: userId })
                 .select('id')
                 .single()
-              
+
               if (createError) {
                 const { data: retryCart } = await supabase
                   .from('carts')
                   .select('id')
                   .eq('user_id', userId)
                   .maybeSingle()
-                
+
                 if (!retryCart) throw createError
                 cart = retryCart
               } else {
@@ -193,7 +193,7 @@ export const useCartStore = create<CartState>()(
                 .from('cart_items')
                 .select('id, variant_id, quantity')
                 .eq('cart_id', cartId)
-              
+
               if (fetchError) throw fetchError
 
               const dbItemsMap = new Map<string, number>()
@@ -225,13 +225,15 @@ export const useCartStore = create<CartState>()(
               // Read back the final merged cart from database to synchronize Zustand state
               const { data: finalDbItems } = await supabase
                 .from('cart_items')
-                .select(`
+                .select(
+                  `
                   id, variant_id, quantity,
                   product_variants (
                     id, sku, name, price, compare_price, stock,
                     products (name, slug, product_images (url, is_primary))
                   )
-                `)
+                `
+                )
                 .eq('cart_id', cartId)
 
               if (finalDbItems) {
@@ -245,9 +247,8 @@ export const useCartStore = create<CartState>()(
                       imagesList = Array.isArray(prod.product_images) ? prod.product_images : []
                     }
                   }
-                  const primaryImg = imagesList.find((img) => img.is_primary)?.url 
-                    || imagesList[0]?.url 
-                    || null
+                  const primaryImg =
+                    imagesList.find((img) => img.is_primary)?.url || imagesList[0]?.url || null
 
                   const prodObj = prod && !Array.isArray(prod) ? prod : null
                   const pvObj = pv && !Array.isArray(pv) ? pv : null
@@ -275,7 +276,7 @@ export const useCartStore = create<CartState>()(
             } else {
               // MERGE = FALSE (Standard debounced update from Cart Drawer)
               // FAST PATH: Fire-and-forget UPSERT, no heavy SELECT needed
-              
+
               // 1. Upsert all local items with exact local quantity
               if (localItems.length > 0) {
                 const upsertData = localItems.map((localItem) => ({
@@ -292,13 +293,13 @@ export const useCartStore = create<CartState>()(
               }
 
               // 2. Delete DB items that are no longer in local items
-              const localVariantIds = localItems.map(item => item.variantId)
+              const localVariantIds = localItems.map((item) => item.variantId)
               let deleteQuery = supabase.from('cart_items').delete().eq('cart_id', cartId)
-              
+
               if (localVariantIds.length > 0) {
                 deleteQuery = deleteQuery.not('variant_id', 'in', `(${localVariantIds.join(',')})`)
               }
-              
+
               const { error: deleteError } = await deleteQuery
               if (deleteError) throw deleteError
 

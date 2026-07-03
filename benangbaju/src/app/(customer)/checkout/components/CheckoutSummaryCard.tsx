@@ -53,7 +53,7 @@ export function CheckoutSummaryCard({
   onPaymentSubmit,
   isCheckoutProcessing,
   isPaymentTokenLoading,
-  canSubmit
+  canSubmit,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   return (
     <div className="border border-neutral-200 p-6 bg-white rounded-none shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
@@ -78,9 +78,13 @@ export function CheckoutSummaryCard({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-heading font-medium text-brand-black uppercase tracking-wide truncate text-[11px]">{item.productName || item.name}</p>
+              <p className="font-heading font-medium text-brand-black uppercase tracking-wide truncate text-[11px]">
+                {item.productName || item.name}
+              </p>
               {item.variantName && (
-                <p className="text-[9px] text-neutral-400 uppercase tracking-wider">{item.variantName}</p>
+                <p className="text-[9px] text-neutral-400 uppercase tracking-wider">
+                  {item.variantName}
+                </p>
               )}
               <p className="text-[10px] text-neutral-400 mt-0.5">Qty: {item.quantity}</p>
             </div>
@@ -100,7 +104,7 @@ export function CheckoutSummaryCard({
         </label>
         <AnimatePresence mode="wait">
           {appliedVoucher ? (
-            <motion.div 
+            <motion.div
               key="applied"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -150,7 +154,7 @@ export function CheckoutSummaryCard({
                   </span>
                   <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
                     {availableVouchers.map((voucher) => {
-                      const isSpendMet = subtotal >= voucher.min_purchase;
+                      const isSpendMet = subtotal >= voucher.min_purchase
                       return (
                         <button
                           key={voucher.id}
@@ -172,13 +176,15 @@ export function CheckoutSummaryCard({
                             {voucher.name}
                           </div>
                           <div className="text-[9px] font-heading font-bold text-neutral-700">
-                            {voucher.discount_type === 'percentage' ? `${voucher.value}% OFF` : `${formatIDR(voucher.value)} OFF`}
+                            {voucher.discount_type === 'percentage'
+                              ? `${voucher.value}% OFF`
+                              : `${formatIDR(voucher.value)} OFF`}
                           </div>
                           <div className="text-[8px] text-neutral-400 font-sans">
                             Min. Belanja: {formatIDR(voucher.min_purchase)}
                           </div>
                         </button>
-                      );
+                      )
                     })}
                   </div>
                 </div>
@@ -192,24 +198,18 @@ export function CheckoutSummaryCard({
       <div className="space-y-3 text-xs text-neutral-500 border-b border-neutral-100 pb-5 mb-5 font-sans">
         <div className="flex justify-between">
           <span>Subtotal Produk</span>
-          <span className="font-semibold text-brand-black">
-            {formatIDR(subtotal)}
-          </span>
+          <span className="font-semibold text-brand-black">{formatIDR(subtotal)}</span>
         </div>
         {appliedVoucher && (
           <div className="flex justify-between font-semibold">
             <span>Diskon Voucher</span>
-            <span className="text-red-600">
-              - {formatIDR(discountAmount)}
-            </span>
+            <span className="text-red-600">- {formatIDR(discountAmount)}</span>
           </div>
         )}
         <div className="flex justify-between">
           <span>Ongkos Kirim</span>
           <span className="font-semibold text-brand-black">
-            {shippingCost > 0
-              ? formatIDR(shippingCost)
-              : 'Pilih kurir...'}
+            {shippingCost > 0 ? formatIDR(shippingCost) : 'Pilih kurir...'}
           </span>
         </div>
       </div>
@@ -217,9 +217,7 @@ export function CheckoutSummaryCard({
       {/* Grand Total */}
       <div className="flex justify-between items-center text-brand-black font-heading mb-8">
         <span className="text-xs uppercase tracking-widest font-medium">Total Pembayaran</span>
-        <span className="text-lg font-bold">
-          {formatIDR(totalAmount)}
-        </span>
+        <span className="text-lg font-bold">{formatIDR(totalAmount)}</span>
       </div>
 
       {/* Payment trigger button */}
@@ -228,7 +226,7 @@ export function CheckoutSummaryCard({
         variant="primary"
         onClick={onPaymentSubmit}
         isLoading={isCheckoutProcessing}
-        loadingText={isPaymentTokenLoading ? "Menghubungi Midtrans..." : "Memproses Pesanan..."}
+        loadingText={isPaymentTokenLoading ? 'Menghubungi Midtrans...' : 'Memproses Pesanan...'}
         className="w-full py-4 text-xs uppercase tracking-widest font-semibold"
         disabled={!canSubmit}
       >

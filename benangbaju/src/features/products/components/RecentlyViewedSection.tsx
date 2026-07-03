@@ -7,7 +7,7 @@ import { ProductCard } from '@/entities/product/ui/ProductCard'
 import { ProductListItem } from '@/entities/product/model/product.types'
 import { PageContainer, SectionHeader } from '@/shared/components'
 
-export function RecentlyViewedSection() : React.JSX.Element | null {
+export function RecentlyViewedSection(): React.JSX.Element | null {
   const { products } = useRecentlyViewedStore()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -25,16 +25,18 @@ export function RecentlyViewedSection() : React.JSX.Element | null {
           is_active: true,
         },
       ]
-      
-      const imagesList = p.imageUrl ? [
-        {
-          id: 'primary',
-          url: p.imageUrl,
-          alt_text: p.name,
-          sort_order: 0,
-          is_primary: true,
-        },
-      ] : []
+
+      const imagesList = p.imageUrl
+        ? [
+            {
+              id: 'primary',
+              url: p.imageUrl,
+              alt_text: p.name,
+              sort_order: 0,
+              is_primary: true,
+            },
+          ]
+        : []
 
       return {
         id: p.id,

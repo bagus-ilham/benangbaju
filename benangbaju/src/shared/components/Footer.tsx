@@ -19,25 +19,39 @@ export function Footer(): React.JSX.Element {
   const logoSetting = settings.find((s) => s.key === 'store_logo_url')
   const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null
 
-  const instagramSetting = settings.find((s) => s.key === 'social_instagram' || s.key === 'instagram_username')
-  const tiktokSetting = settings.find((s) => s.key === 'social_tiktok' || s.key === 'tiktok_username')
-  const whatsappSetting = settings.find((s) => s.key === 'store_whatsapp' || s.key === 'whatsapp_number')
+  const instagramSetting = settings.find(
+    (s) => s.key === 'social_instagram' || s.key === 'instagram_username'
+  )
+  const tiktokSetting = settings.find(
+    (s) => s.key === 'social_tiktok' || s.key === 'tiktok_username'
+  )
+  const whatsappSetting = settings.find(
+    (s) => s.key === 'store_whatsapp' || s.key === 'whatsapp_number'
+  )
   const shopeeSetting = settings.find((s) => s.key === 'social_shopee')
 
   const instagramUrl = instagramSetting?.value
-    ? (instagramSetting.value.startsWith('http') ? instagramSetting.value : `https://instagram.com/${instagramSetting.value}`)
+    ? instagramSetting.value.startsWith('http')
+      ? instagramSetting.value
+      : `https://instagram.com/${instagramSetting.value}`
     : SOCIAL_LINKS.instagram
 
   const tiktokUrl = tiktokSetting?.value
-    ? (tiktokSetting.value.startsWith('http') ? tiktokSetting.value : `https://tiktok.com/@${tiktokSetting.value}`)
+    ? tiktokSetting.value.startsWith('http')
+      ? tiktokSetting.value
+      : `https://tiktok.com/@${tiktokSetting.value}`
     : SOCIAL_LINKS.tiktok
 
   const whatsappUrl = whatsappSetting?.value
-    ? (whatsappSetting.value.startsWith('http') ? whatsappSetting.value : `https://wa.me/${whatsappSetting.value}`)
+    ? whatsappSetting.value.startsWith('http')
+      ? whatsappSetting.value
+      : `https://wa.me/${whatsappSetting.value}`
     : SOCIAL_LINKS.whatsapp
 
   const shopeeUrl = shopeeSetting?.value
-    ? (shopeeSetting.value.startsWith('http') ? shopeeSetting.value : `https://shopee.co.id/${shopeeSetting.value}`)
+    ? shopeeSetting.value.startsWith('http')
+      ? shopeeSetting.value
+      : `https://shopee.co.id/${shopeeSetting.value}`
     : SOCIAL_LINKS.shopee
 
   return (
@@ -68,7 +82,12 @@ export function Footer(): React.JSX.Element {
               required
               className="flex-1 [&_input]:bg-white/10 [&_input]:border-white/20 [&_input]:text-white [&_input]:placeholder:text-neutral-500 [&_label]:text-neutral-400"
             />
-            <Button type="submit" variant="primary" size="sm" className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-gold hover:text-white hover:border-brand-gold transition-all duration-300">
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-gold hover:text-white hover:border-brand-gold transition-all duration-300"
+            >
               Daftar
             </Button>
           </form>
@@ -96,7 +115,8 @@ export function Footer(): React.JSX.Element {
                 </span>
               )}
               <p className="text-[11px] text-neutral-500 leading-relaxed max-w-xs font-sans">
-                Benangbaju menghadirkan fashion muslim premium modern untuk wanita Indonesia dengan desain minimalis, bahan berkualitas, dan kenyamanan terbaik.
+                Benangbaju menghadirkan fashion muslim premium modern untuk wanita Indonesia dengan
+                desain minimalis, bahan berkualitas, dan kenyamanan terbaik.
               </p>
             </div>
 
@@ -107,22 +127,34 @@ export function Footer(): React.JSX.Element {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/cara-belanja" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/cara-belanja"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Cara Belanja
                   </Link>
                 </li>
                 <li>
-                  <Link href="/pengiriman" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/pengiriman"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Informasi Pengiriman
                   </Link>
                 </li>
                 <li>
-                  <Link href="/retur" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/retur"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Kebijakan Pengembalian (Retur)
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kontak" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/kontak"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Hubungi Kami
                   </Link>
                 </li>
@@ -136,17 +168,26 @@ export function Footer(): React.JSX.Element {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/syarat-ketentuan" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/syarat-ketentuan"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Syarat & Ketentuan
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kebijakan-privasi" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/kebijakan-privasi"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Kebijakan Privasi
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tentang" className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans">
+                  <Link
+                    href="/tentang"
+                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                  >
                     Tentang Kami
                   </Link>
                 </li>
@@ -170,7 +211,15 @@ export function Footer(): React.JSX.Element {
                     className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="Instagram"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -185,7 +234,15 @@ export function Footer(): React.JSX.Element {
                     className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="TikTok"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
                     </svg>
                   </a>
@@ -198,7 +255,15 @@ export function Footer(): React.JSX.Element {
                     className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="WhatsApp"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                     </svg>
                   </a>
@@ -212,7 +277,7 @@ export function Footer(): React.JSX.Element {
                     aria-label="Shopee"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.2 7h-2.12c-.52-2.76-2.58-4.8-5.08-4.8s-4.56 2.04-5.08 4.8H4.8c-.99 0-1.8.81-1.8 1.8v10.4c0 .99.81 1.8 1.8 1.8h14.4c.99 0 1.8-.81 1.8-1.8V8.8c0-.99-.81-1.8-1.8-1.8zm-7.2-3c1.47 0 2.7 1.25 3.08 3H8.92c.38-1.75 1.61-3 3.08-3zm7.2 15.2H4.8V8.8h14.4v10.4zm-10.2-7.2c0-.99.81-1.8 1.8-1.8s1.8.81 1.8 1.8v1.2c0 .99-.81 1.8-1.8 1.8s-1.8-.81-1.8-1.8v-1.2z"/>
+                      <path d="M19.2 7h-2.12c-.52-2.76-2.58-4.8-5.08-4.8s-4.56 2.04-5.08 4.8H4.8c-.99 0-1.8.81-1.8 1.8v10.4c0 .99.81 1.8 1.8 1.8h14.4c.99 0 1.8-.81 1.8-1.8V8.8c0-.99-.81-1.8-1.8-1.8zm-7.2-3c1.47 0 2.7 1.25 3.08 3H8.92c.38-1.75 1.61-3 3.08-3zm7.2 15.2H4.8V8.8h14.4v10.4zm-10.2-7.2c0-.99.81-1.8 1.8-1.8s1.8.81 1.8 1.8v1.2c0 .99-.81 1.8-1.8 1.8s-1.8-.81-1.8-1.8v-1.2z" />
                     </svg>
                   </a>
                 )}
@@ -225,9 +290,15 @@ export function Footer(): React.JSX.Element {
               &copy; <CurrentYear /> Benangbaju Store. All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
-              <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">Syarat</Link>
-              <Link href="/kebijakan-privasi" className="hover:text-brand-gold transition-colors">Privasi</Link>
-              <Link href="/kontak" className="hover:text-brand-gold transition-colors">Kontak</Link>
+              <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">
+                Syarat
+              </Link>
+              <Link href="/kebijakan-privasi" className="hover:text-brand-gold transition-colors">
+                Privasi
+              </Link>
+              <Link href="/kontak" className="hover:text-brand-gold transition-colors">
+                Kontak
+              </Link>
             </div>
           </div>
         </div>

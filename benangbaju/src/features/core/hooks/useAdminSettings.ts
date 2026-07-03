@@ -11,14 +11,22 @@ import {
 
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
-export function useAdminSettings() : import("@tanstack/react-query").UseQueryResult<NoInfer<ApiListResponse<SiteSetting>>, Error> {
+export function useAdminSettings(): import('@tanstack/react-query').UseQueryResult<
+  NoInfer<ApiListResponse<SiteSetting>>,
+  Error
+> {
   return useQuery({
     queryKey: ['admin', 'settings'],
-    queryFn: () => adminGetSettings(getAdminSupabase())
+    queryFn: () => adminGetSettings(getAdminSupabase()),
   })
 }
 
-export function useAdminUpdateSettings() : import("@tanstack/react-query").UseMutationResult<ApiResponse<void>, Error, Record<string, string>, unknown> {
+export function useAdminUpdateSettings(): import('@tanstack/react-query').UseMutationResult<
+  ApiResponse<void>,
+  Error,
+  Record<string, string>,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (settings: Record<string, string>) => {
@@ -28,11 +36,16 @@ export function useAdminUpdateSettings() : import("@tanstack/react-query").UseMu
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['settings'], ['settings', 'homepage-data'])
-    }
+    },
   })
 }
 
-export function useAdminUpsertSettings() : import("@tanstack/react-query").UseMutationResult<ApiResponse<void>, Error, SiteSetting[], unknown> {
+export function useAdminUpsertSettings(): import('@tanstack/react-query').UseMutationResult<
+  ApiResponse<void>,
+  Error,
+  SiteSetting[],
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (settings: SiteSetting[]) => {
@@ -42,13 +55,16 @@ export function useAdminUpsertSettings() : import("@tanstack/react-query").UseMu
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['settings'], ['settings', 'homepage-data'])
-    }
+    },
   })
 }
 
-export function useAdminActivityLogs() : import("@tanstack/react-query").UseQueryResult<NoInfer<ApiListResponse<import("@/features/core/services/settings").ActivityLog>>, Error> {
+export function useAdminActivityLogs(): import('@tanstack/react-query').UseQueryResult<
+  NoInfer<ApiListResponse<import('@/features/core/services/settings').ActivityLog>>,
+  Error
+> {
   return useQuery({
     queryKey: ['admin', 'activity-logs'],
-    queryFn: () => adminGetActivityLogs(getAdminSupabase())
+    queryFn: () => adminGetActivityLogs(getAdminSupabase()),
   })
 }

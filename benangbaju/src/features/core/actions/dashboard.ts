@@ -42,46 +42,35 @@ export interface AdminDashboardData {
 export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData> {
   const supabase = await createServerClient()
 
-  const [
-    revRes,
-    activeRes,
-    completedRes,
-    custRes,
-    stockRes,
-    ordersRes,
-    logsRes
-  ] = await Promise.all([
-    supabase.rpc('get_dashboard_revenue'),
-    supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .in('status', ['processing', 'shipped']),
-    supabase
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'completed'),
-    supabase
-      .from('profiles')
-      .select('*', { count: 'exact', head: true })
-      .neq('role', 'admin'),
-    supabase
-      .from('product_variants')
-      .select('id, name, sku, stock, products(name)')
-      .eq('is_active', true)
-      .lt('stock', 5)
-      .order('stock', { ascending: true })
-      .limit(10),
-    supabase
-      .from('orders')
-      .select('id, order_number, total_amount, status, created_at, order_shipping(recipient_name)')
-      .order('created_at', { ascending: false })
-      .limit(5),
-    supabase
-      .from('admin_activity_logs')
-      .select('*, profiles(name, email)')
-      .order('created_at', { ascending: false })
-      .limit(5)
-  ])
+  const [revRes, activeRes, completedRes, custRes, stockRes, ordersRes, logsRes] =
+    await Promise.all([
+      supabase.rpc('get_dashboard_revenue'),
+      supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .in('status', ['processing', 'shipped']),
+      supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+      supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('role', 'admin'),
+      supabase
+        .from('product_variants')
+        .select('id, name, sku, stock, products(name)')
+        .eq('is_active', true)
+        .lt('stock', 5)
+        .order('stock', { ascending: true })
+        .limit(10),
+      supabase
+        .from('orders')
+        .select(
+          'id, order_number, total_amount, status, created_at, order_shipping(recipient_name)'
+        )
+        .order('created_at', { ascending: false })
+        .limit(5),
+      supabase
+        .from('admin_activity_logs')
+        .select('*, profiles(name, email)')
+        .order('created_at', { ascending: false })
+        .limit(5),
+    ])
 
   if (revRes.error) throw new Error(revRes.error.message)
   if (activeRes.error) throw new Error(activeRes.error.message)
@@ -100,10 +89,10 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
     sku: v.sku,
     stock: v.stock,
     products: v.products
-      ? Array.isArray(v.products) 
-        ? { name: v.products[0]?.name || '' } 
+      ? Array.isArray(v.products)
+        ? { name: v.products[0]?.name || '' }
         : { name: v.products.name || '' }
-      : null
+      : null,
   }))
 
   const recentOrders = (ordersRes.data || []).map((o: any) => ({
@@ -116,7 +105,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
       ? Array.isArray(o.order_shipping)
         ? { recipient_name: o.order_shipping[0]?.recipient_name || '' }
         : { recipient_name: o.order_shipping.recipient_name || '' }
-      : null
+      : null,
   }))
 
   const recentLogs = (logsRes.data || []).map((l: any) => ({
@@ -130,7 +119,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
       ? Array.isArray(l.profiles)
         ? { name: l.profiles[0]?.name || null, email: l.profiles[0]?.email || null }
         : { name: l.profiles.name || null, email: l.profiles.email || null }
-      : null
+      : null,
   }))
 
   return {
@@ -140,8 +129,6 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
     customersCount: custRes.count || 0,
     lowStockVariants,
     recentOrders,
-    recentLogs
+    recentLogs,
   }
 }
-
-

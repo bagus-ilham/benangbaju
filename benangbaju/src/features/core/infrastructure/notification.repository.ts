@@ -29,7 +29,7 @@ export async function getUserNotifications(
 
   if (!data) return paginated([], page, limit, count || 0)
 
-  const notifications = data.map(row => ({
+  const notifications = data.map((row) => ({
     id: row.id,
     user_id: row.user_id,
     type: row.type,

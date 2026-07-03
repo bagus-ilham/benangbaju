@@ -35,7 +35,7 @@ export function formatLocalISO(date: string | Date | null | undefined): string {
   if (!date) return ''
   const d = typeof date === 'string' ? new Date(date) : date
   if (isNaN(d.getTime())) return ''
-  
+
   // Shift by timezone offset to get local time in ISO format
   const offset = d.getTimezoneOffset() * 60000
   const localTime = new Date(d.getTime() - offset)
@@ -70,5 +70,3 @@ export function formatProductDescription(text: string | null | undefined): strin
 
   return formatted
 }
-
-

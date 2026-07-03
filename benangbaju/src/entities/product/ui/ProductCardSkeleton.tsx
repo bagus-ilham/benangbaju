@@ -6,9 +6,14 @@ interface ProductCardSkeletonProps {
   className?: string
 }
 
-export function ProductCardSkeleton({ className }: ProductCardSkeletonProps) : React.JSX.Element {
+export function ProductCardSkeleton({ className }: ProductCardSkeletonProps): React.JSX.Element {
   return (
-    <div className={cn('flex flex-col w-full text-left bg-white rounded-xl overflow-hidden border border-neutral-100', className)}>
+    <div
+      className={cn(
+        'flex flex-col w-full text-left bg-white rounded-xl overflow-hidden border border-neutral-100',
+        className
+      )}
+    >
       {/* Product Image Area */}
       <Skeleton className="aspect-[3/4] w-full rounded-none" />
 

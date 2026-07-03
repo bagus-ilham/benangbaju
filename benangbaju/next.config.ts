@@ -1,9 +1,11 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const remotePatterns: import('next/dist/shared/lib/image-config').RemotePattern[] = [
   {
     protocol: 'https',
-    hostname: process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname : 'jwvbzuoatffoxaahdwdx.supabase.co',
+    hostname: process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+      : 'jwvbzuoatffoxaahdwdx.supabase.co',
     pathname: '/storage/v1/object/public/**',
   },
 ]
@@ -56,7 +58,8 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://* https://lh3.googleusercontent.com; connect-src 'self' https://* wss://* https://app.sandbox.midtrans.com https://app.midtrans.com; frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com;"
+            value:
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.sandbox.midtrans.com https://app.midtrans.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://* https://lh3.googleusercontent.com; connect-src 'self' https://* wss://* https://app.sandbox.midtrans.com https://app.midtrans.com; frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com;",
           },
         ],
       },
@@ -65,7 +68,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   experimental: {
     viewTransition: true,
-  }
-};
+  },
+}
 
-export default nextConfig;
+export default nextConfig

@@ -60,7 +60,7 @@ export interface ProductListItem {
   } | null
   product_variants: ProductVariant[]
   product_images: ProductImage[]
-  
+
   // Pre-computed fields for performance
   minPrice: number
   maxPrice: number
@@ -72,7 +72,17 @@ export interface ProductListItem {
   sizeVariants: ProductVariant[]
 }
 
-export interface ProductDetailItem extends Omit<ProductListItem, 'minPrice'|'maxPrice'|'comparePrice'|'discountPercent'|'primaryImage'|'hoverImage'|'hasMultipleColors'|'sizeVariants'> {
+export interface ProductDetailItem extends Omit<
+  ProductListItem,
+  | 'minPrice'
+  | 'maxPrice'
+  | 'comparePrice'
+  | 'discountPercent'
+  | 'primaryImage'
+  | 'hoverImage'
+  | 'hasMultipleColors'
+  | 'sizeVariants'
+> {
   description: string | null
   short_description: string | null
   meta_title: string | null
@@ -155,4 +165,3 @@ export interface ProductPayload {
   links: ProductLinkPayload[]
   collectionIds: string[]
 }
-

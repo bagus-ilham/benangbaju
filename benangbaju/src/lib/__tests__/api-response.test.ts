@@ -24,7 +24,7 @@ describe('api-response helpers', () => {
         error: {
           code: ApiErrorCode.UNAUTHORIZED,
           message: 'Not logged in',
-        }
+        },
       })
     })
 
@@ -36,8 +36,8 @@ describe('api-response helpers', () => {
         error: {
           code: ApiErrorCode.VALIDATION_ERROR,
           message: 'Bad request',
-          details: { field1: ['Required'] }
-        }
+          details: { field1: ['Required'] },
+        },
       })
     })
 
@@ -48,8 +48,8 @@ describe('api-response helpers', () => {
         error: {
           code: 'CUSTOM_CODE',
           message: 'Custom message',
-          details: { param: ['invalid'] }
-        }
+          details: { param: ['invalid'] },
+        },
       })
     })
 
@@ -61,7 +61,7 @@ describe('api-response helpers', () => {
         error: {
           code: ApiErrorCode.INTERNAL_ERROR,
           message: 'Database connection failed',
-        }
+        },
       })
     })
 
@@ -72,7 +72,7 @@ describe('api-response helpers', () => {
         error: {
           code: ApiErrorCode.INTERNAL_ERROR,
           message: 'Kesalahan sistem yang tidak terduga',
-        }
+        },
       })
     })
   })
@@ -83,7 +83,7 @@ describe('api-response helpers', () => {
       const res = paginated(data)
       expect(res).toEqual({
         success: true,
-        data: [{ id: 1 }]
+        data: [{ id: 1 }],
       })
     })
 
@@ -94,7 +94,7 @@ describe('api-response helpers', () => {
         page: 1,
         limit: 10,
         total_count: 25,
-        total_pages: 3
+        total_pages: 3,
       })
     })
 
@@ -104,13 +104,13 @@ describe('api-response helpers', () => {
         page: 1,
         limit: 10,
         total_count: 0,
-        total_pages: 1 // Math.max(1, 0) logic
+        total_pages: 1, // Math.max(1, 0) logic
       })
     })
 
     it('handles division by zero (limit = 0) gracefully (infinity -> 1 or max)', () => {
       const res = paginated([{ id: 1 }], 1, 0, 10)
-      // Math.ceil(10 / 0) is Infinity. 
+      // Math.ceil(10 / 0) is Infinity.
       // This is a known edge case, but we expect it to not crash and return Infinity.
       expect(res.pagination?.total_pages).toBe(Infinity)
     })

@@ -12,7 +12,7 @@ import { useAuthStore } from '@/entities/user/model/authStore'
 import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/features/core/services/reviews'
 import Image from 'next/image'
-export default function AdminReviewsPage() : React.JSX.Element {
+export default function AdminReviewsPage(): React.JSX.Element {
   const { data: reviewsRes, isLoading, isError, refetch } = useAdminReviews()
   const reviews = reviewsRes?.data || []
   const { user } = useAuthStore()
@@ -30,7 +30,10 @@ export default function AdminReviewsPage() : React.JSX.Element {
     setReplyText(existingReply)
   }
 
-  const handleUpdateStatus = async (reviewId: string, status: 'approved' | 'rejected' | 'hidden' | 'pending') => {
+  const handleUpdateStatus = async (
+    reviewId: string,
+    status: 'approved' | 'rejected' | 'hidden' | 'pending'
+  ) => {
     toast.loading('Memperbarui status ulasan...', { id: 'update-status' })
     try {
       await updateStatusMutation.mutateAsync({ reviewId, status })
@@ -54,7 +57,7 @@ export default function AdminReviewsPage() : React.JSX.Element {
       await replyMutation.mutateAsync({
         reviewId: selectedReview.id,
         body: replyText.trim(),
-        adminId: user.id
+        adminId: user.id,
       })
       toast.success('Balasan berhasil disimpan!', { id: 'save-reply' })
       setSelectedReview(null)
@@ -75,12 +78,20 @@ export default function AdminReviewsPage() : React.JSX.Element {
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
         {isLoading ? (
           <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat ulasan...</p>
+            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+              Memuat ulasan...
+            </p>
           </div>
         ) : isError ? (
           <div className="py-24 text-center">
-            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat ulasan dari server</p>
-            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+            <p className="text-red-500 text-xs font-semibold uppercase">
+              Gagal memuat ulasan dari server
+            </p>
+            <Button
+              onClick={() => refetch()}
+              variant="outline"
+              className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+            >
               Coba Lagi
             </Button>
           </div>
@@ -126,13 +137,25 @@ export default function AdminReviewsPage() : React.JSX.Element {
                       </div>
                       {rev.title && <p className="font-bold text-neutral-800">{rev.title}</p>}
                       <p className="text-neutral-600 leading-relaxed font-normal">{rev.body}</p>
-                      
+
                       {/* Review Media Previews */}
                       {rev.review_media && rev.review_media.length > 0 && (
                         <div className="flex gap-2 mt-2">
                           {rev.review_media.map((media) => (
-                            <a key={media.id} href={media.url} target="_blank" rel="noopener noreferrer" className="block border border-neutral-200 hover:border-brand-gold transition-colors relative w-12 h-12">
-                              <Image src={media.url} alt="Review attachment" fill sizes="48px" className="object-cover" />
+                            <a
+                              key={media.id}
+                              href={media.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block border border-neutral-200 hover:border-brand-gold transition-colors relative w-12 h-12"
+                            >
+                              <Image
+                                src={media.url}
+                                alt="Review attachment"
+                                fill
+                                sizes="48px"
+                                className="object-cover"
+                              />
                             </a>
                           ))}
                         </div>
@@ -140,26 +163,32 @@ export default function AdminReviewsPage() : React.JSX.Element {
 
                       {rev.review_replies?.length > 0 && (
                         <div className="bg-neutral-55 bg-neutral-100/60 p-2 border-l-2 border-neutral-900 mt-2 font-normal text-[11px]">
-                          <span className="font-bold text-neutral-800 text-[10px] uppercase block">Balasan Admin:</span>
-                          <span className="italic block mt-0.5 text-neutral-600">{rev.review_replies[0].body}</span>
+                          <span className="font-bold text-neutral-800 text-[10px] uppercase block">
+                            Balasan Admin:
+                          </span>
+                          <span className="italic block mt-0.5 text-neutral-600">
+                            {rev.review_replies[0].body}
+                          </span>
                         </div>
                       )}
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${
-                        rev.status === 'approved'
-                          ? 'bg-green-50 text-green-700 border border-green-200'
-                          : rev.status === 'rejected' || rev.status === 'hidden'
-                          ? 'bg-red-50 text-red-700 border border-red-200'
-                          : 'bg-amber-50 text-amber-700 border border-amber-200'
-                      }`}>
+                      <span
+                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${
+                          rev.status === 'approved'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : rev.status === 'rejected' || rev.status === 'hidden'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200'
+                        }`}
+                      >
                         {rev.status === 'approved'
                           ? 'Disetujui'
                           : rev.status === 'hidden'
-                          ? 'Disembunyikan'
-                          : rev.status === 'rejected'
-                          ? 'Ditolak'
-                          : 'Menunggu'}
+                            ? 'Disembunyikan'
+                            : rev.status === 'rejected'
+                              ? 'Ditolak'
+                              : 'Menunggu'}
                       </span>
                     </td>
                     <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
@@ -217,27 +246,20 @@ export default function AdminReviewsPage() : React.JSX.Element {
               <span className="italic block mt-1">"{selectedReview.body}"</span>
             </div>
 
-              <Textarea
-                label="Tulis Balasan Admin"
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                placeholder="Terima kasih atas ulasan positif Anda!..."
-                required
-                rows={4}
-              />
+            <Textarea
+              label="Tulis Balasan Admin"
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Terima kasih atas ulasan positif Anda!..."
+              required
+              rows={4}
+            />
 
             <div className="flex justify-end space-x-2 pt-3 border-t border-neutral-100">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setSelectedReview(null)}
-              >
+              <Button type="button" variant="outline" onClick={() => setSelectedReview(null)}>
                 Batal
               </Button>
-              <Button
-                type="submit"
-                isLoading={replyMutation.isPending}
-              >
+              <Button type="submit" isLoading={replyMutation.isPending}>
                 Kirim Balasan
               </Button>
             </div>

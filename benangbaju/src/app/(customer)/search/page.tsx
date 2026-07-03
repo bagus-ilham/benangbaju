@@ -31,7 +31,11 @@ function SearchResultsContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
 
-  const { data: dataRes, isLoading, isError } = useProducts({
+  const {
+    data: dataRes,
+    isLoading,
+    isError,
+  } = useProducts({
     searchQuery: query || undefined,
     limit: 40,
   })
@@ -53,8 +57,8 @@ function SearchResultsContent() {
             title="Gagal Memuat Hasil Pencarian"
             description="Terjadi kesalahan koneksi saat mencari produk. Silakan coba kembali."
             action={{
-              label: "Coba Lagi",
-              onClick: () => window.location.reload()
+              label: 'Coba Lagi',
+              onClick: () => window.location.reload(),
             }}
           />
         </PageContainer>
@@ -70,7 +74,6 @@ function SearchResultsContent() {
         subtitle={`Ditemukan ${totalCount} produk yang cocok.`}
       />
       <PageContainer className="py-10 page-content">
-
         {isLoading ? (
           <ProductGridSkeleton count={8} />
         ) : products.length === 0 ? (
@@ -99,15 +102,17 @@ function SearchResultsContent() {
   )
 }
 
-export default function SearchPage() : React.JSX.Element {
+export default function SearchPage(): React.JSX.Element {
   return (
-    <Suspense fallback={
-      <div className="bg-white min-h-screen py-12">
-        <PageContainer>
-          <ProductGridSkeleton count={8} />
-        </PageContainer>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="bg-white min-h-screen py-12">
+          <PageContainer>
+            <ProductGridSkeleton count={8} />
+          </PageContainer>
+        </div>
+      }
+    >
       <SearchResultsContent />
     </Suspense>
   )

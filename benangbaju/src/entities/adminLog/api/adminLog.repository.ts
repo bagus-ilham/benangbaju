@@ -16,9 +16,12 @@ export async function insertAdminActivityLog(
 ): Promise<void> {
   try {
     let currentAdminId = adminId
-    
+
     if (!currentAdminId) {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession()
       if (sessionError || !session?.user) {
         safeLogError('Failed to get user for activity log', sessionError)
         return // Silently fail if no user is found

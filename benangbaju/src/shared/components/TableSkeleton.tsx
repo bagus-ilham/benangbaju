@@ -6,7 +6,7 @@ interface TableSkeletonProps {
   columns?: number
 }
 
-export function TableSkeleton({ rows = 5, columns = 6 }: TableSkeletonProps) : React.JSX.Element {
+export function TableSkeleton({ rows = 5, columns = 6 }: TableSkeletonProps): React.JSX.Element {
   return (
     <div className="w-full">
       {/* Header Row */}
@@ -17,7 +17,7 @@ export function TableSkeleton({ rows = 5, columns = 6 }: TableSkeletonProps) : R
           </div>
         ))}
       </div>
-      
+
       {/* Body Rows */}
       {[...Array(rows)].map((_, r) => (
         <div key={`row-${r}`} className="flex w-full border-b border-neutral-50 py-4 items-center">

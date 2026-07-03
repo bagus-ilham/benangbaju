@@ -14,7 +14,7 @@ async function getCachedFlashSale() {
   return getActiveFlashSale(supabase)
 }
 
-export default async function FlashSalePage() : Promise<React.JSX.Element> {
+export default async function FlashSalePage(): Promise<React.JSX.Element> {
   const flashSaleResponse = await getCachedFlashSale()
   const flashSale = flashSaleResponse.data
 

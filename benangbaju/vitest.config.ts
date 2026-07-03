@@ -6,7 +6,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
     },
     coverage: {
       provider: 'v8',

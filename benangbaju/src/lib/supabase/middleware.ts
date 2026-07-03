@@ -6,7 +6,7 @@ const redirectCache = new Map<string, { to_path: string; status_code: number; ex
 const CACHE_TTL = 60 * 1000 // 1 minute
 const NEGATIVE_CACHE_TTL = 10 * 1000 // 10 seconds
 
-export async function updateSession(request: NextRequest) : Promise<NextResponse<unknown>> {
+export async function updateSession(request: NextRequest): Promise<NextResponse<unknown>> {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -20,18 +20,16 @@ export async function updateSession(request: NextRequest) : Promise<NextResponse
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options)
           )
         },
       },
-    },
+    }
   )
 
   const pathname = request.nextUrl.pathname
@@ -95,9 +93,7 @@ export async function updateSession(request: NextRequest) : Promise<NextResponse
 
   // Protected routes: redirect to login if not authenticated
   const protectedPaths = ['/akun', '/checkout', '/pesanan', '/wishlist']
-  const isProtected = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  )
+  const isProtected = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()
@@ -131,9 +127,7 @@ export async function updateSession(request: NextRequest) : Promise<NextResponse
 
   // Auth pages: redirect to home if already logged in
   const authPaths = ['/masuk', '/daftar', '/lupa-password']
-  const isAuthPage = authPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  )
+  const isAuthPage = authPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
   if (isAuthPage && user) {
     let redirect = request.nextUrl.searchParams.get('redirect') || '/'

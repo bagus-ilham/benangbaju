@@ -19,7 +19,7 @@ const supabase = createBrowserClient()
 
 type BannerRow = Database['public']['Tables']['banners']['Row']
 
-export default function AdminBannersPage() : React.JSX.Element {
+export default function AdminBannersPage(): React.JSX.Element {
   const { data: bannersRes, isLoading, isError, refetch } = useAdminBanners()
   const banners = bannersRes?.data || []
 
@@ -162,11 +162,11 @@ export default function AdminBannersPage() : React.JSX.Element {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
-        title="Banner Promosi"
-        subtitle="Kelola slide promosi halaman depan toko."
-      >
-        <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
+      <AdminPageHeader title="Banner Promosi" subtitle="Kelola slide promosi halaman depan toko.">
+        <Button
+          onClick={handleOpenAdd}
+          className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
+        >
           <Plus size={14} className="mr-1.5" /> Tambah Banner
         </Button>
       </AdminPageHeader>

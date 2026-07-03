@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAdminCategories } from '@/entities/category/api/useAdminCategories';
-import { useAdminCollections } from '@/entities/collection/api/useAdminCollections';
+import { useAdminCategories } from '@/entities/category/api/useAdminCategories'
+import { useAdminCollections } from '@/entities/collection/api/useAdminCollections'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -14,8 +14,12 @@ import { ProductVariantsSection } from './ProductVariantsSection'
 import { ProductMarketplaceLinks } from './ProductMarketplaceLinks'
 import { ProductSeoFields } from './ProductSeoFields'
 
-
-import type { ProductPayload, ProductVariantPayload, ProductImagePayload, ProductLinkPayload } from '@/entities/product/model/product.types'
+import type {
+  ProductPayload,
+  ProductVariantPayload,
+  ProductImagePayload,
+  ProductLinkPayload,
+} from '@/entities/product/model/product.types'
 
 interface InitialProductVariantAttr {
   attr_name: string
@@ -54,7 +58,7 @@ interface InitialCollectionProduct {
   collection_id: string
 }
 
-interface InitialProductData {
+export interface InitialProductData {
   id: string
   name: string
   slug: string
@@ -81,7 +85,12 @@ interface ProductFormProps {
   title: string
 }
 
-export function ProductForm({ initialData, onSubmit, isSubmitting, title }: ProductFormProps) : React.JSX.Element {
+export function ProductForm({
+  initialData,
+  onSubmit,
+  isSubmitting,
+  title,
+}: ProductFormProps): React.JSX.Element {
   const router = useRouter()
   const { data: categories, isLoading: catsLoading } = useAdminCategories()
   const { data: collectionsRes, isLoading: colsLoading } = useAdminCollections()
@@ -144,10 +153,11 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
             weight_gram: v.weight_gram || null,
             is_active: v.is_active !== false,
             // Parse attributes
-            attrs: v.product_variant_attrs?.map((a: InitialProductVariantAttr) => ({
-              attr_name: a.attr_name,
-              attr_value: a.attr_value,
-            })) || [],
+            attrs:
+              v.product_variant_attrs?.map((a: InitialProductVariantAttr) => ({
+                attr_name: a.attr_name,
+                attr_value: a.attr_value,
+              })) || [],
           }))
         )
       }
@@ -256,10 +266,12 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     ])
   }
 
-  const handleUpdateVariantField = (idx: number, field: string, value: string | number | boolean | null | Array<{ attr_name: string; attr_value: string }>) => {
-    setVariants((prev) =>
-      prev.map((v, i) => (i === idx ? { ...v, [field]: value } : v))
-    )
+  const handleUpdateVariantField = (
+    idx: number,
+    field: string,
+    value: string | number | boolean | null | Array<{ attr_name: string; attr_value: string }>
+  ) => {
+    setVariants((prev) => prev.map((v, i) => (i === idx ? { ...v, [field]: value } : v)))
   }
 
   const handleRemoveVariant = (idx: number) => {
@@ -284,7 +296,12 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     )
   }
 
-  const handleUpdateVariantAttrField = (vIdx: number, aIdx: number, field: string, value: string) => {
+  const handleUpdateVariantAttrField = (
+    vIdx: number,
+    aIdx: number,
+    field: string,
+    value: string
+  ) => {
     setVariants((prev) =>
       prev.map((v, i) =>
         i === vIdx
@@ -325,7 +342,11 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
     ])
   }
 
-  const handleUpdateImageField = (idx: number, field: string, value: string | number | boolean | null) => {
+  const handleUpdateImageField = (
+    idx: number,
+    field: string,
+    value: string | number | boolean | null
+  ) => {
     setImages((prev) =>
       prev.map((img, i) => {
         if (field === 'is_primary' && value === true) {
@@ -391,13 +412,13 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
 
     // Clean image objects
     const cleanedImages = images.filter((img) => img.url.trim() !== '')
-    
+
     // Clean marketplace links
     const cleanedLinks = marketplaceLinks.filter((link) => link.url.trim() !== '')
 
-    const cleanedVariants = variants.map(v => ({
+    const cleanedVariants = variants.map((v) => ({
       ...v,
-      attrs: v.attrs.filter(a => a.attr_name.trim() !== '' && a.attr_value.trim() !== '')
+      attrs: v.attrs.filter((a) => a.attr_name.trim() !== '' && a.attr_value.trim() !== ''),
     }))
 
     const payload = {
@@ -436,7 +457,10 @@ export function ProductForm({ initialData, onSubmit, isSubmitting, title }: Prod
       <AdminPageHeader title={title}>
         <div className="flex items-center gap-2">
           <Link href="/admin/produk">
-            <Button variant="outline" className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900">
+            <Button
+              variant="outline"
+              className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900"
+            >
               <ArrowLeft size={14} />
             </Button>
           </Link>

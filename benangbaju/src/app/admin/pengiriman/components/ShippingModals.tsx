@@ -4,18 +4,56 @@ import React from 'react'
 import { Modal, Input, Textarea, Select, Switch, Button } from '@/shared/components'
 
 const PROVINCES = [
-  'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur', 'DI Yogyakarta', 'Banten',
-  'Sumatera Utara', 'Sumatera Barat', 'Sumatera Selatan', 'Riau', 'Lampung', 'Aceh',
-  'Jambi', 'Bengkulu', 'Kepulauan Riau', 'Kepulauan Bangka Belitung',
-  'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Tengah', 'Kalimantan Utara',
-  'Sulawesi Selatan', 'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
-  'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Maluku', 'Maluku Utara'
+  'DKI Jakarta',
+  'Jawa Barat',
+  'Jawa Tengah',
+  'Jawa Timur',
+  'DI Yogyakarta',
+  'Banten',
+  'Sumatera Utara',
+  'Sumatera Barat',
+  'Sumatera Selatan',
+  'Riau',
+  'Lampung',
+  'Aceh',
+  'Jambi',
+  'Bengkulu',
+  'Kepulauan Riau',
+  'Kepulauan Bangka Belitung',
+  'Kalimantan Barat',
+  'Kalimantan Timur',
+  'Kalimantan Selatan',
+  'Kalimantan Tengah',
+  'Kalimantan Utara',
+  'Sulawesi Selatan',
+  'Sulawesi Utara',
+  'Sulawesi Tengah',
+  'Sulawesi Tenggara',
+  'Gorontalo',
+  'Sulawesi Barat',
+  'Bali',
+  'Nusa Tenggara Barat',
+  'Nusa Tenggara Timur',
+  'Papua',
+  'Papua Barat',
+  'Maluku',
+  'Maluku Utara',
 ]
 
 export function ShippingZoneModal({
-  isOpen, onClose, onSubmit, editingZone,
-  zoneName, setZoneName, zoneDesc, setZoneDesc,
-  selectedProvinces, handleToggleProvince, zoneActive, setZoneActive, isPending
+  isOpen,
+  onClose,
+  onSubmit,
+  editingZone,
+  zoneName,
+  setZoneName,
+  zoneDesc,
+  setZoneDesc,
+  selectedProvinces,
+  handleToggleProvince,
+  zoneActive,
+  setZoneActive,
+  isPending,
 }: any) {
   return (
     <Modal
@@ -47,7 +85,9 @@ export function ShippingZoneModal({
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label className="font-bold text-neutral-500 uppercase tracking-wider text-xs">Pilih Cakupan Provinsi* (Minimal 1)</label>
+          <label className="font-bold text-neutral-500 uppercase tracking-wider text-xs">
+            Pilih Cakupan Provinsi* (Minimal 1)
+          </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-neutral-50 border border-neutral-200 max-h-48 overflow-y-auto">
             {PROVINCES.map((p) => {
               const isSelected = selectedProvinces.includes(p)
@@ -74,12 +114,21 @@ export function ShippingZoneModal({
             checked={zoneActive}
             onChange={(e) => setZoneActive(e.target.checked)}
           />
-          <label htmlFor="zoneActive" className="font-bold text-[10px] uppercase tracking-wider text-neutral-700 cursor-pointer">Aktifkan Zona ini</label>
+          <label
+            htmlFor="zoneActive"
+            className="font-bold text-[10px] uppercase tracking-wider text-neutral-700 cursor-pointer"
+          >
+            Aktifkan Zona ini
+          </label>
         </div>
 
         <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
-          <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
-          <Button type="submit" variant="primary" isLoading={isPending}>Simpan</Button>
+          <Button type="button" variant="outline" onClick={onClose}>
+            Batal
+          </Button>
+          <Button type="submit" variant="primary" isLoading={isPending}>
+            Simpan
+          </Button>
         </div>
       </form>
     </Modal>
@@ -87,11 +136,26 @@ export function ShippingZoneModal({
 }
 
 export function ShippingRateModal({
-  isOpen, onClose, onSubmit, editingRate,
-  zones, rateZoneId, setRateZoneId, rateCourier, setRateCourier,
-  rateBasePrice, setRateBasePrice, ratePricePerKg, setRatePricePerKg,
-  rateEtdMin, setRateEtdMin, rateEtdMax, setRateEtdMax,
-  rateActive, setRateActive, isPending
+  isOpen,
+  onClose,
+  onSubmit,
+  editingRate,
+  zones,
+  rateZoneId,
+  setRateZoneId,
+  rateCourier,
+  setRateCourier,
+  rateBasePrice,
+  setRateBasePrice,
+  ratePricePerKg,
+  setRatePricePerKg,
+  rateEtdMin,
+  setRateEtdMin,
+  rateEtdMax,
+  setRateEtdMax,
+  rateActive,
+  setRateActive,
+  isPending,
 }: any) {
   return (
     <Modal
@@ -163,7 +227,9 @@ export function ShippingRateModal({
               required
               min={rateEtdMin}
               value={rateEtdMax.toString()}
-              onChange={(e) => setRateEtdMax(Math.max(rateEtdMin, parseInt(e.target.value) || rateEtdMin))}
+              onChange={(e) =>
+                setRateEtdMax(Math.max(rateEtdMin, parseInt(e.target.value) || rateEtdMin))
+              }
             />
           </div>
         </div>
@@ -174,12 +240,21 @@ export function ShippingRateModal({
             checked={rateActive}
             onChange={(e) => setRateActive(e.target.checked)}
           />
-          <label htmlFor="rateActive" className="font-bold text-[10px] uppercase tracking-wider text-neutral-700 cursor-pointer">Aktifkan Layanan Kurir ini</label>
+          <label
+            htmlFor="rateActive"
+            className="font-bold text-[10px] uppercase tracking-wider text-neutral-700 cursor-pointer"
+          >
+            Aktifkan Layanan Kurir ini
+          </label>
         </div>
 
         <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
-          <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
-          <Button type="submit" variant="primary" isLoading={isPending}>Simpan</Button>
+          <Button type="button" variant="outline" onClick={onClose}>
+            Batal
+          </Button>
+          <Button type="submit" variant="primary" isLoading={isPending}>
+            Simpan
+          </Button>
         </div>
       </form>
     </Modal>

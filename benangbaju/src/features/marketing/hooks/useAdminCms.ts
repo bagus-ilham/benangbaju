@@ -16,7 +16,7 @@ import { RedirectRule, LandingPage } from '@/features/marketing/domain/cms.types
 export function useAdminRedirects() {
   return useQuery({
     queryKey: ['admin', 'redirects'],
-    queryFn: () => adminGetRedirects(getAdminSupabase())
+    queryFn: () => adminGetRedirects(getAdminSupabase()),
   })
 }
 
@@ -30,21 +30,27 @@ export function useAdminCreateRedirect() {
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['redirects'])
-    }
+    },
   })
 }
 
 export function useAdminUpdateRedirect() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ redirectId, redirect }: { redirectId: string; redirect: Partial<Omit<RedirectRule, 'id' | 'created_at'>> }) => {
+    mutationFn: async ({
+      redirectId,
+      redirect,
+    }: {
+      redirectId: string
+      redirect: Partial<Omit<RedirectRule, 'id' | 'created_at'>>
+    }) => {
       const res = await adminUpdateRedirect(getAdminSupabase(), redirectId, redirect)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui redirect')
       return res
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['redirects'])
-    }
+    },
   })
 }
 
@@ -58,14 +64,14 @@ export function useAdminDeleteRedirect() {
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['redirects'])
-    }
+    },
   })
 }
 
 export function useAdminLandingPages() {
   return useQuery({
     queryKey: ['admin', 'landing-pages'],
-    queryFn: () => adminGetLandingPages(getAdminSupabase())
+    queryFn: () => adminGetLandingPages(getAdminSupabase()),
   })
 }
 
@@ -79,21 +85,27 @@ export function useAdminCreateLandingPage() {
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['landing-pages'])
-    }
+    },
   })
 }
 
 export function useAdminUpdateLandingPage() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ landingPageId, landingPage }: { landingPageId: string; landingPage: Partial<Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>> }) => {
+    mutationFn: async ({
+      landingPageId,
+      landingPage,
+    }: {
+      landingPageId: string
+      landingPage: Partial<Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>>
+    }) => {
       const res = await adminUpdateLandingPage(getAdminSupabase(), landingPageId, landingPage)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui landing page')
       return res
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['landing-pages'])
-    }
+    },
   })
 }
 
@@ -107,6 +119,6 @@ export function useAdminDeleteLandingPage() {
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['landing-pages'])
-    }
+    },
   })
 }

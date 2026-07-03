@@ -6,12 +6,9 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_APP_URL',
 ] as const
 
-const serverEnvVars = [
-  'MIDTRANS_SERVER_KEY',
-  'SUPABASE_SERVICE_ROLE_KEY',
-] as const
+const serverEnvVars = ['MIDTRANS_SERVER_KEY', 'SUPABASE_SERVICE_ROLE_KEY'] as const
 
-export function validateEnv() : void {
+export function validateEnv(): void {
   const missing: string[] = requiredEnvVars.filter((key) => {
     const value = process.env[key]
     return !value || value.trim() === ''
@@ -33,7 +30,7 @@ export function validateEnv() : void {
       `\n\nPlease check your .env.local file.`
 
     console.error(errorMessage)
-    const hasMissingServer = serverEnvVars.some(key => missing.includes(key))
+    const hasMissingServer = serverEnvVars.some((key) => missing.includes(key))
     if (hasMissingServer) {
       // Throw error if server secrets are missing even during build
       throw new Error(errorMessage)

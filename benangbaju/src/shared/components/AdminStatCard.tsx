@@ -25,7 +25,7 @@ export function AdminStatCard({
   icon: Icon,
   className,
   accent = 'default',
-}: AdminStatCardProps) : React.JSX.Element {
+}: AdminStatCardProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -41,12 +41,8 @@ export function AdminStatCard({
           <Icon size={15} strokeWidth={1.5} />
         </div>
       </div>
-      <p className="text-2xl font-heading font-semibold text-brand-black tracking-tight">
-        {value}
-      </p>
-      {hint && (
-        <p className="text-[10px] text-neutral-400 font-sans">{hint}</p>
-      )}
+      <p className="text-2xl font-heading font-semibold text-brand-black tracking-tight">{value}</p>
+      {hint && <p className="text-[10px] text-neutral-400 font-sans">{hint}</p>}
     </div>
   )
 }

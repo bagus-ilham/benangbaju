@@ -9,16 +9,16 @@ import {
   useAdminUpsertSettings,
 } from '@/shared/hooks/useAdmin'
 import type { SiteSetting } from '@/features/core/services/settings'
-import { 
-  Button, 
-  Input, 
-  AdminPageHeader, 
+import {
+  Button,
+  Input,
+  AdminPageHeader,
   ClientDateTime,
   Tabs,
   TabsList,
   TabsTrigger,
   DataTable,
-  Select
+  Select,
 } from '@/shared/components'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -26,24 +26,94 @@ import type {} from '@/shared/components/DataTable'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
-  { key: 'store_tagline', value: 'Fashion Muslim Premium Indonesia', type: 'text', group: 'general', label: 'Slogan Toko' },
-  { key: 'homepage_spotlight_collection_1', value: '', type: 'text', group: 'general', label: 'Koleksi Beranda Utama (Spotlight 1)' },
-  { key: 'homepage_spotlight_collection_2', value: '', type: 'text', group: 'general', label: 'Koleksi Beranda Kedua (Spotlight 2)' },
-  { key: 'meta_title', value: 'Benangbaju — Fashion Muslim Premium Indonesia', type: 'text', group: 'seo', label: 'Meta Title Default' },
-  { key: 'meta_description', value: 'Belanja busana muslim premium dengan desain minimalis dan bahan berkualitas.', type: 'text', group: 'seo', label: 'Meta Description Default' },
-  { key: 'enable_midtrans', value: 'true', type: 'boolean', group: 'payment', label: 'Aktifkan Midtrans Sandbox' },
-  { key: 'whatsapp_number', value: '6281234567890', type: 'text', group: 'social', label: 'Nomor WhatsApp Chat' },
-  { key: 'instagram_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username Instagram' },
-  { key: 'tiktok_username', value: 'benangbaju', type: 'text', group: 'social', label: 'Username TikTok' },
-  { key: 'social_shopee', value: 'https://shopee.co.id/benangbaju', type: 'text', group: 'social', label: 'Link Shopee' },
-  { key: 'store_logo_url', value: '/logo.PNG', type: 'image', group: 'general', label: 'URL Logo Toko' },
+  {
+    key: 'store_tagline',
+    value: 'Fashion Muslim Premium Indonesia',
+    type: 'text',
+    group: 'general',
+    label: 'Slogan Toko',
+  },
+  {
+    key: 'homepage_spotlight_collection_1',
+    value: '',
+    type: 'text',
+    group: 'general',
+    label: 'Koleksi Beranda Utama (Spotlight 1)',
+  },
+  {
+    key: 'homepage_spotlight_collection_2',
+    value: '',
+    type: 'text',
+    group: 'general',
+    label: 'Koleksi Beranda Kedua (Spotlight 2)',
+  },
+  {
+    key: 'meta_title',
+    value: 'Benangbaju — Fashion Muslim Premium Indonesia',
+    type: 'text',
+    group: 'seo',
+    label: 'Meta Title Default',
+  },
+  {
+    key: 'meta_description',
+    value: 'Belanja busana muslim premium dengan desain minimalis dan bahan berkualitas.',
+    type: 'text',
+    group: 'seo',
+    label: 'Meta Description Default',
+  },
+  {
+    key: 'enable_midtrans',
+    value: 'true',
+    type: 'boolean',
+    group: 'payment',
+    label: 'Aktifkan Midtrans Sandbox',
+  },
+  {
+    key: 'whatsapp_number',
+    value: '6281234567890',
+    type: 'text',
+    group: 'social',
+    label: 'Nomor WhatsApp Chat',
+  },
+  {
+    key: 'instagram_username',
+    value: 'benangbaju',
+    type: 'text',
+    group: 'social',
+    label: 'Username Instagram',
+  },
+  {
+    key: 'tiktok_username',
+    value: 'benangbaju',
+    type: 'text',
+    group: 'social',
+    label: 'Username TikTok',
+  },
+  {
+    key: 'social_shopee',
+    value: 'https://shopee.co.id/benangbaju',
+    type: 'text',
+    group: 'social',
+    label: 'Link Shopee',
+  },
+  {
+    key: 'store_logo_url',
+    value: '/logo.PNG',
+    type: 'image',
+    group: 'general',
+    label: 'URL Logo Toko',
+  },
 ]
 
-export default function AdminSettingsPage() : React.JSX.Element {
+export default function AdminSettingsPage(): React.JSX.Element {
   const [activeSubTab, setActiveSubTab] = useState<'settings' | 'logs'>('settings')
 
   // Queries
-  const { data: settingsRes, isLoading: settingsLoading, refetch: refetchSettings } = useAdminSettings()
+  const {
+    data: settingsRes,
+    isLoading: settingsLoading,
+    refetch: refetchSettings,
+  } = useAdminSettings()
   const settingsList = settingsRes?.data || []
   const { data: logsRes, isLoading: logsLoading } = useAdminActivityLogs()
   const logsList = logsRes?.data || []
@@ -155,12 +225,17 @@ export default function AdminSettingsPage() : React.JSX.Element {
       {activeSubTab === 'settings' ? (
         settingsLoading ? (
           <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat pengaturan...</p>
+            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+              Memuat pengaturan...
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl">
             {Object.entries(settingsByGroup).map(([group, list]) => (
-              <div key={group} className="border border-neutral-200 bg-white p-5 rounded-none space-y-4">
+              <div
+                key={group}
+                className="border border-neutral-200 bg-white p-5 rounded-none space-y-4"
+              >
                 <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
                   {groupLabels[group] || group}
                 </h3>
@@ -168,7 +243,8 @@ export default function AdminSettingsPage() : React.JSX.Element {
                 <div className="space-y-4">
                   {list.map((setting) => (
                     <div key={setting.key} className="space-y-1">
-                      {setting.key === 'homepage_spotlight_collection_1' || setting.key === 'homepage_spotlight_collection_2' ? (
+                      {setting.key === 'homepage_spotlight_collection_1' ||
+                      setting.key === 'homepage_spotlight_collection_2' ? (
                         <Select
                           label={setting.label || setting.key}
                           value={fields[setting.key] || ''}
@@ -179,8 +255,8 @@ export default function AdminSettingsPage() : React.JSX.Element {
                               .filter((col) => col.is_active)
                               .map((col) => ({
                                 label: `${col.name} (${col.slug})`,
-                                value: col.slug
-                              }))
+                                value: col.slug,
+                              })),
                           ]}
                         />
                       ) : setting.type === 'boolean' ? (
@@ -190,7 +266,7 @@ export default function AdminSettingsPage() : React.JSX.Element {
                           onChange={(val) => handleFieldChange(setting.key, val)}
                           options={[
                             { label: 'Aktif (True)', value: 'true' },
-                            { label: 'Nonaktif (False)', value: 'false' }
+                            { label: 'Nonaktif (False)', value: 'false' },
                           ]}
                         />
                       ) : (
@@ -219,66 +295,68 @@ export default function AdminSettingsPage() : React.JSX.Element {
             </div>
           </form>
         )
+      ) : // Logs viewport
+      logsLoading ? (
+        <div className="py-24 text-center">
+          <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+            Memuat log...
+          </p>
+        </div>
+      ) : logsList.length === 0 ? (
+        <div className="py-24 text-center text-neutral-400 italic text-xs">
+          Belum ada aktivitas admin terekam.
+        </div>
       ) : (
-        // Logs viewport
-        logsLoading ? (
-          <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat log...</p>
-          </div>
-        ) : logsList.length === 0 ? (
-          <div className="py-24 text-center text-neutral-400 italic text-xs">
-            Belum ada aktivitas admin terekam.
-          </div>
-        ) : (
-          <div className="border border-neutral-200 bg-white rounded-none overflow-hidden max-w-4xl">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-sans">
-                <thead>
-                  <tr className="bg-neutral-50/50 border-b border-neutral-200 text-neutral-400 uppercase tracking-widest font-bold text-[10px]">
-                    <th className="py-3 px-5">Waktu Tulis</th>
-                    <th className="py-3 px-4">Operator</th>
-                    <th className="py-3 px-4">Tindakan / Resource</th>
-                    <th className="py-3 px-4 text-center">IP Address</th>
+        <div className="border border-neutral-200 bg-white rounded-none overflow-hidden max-w-4xl">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-sans">
+              <thead>
+                <tr className="bg-neutral-50/50 border-b border-neutral-200 text-neutral-400 uppercase tracking-widest font-bold text-[10px]">
+                  <th className="py-3 px-5">Waktu Tulis</th>
+                  <th className="py-3 px-4">Operator</th>
+                  <th className="py-3 px-4">Tindakan / Resource</th>
+                  <th className="py-3 px-4 text-center">IP Address</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
+                {logsList.map((log) => (
+                  <tr key={log.id} className="hover:bg-neutral-50/20 transition">
+                    <td className="py-3 px-5 text-neutral-500 whitespace-nowrap">
+                      <ClientDateTime
+                        date={log.created_at}
+                        options={{
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                        }}
+                      />
+                    </td>
+                    <td className="py-3 px-4">
+                      <p>{log.profiles?.name || 'Administrator'}</p>
+                      <p className="text-[10px] text-neutral-400 font-normal">
+                        {log.profiles?.email || 'admin@site.com'}
+                      </p>
+                    </td>
+                    <td className="py-3 px-4 leading-relaxed">
+                      <span className="font-semibold text-neutral-900 font-mono text-[10px] bg-neutral-100 px-1 py-0.5 select-all">
+                        {log.action}
+                      </span>
+                      <p className="text-[10px] text-neutral-400 font-normal mt-0.5">
+                        Tipe: {log.resource_type} | ID: {log.resource_id || '-'}
+                      </p>
+                    </td>
+                    <td className="py-3 px-4 text-center text-neutral-500">
+                      {log.ip_address || '-'}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                  {logsList.map((log) => (
-                    <tr key={log.id} className="hover:bg-neutral-50/20 transition">
-                      <td className="py-3 px-5 text-neutral-500 whitespace-nowrap">
-                        <ClientDateTime
-                          date={log.created_at}
-                          options={{
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit'
-                          }}
-                        />
-                      </td>
-                      <td className="py-3 px-4">
-                        <p>{log.profiles?.name || 'Administrator'}</p>
-                        <p className="text-[10px] text-neutral-400 font-normal">{log.profiles?.email || 'admin@site.com'}</p>
-                      </td>
-                      <td className="py-3 px-4 leading-relaxed">
-                        <span className="font-semibold text-neutral-900 font-mono text-[10px] bg-neutral-100 px-1 py-0.5 select-all">
-                          {log.action}
-                        </span>
-                        <p className="text-[10px] text-neutral-400 font-normal mt-0.5">
-                          Tipe: {log.resource_type} | ID: {log.resource_id || '-'}
-                        </p>
-                      </td>
-                      <td className="py-3 px-4 text-center text-neutral-500">
-                        {log.ip_address || '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )
+        </div>
       )}
     </div>
   )

@@ -2,13 +2,11 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { StaffProfile } from "../domain/adminStaff.types";
+import { StaffProfile } from '../domain/adminStaff.types'
 import { InternalError } from '@/lib/api-errors'
 
 // 1. Get list of all admin and staff profiles
-export async function adminGetStaffs(
-  supabase: SupabaseClient<Database>
-): Promise<StaffProfile[]> {
+export async function adminGetStaffs(supabase: SupabaseClient<Database>): Promise<StaffProfile[]> {
   const { data, error } = await supabase
     .from('profiles')
     .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
@@ -23,7 +21,7 @@ export async function adminGetStaffs(
 
   if (!data) return []
 
-  return data.map(row => ({
+  return data.map((row) => ({
     id: row.id,
     name: row.name,
     email: row.email,

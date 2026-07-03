@@ -26,7 +26,7 @@ export function ProductStickyAction({
   isAdding,
   isBuying,
   onAddToCart,
-  onBuyNow
+  onBuyNow,
 }: ProductStickyActionProps): React.JSX.Element {
   return (
     <AnimatePresence>
@@ -43,7 +43,11 @@ export function ProductStickyAction({
             <div className="hidden sm:flex items-center space-x-3">
               <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0">
                 <Image
-                  src={product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || ''}
+                  src={
+                    product.product_images.find((img) => img.is_primary)?.url ||
+                    product.product_images[0]?.url ||
+                    ''
+                  }
                   alt={product.name}
                   className="object-cover"
                   fill
@@ -66,7 +70,9 @@ export function ProductStickyAction({
               {product.product_variants.length > 0 && (
                 <div className="text-xs font-sans text-neutral-500">
                   {selectedVariant ? (
-                    <span>Varian: <strong className="text-brand-black">{selectedVariant.name}</strong></span>
+                    <span>
+                      Varian: <strong className="text-brand-black">{selectedVariant.name}</strong>
+                    </span>
                   ) : (
                     <span className="italic text-neutral-400">Pilih varian di atas</span>
                   )}

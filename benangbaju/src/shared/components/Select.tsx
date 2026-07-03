@@ -10,7 +10,10 @@ export interface SelectOption {
   value: string
 }
 
-export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange' | 'value'> {
+export interface SelectProps extends Omit<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  'onChange' | 'value'
+> {
   label?: string
   options: SelectOption[]
   value?: string
@@ -21,23 +24,37 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, label, options, value, onChange, error, helperText, placeholder = 'Pilih salah satu...', id: idProp, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      label,
+      options,
+      value,
+      onChange,
+      error,
+      helperText,
+      placeholder = 'Pilih salah satu...',
+      id: idProp,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
     const [isOpen, setIsOpen] = useState(false)
     const [focusedIndex, setFocusedIndex] = useState<number>(-1)
     const containerRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
     const listboxRef = useRef<HTMLDivElement>(null)
-    
+
     const generatedId = useId()
     const selectId = idProp ?? generatedId
     const errorId = `${selectId}-error`
     const helperId = `${selectId}-helper`
     const listboxId = `${selectId}-listbox`
 
-    const describedBy = [
-      error ? errorId : null,
-      helperText && !error ? helperId : null
-    ].filter(Boolean).join(' ') || undefined
+    const describedBy =
+      [error ? errorId : null, helperText && !error ? helperId : null].filter(Boolean).join(' ') ||
+      undefined
 
     const selectedOption = options.find((opt) => opt.value === value)
     const selectedIndex = options.findIndex((opt) => opt.value === value)
@@ -85,11 +102,14 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       }
     }, [focusedIndex, isOpen])
 
-    const handleSelect = useCallback((val: string) => {
-      onChange?.(val)
-      setIsOpen(false)
-      buttonRef.current?.focus()
-    }, [onChange])
+    const handleSelect = useCallback(
+      (val: string) => {
+        onChange?.(val)
+        setIsOpen(false)
+        buttonRef.current?.focus()
+      },
+      [onChange]
+    )
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement | HTMLDivElement>) => {
       if (disabled) return
@@ -109,7 +129,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           if (!isOpen) {
             setIsOpen(true)
           } else {
-            setFocusedIndex(prev => (prev < options.length - 1 ? prev + 1 : prev))
+            setFocusedIndex((prev) => (prev < options.length - 1 ? prev + 1 : prev))
           }
           break
         case 'ArrowUp':
@@ -117,7 +137,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           if (!isOpen) {
             setIsOpen(true)
           } else {
-            setFocusedIndex(prev => (prev > 0 ? prev - 1 : prev))
+            setFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev))
           }
           break
         case 'Escape':
@@ -159,7 +179,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             tabIndex={-1}
             {...props}
           >
-            <option value="" disabled>{placeholder}</option>
+            <option value="" disabled>
+              {placeholder}
+            </option>
             {options.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -192,17 +214,20 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             aria-describedby={describedBy}
           >
             <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
-            <ChevronDown 
+            <ChevronDown
               className={cn('w-4 h-4 text-neutral-400 transition-transform duration-300', {
                 'rotate-180': isOpen,
-              })} 
+              })}
               aria-hidden="true"
             />
             {/* Animated focus underline */}
-            <div className={cn(
-              "absolute bottom-0 left-0 right-0 h-[2px] bg-brand-black transform origin-left transition-transform duration-300",
-              isOpen ? "scale-x-100" : "scale-x-0 group-focus-within:scale-x-100"
-            )} aria-hidden="true" />
+            <div
+              className={cn(
+                'absolute bottom-0 left-0 right-0 h-[2px] bg-brand-black transform origin-left transition-transform duration-300',
+                isOpen ? 'scale-x-100' : 'scale-x-0 group-focus-within:scale-x-100'
+              )}
+              aria-hidden="true"
+            />
           </button>
 
           {/* Dropdown Menu */}
@@ -219,7 +244,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 role="listbox"
                 tabIndex={-1}
                 onKeyDown={handleKeyDown}
-                aria-activedescendant={focusedIndex >= 0 ? `${selectId}-opt-${focusedIndex}` : undefined}
+                aria-activedescendant={
+                  focusedIndex >= 0 ? `${selectId}-opt-${focusedIndex}` : undefined
+                }
               >
                 {options.length === 0 ? (
                   <div className="px-4 py-3 text-xs text-neutral-400 text-center">
@@ -247,7 +274,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                       >
                         <span className="truncate">{opt.label}</span>
                         {isSelected && (
-                          <Check className="w-3.5 h-3.5 text-brand-black flex-shrink-0" aria-hidden="true" />
+                          <Check
+                            className="w-3.5 h-3.5 text-brand-black flex-shrink-0"
+                            aria-hidden="true"
+                          />
                         )}
                       </div>
                     )
@@ -263,7 +293,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {error}
           </span>
         )}
-        
+
         {!error && helperText && (
           <span id={helperId} className="text-[10px] text-neutral-500 tracking-wide font-sans">
             {helperText}

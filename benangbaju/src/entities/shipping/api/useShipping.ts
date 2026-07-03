@@ -12,7 +12,9 @@ import {
 } from '@/entities/shipping/lib/shipping'
 import { ApiResponse } from '@/lib/api-response'
 
-export function useUserAddresses(userId: string) : import("@tanstack/react-query").UseQueryResult<ApiResponse<UserAddress[]>, Error> {
+export function useUserAddresses(
+  userId: string
+): import('@tanstack/react-query').UseQueryResult<ApiResponse<UserAddress[]>, Error> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['addresses', userId],
@@ -21,7 +23,7 @@ export function useUserAddresses(userId: string) : import("@tanstack/react-query
   })
 }
 
-export function useAddUserAddress() : UseMutationResult<
+export function useAddUserAddress(): UseMutationResult<
   Awaited<ReturnType<typeof addUserAddress>>,
   Error,
   Omit<UserAddress, 'id' | 'created_at'>,
@@ -41,7 +43,7 @@ export function useAddUserAddress() : UseMutationResult<
   })
 }
 
-export function useUpdateUserAddress() : UseMutationResult<
+export function useUpdateUserAddress(): UseMutationResult<
   Awaited<ReturnType<typeof updateUserAddress>>,
   Error,
   {
@@ -73,7 +75,7 @@ export function useUpdateUserAddress() : UseMutationResult<
   })
 }
 
-export function useDeleteUserAddress() : UseMutationResult<
+export function useDeleteUserAddress(): UseMutationResult<
   Awaited<ReturnType<typeof deleteUserAddress>>,
   Error,
   { addressId: string; userId: string },
@@ -93,7 +95,7 @@ export function useDeleteUserAddress() : UseMutationResult<
   })
 }
 
-export function useSetDefaultAddress() : UseMutationResult<
+export function useSetDefaultAddress(): UseMutationResult<
   Awaited<ReturnType<typeof setDefaultAddress>>,
   Error,
   { addressId: string; userId: string },
@@ -113,7 +115,12 @@ export function useSetDefaultAddress() : UseMutationResult<
   })
 }
 
-export function useDistrictSearch(searchQuery: string) : import("@tanstack/react-query").UseQueryResult<ApiResponse<import("@/entities/shipping/lib/shipping").District[]>, Error> {
+export function useDistrictSearch(
+  searchQuery: string
+): import('@tanstack/react-query').UseQueryResult<
+  ApiResponse<import('@/entities/shipping/lib/shipping').District[]>,
+  Error
+> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['districts-search', searchQuery],
@@ -123,7 +130,13 @@ export function useDistrictSearch(searchQuery: string) : import("@tanstack/react
   })
 }
 
-export function useShippingRates(zoneId: string | null, weightGram: number) : import("@tanstack/react-query").UseQueryResult<ApiResponse<import("@/entities/shipping/lib/shipping").ShippingOption[]>, Error> {
+export function useShippingRates(
+  zoneId: string | null,
+  weightGram: number
+): import('@tanstack/react-query').UseQueryResult<
+  ApiResponse<import('@/entities/shipping/lib/shipping').ShippingOption[]>,
+  Error
+> {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['shipping-rates', zoneId, weightGram],

@@ -28,11 +28,11 @@ interface ProductInfoSectionProps {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { type: 'spring' as const, stiffness: 260, damping: 25 }
-  }
+    transition: { type: 'spring' as const, stiffness: 260, damping: 25 },
+  },
 }
 
 export function ProductInfoSection({
@@ -50,7 +50,7 @@ export function ProductInfoSection({
   onDecrement,
   onToggleWishlist,
   onAddToCart,
-  onBuyNow
+  onBuyNow,
 }: ProductInfoSectionProps): React.JSX.Element {
   return (
     <>
@@ -71,17 +71,17 @@ export function ProductInfoSection({
             {selectedVariant
               ? formatIDR(selectedVariant.price)
               : minPrice === maxPrice
-              ? formatIDR(minPrice)
-              : `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`}
+                ? formatIDR(minPrice)
+                : `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`}
           </span>
-          
+
           {/* Compare Price */}
           {selectedVariant?.compare_price && (
             <span className="text-xs text-neutral-400 line-through font-sans">
               {formatIDR(selectedVariant.compare_price)}
             </span>
           )}
-          
+
           {!selectedVariant && product.product_variants[0]?.compare_price && (
             <span className="text-xs text-neutral-400 line-through font-sans">
               {formatIDR(product.product_variants[0].compare_price)}
@@ -92,14 +92,19 @@ export function ProductInfoSection({
 
       {/* Description intro */}
       {product.short_description && (
-        <motion.p variants={itemVariants} className="text-xs text-neutral-500 font-sans leading-relaxed whitespace-pre-line">
+        <motion.p
+          variants={itemVariants}
+          className="text-xs text-neutral-500 font-sans leading-relaxed whitespace-pre-line"
+        >
           {product.short_description}
         </motion.p>
       )}
 
       {/* Varian Picker */}
       <motion.div variants={itemVariants} className="relative">
-        {product.product_variants.some(v => v.product_variant_attrs?.some(a => a.attr_name.toLowerCase().includes('ukuran'))) && (
+        {product.product_variants.some((v) =>
+          v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
+        ) && (
           <div className="flex justify-end absolute top-1 right-0 z-10">
             <button
               type="button"
@@ -121,7 +126,10 @@ export function ProductInfoSection({
       {selectedVariant && (
         <motion.div variants={itemVariants} className="text-[11px] text-neutral-500 font-sans">
           {selectedVariant.stock > 0 ? (
-            <span>Stok Tersedia: <strong className="text-brand-black">{selectedVariant.stock} pcs</strong></span>
+            <span>
+              Stok Tersedia:{' '}
+              <strong className="text-brand-black">{selectedVariant.stock} pcs</strong>
+            </span>
           ) : (
             <span className="text-red-500 font-semibold">Stok Habis</span>
           )}
@@ -162,7 +170,12 @@ export function ProductInfoSection({
             className="p-4 border border-neutral-200 hover:border-brand-gold bg-white transition-all text-neutral-500 hover:text-brand-gold relative gold-border-hover"
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
-            <Heart className={cn('h-4 w-4 transition-colors duration-300', liked && 'fill-red-500 text-red-500')} />
+            <Heart
+              className={cn(
+                'h-4 w-4 transition-colors duration-300',
+                liked && 'fill-red-500 text-red-500'
+              )}
+            />
           </motion.button>
         </div>
 
@@ -178,8 +191,8 @@ export function ProductInfoSection({
             {!selectedVariant
               ? 'Pilih Varian'
               : selectedVariant.stock === 0
-              ? 'Stok Habis'
-              : 'Tambah Ke Keranjang'}
+                ? 'Stok Habis'
+                : 'Tambah Ke Keranjang'}
           </Button>
 
           {/* Buy Now Button */}
@@ -193,39 +206,48 @@ export function ProductInfoSection({
             {!selectedVariant
               ? 'Pilih Varian'
               : selectedVariant.stock === 0
-              ? 'Stok Habis'
-              : 'Beli Sekarang'}
+                ? 'Stok Habis'
+                : 'Beli Sekarang'}
           </Button>
         </div>
       </motion.div>
 
       {/* Info Badges (Shipping / Return / Guarantee) */}
-      <motion.div variants={itemVariants} className="grid grid-cols-3 gap-2 border border-neutral-100 py-4 px-2 card-hover-lift gold-border-hover bg-brand-cream/30">
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-3 gap-2 border border-neutral-100 py-4 px-2 card-hover-lift gold-border-hover bg-brand-cream/30"
+      >
         <motion.div
           whileHover={{ y: -3 }}
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
           <Truck className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
-          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">Ongkir Flat</span>
+          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
+            Ongkir Flat
+          </span>
           <span className="text-[8px] text-neutral-400 font-sans">Tarif murah per zona</span>
         </motion.div>
-        <motion.div 
+        <motion.div
           whileHover={{ y: -3 }}
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
           <RefreshCw className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
-          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">7 Hari Retur</span>
+          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
+            7 Hari Retur
+          </span>
           <span className="text-[8px] text-neutral-400 font-sans">Bebas tukar ukuran</span>
         </motion.div>
-        <motion.div 
+        <motion.div
           whileHover={{ y: -3 }}
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
           <Shield className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
-          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">Kualitas Premium</span>
+          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
+            Kualitas Premium
+          </span>
           <span className="text-[8px] text-neutral-400 font-sans">Bahan terkurasi</span>
         </motion.div>
       </motion.div>

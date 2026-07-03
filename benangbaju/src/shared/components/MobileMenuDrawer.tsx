@@ -21,16 +21,13 @@ export function MobileMenuDrawer({
   navLinks,
   pathname,
   isAuthenticated,
-  isMounted
+  isMounted,
 }: MobileMenuDrawerProps) {
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
-          <div
-            className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs"
-            onClick={onClose}
-          />
+          <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs" onClick={onClose} />
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}

@@ -22,11 +22,11 @@ describe('Product Repository - mapProductListItem', () => {
         { id: 'v-2', price: 100000, is_active: true },
         { id: 'v-3', price: 200000, is_active: true },
         { id: 'v-4', price: 50000, is_active: false }, // Should be ignored
-      ]
+      ],
     }
-    
+
     const result = mapProductListItem(product)
-    
+
     expect(result.minPrice).toBe(100000)
     expect(result.maxPrice).toBe(200000)
   })
@@ -37,11 +37,11 @@ describe('Product Repository - mapProductListItem', () => {
       product_variants: [
         { id: 'v-1', price: 100000, compare_price: 200000, is_active: true },
         { id: 'v-2', price: 150000, compare_price: 250000, is_active: true },
-      ]
+      ],
     }
-    
+
     const result = mapProductListItem(product)
-    
+
     // minPrice is 100,000. compare_price for v-1 is 200,000
     // discount = (200,000 - 100,000) / 200,000 = 50%
     expect(result.discountPercent).toBe(50)
@@ -50,11 +50,11 @@ describe('Product Repository - mapProductListItem', () => {
   it('handles empty variants gracefully (returns 0 and nulls)', () => {
     const product = {
       ...baseProduct,
-      product_variants: []
+      product_variants: [],
     }
-    
+
     const result = mapProductListItem(product)
-    
+
     expect(result.minPrice).toBe(0)
     expect(result.maxPrice).toBe(0)
     expect(result.comparePrice).toBeNull()
@@ -68,11 +68,11 @@ describe('Product Repository - mapProductListItem', () => {
         { url: 'img-3.jpg', sort_order: 3, is_primary: false },
         { url: 'img-1.jpg', sort_order: 1, is_primary: true },
         { url: 'img-2.jpg', sort_order: 2, is_primary: false },
-      ]
+      ],
     }
-    
+
     const result = mapProductListItem(product)
-    
+
     // Primary is explicit
     expect(result.primaryImage).toBe('img-1.jpg')
     // Hover should be the first non-primary image with sort_order > 0
@@ -84,17 +84,17 @@ describe('Product Repository - mapProductListItem', () => {
     const product = {
       ...baseProduct,
       product_variants: [
-        { 
-          is_active: true, 
-          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Merah' }] 
+        {
+          is_active: true,
+          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Merah' }],
         },
-        { 
-          is_active: true, 
-          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Biru' }] 
-        }
-      ]
+        {
+          is_active: true,
+          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Biru' }],
+        },
+      ],
     }
-    
+
     const result = mapProductListItem(product)
     expect(result.hasMultipleColors).toBe(true)
   })
@@ -103,17 +103,17 @@ describe('Product Repository - mapProductListItem', () => {
     const product = {
       ...baseProduct,
       product_variants: [
-        { 
-          is_active: true, 
-          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Merah' }] 
+        {
+          is_active: true,
+          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Merah' }],
         },
-        { 
-          is_active: true, 
-          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Merah' }] 
-        }
-      ]
+        {
+          is_active: true,
+          product_variant_attrs: [{ attr_name: 'Warna', attr_value: 'Merah' }],
+        },
+      ],
     }
-    
+
     const result = mapProductListItem(product)
     expect(result.hasMultipleColors).toBe(false)
   })

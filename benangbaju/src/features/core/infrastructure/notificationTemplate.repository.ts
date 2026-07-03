@@ -2,7 +2,7 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { NotificationTemplate } from "../domain/notificationTemplate.types";
+import { NotificationTemplate } from '../domain/notificationTemplate.types'
 import { InternalError } from '@/lib/api-errors'
 
 export async function adminGetNotificationTemplates(
@@ -96,10 +96,7 @@ export async function adminDeleteNotificationTemplate(
     .eq('id', templateId)
     .single()
 
-  const { error } = await supabase
-    .from('notification_templates')
-    .delete()
-    .eq('id', templateId)
+  const { error } = await supabase.from('notification_templates').delete().eq('id', templateId)
 
   if (error) {
     safeLogError('Error deleting notification template:', error)

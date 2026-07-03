@@ -11,13 +11,15 @@ interface WishlistState {
 
 export const useWishlistStore = create<WishlistState>((set, get) => ({
   productIds: [],
-  
+
   setProductIds: (productIds) => set({ productIds }),
 
   toggleWishlist: async (productId) => {
     const { productIds } = get()
     const supabase = createBrowserClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     const exists = productIds.includes(productId)
     const updatedIds = exists
@@ -36,12 +38,10 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
             .eq('user_id', user.id)
             .eq('product_id', productId)
         } else {
-          await supabase
-            .from('wishlist_items')
-            .insert({
-              user_id: user.id,
-              product_id: productId,
-            })
+          await supabase.from('wishlist_items').insert({
+            user_id: user.id,
+            product_id: productId,
+          })
         }
       } catch (error) {
         console.error('Error toggling DB wishlist item:', error)

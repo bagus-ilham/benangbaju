@@ -2,7 +2,7 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { RedirectRule, LandingPage } from "../domain/cms.types";
+import { RedirectRule, LandingPage } from '../domain/cms.types'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 
@@ -29,7 +29,7 @@ export async function adminGetRedirects(
   }
 
   if (!data) return paginated([], page, limit, count || 0)
-  const list = data.map(row => ({
+  const list = data.map((row) => ({
     id: row.id,
     from_path: row.from_path,
     to_path: row.to_path,
@@ -45,11 +45,7 @@ export async function adminCreateRedirect(
   supabase: SupabaseClient<Database>,
   redirect: Omit<RedirectRule, 'id' | 'created_at'>
 ): Promise<ApiResponse<RedirectRule>> {
-  const { data, error } = await supabase
-    .from('redirects')
-    .insert([redirect])
-    .select()
-    .single()
+  const { data, error } = await supabase.from('redirects').insert([redirect]).select().single()
 
   if (error) {
     safeLogError('Error creating redirect:', error)
@@ -65,7 +61,13 @@ export async function adminCreateRedirect(
     created_at: data.created_at,
   }
 
-  await insertAdminActivityLog(supabase, 'create', 'redirect', data.id, `Created redirect from ${data.from_path}`)
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'redirect',
+    data.id,
+    `Created redirect from ${data.from_path}`
+  )
 
   return ok(result)
 }
@@ -75,17 +77,20 @@ export async function adminUpdateRedirect(
   redirectId: string,
   redirect: Partial<Omit<RedirectRule, 'id' | 'created_at'>>
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('redirects')
-    .update(redirect)
-    .eq('id', redirectId)
+  const { error } = await supabase.from('redirects').update(redirect).eq('id', redirectId)
 
   if (error) {
     safeLogError('Error updating redirect:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui redirect')
   }
-  
-  await insertAdminActivityLog(supabase, 'update', 'redirect', redirectId, `Updated redirect ${redirectId}`)
+
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'redirect',
+    redirectId,
+    `Updated redirect ${redirectId}`
+  )
   return ok()
 }
 
@@ -93,17 +98,20 @@ export async function adminDeleteRedirect(
   supabase: SupabaseClient<Database>,
   redirectId: string
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('redirects')
-    .delete()
-    .eq('id', redirectId)
+  const { error } = await supabase.from('redirects').delete().eq('id', redirectId)
 
   if (error) {
     safeLogError('Error deleting redirect:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus redirect')
   }
-  
-  await insertAdminActivityLog(supabase, 'delete', 'redirect', redirectId, `Deleted redirect ${redirectId}`)
+
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'redirect',
+    redirectId,
+    `Deleted redirect ${redirectId}`
+  )
   return ok()
 }
 
@@ -120,7 +128,10 @@ export async function adminGetLandingPages(
   const to = from + limit - 1
   const { data, error, count } = await supabase
     .from('landing_pages')
-    .select('id, slug, title, content, meta_title, meta_description, is_active, created_at, updated_at', { count: 'exact' })
+    .select(
+      'id, slug, title, content, meta_title, meta_description, is_active, created_at, updated_at',
+      { count: 'exact' }
+    )
     .order('created_at', { ascending: false })
     .range(from, to)
 
@@ -130,7 +141,7 @@ export async function adminGetLandingPages(
   }
 
   if (!data) return paginated([], page, limit, count || 0)
-  const list = data.map(row => ({
+  const list = data.map((row) => ({
     id: row.id,
     slug: row.slug,
     title: row.title,
@@ -172,7 +183,13 @@ export async function adminCreateLandingPage(
     updated_at: data.updated_at,
   }
 
-  await insertAdminActivityLog(supabase, 'create', 'landing_page', data.id, `Created landing page ${data.slug}`)
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'landing_page',
+    data.id,
+    `Created landing page ${data.slug}`
+  )
 
   return ok(result)
 }
@@ -182,17 +199,20 @@ export async function adminUpdateLandingPage(
   landingPageId: string,
   landingPage: Partial<Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>>
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('landing_pages')
-    .update(landingPage)
-    .eq('id', landingPageId)
+  const { error } = await supabase.from('landing_pages').update(landingPage).eq('id', landingPageId)
 
   if (error) {
     safeLogError('Error updating landing page:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui landing page')
   }
-  
-  await insertAdminActivityLog(supabase, 'update', 'landing_page', landingPageId, `Updated landing page ${landingPageId}`)
+
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'landing_page',
+    landingPageId,
+    `Updated landing page ${landingPageId}`
+  )
   return ok()
 }
 
@@ -200,16 +220,19 @@ export async function adminDeleteLandingPage(
   supabase: SupabaseClient<Database>,
   landingPageId: string
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('landing_pages')
-    .delete()
-    .eq('id', landingPageId)
+  const { error } = await supabase.from('landing_pages').delete().eq('id', landingPageId)
 
   if (error) {
     safeLogError('Error deleting landing page:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus landing page')
   }
-  
-  await insertAdminActivityLog(supabase, 'delete', 'landing_page', landingPageId, `Deleted landing page ${landingPageId}`)
+
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'landing_page',
+    landingPageId,
+    `Deleted landing page ${landingPageId}`
+  )
   return ok()
 }

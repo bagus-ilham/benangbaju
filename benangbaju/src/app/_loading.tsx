@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function RootLoading() : React.JSX.Element {
+export default function RootLoading(): React.JSX.Element {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white font-heading">
       <div className="flex flex-col items-center space-y-4">

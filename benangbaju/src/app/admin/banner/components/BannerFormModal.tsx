@@ -7,11 +7,31 @@ import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 
 export function BannerFormModal({
-  isOpen, onClose, onSubmit, editingBanner,
-  title, setTitle, subtitle, setSubtitle,
-  image_url, setImageUrl, image_mobile_url, setImageMobileUrl,
-  link_url, setLinkUrl, position, setPosition, sort_order, setSortOrder,
-  starts_at, setStartsAt, ends_at, setEndsAt, is_active, setIsActive, isPending
+  isOpen,
+  onClose,
+  onSubmit,
+  editingBanner,
+  title,
+  setTitle,
+  subtitle,
+  setSubtitle,
+  image_url,
+  setImageUrl,
+  image_mobile_url,
+  setImageMobileUrl,
+  link_url,
+  setLinkUrl,
+  position,
+  setPosition,
+  sort_order,
+  setSortOrder,
+  starts_at,
+  setStartsAt,
+  ends_at,
+  setEndsAt,
+  is_active,
+  setIsActive,
+  isPending,
 }: any) {
   return (
     <Modal
@@ -44,7 +64,6 @@ export function BannerFormModal({
             <div className="flex gap-3 items-start">
               <div className="w-20 h-10 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                 {image_url ? (
-                   
                   <Image
                     src={image_url}
                     alt="Desktop Preview"
@@ -57,7 +76,9 @@ export function BannerFormModal({
                     }}
                   />
                 ) : (
-                  <span className="text-[8px] text-neutral-400 uppercase font-semibold">No Image</span>
+                  <span className="text-[8px] text-neutral-400 uppercase font-semibold">
+                    No Image
+                  </span>
                 )}
               </div>
               <div className="flex-1 space-y-2">
@@ -78,14 +99,15 @@ export function BannerFormModal({
                     onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (!file) return
-                      
+
                       const toastId = toast.loading('Mengunggah gambar desktop...')
                       try {
                         const publicUrl = await uploadImage(file, 'banners')
                         setImageUrl(publicUrl)
                         toast.success('Gambar desktop berhasil diunggah!', { id: toastId })
                       } catch (err: unknown) {
-                        const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar desktop'
+                        const message =
+                          err instanceof Error ? err.message : 'Gagal mengunggah gambar desktop'
                         toast.error(message, { id: toastId })
                       }
                     }}
@@ -109,7 +131,6 @@ export function BannerFormModal({
             <div className="flex gap-3 items-start">
               <div className="w-12 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                 {image_mobile_url ? (
-                   
                   <Image
                     src={image_mobile_url}
                     alt="Mobile Preview"
@@ -122,7 +143,9 @@ export function BannerFormModal({
                     }}
                   />
                 ) : (
-                  <span className="text-[8px] text-neutral-400 uppercase font-semibold">No Image</span>
+                  <span className="text-[8px] text-neutral-400 uppercase font-semibold">
+                    No Image
+                  </span>
                 )}
               </div>
               <div className="flex-1 space-y-2">
@@ -142,14 +165,15 @@ export function BannerFormModal({
                     onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (!file) return
-                      
+
                       const toastId = toast.loading('Mengunggah gambar mobile...')
                       try {
                         const publicUrl = await uploadImage(file, 'banners')
                         setImageMobileUrl(publicUrl)
                         toast.success('Gambar mobile berhasil diunggah!', { id: toastId })
                       } catch (err: unknown) {
-                        const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar mobile'
+                        const message =
+                          err instanceof Error ? err.message : 'Gagal mengunggah gambar mobile'
                         toast.error(message, { id: toastId })
                       }
                     }}
@@ -174,7 +198,7 @@ export function BannerFormModal({
               onChange={setPosition}
               options={[
                 { label: 'Hero Slider Depan', value: 'homepage_hero' },
-                { label: 'Banner Tengah Halaman', value: 'mid_banner' }
+                { label: 'Banner Tengah Halaman', value: 'mid_banner' },
               ]}
               required
             />
@@ -217,24 +241,19 @@ export function BannerFormModal({
             checked={is_active}
             onChange={(e) => setIsActive(e.target.checked)}
           />
-          <label htmlFor="banner_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
+          <label
+            htmlFor="banner_is_active"
+            className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
+          >
             Banner Aktif & Ditampilkan
           </label>
         </div>
 
         <div className="flex justify-end space-x-3 pt-3 border-t border-neutral-100">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={isPending}
-          >
+          <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
             Batal
           </Button>
-          <Button
-            type="submit"
-            isLoading={isPending}
-          >
+          <Button type="submit" isLoading={isPending}>
             Simpan
           </Button>
         </div>

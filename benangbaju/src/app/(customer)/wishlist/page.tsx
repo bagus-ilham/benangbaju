@@ -8,10 +8,14 @@ import { ProductCard } from '@/entities/product/ui/ProductCard'
 import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
 import { Heart } from 'lucide-react'
 
-export default function WishlistPage() : React.JSX.Element {
+export default function WishlistPage(): React.JSX.Element {
   const productIds = useWishlistStore((state) => state.productIds)
 
-  const { data: dataRes, isLoading, isError } = useProducts({
+  const {
+    data: dataRes,
+    isLoading,
+    isError,
+  } = useProducts({
     productIds: productIds.length > 0 ? productIds : ['00000000-0000-0000-0000-000000000000'],
     limit: 40,
   })
@@ -33,8 +37,8 @@ export default function WishlistPage() : React.JSX.Element {
             title="Gagal Memuat Wishlist"
             description="Terjadi kesalahan saat memuat daftar keinginan Anda. Silakan coba kembali."
             action={{
-              label: "Coba Lagi",
-              onClick: () => window.location.reload()
+              label: 'Coba Lagi',
+              onClick: () => window.location.reload(),
             }}
           />
         </PageContainer>
@@ -50,7 +54,6 @@ export default function WishlistPage() : React.JSX.Element {
         subtitle="Simpan produk favorit Anda dan belanja kapan saja."
       />
       <PageContainer className="py-10 page-content">
-
         {isLoading ? (
           <ProductGridSkeleton count={4} />
         ) : !hasItems ? (

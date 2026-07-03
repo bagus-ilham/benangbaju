@@ -4,34 +4,41 @@ import { PageHero, PageContainer } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Syarat & Ketentuan — Benangbaju',
-  description: 'Syarat dan ketentuan umum penggunaan situs, pendaftaran akun, pembelian produk, keamanan transaksi, dan kebijakan pembatalan di Benangbaju.',
+  description:
+    'Syarat dan ketentuan umum penggunaan situs, pendaftaran akun, pembelian produk, keamanan transaksi, dan kebijakan pembatalan di Benangbaju.',
 }
 
-export default function SyaratKetentuanPage() : React.JSX.Element {
+export default function SyaratKetentuanPage(): React.JSX.Element {
   const sections = [
     {
       title: '1. Ketentuan Umum',
-      content: 'Selamat datang di Benangbaju. Dengan mengakses dan menggunakan situs ini, Anda dianggap telah membaca, memahami, dan menyetujui seluruh Syarat & Ketentuan yang berlaku. Syarat & Ketentuan ini dapat berubah sewaktu-waktu tanpa pemberitahuan terlebih dahulu. Harap tinjau halaman ini secara berkala.',
+      content:
+        'Selamat datang di Benangbaju. Dengan mengakses dan menggunakan situs ini, Anda dianggap telah membaca, memahami, dan menyetujui seluruh Syarat & Ketentuan yang berlaku. Syarat & Ketentuan ini dapat berubah sewaktu-waktu tanpa pemberitahuan terlebih dahulu. Harap tinjau halaman ini secara berkala.',
     },
     {
       title: '2. Akun Pengguna',
-      content: 'Untuk kemudahan bertransaksi, Anda disarankan mendaftarkan akun di situs kami. Anda bertanggung jawab penuh atas kerahasiaan password dan aktivitas yang terjadi di bawah akun Anda. Pihak Benangbaju berhak menangguhkan atau menghapus akun Anda secara sepihak apabila ditemukan penyalahgunaan, manipulasi voucher, atau tindakan mencurigakan yang melanggar hukum.',
+      content:
+        'Untuk kemudahan bertransaksi, Anda disarankan mendaftarkan akun di situs kami. Anda bertanggung jawab penuh atas kerahasiaan password dan aktivitas yang terjadi di bawah akun Anda. Pihak Benangbaju berhak menangguhkan atau menghapus akun Anda secara sepihak apabila ditemukan penyalahgunaan, manipulasi voucher, atau tindakan mencurigakan yang melanggar hukum.',
     },
     {
       title: '3. Pemesanan & Ketersediaan Produk',
-      content: 'Semua pesanan tunduk pada ketersediaan produk. Jika produk yang Anda pesan tidak tersedia karena kesalahan penghitungan stok gudang, kami akan segera menghubungi Anda untuk penukaran produk sejenis atau pembatalan pesanan beserta pengembalian dana penuh. Warna produk pada layar Anda mungkin sedikit berbeda dari warna produk asli akibat pencahayaan foto dan kalibrasi monitor Anda.',
+      content:
+        'Semua pesanan tunduk pada ketersediaan produk. Jika produk yang Anda pesan tidak tersedia karena kesalahan penghitungan stok gudang, kami akan segera menghubungi Anda untuk penukaran produk sejenis atau pembatalan pesanan beserta pengembalian dana penuh. Warna produk pada layar Anda mungkin sedikit berbeda dari warna produk asli akibat pencahayaan foto dan kalibrasi monitor Anda.',
     },
     {
       title: '4. Harga & Pembayaran',
-      content: 'Harga yang tertera di situs kami dinyatakan dalam Rupiah (IDR) dan belum termasuk ongkos kirim. Ongkos kirim dihitung otomatis saat checkout berdasarkan alamat tujuan dan ekspedisi pilihan. Pembayaran dilakukan secara instan melalui payment gateway Midtrans. Batas waktu transfer mengikuti instruksi masing-masing metode bayar, dan kegagalan membayar dalam tenggat waktu tersebut akan menyebabkan pesanan batal otomatis.',
+      content:
+        'Harga yang tertera di situs kami dinyatakan dalam Rupiah (IDR) dan belum termasuk ongkos kirim. Ongkos kirim dihitung otomatis saat checkout berdasarkan alamat tujuan dan ekspedisi pilihan. Pembayaran dilakukan secara instan melalui payment gateway Midtrans. Batas waktu transfer mengikuti instruksi masing-masing metode bayar, dan kegagalan membayar dalam tenggat waktu tersebut akan menyebabkan pesanan batal otomatis.',
     },
     {
       title: '5. Hak Pembatalan Pesanan',
-      content: 'Benangbaju berhak menolak atau membatalkan pesanan Anda apabila terdapat indikasi penipuan transaksi, kesalahan pencantuman harga produk yang tidak wajar akibat gangguan sistem, atau kegagalan otorisasi pembayaran dari bank/penyedia kartu kredit.',
+      content:
+        'Benangbaju berhak menolak atau membatalkan pesanan Anda apabila terdapat indikasi penipuan transaksi, kesalahan pencantuman harga produk yang tidak wajar akibat gangguan sistem, atau kegagalan otorisasi pembayaran dari bank/penyedia kartu kredit.',
     },
     {
       title: '6. Hak Kekayaan Intelektual',
-      content: 'Seluruh konten yang terdapat di situs ini, termasuk namun tidak terbatas pada logo, teks, foto produk, grafik, ilustrasi, source code, dan desain koleksi baju adalah hak kekayaan intelektual milik Benangbaju. Dilarang keras menggandakan, mendistribusikan, atau menyalahgunakan konten tersebut untuk kepentingan komersial pribadi tanpa izin tertulis dari kami.',
+      content:
+        'Seluruh konten yang terdapat di situs ini, termasuk namun tidak terbatas pada logo, teks, foto produk, grafik, ilustrasi, source code, dan desain koleksi baju adalah hak kekayaan intelektual milik Benangbaju. Dilarang keras menggandakan, mendistribusikan, atau menyalahgunakan konten tersebut untuk kepentingan komersial pribadi tanpa izin tertulis dari kami.',
     },
   ]
 
@@ -50,8 +57,9 @@ export default function SyaratKetentuanPage() : React.JSX.Element {
               Terakhir diperbarui: 10 Juni 2026
             </p>
             <p>
-              Harap baca syarat dan ketentuan ini dengan saksama sebelum mulai menggunakan situs kami atau melakukan transaksi pembelian produk.
-              Penggunaan situs dan transaksi Anda diatur oleh dokumen perjanjian ini.
+              Harap baca syarat dan ketentuan ini dengan saksama sebelum mulai menggunakan situs
+              kami atau melakukan transaksi pembelian produk. Penggunaan situs dan transaksi Anda
+              diatur oleh dokumen perjanjian ini.
             </p>
           </div>
 

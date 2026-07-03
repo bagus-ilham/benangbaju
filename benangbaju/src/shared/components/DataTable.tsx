@@ -44,7 +44,6 @@ export function DataTable<T extends { id?: string | number }>({
   onRowClick,
   className,
 }: DataTableProps<T>) {
-  
   const handleSort = (key: string) => {
     if (!onSort) return
     if (sortBy === key) {
@@ -55,7 +54,7 @@ export function DataTable<T extends { id?: string | number }>({
   }
 
   return (
-    <div className={cn("w-full overflow-hidden bg-white border border-neutral-200", className)}>
+    <div className={cn('w-full overflow-hidden bg-white border border-neutral-200', className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -64,8 +63,8 @@ export function DataTable<T extends { id?: string | number }>({
                 <th
                   key={String(col.key) || idx}
                   className={cn(
-                    "px-6 py-4 text-[10px] font-heading font-bold uppercase tracking-wider text-neutral-500",
-                    col.sortable && "cursor-pointer hover:bg-neutral-100 transition-colors",
+                    'px-6 py-4 text-[10px] font-heading font-bold uppercase tracking-wider text-neutral-500',
+                    col.sortable && 'cursor-pointer hover:bg-neutral-100 transition-colors',
                     col.className
                   )}
                   onClick={() => col.sortable && handleSort(String(col.key))}
@@ -75,14 +74,14 @@ export function DataTable<T extends { id?: string | number }>({
                     {col.sortable && (
                       <div className="flex flex-col space-y-[1px]">
                         <ChevronUp
-                          className={cn("w-2 h-2 text-neutral-300", {
-                            "text-brand-black": sortBy === col.key && sortDirection === 'asc'
+                          className={cn('w-2 h-2 text-neutral-300', {
+                            'text-brand-black': sortBy === col.key && sortDirection === 'asc',
                           })}
                           strokeWidth={4}
                         />
                         <ChevronDown
-                          className={cn("w-2 h-2 text-neutral-300", {
-                            "text-brand-black": sortBy === col.key && sortDirection === 'desc'
+                          className={cn('w-2 h-2 text-neutral-300', {
+                            'text-brand-black': sortBy === col.key && sortDirection === 'desc',
                           })}
                           strokeWidth={4}
                         />
@@ -93,13 +92,13 @@ export function DataTable<T extends { id?: string | number }>({
               ))}
             </tr>
           </thead>
-          
+
           <tbody className="divide-y divide-neutral-100">
             {isLoading ? (
               Array.from({ length: loadingRows }).map((_, rIdx) => (
                 <tr key={rIdx} className="bg-white">
                   {columns.map((col, cIdx) => (
-                    <td key={cIdx} className={cn("px-6 py-4", col.className)}>
+                    <td key={cIdx} className={cn('px-6 py-4', col.className)}>
                       <Skeleton className="h-4 w-3/4 rounded-sm" />
                     </td>
                   ))}
@@ -108,11 +107,7 @@ export function DataTable<T extends { id?: string | number }>({
             ) : data.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-6 py-12">
-                  <EmptyState
-                    icon={emptyIcon}
-                    title={emptyTitle}
-                    description={emptyDescription}
-                  />
+                  <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} />
                 </td>
               </tr>
             ) : (
@@ -124,14 +119,14 @@ export function DataTable<T extends { id?: string | number }>({
                   transition={{ duration: 0.2, delay: rIdx * 0.03 }}
                   onClick={() => onRowClick?.(row)}
                   className={cn(
-                    "bg-white transition-colors duration-200 group hover:bg-neutral-50/80",
-                    onRowClick && "cursor-pointer"
+                    'bg-white transition-colors duration-200 group hover:bg-neutral-50/80',
+                    onRowClick && 'cursor-pointer'
                   )}
                 >
                   {columns.map((col, cIdx) => (
                     <td
                       key={String(col.key) || cIdx}
-                      className={cn("px-6 py-4 text-xs font-sans text-neutral-700", col.className)}
+                      className={cn('px-6 py-4 text-xs font-sans text-neutral-700', col.className)}
                     >
                       {col.render ? col.render(row) : (row as any)[col.key]}
                     </td>

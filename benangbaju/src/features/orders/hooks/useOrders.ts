@@ -20,7 +20,11 @@ export function useOrdersList(userId: string, status?: string, page = 1, limit =
   })
 }
 
-export function useOrderDetail(orderNumber: string, userId?: string, options?: { refetchInterval?: number | false }) {
+export function useOrderDetail(
+  orderNumber: string,
+  userId?: string,
+  options?: { refetchInterval?: number | false }
+) {
   const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['order', orderNumber, userId],

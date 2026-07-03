@@ -36,7 +36,13 @@ async function getCachedRelatedProducts(productId: string, categoryId: string) {
   return res.success ? res.data : []
 }
 
-async function RelatedProductsServer({ productId, categoryId }: { productId: string, categoryId: string }) {
+async function RelatedProductsServer({
+  productId,
+  categoryId,
+}: {
+  productId: string
+  categoryId: string
+}) {
   const relatedProducts = await getCachedRelatedProducts(productId, categoryId)
   return <RelatedProducts products={relatedProducts} />
 }
@@ -60,16 +66,24 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     // Determine primary image
     let imageUrl = ''
     if (product.product_images && product.product_images.length > 0) {
-      const primaryImg = product.product_images.find(img => img.is_primary) || product.product_images[0]
+      const primaryImg =
+        product.product_images.find((img) => img.is_primary) || product.product_images[0]
       imageUrl = primaryImg.url
     }
 
     return {
       title: product.meta_title || `${product.name} | Benangbaju`,
-      description: product.meta_description || product.short_description || product.description || `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
+      description:
+        product.meta_description ||
+        product.short_description ||
+        product.description ||
+        `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
       openGraph: {
         title: product.meta_title || `${product.name} | Benangbaju`,
-        description: product.meta_description || product.short_description || `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
+        description:
+          product.meta_description ||
+          product.short_description ||
+          `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
         url: `${baseUrl}/produk/${slug}`,
         images: imageUrl ? [{ url: imageUrl }] : [],
         type: 'website',
@@ -79,16 +93,18 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         title: product.meta_title || `${product.name} | Benangbaju`,
         description: product.meta_description || product.short_description || '',
         images: imageUrl ? [imageUrl] : [],
-      }
+      },
     }
   } catch (e) {
     return {
-      title: 'Produk Tidak Ditemukan | Benangbaju'
+      title: 'Produk Tidak Ditemukan | Benangbaju',
     }
   }
 }
 
-export default async function ProductDetailPage({ params }: ProductPageProps) : Promise<React.JSX.Element> {
+export default async function ProductDetailPage({
+  params,
+}: ProductPageProps): Promise<React.JSX.Element> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
 
@@ -101,14 +117,16 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
   }
 
   const hasRelated = product.categories && product.category_id
-  
+
   const relatedNode = hasRelated ? (
-    <Suspense fallback={
-      <div className="py-12 border-t border-neutral-100">
-        <div className="h-8 w-48 bg-neutral-100 mx-auto mb-8 skeleton-shimmer rounded-md" />
-        <ProductGridSkeleton count={4} />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="py-12 border-t border-neutral-100">
+          <div className="h-8 w-48 bg-neutral-100 mx-auto mb-8 skeleton-shimmer rounded-md" />
+          <ProductGridSkeleton count={4} />
+        </div>
+      }
+    >
       <RelatedProductsServer productId={product.id} categoryId={product.category_id} />
     </Suspense>
   ) : null
@@ -117,14 +135,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
   let primaryImageUrl = ''
   if (product.product_images && product.product_images.length > 0) {
-    const primaryImg = product.product_images.find(img => img.is_primary) || product.product_images[0]
+    const primaryImg =
+      product.product_images.find((img) => img.is_primary) || product.product_images[0]
     primaryImageUrl = primaryImg.url
   }
-  
+
   // Find cheapest price for Offer
   let price = 0
   if (product.product_variants && product.product_variants.length > 0) {
-    price = Math.min(...product.product_variants.map(v => Number(v.price)))
+    price = Math.min(...product.product_variants.map((v) => Number(v.price)))
   }
 
   const jsonLd = {
@@ -132,36 +151,34 @@ export default async function ProductDetailPage({ params }: ProductPageProps) : 
     '@type': 'Product',
     name: product.name,
     image: primaryImageUrl ? [primaryImageUrl] : [],
-    description: product.meta_description || product.short_description || product.description || `Beli ${product.name} dari Benangbaju.`,
+    description:
+      product.meta_description ||
+      product.short_description ||
+      product.description ||
+      `Beli ${product.name} dari Benangbaju.`,
     sku: product.product_variants?.[0]?.sku || '',
     brand: {
       '@type': 'Brand',
-      name: 'Benangbaju'
+      name: 'Benangbaju',
     },
     offers: {
       '@type': 'Offer',
       url: `${baseUrl}/produk/${slug}`,
       priceCurrency: 'IDR',
       price: price,
-      availability: product.product_variants?.some(v => v.stock > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      itemCondition: 'https://schema.org/NewCondition'
-    }
+      availability: product.product_variants?.some((v) => v.stock > 0)
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
   }
 
-  const safeJsonLd = JSON.stringify(jsonLd)
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
+  const safeJsonLd = JSON.stringify(jsonLd).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd }}
-      />
-      <ProductDetailClient
-        product={product}
-        relatedProductsNode={relatedNode}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd }} />
+      <ProductDetailClient product={product} relatedProductsNode={relatedNode} />
     </>
   )
 }

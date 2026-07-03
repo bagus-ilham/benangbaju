@@ -2,7 +2,11 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { FlashSaleItemDetail, FlashSaleDetail, AdminFlashSaleListItem } from "../domain/flashSale.types";
+import {
+  FlashSaleItemDetail,
+  FlashSaleDetail,
+  AdminFlashSaleListItem,
+} from '../domain/flashSale.types'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 
@@ -56,7 +60,7 @@ export async function getActiveFlashSale(
 
     const rawImages = prod.product_images
     const imagesList = Array.isArray(rawImages) ? rawImages : []
-    const product_images = imagesList.map(img => ({
+    const product_images = imagesList.map((img) => ({
       url: img.url,
       alt_text: img.alt_text,
       is_primary: img.is_primary,
@@ -108,7 +112,8 @@ export async function adminGetFlashSales(
   const to = from + limit - 1
   const { data, error, count } = await supabase
     .from('flash_sales')
-    .select(`
+    .select(
+      `
       id, name, description, banner_url, starts_at, ends_at, is_active,
       flash_sale_items (
         id, variant_id, original_price, sale_price, quota, sold_count,
@@ -117,7 +122,9 @@ export async function adminGetFlashSales(
           products (name)
         )
       )
-    `, { count: 'exact' })
+    `,
+      { count: 'exact' }
+    )
     .order('starts_at', { ascending: false })
     .range(from, to)
 
@@ -128,10 +135,10 @@ export async function adminGetFlashSales(
 
   if (!data) return paginated([], page, limit, count || 0)
 
-  const result = data.map(sale => {
+  const result = data.map((sale) => {
     const rawItems = sale.flash_sale_items
     const itemsList = Array.isArray(rawItems) ? rawItems : []
-    const flash_sale_items = itemsList.map(item => {
+    const flash_sale_items = itemsList.map((item) => {
       const pv = item.product_variants
       const prod = pv?.products
       return {
@@ -141,10 +148,12 @@ export async function adminGetFlashSales(
         sale_price: item.sale_price,
         quota: item.quota,
         sold_count: item.sold_count,
-        product_variants: pv ? {
-          name: pv.name,
-          products: prod ? { name: prod.name } : null
-        } : null
+        product_variants: pv
+          ? {
+              name: pv.name,
+              products: prod ? { name: prod.name } : null,
+            }
+          : null,
       }
     })
 
@@ -179,10 +188,10 @@ export async function adminCreateFlashSale(
     sale_price: number
     quota: number
   }[]
-) : Promise<ApiResponse<{ id: string; }>> {
+): Promise<ApiResponse<{ id: string }>> {
   const { data: result, error: rpcErr } = await supabase.rpc('admin_create_flash_sale', {
     p_flash_sale: saleData as any,
-    p_items: items as any
+    p_items: items as any,
   })
 
   if (rpcErr) {
@@ -198,7 +207,13 @@ export async function adminCreateFlashSale(
 
   const flashSaleId = res?.data?.id
 
-  await insertAdminActivityLog(supabase, 'create', 'flash_sale', flashSaleId, `Created flash sale ${saleData.name}`)
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'flash_sale',
+    flashSaleId,
+    `Created flash sale ${saleData.name}`
+  )
 
   return ok({ id: flashSaleId })
 }
@@ -220,7 +235,7 @@ export async function adminUpdateFlashSale(
     sale_price: number
     quota: number
   }[]
-) : Promise<ApiResponse<{ id: string; }>> {
+): Promise<ApiResponse<{ id: string }>> {
   // Fetch current items to determine deletions
   const { data: existingItems, error: fetchErr } = await supabase
     .from('flash_sale_items')
@@ -233,16 +248,16 @@ export async function adminUpdateFlashSale(
   }
 
   // Determine items to delete (those that are not in the new items list)
-  const newVariantIds = new Set(items.map(item => item.variant_id))
+  const newVariantIds = new Set(items.map((item) => item.variant_id))
   const itemsToDelete = (existingItems || [])
-    .filter(item => !newVariantIds.has(item.variant_id))
-    .map(item => item.variant_id)
+    .filter((item) => !newVariantIds.has(item.variant_id))
+    .map((item) => item.variant_id)
 
   const { data: result, error: rpcErr } = await supabase.rpc('admin_update_flash_sale', {
     p_flash_sale_id: saleId as any,
     p_flash_sale: saleData as any,
     p_items_to_upsert: items as any,
-    p_variant_ids_to_delete: itemsToDelete
+    p_variant_ids_to_delete: itemsToDelete,
   })
 
   if (rpcErr) {
@@ -256,7 +271,13 @@ export async function adminUpdateFlashSale(
     return fail(ApiErrorCode.INTERNAL_ERROR, res.error?.message || 'Transaction failed')
   }
 
-  await insertAdminActivityLog(supabase, 'update', 'flash_sale', saleId, `Updated flash sale ${saleData.name}`)
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'flash_sale',
+    saleId,
+    `Updated flash sale ${saleData.name}`
+  )
 
   return ok({ id: saleId })
 }
@@ -264,7 +285,7 @@ export async function adminUpdateFlashSale(
 export async function adminDeleteFlashSale(
   supabase: SupabaseClient<Database>,
   saleId: string
-) : Promise<ApiResponse<void>> {
+): Promise<ApiResponse<void>> {
   // 1. Fetch banner image associated with this flash sale to clean up storage
   const { data: sale } = await supabase
     .from('flash_sales')
@@ -279,17 +300,20 @@ export async function adminDeleteFlashSale(
   }
 
   // 3. Delete flash sale record
-  const { error } = await supabase
-    .from('flash_sales')
-    .delete()
-    .eq('id', saleId)
+  const { error } = await supabase.from('flash_sales').delete().eq('id', saleId)
 
   if (error) {
     safeLogError('Error deleting flash sale:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus flash sale')
   }
-  
-  await insertAdminActivityLog(supabase, 'delete', 'flash_sale', saleId, `Deleted flash sale ${saleId}`)
-  
+
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'flash_sale',
+    saleId,
+    `Deleted flash sale ${saleId}`
+  )
+
   return ok()
 }

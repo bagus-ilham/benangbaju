@@ -21,7 +21,7 @@ export function SectionHeader({
   className,
   showDivider = true,
   children,
-}: SectionHeaderProps) : React.JSX.Element {
+}: SectionHeaderProps): React.JSX.Element {
   const isCenter = align === 'center'
 
   return (
@@ -46,14 +46,7 @@ export function SectionHeader({
       <h2 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
         {title}
       </h2>
-      {showDivider && (
-        <div
-          className={cn(
-            'accent-line pt-1',
-            isCenter && 'accent-line-center'
-          )}
-        />
-      )}
+      {showDivider && <div className={cn('accent-line pt-1', isCenter && 'accent-line-center')} />}
       {children}
     </motion.div>
   )

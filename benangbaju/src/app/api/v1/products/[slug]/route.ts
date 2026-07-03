@@ -3,10 +3,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { getProductBySlug } from '@/features/products/infrastructure/product.repository'
 import { ApiErrorCode } from '@/lib/api-errors'
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
   try {
@@ -24,7 +21,10 @@ export async function GET(
   } catch (err: any) {
     console.error('Product Detail API error:', err)
     return NextResponse.json(
-      { success: false, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Internal Server Error' } },
+      {
+        success: false,
+        error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Internal Server Error' },
+      },
       { status: 500 }
     )
   }

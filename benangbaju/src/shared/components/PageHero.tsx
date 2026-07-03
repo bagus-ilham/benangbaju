@@ -21,7 +21,7 @@ export function PageHero({
   variant = 'cream',
   className,
   children,
-}: PageHeroProps) : React.JSX.Element {
+}: PageHeroProps): React.JSX.Element {
   const variantClasses = {
     light: 'bg-white border-neutral-100',
     cream: 'bg-brand-cream section-texture border-neutral-200',
@@ -76,7 +76,9 @@ export function PageHero({
             </h1>
             <div className="accent-line" />
             {subtitle && (
-              <p className={cn('text-xs md:text-sm font-sans leading-relaxed pt-1', colors.subtitle)}>
+              <p
+                className={cn('text-xs md:text-sm font-sans leading-relaxed pt-1', colors.subtitle)}
+              >
                 {subtitle}
               </p>
             )}

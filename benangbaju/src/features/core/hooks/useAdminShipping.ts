@@ -15,31 +15,48 @@ import { ShippingZone, ShippingRate } from '@/features/core/domain/shipping.type
 
 import { ApiListResponse } from '@/lib/api-response'
 
-export function useAdminShippingZones(page = 1, limit = 20) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<ShippingZone>, Error> {
+export function useAdminShippingZones(
+  page = 1,
+  limit = 20
+): import('@tanstack/react-query').UseQueryResult<ApiListResponse<ShippingZone>, Error> {
   return useQuery({
     queryKey: ['admin', 'shipping-zones', page, limit],
-    queryFn: () => adminGetShippingZones(getAdminSupabase(), page, limit)
+    queryFn: () => adminGetShippingZones(getAdminSupabase(), page, limit),
   })
 }
 
 export function useAdminCreateShippingZone() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ zone, provinces }: { zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>; provinces: string[] }) => {
+    mutationFn: async ({
+      zone,
+      provinces,
+    }: {
+      zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>
+      provinces: string[]
+    }) => {
       const res = await adminCreateShippingZone(getAdminSupabase(), zone, provinces)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat zona pengiriman')
       return res
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-zones'])
-    }
+    },
   })
 }
 
 export function useAdminUpdateShippingZone() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ zoneId, zone, provinces }: { zoneId: string; zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>; provinces?: string[] }) => {
+    mutationFn: async ({
+      zoneId,
+      zone,
+      provinces,
+    }: {
+      zoneId: string
+      zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>
+      provinces?: string[]
+    }) => {
       const res = await adminUpdateShippingZone(getAdminSupabase(), zoneId, zone, provinces)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui zona pengiriman')
       return res
@@ -47,7 +64,7 @@ export function useAdminUpdateShippingZone() {
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-zones'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] }) // Invalidate calculation cache too
-    }
+    },
   })
 }
 
@@ -61,14 +78,17 @@ export function useAdminDeleteShippingZone() {
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-zones', 'shipping-rates'])
-    }
+    },
   })
 }
 
-export function useAdminShippingRates(page = 1, limit = 20) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<ShippingRate>, Error> {
+export function useAdminShippingRates(
+  page = 1,
+  limit = 20
+): import('@tanstack/react-query').UseQueryResult<ApiListResponse<ShippingRate>, Error> {
   return useQuery({
     queryKey: ['admin', 'shipping-rates', page, limit],
-    queryFn: () => adminGetShippingRates(getAdminSupabase(), page, limit)
+    queryFn: () => adminGetShippingRates(getAdminSupabase(), page, limit),
   })
 }
 
@@ -83,14 +103,20 @@ export function useAdminCreateShippingRate() {
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-rates'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] })
-    }
+    },
   })
 }
 
 export function useAdminUpdateShippingRate() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ rateId, rate }: { rateId: string; rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>> }) => {
+    mutationFn: async ({
+      rateId,
+      rate,
+    }: {
+      rateId: string
+      rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>>
+    }) => {
       const res = await adminUpdateShippingRate(getAdminSupabase(), rateId, rate)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui tarif pengiriman')
       return res
@@ -98,7 +124,7 @@ export function useAdminUpdateShippingRate() {
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-rates'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] })
-    }
+    },
   })
 }
 
@@ -113,6 +139,6 @@ export function useAdminDeleteShippingRate() {
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['shipping-rates'])
       queryClient.invalidateQueries({ queryKey: ['shipping-rates'] })
-    }
+    },
   })
 }

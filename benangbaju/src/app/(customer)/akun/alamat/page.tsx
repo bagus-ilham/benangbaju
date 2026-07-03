@@ -3,7 +3,11 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/entities/user/model/authStore'
-import { useUserAddresses, useDeleteUserAddress, useSetDefaultAddress } from '@/entities/shipping/api/useShipping'
+import {
+  useUserAddresses,
+  useDeleteUserAddress,
+  useSetDefaultAddress,
+} from '@/entities/shipping/api/useShipping'
 import { UserAddress } from '@/entities/shipping/lib/shipping'
 import { AddressCard } from '@/features/users/components/AddressCard'
 import { AddressModal } from '@/features/users/components/AddressModal'
@@ -12,7 +16,7 @@ import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
-export default function AlamatPage() : React.JSX.Element {
+export default function AlamatPage(): React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [modalOpen, setModalOpen] = useState(false)
@@ -71,7 +75,9 @@ export default function AlamatPage() : React.JSX.Element {
       <PageContainer size="lg" className="py-10 page-content">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-            <Link href="/akun" className="hover:text-brand-gold transition">Akun Saya</Link>
+            <Link href="/akun" className="hover:text-brand-gold transition">
+              Akun Saya
+            </Link>
             <span>/</span>
             <span className="text-brand-black font-semibold">Daftar Alamat</span>
           </div>

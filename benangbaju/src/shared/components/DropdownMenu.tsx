@@ -22,11 +22,11 @@ export function DropdownMenu({ children }: { children: React.ReactNode }) {
         setIsOpen(false)
       }
     }
-    
+
     if (isOpen) {
       document.addEventListener('mousedown', handleOutsideClick)
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick)
     }
@@ -41,12 +41,12 @@ export function DropdownMenu({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function DropdownMenuTrigger({ 
-  children, 
-  asChild = false 
-}: { 
+export function DropdownMenuTrigger({
+  children,
+  asChild = false,
+}: {
   children: React.ReactNode
-  asChild?: boolean 
+  asChild?: boolean
 }) {
   const ctx = useContext(DropdownMenuContext)
   if (!ctx) throw new Error('DropdownMenuTrigger must be used within DropdownMenu')
@@ -61,8 +61,8 @@ export function DropdownMenuTrigger({
         }
         ctx.setIsOpen(!ctx.isOpen)
       },
-      "aria-expanded": ctx.isOpen,
-      "aria-haspopup": "menu"
+      'aria-expanded': ctx.isOpen,
+      'aria-haspopup': 'menu',
     })
   }
 
@@ -78,11 +78,11 @@ export function DropdownMenuTrigger({
   )
 }
 
-export function DropdownMenuContent({ 
-  children, 
+export function DropdownMenuContent({
+  children,
   className,
-  align = 'right'
-}: { 
+  align = 'right',
+}: {
   children: React.ReactNode
   className?: string
   align?: 'left' | 'right' | 'center'
@@ -99,11 +99,11 @@ export function DropdownMenuContent({
           exit={{ opacity: 0, scale: 0.95, y: -5 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
           className={cn(
-            "absolute z-50 mt-2 w-48 bg-white border border-neutral-200 shadow-xl py-1 outline-none",
+            'absolute z-50 mt-2 w-48 bg-white border border-neutral-200 shadow-xl py-1 outline-none',
             {
-              "right-0 origin-top-right": align === 'right',
-              "left-0 origin-top-left": align === 'left',
-              "left-1/2 -translate-x-1/2 origin-top": align === 'center',
+              'right-0 origin-top-right': align === 'right',
+              'left-0 origin-top-left': align === 'left',
+              'left-1/2 -translate-x-1/2 origin-top': align === 'center',
             },
             className
           )}
@@ -116,13 +116,13 @@ export function DropdownMenuContent({
   )
 }
 
-export function DropdownMenuItem({ 
-  children, 
-  onClick, 
+export function DropdownMenuItem({
+  children,
+  onClick,
   className,
   disabled = false,
-  destructive = false
-}: { 
+  destructive = false,
+}: {
   children: React.ReactNode
   onClick?: () => void
   className?: string
@@ -144,9 +144,12 @@ export function DropdownMenuItem({
         }
       }}
       className={cn(
-        "w-full text-left px-4 py-2.5 text-xs font-sans transition-colors duration-150 flex items-center gap-2",
-        disabled ? "opacity-50 cursor-not-allowed text-neutral-400" : 
-        destructive ? "text-red-600 hover:bg-red-50" : "text-neutral-700 hover:bg-neutral-50 hover:text-brand-black",
+        'w-full text-left px-4 py-2.5 text-xs font-sans transition-colors duration-150 flex items-center gap-2',
+        disabled
+          ? 'opacity-50 cursor-not-allowed text-neutral-400'
+          : destructive
+            ? 'text-red-600 hover:bg-red-50'
+            : 'text-neutral-700 hover:bg-neutral-50 hover:text-brand-black',
         className
       )}
     >

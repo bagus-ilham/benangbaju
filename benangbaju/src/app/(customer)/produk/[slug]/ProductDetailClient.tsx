@@ -5,10 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import {
-  ProductDetailItem,
-  ProductVariant,
-} from '@/features/products/services'
+import { ProductDetailItem, ProductVariant } from '@/features/products/services'
 import {
   ProductGallery,
   MarketplaceLinks,
@@ -16,13 +13,15 @@ import {
   ProductInfoSection,
   ProductAccordionTabs,
   ProductStickyAction,
-  ProductSizeGuideModal
+  ProductSizeGuideModal,
 } from '@/features/products/components'
 import { PageContainer } from '@/shared/components'
 import { useCartStore } from '@/entities/cart/model/cartStore'
 import { useWishlistStore } from '@/features/products/stores/wishlistStore'
-import { useRecentlyViewedStore, RecentlyViewedState } from '@/features/products/stores/recentlyViewedStore'
-
+import {
+  useRecentlyViewedStore,
+  RecentlyViewedState,
+} from '@/features/products/stores/recentlyViewedStore'
 
 import toast from 'react-hot-toast'
 
@@ -33,22 +32,26 @@ interface ProductDetailClientProps {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { type: 'spring' as const, stiffness: 260, damping: 25 }
-  }
+    transition: { type: 'spring' as const, stiffness: 260, damping: 25 },
+  },
 }
 
+export function ProductDetailClient({
+  product,
+  relatedProductsNode,
+}: ProductDetailClientProps): React.JSX.Element {
+  const addItem = useCartStore((state) => state.addItem)
+  const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
 
-export function ProductDetailClient({ product, relatedProductsNode }: ProductDetailClientProps) : React.JSX.Element {
-  const addItem = useCartStore(state => state.addItem)
-  const setCartDrawerOpen = useCartStore(state => state.setCartDrawerOpen)
-  
-  const liked = useWishlistStore(state => state.productIds.includes(product.id))
-  const toggleWishlist = useWishlistStore(state => state.toggleWishlist)
-  
-  const addProductToRecentlyViewed = useRecentlyViewedStore((s: RecentlyViewedState) => s.addProduct)
+  const liked = useWishlistStore((state) => state.productIds.includes(product.id))
+  const toggleWishlist = useWishlistStore((state) => state.toggleWishlist)
+
+  const addProductToRecentlyViewed = useRecentlyViewedStore(
+    (s: RecentlyViewedState) => s.addProduct
+  )
   const router = useRouter()
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)
@@ -121,7 +124,6 @@ export function ProductDetailClient({ product, relatedProductsNode }: ProductDet
     }
   }
 
-
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 600) {
@@ -137,8 +139,8 @@ export function ProductDetailClient({ product, relatedProductsNode }: ProductDet
   // 1. Record viewed item in recently viewed list on load
   useEffect(() => {
     // Find representative price (first active variant price)
-    const basePrice = product.product_variants[0]?.price 
-      ? Number(product.product_variants[0].price) 
+    const basePrice = product.product_variants[0]?.price
+      ? Number(product.product_variants[0].price)
       : 0
 
     addProductToRecentlyViewed({
@@ -295,13 +297,20 @@ export function ProductDetailClient({ product, relatedProductsNode }: ProductDet
           transition={{ duration: 0.4 }}
           className="flex items-center flex-wrap gap-x-2 gap-y-1 text-[10px] uppercase tracking-wider text-neutral-400 mb-8 font-heading"
         >
-          <Link href="/" className="hover:text-brand-black transition-colors">Home</Link>
+          <Link href="/" className="hover:text-brand-black transition-colors">
+            Home
+          </Link>
           <span>/</span>
-          <Link href="/produk" className="hover:text-brand-black transition-colors">Produk</Link>
+          <Link href="/produk" className="hover:text-brand-black transition-colors">
+            Produk
+          </Link>
           <span>/</span>
           {product.categories && (
             <>
-              <Link href={`/kategori/${product.categories.slug}`} className="hover:text-brand-black transition-colors">
+              <Link
+                href={`/kategori/${product.categories.slug}`}
+                className="hover:text-brand-black transition-colors"
+              >
                 {product.categories.name}
               </Link>
               <span>/</span>
@@ -312,32 +321,31 @@ export function ProductDetailClient({ product, relatedProductsNode }: ProductDet
 
         {/* Main Grid: Left Gallery, Right Details */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
-          
           {/* Left Gallery column (takes 7 cols) */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="md:col-span-7"
           >
-            <ProductGallery 
-              images={product.product_images} 
-              productName={product.name} 
+            <ProductGallery
+              images={product.product_images}
+              productName={product.name}
               selectedVariantId={selectedVariant?.id || null}
             />
           </motion.div>
 
-                    {/* Right sticky Details column (takes 5 cols) */}
-          <motion.div 
+          {/* Right sticky Details column (takes 5 cols) */}
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={{
               hidden: {},
               visible: {
                 transition: {
-                  staggerChildren: 0.06
-                }
-              }
+                  staggerChildren: 0.06,
+                },
+              },
             }}
             className="md:col-span-5 md:sticky md:top-24 space-y-6"
           >
@@ -366,10 +374,7 @@ export function ProductDetailClient({ product, relatedProductsNode }: ProductDet
               <MarketplaceLinks links={product.product_marketplace_links} />
             </motion.div>
 
-            <ProductAccordionTabs
-              product={product}
-              selectedVariant={selectedVariant}
-            />
+            <ProductAccordionTabs product={product} selectedVariant={selectedVariant} />
           </motion.div>
         </div>
 

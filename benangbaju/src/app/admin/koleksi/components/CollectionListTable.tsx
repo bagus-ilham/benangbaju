@@ -24,12 +24,14 @@ export function CollectionListTable({
   onToggleActive,
   onEdit,
   onDuplicate,
-  onDelete
+  onDelete,
 }: CollectionListTableProps) {
   if (isLoading) {
     return (
       <div className="py-24 text-center">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat koleksi...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat koleksi...
+        </p>
       </div>
     )
   }
@@ -37,8 +39,14 @@ export function CollectionListTable({
   if (isError) {
     return (
       <div className="py-24 text-center">
-        <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat koleksi dari server</p>
-        <Button onClick={onRefetch} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+        <p className="text-red-500 text-xs font-semibold uppercase">
+          Gagal memuat koleksi dari server
+        </p>
+        <Button
+          onClick={onRefetch}
+          variant="outline"
+          className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+        >
           Coba Lagi
         </Button>
       </div>
@@ -70,9 +78,7 @@ export function CollectionListTable({
           {collections.map((col: AdminCollectionItem) => (
             <tr key={col.id} className="hover:bg-neutral-50/20 transition duration-150">
               <td className="py-4 px-5">
-                <span className="font-semibold text-neutral-900 text-sm block">
-                  {col.name}
-                </span>
+                <span className="font-semibold text-neutral-900 text-sm block">{col.name}</span>
                 {col.starts_at && (
                   <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
                     Periode: {new Date(col.starts_at).toLocaleDateString()} -{' '}
@@ -80,9 +86,7 @@ export function CollectionListTable({
                   </span>
                 )}
               </td>
-              <td className="py-4 px-4 font-mono text-neutral-500">
-                {col.slug}
-              </td>
+              <td className="py-4 px-4 font-mono text-neutral-500">{col.slug}</td>
               <td className="py-4 px-4 text-center font-bold">
                 {col.product_ids?.length || 0} Produk
               </td>

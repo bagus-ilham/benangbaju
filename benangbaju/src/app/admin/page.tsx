@@ -2,16 +2,26 @@
 
 import React, { useState } from 'react'
 import { useAdminDashboardStats } from '@/shared/hooks/useAdmin'
-import type { LowStockVariant, RecentOrder, RecentActivityLog } from '@/features/core/actions/dashboard'
+import type {
+  LowStockVariant,
+  RecentOrder,
+  RecentActivityLog,
+} from '@/features/core/actions/dashboard'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, AdminPageHeader, AdminStatCard, AdminPanel, ClientDateTime } from '@/shared/components'
+import {
+  Button,
+  AdminPageHeader,
+  AdminStatCard,
+  AdminPanel,
+  ClientDateTime,
+} from '@/shared/components'
 import { TrendingUp, ShoppingBag, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()
 
-export default function AdminDashboardPage() : React.JSX.Element {
+export default function AdminDashboardPage(): React.JSX.Element {
   const { data: stats, isLoading, isError, refetch } = useAdminDashboardStats()
   const [updatingStockId, setUpdatingStockId] = useState<string | null>(null)
   const [newStockVal, setNewStockVal] = useState<number>(0)
@@ -54,7 +64,9 @@ export default function AdminDashboardPage() : React.JSX.Element {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 text-sm">Gagal memuat data dashboard.</p>
-        <Button onClick={() => refetch()} className="mt-4 text-xs uppercase">Coba Lagi</Button>
+        <Button onClick={() => refetch()} className="mt-4 text-xs uppercase">
+          Coba Lagi
+        </Button>
       </div>
     )
   }
@@ -113,7 +125,9 @@ export default function AdminDashboardPage() : React.JSX.Element {
             icon={<AlertTriangle size={14} className="text-amber-500" />}
           >
             {stats.lowStockVariants.length === 0 ? (
-              <p className="text-xs text-neutral-400 italic">Semua varian memiliki stok yang cukup.</p>
+              <p className="text-xs text-neutral-400 italic">
+                Semua varian memiliki stok yang cukup.
+              </p>
             ) : (
               <div className="overflow-x-auto -mx-5 px-5">
                 <table className="admin-table">
@@ -139,7 +153,9 @@ export default function AdminDashboardPage() : React.JSX.Element {
                               type="number"
                               className="w-16 px-1.5 py-0.5 border border-neutral-300 outline-none text-center font-bold"
                               value={newStockVal}
-                              onChange={(e) => setNewStockVal(Math.max(0, parseInt(e.target.value) || 0))}
+                              onChange={(e) =>
+                                setNewStockVal(Math.max(0, parseInt(e.target.value) || 0))
+                              }
                             />
                           ) : (
                             <span className="font-bold text-red-600 bg-red-50 px-2 py-0.5">
@@ -150,15 +166,26 @@ export default function AdminDashboardPage() : React.JSX.Element {
                         <td className="text-right">
                           {updatingStockId === item.id ? (
                             <div className="flex justify-end space-x-1">
-                              <Button onClick={() => handleSaveStock(item.id)} className="text-[10px] py-1 px-2.5 font-bold uppercase">
+                              <Button
+                                onClick={() => handleSaveStock(item.id)}
+                                className="text-[10px] py-1 px-2.5 font-bold uppercase"
+                              >
                                 Simpan
                               </Button>
-                              <Button onClick={() => setUpdatingStockId(null)} variant="outline" className="text-[10px] py-1 px-2.5 font-bold uppercase border-neutral-200">
+                              <Button
+                                onClick={() => setUpdatingStockId(null)}
+                                variant="outline"
+                                className="text-[10px] py-1 px-2.5 font-bold uppercase border-neutral-200"
+                              >
                                 Batal
                               </Button>
                             </div>
                           ) : (
-                            <Button onClick={() => handleQuickStockUpdate(item.id, item.stock)} variant="outline" className="text-[10px] py-1 px-2.5 font-bold uppercase border-neutral-200">
+                            <Button
+                              onClick={() => handleQuickStockUpdate(item.id, item.stock)}
+                              variant="outline"
+                              className="text-[10px] py-1 px-2.5 font-bold uppercase border-neutral-200"
+                            >
                               Ubah Stok
                             </Button>
                           )}
@@ -177,9 +204,15 @@ export default function AdminDashboardPage() : React.JSX.Element {
             ) : (
               <div className="space-y-4">
                 {stats.recentOrders.map((order: RecentOrder) => (
-                  <div key={order.id} className="flex justify-between items-center border-b border-neutral-100 last:border-0 pb-3 last:pb-0 text-xs font-sans">
+                  <div
+                    key={order.id}
+                    className="flex justify-between items-center border-b border-neutral-100 last:border-0 pb-3 last:pb-0 text-xs font-sans"
+                  >
                     <div>
-                      <Link href="/admin/pesanan" className="font-semibold text-brand-black hover:underline">
+                      <Link
+                        href="/admin/pesanan"
+                        className="font-semibold text-brand-black hover:underline"
+                      >
                         {order.order_number}
                       </Link>
                       <p className="text-[10px] text-neutral-400 mt-0.5">
@@ -196,22 +229,24 @@ export default function AdminDashboardPage() : React.JSX.Element {
                       <p className="font-bold text-brand-black">
                         Rp {order.total_amount.toLocaleString('id-ID')}
                       </p>
-                      <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 mt-1 ${
-                        order.status === 'completed'
-                          ? 'bg-green-50 text-green-700 border border-green-200'
-                          : order.status === 'cancelled'
-                          ? 'bg-red-50 text-red-700 border border-red-200'
-                          : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                      }`}>
+                      <span
+                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 mt-1 ${
+                          order.status === 'completed'
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : order.status === 'cancelled'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
+                        }`}
+                      >
                         {order.status === 'pending_payment'
                           ? 'Belum Bayar'
                           : order.status === 'processing'
-                          ? 'Diproses'
-                          : order.status === 'shipped'
-                          ? 'Dikirim'
-                          : order.status === 'completed'
-                          ? 'Selesai'
-                          : 'Batal'}
+                            ? 'Diproses'
+                            : order.status === 'shipped'
+                              ? 'Dikirim'
+                              : order.status === 'completed'
+                                ? 'Selesai'
+                                : 'Batal'}
                       </span>
                     </div>
                   </div>
@@ -228,7 +263,10 @@ export default function AdminDashboardPage() : React.JSX.Element {
             ) : (
               <div className="space-y-4 overflow-y-auto max-h-[500px] pr-1">
                 {stats.recentLogs.map((log: RecentActivityLog) => (
-                  <div key={log.id} className="text-xs space-y-1.5 pb-3 border-b border-neutral-100 last:border-0 last:pb-0 font-sans">
+                  <div
+                    key={log.id}
+                    className="text-xs space-y-1.5 pb-3 border-b border-neutral-100 last:border-0 last:pb-0 font-sans"
+                  >
                     <p className="font-semibold text-neutral-800">
                       {log.profiles?.name || 'Administrator'}
                     </p>

@@ -29,7 +29,7 @@ const TRUST_ITEMS = [
   },
 ] as const
 
-export function TrustStrip() : React.JSX.Element {
+export function TrustStrip(): React.JSX.Element {
   return (
     <section className="bg-brand-black border-b border-neutral-800 py-6 md:py-8">
       <PageContainer>

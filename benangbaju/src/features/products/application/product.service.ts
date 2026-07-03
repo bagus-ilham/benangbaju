@@ -23,12 +23,40 @@ export class ProductService {
     return repo.adminGetProducts(this.supabase, params)
   }
 
-  async adminCreateProduct(productData: ProductPayload['productData'], variants: ProductPayload['variants'], images: ProductPayload['images'], marketplaceLinks: ProductPayload['links'], collectionIds: string[] = []) {
-    return repo.adminCreateProduct(this.supabase, productData, variants, images, marketplaceLinks, collectionIds)
+  async adminCreateProduct(
+    productData: ProductPayload['productData'],
+    variants: ProductPayload['variants'],
+    images: ProductPayload['images'],
+    marketplaceLinks: ProductPayload['links'],
+    collectionIds: string[] = []
+  ) {
+    return repo.adminCreateProduct(
+      this.supabase,
+      productData,
+      variants,
+      images,
+      marketplaceLinks,
+      collectionIds
+    )
   }
 
-  async adminUpdateProduct(productId: string, productData: ProductPayload['productData'], variants: ProductPayload['variants'], images: ProductPayload['images'], marketplaceLinks: ProductPayload['links'], collectionIds: string[] = []) {
-    return repo.adminUpdateProduct(this.supabase, productId, productData, variants, images, marketplaceLinks, collectionIds)
+  async adminUpdateProduct(
+    productId: string,
+    productData: ProductPayload['productData'],
+    variants: ProductPayload['variants'],
+    images: ProductPayload['images'],
+    marketplaceLinks: ProductPayload['links'],
+    collectionIds: string[] = []
+  ) {
+    return repo.adminUpdateProduct(
+      this.supabase,
+      productId,
+      productData,
+      variants,
+      images,
+      marketplaceLinks,
+      collectionIds
+    )
   }
 
   async adminDeleteProduct(productId: string) {

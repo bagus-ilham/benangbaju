@@ -20,23 +20,33 @@ import {
   ShippingZonesTable,
   ShippingRatesTable,
   ShippingZoneModal,
-  ShippingRateModal
+  ShippingRateModal,
 } from './components'
 
-export default function AdminShippingPage() : React.JSX.Element {
+export default function AdminShippingPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'zones' | 'rates'>('zones')
-  
+
   // Queries
-  const { data: zonesRes, isLoading: zonesLoading, isError: zonesError, refetch: refetchZones } = useAdminShippingZones()
+  const {
+    data: zonesRes,
+    isLoading: zonesLoading,
+    isError: zonesError,
+    refetch: refetchZones,
+  } = useAdminShippingZones()
   const zones = zonesRes?.data || []
-  const { data: ratesRes, isLoading: ratesLoading, isError: ratesError, refetch: refetchRates } = useAdminShippingRates()
+  const {
+    data: ratesRes,
+    isLoading: ratesLoading,
+    isError: ratesError,
+    refetch: refetchRates,
+  } = useAdminShippingRates()
   const rates = ratesRes?.data || []
 
   // Mutations
   const createZoneMutation = useAdminCreateShippingZone()
   const updateZoneMutation = useAdminUpdateShippingZone()
   const deleteZoneMutation = useAdminDeleteShippingZone()
-  
+
   const createRateMutation = useAdminCreateShippingRate()
   const updateRateMutation = useAdminUpdateShippingRate()
   const deleteRateMutation = useAdminDeleteShippingRate()
@@ -121,7 +131,11 @@ export default function AdminShippingPage() : React.JSX.Element {
   }
 
   const handleDeleteZone = async (id: string, name: string) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus zona "${name}"? Seluruh tarif yang menggunakan zona ini juga akan terhapus!`)) {
+    if (
+      !confirm(
+        `Apakah Anda yakin ingin menghapus zona "${name}"? Seluruh tarif yang menggunakan zona ini juga akan terhapus!`
+      )
+    ) {
       return
     }
     try {
@@ -264,7 +278,10 @@ export default function AdminShippingPage() : React.JSX.Element {
             className="space-y-6"
           >
             <div className="flex justify-end">
-              <Button onClick={() => handleOpenZoneModal()} className="text-xs font-bold uppercase tracking-wider py-2.5 px-4">
+              <Button
+                onClick={() => handleOpenZoneModal()}
+                className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
+              >
                 <Plus size={14} className="mr-1.5" /> Tambah Zona Baru
               </Button>
             </div>

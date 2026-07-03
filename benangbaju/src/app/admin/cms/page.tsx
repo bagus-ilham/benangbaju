@@ -21,16 +21,24 @@ import {
   AdminRedirectsTable,
   AdminLandingPagesTable,
   RedirectFormModal,
-  LandingPageFormModal
+  LandingPageFormModal,
 } from './components'
 
-export default function AdminCmsPage() : React.JSX.Element {
+export default function AdminCmsPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'redirects' | 'landing_pages'>('redirects')
 
   // Queries
-  const { data: redirectsRes, isLoading: redirectsLoading, refetch: refetchRedirects } = useAdminRedirects()
+  const {
+    data: redirectsRes,
+    isLoading: redirectsLoading,
+    refetch: refetchRedirects,
+  } = useAdminRedirects()
   const redirects = redirectsRes?.data || []
-  const { data: landingPagesRes, isLoading: pagesLoading, refetch: refetchPages } = useAdminLandingPages()
+  const {
+    data: landingPagesRes,
+    isLoading: pagesLoading,
+    refetch: refetchPages,
+  } = useAdminLandingPages()
   const landingPages = landingPagesRes?.data || []
 
   // Mutations
@@ -57,7 +65,9 @@ export default function AdminCmsPage() : React.JSX.Element {
   const [pageTitle, setPageTitle] = useState('')
   const [metaTitle, setMetaTitle] = useState('')
   const [metaDesc, setMetaDesc] = useState('')
-  const [jsonContent, setJsonContent] = useState('{\n  "heading": "Selamat Datang",\n  "subheading": "Promo Terbatas Minggu Ini"\n}')
+  const [jsonContent, setJsonContent] = useState(
+    '{\n  "heading": "Selamat Datang",\n  "subheading": "Promo Terbatas Minggu Ini"\n}'
+  )
   const [pageActive, setPageActive] = useState(true)
 
   // --- Redirect Handlers ---
@@ -137,7 +147,9 @@ export default function AdminCmsPage() : React.JSX.Element {
       setPageTitle('')
       setMetaTitle('')
       setMetaDesc('')
-      setJsonContent('{\n  "heading": "Selamat Datang",\n  "subheading": "Promo Terbatas Minggu Ini"\n}')
+      setJsonContent(
+        '{\n  "heading": "Selamat Datang",\n  "subheading": "Promo Terbatas Minggu Ini"\n}'
+      )
       setPageActive(true)
     }
     setPageModalOpen(true)
@@ -159,7 +171,10 @@ export default function AdminCmsPage() : React.JSX.Element {
     }
 
     const payload = {
-      slug: pageSlug.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-'),
+      slug: pageSlug
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9-_]/g, '-'),
       title: pageTitle.trim(),
       content: parsedContent,
       meta_title: metaTitle.trim() || null,
@@ -270,7 +285,10 @@ export default function AdminCmsPage() : React.JSX.Element {
             className="space-y-6"
           >
             <div className="flex justify-end">
-              <Button onClick={() => handleOpenRedirectModal()} className="text-xs font-bold uppercase tracking-wider py-2.5 px-4">
+              <Button
+                onClick={() => handleOpenRedirectModal()}
+                className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
+              >
                 + Tambah Pengalihan
               </Button>
             </div>
@@ -291,7 +309,10 @@ export default function AdminCmsPage() : React.JSX.Element {
             className="space-y-6"
           >
             <div className="flex justify-end">
-              <Button onClick={() => handleOpenPageModal()} className="text-xs font-bold uppercase tracking-wider py-2.5 px-4">
+              <Button
+                onClick={() => handleOpenPageModal()}
+                className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
+              >
                 + Buat Landing Page
               </Button>
             </div>

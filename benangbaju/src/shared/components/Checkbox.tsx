@@ -18,10 +18,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     const errorId = `${checkboxId}-error`
     const helperId = `${checkboxId}-helper`
 
-    const describedBy = [
-      error ? errorId : null,
-      helperText && !error ? helperId : null
-    ].filter(Boolean).join(' ') || undefined
+    const describedBy =
+      [error ? errorId : null, helperText && !error ? helperId : null].filter(Boolean).join(' ') ||
+      undefined
 
     return (
       <div className={cn('flex flex-col space-y-1', className)}>
@@ -35,14 +34,16 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             aria-describedby={describedBy}
             {...props}
           />
-          
-          <div className={cn(
-            "relative flex items-center justify-center w-5 h-5 mt-0.5 border bg-white transition-all duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-black/20 peer-checked:bg-brand-black peer-checked:border-brand-black peer-disabled:opacity-50 peer-disabled:cursor-not-allowed",
-            error ? "border-red-500" : "border-neutral-300"
-          )}>
+
+          <div
+            className={cn(
+              'relative flex items-center justify-center w-5 h-5 mt-0.5 border bg-white transition-all duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-black/20 peer-checked:bg-brand-black peer-checked:border-brand-black peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
+              error ? 'border-red-500' : 'border-neutral-300'
+            )}
+          >
             {/* Custom Check Icon */}
-            <Check 
-              className="w-3.5 h-3.5 text-white opacity-0 transition-opacity duration-200 peer-checked:opacity-100" 
+            <Check
+              className="w-3.5 h-3.5 text-white opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
               strokeWidth={3}
             />
           </div>
@@ -59,7 +60,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             {error}
           </span>
         )}
-        
+
         {!error && helperText && (
           <span id={helperId} className="text-[10px] text-neutral-500 tracking-wide font-sans mt-1">
             {helperText}

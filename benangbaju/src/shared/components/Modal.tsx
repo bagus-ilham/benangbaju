@@ -22,7 +22,7 @@ export function Modal({
   children,
   size = 'md',
   className,
-}: ModalProps) : React.ReactPortal | null {
+}: ModalProps): React.ReactPortal | null {
   const [mounted, setMounted] = React.useState(false)
 
   useEffect(() => {
@@ -124,7 +124,12 @@ export function Modal({
               scale: 1,
               transition: { type: 'spring', damping: 22, stiffness: 300, mass: 0.8 },
             }}
-            exit={{ opacity: 0, y: 12, scale: 0.97, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+            exit={{
+              opacity: 0,
+              y: 12,
+              scale: 0.97,
+              transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+            }}
             className={cn(
               'relative w-full bg-white border border-neutral-200 shadow-xl rounded-none flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
               {

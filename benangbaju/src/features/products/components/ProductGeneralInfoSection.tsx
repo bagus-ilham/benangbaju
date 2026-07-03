@@ -31,26 +31,39 @@ interface ProductGeneralInfoSectionProps {
 }
 
 export function ProductGeneralInfoSection({
-  name, onNameChange,
-  slug, onSlugChange,
-  categoryId, onCategoryChange,
-  weightGram, onWeightGramChange,
-  shortDescription, onShortDescriptionChange,
-  description, onDescriptionChange,
-  sizeGuide, onSizeGuideChange,
-  careGuide, onCareGuideChange,
-  isActive, onIsActiveChange,
-  isFeatured, onIsFeaturedChange,
-  categories, catsLoading,
-  collections, colsLoading,
-  selectedCollections, onToggleCollection
+  name,
+  onNameChange,
+  slug,
+  onSlugChange,
+  categoryId,
+  onCategoryChange,
+  weightGram,
+  onWeightGramChange,
+  shortDescription,
+  onShortDescriptionChange,
+  description,
+  onDescriptionChange,
+  sizeGuide,
+  onSizeGuideChange,
+  careGuide,
+  onCareGuideChange,
+  isActive,
+  onIsActiveChange,
+  isFeatured,
+  onIsFeaturedChange,
+  categories,
+  catsLoading,
+  collections,
+  colsLoading,
+  selectedCollections,
+  onToggleCollection,
 }: ProductGeneralInfoSectionProps): React.JSX.Element {
   return (
     <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-5">
       <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2.5">
         Informasi Umum
       </h3>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Nama Produk*"
@@ -73,8 +86,10 @@ export function ProductGeneralInfoSection({
           label="Kategori*"
           value={categoryId}
           onChange={(val) => onCategoryChange(val)}
-          options={catsLoading ? [] : (categories?.map((cat) => ({ label: cat.name, value: cat.id })) || [])}
-          placeholder={catsLoading ? "Memuat kategori..." : "Pilih Kategori"}
+          options={
+            catsLoading ? [] : categories?.map((cat) => ({ label: cat.name, value: cat.id })) || []
+          }
+          placeholder={catsLoading ? 'Memuat kategori...' : 'Pilih Kategori'}
           required
         />
 
@@ -92,7 +107,9 @@ export function ProductGeneralInfoSection({
           Koleksi Kurasi (Opsional)
         </label>
         {colsLoading ? (
-          <p className="text-neutral-400 italic text-[11px] animate-pulse">Memuat daftar koleksi...</p>
+          <p className="text-neutral-400 italic text-[11px] animate-pulse">
+            Memuat daftar koleksi...
+          </p>
         ) : !collections || collections.length === 0 ? (
           <p className="text-neutral-400 italic text-[11px]">Belum ada koleksi yang dibuat.</p>
         ) : (

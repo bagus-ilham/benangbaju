@@ -2,7 +2,7 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { Category } from "../domain/category.types";
+import { Category } from '../domain/category.types'
 import { InternalError } from '@/lib/api-errors'
 
 export async function getActiveCategories(supabase: SupabaseClient<Database>): Promise<Category[]> {
@@ -63,7 +63,16 @@ export async function adminCreateCategory(
     sort_order: number
     is_active: boolean
   }
-) : Promise<{ id: string; parent_id: string | null; name: string; slug: string; description: string | null; image_url: string | null; sort_order: number; is_active: boolean; }> {
+): Promise<{
+  id: string
+  parent_id: string | null
+  name: string
+  slug: string
+  description: string | null
+  image_url: string | null
+  sort_order: number
+  is_active: boolean
+}> {
   const { data, error } = await supabase
     .from('categories')
     .insert(categoryData)
@@ -74,9 +83,15 @@ export async function adminCreateCategory(
     safeLogError('Error in adminCreateCategory:', error)
     throw new InternalError('Gagal membuat kategori')
   }
-  
-  await insertAdminActivityLog(supabase, 'create', 'category', data.id, `Created category ${categoryData.name}`)
-  
+
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'category',
+    data.id,
+    `Created category ${categoryData.name}`
+  )
+
   return data
 }
 
@@ -92,7 +107,16 @@ export async function adminUpdateCategory(
     sort_order: number
     is_active: boolean
   }
-) : Promise<{ id: string; parent_id: string | null; name: string; slug: string; description: string | null; image_url: string | null; sort_order: number; is_active: boolean; }> {
+): Promise<{
+  id: string
+  parent_id: string | null
+  name: string
+  slug: string
+  description: string | null
+  image_url: string | null
+  sort_order: number
+  is_active: boolean
+}> {
   const { data, error } = await supabase
     .from('categories')
     .update(categoryData)
@@ -104,16 +128,22 @@ export async function adminUpdateCategory(
     safeLogError('Error in adminUpdateCategory:', error)
     throw new InternalError('Gagal memperbarui kategori')
   }
-  
-  await insertAdminActivityLog(supabase, 'update', 'category', categoryId, `Updated category ${categoryData.name}`)
-  
+
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'category',
+    categoryId,
+    `Updated category ${categoryData.name}`
+  )
+
   return data
 }
 
 export async function adminDeleteCategory(
   supabase: SupabaseClient<Database>,
   categoryId: string
-) : Promise<{ success: boolean; }> {
+): Promise<{ success: boolean }> {
   // 1. Fetch images associated with this category to clean up storage
   const { data: category } = await supabase
     .from('categories')
@@ -128,17 +158,20 @@ export async function adminDeleteCategory(
   }
 
   // 3. Delete category record
-  const { error } = await supabase
-    .from('categories')
-    .delete()
-    .eq('id', categoryId)
+  const { error } = await supabase.from('categories').delete().eq('id', categoryId)
 
   if (error) {
     safeLogError('Error in adminDeleteCategory:', error)
     throw new InternalError('Gagal menghapus kategori')
   }
-  
-  await insertAdminActivityLog(supabase, 'delete', 'category', categoryId, `Deleted category ${categoryId}`)
-  
+
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'category',
+    categoryId,
+    `Deleted category ${categoryId}`
+  )
+
   return { success: true }
 }

@@ -20,13 +20,15 @@ export function FlashSaleListTable({
   onToggleActive,
   onDuplicate,
   onEdit,
-  onDelete
+  onDelete,
 }: FlashSaleListTableProps) {
   return (
     <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
       {isLoading ? (
         <div className="py-24 text-center">
-          <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat flash sale...</p>
+          <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+            Memuat flash sale...
+          </p>
         </div>
       ) : campaigns.length === 0 ? (
         <div className="py-24 text-center text-neutral-400 italic text-xs">
@@ -50,7 +52,7 @@ export function FlashSaleListTable({
                 const start = new Date(camp.starts_at)
                 const end = new Date(camp.ends_at)
                 const isRunning = camp.is_active && start <= now && end >= now
-                
+
                 return (
                   <tr key={camp.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
@@ -65,7 +67,9 @@ export function FlashSaleListTable({
                     </td>
                     <td className="py-4 px-4 text-neutral-600 font-medium leading-relaxed">
                       <p>Mulai: {new Date(camp.starts_at).toLocaleString()}</p>
-                      <p className="text-[10px] text-neutral-400">Selesai: {new Date(camp.ends_at).toLocaleString()}</p>
+                      <p className="text-[10px] text-neutral-400">
+                        Selesai: {new Date(camp.ends_at).toLocaleString()}
+                      </p>
                     </td>
                     <td className="py-4 px-4 text-center font-bold">
                       {camp.flash_sale_items?.length || 0} Produk Varian

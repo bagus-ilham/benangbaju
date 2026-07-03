@@ -3,20 +3,21 @@ import Link from 'next/link'
 import { HelpCircle } from 'lucide-react'
 import { Button, PageContainer } from '@/shared/components'
 
-export default function CustomerNotFound() : React.JSX.Element {
+export default function CustomerNotFound(): React.JSX.Element {
   return (
     <PageContainer className="flex-1 min-h-[60vh] flex flex-col items-center justify-center text-center p-6 bg-white font-sans">
       <div className="max-w-md space-y-6 flex flex-col items-center py-12">
         <div className="p-4 bg-neutral-50 border border-neutral-100 text-neutral-800 rounded-none mb-2">
           <HelpCircle className="h-10 w-10 text-neutral-450" />
         </div>
-        
+
         <div className="space-y-2">
           <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
             Halaman Tidak Ditemukan
           </h1>
           <p className="text-xs text-neutral-500 leading-relaxed max-w-xs mx-auto">
-            Maaf, halaman atau koleksi yang Anda cari tidak dapat ditemukan, tidak aktif, atau telah dipindahkan.
+            Maaf, halaman atau koleksi yang Anda cari tidak dapat ditemukan, tidak aktif, atau telah
+            dipindahkan.
           </p>
         </div>
 

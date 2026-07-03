@@ -4,7 +4,6 @@ import React, { useId } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-
 export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: React.ReactNode
   error?: string
@@ -29,7 +28,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             aria-checked={checked}
             {...props}
           />
-          
+
           <div className="relative flex items-center w-9 h-5 rounded-full border border-neutral-300 bg-neutral-200 transition-colors duration-300 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-black/20 peer-checked:bg-brand-black peer-checked:border-brand-black peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
             {/* Switch Thumb */}
             <motion.div
@@ -54,11 +53,9 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
         </label>
 
         {error && (
-          <span className="text-[10px] text-red-500 tracking-wide font-sans mt-1">
-            {error}
-          </span>
+          <span className="text-[10px] text-red-500 tracking-wide font-sans mt-1">{error}</span>
         )}
-        
+
         {!error && helperText && (
           <span className="text-[10px] text-neutral-500 tracking-wide font-sans mt-1">
             {helperText}

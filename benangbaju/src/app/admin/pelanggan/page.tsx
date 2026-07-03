@@ -9,17 +9,21 @@ import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
 import { motion } from 'framer-motion'
 
-export default function AdminCustomersPage() : React.JSX.Element {
+export default function AdminCustomersPage(): React.JSX.Element {
   const { data: customersRes, isLoading, isError, refetch } = useAdminCustomers()
   const customers = customersRes?.data || []
   const toggleStatusMutation = useAdminToggleCustomerStatus()
-  
+
   const [searchQuery, setSearchQuery] = useState('')
 
-  const handleToggleStatus = async (customerId: string, currentStatus: boolean, customerName: string) => {
+  const handleToggleStatus = async (
+    customerId: string,
+    currentStatus: boolean,
+    customerName: string
+  ) => {
     const nextStatus = !currentStatus
     const actionText = nextStatus ? 'mengaktifkan' : 'memblokir'
-    
+
     if (!confirm(`Apakah Anda yakin ingin ${actionText} akun ${customerName}?`)) {
       return
     }
@@ -45,7 +49,9 @@ export default function AdminCustomersPage() : React.JSX.Element {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat data pelanggan...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat data pelanggan...
+        </p>
       </div>
     )
   }
@@ -54,7 +60,9 @@ export default function AdminCustomersPage() : React.JSX.Element {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 text-sm">Gagal memuat data pelanggan.</p>
-        <Button onClick={() => refetch()} className="mt-4 text-xs uppercase">Coba Lagi</Button>
+        <Button onClick={() => refetch()} className="mt-4 text-xs uppercase">
+          Coba Lagi
+        </Button>
       </div>
     )
   }
@@ -96,7 +104,9 @@ export default function AdminCustomersPage() : React.JSX.Element {
       <div className="border border-neutral-200 bg-white rounded-none">
         {filteredCustomers.length === 0 ? (
           <div className="text-center py-12 text-neutral-400 text-xs italic">
-            {searchQuery ? 'Tidak ada pelanggan yang cocok dengan pencarian Anda.' : 'Belum ada pelanggan terdaftar.'}
+            {searchQuery
+              ? 'Tidak ada pelanggan yang cocok dengan pencarian Anda.'
+              : 'Belum ada pelanggan terdaftar.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -125,8 +135,12 @@ export default function AdminCustomersPage() : React.JSX.Element {
                           {(customer.name || 'U').substring(0, 2)}
                         </div>
                         <div>
-                          <p className="text-neutral-900 font-bold text-sm">{customer.name || 'No Name'}</p>
-                          <p className="text-[10px] text-neutral-400 font-mono mt-0.5">{customer.id}</p>
+                          <p className="text-neutral-900 font-bold text-sm">
+                            {customer.name || 'No Name'}
+                          </p>
+                          <p className="text-[10px] text-neutral-400 font-mono mt-0.5">
+                            {customer.id}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -147,11 +161,13 @@ export default function AdminCustomersPage() : React.JSX.Element {
                       </p>
                     </td>
                     <td className="py-4 px-6 text-center">
-                      <span className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-none ${
-                        customer.is_active
-                          ? 'bg-green-50 text-green-700 border border-green-200'
-                          : 'bg-red-50 text-red-700 border border-red-200'
-                      }`}>
+                      <span
+                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-none ${
+                          customer.is_active
+                            ? 'bg-green-50 text-green-700 border border-green-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
+                        }`}
+                      >
                         {customer.is_active ? 'Aktif' : 'Diblokir'}
                       </span>
                     </td>
@@ -166,7 +182,9 @@ export default function AdminCustomersPage() : React.JSX.Element {
                       </Link>
                       {customer.is_active ? (
                         <Button
-                          onClick={() => handleToggleStatus(customer.id, customer.is_active, customer.name)}
+                          onClick={() =>
+                            handleToggleStatus(customer.id, customer.is_active, customer.name)
+                          }
                           variant="outline"
                           disabled={toggleStatusMutation.isPending}
                           className="text-[10px] py-1.5 px-3 font-bold uppercase border-red-200 text-red-500 hover:bg-red-50"
@@ -175,7 +193,9 @@ export default function AdminCustomersPage() : React.JSX.Element {
                         </Button>
                       ) : (
                         <Button
-                          onClick={() => handleToggleStatus(customer.id, customer.is_active, customer.name)}
+                          onClick={() =>
+                            handleToggleStatus(customer.id, customer.is_active, customer.name)
+                          }
                           disabled={toggleStatusMutation.isPending}
                           className="text-[10px] py-1.5 px-3 font-bold uppercase bg-green-600 border border-green-600 hover:bg-green-700 text-white"
                         >

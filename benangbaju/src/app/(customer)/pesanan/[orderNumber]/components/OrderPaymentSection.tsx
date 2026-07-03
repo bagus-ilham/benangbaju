@@ -40,7 +40,9 @@ export function OrderPaymentSection({
         {Number(order.discount_amount) > 0 && (
           <div className="flex justify-between text-neutral-800 font-semibold">
             <span>Diskon Voucher</span>
-            <span className="text-red-600">- Rp {order.discount_amount.toLocaleString('id-ID')}</span>
+            <span className="text-red-600">
+              - Rp {order.discount_amount.toLocaleString('id-ID')}
+            </span>
           </div>
         )}
         <div className="flex justify-between">
@@ -51,7 +53,9 @@ export function OrderPaymentSection({
         </div>
         <div className="flex justify-between items-center text-brand-black font-heading border-t border-neutral-100 pt-4 mt-2">
           <span className="text-sm font-semibold">Total Pembayaran</span>
-          <span className="text-lg font-bold">Rp {order.total_amount?.toLocaleString('id-ID')}</span>
+          <span className="text-lg font-bold">
+            Rp {order.total_amount?.toLocaleString('id-ID')}
+          </span>
         </div>
       </div>
 
@@ -111,7 +115,10 @@ export function OrderPaymentSection({
               <span>Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!</span>
             </div>
             <Link href={`/pesanan/${order.order_number}/retur`} className="w-full">
-              <Button variant="outline" className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-800 text-neutral-800 hover:bg-neutral-50">
+              <Button
+                variant="outline"
+                className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-800 text-neutral-800 hover:bg-neutral-50"
+              >
                 Ajukan Retur Barang
               </Button>
             </Link>

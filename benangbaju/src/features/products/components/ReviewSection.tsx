@@ -12,15 +12,15 @@ interface ReviewSectionProps {
   ratingSummary: ProductRatingSummary | null
 }
 
-export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) : React.JSX.Element {
+export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps): React.JSX.Element {
   const { data: reviewsRes, isLoading } = useReviews(productId)
   const reviews = reviewsRes?.data || []
 
   // Calculate default values if ratingSummary is missing
   const total = ratingSummary?.total_reviews || reviews.length
-  const avgRating = ratingSummary?.avg_rating || (reviews.length > 0
-    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-    : 0)
+  const avgRating =
+    ratingSummary?.avg_rating ||
+    (reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0)
 
   // Star render helper
   const renderStars = (rating: number, className = 'h-3.5 w-3.5') => {
@@ -29,9 +29,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
         key={i}
         className={cn(
           className,
-          i < Math.round(rating)
-            ? 'fill-brand-gold text-brand-gold'
-            : 'text-neutral-200'
+          i < Math.round(rating) ? 'fill-brand-gold text-brand-gold' : 'text-neutral-200'
         )}
       />
     ))
@@ -69,9 +67,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
             </span>
             <span className="text-xs text-neutral-400 font-sans">/ 5.0</span>
           </div>
-          <div className="flex space-x-1">
-            {renderStars(avgRating, 'h-4 w-4')}
-          </div>
+          <div className="flex space-x-1">{renderStars(avgRating, 'h-4 w-4')}</div>
           <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
             Berdasarkan {total} ulasan terverifikasi dari pembeli.
           </p>
@@ -93,9 +89,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
                         {review.is_anonymous ? 'Anonim' : review.profiles?.name || 'Customer'}
                       </span>
                       <div className="flex items-center space-x-2">
-                        <div className="flex">
-                          {renderStars(review.rating)}
-                        </div>
+                        <div className="flex">{renderStars(review.rating)}</div>
                         {review.is_verified_purchase && (
                           <span className="flex items-center text-[9px] uppercase tracking-wider text-brand-gold font-heading">
                             <CheckCircle className="h-2.5 w-2.5 text-brand-gold mr-1" />
@@ -110,9 +104,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps) 
                   </div>
 
                   {review.title && (
-                    <h4 className="text-xs font-semibold text-brand-black">
-                      {review.title}
-                    </h4>
+                    <h4 className="text-xs font-semibold text-brand-black">{review.title}</h4>
                   )}
 
                   <p className="text-xs text-neutral-600 font-sans leading-relaxed">

@@ -8,7 +8,7 @@ import { useWishlistStore } from '@/features/products/stores/wishlistStore'
 
 import { AuthChangeEvent, Session } from '@supabase/supabase-js'
 
-export function SupabaseProvider({ children }: { children: React.ReactNode }) : React.JSX.Element {
+export function SupabaseProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const supabase = createBrowserClient()
   const { setUser, setProfile, setLoading, clearAuth } = useAuthStore()
 
@@ -23,7 +23,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) : 
 
         if (user) {
           setUser(user)
-          
+
           // Fetch profile details
           const { data: profile } = await supabase
             .from('profiles')
@@ -63,7 +63,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) : 
     } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       if (session?.user) {
         setUser(session.user)
-        
+
         // Fetch profile
         const { data: profile } = await supabase
           .from('profiles')

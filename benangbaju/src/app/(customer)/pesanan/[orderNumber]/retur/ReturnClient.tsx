@@ -5,7 +5,16 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/entities/user/model/authStore'
 import { useOrderDetail } from '@/features/orders/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, Input, PageHero, PageContainer, EmptyState, AuthLoading, Select, Textarea } from '@/shared/components'
+import {
+  Button,
+  Input,
+  PageHero,
+  PageContainer,
+  EmptyState,
+  AuthLoading,
+  Select,
+  Textarea,
+} from '@/shared/components'
 import { ArrowLeft, AlertTriangle, ShieldCheck, Image as ImageIcon, X } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -29,7 +38,7 @@ interface ReturnPageProps {
   }
 }
 
-export default function ReturnPageClient({ params }: ReturnPageProps) : React.JSX.Element | null {
+export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX.Element | null {
   const { orderNumber } = params
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
@@ -62,7 +71,9 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
     queryFn: async () => {
       const { data } = await supabase
         .from('return_requests')
-        .select('id, order_id, user_id, status, reason, customer_notes, admin_notes, refund_amount, refund_bank_name, refund_account_number, refund_account_name, refund_transferred_at, approved_at, rejected_at, completed_at, created_at, updated_at')
+        .select(
+          'id, order_id, user_id, status, reason, customer_notes, admin_notes, refund_amount, refund_bank_name, refund_account_number, refund_account_name, refund_transferred_at, approved_at, rejected_at, completed_at, created_at, updated_at'
+        )
         .eq('order_id', order!.id)
         .maybeSingle()
       return data
@@ -105,7 +116,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
     const newFiles = Array.from(e.target.files)
-    
+
     // Validate max 2 files total
     if (returnFiles.length + newFiles.length > 2) {
       toast.error('Maksimal 2 foto retur diperbolehkan')
@@ -113,17 +124,17 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
     }
 
     // Validate size (max 2MB per file)
-    const invalidFile = newFiles.find(f => f.size > 2 * 1024 * 1024)
+    const invalidFile = newFiles.find((f) => f.size > 2 * 1024 * 1024)
     if (invalidFile) {
       toast.error(`Ukuran file ${invalidFile.name} melebihi batas 2MB`)
       return
     }
 
-    setReturnFiles(prev => [...prev, ...newFiles])
+    setReturnFiles((prev) => [...prev, ...newFiles])
   }
 
   const handleRemoveFile = (index: number) => {
-    setReturnFiles(prev => prev.filter((_, i) => i !== index))
+    setReturnFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmitReturn = async (e: React.FormEvent) => {
@@ -169,9 +180,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
         quantity: quantities[itemId],
       }))
 
-      const { error: itemsError } = await supabase
-        .from('return_items')
-        .insert(returnItemsData)
+      const { error: itemsError } = await supabase.from('return_items').insert(returnItemsData)
 
       if (itemsError) throw itemsError
 
@@ -194,12 +203,10 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
           const mediaData = mediaUrls.map((url, idx) => ({
             return_request_id: returnReq.id,
             url: url,
-            sort_order: idx
+            sort_order: idx,
           }))
 
-          const { error: mediaError } = await supabase
-            .from('return_media')
-            .insert(mediaData)
+          const { error: mediaError } = await supabase.from('return_media').insert(mediaData)
 
           if (mediaError) console.error('Error inserting return media:', mediaError)
         }
@@ -288,7 +295,10 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
                     className="mt-1 w-4 h-4 border-neutral-300 accent-neutral-900 focus:ring-0 rounded-none"
                   />
                   <div className="flex-1 min-w-0 text-sm">
-                    <label htmlFor={`checkbox-${item.id}`} className="font-semibold text-neutral-800 cursor-pointer block">
+                    <label
+                      htmlFor={`checkbox-${item.id}`}
+                      className="font-semibold text-neutral-800 cursor-pointer block"
+                    >
                       {item.product_name}
                     </label>
                     <p className="text-xs text-neutral-500 mt-1">
@@ -301,13 +311,17 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
 
                   {selectedItems[item.id] && (
                     <div className="flex items-center space-x-2">
-                      <label className="text-xs text-neutral-500 font-semibold uppercase">Jumlah Retur:</label>
+                      <label className="text-xs text-neutral-500 font-semibold uppercase">
+                        Jumlah Retur:
+                      </label>
                       <input
                         type="number"
                         min="1"
                         max={item.quantity}
                         value={quantities[item.id] || 1}
-                        onChange={(e) => handleQtyChange(item.id, item.quantity, parseInt(e.target.value))}
+                        onChange={(e) =>
+                          handleQtyChange(item.id, item.quantity, parseInt(e.target.value))
+                        }
                         className="w-16 px-2 py-1.5 border border-neutral-200 text-center text-sm outline-none focus:border-neutral-900 rounded-none font-semibold"
                       />
                     </div>
@@ -324,11 +338,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
               Alasan Pengembalian*
             </h2>
             <div className="space-y-4">
-              <Select
-                value={reason}
-                onChange={setReason}
-                options={RETURN_REASONS}
-              />
+              <Select value={reason} onChange={setReason} options={RETURN_REASONS} />
               <Textarea
                 label="Deskripsi Tambahan / Detail Cacat"
                 value={customerNotes}
@@ -343,12 +353,12 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
               <label className="block text-xs uppercase tracking-widest font-semibold text-neutral-500">
                 Lampirkan Bukti Foto (Opsional, Maks 2 Foto)
               </label>
-              
+
               <div className="flex flex-wrap gap-4">
                 {returnFiles.map((file, idx) => (
                   <div key={idx} className="relative w-24 h-24 border border-neutral-200 group">
-                    <img 
-                      src={URL.createObjectURL(file)} 
+                    <img
+                      src={URL.createObjectURL(file)}
                       alt={`Preview ${idx}`}
                       className="w-full h-full object-cover"
                     />
@@ -361,16 +371,19 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
                     </button>
                   </div>
                 ))}
-                
+
                 {returnFiles.length < 2 && (
                   <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-gold hover:text-brand-gold transition group">
-                    <ImageIcon size={20} className="mb-1 group-hover:scale-110 transition-transform" />
+                    <ImageIcon
+                      size={20}
+                      className="mb-1 group-hover:scale-110 transition-transform"
+                    />
                     <span className="text-[10px] uppercase font-bold tracking-wider">Tambah</span>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      multiple 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
                       onChange={handleFileChange}
                     />
                   </label>
@@ -433,4 +446,3 @@ export default function ReturnPageClient({ params }: ReturnPageProps) : React.JS
     </div>
   )
 }
-

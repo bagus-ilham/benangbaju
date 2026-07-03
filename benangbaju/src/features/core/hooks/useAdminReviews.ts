@@ -1,4 +1,10 @@
-import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+  UseMutationResult,
+} from '@tanstack/react-query'
 import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
@@ -20,14 +26,14 @@ export interface AdminReplyToReviewInput {
   adminId: string
 }
 
-export function useAdminReviews() : UseQueryResult<ApiListResponse<AdminReviewListItem>, Error> {
+export function useAdminReviews(): UseQueryResult<ApiListResponse<AdminReviewListItem>, Error> {
   return useQuery({
     queryKey: ['admin', 'reviews'],
-    queryFn: () => adminGetReviews(getAdminSupabase())
+    queryFn: () => adminGetReviews(getAdminSupabase()),
   })
 }
 
-export function useAdminUpdateReviewStatus() : UseMutationResult<
+export function useAdminUpdateReviewStatus(): UseMutationResult<
   Awaited<ReturnType<typeof adminUpdateReviewStatus>>,
   Error,
   AdminUpdateReviewStatusInput,
@@ -42,11 +48,11 @@ export function useAdminUpdateReviewStatus() : UseMutationResult<
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['reviews'])
-    }
+    },
   })
 }
 
-export function useAdminReplyToReview() : UseMutationResult<
+export function useAdminReplyToReview(): UseMutationResult<
   Awaited<ReturnType<typeof adminReplyToReview>>,
   Error,
   AdminReplyToReviewInput,
@@ -61,6 +67,6 @@ export function useAdminReplyToReview() : UseMutationResult<
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['reviews'])
-    }
+    },
   })
 }

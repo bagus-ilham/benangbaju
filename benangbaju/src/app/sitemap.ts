@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const [productsRes, categoriesRes, collectionsRes] = await Promise.all([
       supabase.from('products').select('slug, updated_at').eq('is_active', true),
       supabase.from('categories').select('slug').eq('is_active', true),
-      supabase.from('collections').select('slug').eq('is_active', true)
+      supabase.from('collections').select('slug').eq('is_active', true),
     ])
 
     if (productsRes.data) {

@@ -12,7 +12,11 @@ interface ProductGalleryProps {
   selectedVariantId?: string | null
 }
 
-export function ProductGallery({ images, productName, selectedVariantId }: ProductGalleryProps) : React.JSX.Element {
+export function ProductGallery({
+  images,
+  productName,
+  selectedVariantId,
+}: ProductGalleryProps): React.JSX.Element {
   const [activeImage, setActiveImage] = useState<string | null>(
     images.find((img) => img.is_primary)?.url || images[0]?.url || null
   )
@@ -49,7 +53,7 @@ export function ProductGallery({ images, productName, selectedVariantId }: Produ
   return (
     <div className="flex flex-col w-full">
       {/* Main Focus Image */}
-      <div 
+      <div
         className="relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in"
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
@@ -74,7 +78,7 @@ export function ProductGallery({ images, productName, selectedVariantId }: Produ
                 style={{
                   transformOrigin: isZoomed ? `${zoomPos.x}% ${zoomPos.y}%` : 'center',
                   transform: isZoomed ? 'scale(2.2)' : 'scale(1)',
-                  transition: isZoomed ? 'none' : 'transform 0.3s ease-out'
+                  transition: isZoomed ? 'none' : 'transform 0.3s ease-out',
                 }}
                 priority
               />

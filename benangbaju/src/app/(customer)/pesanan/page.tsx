@@ -4,11 +4,31 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/entities/user/model/authStore'
-import { useOrdersList, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken } from '@/features/orders/hooks/useOrders'
+import {
+  useOrdersList,
+  useCancelOrder,
+  useConfirmDelivery,
+  useGeneratePaymentToken,
+} from '@/features/orders/hooks/useOrders'
 import { lazyCancelExpiredOrders } from '@/features/orders/services'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, AuthLoading, EmptyState, PageContainer, PageHero, Modal } from '@/shared/components'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle2, XCircle, ClipboardList } from 'lucide-react'
+import {
+  Button,
+  AuthLoading,
+  EmptyState,
+  PageContainer,
+  PageHero,
+  Modal,
+} from '@/shared/components'
+import {
+  ArrowLeft,
+  Clock,
+  Package,
+  Truck,
+  CheckCircle2,
+  XCircle,
+  ClipboardList,
+} from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { formatIDR } from '@/lib/utils'
@@ -24,13 +44,17 @@ const STATUS_TABS = [
   { id: 'cancelled', label: 'Dibatalkan' },
 ]
 
-export default function PesananPage() : React.JSX.Element {
+export default function PesananPage(): React.JSX.Element {
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [activeTab, setActiveTab] = useState('all')
   const [page, setPage] = useState(1)
-  const [cancelOrderInfo, setCancelOrderInfo] = useState<{ id: string, number: string } | null>(null)
-  const [receiptOrderInfo, setReceiptOrderInfo] = useState<{ id: string, number: string } | null>(null)
+  const [cancelOrderInfo, setCancelOrderInfo] = useState<{ id: string; number: string } | null>(
+    null
+  )
+  const [receiptOrderInfo, setReceiptOrderInfo] = useState<{ id: string; number: string } | null>(
+    null
+  )
   const limit = 8
 
   // 1. Redirect if not authenticated
@@ -48,12 +72,11 @@ export default function PesananPage() : React.JSX.Element {
   }, [user])
 
   // 3. Fetch Orders
-  const { data: ordersResponse, isLoading: ordersLoading, refetch } = useOrdersList(
-    user?.id || '',
-    activeTab,
-    page,
-    limit
-  )
+  const {
+    data: ordersResponse,
+    isLoading: ordersLoading,
+    refetch,
+  } = useOrdersList(user?.id || '', activeTab, page, limit)
 
   const orders = Array.isArray(ordersResponse?.data) ? ordersResponse.data : []
   const totalCount = ordersResponse?.pagination?.total_count || 0
@@ -65,7 +88,8 @@ export default function PesananPage() : React.JSX.Element {
 
   // Load Midtrans Snap.js Script dynamically
   useEffect(() => {
-    const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
+    const snapScriptUrl =
+      process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
     const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
     if (!existingScript) {
       const script = document.createElement('script')
@@ -90,7 +114,10 @@ export default function PesananPage() : React.JSX.Element {
   const executeCancelOrder = async () => {
     if (!cancelOrderInfo) return
     try {
-      await cancelMutation.mutateAsync({ orderId: cancelOrderInfo.id, reason: 'Dibatalkan oleh customer' })
+      await cancelMutation.mutateAsync({
+        orderId: cancelOrderInfo.id,
+        reason: 'Dibatalkan oleh customer',
+      })
       toast.success('Pesanan berhasil dibatalkan')
       refetch()
     } catch (err: any) {
@@ -215,7 +242,9 @@ export default function PesananPage() : React.JSX.Element {
       <PageContainer size="lg" className="py-10 page-content">
         {/* Navigation Breadcrumb */}
         <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-          <Link href="/akun" className="hover:text-neutral-900 transition">Akun Saya</Link>
+          <Link href="/akun" className="hover:text-neutral-900 transition">
+            Akun Saya
+          </Link>
           <span>/</span>
           <span className="text-neutral-900 font-semibold">Pesanan Saya</span>
         </div>
@@ -258,17 +287,21 @@ export default function PesananPage() : React.JSX.Element {
                   <div className="space-y-1">
                     <p className="font-semibold text-neutral-900">
                       No. Pesanan:{' '}
-                      <Link href={`/pesanan/${order.order_number}`} className="underline hover:text-neutral-600">
+                      <Link
+                        href={`/pesanan/${order.order_number}`}
+                        className="underline hover:text-neutral-600"
+                      >
                         {order.order_number}
                       </Link>
                     </p>
                     <p className="text-xs text-neutral-400">
-                      Tanggal: {new Date(order.created_at).toLocaleDateString('id-ID', {
+                      Tanggal:{' '}
+                      {new Date(order.created_at).toLocaleDateString('id-ID', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
                         hour: '2-digit',
-                        minute: '2-digit'
+                        minute: '2-digit',
                       })}
                     </p>
                   </div>
@@ -305,7 +338,10 @@ export default function PesananPage() : React.JSX.Element {
 
                   <div className="flex flex-wrap gap-2">
                     <Link href={`/pesanan/${order.order_number}`}>
-                      <Button variant="outline" className="text-xs py-2 px-4 uppercase font-semibold">
+                      <Button
+                        variant="outline"
+                        className="text-xs py-2 px-4 uppercase font-semibold"
+                      >
                         Lihat Detail
                       </Button>
                     </Link>
@@ -394,7 +430,8 @@ export default function PesananPage() : React.JSX.Element {
       >
         <div className="space-y-6">
           <p className="text-sm text-neutral-600">
-            Apakah Anda yakin ingin membatalkan pesanan {cancelOrderInfo?.number}? Tindakan ini tidak dapat dibatalkan.
+            Apakah Anda yakin ingin membatalkan pesanan {cancelOrderInfo?.number}? Tindakan ini
+            tidak dapat dibatalkan.
           </p>
           <div className="flex gap-3">
             <Button
@@ -425,7 +462,8 @@ export default function PesananPage() : React.JSX.Element {
       >
         <div className="space-y-6">
           <p className="text-sm text-neutral-600">
-            Apakah Anda sudah menerima barang untuk pesanan {receiptOrderInfo?.number} dan yakin ingin menyelesaikannya?
+            Apakah Anda sudah menerima barang untuk pesanan {receiptOrderInfo?.number} dan yakin
+            ingin menyelesaikannya?
           </p>
           <div className="flex gap-3">
             <Button

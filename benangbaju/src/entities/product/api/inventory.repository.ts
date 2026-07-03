@@ -9,13 +9,21 @@ export interface StockUpdate {
 
 export async function bulkUpdateStock(supabase: SupabaseClient<Database>, updates: StockUpdate[]) {
   const { error } = await supabase.rpc('bulk_update_stock', {
-    updates: updates as any
+    updates: updates as any,
   })
 
   if (error) {
     console.error('Failed to bulk update stock via RPC:', error)
-    return { success: false as const, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Gagal mengupdate stok ke database.' }, status: 500 }
+    return {
+      success: false as const,
+      error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Gagal mengupdate stok ke database.' },
+      status: 500,
+    }
   }
 
-  return { success: true as const, data: { message: `Successfully updated ${updates.length} items` }, status: 200 }
+  return {
+    success: true as const,
+    data: { message: `Successfully updated ${updates.length} items` },
+    status: 200,
+  }
 }

@@ -18,7 +18,7 @@ export function AdminLandingPagesTable({
   landingPages,
   isLoading,
   onEdit,
-  onDelete
+  onDelete,
 }: AdminLandingPagesTableProps) {
   if (isLoading) {
     return <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
@@ -49,15 +49,17 @@ export function AdminLandingPagesTable({
                 <h3 className="font-serif font-bold text-neutral-900 text-base">{page.title}</h3>
                 <p className="text-[10px] font-mono text-neutral-400 mt-0.5">Slug: /{page.slug}</p>
               </div>
-              <span className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
-                page.is_active
-                  ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-red-50 text-red-700 border border-red-200'
-              }`}>
+              <span
+                className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
+                  page.is_active
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
+                }`}
+              >
                 {page.is_active ? 'Aktif' : 'Nonaktif'}
               </span>
             </div>
-            
+
             {page.meta_title && (
               <p className="text-xs text-neutral-500">
                 <strong className="text-neutral-700">Meta Title:</strong> {page.meta_title}
@@ -74,22 +76,38 @@ export function AdminLandingPagesTable({
                 <FileCode size={11} className="mr-1" /> JSON Content Keys:
               </span>
               <div className="flex flex-wrap gap-1 mt-1">
-                {typeof page.content === 'object' && page.content !== null && !Array.isArray(page.content) && Object.keys(page.content).map((key) => (
-                  <span key={key} className="bg-neutral-50 border border-neutral-200 text-[9px] px-1.5 py-0.5 text-neutral-600 font-mono">
-                    {key}
-                  </span>
-                ))}
+                {typeof page.content === 'object' &&
+                  page.content !== null &&
+                  !Array.isArray(page.content) &&
+                  Object.keys(page.content).map((key) => (
+                    <span
+                      key={key}
+                      className="bg-neutral-50 border border-neutral-200 text-[9px] px-1.5 py-0.5 text-neutral-600 font-mono"
+                    >
+                      {key}
+                    </span>
+                  ))}
               </div>
             </div>
           </div>
 
           <div className="pt-4 border-t border-neutral-100 flex justify-between items-center">
-            <span className="text-[9px] text-neutral-400 font-mono">Dibuat: {formatDate(page.created_at)}</span>
+            <span className="text-[9px] text-neutral-400 font-mono">
+              Dibuat: {formatDate(page.created_at)}
+            </span>
             <div className="flex space-x-2">
-              <Button onClick={() => onEdit(page)} variant="outline" className="text-[10px] py-1.5 px-3 font-bold uppercase border-neutral-200">
+              <Button
+                onClick={() => onEdit(page)}
+                variant="outline"
+                className="text-[10px] py-1.5 px-3 font-bold uppercase border-neutral-200"
+              >
                 <Edit size={11} className="mr-1" /> Edit
               </Button>
-              <Button onClick={() => onDelete(page.id, page.title)} variant="outline" className="text-[10px] py-1.5 px-3 font-bold uppercase border-red-200 text-red-500 hover:bg-red-50">
+              <Button
+                onClick={() => onDelete(page.id, page.title)}
+                variant="outline"
+                className="text-[10px] py-1.5 px-3 font-bold uppercase border-red-200 text-red-500 hover:bg-red-50"
+              >
                 <Trash2 size={11} className="mr-1" /> Hapus
               </Button>
             </div>

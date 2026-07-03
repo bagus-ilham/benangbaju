@@ -9,11 +9,11 @@ describe('Voucher Repository - validateVoucher RPC parsing', () => {
   it('handles database error correctly', async () => {
     mockSupabase.rpc.mockResolvedValueOnce({
       data: null,
-      error: { message: 'Connection timeout' }
+      error: { message: 'Connection timeout' },
     })
 
     const res = await validateVoucher(mockSupabase, 'PROMO10', 100000, 'user-1')
-    
+
     expect(res.success).toBe(false)
     expect(res.valid).toBe(false)
     expect(res.message).toBe('Gagal memvalidasi voucher. Coba beberapa saat lagi.')
@@ -21,12 +21,12 @@ describe('Voucher Repository - validateVoucher RPC parsing', () => {
 
   it('handles non-object response from RPC', async () => {
     mockSupabase.rpc.mockResolvedValueOnce({
-      data: ["invalid format"],
-      error: null
+      data: ['invalid format'],
+      error: null,
     })
 
     const res = await validateVoucher(mockSupabase, 'PROMO10', 100000, 'user-1')
-    
+
     expect(res.success).toBe(false)
     expect(res.message).toBe('Format respon voucher tidak valid.')
   })
@@ -40,13 +40,13 @@ describe('Voucher Repository - validateVoucher RPC parsing', () => {
         code: 'PROMO10',
         discount_type: 'percentage',
         discount_amount: 10000,
-        final_total: 90000
+        final_total: 90000,
       },
-      error: null
+      error: null,
     })
 
     const res = await validateVoucher(mockSupabase, 'PROMO10', 100000, 'user-1')
-    
+
     expect(res).toEqual({
       success: true,
       valid: true,
@@ -66,13 +66,13 @@ describe('Voucher Repository - validateVoucher RPC parsing', () => {
         success: true,
         valid: true,
         discount_type: 'invalid_type', // Not fixed or percentage
-        discount_amount: "10000", // String instead of number
+        discount_amount: '10000', // String instead of number
       },
-      error: null
+      error: null,
     })
 
     const res = await validateVoucher(mockSupabase, 'PROMO10', 100000, 'user-1')
-    
+
     expect(res.discount_type).toBeUndefined()
     expect(res.discount_amount).toBeUndefined()
   })

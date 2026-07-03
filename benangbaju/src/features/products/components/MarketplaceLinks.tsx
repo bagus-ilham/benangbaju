@@ -8,7 +8,7 @@ interface MarketplaceLinksProps {
   links: ProductMarketplaceLink[]
 }
 
-export function MarketplaceLinks({ links }: MarketplaceLinksProps) : React.JSX.Element | null {
+export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.Element | null {
   if (links.length === 0) return null
 
   // Helper to resolve platform names nicely

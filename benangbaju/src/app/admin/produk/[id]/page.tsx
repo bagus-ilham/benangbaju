@@ -19,30 +19,37 @@ interface EditProductPageProps {
   }>
 }
 
-function AdminProductEditContent({ params }: EditProductPageProps) : React.JSX.Element {
+function AdminProductEditContent({ params }: EditProductPageProps): React.JSX.Element {
   const { id: productId } = use(params)
   const updateMutation = useAdminUpdateProduct()
 
   // Fetch product detail for editing
-  const { data: product, isLoading, isError, refetch } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['admin', 'product-edit', productId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           product_variants (*, product_variant_attrs(*)),
           product_images (*),
           product_marketplace_links (*),
           collection_products (*)
-        `)
+        `
+        )
         .eq('id', productId)
         .single()
 
       if (error) throw error
       return data
     },
-    enabled: !!productId
+    enabled: !!productId,
   })
 
   const handleUpdateProduct = async (payload: ProductPayload) => {
@@ -54,7 +61,7 @@ function AdminProductEditContent({ params }: EditProductPageProps) : React.JSX.E
         variants: payload.variants,
         images: payload.images,
         links: payload.links,
-        collectionIds: payload.collectionIds
+        collectionIds: payload.collectionIds,
       })
       toast.success('Produk berhasil diperbarui!', { id: 'update-product' })
       refetch()
@@ -69,7 +76,9 @@ function AdminProductEditContent({ params }: EditProductPageProps) : React.JSX.E
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat detail produk...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat detail produk...
+        </p>
       </div>
     )
   }
@@ -97,7 +106,7 @@ function AdminProductEditContent({ params }: EditProductPageProps) : React.JSX.E
   )
 }
 
-export default function AdminProductEditPage({ params }: EditProductPageProps) : React.JSX.Element {
+export default function AdminProductEditPage({ params }: EditProductPageProps): React.JSX.Element {
   return (
     <Suspense fallback={<div className="p-8 text-center">Memuat produk...</div>}>
       <AdminProductEditContent params={params} />

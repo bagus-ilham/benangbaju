@@ -9,7 +9,19 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', isLoading, loadingText, children, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      variant = 'primary',
+      size = 'md',
+      isLoading,
+      loadingText,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <button
         ref={ref}
@@ -22,12 +34,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           'inline-flex items-center justify-center font-heading font-medium tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] active:translate-y-[1px] focus-ring-premium',
           {
             // Variants
-            'bg-brand-black text-white hover:bg-neutral-800 border border-brand-black btn-shine hover:shadow-[0_4px_14px_rgba(23,23,23,0.15)]': variant === 'primary',
-            'bg-brand-cream text-brand-black hover:bg-brand-beige border border-brand-cream hover:shadow-sm': variant === 'secondary',
-            'bg-transparent text-brand-black border border-brand-black hover:bg-brand-black hover:text-white hover:shadow-[0_4px_14px_rgba(23,23,23,0.1)]': variant === 'outline',
-            'bg-transparent text-brand-black hover:bg-neutral-100 border border-transparent': variant === 'ghost',
-            'bg-red-700 text-white hover:bg-red-800 border border-red-700 hover:shadow-[0_4px_14px_rgba(185,28,28,0.2)]': variant === 'danger',
-            
+            'bg-brand-black text-white hover:bg-neutral-800 border border-brand-black btn-shine hover:shadow-[0_4px_14px_rgba(23,23,23,0.15)]':
+              variant === 'primary',
+            'bg-brand-cream text-brand-black hover:bg-brand-beige border border-brand-cream hover:shadow-sm':
+              variant === 'secondary',
+            'bg-transparent text-brand-black border border-brand-black hover:bg-brand-black hover:text-white hover:shadow-[0_4px_14px_rgba(23,23,23,0.1)]':
+              variant === 'outline',
+            'bg-transparent text-brand-black hover:bg-neutral-100 border border-transparent':
+              variant === 'ghost',
+            'bg-red-700 text-white hover:bg-red-800 border border-red-700 hover:shadow-[0_4px_14px_rgba(185,28,28,0.2)]':
+              variant === 'danger',
+
             // Sizes
             'text-[10px] px-4 py-2': size === 'sm',
             'text-xs px-6 py-3': size === 'md',

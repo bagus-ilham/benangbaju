@@ -1,9 +1,12 @@
 'use client'
- 
 
 import React, { useState, useEffect, useRef, useId, useCallback } from 'react'
 import { Modal, Button, Input, Textarea, Select, Checkbox } from '@/shared/components'
-import { useAddUserAddress, useUpdateUserAddress, useDistrictSearch } from '@/entities/shipping/api/useShipping'
+import {
+  useAddUserAddress,
+  useUpdateUserAddress,
+  useDistrictSearch,
+} from '@/entities/shipping/api/useShipping'
 import type { UserAddress } from '@/entities/shipping/lib/shipping'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -15,11 +18,19 @@ import { cn } from '@/lib/utils'
 const addressSchema = z.object({
   label: z.string().min(1, 'Label alamat wajib diisi (cth: Rumah)'),
   recipient_name: z.string().min(3, 'Nama penerima minimal 3 karakter'),
-  phone: z.string().min(9, 'Nomor telepon minimal 9 digit').regex(/^[0-9+]+$/, 'Hanya angka yang diperbolehkan'),
+  phone: z
+    .string()
+    .min(9, 'Nomor telepon minimal 9 digit')
+    .regex(/^[0-9+]+$/, 'Hanya angka yang diperbolehkan'),
   province_name: z.string().min(1, 'Provinsi wajib dipilih'),
   city_name: z.string().min(1, 'Kota wajib diisi'),
   district_name: z.string().min(1, 'Kecamatan wajib diisi'),
-  postal_code: z.string().min(5, 'Kode pos harus 5 digit').regex(/^[0-9]+$/, 'Hanya angka yang diperbolehkan').optional().or(z.literal('')),
+  postal_code: z
+    .string()
+    .min(5, 'Kode pos harus 5 digit')
+    .regex(/^[0-9]+$/, 'Hanya angka yang diperbolehkan')
+    .optional()
+    .or(z.literal('')),
   full_address: z.string().min(10, 'Alamat lengkap minimal 10 karakter'),
   zone_id: z.string().nullable(),
   is_default: z.boolean(),
@@ -37,15 +48,48 @@ interface AddressModalProps {
 const supabase = createBrowserClient()
 
 const PROVINCES = [
-  'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur', 'DI Yogyakarta', 'Banten',
-  'Sumatera Utara', 'Sumatera Barat', 'Sumatera Selatan', 'Riau', 'Lampung', 'Aceh',
-  'Jambi', 'Bengkulu', 'Kepulauan Riau', 'Kepulauan Bangka Belitung',
-  'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Tengah', 'Kalimantan Utara',
-  'Sulawesi Selatan', 'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
-  'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Maluku', 'Maluku Utara'
+  'DKI Jakarta',
+  'Jawa Barat',
+  'Jawa Tengah',
+  'Jawa Timur',
+  'DI Yogyakarta',
+  'Banten',
+  'Sumatera Utara',
+  'Sumatera Barat',
+  'Sumatera Selatan',
+  'Riau',
+  'Lampung',
+  'Aceh',
+  'Jambi',
+  'Bengkulu',
+  'Kepulauan Riau',
+  'Kepulauan Bangka Belitung',
+  'Kalimantan Barat',
+  'Kalimantan Timur',
+  'Kalimantan Selatan',
+  'Kalimantan Tengah',
+  'Kalimantan Utara',
+  'Sulawesi Selatan',
+  'Sulawesi Utara',
+  'Sulawesi Tengah',
+  'Sulawesi Tenggara',
+  'Gorontalo',
+  'Sulawesi Barat',
+  'Bali',
+  'Nusa Tenggara Barat',
+  'Nusa Tenggara Timur',
+  'Papua',
+  'Papua Barat',
+  'Maluku',
+  'Maluku Utara',
 ]
 
-export function AddressModal({ isOpen, onClose, userId, addressToEdit }: AddressModalProps) : React.JSX.Element {
+export function AddressModal({
+  isOpen,
+  onClose,
+  userId,
+  addressToEdit,
+}: AddressModalProps): React.JSX.Element {
   const isEdit = !!addressToEdit
 
   const {
@@ -79,14 +123,14 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
   const [searchQuery, setSearchQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
-  
+
   const { data: searchResultsRes } = useDistrictSearch(searchQuery)
   const searchResults = searchResultsRes?.data || []
-  
+
   const skipProvinceFetchRef = useRef(false)
   const listboxRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  
+
   const listboxId = useId()
 
   const addAddressMutation = useAddUserAddress()
@@ -110,7 +154,11 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
           zone_id: addressToEdit.zone_id,
           is_default: addressToEdit.is_default,
         })
-        setSearchQuery(addressToEdit.district_name ? `${addressToEdit.district_name}, ${addressToEdit.city_name}` : '')
+        setSearchQuery(
+          addressToEdit.district_name
+            ? `${addressToEdit.district_name}, ${addressToEdit.city_name}`
+            : ''
+        )
         setShowSuggestions(false)
         if (addressToEdit.province_name) {
           justInitializedRef.current = true
@@ -161,7 +209,7 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
           .select('id')
           .ilike('name', provinceName)
           .single()
-        
+
         if (data) {
           setValue('zone_id', data.id)
         } else {
@@ -208,17 +256,20 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
     }
   }
 
-  const handleSelectDistrict = useCallback((district: typeof searchResults[0]) => {
-    skipProvinceFetchRef.current = true
-    setValue('province_name', district.province_name)
-    setValue('city_name', district.city_name)
-    setValue('district_name', district.district_name)
-    setValue('postal_code', district.postal_code || '')
-    setValue('zone_id', district.zone_id)
-    setSearchQuery(`${district.district_name}, ${district.city_name}`)
-    setShowSuggestions(false)
-    setFocusedIndex(-1)
-  }, [setValue])
+  const handleSelectDistrict = useCallback(
+    (district: (typeof searchResults)[0]) => {
+      skipProvinceFetchRef.current = true
+      setValue('province_name', district.province_name)
+      setValue('city_name', district.city_name)
+      setValue('district_name', district.district_name)
+      setValue('postal_code', district.postal_code || '')
+      setValue('zone_id', district.zone_id)
+      setSearchQuery(`${district.district_name}, ${district.city_name}`)
+      setShowSuggestions(false)
+      setFocusedIndex(-1)
+    },
+    [setValue]
+  )
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showSuggestions || searchResults.length === 0) return
@@ -334,11 +385,13 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
             aria-expanded={showSuggestions && searchResults.length > 0}
             aria-autocomplete="list"
             aria-controls={showSuggestions ? listboxId : undefined}
-            aria-activedescendant={focusedIndex >= 0 ? `${listboxId}-opt-${focusedIndex}` : undefined}
+            aria-activedescendant={
+              focusedIndex >= 0 ? `${listboxId}-opt-${focusedIndex}` : undefined
+            }
             role="combobox"
           />
           {showSuggestions && searchResults.length > 0 && (
-            <div 
+            <div
               ref={listboxRef}
               id={listboxId}
               role="listbox"
@@ -353,15 +406,16 @@ export function AddressModal({ isOpen, onClose, userId, addressToEdit }: Address
                   onClick={() => handleSelectDistrict(district)}
                   onMouseMove={() => setFocusedIndex(index)}
                   className={cn(
-                    "p-2.5 cursor-pointer border-b border-neutral-100 last:border-0 transition-colors",
-                    focusedIndex === index ? "bg-neutral-50" : ""
+                    'p-2.5 cursor-pointer border-b border-neutral-100 last:border-0 transition-colors',
+                    focusedIndex === index ? 'bg-neutral-50' : ''
                   )}
                 >
                   <p className="font-bold text-neutral-800">
                     {district.district_name}, {district.city_name}
                   </p>
                   <p className="text-[10px] text-neutral-400 uppercase tracking-wider">
-                    {district.province_name} {district.postal_code ? `• ${district.postal_code}` : ''}
+                    {district.province_name}{' '}
+                    {district.postal_code ? `• ${district.postal_code}` : ''}
                   </p>
                 </div>
               ))}

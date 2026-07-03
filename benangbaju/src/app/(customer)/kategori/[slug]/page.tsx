@@ -45,7 +45,9 @@ export async function generateStaticParams() {
   return (data || []).map((c) => ({ slug: c.slug }))
 }
 
-export default async function CategoryDetailPage({ params }: CategoryPageProps) : Promise<React.JSX.Element> {
+export default async function CategoryDetailPage({
+  params,
+}: CategoryPageProps): Promise<React.JSX.Element> {
   const { slug: rawSlug } = await params
   const slug = decodeURIComponent(rawSlug)
 
@@ -55,7 +57,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
   try {
     const [catRes, prodRes] = await Promise.all([
       getCachedCategory(slug),
-      getCachedCategoryProducts(slug)
+      getCachedCategoryProducts(slug),
     ])
     category = catRes
     products = prodRes.data || []
@@ -75,7 +77,10 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
             className="object-cover"
           />
           <div className="absolute inset-0 gradient-overlay-dark" />
-          <div className="absolute inset-0 section-texture opacity-20 pointer-events-none" aria-hidden />
+          <div
+            className="absolute inset-0 section-texture opacity-20 pointer-events-none"
+            aria-hidden
+          />
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-10 md:pb-14">
               <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold-light">

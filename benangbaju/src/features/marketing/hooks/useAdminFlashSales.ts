@@ -1,4 +1,10 @@
-import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+  UseMutationResult,
+} from '@tanstack/react-query'
 import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
@@ -21,14 +27,17 @@ export interface AdminUpdateFlashSaleInput {
   items: Parameters<typeof adminUpdateFlashSale>[3]
 }
 
-export function useAdminFlashSales() : UseQueryResult<ApiListResponse<AdminFlashSaleListItem>, Error> {
+export function useAdminFlashSales(): UseQueryResult<
+  ApiListResponse<AdminFlashSaleListItem>,
+  Error
+> {
   return useQuery({
     queryKey: ['admin', 'flash-sales'],
-    queryFn: () => adminGetFlashSales(getAdminSupabase())
+    queryFn: () => adminGetFlashSales(getAdminSupabase()),
   })
 }
 
-export function useAdminCreateFlashSale() : UseMutationResult<
+export function useAdminCreateFlashSale(): UseMutationResult<
   Awaited<ReturnType<typeof adminCreateFlashSale>>,
   Error,
   AdminCreateFlashSaleInput,
@@ -43,11 +52,11 @@ export function useAdminCreateFlashSale() : UseMutationResult<
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['flash-sales'], ['flash-sales', 'homepage-data'])
-    }
+    },
   })
 }
 
-export function useAdminUpdateFlashSale() : UseMutationResult<
+export function useAdminUpdateFlashSale(): UseMutationResult<
   Awaited<ReturnType<typeof adminUpdateFlashSale>>,
   Error,
   AdminUpdateFlashSaleInput,
@@ -62,11 +71,16 @@ export function useAdminUpdateFlashSale() : UseMutationResult<
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['flash-sales'], ['flash-sales', 'homepage-data'])
-    }
+    },
   })
 }
 
-export function useAdminDeleteFlashSale() : UseMutationResult<ApiResponse<void>, Error, string, unknown> {
+export function useAdminDeleteFlashSale(): UseMutationResult<
+  ApiResponse<void>,
+  Error,
+  string,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (saleId: string) => {
@@ -76,6 +90,6 @@ export function useAdminDeleteFlashSale() : UseMutationResult<ApiResponse<void>,
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['flash-sales'], ['flash-sales', 'homepage-data'])
-    }
+    },
   })
 }

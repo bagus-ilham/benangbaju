@@ -14,7 +14,7 @@ interface ProductSizeGuideModalProps {
 export function ProductSizeGuideModal({
   isOpen,
   onClose,
-  productSizeGuide
+  productSizeGuide,
 }: ProductSizeGuideModalProps): React.JSX.Element {
   return (
     <AnimatePresence>
@@ -27,7 +27,7 @@ export function ProductSizeGuideModal({
             onClick={onClose}
             className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm"
           />
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -53,7 +53,8 @@ export function ProductSizeGuideModal({
                   Panduan Ukuran Pakaian (Size Chart)
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-sans">
-                  Semua ukuran dalam centimeter (cm). Toleransi perbedaan ukuran 1-2 cm wajar terjadi.
+                  Semua ukuran dalam centimeter (cm). Toleransi perbedaan ukuran 1-2 cm wajar
+                  terjadi.
                 </p>
               </div>
 
@@ -66,11 +67,21 @@ export function ProductSizeGuideModal({
                   <table className="w-full text-left border-collapse text-[10px] font-sans">
                     <thead>
                       <tr className="border-b border-neutral-200 bg-neutral-50">
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Ukuran</th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Lingkar Dada</th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Lebar Bahu</th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Panjang Lengan</th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">Panjang Baju</th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                          Ukuran
+                        </th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                          Lingkar Dada
+                        </th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                          Lebar Bahu
+                        </th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                          Panjang Lengan
+                        </th>
+                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                          Panjang Baju
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral-100 text-neutral-600">
@@ -112,9 +123,17 @@ export function ProductSizeGuideModal({
                   Tips Menentukan Ukuran:
                 </h4>
                 <ul className="list-disc list-inside text-[9px] text-neutral-500 space-y-1 leading-relaxed">
-                  <li><strong>Lingkar Dada</strong>: Ukur di sekeliling bagian dada terlebar Anda dengan pas.</li>
-                  <li><strong>Lebar Bahu</strong>: Ukur dari ujung bahu kiri ke ujung bahu kanan.</li>
-                  <li><strong>Panjang Baju</strong>: Ukur secara vertikal dari pangkal leher/bahu hingga batas bawah baju yang diinginkan.</li>
+                  <li>
+                    <strong>Lingkar Dada</strong>: Ukur di sekeliling bagian dada terlebar Anda
+                    dengan pas.
+                  </li>
+                  <li>
+                    <strong>Lebar Bahu</strong>: Ukur dari ujung bahu kiri ke ujung bahu kanan.
+                  </li>
+                  <li>
+                    <strong>Panjang Baju</strong>: Ukur secara vertikal dari pangkal leher/bahu
+                    hingga batas bawah baju yang diinginkan.
+                  </li>
                 </ul>
               </div>
             </div>

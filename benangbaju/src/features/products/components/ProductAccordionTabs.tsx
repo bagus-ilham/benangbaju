@@ -12,14 +12,17 @@ interface ProductAccordionTabsProps {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 15 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { type: 'spring' as const, stiffness: 260, damping: 25 }
-  }
+    transition: { type: 'spring' as const, stiffness: 260, damping: 25 },
+  },
 }
 
-export function ProductAccordionTabs({ product, selectedVariant }: ProductAccordionTabsProps): React.JSX.Element {
+export function ProductAccordionTabs({
+  product,
+  selectedVariant,
+}: ProductAccordionTabsProps): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'details' | 'shipping' | 'care'>('details')
 
   return (
@@ -90,7 +93,9 @@ export function ProductAccordionTabs({ product, selectedVariant }: ProductAccord
                   {formatProductDescription(product.description)}
                 </p>
                 {selectedVariant && (
-                  <p className="text-[10px] text-neutral-400 font-sans">SKU: {selectedVariant.sku}</p>
+                  <p className="text-[10px] text-neutral-400 font-sans">
+                    SKU: {selectedVariant.sku}
+                  </p>
                 )}
               </div>
             )}
@@ -100,8 +105,14 @@ export function ProductAccordionTabs({ product, selectedVariant }: ProductAccord
                   formatProductDescription(product.size_guide)
                 ) : (
                   <>
-                    <p><strong>Pengiriman:</strong> Pesanan dikirimkan dalam 1-2 hari kerja setelah pembayaran dikonfirmasi.</p>
-                    <p><strong>Ukuran:</strong> Pastikan mengukur detail ukuran badan sebelum membeli.</p>
+                    <p>
+                      <strong>Pengiriman:</strong> Pesanan dikirimkan dalam 1-2 hari kerja setelah
+                      pembayaran dikonfirmasi.
+                    </p>
+                    <p>
+                      <strong>Ukuran:</strong> Pastikan mengukur detail ukuran badan sebelum
+                      membeli.
+                    </p>
                   </>
                 )}
               </div>

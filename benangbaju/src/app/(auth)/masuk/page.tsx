@@ -9,7 +9,6 @@ import { Button, Input, Card, AuthLoading } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import toast from 'react-hot-toast'
 
-
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -88,11 +87,7 @@ function LoginContent() {
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
       <Card bordered={true} className="w-full max-w-md shadow-lg p-8 md:p-10 border-neutral-200">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
+        <motion.div variants={staggerContainer} initial="hidden" animate="visible">
           <motion.div variants={fadeUpItem} className="flex flex-col space-y-2 text-center mb-8">
             {/* Brand identity */}
             <span className="text-[10px] font-heading font-medium uppercase tracking-[0.3em] text-neutral-400 mb-2">
@@ -143,12 +138,7 @@ function LoginContent() {
             </motion.div>
 
             <motion.div variants={fadeUpItem}>
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-full mt-2"
-                isLoading={isLoading}
-              >
+              <Button type="submit" variant="primary" className="w-full mt-2" isLoading={isLoading}>
                 Masuk
               </Button>
             </motion.div>
@@ -172,12 +162,30 @@ function LoginContent() {
               onClick={handleGoogleLogin}
               className="w-full flex items-center justify-center space-x-2 border-neutral-300"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <g transform="matrix(1, 0, 0, 1, 0, 0)">
-                  <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.58h3.3c1.93,-1.78 3.04,-4.4 3.04,-7.4C21.68,11.85 21.56,11.4 21.35,11.1z" fill="#4285F4" />
-                  <path d="M12,20.5c2.3,0 4.23,-0.76 5.64,-2.08l-3.3,-2.58c-0.91,0.61 -2.08,0.98 -3.34,0.98 -2.57,0 -4.75,-1.74 -5.53,-4.07H2.07v2.66C3.54,17.34 7.48,20.5 12,20.5z" fill="#34A853" />
-                  <path d="M6.47,12.75c-0.2,-0.61 -0.31,-1.26 -0.31,-1.93s0.11,-1.32 0.31,-1.93V6.26H2.07C1.31,7.77 0.88,9.47 0.88,11.27s0.43,3.5 1.19,5.01L6.47,12.75z" fill="#FBBC05" />
-                  <path d="M12,4.68c1.25,0 2.37,0.43 3.25,1.27l2.44,-2.44C16.22,2.12 14.29,1.27 12,1.27 7.48,1.27 3.54,4.43 2.07,7.35l4.4,3.47C7.25,6.42 9.43,4.68 12,4.68z" fill="#EA4335" />
+                  <path
+                    d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.58h3.3c1.93,-1.78 3.04,-4.4 3.04,-7.4C21.68,11.85 21.56,11.4 21.35,11.1z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12,20.5c2.3,0 4.23,-0.76 5.64,-2.08l-3.3,-2.58c-0.91,0.61 -2.08,0.98 -3.34,0.98 -2.57,0 -4.75,-1.74 -5.53,-4.07H2.07v2.66C3.54,17.34 7.48,20.5 12,20.5z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M6.47,12.75c-0.2,-0.61 -0.31,-1.26 -0.31,-1.93s0.11,-1.32 0.31,-1.93V6.26H2.07C1.31,7.77 0.88,9.47 0.88,11.27s0.43,3.5 1.19,5.01L6.47,12.75z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12,4.68c1.25,0 2.37,0.43 3.25,1.27l2.44,-2.44C16.22,2.12 14.29,1.27 12,1.27 7.48,1.27 3.54,4.43 2.07,7.35l4.4,3.47C7.25,6.42 9.43,4.68 12,4.68z"
+                    fill="#EA4335"
+                  />
                 </g>
               </svg>
               <span>Google</span>
@@ -185,13 +193,13 @@ function LoginContent() {
           </motion.div>
 
           {/* Footer Link */}
-          <motion.div variants={fadeUpItem} className="text-center mt-8 pt-4 border-t border-neutral-100">
+          <motion.div
+            variants={fadeUpItem}
+            className="text-center mt-8 pt-4 border-t border-neutral-100"
+          >
             <p className="text-xs text-neutral-500 font-sans">
               Belum punya akun?{' '}
-              <Link
-                href="/daftar"
-                className="text-brand-black font-semibold hover:underline"
-              >
+              <Link href="/daftar" className="text-brand-black font-semibold hover:underline">
                 Daftar sekarang
               </Link>
             </p>
@@ -202,7 +210,7 @@ function LoginContent() {
   )
 }
 
-export default function LoginPage() : React.JSX.Element {
+export default function LoginPage(): React.JSX.Element {
   return (
     <Suspense fallback={<AuthLoading message="Memuat halaman masuk..." />}>
       <LoginContent />

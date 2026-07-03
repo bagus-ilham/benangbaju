@@ -7,7 +7,12 @@ export { Radio } from './Radio'
 export { Switch } from './Switch'
 export { DataTable } from './DataTable'
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs'
-export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './DropdownMenu'
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from './DropdownMenu'
 export { Drawer } from './Drawer'
 export { Tooltip } from './Tooltip'
 export { Card } from './Card'

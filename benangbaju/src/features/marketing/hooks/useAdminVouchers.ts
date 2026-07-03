@@ -1,4 +1,10 @@
-import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+  UseMutationResult,
+} from '@tanstack/react-query'
 import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
@@ -15,14 +21,17 @@ export interface AdminUpdateVoucherInput {
   voucherData: Parameters<typeof adminUpdateVoucher>[2]
 }
 
-export function useAdminVouchers() : UseQueryResult<Awaited<ReturnType<typeof adminGetVouchers>>, Error> {
+export function useAdminVouchers(): UseQueryResult<
+  Awaited<ReturnType<typeof adminGetVouchers>>,
+  Error
+> {
   return useQuery({
     queryKey: ['admin', 'vouchers'],
-    queryFn: () => adminGetVouchers(getAdminSupabase())
+    queryFn: () => adminGetVouchers(getAdminSupabase()),
   })
 }
 
-export function useAdminCreateVoucher() : UseMutationResult<
+export function useAdminCreateVoucher(): UseMutationResult<
   Awaited<ReturnType<typeof adminCreateVoucher>>,
   Error,
   AdminCreateVoucherInput,
@@ -37,11 +46,11 @@ export function useAdminCreateVoucher() : UseMutationResult<
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['vouchers'])
-    }
+    },
   })
 }
 
-export function useAdminUpdateVoucher() : UseMutationResult<
+export function useAdminUpdateVoucher(): UseMutationResult<
   Awaited<ReturnType<typeof adminUpdateVoucher>>,
   Error,
   AdminUpdateVoucherInput,
@@ -56,11 +65,16 @@ export function useAdminUpdateVoucher() : UseMutationResult<
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['vouchers'])
-    }
+    },
   })
 }
 
-export function useAdminDeleteVoucher() : UseMutationResult<Awaited<ReturnType<typeof adminDeleteVoucher>>, Error, string, unknown> {
+export function useAdminDeleteVoucher(): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteVoucher>>,
+  Error,
+  string,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (voucherId: string) => {
@@ -70,6 +84,6 @@ export function useAdminDeleteVoucher() : UseMutationResult<Awaited<ReturnType<t
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['vouchers'])
-    }
+    },
   })
 }

@@ -21,7 +21,7 @@ export function PageHeader({
   className,
   animated = true,
   children,
-}: PageHeaderProps) : React.JSX.Element {
+}: PageHeaderProps): React.JSX.Element {
   const content = (
     <div
       className={cn(
@@ -40,7 +40,9 @@ export function PageHeader({
         </h2>
         <div className="accent-line pt-1" />
         {subtitle && (
-          <p className="text-xs text-neutral-500 font-sans max-w-xl leading-relaxed pt-1">{subtitle}</p>
+          <p className="text-xs text-neutral-500 font-sans max-w-xl leading-relaxed pt-1">
+            {subtitle}
+          </p>
         )}
       </div>
       {children && <div className="flex-shrink-0">{children}</div>}

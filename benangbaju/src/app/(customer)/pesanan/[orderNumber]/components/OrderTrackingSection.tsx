@@ -6,7 +6,10 @@ interface OrderTrackingSectionProps {
   cancelReason?: string | null
 }
 
-export function OrderTrackingSection({ status, cancelReason }: OrderTrackingSectionProps): React.JSX.Element {
+export function OrderTrackingSection({
+  status,
+  cancelReason,
+}: OrderTrackingSectionProps): React.JSX.Element {
   const steps = [
     { id: 'pending_payment', label: 'Menunggu Pembayaran', icon: <Clock size={16} /> },
     { id: 'processing', label: 'Diproses', icon: <Package size={16} /> },
@@ -19,12 +22,16 @@ export function OrderTrackingSection({ status, cancelReason }: OrderTrackingSect
   if (status === 'cancelled') {
     return (
       <div className="border border-error-border p-5 bg-error-bg card-hover-lift gold-border-hover">
-        <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-error mb-4">Status Pesanan</p>
+        <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-error mb-4">
+          Status Pesanan
+        </p>
         <div className="flex items-center space-x-3 text-error text-xs font-semibold">
           <XCircle size={18} />
           <div>
             <p className="font-bold uppercase tracking-wider text-xs">Pesanan Dibatalkan</p>
-            {cancelReason && <p className="font-normal text-error/80 mt-1">Alasan: {cancelReason}</p>}
+            {cancelReason && (
+              <p className="font-normal text-error/80 mt-1">Alasan: {cancelReason}</p>
+            )}
           </div>
         </div>
       </div>
@@ -33,14 +40,19 @@ export function OrderTrackingSection({ status, cancelReason }: OrderTrackingSect
 
   return (
     <div className="border border-neutral-200 p-5 bg-brand-cream/30 card-hover-lift gold-border-hover">
-      <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold mb-6">Status Pesanan</p>
+      <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold mb-6">
+        Status Pesanan
+      </p>
       <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
         {steps.map((step, idx) => {
           const isCompleted = idx <= statusIndex
           const isActive = idx === statusIndex
 
           return (
-            <div key={step.id} className="flex md:flex-col items-center flex-1 w-full relative z-10">
+            <div
+              key={step.id}
+              className="flex md:flex-col items-center flex-1 w-full relative z-10"
+            >
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition duration-200 ${
                   isCompleted
@@ -53,7 +65,11 @@ export function OrderTrackingSection({ status, cancelReason }: OrderTrackingSect
 
               <span
                 className={`ml-4 md:ml-0 md:mt-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${
-                  isActive ? 'text-brand-gold font-bold' : isCompleted ? 'text-brand-black' : 'text-neutral-400'
+                  isActive
+                    ? 'text-brand-gold font-bold'
+                    : isCompleted
+                      ? 'text-brand-black'
+                      : 'text-neutral-400'
                 }`}
               >
                 {step.label}

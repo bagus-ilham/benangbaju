@@ -2,7 +2,7 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { CustomerProfile, CustomerDetail } from "../domain/adminCustomer.types";
+import { CustomerProfile, CustomerDetail } from '../domain/adminCustomer.types'
 
 import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
@@ -17,7 +17,9 @@ export async function adminGetCustomers(
   const to = from + limit - 1
   const { data, count, error } = await supabase
     .from('profiles')
-    .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at', { count: 'exact' })
+    .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at', {
+      count: 'exact',
+    })
     .neq('role', 'admin')
     .order('created_at', { ascending: false })
     .range(from, to)
@@ -27,7 +29,7 @@ export async function adminGetCustomers(
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat daftar pelanggan')
   }
 
-  const profiles = (data || []).map(row => ({
+  const profiles = (data || []).map((row) => ({
     id: row.id,
     name: row.name,
     email: row.email,
@@ -56,10 +58,18 @@ export async function adminToggleCustomerStatus(
 
   if (error) {
     safeLogError('Error toggling customer status:', error)
-    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengubah status pelanggan.', { detail: [error.message] })
+    return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengubah status pelanggan.', {
+      detail: [error.message],
+    })
   }
 
-  await insertAdminActivityLog(supabase, 'update', 'customer', customerId, `Toggled customer ${customerId} status to ${isActive}`)
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'customer',
+    customerId,
+    `Toggled customer ${customerId} status to ${isActive}`
+  )
 
   return ok(null)
 }
@@ -68,24 +78,17 @@ export async function adminGetCustomerDetail(
   supabase: SupabaseClient<Database>,
   customerId: string
 ): Promise<ApiResponse<CustomerDetail>> {
-  const [
-    profileRes,
-    addressesRes,
-    wishlistRes,
-    cartRes
-  ] = await Promise.all([
+  const [profileRes, addressesRes, wishlistRes, cartRes] = await Promise.all([
     supabase
       .from('profiles')
       .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at')
       .eq('id', customerId)
       .single(),
-    supabase
-      .from('user_addresses')
-      .select('*')
-      .eq('user_id', customerId),
+    supabase.from('user_addresses').select('*').eq('user_id', customerId),
     supabase
       .from('wishlist_items')
-      .select(`
+      .select(
+        `
         id,
         products (
           id,
@@ -93,11 +96,13 @@ export async function adminGetCustomerDetail(
           product_variants ( price ),
           product_images ( url )
         )
-      `)
+      `
+      )
       .eq('user_id', customerId),
     supabase
       .from('carts')
-      .select(`
+      .select(
+        `
         id,
         cart_items(
           id,
@@ -114,63 +119,72 @@ export async function adminGetCustomerDetail(
             )
           )
         )
-      `)
+      `
+      )
       .eq('user_id', customerId)
       .order('created_at', { ascending: false })
       .limit(1)
-      .maybeSingle()
-  ]);
+      .maybeSingle(),
+  ])
 
-  const profile = profileRes.data;
+  const profile = profileRes.data
   if (profileRes.error || !profile) {
-    safeLogError('Error fetching admin customer profile:', profileRes.error);
-    return fail(ApiErrorCode.NOT_FOUND, 'Pelanggan tidak ditemukan', { detail: [profileRes.error?.message || ''] });
+    safeLogError('Error fetching admin customer profile:', profileRes.error)
+    return fail(ApiErrorCode.NOT_FOUND, 'Pelanggan tidak ditemukan', {
+      detail: [profileRes.error?.message || ''],
+    })
   }
 
-  const addresses = addressesRes.data;
-  const wishlist = wishlistRes.data;
-  const cart = cartRes.data;
-  const cartItems = (cart?.cart_items && Array.isArray(cart.cart_items)) ? cart.cart_items : [];
+  const addresses = addressesRes.data
+  const wishlist = wishlistRes.data
+  const cart = cartRes.data
+  const cartItems = cart?.cart_items && Array.isArray(cart.cart_items) ? cart.cart_items : []
 
   // Format data
   const formattedWishlist = (wishlist || []).map((w: any) => {
-    const p = w.products;
-    const pImages = p?.product_images || [];
-    const pImage = Array.isArray(pImages) && pImages.length > 0 ? pImages[0]?.url : null;
-    const pVariants = p?.product_variants || [];
-    const pPrice = Array.isArray(pVariants) && pVariants.length > 0 ? pVariants[0]?.price : 0;
+    const p = w.products
+    const pImages = p?.product_images || []
+    const pImage = Array.isArray(pImages) && pImages.length > 0 ? pImages[0]?.url : null
+    const pVariants = p?.product_variants || []
+    const pPrice = Array.isArray(pVariants) && pVariants.length > 0 ? pVariants[0]?.price : 0
     return {
       id: w.id,
-      product: p ? {
-        id: p.id,
-        name: p.name,
-        price: pPrice,
-        image_url: pImage,
-      } : null,
-    };
-  });
+      product: p
+        ? {
+            id: p.id,
+            name: p.name,
+            price: pPrice,
+            image_url: pImage,
+          }
+        : null,
+    }
+  })
 
   const formattedCart = cartItems.map((c: any) => {
-    const v = c.product_variants;
-    const p = v?.products;
-    const pImages = p?.product_images || [];
-    const pImage = Array.isArray(pImages) && pImages.length > 0 ? pImages[0]?.url : null;
+    const v = c.product_variants
+    const p = v?.products
+    const pImages = p?.product_images || []
+    const pImage = Array.isArray(pImages) && pImages.length > 0 ? pImages[0]?.url : null
     return {
       id: c.id,
       quantity: c.quantity,
-      variant: v ? {
-        id: v.id,
-        name: v.name,
-        price: v.price,
-        sku: v.sku,
-        product: p ? {
-          id: p.id,
-          name: p.name,
-          image_url: pImage,
-        } : null,
-      } : null,
-    };
-  });
+      variant: v
+        ? {
+            id: v.id,
+            name: v.name,
+            price: v.price,
+            sku: v.sku,
+            product: p
+              ? {
+                  id: p.id,
+                  name: p.name,
+                  image_url: pImage,
+                }
+              : null,
+          }
+        : null,
+    }
+  })
 
   return ok({
     id: profile.id,
@@ -185,5 +199,5 @@ export async function adminGetCustomerDetail(
     addresses: addresses || [],
     wishlist_items: formattedWishlist,
     cart_items: formattedCart,
-  });
+  })
 }

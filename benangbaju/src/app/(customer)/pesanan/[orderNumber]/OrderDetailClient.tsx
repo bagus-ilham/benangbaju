@@ -3,7 +3,13 @@
 import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/entities/user/model/authStore'
-import { useOrderDetail, useCancelOrder, useConfirmDelivery, useGeneratePaymentToken, useCheckPaymentStatus } from '@/features/orders/hooks/useOrders'
+import {
+  useOrderDetail,
+  useCancelOrder,
+  useConfirmDelivery,
+  useGeneratePaymentToken,
+  useCheckPaymentStatus,
+} from '@/features/orders/hooks/useOrders'
 import { useSubmitReview } from '@/entities/review/api/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/shared/components/AuthLoading'
@@ -24,7 +30,7 @@ interface OrderDetailPageProps {
   }
 }
 
-function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Element | null {
+function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element | null {
   const { orderNumber } = params
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const searchParams = useSearchParams()
@@ -32,12 +38,18 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
   const [receiptConfirmOpen, setReceiptConfirmOpen] = useState(false)
   const [selectedReviewItem, setSelectedReviewItem] = useState<any | null>(null)
-  const [isVerifyingPayment, setIsVerifyingPayment] = useState(() => searchParams.get('verifying') === '1')
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(
+    () => searchParams.get('verifying') === '1'
+  )
   const verifyTimeoutsRef = useRef<NodeJS.Timeout[]>([])
   const hasTriggeredVerification = useRef(false)
 
   // 1. Fetch Order Details
-  const { data: orderResponse, isLoading: orderLoading, refetch } = useOrderDetail(orderNumber, user?.id)
+  const {
+    data: orderResponse,
+    isLoading: orderLoading,
+    refetch,
+  } = useOrderDetail(orderNumber, user?.id)
   const order = orderResponse?.data
 
   const [formattedDate, setFormattedDate] = useState('')
@@ -88,7 +100,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
 
     // Schedule 3 attempts: 3s, 10s, 25s
     const delays = [3000, 10000, 25000]
-    
+
     delays.forEach((delay, index) => {
       const timeoutId = setTimeout(async () => {
         const done = await doCheck(index + 1)
@@ -97,7 +109,10 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
           verifyTimeoutsRef.current = []
         } else if (index === delays.length - 1) {
           setIsVerifyingPayment(false)
-          toast('Verifikasi otomatis selesai. Jika pembayaran belum terupdate, silakan gunakan tombol cek manual.', { icon: 'ℹ️' })
+          toast(
+            'Verifikasi otomatis selesai. Jika pembayaran belum terupdate, silakan gunakan tombol cek manual.',
+            { icon: 'ℹ️' }
+          )
         }
       }, delay)
       verifyTimeoutsRef.current.push(timeoutId)
@@ -110,7 +125,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
       toast.loading('Mengecek status pembayaran...', { id: 'manual-check' })
       const result = await checkPaymentMutation.mutateAsync(orderNumber)
       toast.dismiss('manual-check')
-      
+
       if (result.order_status) {
         if (result.order_status !== 'pending_payment') {
           toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
@@ -134,12 +149,10 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
     setSelectedReviewItem(null)
   }
 
-
-
-
   // Load Midtrans Snap.js Script dynamically
   useEffect(() => {
-    const snapScriptUrl = process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
+    const snapScriptUrl =
+      process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
     const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
     if (!existingScript) {
       const script = document.createElement('script')
@@ -175,7 +188,6 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
 
   // Handle Cancel Action (open custom confirmation modal)
 
-
   const executeCancelOrder = async () => {
     if (!order) return
     try {
@@ -191,7 +203,6 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
 
   // Handle Confirm Receipt Action (open custom confirmation modal)
 
-
   const executeConfirmDelivery = async () => {
     if (!order) return
     try {
@@ -205,14 +216,14 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
     }
   }
 
-
-
   // Handle Pay Action (Retry Payment)
   const handlePayOrder = async () => {
     if (!order) return
     try {
       toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
-      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(order.order_number)
+      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(
+        order.order_number
+      )
       toast.dismiss('payment-loading')
 
       if (token) {
@@ -277,7 +288,6 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
       setIsInvoiceLoading(false)
     }
   }
-
 
   if (authLoading || orderLoading) {
     return <AuthLoading message="Memuat pesanan..." />
@@ -374,13 +384,15 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
 
             {order.notes && (
               <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-brand-cream/30 space-y-2">
-                <h3 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold">Catatan dari Anda</h3>
+                <h3 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold">
+                  Catatan dari Anda
+                </h3>
                 <p className="text-sm text-neutral-700 whitespace-pre-wrap">{order.notes}</p>
               </div>
             )}
           </div>
 
-          <OrderPaymentSection 
+          <OrderPaymentSection
             order={order}
             isVerifyingPayment={isVerifyingPayment}
             isGeneratingToken={generatePaymentTokenMutation.isPending}
@@ -392,10 +404,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
           />
         </div>
 
-        <OrderItemsList 
-          order={order}
-          onOpenReviewModal={handleOpenReviewModal}
-        />
+        <OrderItemsList order={order} onOpenReviewModal={handleOpenReviewModal} />
       </PageContainer>
 
       <Modal
@@ -458,7 +467,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
         </div>
       </Modal>
 
-      <OrderReviewModal 
+      <OrderReviewModal
         selectedReviewItem={selectedReviewItem}
         onClose={handleCloseReviewModal}
         user={user}
@@ -469,7 +478,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps) : React.JSX.Elemen
   )
 }
 
-export default function OrderDetailPage({ params }: OrderDetailPageProps) : React.JSX.Element {
+export default function OrderDetailPage({ params }: OrderDetailPageProps): React.JSX.Element {
   return (
     <Suspense fallback={<AuthLoading message="Memuat pesanan..." />}>
       <OrderDetailContent params={params} />

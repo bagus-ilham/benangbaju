@@ -39,8 +39,8 @@ export function EmptyState({
   action,
   secondaryAction,
   className,
-}: EmptyStateProps) : React.JSX.Element {
-  const Icon = typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon;
+}: EmptyStateProps): React.JSX.Element {
+  const Icon = typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon
 
   const renderAction = (act: EmptyStateAction, key: string) => {
     const button = (
@@ -71,7 +71,10 @@ export function EmptyState({
       )}
     >
       <div className="relative">
-        <div className="absolute inset-0 bg-brand-gold/10 blur-xl rounded-full scale-150" aria-hidden />
+        <div
+          className="absolute inset-0 bg-brand-gold/10 blur-xl rounded-full scale-150"
+          aria-hidden
+        />
         <div className="relative p-5 bg-brand-cream border border-brand-gold/20 animate-gentle-float">
           <Icon className="h-8 w-8 text-brand-gold" strokeWidth={1.5} />
         </div>

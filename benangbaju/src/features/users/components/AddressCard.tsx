@@ -26,7 +26,7 @@ export function AddressCard({
   isSelected = false,
   showActions = true,
   showSelectButton = false,
-}: AddressCardProps) : React.JSX.Element {
+}: AddressCardProps): React.JSX.Element {
   return (
     <div
       onClick={() => onSelect?.(address)}
@@ -65,7 +65,8 @@ export function AddressCard({
         <p>{address.phone}</p>
         <p className="mt-1 leading-relaxed">{address.full_address}</p>
         <p className="text-xs text-neutral-500 font-medium">
-          {address.district_name}, {address.city_name}, {address.province_name} {address.postal_code}
+          {address.district_name}, {address.city_name}, {address.province_name}{' '}
+          {address.postal_code}
         </p>
       </div>
 

@@ -9,7 +9,12 @@ import {
 
 import { ApiListResponse } from '@/lib/api-response'
 
-export function useUserNotifications(userId: string) : import("@tanstack/react-query").UseQueryResult<ApiListResponse<import("@/features/core/services/notifications").UserNotification>, Error> {
+export function useUserNotifications(
+  userId: string
+): import('@tanstack/react-query').UseQueryResult<
+  ApiListResponse<import('@/features/core/services/notifications').UserNotification>,
+  Error
+> {
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
 
@@ -44,12 +49,9 @@ export function useUserNotifications(userId: string) : import("@tanstack/react-q
   })
 }
 
-export function useMarkNotificationRead(userId: string) : UseMutationResult<
-  Awaited<ReturnType<typeof markNotificationRead>>,
-  Error,
-  string,
-  unknown
-> {
+export function useMarkNotificationRead(
+  userId: string
+): UseMutationResult<Awaited<ReturnType<typeof markNotificationRead>>, Error, string, unknown> {
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
@@ -64,18 +66,16 @@ export function useMarkNotificationRead(userId: string) : UseMutationResult<
   })
 }
 
-export function useMarkAllNotificationsRead(userId: string) : UseMutationResult<
-  Awaited<ReturnType<typeof markAllNotificationsRead>>,
-  Error,
-  void,
-  unknown
-> {
+export function useMarkAllNotificationsRead(
+  userId: string
+): UseMutationResult<Awaited<ReturnType<typeof markAllNotificationsRead>>, Error, void, unknown> {
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
   return useMutation({
     mutationFn: async () => {
       const res = await markAllNotificationsRead(supabase, userId)
-      if (!res.success) throw new Error(res.error?.message || 'Gagal menandai semua notifikasi telah dibaca')
+      if (!res.success)
+        throw new Error(res.error?.message || 'Gagal menandai semua notifikasi telah dibaca')
       return res
     },
     onSuccess: () => {
@@ -83,4 +83,3 @@ export function useMarkAllNotificationsRead(userId: string) : UseMutationResult<
     },
   })
 }
-

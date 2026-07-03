@@ -3,24 +3,35 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveBanners } from '@/features/marketing/services/banners'
 import { getActiveCategories } from '@/features/marketing/services/categories'
-import { getActiveCollections, getCollectionBySlug } from '@/features/marketing/services/collections'
+import {
+  getActiveCollections,
+  getCollectionBySlug,
+} from '@/features/marketing/services/collections'
 import { getActiveFlashSale } from '@/features/marketing/services/flashSales'
 import { getProducts } from '@/features/products/services'
 import { getSiteSettings } from '@/features/core/services/settings'
-import { HeroSection } from '@/features/marketing/components/HeroSection';
-import { CategorySection } from '@/features/marketing/components/CategorySection';
-import { FlashSaleSection } from '@/features/marketing/components/FlashSaleSection';
-import { CollectionSpotlight } from '@/features/marketing/components/CollectionSpotlight';
-import { TrustStrip } from '@/features/marketing/components/TrustStrip';
-import { FeaturedProductsSection } from '@/features/products/components/FeaturedProductsSection';
-import { NewArrivalsSection } from '@/features/products/components/NewArrivalsSection';
-import { ProductGridSection } from '@/features/products/components/ProductGridSection';
-import { RecentlyViewedSection } from '@/features/products/components/RecentlyViewedSection';
+import { HeroSection } from '@/features/marketing/components/HeroSection'
+import { CategorySection } from '@/features/marketing/components/CategorySection'
+import { FlashSaleSection } from '@/features/marketing/components/FlashSaleSection'
+import { CollectionSpotlight } from '@/features/marketing/components/CollectionSpotlight'
+import { TrustStrip } from '@/features/marketing/components/TrustStrip'
+import { FeaturedProductsSection } from '@/features/products/components/FeaturedProductsSection'
+import { NewArrivalsSection } from '@/features/products/components/NewArrivalsSection'
+import { ProductGridSection } from '@/features/products/components/ProductGridSection'
+import { RecentlyViewedSection } from '@/features/products/components/RecentlyViewedSection'
 
 async function getCachedHomepageData() {
   'use cache'
   cacheLife('hours')
-  cacheTag('banners', 'categories', 'collections', 'flash-sales', 'products', 'settings', 'homepage-data')
+  cacheTag(
+    'banners',
+    'categories',
+    'collections',
+    'flash-sales',
+    'products',
+    'settings',
+    'homepage-data'
+  )
 
   const supabase = createStaticClient()
 
@@ -45,8 +56,10 @@ async function getCachedHomepageData() {
   const settings = settingsRes.data || []
   const collections = collectionsRes.data || []
   const flashSale = flashSaleRes.data || null
-  const spotlight1Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_1')?.value || ''
-  const spotlight2Slug = settings.find((s) => s.key === 'homepage_spotlight_collection_2')?.value || ''
+  const spotlight1Slug =
+    settings.find((s) => s.key === 'homepage_spotlight_collection_1')?.value || ''
+  const spotlight2Slug =
+    settings.find((s) => s.key === 'homepage_spotlight_collection_2')?.value || ''
 
   const [col1Res, col2Res] = await Promise.all([
     spotlight1Slug ? getCollectionBySlug(supabase, spotlight1Slug) : Promise.resolve(null),
@@ -55,7 +68,6 @@ async function getCachedHomepageData() {
 
   const col1 = col1Res?.data || collections[0] || null
   const col2 = col2Res?.data || collections[1] || null
-
 
   const [collection1Products, collection2Products] = await Promise.all([
     col1
@@ -84,7 +96,8 @@ export async function generateMetadata() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
   return {
     title: 'Benangbaju - Premium Modest Fashion',
-    description: 'Temukan koleksi modest fashion terbaik, kemeja linen, dan gaya busana premium di Benangbaju. Belanja mudah, cepat, dan aman.',
+    description:
+      'Temukan koleksi modest fashion terbaik, kemeja linen, dan gaya busana premium di Benangbaju. Belanja mudah, cepat, dan aman.',
     openGraph: {
       title: 'Benangbaju - Premium Modest Fashion',
       description: 'Temukan koleksi modest fashion terbaik di Benangbaju.',
@@ -94,7 +107,7 @@ export async function generateMetadata() {
   }
 }
 
-export default async function Homepage() : Promise<React.JSX.Element> {
+export default async function Homepage(): Promise<React.JSX.Element> {
   const {
     banners,
     categories,
@@ -116,10 +129,7 @@ export default async function Homepage() : Promise<React.JSX.Element> {
     name: 'Benangbaju',
     url: baseUrl,
     logo: `${baseUrl}/images/logo.png`,
-    sameAs: [
-      'https://www.instagram.com/benangbaju',
-      'https://www.facebook.com/benangbaju'
-    ]
+    sameAs: ['https://www.instagram.com/benangbaju', 'https://www.facebook.com/benangbaju'],
   }
 
   const websiteJsonLd = {
@@ -130,8 +140,8 @@ export default async function Homepage() : Promise<React.JSX.Element> {
     potentialAction: {
       '@type': 'SearchAction',
       target: `${baseUrl}/search?q={search_term_string}`,
-      'query-input': 'required name=search_term_string'
-    }
+      'query-input': 'required name=search_term_string',
+    },
   }
 
   return (

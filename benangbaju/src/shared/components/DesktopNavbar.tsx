@@ -42,7 +42,7 @@ export function DesktopNavbar({
   isAuthenticated,
   profile,
   user,
-  onLogout
+  onLogout,
 }: DesktopNavbarProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
@@ -66,7 +66,7 @@ export function DesktopNavbar({
             >
               <Menu className="h-5 w-5" />
             </button>
-            
+
             <nav className="hidden md:flex space-x-8">
               {navLinks.map((link) => (
                 <Link
@@ -185,7 +185,8 @@ export function DesktopNavbar({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 border-t-2 border-t-brand-gold rounded-none shadow-lg py-1 z-20">
+                        className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 border-t-2 border-t-brand-gold rounded-none shadow-lg py-1 z-20"
+                      >
                         <div className="px-4 py-2 border-b border-neutral-100">
                           <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
                             Halo,
@@ -194,7 +195,7 @@ export function DesktopNavbar({
                             {profile?.name || user?.email}
                           </p>
                         </div>
-                        
+
                         <Link
                           href="/akun"
                           onClick={() => setIsUserMenuOpen(false)}
@@ -202,7 +203,7 @@ export function DesktopNavbar({
                         >
                           Akun Saya
                         </Link>
-                        
+
                         {profile?.role === 'admin' && (
                           <Link
                             href="/admin"
@@ -212,7 +213,7 @@ export function DesktopNavbar({
                             Admin Panel
                           </Link>
                         )}
-                        
+
                         <button
                           onClick={() => {
                             setIsUserMenuOpen(false)

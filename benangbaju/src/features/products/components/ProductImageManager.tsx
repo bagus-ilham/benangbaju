@@ -4,7 +4,10 @@ import { Button, Select, Input, Checkbox } from '@/shared/components'
 import { Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
-import type { ProductImagePayload, ProductVariantPayload } from '@/entities/product/model/product.types'
+import type {
+  ProductImagePayload,
+  ProductVariantPayload,
+} from '@/entities/product/model/product.types'
 
 interface ProductImageManagerProps {
   images: ProductImagePayload[]
@@ -38,13 +41,18 @@ export function ProductImageManager({
       </div>
 
       {!images.some((img) => !img.variant_id) ? (
-        <p className="text-[11px] text-neutral-400 italic">Belum ada gambar ditambahkan. Silakan tambah url gambar.</p>
+        <p className="text-[11px] text-neutral-400 italic">
+          Belum ada gambar ditambahkan. Silakan tambah url gambar.
+        </p>
       ) : (
         <div className="space-y-4">
           {images.map((img, idx) => {
             if (img.variant_id) return null
             return (
-              <div key={idx} className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10">
+              <div
+                key={idx}
+                className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10"
+              >
                 <button
                   type="button"
                   onClick={() => onRemoveImage(idx)}
@@ -69,7 +77,9 @@ export function ProductImageManager({
                         }}
                       />
                     ) : (
-                      <span className="text-[9px] text-neutral-400 uppercase font-semibold">No Image</span>
+                      <span className="text-[9px] text-neutral-400 uppercase font-semibold">
+                        No Image
+                      </span>
                     )}
                   </div>
 
@@ -96,14 +106,15 @@ export function ProductImageManager({
                         onChange={async (e) => {
                           const file = e.target.files?.[0]
                           if (!file) return
-                          
+
                           const toastId = toast.loading('Mengunggah gambar...')
                           try {
                             const publicUrl = await uploadImage(file, 'products')
                             onUpdateImageField(idx, 'url', publicUrl)
                             toast.success('Gambar berhasil diunggah!', { id: toastId })
                           } catch (err: unknown) {
-                            const errorMessage = err instanceof Error ? err.message : 'Gagal mengunggah gambar'
+                            const errorMessage =
+                              err instanceof Error ? err.message : 'Gagal mengunggah gambar'
                             toast.error(errorMessage, { id: toastId })
                           }
                         }}
@@ -136,7 +147,9 @@ export function ProductImageManager({
                       label="No. Urut"
                       type="number"
                       value={img.sort_order.toString()}
-                      onChange={(e) => onUpdateImageField(idx, 'sort_order', parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        onUpdateImageField(idx, 'sort_order', parseInt(e.target.value) || 0)
+                      }
                     />
                   </div>
                 </div>
@@ -150,8 +163,8 @@ export function ProductImageManager({
                       { label: 'Semua Varian (Gambar Umum)', value: '' },
                       ...variants.map((v, vIdx) => ({
                         label: `${v.name || `Varian #${vIdx + 1}`} (${v.sku || 'Tanpa SKU'})`,
-                        value: v.id || `temp-${vIdx}`
-                      }))
+                        value: v.id || `temp-${vIdx}`,
+                      })),
                     ]}
                   />
                 </div>
@@ -162,7 +175,10 @@ export function ProductImageManager({
                     checked={img.is_primary}
                     onChange={(e) => onUpdateImageField(idx, 'is_primary', e.target.checked)}
                   />
-                  <label htmlFor={`img-primary-${idx}`} className="select-none text-[10px] text-neutral-600 font-bold uppercase cursor-pointer">
+                  <label
+                    htmlFor={`img-primary-${idx}`}
+                    className="select-none text-[10px] text-neutral-600 font-bold uppercase cursor-pointer"
+                  >
                     Gambar Utama
                   </label>
                 </div>

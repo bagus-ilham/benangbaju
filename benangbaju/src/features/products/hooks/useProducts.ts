@@ -1,5 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { getProducts, getProductBySlug, getRelatedProducts, ProductFilters } from '@/features/products/services'
+import {
+  getProducts,
+  getProductBySlug,
+  getRelatedProducts,
+  ProductFilters,
+} from '@/features/products/services'
 import { createBrowserClient } from '@/lib/supabase/client'
 
 export function useProducts(filters: ProductFilters = {}) {

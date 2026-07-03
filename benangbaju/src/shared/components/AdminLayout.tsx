@@ -23,7 +23,7 @@ import {
   X,
   Globe,
   Layers,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react'
 import { useAuthStore } from '@/entities/user/model/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -37,7 +37,7 @@ interface AdminLayoutProps {
   children: React.ReactNode
 }
 
-export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element {
+export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createBrowserClient()
@@ -72,7 +72,8 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
   // Mobile sidebar focus trap
   useEffect(() => {
     let originalOverflow = ''
-    if (isSidebarOpen && window.innerWidth < 1024) { // lg breakpoint is 1024px
+    if (isSidebarOpen && window.innerWidth < 1024) {
+      // lg breakpoint is 1024px
       originalOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       if (document.activeElement instanceof HTMLElement) {
@@ -199,7 +200,10 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
               </span>
             </Link>
           ) : (
-            <Link href="/admin" className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+            <Link
+              href="/admin"
+              className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase"
+            >
               BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
             </Link>
           )}
@@ -274,7 +278,11 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
                     BENANGBAJU <span className="text-brand-gold">CMS</span>
                   </span>
                 )}
-                <button onClick={() => setIsSidebarOpen(false)} className="text-neutral-400 hover:text-brand-black p-1" aria-label="Tutup sidebar">
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="text-neutral-400 hover:text-brand-black p-1"
+                  aria-label="Tutup sidebar"
+                >
                   <X className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
@@ -331,12 +339,19 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
 
             <div className="ml-4 flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 bg-brand-black text-brand-gold-light flex items-center justify-center text-xs font-heading font-bold uppercase" aria-hidden="true">
+                <div
+                  className="h-8 w-8 bg-brand-black text-brand-gold-light flex items-center justify-center text-xs font-heading font-bold uppercase"
+                  aria-hidden="true"
+                >
                   {profile?.name?.substring(0, 2) || user?.email?.substring(0, 2) || 'AD'}
                 </div>
                 <div className="hidden md:block">
-                  <p className="text-xs font-semibold text-brand-black">{profile?.name || 'Administrator'}</p>
-                  <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">{profile?.role || 'admin'}</p>
+                  <p className="text-xs font-semibold text-brand-black">
+                    {profile?.name || 'Administrator'}
+                  </p>
+                  <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
+                    {profile?.role || 'admin'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -345,9 +360,7 @@ export function AdminLayout({ children }: AdminLayoutProps) : React.JSX.Element 
 
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-neutral-50">
           <div className="mx-auto max-w-7xl animate-slide-up">
-            <ErrorBoundary>
-              {children}
-            </ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
           </div>
         </main>
       </div>

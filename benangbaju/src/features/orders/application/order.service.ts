@@ -38,7 +38,9 @@ export class OrderService {
     return repo.checkPaymentStatus(this.supabase, orderNumber)
   }
 
-  async adminGetOrders(params: { status?: string; search?: string; page?: number; limit?: number } = {}) {
+  async adminGetOrders(
+    params: { status?: string; search?: string; page?: number; limit?: number } = {}
+  ) {
     return repo.adminGetOrders(this.supabase, params)
   }
 

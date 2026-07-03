@@ -6,7 +6,8 @@ import { PageHero, PageContainer } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Cara Belanja — Benangbaju',
-  description: 'Ikuti panduan mudah cara berbelanja pakaian muslim premium di toko online Benangbaju.',
+  description:
+    'Ikuti panduan mudah cara berbelanja pakaian muslim premium di toko online Benangbaju.',
 }
 
 const steps = [
@@ -37,7 +38,7 @@ const steps = [
   },
 ]
 
-export default function CaraBelanjaPage() : React.JSX.Element {
+export default function CaraBelanjaPage(): React.JSX.Element {
   return (
     <div className="min-h-screen bg-white font-sans">
       <PageHero
@@ -60,9 +61,7 @@ export default function CaraBelanjaPage() : React.JSX.Element {
                 <h3 className="font-heading text-sm font-semibold text-brand-black uppercase tracking-wide">
                   {step.title}
                 </h3>
-                <p className="text-xs text-neutral-500 leading-relaxed font-medium">
-                  {step.desc}
-                </p>
+                <p className="text-xs text-neutral-500 leading-relaxed font-medium">{step.desc}</p>
               </div>
             </div>
           ))}
@@ -71,8 +70,12 @@ export default function CaraBelanjaPage() : React.JSX.Element {
             <p className="font-heading font-semibold text-brand-black mb-2 uppercase tracking-wider text-[10px]">
               Butuh Bantuan Lebih Lanjut?
             </p>
-            Jika Anda mengalami kendala saat checkout atau pembayaran, silakan hubungi Customer Service kami melalui halaman{' '}
-            <Link href="/kontak" className="text-brand-black underline font-semibold hover:text-brand-gold transition-colors">
+            Jika Anda mengalami kendala saat checkout atau pembayaran, silakan hubungi Customer
+            Service kami melalui halaman{' '}
+            <Link
+              href="/kontak"
+              className="text-brand-black underline font-semibold hover:text-brand-gold transition-colors"
+            >
               Hubungi Kami
             </Link>{' '}
             untuk respon cepat via WhatsApp.

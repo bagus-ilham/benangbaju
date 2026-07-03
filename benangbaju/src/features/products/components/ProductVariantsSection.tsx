@@ -4,7 +4,10 @@ import { Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
-import type { ProductVariantPayload, ProductImagePayload } from '@/entities/product/model/product.types'
+import type {
+  ProductVariantPayload,
+  ProductImagePayload,
+} from '@/entities/product/model/product.types'
 
 interface ProductVariantsSectionProps {
   variants: ProductVariantPayload[]
@@ -21,12 +24,18 @@ interface ProductVariantsSectionProps {
 }
 
 export function ProductVariantsSection({
-  variants, images,
-  onAddVariant, onUpdateVariantField, onRemoveVariant,
-  onAddVariantAttr, onUpdateVariantAttrField, onRemoveVariantAttr,
-  onAddImage, onUpdateImageField, onRemoveImage
+  variants,
+  images,
+  onAddVariant,
+  onUpdateVariantField,
+  onRemoveVariant,
+  onAddVariantAttr,
+  onUpdateVariantAttrField,
+  onRemoveVariantAttr,
+  onAddImage,
+  onUpdateImageField,
+  onRemoveImage,
 }: ProductVariantsSectionProps): React.JSX.Element {
-
   return (
     <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-6">
       <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
@@ -45,7 +54,10 @@ export function ProductVariantsSection({
 
       <div className="space-y-6">
         {variants.map((v, vIdx) => (
-          <div key={vIdx} className="border border-neutral-200 p-4 relative bg-neutral-50/20 space-y-4 rounded-none">
+          <div
+            key={vIdx}
+            className="border border-neutral-200 p-4 relative bg-neutral-50/20 space-y-4 rounded-none"
+          >
             {variants.length > 1 && (
               <button
                 type="button"
@@ -79,7 +91,9 @@ export function ProductVariantsSection({
                 label="Stok*"
                 type="number"
                 value={v.stock}
-                onChange={(e) => onUpdateVariantField(vIdx, 'stock', Math.max(0, parseInt(e.target.value) || 0))}
+                onChange={(e) =>
+                  onUpdateVariantField(vIdx, 'stock', Math.max(0, parseInt(e.target.value) || 0))
+                }
                 required
               />
             </div>
@@ -89,20 +103,34 @@ export function ProductVariantsSection({
                 label="Harga Jual (Rupiah)*"
                 type="number"
                 value={v.price}
-                onChange={(e) => onUpdateVariantField(vIdx, 'price', Math.max(0, parseFloat(e.target.value) || 0))}
+                onChange={(e) =>
+                  onUpdateVariantField(vIdx, 'price', Math.max(0, parseFloat(e.target.value) || 0))
+                }
                 required
               />
               <Input
                 label="Harga Coret (Compare Price)"
                 type="number"
                 value={v.compare_price || ''}
-                onChange={(e) => onUpdateVariantField(vIdx, 'compare_price', e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null)}
+                onChange={(e) =>
+                  onUpdateVariantField(
+                    vIdx,
+                    'compare_price',
+                    e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null
+                  )
+                }
               />
               <Input
                 label="Berat Varian (Gram)"
                 type="number"
                 value={v.weight_gram || ''}
-                onChange={(e) => onUpdateVariantField(vIdx, 'weight_gram', e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null)}
+                onChange={(e) =>
+                  onUpdateVariantField(
+                    vIdx,
+                    'weight_gram',
+                    e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null
+                  )
+                }
               />
             </div>
 
@@ -116,7 +144,9 @@ export function ProductVariantsSection({
             {/* Variant Images Sub-section */}
             <div className="space-y-3 pt-2 border-t border-neutral-100">
               <div className="flex justify-between items-center">
-                <p className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">Gambar Varian</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">
+                  Gambar Varian
+                </p>
                 <button
                   type="button"
                   onClick={() => onAddImage(v.id || null)}
@@ -131,7 +161,10 @@ export function ProductVariantsSection({
                   {images.map((img, imgIdx) => {
                     if (img.variant_id !== v.id) return null
                     return (
-                      <div key={imgIdx} className="flex gap-2 items-center border border-neutral-100 p-2 bg-white">
+                      <div
+                        key={imgIdx}
+                        className="flex gap-2 items-center border border-neutral-100 p-2 bg-white"
+                      >
                         <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                           {img.url ? (
                             <Image
@@ -146,7 +179,9 @@ export function ProductVariantsSection({
                               }}
                             />
                           ) : (
-                            <span className="text-[7px] text-neutral-400 uppercase font-semibold">No Img</span>
+                            <span className="text-[7px] text-neutral-400 uppercase font-semibold">
+                              No Img
+                            </span>
                           )}
                         </div>
 
@@ -167,14 +202,15 @@ export function ProductVariantsSection({
                           onChange={async (e) => {
                             const file = e.target.files?.[0]
                             if (!file) return
-                            
+
                             const toastId = toast.loading('Mengunggah gambar...')
                             try {
                               const publicUrl = await uploadImage(file, 'products')
                               onUpdateImageField(imgIdx, 'url', publicUrl)
                               toast.success('Gambar berhasil diunggah!', { id: toastId })
                             } catch (err: unknown) {
-                              const errorMessage = err instanceof Error ? err.message : 'Gagal mengunggah gambar'
+                              const errorMessage =
+                                err instanceof Error ? err.message : 'Gagal mengunggah gambar'
                               toast.error(errorMessage, { id: toastId })
                             }
                           }}
@@ -203,7 +239,9 @@ export function ProductVariantsSection({
             {/* Attributes Sub-section */}
             <div className="space-y-3 pt-2 border-t border-neutral-100">
               <div className="flex justify-between items-center">
-                <p className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">Atribut Varian (cth: Ukuran/Warna)</p>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">
+                  Atribut Varian (cth: Ukuran/Warna)
+                </p>
                 <button
                   type="button"
                   onClick={() => onAddVariantAttr(vIdx)}
@@ -221,14 +259,18 @@ export function ProductVariantsSection({
                         type="text"
                         className="px-2 py-1.5 border border-neutral-200 outline-none text-xs w-28 bg-white focus:border-neutral-800 font-medium"
                         value={attr.attr_name}
-                        onChange={(e) => onUpdateVariantAttrField(vIdx, aIdx, 'attr_name', e.target.value)}
+                        onChange={(e) =>
+                          onUpdateVariantAttrField(vIdx, aIdx, 'attr_name', e.target.value)
+                        }
                         placeholder="Nama Atribut"
                       />
                       <input
                         type="text"
                         className="flex-1 px-2 py-1.5 border border-neutral-200 outline-none text-xs bg-white focus:border-neutral-800 font-medium"
                         value={attr.attr_value}
-                        onChange={(e) => onUpdateVariantAttrField(vIdx, aIdx, 'attr_value', e.target.value)}
+                        onChange={(e) =>
+                          onUpdateVariantAttrField(vIdx, aIdx, 'attr_value', e.target.value)
+                        }
                         placeholder="Nilai Atribut"
                       />
                       <button

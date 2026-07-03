@@ -2,7 +2,13 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { UserAddress, District, ShippingOption, ShippingZone, ShippingRate } from "../domain/shipping.types";
+import {
+  UserAddress,
+  District,
+  ShippingOption,
+  ShippingZone,
+  ShippingRate,
+} from '../domain/shipping.types'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 
@@ -17,7 +23,9 @@ export async function getUserAddresses(
 ): Promise<ApiResponse<UserAddress[]>> {
   const { data, error } = await supabase
     .from('user_addresses')
-    .select('id, user_id, label, recipient_name, phone, province_name, city_name, district_name, postal_code, full_address, zone_id, is_default, created_at')
+    .select(
+      'id, user_id, label, recipient_name, phone, province_name, city_name, district_name, postal_code, full_address, zone_id, is_default, created_at'
+    )
     .eq('user_id', userId)
     .order('is_default', { ascending: false })
     .order('created_at', { ascending: false })
@@ -29,21 +37,23 @@ export async function getUserAddresses(
 
   if (!data) return ok([])
 
-  return ok(data.map(row => ({
-    id: row.id,
-    user_id: row.user_id,
-    label: row.label,
-    recipient_name: row.recipient_name,
-    phone: row.phone,
-    province_name: row.province_name,
-    city_name: row.city_name,
-    district_name: row.district_name,
-    postal_code: row.postal_code,
-    full_address: row.full_address,
-    zone_id: row.zone_id,
-    is_default: row.is_default,
-    created_at: row.created_at,
-  })))
+  return ok(
+    data.map((row) => ({
+      id: row.id,
+      user_id: row.user_id,
+      label: row.label,
+      recipient_name: row.recipient_name,
+      phone: row.phone,
+      province_name: row.province_name,
+      city_name: row.city_name,
+      district_name: row.district_name,
+      postal_code: row.postal_code,
+      full_address: row.full_address,
+      zone_id: row.zone_id,
+      is_default: row.is_default,
+      created_at: row.created_at,
+    }))
+  )
 }
 
 // 2. Add user address
@@ -51,11 +61,7 @@ export async function addUserAddress(
   supabase: SupabaseClient<Database>,
   address: Omit<UserAddress, 'id' | 'created_at'>
 ): Promise<ApiResponse<UserAddress>> {
-  const { data, error } = await supabase
-    .from('user_addresses')
-    .insert([address])
-    .select()
-    .single()
+  const { data, error } = await supabase.from('user_addresses').insert([address]).select().single()
 
   if (error) {
     safeLogError('Error adding user address:', error)
@@ -165,7 +171,8 @@ export async function searchDistricts(
 ): Promise<ApiResponse<District[]>> {
   if (!searchQuery || searchQuery.trim().length < 2) return ok([])
 
-  const escapedQuery = searchQuery.trim()
+  const escapedQuery = searchQuery
+    .trim()
     .replace(/\\/g, '\\\\')
     .replace(/%/g, '\\%')
     .replace(/_/g, '\\_')
@@ -187,14 +194,16 @@ export async function searchDistricts(
 
   if (!data) return ok([])
 
-  return ok(data.map(row => ({
-    id: row.id,
-    province_name: row.province_name,
-    city_name: row.city_name,
-    district_name: row.district_name,
-    postal_code: row.postal_code,
-    zone_id: row.zone_id,
-  })))
+  return ok(
+    data.map((row) => ({
+      id: row.id,
+      province_name: row.province_name,
+      city_name: row.city_name,
+      district_name: row.district_name,
+      postal_code: row.postal_code,
+      zone_id: row.zone_id,
+    }))
+  )
 }
 
 // 7. Calculate shipping rates options
@@ -217,11 +226,11 @@ export async function calculateShippingRates(
     const success = typeof data['success'] === 'boolean' ? data['success'] : false
     const message = typeof data['message'] === 'string' ? data['message'] : undefined
     const rawOptions = data['data']
-    
+
     if (!success) {
       return fail(ApiErrorCode.VALIDATION_ERROR, message || 'Gagal menghitung ongkos kirim')
     }
-    
+
     const optionsList = Array.isArray(rawOptions) ? rawOptions : []
     const options: ShippingOption[] = []
 
@@ -233,7 +242,8 @@ export async function calculateShippingRates(
           price: typeof opt['price'] === 'number' ? opt['price'] : 0,
           etd_min: typeof opt['etd_min'] === 'number' ? opt['etd_min'] : 0,
           etd_max: typeof opt['etd_max'] === 'number' ? opt['etd_max'] : 0,
-          weight_used_gram: typeof opt['weight_used_gram'] === 'number' ? opt['weight_used_gram'] : 0,
+          weight_used_gram:
+            typeof opt['weight_used_gram'] === 'number' ? opt['weight_used_gram'] : 0,
         })
       }
     }
@@ -268,10 +278,10 @@ export async function adminGetShippingZones(
 
   if (!data) return paginated([], page, limit, count || 0)
 
-  const result = data.map(row => {
+  const result = data.map((row) => {
     const rawCoverage = row.shipping_zone_coverage
     const coverageList = Array.isArray(rawCoverage) ? rawCoverage : []
-    const shipping_zone_coverage = coverageList.map(c => ({
+    const shipping_zone_coverage = coverageList.map((c) => ({
       province_name: c.province_name,
     }))
     return {
@@ -282,7 +292,7 @@ export async function adminGetShippingZones(
       shipping_zone_coverage,
     }
   })
-  
+
   return paginated(result, page, limit, count || 0)
 }
 
@@ -294,7 +304,7 @@ export async function adminCreateShippingZone(
 ): Promise<ApiResponse<ShippingZone>> {
   const { data: result, error: rpcErr } = await supabase.rpc('admin_create_shipping_zone', {
     p_zone: zone as any,
-    p_provinces: provinces
+    p_provinces: provinces,
   })
 
   if (rpcErr) {
@@ -309,7 +319,13 @@ export async function adminCreateShippingZone(
   }
 
   const newZone = res?.data
-  await insertAdminActivityLog(supabase, 'create', 'shipping_zone', newZone.id, `Created shipping zone ${newZone.name}`)
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'shipping_zone',
+    newZone.id,
+    `Created shipping zone ${newZone.name}`
+  )
 
   return ok(newZone)
 }
@@ -324,7 +340,7 @@ export async function adminUpdateShippingZone(
   const { data: result, error: rpcErr } = await supabase.rpc('admin_update_shipping_zone', {
     p_zone_id: zoneId as any,
     p_zone: zone as any,
-    p_provinces: provinces as any
+    p_provinces: provinces as any,
   })
 
   if (rpcErr) {
@@ -338,7 +354,13 @@ export async function adminUpdateShippingZone(
     return fail(ApiErrorCode.INTERNAL_ERROR, res.error?.message || 'Transaction failed')
   }
 
-  await insertAdminActivityLog(supabase, 'update', 'shipping_zone', zoneId, `Updated shipping zone ${zone.name || zoneId}`)
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'shipping_zone',
+    zoneId,
+    `Updated shipping zone ${zone.name || zoneId}`
+  )
 
   return ok()
 }
@@ -348,17 +370,20 @@ export async function adminDeleteShippingZone(
   supabase: SupabaseClient<Database>,
   zoneId: string
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('shipping_zones')
-    .delete()
-    .eq('id', zoneId)
+  const { error } = await supabase.from('shipping_zones').delete().eq('id', zoneId)
 
   if (error) {
     safeLogError('Error deleting shipping zone:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus zona pengiriman')
   }
 
-  await insertAdminActivityLog(supabase, 'delete', 'shipping_zone', zoneId, `Deleted shipping zone ${zoneId}`)
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'shipping_zone',
+    zoneId,
+    `Deleted shipping zone ${zoneId}`
+  )
   return ok()
 }
 
@@ -383,7 +408,7 @@ export async function adminGetShippingRates(
 
   if (!data) return paginated([], page, limit, count || 0)
 
-  const result = data.map(row => {
+  const result = data.map((row) => {
     const rawZones = row.shipping_zones
     let shipping_zones: { name: string } | null = null
     if (rawZones && !Array.isArray(rawZones)) {
@@ -404,7 +429,7 @@ export async function adminGetShippingRates(
       shipping_zones,
     }
   })
-  
+
   return paginated(result, page, limit, count || 0)
 }
 
@@ -413,11 +438,7 @@ export async function adminCreateShippingRate(
   supabase: SupabaseClient<Database>,
   rate: Omit<ShippingRate, 'id' | 'shipping_zones'>
 ): Promise<ApiResponse<ShippingRate>> {
-  const { data, error } = await supabase
-    .from('shipping_rates')
-    .insert([rate])
-    .select()
-    .single()
+  const { data, error } = await supabase.from('shipping_rates').insert([rate]).select().single()
 
   if (error) {
     safeLogError('Error creating shipping rate:', error)
@@ -436,7 +457,13 @@ export async function adminCreateShippingRate(
     is_active: data.is_active,
   }
 
-  await insertAdminActivityLog(supabase, 'create', 'shipping_rate', data.id, `Created shipping rate for courier ${data.courier_name}`)
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'shipping_rate',
+    data.id,
+    `Created shipping rate for courier ${data.courier_name}`
+  )
 
   return ok(result)
 }
@@ -447,17 +474,20 @@ export async function adminUpdateShippingRate(
   rateId: string,
   rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>>
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('shipping_rates')
-    .update(rate)
-    .eq('id', rateId)
+  const { error } = await supabase.from('shipping_rates').update(rate).eq('id', rateId)
 
   if (error) {
     safeLogError('Error updating shipping rate:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui tarif pengiriman')
   }
 
-  await insertAdminActivityLog(supabase, 'update', 'shipping_rate', rateId, `Updated shipping rate ${rateId}`)
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'shipping_rate',
+    rateId,
+    `Updated shipping rate ${rateId}`
+  )
   return ok()
 }
 
@@ -466,16 +496,19 @@ export async function adminDeleteShippingRate(
   supabase: SupabaseClient<Database>,
   rateId: string
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('shipping_rates')
-    .delete()
-    .eq('id', rateId)
+  const { error } = await supabase.from('shipping_rates').delete().eq('id', rateId)
 
   if (error) {
     safeLogError('Error deleting shipping rate:', error)
     return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus tarif pengiriman')
   }
 
-  await insertAdminActivityLog(supabase, 'delete', 'shipping_rate', rateId, `Deleted shipping rate ${rateId}`)
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'shipping_rate',
+    rateId,
+    `Deleted shipping rate ${rateId}`
+  )
   return ok()
 }

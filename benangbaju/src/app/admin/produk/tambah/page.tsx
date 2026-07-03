@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { ProductForm } from '@/features/products/components/ProductForm'
+import { ProductForm, type InitialProductData } from '@/features/products/components/ProductForm'
 import { useAdminCreateProduct } from '@/shared/hooks/useAdmin'
 import type { ProductPayload } from '@/entities/product/model/product.types'
 import { useQuery } from '@tanstack/react-query'
@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()
 
-function AdminProductTambahContent() : React.JSX.Element {
+function AdminProductTambahContent(): React.JSX.Element {
   const searchParams = useSearchParams()
   const duplicateId = searchParams.get('duplicate')
   const createMutation = useAdminCreateProduct()
@@ -22,13 +22,15 @@ function AdminProductTambahContent() : React.JSX.Element {
       if (!duplicateId) return null
       const { data, error } = await supabase
         .from('products')
-        .select(`
+        .select(
+          `
           *,
           product_variants (*, product_variant_attrs(*)),
           product_images (*),
           product_marketplace_links (*),
           collection_products (*)
-        `)
+        `
+        )
         .eq('id', duplicateId)
         .single()
 
@@ -38,7 +40,7 @@ function AdminProductTambahContent() : React.JSX.Element {
       const copy = { ...data }
       copy.name = `${copy.name} (Copy)`
       copy.slug = `${copy.slug}-copy`
-      
+
       if (copy.product_variants) {
         const oldToNewIdMap = new Map<string, string>()
         copy.product_variants = copy.product_variants.map((v: any) => {
@@ -47,7 +49,7 @@ function AdminProductTambahContent() : React.JSX.Element {
           return {
             ...v,
             id: newId,
-            sku: v.sku ? `${v.sku}-COPY` : ''
+            sku: v.sku ? `${v.sku}-COPY` : '',
           }
         })
         if (copy.product_images) {
@@ -55,7 +57,7 @@ function AdminProductTambahContent() : React.JSX.Element {
             if (img.variant_id && oldToNewIdMap.has(img.variant_id)) {
               return {
                 ...img,
-                variant_id: oldToNewIdMap.get(img.variant_id)
+                variant_id: oldToNewIdMap.get(img.variant_id),
               }
             }
             return img
@@ -65,7 +67,7 @@ function AdminProductTambahContent() : React.JSX.Element {
 
       return copy
     },
-    enabled: !!duplicateId
+    enabled: !!duplicateId,
   })
 
   const handleCreateProduct = async (payload: ProductPayload) => {
@@ -84,22 +86,24 @@ function AdminProductTambahContent() : React.JSX.Element {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat data duplikasi...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat data duplikasi...
+        </p>
       </div>
     )
   }
 
   return (
     <ProductForm
-      title={duplicateId ? "Duplikat Produk" : "Tambah Produk Baru"}
-      initialData={duplicateProduct}
+      title={duplicateId ? 'Duplikat Produk' : 'Tambah Produk Baru'}
+      initialData={duplicateProduct as unknown as InitialProductData}
       onSubmit={handleCreateProduct}
       isSubmitting={createMutation.isPending}
     />
   )
 }
 
-export default function AdminProductTambahPage() : React.JSX.Element {
+export default function AdminProductTambahPage(): React.JSX.Element {
   return (
     <Suspense fallback={<div className="p-8 text-center">Memuat form...</div>}>
       <AdminProductTambahContent />

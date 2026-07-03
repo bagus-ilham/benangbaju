@@ -19,7 +19,7 @@ interface SearchOverlayProps {
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
-  
+
   const [searchQuery, setSearchQuery] = useState('')
   const [instantResults, setInstantResults] = useState<ProductListItem[]>([])
   const [isSearchingInstant, setIsSearchingInstant] = useState(false)
@@ -128,12 +128,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   {instantResults.length > 0 ? (
                     <div className="space-y-3">
                       {instantResults.map((product) => {
-                        const primaryImg = product.product_images?.find((img) => img.is_primary)?.url 
-                          || product.product_images?.[0]?.url 
-                          || null;
+                        const primaryImg =
+                          product.product_images?.find((img) => img.is_primary)?.url ||
+                          product.product_images?.[0]?.url ||
+                          null
 
-                        const prices = product.product_variants?.map((v) => Number(v.price)) || [];
-                        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+                        const prices = product.product_variants?.map((v) => Number(v.price)) || []
+                        const minPrice = prices.length > 0 ? Math.min(...prices) : 0
 
                         return (
                           <Link
@@ -171,7 +172,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                           </Link>
                         )
                       })}
-                      
+
                       <button
                         onClick={handleSearchSubmit}
                         className="w-full pt-2 pb-1 text-[10px] uppercase tracking-widest font-heading font-semibold text-brand-gold hover:text-brand-black transition-colors"

@@ -7,10 +7,10 @@ import {
   useAdminUpdateVoucher,
   useAdminDeleteVoucher,
 } from '@/shared/hooks/useAdmin'
-import { 
-  Button, 
-  Input, 
-  Modal, 
+import {
+  Button,
+  Input,
+  Modal,
   AdminPageHeader,
   DataTable,
   Select,
@@ -18,7 +18,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem
+  DropdownMenuItem,
 } from '@/shared/components'
 import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -29,15 +29,13 @@ import { Voucher } from '@/features/marketing/domain/voucher.types'
 
 const supabase = createBrowserClient()
 
-export default function AdminVouchersPage() : React.JSX.Element {
+export default function AdminVouchersPage(): React.JSX.Element {
   const { data: vouchersRes, isLoading, isError, refetch } = useAdminVouchers()
   const vouchers = vouchersRes?.data || []
 
   const createMutation = useAdminCreateVoucher()
   const updateMutation = useAdminUpdateVoucher()
   const deleteMutation = useAdminDeleteVoucher()
-
-
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
@@ -76,7 +74,11 @@ export default function AdminVouchersPage() : React.JSX.Element {
     setEditingVoucher(v)
     setCode(v.code || '')
     setName(v.name || '')
-    setDiscountType(v.discount_type === 'percentage' || v.discount_type === 'fixed' ? v.discount_type : 'percentage')
+    setDiscountType(
+      v.discount_type === 'percentage' || v.discount_type === 'fixed'
+        ? v.discount_type
+        : 'percentage'
+    )
     setValue(Number(v.value) || 0)
     setMinPurchase(Number(v.min_purchase) || 0)
     setMaxDiscount(v.max_discount ? Number(v.max_discount) : null)
@@ -92,7 +94,11 @@ export default function AdminVouchersPage() : React.JSX.Element {
     setEditingVoucher(null)
     setCode((v.code || '') + '_COPY')
     setName((v.name || '') + ' (Copy)')
-    setDiscountType(v.discount_type === 'percentage' || v.discount_type === 'fixed' ? v.discount_type : 'percentage')
+    setDiscountType(
+      v.discount_type === 'percentage' || v.discount_type === 'fixed'
+        ? v.discount_type
+        : 'percentage'
+    )
     setValue(Number(v.value) || 0)
     setMinPurchase(Number(v.min_purchase) || 0)
     setMaxDiscount(v.max_discount ? Number(v.max_discount) : null)
@@ -180,11 +186,11 @@ export default function AdminVouchersPage() : React.JSX.Element {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <AdminPageHeader
-        title="Kupon Voucher"
-        subtitle="Kelola diskon belanja dan penawaran khusus."
-      >
-        <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
+      <AdminPageHeader title="Kupon Voucher" subtitle="Kelola diskon belanja dan penawaran khusus.">
+        <Button
+          onClick={handleOpenAdd}
+          className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
+        >
           <Plus size={14} className="mr-1.5" /> Tambah Voucher
         </Button>
       </AdminPageHeader>
@@ -193,12 +199,20 @@ export default function AdminVouchersPage() : React.JSX.Element {
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
         {isLoading ? (
           <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat voucher...</p>
+            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+              Memuat voucher...
+            </p>
           </div>
         ) : isError ? (
           <div className="py-24 text-center">
-            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat voucher dari server</p>
-            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+            <p className="text-red-500 text-xs font-semibold uppercase">
+              Gagal memuat voucher dari server
+            </p>
+            <Button
+              onClick={() => refetch()}
+              variant="outline"
+              className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+            >
               Coba Lagi
             </Button>
           </div>
@@ -220,7 +234,7 @@ export default function AdminVouchersPage() : React.JSX.Element {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                 {vouchers.map((v: Voucher) => (
+                {vouchers.map((v: Voucher) => (
                   <tr key={v.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
                       <span className="font-bold text-neutral-900 text-sm block font-mono select-all tracking-wider">
@@ -232,19 +246,27 @@ export default function AdminVouchersPage() : React.JSX.Element {
                     </td>
                     <td className="py-4 px-4 text-neutral-600">
                       <p className="font-bold text-neutral-850">
-                        {v.discount_type === 'percentage' ? `${v.value}%` : `Rp ${Number(v.value).toLocaleString()}`}
+                        {v.discount_type === 'percentage'
+                          ? `${v.value}%`
+                          : `Rp ${Number(v.value).toLocaleString()}`}
                       </p>
                       <p className="text-[10px] text-neutral-450 font-normal">
                         Min Belanja: Rp {Number(v.min_purchase).toLocaleString()}
                       </p>
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <p className="font-semibold">{v.used_count || 0} / {v.usage_limit || '∞'} Terpakai</p>
-                      <p className="text-[10px] text-neutral-400 font-normal">Maksimal {v.usage_per_user} per user</p>
+                      <p className="font-semibold">
+                        {v.used_count || 0} / {v.usage_limit || '∞'} Terpakai
+                      </p>
+                      <p className="text-[10px] text-neutral-400 font-normal">
+                        Maksimal {v.usage_per_user} per user
+                      </p>
                     </td>
                     <td className="py-4 px-4 text-center text-neutral-550 leading-relaxed">
                       <p>{v.starts_at ? new Date(v.starts_at).toLocaleDateString() : '-'}</p>
-                      <p className="text-[10px] text-neutral-400 font-normal">s.d {v.expires_at ? new Date(v.expires_at).toLocaleDateString() : '-'}</p>
+                      <p className="text-[10px] text-neutral-400 font-normal">
+                        s.d {v.expires_at ? new Date(v.expires_at).toLocaleDateString() : '-'}
+                      </p>
                     </td>
                     <td className="py-4 px-4 text-center">
                       <button
@@ -328,7 +350,7 @@ export default function AdminVouchersPage() : React.JSX.Element {
                 }}
                 options={[
                   { label: 'Persentase (%)', value: 'percentage' },
-                  { label: 'Nominal Flat (Rp)', value: 'fixed' }
+                  { label: 'Nominal Flat (Rp)', value: 'fixed' },
                 ]}
               />
             </div>
@@ -356,7 +378,9 @@ export default function AdminVouchersPage() : React.JSX.Element {
               label="Maksimal Potongan (Maks Rp)"
               type="number"
               value={max_discount || ''}
-              onChange={(e) => setMaxDiscount(e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null)}
+              onChange={(e) =>
+                setMaxDiscount(e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null)
+              }
               placeholder="Kosongkan jika tidak dibatasi"
             />
 
@@ -364,7 +388,9 @@ export default function AdminVouchersPage() : React.JSX.Element {
               label="Batas Penggunaan Total"
               type="number"
               value={usage_limit || ''}
-              onChange={(e) => setUsageLimit(e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null)}
+              onChange={(e) =>
+                setUsageLimit(e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null)
+              }
               placeholder="Kosongkan jika tidak dibatasi"
             />
 
@@ -400,7 +426,10 @@ export default function AdminVouchersPage() : React.JSX.Element {
               checked={is_active}
               onChange={(e) => setIsActive(e.target.checked)}
             />
-            <label htmlFor="voucher_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
+            <label
+              htmlFor="voucher_is_active"
+              className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
+            >
               Voucher Aktif & Dapat Digunakan
             </label>
           </div>
@@ -414,10 +443,7 @@ export default function AdminVouchersPage() : React.JSX.Element {
             >
               Batal
             </Button>
-            <Button
-              type="submit"
-              isLoading={createMutation.isPending || updateMutation.isPending}
-            >
+            <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
               Simpan
             </Button>
           </div>

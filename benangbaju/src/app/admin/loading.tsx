@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Skeleton } from '@/shared/components/Skeleton'
 
-export default function AdminLoading() : React.JSX.Element {
+export default function AdminLoading(): React.JSX.Element {
   return (
     <div className="p-8 space-y-8 bg-neutral-50/50 min-h-full">
       {/* Header Skeleton */}

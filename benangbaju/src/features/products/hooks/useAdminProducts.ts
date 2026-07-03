@@ -1,4 +1,10 @@
-import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+  UseMutationResult,
+} from '@tanstack/react-query'
 import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
@@ -9,8 +15,10 @@ import {
   AdminProductListItem,
 } from '@/features/products/services'
 import type { ProductPayload } from '@/entities/product/model/product.types'
-import { updateProductActiveStatusAction, updateProductFeaturedStatusAction } from '@/features/products/actions'
-
+import {
+  updateProductActiveStatusAction,
+  updateProductFeaturedStatusAction,
+} from '@/features/products/actions'
 
 export interface UpdateProductPayload extends ProductPayload {
   productId: string
@@ -18,47 +26,92 @@ export interface UpdateProductPayload extends ProductPayload {
 
 import { ApiListResponse } from '@/lib/api-response'
 
-export function useAdminProducts(page = 1, limit = 20, search = '') : UseQueryResult<ApiListResponse<AdminProductListItem>, Error> {
+export function useAdminProducts(
+  page = 1,
+  limit = 20,
+  search = ''
+): UseQueryResult<ApiListResponse<AdminProductListItem>, Error> {
   return useQuery({
     queryKey: ['admin', 'products', page, limit, search],
-    queryFn: () => adminGetProducts(getAdminSupabase(), { page, limit, search })
+    queryFn: () => adminGetProducts(getAdminSupabase(), { page, limit, search }),
   })
 }
 
-export function useAdminCreateProduct() : UseMutationResult<{ id: string; }, Error, ProductPayload, unknown> {
+export function useAdminCreateProduct(): UseMutationResult<
+  { id: string },
+  Error,
+  ProductPayload,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ productData, variants, images, links, collectionIds }: ProductPayload) => {
-      const res = await adminCreateProduct(getAdminSupabase(), productData, variants, images, links, collectionIds)
+      const res = await adminCreateProduct(
+        getAdminSupabase(),
+        productData,
+        variants,
+        images,
+        links,
+        collectionIds
+      )
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat produk')
       return res.data!
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['products', 'dashboard'], ['products', 'homepage-data'])
-    }
+    },
   })
 }
 
-export function useAdminUpdateProduct() : UseMutationResult<{ id: string; }, Error, UpdateProductPayload, unknown> {
+export function useAdminUpdateProduct(): UseMutationResult<
+  { id: string },
+  Error,
+  UpdateProductPayload,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ productId, productData, variants, images, links, collectionIds }: UpdateProductPayload) => {
-      const res = await adminUpdateProduct(getAdminSupabase(), productId, productData, variants, images, links, collectionIds)
+    mutationFn: async ({
+      productId,
+      productData,
+      variants,
+      images,
+      links,
+      collectionIds,
+    }: UpdateProductPayload) => {
+      const res = await adminUpdateProduct(
+        getAdminSupabase(),
+        productId,
+        productData,
+        variants,
+        images,
+        links,
+        collectionIds
+      )
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui produk')
       return res.data!
     },
     onSuccess: (data, variables) => {
-      invalidateAdminQueries(queryClient, ['products', 'product-edit', 'dashboard'], ['products', 'homepage-data'])
+      invalidateAdminQueries(
+        queryClient,
+        ['products', 'product-edit', 'dashboard'],
+        ['products', 'homepage-data']
+      )
       if (variables?.productId) {
         queryClient.invalidateQueries({ queryKey: ['admin', 'product-edit', variables.productId] })
       }
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['product'] })
-    }
+    },
   })
 }
 
-export function useAdminDeleteProduct() : UseMutationResult<{ success: boolean; }, Error, string, unknown> {
+export function useAdminDeleteProduct(): UseMutationResult<
+  { success: boolean },
+  Error,
+  string,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (productId: string) => {
@@ -68,11 +121,11 @@ export function useAdminDeleteProduct() : UseMutationResult<{ success: boolean; 
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['products', 'dashboard'], ['products', 'homepage-data'])
-    }
+    },
   })
 }
 
-export function useAdminUpdateProductActiveStatus() : UseMutationResult<
+export function useAdminUpdateProductActiveStatus(): UseMutationResult<
   void,
   Error,
   { productId: string; isActive: boolean },
@@ -87,11 +140,11 @@ export function useAdminUpdateProductActiveStatus() : UseMutationResult<
       invalidateAdminQueries(queryClient, ['products'], ['products', 'homepage-data'])
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['product'] })
-    }
+    },
   })
 }
 
-export function useAdminUpdateProductFeaturedStatus() : UseMutationResult<
+export function useAdminUpdateProductFeaturedStatus(): UseMutationResult<
   void,
   Error,
   { productId: string; isFeatured: boolean },
@@ -106,6 +159,6 @@ export function useAdminUpdateProductFeaturedStatus() : UseMutationResult<
       invalidateAdminQueries(queryClient, ['products'], ['products', 'homepage-data'])
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['product'] })
-    }
+    },
   })
 }

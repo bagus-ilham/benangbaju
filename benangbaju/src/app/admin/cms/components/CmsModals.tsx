@@ -5,9 +5,19 @@ import { X } from 'lucide-react'
 import { Button, Input, Select, Switch, Textarea } from '@/shared/components'
 
 export function RedirectFormModal({
-  isOpen, onClose, onSubmit, editingRedirect,
-  fromPath, setFromPath, toPath, setToPath,
-  statusCode, setStatusCode, redirectActive, setRedirectActive, isPending
+  isOpen,
+  onClose,
+  onSubmit,
+  editingRedirect,
+  fromPath,
+  setFromPath,
+  toPath,
+  setToPath,
+  statusCode,
+  setStatusCode,
+  redirectActive,
+  setRedirectActive,
+  isPending,
 }: any) {
   if (!isOpen) return null
 
@@ -18,11 +28,15 @@ export function RedirectFormModal({
           <h3 className="font-serif text-lg font-bold text-neutral-900">
             {editingRedirect ? 'Ubah Aturan Pengalihan' : 'Tambah Aturan Pengalihan'}
           </h3>
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal">
+          <button
+            onClick={onClose}
+            className="text-neutral-400 hover:text-neutral-800"
+            aria-label="Tutup modal"
+          >
             <X size={18} />
           </button>
         </div>
-        
+
         <form onSubmit={onSubmit} className="space-y-4">
           <Input
             label="Jalur Asal (From Path)*"
@@ -52,7 +66,7 @@ export function RedirectFormModal({
               onChange={(val) => setStatusCode(Number(val))}
               options={[
                 { label: '301 (Permanent Redirect)', value: '301' },
-                { label: '302 (Temporary Redirect)', value: '302' }
+                { label: '302 (Temporary Redirect)', value: '302' },
               ]}
             />
           </div>
@@ -63,13 +77,18 @@ export function RedirectFormModal({
               checked={redirectActive}
               onChange={(e) => setRedirectActive(e.target.checked)}
             />
-            <label htmlFor="redirectActive" className="text-[10px] font-bold uppercase tracking-wider text-neutral-700 cursor-pointer">
+            <label
+              htmlFor="redirectActive"
+              className="text-[10px] font-bold uppercase tracking-wider text-neutral-700 cursor-pointer"
+            >
               Aktifkan pengalihan ini
             </label>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
-            <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Batal
+            </Button>
             <Button type="submit" variant="primary" isLoading={isPending}>
               Simpan
             </Button>
@@ -81,10 +100,23 @@ export function RedirectFormModal({
 }
 
 export function LandingPageFormModal({
-  isOpen, onClose, onSubmit, editingPage,
-  pageSlug, setPageSlug, pageTitle, setPageTitle,
-  metaTitle, setMetaTitle, metaDesc, setMetaDesc,
-  jsonContent, setJsonContent, pageActive, setPageActive, isPending
+  isOpen,
+  onClose,
+  onSubmit,
+  editingPage,
+  pageSlug,
+  setPageSlug,
+  pageTitle,
+  setPageTitle,
+  metaTitle,
+  setMetaTitle,
+  metaDesc,
+  setMetaDesc,
+  jsonContent,
+  setJsonContent,
+  pageActive,
+  setPageActive,
+  isPending,
 }: any) {
   if (!isOpen) return null
 
@@ -95,11 +127,15 @@ export function LandingPageFormModal({
           <h3 className="font-serif text-lg font-bold text-neutral-900">
             {editingPage ? 'Ubah Landing Page' : 'Buat Landing Page Baru'}
           </h3>
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-800" aria-label="Tutup modal">
+          <button
+            onClick={onClose}
+            className="text-neutral-400 hover:text-neutral-800"
+            aria-label="Tutup modal"
+          >
             <X size={18} />
           </button>
         </div>
-        
+
         <form onSubmit={onSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
           <div className="grid grid-cols-2 gap-4">
             <Input
@@ -153,13 +189,18 @@ export function LandingPageFormModal({
               checked={pageActive}
               onChange={(e) => setPageActive(e.target.checked)}
             />
-            <label htmlFor="pageActive" className="text-[10px] font-bold uppercase tracking-wider text-neutral-700 cursor-pointer">
+            <label
+              htmlFor="pageActive"
+              className="text-[10px] font-bold uppercase tracking-wider text-neutral-700 cursor-pointer"
+            >
               Aktifkan halaman ini
             </label>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4 border-t border-neutral-100">
-            <Button type="button" variant="outline" onClick={onClose}>Batal</Button>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Batal
+            </Button>
             <Button type="submit" variant="primary" isLoading={isPending}>
               Simpan
             </Button>

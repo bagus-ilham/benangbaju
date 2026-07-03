@@ -13,7 +13,7 @@ export type ApiErrorResponse<T = unknown> = {
   pagination?: ApiPaginationParams
 }
 
-export type ApiResponse<T = undefined> = 
+export type ApiResponse<T = undefined> =
   | {
       success: true
       data?: T
@@ -27,7 +27,7 @@ export type ApiPaginationParams = {
   total_pages: number
 }
 
-export type ApiListResponse<T> = 
+export type ApiListResponse<T> =
   | {
       success: true
       data: T[]
@@ -50,7 +50,11 @@ export function ok<T>(data?: T): ApiResponse<T> {
  * Can be constructed from a known ApiError, an Error, or raw strings.
  */
 export function fail<T = unknown>(error: ApiError | Error | unknown): ApiErrorResponse<T>
-export function fail<T = unknown>(code: string, message: string, details?: Record<string, string[]>): ApiErrorResponse<T>
+export function fail<T = unknown>(
+  code: string,
+  message: string,
+  details?: Record<string, string[]>
+): ApiErrorResponse<T>
 export function fail<T = unknown>(
   errOrCode: unknown,
   message?: string,
@@ -73,9 +77,9 @@ export function fail<T = unknown>(
       error: {
         code: errOrCode.code,
         message: errOrCode.message,
-        ...(errOrCode instanceof ValidationError && errOrCode.details 
-              ? { details: errOrCode.details } 
-              : {}),
+        ...(errOrCode instanceof ValidationError && errOrCode.details
+          ? { details: errOrCode.details }
+          : {}),
       },
     }
   }
@@ -121,7 +125,7 @@ export function paginated<T>(
       },
     }
   }
-  
+
   // Return unpaginated list
   return {
     success: true,

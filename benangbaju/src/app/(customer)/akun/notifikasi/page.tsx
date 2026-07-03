@@ -16,10 +16,10 @@ import { formatDate } from '@/lib/utils/format'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 
-export default function NotifikasiPage() : React.JSX.Element {
+export default function NotifikasiPage(): React.JSX.Element {
   const router = useRouter()
   const supabase = createBrowserClient()
-  const { user,  clearAuth, isAuthenticated, isLoading: authLoading } = useAuthStore()
+  const { user, clearAuth, isAuthenticated, isLoading: authLoading } = useAuthStore()
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -28,7 +28,9 @@ export default function NotifikasiPage() : React.JSX.Element {
     }
   }, [isAuthenticated, authLoading, router])
 
-  const { data: notifications, isLoading: notificationsLoading } = useUserNotifications(user?.id || '')
+  const { data: notifications, isLoading: notificationsLoading } = useUserNotifications(
+    user?.id || ''
+  )
   const markReadMutation = useMarkNotificationRead(user?.id || '')
   const markAllReadMutation = useMarkAllNotificationsRead(user?.id || '')
 
@@ -76,12 +78,13 @@ export default function NotifikasiPage() : React.JSX.Element {
         subtitle="Lihat pembaruan pesanan, promo, dan informasi akun Anda."
       />
       <PageContainer size="lg" className="py-10 page-content">
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Quick Navigation Menu */}
           <div className="space-y-2 md:col-span-1">
-            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400 mb-4">Navigasi Akun</h2>
-            
+            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400 mb-4">
+              Navigasi Akun
+            </h2>
+
             <Link href="/pesanan">
               <motion.div
                 whileHover={{ x: 4, borderColor: '#9a7b4f' }}
@@ -115,15 +118,17 @@ export default function NotifikasiPage() : React.JSX.Element {
               </motion.div>
             </Link>
 
-            <div
-              className="flex items-center space-x-3 px-4 py-3 bg-brand-black border border-brand-black border-l-4 border-l-brand-gold text-white font-heading font-semibold tracking-wide uppercase rounded-none text-xs"
-            >
+            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-black border border-brand-black border-l-4 border-l-brand-gold text-white font-heading font-semibold tracking-wide uppercase rounded-none text-xs">
               <Bell size={14} className="text-brand-gold-light" />
               <span>Notifikasi Saya</span>
             </div>
 
             <motion.button
-              whileHover={{ x: 4, borderColor: '#ef4444', backgroundColor: 'rgba(254,226,226,0.2)' }}
+              whileHover={{
+                x: 4,
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(254,226,226,0.2)',
+              }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSignOut}
               className="w-full flex items-center space-x-3 px-4 py-3 border border-red-100 text-red-500 hover:text-red-700 font-heading font-medium tracking-wide uppercase transition-all duration-200 rounded-none text-xs text-left bg-white"
@@ -194,7 +199,9 @@ export default function NotifikasiPage() : React.JSX.Element {
             ) : (
               <div className="text-center py-12 border border-dashed border-neutral-200">
                 <BellOff size={28} className="mx-auto text-neutral-300 mb-3" />
-                <p className="text-sm text-neutral-500 font-medium">Belum ada pemberitahuan baru.</p>
+                <p className="text-sm text-neutral-500 font-medium">
+                  Belum ada pemberitahuan baru.
+                </p>
               </div>
             )}
           </div>

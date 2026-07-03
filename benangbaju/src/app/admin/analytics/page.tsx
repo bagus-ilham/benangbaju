@@ -3,7 +3,17 @@
 import React, { useState } from 'react'
 import { useAdminAnalytics } from '@/shared/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from 'recharts'
 import { formatIDR } from '@/lib/utils/format'
 import { TrendingUp, ShoppingBag, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
 
@@ -14,7 +24,9 @@ export default function AdminAnalyticsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat data analitik...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat data analitik...
+        </p>
       </div>
     )
   }
@@ -68,7 +80,9 @@ export default function AdminAnalyticsPage() {
         <div className="bg-white border border-neutral-200 p-4 rounded-none">
           <div className="flex items-center text-neutral-500 mb-2">
             <ShoppingCart size={16} className="mr-2" />
-            <h3 className="text-[10px] font-bold uppercase tracking-wider">Keranjang Ditinggalkan</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-wider">
+              Keranjang Ditinggalkan
+            </h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">{analytics.abandonedCartsCount}</p>
           <p className="text-[10px] text-neutral-400 mt-1">Total Abandoned Carts (&gt;24j)</p>
@@ -89,23 +103,42 @@ export default function AdminAnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Grafik Penjualan */}
         <div className="bg-white border border-neutral-200 p-6 rounded-none">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">Tren Pendapatan</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">
+            Tren Pendapatan
+          </h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={analytics.revenueTrends}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
-                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#737373' }} dy={10} />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10, fill: '#737373' }} 
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: '#737373' }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: '#737373' }}
                   tickFormatter={(val) => `Rp${(val / 1000000).toFixed(0)}M`}
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value: any) => [formatIDR(Number(value) || 0), 'Pendapatan']}
-                  contentStyle={{ fontSize: '12px', border: '1px solid #e5e5e5', borderRadius: '0' }}
+                  contentStyle={{
+                    fontSize: '12px',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '0',
+                  }}
                 />
-                <Line type="monotone" dataKey="revenue" stroke="#171717" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#171717"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -113,7 +146,9 @@ export default function AdminAnalyticsPage() {
 
         {/* Top Products */}
         <div className="bg-white border border-neutral-200 p-6 rounded-none">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">Produk Terlaris</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">
+            Produk Terlaris
+          </h3>
           <div className="h-[300px] w-full">
             {analytics.topProducts.length === 0 ? (
               <div className="h-full flex items-center justify-center">
@@ -123,11 +158,27 @@ export default function AdminAnalyticsPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={analytics.topProducts} layout="vertical" margin={{ left: 50 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e5e5" />
-                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#737373' }} />
-                  <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#171717' }} width={100} />
-                  <Tooltip 
+                  <XAxis
+                    type="number"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#737373' }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#171717' }}
+                    width={100}
+                  />
+                  <Tooltip
                     cursor={{ fill: '#f5f5f5' }}
-                    contentStyle={{ fontSize: '12px', border: '1px solid #e5e5e5', borderRadius: '0' }}
+                    contentStyle={{
+                      fontSize: '12px',
+                      border: '1px solid #e5e5e5',
+                      borderRadius: '0',
+                    }}
                   />
                   <Bar dataKey="quantity" fill="#171717" radius={[0, 4, 4, 0]} barSize={20} />
                 </BarChart>
@@ -141,7 +192,9 @@ export default function AdminAnalyticsPage() {
       {analytics.voucherUsage.length > 0 && (
         <div className="bg-white border border-neutral-200 rounded-none overflow-hidden">
           <div className="p-4 border-b border-neutral-200">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900">Performa Voucher (Berdasarkan Pesanan Sukses)</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+              Performa Voucher (Berdasarkan Pesanan Sukses)
+            </h3>
           </div>
           <table className="w-full text-left text-sm">
             <thead className="bg-neutral-50 text-neutral-500 text-xs uppercase">

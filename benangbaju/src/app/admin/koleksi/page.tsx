@@ -18,10 +18,10 @@ import { CollectionListTable, CollectionFormModal } from './components'
 
 const supabase = createBrowserClient()
 
-export default function AdminCollectionPage() : React.JSX.Element {
+export default function AdminCollectionPage(): React.JSX.Element {
   const { data: collectionsRes, isLoading, isError, refetch } = useAdminCollections()
   const collections = collectionsRes?.data || []
-  
+
   const createMutation = useAdminCreateCollection()
   const updateMutation = useAdminUpdateCollection()
   const deleteMutation = useAdminDeleteCollection()
@@ -37,7 +37,7 @@ export default function AdminCollectionPage() : React.JSX.Element {
         .order('name')
       if (error) throw error
       return data || []
-    }
+    },
   })
 
   // Modal control states
@@ -163,7 +163,9 @@ export default function AdminCollectionPage() : React.JSX.Element {
       return
     }
 
-    const linkedProductIds = Object.keys(selectedProductIds).filter((pid) => selectedProductIds[pid])
+    const linkedProductIds = Object.keys(selectedProductIds).filter(
+      (pid) => selectedProductIds[pid]
+    )
 
     if (starts_at && ends_at && new Date(ends_at) <= new Date(starts_at)) {
       toast.error('Tanggal selesai tampil harus setelah tanggal mulai tampil')
@@ -210,7 +212,10 @@ export default function AdminCollectionPage() : React.JSX.Element {
         title="Koleksi Kurasi"
         subtitle="Kelola editorial tematik dan promosi musiman."
       >
-        <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
+        <Button
+          onClick={handleOpenAdd}
+          className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
+        >
           <Plus size={14} className="mr-1.5" /> Tambah Koleksi
         </Button>
       </AdminPageHeader>

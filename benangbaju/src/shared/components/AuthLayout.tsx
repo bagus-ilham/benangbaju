@@ -6,7 +6,7 @@ interface AuthLayoutProps {
   children: React.ReactNode
 }
 
-export function AuthLayout({ children }: AuthLayoutProps) : React.JSX.Element {
+export function AuthLayout({ children }: AuthLayoutProps): React.JSX.Element {
   return (
     <div className="min-h-screen flex">
       {/* Brand panel — visible on desktop */}
@@ -36,7 +36,8 @@ export function AuthLayout({ children }: AuthLayoutProps) : React.JSX.Element {
               Elegan dalam Setiap Benang
             </h1>
             <p className="text-sm text-neutral-400 font-sans leading-relaxed">
-              Temukan koleksi busana muslim wanita dengan desain minimalis, bahan berkualitas premium, dan kenyamanan sepanjang hari.
+              Temukan koleksi busana muslim wanita dengan desain minimalis, bahan berkualitas
+              premium, dan kenyamanan sepanjang hari.
             </p>
           </div>
 

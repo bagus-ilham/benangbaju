@@ -6,8 +6,22 @@ import { motion } from 'framer-motion'
 import { ProductListItem } from '@/entities/product/model/product.types'
 import { Category } from '@/features/marketing/services/categories'
 import { ProductCard } from '@/entities/product/ui/ProductCard'
-import { PageContainer, PageHero, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/shared/components'
-import { SlidersHorizontal, ChevronLeft, ChevronRight, X, PackageSearch, ChevronDown } from 'lucide-react'
+import {
+  PageContainer,
+  PageHero,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/shared/components'
+import {
+  SlidersHorizontal,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  PackageSearch,
+  ChevronDown,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTransition } from 'react'
 
@@ -36,8 +50,8 @@ export function CatalogClient({
   initialProducts,
   totalCount,
   categories,
-  filters
-}: CatalogClientProps) : React.JSX.Element {
+  filters,
+}: CatalogClientProps): React.JSX.Element {
   const router = useRouter()
 
   const { categorySlug, sortBy = 'newest', searchQuery, page = 1, limit = 12 } = filters
@@ -50,7 +64,7 @@ export function CatalogClient({
   const updateFilters = (newParams: Record<string, string | null>) => {
     // Generate new URL with search params
     const searchParams = new URLSearchParams()
-    
+
     // Add existing filters
     if (categorySlug) searchParams.set('kategori', categorySlug)
     if (sortBy && sortBy !== 'newest') searchParams.set('urutkan', sortBy)
@@ -65,7 +79,7 @@ export function CatalogClient({
         searchParams.set(key, val)
       }
     })
-    
+
     // Always reset page to 1 on filter changes unless we are explicitly changing the page
     if (!newParams.halaman && searchParams.has('halaman')) {
       searchParams.delete('halaman')
@@ -102,10 +116,16 @@ export function CatalogClient({
         title="Semua Produk"
         subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
       />
-      <PageContainer className={cn("py-10 page-content transition-opacity duration-300", isPending && "opacity-50 pointer-events-none")}>
+      <PageContainer
+        className={cn(
+          'py-10 page-content transition-opacity duration-300',
+          isPending && 'opacity-50 pointer-events-none'
+        )}
+      >
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
-            Hasil pencarian untuk: <strong className="text-brand-black">"{searchQuery}"</strong> ({totalCount} produk)
+            Hasil pencarian untuk: <strong className="text-brand-black">"{searchQuery}"</strong> (
+            {totalCount} produk)
           </p>
         )}
 
@@ -118,7 +138,7 @@ export function CatalogClient({
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filter</span>
           </button>
-          
+
           <div className="hidden md:block" />
 
           {/* Sort Selector */}
@@ -129,7 +149,9 @@ export function CatalogClient({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center space-x-1 bg-transparent text-[10px] font-heading font-bold uppercase tracking-wider text-brand-black hover:text-brand-gold transition-colors p-1">
-                  <span>{SORT_OPTIONS.find(opt => opt.value === sortBy)?.label || 'Urutkan'}</span>
+                  <span>
+                    {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || 'Urutkan'}
+                  </span>
                   <ChevronDown className="w-3.5 h-3.5" />
                 </button>
               </DropdownMenuTrigger>
@@ -138,7 +160,9 @@ export function CatalogClient({
                   <DropdownMenuItem
                     key={opt.value}
                     onClick={() => handleSortSelect(opt.value)}
-                    className={cn(sortBy === opt.value && "font-bold text-brand-black bg-neutral-50")}
+                    className={cn(
+                      sortBy === opt.value && 'font-bold text-brand-black bg-neutral-50'
+                    )}
                   >
                     {opt.label}
                   </DropdownMenuItem>
@@ -164,7 +188,7 @@ export function CatalogClient({
                 </button>
               )}
             </div>
-            
+
             <ul className="space-y-2 border-b border-neutral-100 pb-6">
               <li>
                 <button
@@ -183,7 +207,9 @@ export function CatalogClient({
                     onClick={() => handleCategorySelect(cat.slug)}
                     className={cn(
                       'text-xs font-sans tracking-wide hover:text-brand-black text-left w-full py-1',
-                      categorySlug === cat.slug ? 'text-brand-black font-semibold' : 'text-neutral-500'
+                      categorySlug === cat.slug
+                        ? 'text-brand-black font-semibold'
+                        : 'text-neutral-500'
                     )}
                   >
                     {cat.name}
@@ -247,7 +273,9 @@ export function CatalogClient({
                         }}
                         className={cn(
                           'text-sm font-sans tracking-wide text-left w-full',
-                          categorySlug === cat.slug ? 'text-brand-black font-semibold' : 'text-neutral-500'
+                          categorySlug === cat.slug
+                            ? 'text-brand-black font-semibold'
+                            : 'text-neutral-500'
                         )}
                       >
                         {cat.name}
@@ -287,7 +315,8 @@ export function CatalogClient({
                   Produk Tidak Ditemukan
                 </h3>
                 <p className="text-neutral-500 text-sm max-w-sm">
-                  Maaf, tidak ada produk yang sesuai dengan kriteria pencarian Anda. Silakan coba filter lain.
+                  Maaf, tidak ada produk yang sesuai dengan kriteria pencarian Anda. Silakan coba
+                  filter lain.
                 </p>
                 {(categorySlug || searchQuery) && (
                   <button
@@ -324,7 +353,7 @@ export function CatalogClient({
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                
+
                 <span className="text-xs font-heading font-medium tracking-wide">
                   Halaman {page} dari {totalPages}
                 </span>
@@ -341,7 +370,6 @@ export function CatalogClient({
             )}
           </div>
         </div>
-
       </PageContainer>
     </div>
   )

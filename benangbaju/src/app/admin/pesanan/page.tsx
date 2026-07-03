@@ -15,7 +15,7 @@ import {
   AdminOrdersTable,
   AdminReturnsTable,
   QuickResiModal,
-  ReturnReviewModal
+  ReturnReviewModal,
 } from './components'
 
 const TABS = [
@@ -28,21 +28,26 @@ const TABS = [
   { id: 'returns', label: 'Pengajuan Retur' },
 ]
 
-export default function AdminOrdersPage() : React.JSX.Element {
+export default function AdminOrdersPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const limit = 10
 
   // Queries
-  const { data: ordersData, isLoading: ordersLoading, isError: ordersError, refetch: refetchOrders } = useAdminOrders(
-    activeTab === 'returns' ? 'all' : activeTab,
-    search,
-    page,
-    limit
-  )
-  const { data: returnsDataResponse, isLoading: returnsLoading, isError: returnsError, refetch: refetchReturns } = useAdminReturnRequests()
-  const returnsData = returnsDataResponse?.success ? (returnsDataResponse.data || []) : []
+  const {
+    data: ordersData,
+    isLoading: ordersLoading,
+    isError: ordersError,
+    refetch: refetchOrders,
+  } = useAdminOrders(activeTab === 'returns' ? 'all' : activeTab, search, page, limit)
+  const {
+    data: returnsDataResponse,
+    isLoading: returnsLoading,
+    isError: returnsError,
+    refetch: refetchReturns,
+  } = useAdminReturnRequests()
+  const returnsData = returnsDataResponse?.success ? returnsDataResponse.data || [] : []
 
   const updateReturnMutation = useAdminUpdateReturnRequest()
   const updateOrderStatusMutation = useAdminUpdateOrderStatus()
@@ -74,7 +79,7 @@ export default function AdminOrdersPage() : React.JSX.Element {
       await updateOrderStatusMutation.mutateAsync({
         orderId: quickResiOrder.id,
         status: 'shipped',
-        trackingNumber: quickResiNumber.trim()
+        trackingNumber: quickResiNumber.trim(),
       })
       toast.success('Resi diinput dan pesanan dikirim!', { id: 'quick-resi' })
       setQuickResiOrder(null)
@@ -92,14 +97,14 @@ export default function AdminOrdersPage() : React.JSX.Element {
 
   const handleUpdateReturnStatus = async (status: 'approved' | 'rejected' | 'completed') => {
     if (!selectedReturn) return
-    
+
     toast.loading('Memperbarui status retur...', { id: 'update-return' })
     try {
       await updateReturnMutation.mutateAsync({
         requestId: selectedReturn.id,
         status,
         adminNotes: adminNotes.trim() || null,
-        refundAmount: Number(refundAmount) || 0
+        refundAmount: Number(refundAmount) || 0,
       })
       toast.success('Status pengajuan retur berhasil diperbarui!', { id: 'update-return' })
       setSelectedReturn(null)
@@ -110,8 +115,8 @@ export default function AdminOrdersPage() : React.JSX.Element {
     }
   }
 
-  const orders = ordersData?.success ? (ordersData.data || []) : []
-  const totalCount = ordersData?.success ? (ordersData.pagination?.total_count || 0) : 0
+  const orders = ordersData?.success ? ordersData.data || [] : []
+  const totalCount = ordersData?.success ? ordersData.pagination?.total_count || 0 : 0
   const totalPages = Math.ceil(totalCount / limit)
 
   return (
@@ -137,9 +142,12 @@ export default function AdminOrdersPage() : React.JSX.Element {
             }`}
           >
             {tab.label}
-              {tab.id === 'returns' && returnsData.length > 0 && (
+            {tab.id === 'returns' && returnsData.length > 0 && (
               <span className="ml-1.5 bg-red-500 text-white font-bold px-1.5 py-0.5 text-[9px] rounded-full">
-                {returnsData.filter((r: AdminReturnRequestListItem) => r.status === 'pending').length}
+                {
+                  returnsData.filter((r: AdminReturnRequestListItem) => r.status === 'pending')
+                    .length
+                }
               </span>
             )}
           </button>
@@ -189,7 +197,9 @@ export default function AdminOrdersPage() : React.JSX.Element {
         {/* Pagination (Skip for returns) */}
         {activeTab !== 'returns' && totalPages > 1 && (
           <div className="flex items-center justify-between border-t border-neutral-150 px-5 py-4 text-xs font-semibold text-neutral-500">
-            <span>Menampilkan halaman {page} dari {totalPages}</span>
+            <span>
+              Menampilkan halaman {page} dari {totalPages}
+            </span>
             <div className="flex space-x-1">
               <Button
                 variant="outline"

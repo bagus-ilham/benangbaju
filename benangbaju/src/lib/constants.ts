@@ -10,7 +10,7 @@ export const ORDER_STATUS = {
   REFUNDED: 'refunded',
 } as const
 
-export type OrderStatus = typeof ORDER_STATUS[keyof typeof ORDER_STATUS]
+export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS]
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending_payment: 'Menunggu Pembayaran',
@@ -30,7 +30,7 @@ export const PAYMENT_STATUS = {
   REFUNDED: 'refunded',
 } as const
 
-export type PaymentStatus = typeof PAYMENT_STATUS[keyof typeof PAYMENT_STATUS]
+export type PaymentStatus = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
 
 export const SHIPPING_STATUS = {
   PENDING: 'pending',
@@ -39,14 +39,14 @@ export const SHIPPING_STATUS = {
   DELIVERED: 'delivered',
 } as const
 
-export type ShippingStatus = typeof SHIPPING_STATUS[keyof typeof SHIPPING_STATUS]
+export type ShippingStatus = (typeof SHIPPING_STATUS)[keyof typeof SHIPPING_STATUS]
 
 export const VOUCHER_DISCOUNT_TYPE = {
   PERCENTAGE: 'percentage',
   FIXED: 'fixed',
 } as const
 
-export type VoucherDiscountType = typeof VOUCHER_DISCOUNT_TYPE[keyof typeof VOUCHER_DISCOUNT_TYPE]
+export type VoucherDiscountType = (typeof VOUCHER_DISCOUNT_TYPE)[keyof typeof VOUCHER_DISCOUNT_TYPE]
 
 export const SOCIAL_LINKS = {
   instagram: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM || 'https://instagram.com/benangbaju',

@@ -27,12 +27,14 @@ export function BannerListTable({
   onToggleActive,
   onEdit,
   onDuplicate,
-  onDelete
+  onDelete,
 }: BannerListTableProps) {
   if (isLoading) {
     return (
       <div className="py-24 text-center">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat banner...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat banner...
+        </p>
       </div>
     )
   }
@@ -40,8 +42,14 @@ export function BannerListTable({
   if (isError) {
     return (
       <div className="py-24 text-center">
-        <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat banner dari server</p>
-        <Button onClick={onRefetch} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+        <p className="text-red-500 text-xs font-semibold uppercase">
+          Gagal memuat banner dari server
+        </p>
+        <Button
+          onClick={onRefetch}
+          variant="outline"
+          className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+        >
           Coba Lagi
         </Button>
       </div>
@@ -74,7 +82,6 @@ export function BannerListTable({
             <tr key={b.id} className="hover:bg-neutral-50/20 transition duration-150">
               <td className="py-4 px-5 flex items-center space-x-3.5">
                 <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none">
-                   
                   <Image
                     src={b.image_url || ''}
                     alt={b.title || ''}
@@ -108,7 +115,9 @@ export function BannerListTable({
                 {b.starts_at ? (
                   <>
                     <p>{new Date(b.starts_at).toLocaleDateString()}</p>
-                    <p className="text-[10px] text-neutral-400">s.d {b.ends_at ? new Date(b.ends_at).toLocaleDateString() : 'Selamanya'}</p>
+                    <p className="text-[10px] text-neutral-400">
+                      s.d {b.ends_at ? new Date(b.ends_at).toLocaleDateString() : 'Selamanya'}
+                    </p>
                   </>
                 ) : (
                   'Selamanya'

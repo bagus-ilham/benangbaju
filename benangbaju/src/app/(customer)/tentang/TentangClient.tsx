@@ -12,7 +12,7 @@ const fadeUp = {
   transition: { duration: 0.6, ease: EASE_PREMIUM },
 }
 
-export function TentangClient() : React.JSX.Element {
+export function TentangClient(): React.JSX.Element {
   return (
     <div className="min-h-screen bg-white font-sans">
       <PageHero
@@ -23,15 +23,21 @@ export function TentangClient() : React.JSX.Element {
 
       <PageContainer size="md" className="py-12 md:py-16 page-content">
         <div className="max-w-3xl mx-auto space-y-12">
-          <motion.div {...fadeUp} className="space-y-6 text-sm leading-relaxed text-neutral-600 font-medium">
+          <motion.div
+            {...fadeUp}
+            className="space-y-6 text-sm leading-relaxed text-neutral-600 font-medium"
+          >
             <p>
-              Didirikan dengan visi untuk menghadirkan alternatif pakaian muslim yang bersahaja namun tetap berkarakter,{' '}
-              <span className="font-semibold text-brand-black">Benangbaju</span> lahir dari perpaduan kecintaan terhadap tekstil berkualitas
-              dan kebutuhan akan fashion yang praktis serta elegan untuk wanita modern Indonesia.
+              Didirikan dengan visi untuk menghadirkan alternatif pakaian muslim yang bersahaja
+              namun tetap berkarakter,{' '}
+              <span className="font-semibold text-brand-black">Benangbaju</span> lahir dari
+              perpaduan kecintaan terhadap tekstil berkualitas dan kebutuhan akan fashion yang
+              praktis serta elegan untuk wanita modern Indonesia.
             </p>
             <p>
-              Kami percaya bahwa kesederhanaan adalah bentuk kemewahan yang abadi. Oleh karena itu, setiap koleksi kami dirancang
-              dengan pendekatan desain minimalis modern, garis potongan yang bersih, serta palet warna bumi yang netral dan menenangkan.
+              Kami percaya bahwa kesederhanaan adalah bentuk kemewahan yang abadi. Oleh karena itu,
+              setiap koleksi kami dirancang dengan pendekatan desain minimalis modern, garis
+              potongan yang bersih, serta palet warna bumi yang netral dan menenangkan.
             </p>
           </motion.div>
 
@@ -48,8 +54,9 @@ export function TentangClient() : React.JSX.Element {
                 Bahan Premium Pilihan
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">
-                Kami menyeleksi bahan katun, linen, dan serat alam terbaik secara ketat. Pakaian kami didesain agar tetap adem,
-                menyerap keringat, dan nyaman dipakai seharian di iklim tropis Indonesia.
+                Kami menyeleksi bahan katun, linen, dan serat alam terbaik secara ketat. Pakaian
+                kami didesain agar tetap adem, menyerap keringat, dan nyaman dipakai seharian di
+                iklim tropis Indonesia.
               </p>
             </motion.div>
 
@@ -65,8 +72,9 @@ export function TentangClient() : React.JSX.Element {
                 Jahitan Standar Butik
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">
-                Setiap pakaian dijahit secara presisi oleh pengrajin lokal berpengalaman. Kami memastikan keliman rapi,
-                pola presisi, serta ketahanan jahitan yang kuat untuk investasi jangka panjang lemari pakaian Anda.
+                Setiap pakaian dijahit secara presisi oleh pengrajin lokal berpengalaman. Kami
+                memastikan keliman rapi, pola presisi, serta ketahanan jahitan yang kuat untuk
+                investasi jangka panjang lemari pakaian Anda.
               </p>
             </motion.div>
           </div>

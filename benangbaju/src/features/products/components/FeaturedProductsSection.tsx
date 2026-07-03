@@ -12,7 +12,9 @@ interface FeaturedProductsSectionProps {
   products: ProductListItem[]
 }
 
-export function FeaturedProductsSection({ products }: FeaturedProductsSectionProps) : React.JSX.Element | null {
+export function FeaturedProductsSection({
+  products,
+}: FeaturedProductsSectionProps): React.JSX.Element | null {
   if (products.length === 0) return null
 
   return (

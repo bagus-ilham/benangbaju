@@ -12,7 +12,7 @@ interface FlashSaleSectionProps {
   flashSale: FlashSaleDetail | null
 }
 
-export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.JSX.Element | null {
+export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JSX.Element | null {
   const [timeLeft, setTimeLeft] = useState<{
     hours: number
     minutes: number
@@ -25,22 +25,29 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
       const pv = item.product_variants
       const prod = pv?.products
 
-      const images = prod?.product_images?.map((img: { url: string; alt_text?: string | null; is_primary?: boolean }, idx: number) => ({
-        id: String(idx),
-        url: img.url,
-        alt_text: img.alt_text || prod.name,
-        sort_order: idx,
-        is_primary: img.is_primary ?? false,
-      })) || []
+      const images =
+        prod?.product_images?.map(
+          (img: { url: string; alt_text?: string | null; is_primary?: boolean }, idx: number) => ({
+            id: String(idx),
+            url: img.url,
+            alt_text: img.alt_text || prod.name,
+            sort_order: idx,
+            is_primary: img.is_primary ?? false,
+          })
+        ) || []
 
       const price = Number(item.sale_price)
       const comparePrice = Number(item.original_price)
-      const discountPercent = comparePrice && comparePrice > price
-        ? Math.round(((comparePrice - price) / comparePrice) * 100)
-        : null
+      const discountPercent =
+        comparePrice && comparePrice > price
+          ? Math.round(((comparePrice - price) / comparePrice) * 100)
+          : null
 
-      const primaryImage = images.find(img => img.is_primary)?.url || images[0]?.url || null
-      const hoverImage = images.find(img => !img.is_primary && img.sort_order > 0)?.url || images[1]?.url || primaryImage
+      const primaryImage = images.find((img) => img.is_primary)?.url || images[0]?.url || null
+      const hoverImage =
+        images.find((img) => !img.is_primary && img.sort_order > 0)?.url ||
+        images[1]?.url ||
+        primaryImage
 
       const variantList = [
         {
@@ -153,7 +160,11 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps) : React.J
 
         <div className="flex justify-center mt-12">
           <Link href="/flash-sale">
-            <Button variant="secondary" size="md" className="bg-transparent text-white border-white/30 hover:bg-white hover:text-brand-black">
+            <Button
+              variant="secondary"
+              size="md"
+              className="bg-transparent text-white border-white/30 hover:bg-white hover:text-brand-black"
+            >
               Lihat Semua Flash Sale
             </Button>
           </Link>

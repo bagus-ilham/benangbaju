@@ -1,38 +1,49 @@
 'use client'
- 
+
 import React, { useState } from 'react'
 import {
   useAdminProducts,
   useAdminDeleteProduct,
   useAdminUpdateProductActiveStatus,
-  useAdminUpdateProductFeaturedStatus
+  useAdminUpdateProductFeaturedStatus,
 } from '@/shared/hooks/useAdmin'
 import type { AdminProductListItem } from '@/features/products/services'
-import { 
-  Button, 
-  AdminPageHeader, 
-  DataTable, 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent, 
-  DropdownMenuItem 
+import {
+  Button,
+  AdminPageHeader,
+  DataTable,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from '@/shared/components'
-import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star, Copy, MoreHorizontal } from 'lucide-react'
+import {
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  Star,
+  Copy,
+  MoreHorizontal,
+} from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import type { Column } from '@/shared/components/DataTable'
- 
-export default function AdminProductListPage() : React.JSX.Element {
+
+export default function AdminProductListPage(): React.JSX.Element {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const limit = 10
- 
+
   const { data: dataRes, isLoading, isError, refetch } = useAdminProducts(page, limit, search)
   const data = dataRes?.data
   const deleteMutation = useAdminDeleteProduct()
   const updateActiveStatusMutation = useAdminUpdateProductActiveStatus()
   const updateFeaturedStatusMutation = useAdminUpdateProductFeaturedStatus()
- 
+
   const handleToggleActive = async (productId: string, currentStatus: boolean) => {
     try {
       await updateActiveStatusMutation.mutateAsync({ productId, isActive: !currentStatus })
@@ -42,7 +53,7 @@ export default function AdminProductListPage() : React.JSX.Element {
       toast.error('Gagal memperbarui status')
     }
   }
- 
+
   const handleToggleFeatured = async (productId: string, currentStatus: boolean) => {
     try {
       await updateFeaturedStatusMutation.mutateAsync({ productId, isFeatured: !currentStatus })
@@ -52,7 +63,7 @@ export default function AdminProductListPage() : React.JSX.Element {
       toast.error('Gagal memperbarui status unggulan')
     }
   }
- 
+
   const handleDeleteProduct = async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menonaktifkan produk ini?')) {
       try {
@@ -82,12 +93,12 @@ export default function AdminProductListPage() : React.JSX.Element {
             Slug: {p.slug}
           </span>
         </div>
-      )
+      ),
     },
     {
       key: 'categories',
       header: 'Kategori',
-      render: (p) => p.categories?.name || '-'
+      render: (p) => p.categories?.name || '-',
     },
     {
       key: 'stock',
@@ -96,11 +107,15 @@ export default function AdminProductListPage() : React.JSX.Element {
       render: (p) => {
         const totalStock = p.product_variants?.reduce((sum: number, v) => sum + v.stock, 0) || 0
         return (
-          <span className={totalStock === 0 ? 'text-red-500 bg-red-50 px-2 py-0.5 font-bold' : 'font-bold'}>
+          <span
+            className={
+              totalStock === 0 ? 'text-red-500 bg-red-50 px-2 py-0.5 font-bold' : 'font-bold'
+            }
+          >
             {totalStock}
           </span>
         )
-      }
+      },
     },
     {
       key: 'featured',
@@ -115,7 +130,7 @@ export default function AdminProductListPage() : React.JSX.Element {
         >
           <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
         </button>
-      )
+      ),
     },
     {
       key: 'status',
@@ -132,7 +147,7 @@ export default function AdminProductListPage() : React.JSX.Element {
         >
           {p.is_active ? 'Aktif' : 'Nonaktif'}
         </button>
-      )
+      ),
     },
     {
       key: 'actions',
@@ -142,7 +157,11 @@ export default function AdminProductListPage() : React.JSX.Element {
         <div className="flex justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900" title="Opsi">
+              <Button
+                variant="outline"
+                className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                title="Opsi"
+              >
                 <MoreHorizontal size={14} />
               </Button>
             </DropdownMenuTrigger>
@@ -168,8 +187,8 @@ export default function AdminProductListPage() : React.JSX.Element {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   return (
@@ -207,18 +226,28 @@ export default function AdminProductListPage() : React.JSX.Element {
       <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
         {isError ? (
           <div className="py-24 text-center">
-            <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat produk dari server</p>
-            <Button onClick={() => refetch()} variant="outline" className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block">
+            <p className="text-red-500 text-xs font-semibold uppercase">
+              Gagal memuat produk dari server
+            </p>
+            <Button
+              onClick={() => refetch()}
+              variant="outline"
+              className="mt-4 text-xs font-bold uppercase border-neutral-200 py-2 px-3 mx-auto block"
+            >
               Coba Lagi
             </Button>
           </div>
         ) : (
-          <DataTable 
+          <DataTable
             columns={columns}
             data={products}
             isLoading={isLoading}
             emptyTitle="Tidak ada produk ditemukan"
-            emptyDescription={search ? "Coba gunakan kata kunci pencarian yang berbeda." : "Katalog produk masih kosong."}
+            emptyDescription={
+              search
+                ? 'Coba gunakan kata kunci pencarian yang berbeda.'
+                : 'Katalog produk masih kosong.'
+            }
             className="border-0"
           />
         )}
@@ -226,7 +255,9 @@ export default function AdminProductListPage() : React.JSX.Element {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between border-t border-neutral-150 px-5 py-4 text-xs font-semibold text-neutral-500">
-            <span>Menampilkan halaman {page} dari {totalPages}</span>
+            <span>
+              Menampilkan halaman {page} dari {totalPages}
+            </span>
             <div className="flex space-x-1">
               <Button
                 variant="outline"

@@ -16,7 +16,7 @@ export function AdminRedirectsTable({
   redirects,
   isLoading,
   onEdit,
-  onDelete
+  onDelete,
 }: AdminRedirectsTableProps) {
   if (isLoading) {
     return <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
@@ -59,19 +59,27 @@ export function AdminRedirectsTable({
                 </span>
               </td>
               <td className="py-4 px-6 text-center">
-                <span className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
-                  rule.is_active
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                }`}>
+                <span
+                  className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
+                    rule.is_active
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}
+                >
                   {rule.is_active ? 'Aktif' : 'Nonaktif'}
                 </span>
               </td>
               <td className="py-4 px-6 text-right space-x-1.5">
-                <button onClick={() => onEdit(rule)} className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200">
+                <button
+                  onClick={() => onEdit(rule)}
+                  className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200"
+                >
                   <Edit size={12} />
                 </button>
-                <button onClick={() => onDelete(rule.id, rule.from_path)} className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50">
+                <button
+                  onClick={() => onDelete(rule.id, rule.from_path)}
+                  className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50"
+                >
                   <Trash2 size={12} />
                 </button>
               </td>

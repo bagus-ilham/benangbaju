@@ -32,7 +32,7 @@ export function CheckoutAddressForm({
   onSelectCourier,
   shippingLoading,
   notes,
-  onNotesChange
+  onNotesChange,
 }: CheckoutAddressFormProps): React.JSX.Element {
   return (
     <div className="space-y-8">
@@ -58,27 +58,36 @@ export function CheckoutAddressForm({
           <div className="space-y-3">
             {/* Selected Address Display */}
             {selectedAddress ? (
-              <motion.div 
+              <motion.div
                 layoutId="selectedAddressBox"
                 className="border border-brand-gold bg-brand-gold-muted/10 p-4 relative rounded-none shadow-sm"
               >
                 <p className="font-heading font-semibold text-xs text-brand-gold uppercase tracking-wider">
                   {selectedAddress.label} (Pilihan)
                 </p>
-                <p className="font-sans font-medium text-neutral-700 mt-1.5">{selectedAddress.recipient_name} | {selectedAddress.phone}</p>
-                <p className="text-neutral-500 text-xs mt-1 leading-relaxed">{selectedAddress.full_address}</p>
+                <p className="font-sans font-medium text-neutral-700 mt-1.5">
+                  {selectedAddress.recipient_name} | {selectedAddress.phone}
+                </p>
+                <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
+                  {selectedAddress.full_address}
+                </p>
                 <p className="text-[10px] text-neutral-400 mt-1 font-sans">
-                  {selectedAddress.district_name}, {selectedAddress.city_name}, {selectedAddress.province_name} {selectedAddress.postal_code}
+                  {selectedAddress.district_name}, {selectedAddress.city_name},{' '}
+                  {selectedAddress.province_name} {selectedAddress.postal_code}
                 </p>
               </motion.div>
             ) : (
-              <p className="text-sm text-red-500 font-medium">Harap pilih atau tambahkan alamat baru</p>
+              <p className="text-sm text-red-500 font-medium">
+                Harap pilih atau tambahkan alamat baru
+              </p>
             )}
 
             {/* Other Addresses */}
             {addresses.length > 1 && (
               <div className="border border-neutral-200 p-4 space-y-3 bg-white">
-                <p className="text-[10px] text-neutral-400 font-heading font-medium uppercase tracking-widest">Pilih Alamat Lain:</p>
+                <p className="text-[10px] text-neutral-400 font-heading font-medium uppercase tracking-widest">
+                  Pilih Alamat Lain:
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
                   {addresses
                     .filter((a) => a.id !== selectedAddress?.id)
@@ -98,9 +107,15 @@ export function CheckoutAddressForm({
                         }}
                         className="p-3 border border-neutral-200 text-xs cursor-pointer bg-white transition-all duration-200"
                       >
-                        <p className="font-heading font-medium text-[10px] text-brand-black uppercase tracking-wider">{address.label}</p>
-                        <p className="font-sans text-neutral-700 mt-1 font-medium">{address.recipient_name}</p>
-                        <p className="text-neutral-500 truncate mt-0.5 text-[11px]">{address.full_address}</p>
+                        <p className="font-heading font-medium text-[10px] text-brand-black uppercase tracking-wider">
+                          {address.label}
+                        </p>
+                        <p className="font-sans text-neutral-700 mt-1 font-medium">
+                          {address.recipient_name}
+                        </p>
+                        <p className="text-neutral-500 truncate mt-0.5 text-[11px]">
+                          {address.full_address}
+                        </p>
                       </motion.div>
                     ))}
                 </div>
@@ -128,7 +143,9 @@ export function CheckoutAddressForm({
         </h2>
 
         {!selectedAddress ? (
-          <p className="text-xs text-neutral-400 italic">Harap pilih alamat terlebih dahulu untuk menampilkan opsi pengiriman.</p>
+          <p className="text-xs text-neutral-400 italic">
+            Harap pilih alamat terlebih dahulu untuk menampilkan opsi pengiriman.
+          </p>
         ) : shippingLoading ? (
           <div className="space-y-2">
             <div className="h-12 bg-neutral-100 animate-pulse rounded-none" />
@@ -138,7 +155,11 @@ export function CheckoutAddressForm({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {shippingOptions.map((option) => (
               <motion.div
-                whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderColor: '#171717' }}
+                whileHover={{
+                  y: -2,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                  borderColor: '#171717',
+                }}
                 whileTap={{ scale: 0.99 }}
                 key={option.id}
                 role="button"
@@ -176,7 +197,9 @@ export function CheckoutAddressForm({
             ))}
           </div>
         ) : (
-          <p className="text-xs text-red-500 font-semibold">Pengiriman tidak tersedia untuk zona alamat Anda. Harap hubungi Admin.</p>
+          <p className="text-xs text-red-500 font-semibold">
+            Pengiriman tidak tersedia untuk zona alamat Anda. Harap hubungi Admin.
+          </p>
         )}
       </div>
 

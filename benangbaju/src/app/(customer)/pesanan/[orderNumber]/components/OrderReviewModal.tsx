@@ -35,23 +35,23 @@ export function OrderReviewModal({
         toast.error('Maksimal hanya 2 foto yang diperbolehkan')
         return
       }
-      
-      const validFiles = selected.filter(f => f.type.startsWith('image/'))
+
+      const validFiles = selected.filter((f) => f.type.startsWith('image/'))
       if (validFiles.length !== selected.length) {
         toast.error('Hanya file gambar yang diperbolehkan')
       }
-      
-      const smallFiles = validFiles.filter(f => f.size <= 2 * 1024 * 1024)
+
+      const smallFiles = validFiles.filter((f) => f.size <= 2 * 1024 * 1024)
       if (smallFiles.length !== validFiles.length) {
         toast.error('Ukuran maksimal per foto adalah 2MB')
       }
 
-      setReviewFiles(prev => [...prev, ...smallFiles].slice(0, 2))
+      setReviewFiles((prev) => [...prev, ...smallFiles].slice(0, 2))
     }
   }
 
   const removeFile = (idx: number) => {
-    setReviewFiles(prev => prev.filter((_, i) => i !== idx))
+    setReviewFiles((prev) => prev.filter((_, i) => i !== idx))
   }
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -84,7 +84,7 @@ export function OrderReviewModal({
 
       setIsUploading(true)
       const mediaUrls: string[] = []
-      
+
       try {
         for (const file of reviewFiles) {
           const url = await uploadImage(file, 'products')
@@ -134,12 +134,16 @@ export function OrderReviewModal({
       {selectedReviewItem && (
         <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-brand-gold font-semibold mb-1">Nama Produk</p>
+            <p className="text-[10px] uppercase tracking-widest text-brand-gold font-semibold mb-1">
+              Nama Produk
+            </p>
             <h4 className="text-sm font-semibold text-neutral-800 font-heading">
               {selectedReviewItem.product_name}
             </h4>
             {selectedReviewItem.variant_name && (
-              <p className="text-xs text-neutral-500 mt-0.5">Varian: {selectedReviewItem.variant_name}</p>
+              <p className="text-xs text-neutral-500 mt-0.5">
+                Varian: {selectedReviewItem.variant_name}
+              </p>
             )}
           </div>
 
@@ -155,7 +159,9 @@ export function OrderReviewModal({
                   onClick={() => setReviewRating(star)}
                   className="focus:outline-none transition-transform hover:scale-110"
                 >
-                  <span className={`text-2xl ${star <= reviewRating ? 'text-amber-400' : 'text-neutral-200'}`}>
+                  <span
+                    className={`text-2xl ${star <= reviewRating ? 'text-amber-400' : 'text-neutral-200'}`}
+                  >
                     ★
                   </span>
                 </button>
@@ -190,7 +196,10 @@ export function OrderReviewModal({
               checked={reviewAnonymous}
               onChange={(e) => setReviewAnonymous(e.target.checked)}
             />
-            <label htmlFor="is-anonymous" className="text-xs text-neutral-600 select-none cursor-pointer">
+            <label
+              htmlFor="is-anonymous"
+              className="text-xs text-neutral-600 select-none cursor-pointer"
+            >
               Kirim sebagai Anonim (Sembunyikan nama Anda)
             </label>
           </div>
@@ -199,13 +208,13 @@ export function OrderReviewModal({
             <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold">
               Lampirkan Foto (Maks 2 Foto, 2MB/Foto)
             </label>
-            
+
             <div className="flex flex-wrap gap-3">
               {reviewFiles.map((file, idx) => (
                 <div key={idx} className="relative w-20 h-20 border border-neutral-200">
-                  <img 
-                    src={URL.createObjectURL(file)} 
-                    alt={`Preview ${idx}`} 
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Preview ${idx}`}
                     className="w-full h-full object-cover"
                   />
                   <button
@@ -217,7 +226,7 @@ export function OrderReviewModal({
                   </button>
                 </div>
               ))}
-              
+
               {reviewFiles.length < 2 && (
                 <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-gold hover:border-brand-gold cursor-pointer transition-colors">
                   <ImageIcon size={20} className="mb-1" />

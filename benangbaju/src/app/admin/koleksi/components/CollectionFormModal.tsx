@@ -6,12 +6,30 @@ import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 
 export function CollectionFormModal({
-  isOpen, onClose, onSubmit, editingCollection,
-  name, handleNameChange, slug, setSlug,
-  description, setDescription, image_url, setImageUrl,
-  sort_order, setSortOrder, starts_at, setStartsAt, ends_at, setEndsAt,
-  is_active, setIsActive, selectedProductIds, handleToggleProduct,
-  allProducts, isPending
+  isOpen,
+  onClose,
+  onSubmit,
+  editingCollection,
+  name,
+  handleNameChange,
+  slug,
+  setSlug,
+  description,
+  setDescription,
+  image_url,
+  setImageUrl,
+  sort_order,
+  setSortOrder,
+  starts_at,
+  setStartsAt,
+  ends_at,
+  setEndsAt,
+  is_active,
+  setIsActive,
+  selectedProductIds,
+  handleToggleProduct,
+  allProducts,
+  isPending,
 }: any) {
   return (
     <Modal
@@ -70,14 +88,15 @@ export function CollectionFormModal({
                 onChange={async (e) => {
                   const file = e.target.files?.[0]
                   if (!file) return
-                  
+
                   const toastId = toast.loading('Mengunggah gambar...')
                   try {
                     const publicUrl = await uploadImage(file, 'banners')
                     setImageUrl(publicUrl)
                     toast.success('Gambar berhasil diunggah!', { id: toastId })
                   } catch (err: unknown) {
-                    const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar koleksi'
+                    const message =
+                      err instanceof Error ? err.message : 'Gagal mengunggah gambar koleksi'
                     toast.error(message, { id: toastId })
                   }
                 }}
@@ -125,7 +144,10 @@ export function CollectionFormModal({
                     checked={!!selectedProductIds[p.id]}
                     onChange={() => handleToggleProduct(p.id)}
                   />
-                  <label htmlFor={`link-prod-${p.id}`} className="select-none text-neutral-700 cursor-pointer">
+                  <label
+                    htmlFor={`link-prod-${p.id}`}
+                    className="select-none text-neutral-700 cursor-pointer"
+                  >
                     {p.name}
                   </label>
                 </div>
@@ -140,24 +162,19 @@ export function CollectionFormModal({
             checked={is_active}
             onChange={(e) => setIsActive(e.target.checked)}
           />
-          <label htmlFor="col_is_active" className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer">
+          <label
+            htmlFor="col_is_active"
+            className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
+          >
             Koleksi Aktif
           </label>
         </div>
 
         <div className="flex justify-end space-x-3 pt-3 border-t border-neutral-100">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={isPending}
-          >
+          <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
             Batal
           </Button>
-          <Button
-            type="submit"
-            isLoading={isPending}
-          >
+          <Button type="submit" isLoading={isPending}>
             Simpan
           </Button>
         </div>

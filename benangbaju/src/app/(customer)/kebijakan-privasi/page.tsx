@@ -4,34 +4,41 @@ import { PageHero, PageContainer } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Kebijakan Privasi — Benangbaju',
-  description: 'Informasi mengenai bagaimana Benangbaju mengumpulkan, menyimpan, menggunakan, dan melindungi data pribadi Anda selaku pelanggan.',
+  description:
+    'Informasi mengenai bagaimana Benangbaju mengumpulkan, menyimpan, menggunakan, dan melindungi data pribadi Anda selaku pelanggan.',
 }
 
-export default function KebijakanPrivasiPage() : React.JSX.Element {
+export default function KebijakanPrivasiPage(): React.JSX.Element {
   const sections = [
     {
       title: '1. Pengumpulan Informasi Pribadi',
-      content: 'Kami mengumpulkan informasi pribadi yang Anda berikan secara sukarela saat melakukan pendaftaran akun, checkout produk, atau saat berkomunikasi dengan customer service kami. Informasi ini mencakup nama lengkap, alamat pengiriman, nomor telepon, alamat email, dan koordinat wilayah pengiriman.',
+      content:
+        'Kami mengumpulkan informasi pribadi yang Anda berikan secara sukarela saat melakukan pendaftaran akun, checkout produk, atau saat berkomunikasi dengan customer service kami. Informasi ini mencakup nama lengkap, alamat pengiriman, nomor telepon, alamat email, dan koordinat wilayah pengiriman.',
     },
     {
       title: '2. Penggunaan Data Anda',
-      content: 'Data pribadi Anda digunakan semata-mata untuk memproses transaksi pesanan Anda, mengirimkan paket melalui kurir mitra ekspedisi, melakukan verifikasi pembayaran otomatis (Midtrans), memberikan pembaruan status pesanan, serta memberikan rekomendasi produk atau promosi yang dipersonalisasi apabila Anda menyetujui berlangganan newsletter.',
+      content:
+        'Data pribadi Anda digunakan semata-mata untuk memproses transaksi pesanan Anda, mengirimkan paket melalui kurir mitra ekspedisi, melakukan verifikasi pembayaran otomatis (Midtrans), memberikan pembaruan status pesanan, serta memberikan rekomendasi produk atau promosi yang dipersonalisasi apabila Anda menyetujui berlangganan newsletter.',
     },
     {
       title: '3. Keamanan & Penyimpanan Data',
-      content: 'Kami mengambil langkah-langkah keamanan teknis yang wajar untuk melindungi informasi Anda dari akses ilegal, pengungkapan tanpa izin, perubahan, atau kerusakan. Akun Anda dilindungi dengan enkripsi kata sandi. Transaksi keuangan Anda diproses secara terenkripsi oleh payment gateway bersertifikasi PCI-DSS (Midtrans) sehingga kami tidak menyimpan detail kartu kredit atau virtual account Anda.',
+      content:
+        'Kami mengambil langkah-langkah keamanan teknis yang wajar untuk melindungi informasi Anda dari akses ilegal, pengungkapan tanpa izin, perubahan, atau kerusakan. Akun Anda dilindungi dengan enkripsi kata sandi. Transaksi keuangan Anda diproses secara terenkripsi oleh payment gateway bersertifikasi PCI-DSS (Midtrans) sehingga kami tidak menyimpan detail kartu kredit atau virtual account Anda.',
     },
     {
       title: '4. Penggunaan Cookies',
-      content: 'Situs kami menggunakan cookie untuk melacak isi keranjang belanja Anda (cart), mengingat preferensi login Anda, serta mengumpulkan data analitik kunjungan situs (seperti halaman yang paling sering dikunjungi) secara anonim guna membantu meningkatkan kenyamanan navigasi web kami.',
+      content:
+        'Situs kami menggunakan cookie untuk melacak isi keranjang belanja Anda (cart), mengingat preferensi login Anda, serta mengumpulkan data analitik kunjungan situs (seperti halaman yang paling sering dikunjungi) secara anonim guna membantu meningkatkan kenyamanan navigasi web kami.',
     },
     {
       title: '5. Pengungkapan Kepada Pihak Ketiga',
-      content: 'Kami tidak akan pernah menjual, menyewakan, atau menyebarluaskan data pribadi Anda kepada pihak ketiga manapun untuk kepentingan pemasaran mereka. Informasi Anda hanya dibagikan kepada mitra logistik/ekspedisi (seperti JNE, J&T, SiCepat) untuk memfasilitasi pengantaran pesanan fisik Anda.',
+      content:
+        'Kami tidak akan pernah menjual, menyewakan, atau menyebarluaskan data pribadi Anda kepada pihak ketiga manapun untuk kepentingan pemasaran mereka. Informasi Anda hanya dibagikan kepada mitra logistik/ekspedisi (seperti JNE, J&T, SiCepat) untuk memfasilitasi pengantaran pesanan fisik Anda.',
     },
     {
       title: '6. Hak Akses & Perubahan Data',
-      content: 'Anda memiliki hak untuk melihat, mengedit, atau menghapus informasi pribadi Anda kapan saja melalui halaman profil akun Anda di situs web Benangbaju. Jika Anda ingin menonaktifkan akun Anda secara permanen atau berhenti berlangganan newsletter promo, silakan kirim permohonan ke tim customer service kami.',
+      content:
+        'Anda memiliki hak untuk melihat, mengedit, atau menghapus informasi pribadi Anda kapan saja melalui halaman profil akun Anda di situs web Benangbaju. Jika Anda ingin menonaktifkan akun Anda secara permanen atau berhenti berlangganan newsletter promo, silakan kirim permohonan ke tim customer service kami.',
     },
   ]
 
@@ -50,8 +57,9 @@ export default function KebijakanPrivasiPage() : React.JSX.Element {
               Terakhir diperbarui: 10 Juni 2026
             </p>
             <p>
-              Benangbaju sangat menghargai privasi dan kepercayaan Anda. Kami berkomitmen untuk melindungi informasi pribadi Anda
-              dan menggunakannya sesuai dengan kebijakan perlindungan data nasional dan internasional.
+              Benangbaju sangat menghargai privasi dan kepercayaan Anda. Kami berkomitmen untuk
+              melindungi informasi pribadi Anda dan menggunakannya sesuai dengan kebijakan
+              perlindungan data nasional dan internasional.
             </p>
           </div>
 

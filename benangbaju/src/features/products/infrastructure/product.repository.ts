@@ -3,9 +3,14 @@ import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
 
-import { 
-  ProductFilters, ProductVariant, ProductImage,  
-  ProductRatingSummary, ProductListItem, ProductDetailItem, AdminProductListItem 
+import {
+  ProductFilters,
+  ProductVariant,
+  ProductImage,
+  ProductRatingSummary,
+  ProductListItem,
+  ProductDetailItem,
+  AdminProductListItem,
 } from '@/entities/product/model/product.types'
 import { ProductPayload } from '@/entities/product/model/product.types'
 
@@ -32,21 +37,23 @@ export function mapVariants(rawVariants: any, includeAttrs = true): ProductVaria
         id: attr.id,
         attr_name: attr.attr_name,
         attr_value: attr.attr_value,
-      }))
-    })
+      })),
+    }),
   }))
 }
 
 export function mapImages(rawImages: any): ProductImage[] {
   const imagesList = Array.isArray(rawImages) ? rawImages : []
-  return imagesList.map((img: any) => ({
-    id: img.id,
-    url: img.url,
-    alt_text: img.alt_text,
-    sort_order: img.sort_order,
-    is_primary: img.is_primary,
-    variant_id: img.variant_id,
-  })).sort((a: any, b: any) => a.sort_order - b.sort_order)
+  return imagesList
+    .map((img: any) => ({
+      id: img.id,
+      url: img.url,
+      alt_text: img.alt_text,
+      sort_order: img.sort_order,
+      is_primary: img.is_primary,
+      variant_id: img.variant_id,
+    }))
+    .sort((a: any, b: any) => a.sort_order - b.sort_order)
 }
 
 export function mapProductListItem(p: any): ProductListItem {
@@ -82,9 +89,10 @@ export function mapProductListItem(p: any): ProductListItem {
   }
 
   const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
-  const discountPercent = comparePrice && comparePrice > minPrice
-    ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
-    : null
+  const discountPercent =
+    comparePrice && comparePrice > minPrice
+      ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
+      : null
 
   let primaryImage = null
   let hoverImage = null
@@ -101,7 +109,7 @@ export function mapProductListItem(p: any): ProductListItem {
       foundHover = true
     }
   }
-  
+
   // Fallbacks
   if (!primaryImage && product_images.length > 0) primaryImage = product_images[0].url
   if (!hoverImage && product_images.length > 1) hoverImage = product_images[1].url
@@ -115,7 +123,7 @@ export function mapProductListItem(p: any): ProductListItem {
   for (let i = 0; i < product_variants.length; i++) {
     const v = product_variants[i]
     if (!v.is_active) continue
-    
+
     let hasSize = false
     if (v.product_variant_attrs) {
       for (let j = 0; j < v.product_variant_attrs.length; j++) {
@@ -129,7 +137,7 @@ export function mapProductListItem(p: any): ProductListItem {
         }
       }
     }
-    
+
     if (hasSize && v.stock > 0) {
       sizeVariants.push(v)
     }
@@ -152,10 +160,9 @@ export function mapProductListItem(p: any): ProductListItem {
     primaryImage,
     hoverImage,
     hasMultipleColors,
-    sizeVariants
+    sizeVariants,
   }
 }
-
 
 export async function getProducts(
   supabase: SupabaseClient<Database>,
@@ -192,8 +199,12 @@ export async function getProducts(
 
   // 1b. Fetch categories and collections in parallel if needed
   const [categoriesRes, collectionRes] = await Promise.all([
-    categorySlug ? supabase.from('categories').select('id, slug, parent_id') : Promise.resolve(null),
-    collectionSlug ? supabase.from('collections').select('id').eq('slug', collectionSlug).single() : Promise.resolve(null)
+    categorySlug
+      ? supabase.from('categories').select('id, slug, parent_id')
+      : Promise.resolve(null),
+    collectionSlug
+      ? supabase.from('collections').select('id').eq('slug', collectionSlug).single()
+      : Promise.resolve(null),
   ])
 
   // 2. Filter by Category
@@ -220,7 +231,7 @@ export async function getProducts(
         .from('collection_products')
         .select('product_id')
         .eq('collection_id', collection.id)
-      
+
       const pIds = junction?.map((j) => j.product_id) || []
       if (pIds.length > 0) {
         query = query.in('id', pIds)
@@ -258,7 +269,9 @@ export async function getProducts(
   if (sortBy === 'newest') {
     query = query.order('created_at', { ascending: false })
   } else if (sortBy === 'featured') {
-    query = query.order('is_featured', { ascending: false }).order('created_at', { ascending: false })
+    query = query
+      .order('is_featured', { ascending: false })
+      .order('created_at', { ascending: false })
   } else if (sortBy === 'price-low') {
     query = query.order('min_price', { ascending: true })
   } else if (sortBy === 'price-high') {
@@ -319,7 +332,7 @@ export async function getProductBySlug(
 
   const rawLinks = data.product_marketplace_links
   const linksList = Array.isArray(rawLinks) ? rawLinks : []
-  const product_marketplace_links = linksList.map(link => ({
+  const product_marketplace_links = linksList.map((link) => ({
     id: link.id,
     platform: link.platform,
     url: link.url,
@@ -329,10 +342,12 @@ export async function getProductBySlug(
   const rawSummary = data.product_rating_summary
   const summaryList = Array.isArray(rawSummary) ? rawSummary : []
   const firstSummary = summaryList[0] || null
-  const product_rating_summary = firstSummary ? {
-    avg_rating: firstSummary.avg_rating,
-    total_reviews: firstSummary.total_reviews,
-  } : null
+  const product_rating_summary = firstSummary
+    ? {
+        avg_rating: firstSummary.avg_rating,
+        total_reviews: firstSummary.total_reviews,
+      }
+    : null
 
   return ok({
     id: data.id,
@@ -355,7 +370,6 @@ export async function getProductBySlug(
     care_guide: data.care_guide,
   })
 }
-
 
 export async function getRelatedProducts(
   supabase: SupabaseClient<Database>,
@@ -399,22 +413,17 @@ export async function adminGetProducts(
   const { page = 1, limit = 20, search = '' } = params
   const offset = (page - 1) * limit
 
-  let query = supabase
-    .from('products')
-    .select(
-      `
+  let query = supabase.from('products').select(
+    `
         id, name, slug, description, short_description, weight_gram, is_featured, is_active, created_at,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active)
       `,
-      { count: 'exact' }
-    )
+    { count: 'exact' }
+  )
 
   if (search) {
-    const escapedSearch = search
-      .replace(/\\/g, '\\\\')
-      .replace(/%/g, '\\%')
-      .replace(/_/g, '\\_')
+    const escapedSearch = search.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
     query = query.ilike('name', `%${escapedSearch}%`)
   }
 
@@ -429,7 +438,7 @@ export async function adminGetProducts(
 
   if (!data) return paginated([], 0, page, limit)
 
-  const products: AdminProductListItem[] = data.map(p => {
+  const products: AdminProductListItem[] = data.map((p) => {
     const categories = mapCategory(p.categories)
     const product_variants = mapVariants(p.product_variants, false)
 
@@ -458,20 +467,20 @@ export async function adminCreateProduct(
   images: ProductPayload['images'],
   marketplaceLinks: ProductPayload['links'],
   collectionIds: string[] = []
-) : Promise<ApiResponse<{ id: string; }>> {
+): Promise<ApiResponse<{ id: string }>> {
   const { data: result, error: rpcErr } = await supabase.rpc('admin_create_product', {
     p_product: productData as any,
     p_variants: variants as any,
     p_images: images as any,
     p_links: marketplaceLinks as any,
-    p_collections: collectionIds
+    p_collections: collectionIds,
   })
 
   if (rpcErr) {
     safeLogError('Gagal membuat produk (RPC)', rpcErr)
     return fail('Gagal membuat produk', rpcErr.message)
   }
-  
+
   const res = result as any
   if (res && res.success === false) {
     safeLogError('Gagal membuat produk (RPC transaction)', res.error)
@@ -480,7 +489,13 @@ export async function adminCreateProduct(
 
   const productId = res?.data?.id
 
-  await insertAdminActivityLog(supabase, 'create', 'product', productId, `Created product ${productData.name}`)
+  await insertAdminActivityLog(
+    supabase,
+    'create',
+    'product',
+    productId,
+    `Created product ${productData.name}`
+  )
 
   return ok({ id: productId })
 }
@@ -493,43 +508,51 @@ export async function adminUpdateProduct(
   images: ProductPayload['images'],
   marketplaceLinks: ProductPayload['links'],
   collectionIds: string[] = []
-) : Promise<ApiResponse<{ id: string; }>> {
-
+): Promise<ApiResponse<{ id: string }>> {
   // We need to determine which variants/images/links to delete vs upsert
   // The RPC handles this by receiving the items to upsert and the IDs to delete.
-  
+
   // Variants
-  const variantsToUpsert = variants.map(v => ({
+  const variantsToUpsert = variants.map((v) => ({
     ...v,
-    id: v.id?.startsWith('temp-') ? null : v.id
+    id: v.id?.startsWith('temp-') ? null : v.id,
   }))
 
-  const { data: dbVariants } = await supabase.from('product_variants').select('id').eq('product_id', productId)
-  const dbVariantIds = (dbVariants || []).map(v => v.id)
-  const incomingVariantIds = variantsToUpsert.map(v => v.id).filter(id => id) as string[]
-  const variantIdsToDelete = dbVariantIds.filter(id => !incomingVariantIds.includes(id))
+  const { data: dbVariants } = await supabase
+    .from('product_variants')
+    .select('id')
+    .eq('product_id', productId)
+  const dbVariantIds = (dbVariants || []).map((v) => v.id)
+  const incomingVariantIds = variantsToUpsert.map((v) => v.id).filter((id) => id) as string[]
+  const variantIdsToDelete = dbVariantIds.filter((id) => !incomingVariantIds.includes(id))
 
   // Images
-  const imagesToUpsert = images.map(img => ({
+  const imagesToUpsert = images.map((img) => ({
     ...img,
-    id: (img as any).id?.startsWith('temp-') ? null : (img as any).id
+    id: (img as any).id?.startsWith('temp-') ? null : (img as any).id,
   }))
 
-  const { data: dbImages } = await supabase.from('product_images').select('id').eq('product_id', productId)
-  const dbImageIds = (dbImages || []).map(i => i.id)
-  const incomingImageIds = imagesToUpsert.map(i => (i as any).id).filter(id => id) as string[]
-  const imageIdsToDelete = dbImageIds.filter(id => !incomingImageIds.includes(id))
+  const { data: dbImages } = await supabase
+    .from('product_images')
+    .select('id')
+    .eq('product_id', productId)
+  const dbImageIds = (dbImages || []).map((i) => i.id)
+  const incomingImageIds = imagesToUpsert.map((i) => (i as any).id).filter((id) => id) as string[]
+  const imageIdsToDelete = dbImageIds.filter((id) => !incomingImageIds.includes(id))
 
   // Links
-  const linksToUpsert = marketplaceLinks.map(link => ({
+  const linksToUpsert = marketplaceLinks.map((link) => ({
     ...link,
-    id: (link as any).id?.startsWith('temp-') ? null : (link as any).id
+    id: (link as any).id?.startsWith('temp-') ? null : (link as any).id,
   }))
 
-  const { data: dbLinks } = await supabase.from('product_marketplace_links').select('id').eq('product_id', productId)
-  const dbLinkIds = (dbLinks || []).map(l => l.id)
-  const incomingLinkIds = linksToUpsert.map(l => (l as any).id).filter(id => id) as string[]
-  const linkIdsToDelete = dbLinkIds.filter(id => !incomingLinkIds.includes(id))
+  const { data: dbLinks } = await supabase
+    .from('product_marketplace_links')
+    .select('id')
+    .eq('product_id', productId)
+  const dbLinkIds = (dbLinks || []).map((l) => l.id)
+  const incomingLinkIds = linksToUpsert.map((l) => (l as any).id).filter((id) => id) as string[]
+  const linkIdsToDelete = dbLinkIds.filter((id) => !incomingLinkIds.includes(id))
 
   const { data: result, error: rpcErr } = await supabase.rpc('admin_update_product', {
     p_product_id: productId as any,
@@ -540,21 +563,27 @@ export async function adminUpdateProduct(
     p_image_ids_to_delete: imageIdsToDelete,
     p_links_to_upsert: linksToUpsert as any,
     p_link_ids_to_delete: linkIdsToDelete,
-    p_collections: collectionIds
+    p_collections: collectionIds,
   })
 
   if (rpcErr) {
     safeLogError('Gagal memperbarui produk (RPC)', rpcErr)
     return fail('Gagal memperbarui produk', rpcErr.message)
   }
-  
+
   const res = result as any
   if (res && res.success === false) {
     safeLogError('Gagal memperbarui produk (RPC transaction)', res.error)
     return fail('Gagal memperbarui produk', res.error?.message || 'Transaction failed')
   }
 
-  await insertAdminActivityLog(supabase, 'update', 'product', productId, `Updated product ${productData.name}`)
+  await insertAdminActivityLog(
+    supabase,
+    'update',
+    'product',
+    productId,
+    `Updated product ${productData.name}`
+  )
 
   return ok({ id: productId })
 }
@@ -562,7 +591,7 @@ export async function adminUpdateProduct(
 export async function adminDeleteProduct(
   supabase: SupabaseClient<Database>,
   productId: string
-) : Promise<ApiResponse<null>> {
+): Promise<ApiResponse<null>> {
   // 1. Fetch images associated with this product to clean up storage
   const { data: images } = await supabase
     .from('product_images')
@@ -572,28 +601,25 @@ export async function adminDeleteProduct(
   // 2. Delete the physical images from Supabase Storage
   if (images && images.length > 0) {
     const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-    await Promise.all(
-      images.map(img => deleteImageByUrl(supabase, img.url, 'products'))
-    )
+    await Promise.all(images.map((img) => deleteImageByUrl(supabase, img.url, 'products')))
   }
 
   // 3. Hard delete from database
   // Bergantung pada konfigurasi ON DELETE CASCADE di database untuk menghapus relasi (variants, images, dll)
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', productId)
+  const { error } = await supabase.from('products').delete().eq('id', productId)
 
   if (error) {
     safeLogError('Delete error:', error)
     return fail('Gagal menghapus produk', error.message)
   }
-  
-  await insertAdminActivityLog(supabase, 'delete', 'product', productId, `Deleted product ${productId}`)
-  
+
+  await insertAdminActivityLog(
+    supabase,
+    'delete',
+    'product',
+    productId,
+    `Deleted product ${productId}`
+  )
+
   return ok(null)
 }
-
-
-
-

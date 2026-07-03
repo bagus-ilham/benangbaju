@@ -24,7 +24,7 @@ export function Drawer({
   position = 'right',
   size = 'md',
   className,
-}: DrawerProps) : React.ReactPortal | null {
+}: DrawerProps): React.ReactPortal | null {
   const [mounted, setMounted] = React.useState(false)
 
   useEffect(() => {
@@ -94,20 +94,20 @@ export function Drawer({
 
   // Animation variants
   const slideVariants: import('framer-motion').Variants = {
-    hidden: { 
+    hidden: {
       x: position === 'right' ? '100%' : '-100%',
-      opacity: 1
+      opacity: 1,
     },
-    visible: { 
+    visible: {
       x: 0,
       opacity: 1,
-      transition: { type: 'spring', damping: 25, stiffness: 200 }
+      transition: { type: 'spring', damping: 25, stiffness: 200 },
     },
-    exit: { 
+    exit: {
       x: position === 'right' ? '100%' : '-100%',
       opacity: 1,
-      transition: { type: 'spring', damping: 25, stiffness: 200 }
-    }
+      transition: { type: 'spring', damping: 25, stiffness: 200 },
+    },
   }
 
   return createPortal(
@@ -136,7 +136,7 @@ export function Drawer({
             animate="visible"
             exit="exit"
             className={cn(
-              "fixed top-0 bottom-0 z-10 flex flex-col bg-white border-neutral-200 shadow-2xl outline-none",
+              'fixed top-0 bottom-0 z-10 flex flex-col bg-white border-neutral-200 shadow-2xl outline-none',
               {
                 'right-0 border-l': position === 'right',
                 'left-0 border-r': position === 'left',

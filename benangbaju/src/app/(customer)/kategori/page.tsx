@@ -15,7 +15,7 @@ async function getCachedCategories() {
   return getActiveCategories(supabase)
 }
 
-export default async function CategoriesIndexPage() : Promise<React.JSX.Element> {
+export default async function CategoriesIndexPage(): Promise<React.JSX.Element> {
   const categories = await getCachedCategories()
   const parentCategories = categories.filter((cat) => !cat.parent_id)
 
@@ -45,7 +45,9 @@ export default async function CategoriesIndexPage() : Promise<React.JSX.Element>
                 />
               ) : (
                 <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
-                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">{cat.name}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">
+                    {cat.name}
+                  </span>
                 </div>
               )}
               <div className="absolute inset-0 gradient-overlay-dark opacity-70 group-hover:opacity-90 transition-opacity duration-500" />

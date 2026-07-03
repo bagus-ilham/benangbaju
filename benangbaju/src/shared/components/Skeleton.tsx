@@ -4,7 +4,11 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'rect' | 'circle'
 }
 
-export function Skeleton({ className, variant = 'rect', ...props }: SkeletonProps) : React.JSX.Element {
+export function Skeleton({
+  className,
+  variant = 'rect',
+  ...props
+}: SkeletonProps): React.JSX.Element {
   return (
     <div
       className={cn(

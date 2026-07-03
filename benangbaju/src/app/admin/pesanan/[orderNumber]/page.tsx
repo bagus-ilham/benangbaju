@@ -3,11 +3,25 @@
 import React, { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useOrderDetail } from '@/features/orders/hooks/useOrders'
-import { useAdminUpdateOrderStatus, useAdminUpdateTrackingNumber } from '@/features/orders/hooks/useAdminOrders'
+import {
+  useAdminUpdateOrderStatus,
+  useAdminUpdateTrackingNumber,
+} from '@/features/orders/hooks/useAdminOrders'
 
 import { Button, Input, AdminPageHeader, AdminPanel } from '@/shared/components'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle,  Download, Edit2, X, Check } from 'lucide-react'
+import {
+  ArrowLeft,
+  Clock,
+  Package,
+  Truck,
+  CheckCircle,
+  XCircle,
+  Download,
+  Edit2,
+  X,
+  Check,
+} from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
@@ -19,7 +33,7 @@ interface AdminOrderDetailPageProps {
   }>
 }
 
-function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.JSX.Element {
+function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.JSX.Element {
   const { orderNumber } = use(params)
   const router = useRouter()
 
@@ -38,11 +52,13 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
         month: 'long',
         year: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       })
     : '-'
 
-  const handleUpdateStatus = async (status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled') => {
+  const handleUpdateStatus = async (
+    status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled'
+  ) => {
     if (!order) return
 
     if (status === 'shipped' && !trackingNumber.trim()) {
@@ -56,7 +72,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
         await updateStatusMutation.mutateAsync({
           orderId: order.id,
           status,
-          trackingNumber: status === 'shipped' ? trackingNumber.trim() : undefined
+          trackingNumber: status === 'shipped' ? trackingNumber.trim() : undefined,
         })
         toast.success('Status pesanan berhasil diubah', { id: 'status-update' })
         refetch()
@@ -78,7 +94,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
     try {
       await updateTrackingMutation.mutateAsync({
         orderId: order.id,
-        trackingNumber: editResiNumber.trim()
+        trackingNumber: editResiNumber.trim(),
       })
       toast.success('Resi berhasil diperbarui', { id: 'resi-update' })
       setIsEditingResi(false)
@@ -121,7 +137,9 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">Memuat detail pesanan...</p>
+        <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
+          Memuat detail pesanan...
+        </p>
       </div>
     )
   }
@@ -147,7 +165,10 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
       >
         <div className="flex items-center gap-2">
           <Link href="/admin/pesanan">
-            <Button variant="outline" className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900">
+            <Button
+              variant="outline"
+              className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900"
+            >
               <ArrowLeft size={14} />
             </Button>
           </Link>
@@ -193,25 +214,40 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
                 </p>
                 <p className="leading-relaxed">{order.order_shipping.full_address}</p>
                 <p className="text-xs text-neutral-500">
-                  Kecamatan {order.order_shipping.district_name}, {order.order_shipping.city_name}, {order.order_shipping.province_name} {order.order_shipping.postal_code}
+                  Kecamatan {order.order_shipping.district_name}, {order.order_shipping.city_name},{' '}
+                  {order.order_shipping.province_name} {order.order_shipping.postal_code}
                 </p>
                 <div className="pt-2 border-t border-neutral-100 mt-2 space-y-1 text-neutral-500 text-xs">
-                  <p>Kurir: <span className="font-bold text-neutral-700 uppercase">{order.order_shipping.courier_name}</span></p>
+                  <p>
+                    Kurir:{' '}
+                    <span className="font-bold text-neutral-700 uppercase">
+                      {order.order_shipping.courier_name}
+                    </span>
+                  </p>
                   {order.order_shipping.tracking_number && (
                     <div className="flex items-center gap-2">
                       <p>No. Resi: </p>
                       {isEditingResi ? (
                         <div className="flex items-center gap-1">
-                          <Input 
+                          <Input
                             value={editResiNumber}
                             onChange={(e) => setEditResiNumber(e.target.value)}
                             className="w-32 py-1"
                             autoFocus
                           />
-                          <button onClick={handleUpdateResi} disabled={updateTrackingMutation.isPending} className="text-green-600 hover:text-green-700 p-0.5" title="Simpan">
+                          <button
+                            onClick={handleUpdateResi}
+                            disabled={updateTrackingMutation.isPending}
+                            className="text-green-600 hover:text-green-700 p-0.5"
+                            title="Simpan"
+                          >
                             <Check size={14} />
                           </button>
-                          <button onClick={() => setIsEditingResi(false)} className="text-red-500 hover:text-red-600 p-0.5" title="Batal">
+                          <button
+                            onClick={() => setIsEditingResi(false)}
+                            className="text-red-500 hover:text-red-600 p-0.5"
+                            title="Batal"
+                          >
                             <X size={14} />
                           </button>
                         </div>
@@ -220,11 +256,11 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
                           <span className="font-bold text-neutral-900 bg-neutral-100 px-1.5 py-0.5 select-all">
                             {order.order_shipping.tracking_number}
                           </span>
-                          <button 
+                          <button
                             onClick={() => {
                               setEditResiNumber(order.order_shipping!.tracking_number!)
                               setIsEditingResi(true)
-                            }} 
+                            }}
                             className="text-neutral-400 hover:text-brand-gold transition"
                             title="Edit Resi"
                           >
@@ -243,7 +279,9 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
 
           {order.notes && (
             <AdminPanel title="Catatan Pelanggan" className="bg-brand-cream/20">
-              <p className="text-xs text-neutral-700 whitespace-pre-wrap leading-relaxed">{order.notes}</p>
+              <p className="text-xs text-neutral-700 whitespace-pre-wrap leading-relaxed">
+                {order.notes}
+              </p>
             </AdminPanel>
           )}
         </div>
@@ -260,12 +298,12 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
                 {order.status === 'pending_payment'
                   ? 'Belum Bayar'
                   : order.status === 'processing'
-                  ? 'Diproses'
-                  : order.status === 'shipped'
-                  ? 'Dikirim'
-                  : order.status === 'completed'
-                  ? 'Selesai'
-                  : 'Batal'}
+                    ? 'Diproses'
+                    : order.status === 'shipped'
+                      ? 'Dikirim'
+                      : order.status === 'completed'
+                        ? 'Selesai'
+                        : 'Batal'}
               </span>
             </div>
 
@@ -347,7 +385,9 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
               {Number(order.discount_amount) > 0 && (
                 <div className="flex justify-between font-semibold">
                   <span>Voucher Diskon</span>
-                  <span className="text-red-600">- Rp {order.discount_amount.toLocaleString('id-ID')}</span>
+                  <span className="text-red-600">
+                    - Rp {order.discount_amount.toLocaleString('id-ID')}
+                  </span>
                 </div>
               )}
               <div className="flex justify-between">
@@ -368,7 +408,9 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
   )
 }
 
-export default function AdminOrderDetailPage({ params }: AdminOrderDetailPageProps) : React.JSX.Element {
+export default function AdminOrderDetailPage({
+  params,
+}: AdminOrderDetailPageProps): React.JSX.Element {
   return (
     <React.Suspense fallback={<div className="p-8 text-center">Memuat data pesanan...</div>}>
       <AdminOrderDetailContent params={params} />

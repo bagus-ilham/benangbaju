@@ -14,10 +14,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const errorId = `${textareaId}-error`
     const helperId = `${textareaId}-helper`
 
-    const describedBy = [
-      error ? errorId : null,
-      helperText && !error ? helperId : null
-    ].filter(Boolean).join(' ') || undefined
+    const describedBy =
+      [error ? errorId : null, helperText && !error ? helperId : null].filter(Boolean).join(' ') ||
+      undefined
 
     return (
       <div className="w-full flex flex-col space-y-1">
@@ -29,7 +28,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             {label}
           </label>
         )}
-        
+
         <div className="relative flex group">
           <textarea
             id={textareaId}
@@ -57,7 +56,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             {error}
           </span>
         )}
-        
+
         {!error && helperText && (
           <span id={helperId} className="text-[10px] text-neutral-500 tracking-wide font-sans">
             {helperText}

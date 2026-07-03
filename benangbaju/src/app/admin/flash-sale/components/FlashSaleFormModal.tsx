@@ -34,15 +34,22 @@ interface FlashSaleFormModalProps {
   editingCampaign: AdminFlashSaleListItem | null
   onSubmit: (payload: any) => Promise<void>
   allVariants: VariantSimple[]
-  
+
   // Form States provided by parent
-  name: string; setName: (val: string) => void
-  description: string; setDescription: (val: string) => void
-  banner_url: string; setBannerUrl: (val: string) => void
-  starts_at: string; setStartsAt: (val: string) => void
-  ends_at: string; setEndsAt: (val: string) => void
-  is_active: boolean; setIsActive: (val: boolean) => void
-  items: FlashSaleFormItem[]; setItems: React.Dispatch<React.SetStateAction<FlashSaleFormItem[]>>
+  name: string
+  setName: (val: string) => void
+  description: string
+  setDescription: (val: string) => void
+  banner_url: string
+  setBannerUrl: (val: string) => void
+  starts_at: string
+  setStartsAt: (val: string) => void
+  ends_at: string
+  setEndsAt: (val: string) => void
+  is_active: boolean
+  setIsActive: (val: boolean) => void
+  items: FlashSaleFormItem[]
+  setItems: React.Dispatch<React.SetStateAction<FlashSaleFormItem[]>>
 }
 
 export function FlashSaleFormModal({
@@ -51,15 +58,21 @@ export function FlashSaleFormModal({
   editingCampaign,
   onSubmit,
   allVariants,
-  name, setName,
-  description, setDescription,
-  banner_url, setBannerUrl,
-  starts_at, setStartsAt,
-  ends_at, setEndsAt,
-  is_active, setIsActive,
-  items, setItems
+  name,
+  setName,
+  description,
+  setDescription,
+  banner_url,
+  setBannerUrl,
+  starts_at,
+  setStartsAt,
+  ends_at,
+  setEndsAt,
+  is_active,
+  setIsActive,
+  items,
+  setItems,
 }: FlashSaleFormModalProps) {
-  
   const [variantSearch, setVariantSearch] = useState('')
   const [showVariantList, setShowVariantList] = useState(false)
 
@@ -84,10 +97,12 @@ export function FlashSaleFormModal({
     setVariantSearch('')
   }
 
-  const handleUpdateItemField = (idx: number, field: keyof FlashSaleFormItem, value: number | string) => {
-    setItems((prev) =>
-      prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item))
-    )
+  const handleUpdateItemField = (
+    idx: number,
+    field: keyof FlashSaleFormItem,
+    value: number | string
+  ) => {
+    setItems((prev) => prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item)))
   }
 
   const handleRemoveItem = (idx: number) => {
@@ -133,14 +148,16 @@ export function FlashSaleFormModal({
     onSubmit(payload)
   }
 
-  const filteredVariants = allVariants.filter((v) => {
-    const term = variantSearch.toLowerCase()
-    return (
-      v.sku?.toLowerCase().includes(term) ||
-      v.name?.toLowerCase().includes(term) ||
-      v.products?.name?.toLowerCase().includes(term)
-    )
-  }).slice(0, 5)
+  const filteredVariants = allVariants
+    .filter((v) => {
+      const term = variantSearch.toLowerCase()
+      return (
+        v.sku?.toLowerCase().includes(term) ||
+        v.name?.toLowerCase().includes(term) ||
+        v.products?.name?.toLowerCase().includes(term)
+      )
+    })
+    .slice(0, 5)
 
   return (
     <Modal
@@ -224,7 +241,10 @@ export function FlashSaleFormModal({
             onChange={(e) => setIsActive(e.target.checked)}
             className="h-4 w-4 text-brand-gold focus:ring-brand-gold border-gray-300 rounded-none cursor-pointer"
           />
-          <label htmlFor="active-campaign" className="text-xs font-semibold text-neutral-800 cursor-pointer select-none">
+          <label
+            htmlFor="active-campaign"
+            className="text-xs font-semibold text-neutral-800 cursor-pointer select-none"
+          >
             Aktifkan Flash Sale ini?
           </label>
         </div>
@@ -272,17 +292,25 @@ export function FlashSaleFormModal({
                       onClick={() => handleAddVariantItem(v)}
                     >
                       <div>
-                        <p className="font-bold text-[10px] uppercase tracking-wider text-brand-black">{v.sku}</p>
-                        <p className="text-[10px] text-neutral-600 line-clamp-1">{v.products?.name} - {v.name}</p>
+                        <p className="font-bold text-[10px] uppercase tracking-wider text-brand-black">
+                          {v.sku}
+                        </p>
+                        <p className="text-[10px] text-neutral-600 line-clamp-1">
+                          {v.products?.name} - {v.name}
+                        </p>
                       </div>
                       <div className="text-right pl-2 shrink-0">
-                        <p className="text-[10px] font-bold text-neutral-800">Rp {v.price.toLocaleString()}</p>
+                        <p className="text-[10px] font-bold text-neutral-800">
+                          Rp {v.price.toLocaleString()}
+                        </p>
                         <p className="text-[9px] text-neutral-400">Stok: {v.stock}</p>
                       </div>
                     </div>
                   ))}
                   {filteredVariants.length === 0 && (
-                    <p className="text-[10px] text-center py-2 text-neutral-400">Tidak ada varian cocok.</p>
+                    <p className="text-[10px] text-center py-2 text-neutral-400">
+                      Tidak ada varian cocok.
+                    </p>
                   )}
                 </div>
               )}
@@ -311,7 +339,9 @@ export function FlashSaleFormModal({
                     {items.map((it, idx) => (
                       <tr key={it.variant_id}>
                         <td className="py-2 px-3">
-                          <span className="block font-bold text-neutral-800 line-clamp-1">{it.prodName}</span>
+                          <span className="block font-bold text-neutral-800 line-clamp-1">
+                            {it.prodName}
+                          </span>
                           <span className="text-[9px] text-neutral-500 uppercase">{it.name}</span>
                         </td>
                         <td className="py-2 px-3 text-neutral-500">
@@ -322,7 +352,9 @@ export function FlashSaleFormModal({
                             type="number"
                             className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-gold text-[10px]"
                             value={it.sale_price}
-                            onChange={(e) => handleUpdateItemField(idx, 'sale_price', Number(e.target.value))}
+                            onChange={(e) =>
+                              handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
+                            }
                           />
                         </td>
                         <td className="py-2 px-3">
@@ -330,7 +362,9 @@ export function FlashSaleFormModal({
                             type="number"
                             className="w-16 border border-neutral-200 p-1 outline-none focus:border-brand-gold text-[10px]"
                             value={it.quota}
-                            onChange={(e) => handleUpdateItemField(idx, 'quota', Number(e.target.value))}
+                            onChange={(e) =>
+                              handleUpdateItemField(idx, 'quota', Number(e.target.value))
+                            }
                           />
                         </td>
                         <td className="py-2 px-3 text-center">
@@ -352,10 +386,19 @@ export function FlashSaleFormModal({
         </div>
 
         <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-100">
-          <Button type="button" variant="outline" onClick={onClose} className="px-5 py-2.5 text-xs font-bold uppercase">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            className="px-5 py-2.5 text-xs font-bold uppercase"
+          >
             Batal
           </Button>
-          <Button type="submit" variant="primary" className="px-5 py-2.5 text-xs font-bold uppercase tracking-widest">
+          <Button
+            type="submit"
+            variant="primary"
+            className="px-5 py-2.5 text-xs font-bold uppercase tracking-widest"
+          >
             Simpan Flash Sale
           </Button>
         </div>

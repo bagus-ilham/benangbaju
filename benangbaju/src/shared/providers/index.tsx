@@ -5,7 +5,7 @@ import { QueryProvider } from './QueryProvider'
 import { SupabaseProvider } from './SupabaseProvider'
 import { Toaster } from 'react-hot-toast'
 
-export function Providers({ children }: { children: React.ReactNode }) : React.JSX.Element {
+export function Providers({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <QueryProvider>
       <SupabaseProvider>
@@ -33,7 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) : React.J
               },
               style: {
                 borderLeft: '3px solid #171717',
-              }
+              },
             },
             error: {
               iconTheme: {
@@ -42,8 +42,8 @@ export function Providers({ children }: { children: React.ReactNode }) : React.J
               },
               style: {
                 borderLeft: '3px solid #ef4444',
-              }
-            }
+              },
+            },
           }}
         />
       </SupabaseProvider>

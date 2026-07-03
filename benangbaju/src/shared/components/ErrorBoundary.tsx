@@ -29,9 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         this.props.fallback || (
           <div className="p-4 border border-red-100 bg-red-50 text-red-700 text-xs font-sans rounded-none">
-            <h4 className="font-semibold uppercase tracking-wider mb-1">
-              Komponen Bermasalah
-            </h4>
+            <h4 className="font-semibold uppercase tracking-wider mb-1">Komponen Bermasalah</h4>
             <p>Gagal memuat komponen ini secara aman.</p>
           </div>
         )

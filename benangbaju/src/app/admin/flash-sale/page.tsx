@@ -29,7 +29,7 @@ export interface VariantSimple {
   } | null
 }
 
-export default function AdminFlashSalesPage() : React.JSX.Element {
+export default function AdminFlashSalesPage(): React.JSX.Element {
   const { data: campaignsRes, isLoading, refetch } = useAdminFlashSales()
   const campaigns = campaignsRes?.data || []
 
@@ -48,7 +48,7 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
         .order('sku')
       if (error) throw error
       return data || []
-    }
+    },
   })
 
   // Modal control states
@@ -180,11 +180,11 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
-        title="Flash Sale"
-        subtitle="Kelola promo kilat dengan slot waktu terbatas."
-      >
-        <Button onClick={handleOpenAdd} className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
+      <AdminPageHeader title="Flash Sale" subtitle="Kelola promo kilat dengan slot waktu terbatas.">
+        <Button
+          onClick={handleOpenAdd}
+          className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
+        >
           <Plus size={14} className="mr-1.5" /> Tambah Flash Sale
         </Button>
       </AdminPageHeader>
@@ -204,13 +204,20 @@ export default function AdminFlashSalesPage() : React.JSX.Element {
         editingCampaign={editingCampaign}
         onSubmit={handleSubmit}
         allVariants={allVariants}
-        name={name} setName={setName}
-        description={description} setDescription={setDescription}
-        banner_url={banner_url} setBannerUrl={setBannerUrl}
-        starts_at={starts_at} setStartsAt={setStartsAt}
-        ends_at={ends_at} setEndsAt={setEndsAt}
-        is_active={is_active} setIsActive={setIsActive}
-        items={items} setItems={setItems}
+        name={name}
+        setName={setName}
+        description={description}
+        setDescription={setDescription}
+        banner_url={banner_url}
+        setBannerUrl={setBannerUrl}
+        starts_at={starts_at}
+        setStartsAt={setStartsAt}
+        ends_at={ends_at}
+        setEndsAt={setEndsAt}
+        is_active={is_active}
+        setIsActive={setIsActive}
+        items={items}
+        setItems={setItems}
       />
     </div>
   )

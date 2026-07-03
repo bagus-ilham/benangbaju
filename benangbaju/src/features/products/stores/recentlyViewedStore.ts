@@ -19,7 +19,7 @@ export const useRecentlyViewedStore = create<RecentlyViewedState>()(
   persist(
     (set, get) => ({
       products: [],
-      
+
       addProduct: (newProduct) => {
         const { products } = get()
         // Filter out existing occurrence of this product
@@ -28,7 +28,7 @@ export const useRecentlyViewedStore = create<RecentlyViewedState>()(
         const updated = [newProduct, ...filtered].slice(0, 10)
         set({ products: updated })
       },
-      
+
       clearRecentlyViewed: () => set({ products: [] }),
     }),
     {

@@ -2,7 +2,7 @@ import { safeLogError } from '@/lib/logger'
 import { insertAdminActivityLog } from '@/entities/adminLog/api/adminLogs'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
-import { SiteSetting, ActivityLog } from "../domain/setting.types";
+import { SiteSetting, ActivityLog } from '../domain/setting.types'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 
@@ -29,7 +29,9 @@ function mapSiteSetting(row: Database['public']['Tables']['site_settings']['Row'
   }
 }
 
-export async function adminGetSettings(supabase: SupabaseClient<Database>): Promise<ApiListResponse<SiteSetting>> {
+export async function adminGetSettings(
+  supabase: SupabaseClient<Database>
+): Promise<ApiListResponse<SiteSetting>> {
   const { data, error } = await supabase
     .from('site_settings')
     .select('key, value, type, group, label')
@@ -97,7 +99,7 @@ export async function adminGetActivityLogs(
 
   if (!data) return paginated([], page, limit, count || 0)
 
-  const list = data.map(row => {
+  const list = data.map((row) => {
     const rawProfiles = row.profiles
     let profiles: { name: string; email: string | null } | null = null
     if (rawProfiles && !Array.isArray(rawProfiles)) {
@@ -126,9 +128,7 @@ export async function adminUpsertSettings(
   supabase: SupabaseClient<Database>,
   settings: SiteSetting[]
 ): Promise<ApiResponse<void>> {
-  const { error } = await supabase
-    .from('site_settings')
-    .upsert(settings, { onConflict: 'key' })
+  const { error } = await supabase.from('site_settings').upsert(settings, { onConflict: 'key' })
 
   if (error) {
     safeLogError('Error upserting settings:', error)

@@ -13,7 +13,7 @@ export function AdminPageHeader({
   subtitle,
   className,
   children,
-}: AdminPageHeaderProps) : React.JSX.Element {
+}: AdminPageHeaderProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -28,9 +28,7 @@ export function AdminPageHeader({
         <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
           {title}
         </h2>
-        {subtitle && (
-          <p className="text-xs text-neutral-500 font-sans">{subtitle}</p>
-        )}
+        {subtitle && <p className="text-xs text-neutral-500 font-sans">{subtitle}</p>}
       </div>
       {children && <div className="flex-shrink-0">{children}</div>}
     </div>

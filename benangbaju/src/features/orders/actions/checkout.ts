@@ -15,16 +15,12 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
   // Verify shipping cost server-side
   // 1 & 2. Get address zone and cart concurrently
   const [addressRes, cartRes] = await Promise.all([
-    supabase
-      .from('user_addresses')
-      .select('zone_id')
-      .eq('id', params.addressId)
-      .single(),
+    supabase.from('user_addresses').select('zone_id').eq('id', params.addressId).single(),
     supabase
       .from('carts')
       .select('id, cart_items(quantity, product_variants(weight_gram, products(weight_gram)))')
       .eq('user_id', user.id)
-      .maybeSingle()
+      .maybeSingle(),
   ])
 
   const address = addressRes.data
@@ -47,7 +43,12 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
         } else {
           // Use product weight
           const product = Array.isArray(variant.products) ? variant.products[0] : variant.products
-          if (product && typeof product === 'object' && 'weight_gram' in product && typeof product.weight_gram === 'number') {
+          if (
+            product &&
+            typeof product === 'object' &&
+            'weight_gram' in product &&
+            typeof product.weight_gram === 'number'
+          ) {
             weight = product.weight_gram
           }
         }
@@ -61,10 +62,12 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
   const validRates = shippingRes.data || []
 
   // 4. Validate the requested courier matches a valid rate
-  const selectedRate = params.shippingRateId 
-    ? validRates.find(r => r.id === params.shippingRateId)
-    : validRates.find(r => r.courier_name === params.courierName || params.courierName?.includes(r.courier_name))
-  
+  const selectedRate = params.shippingRateId
+    ? validRates.find((r) => r.id === params.shippingRateId)
+    : validRates.find(
+        (r) => r.courier_name === params.courierName || params.courierName?.includes(r.courier_name)
+      )
+
   if (!selectedRate) {
     throw new Error('Invalid shipping method selected')
   }
@@ -72,7 +75,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
   // 5. Override the client-provided cost with the server-calculated cost
   const secureParams = {
     ...params,
-    shippingCost: selectedRate.price
+    shippingCost: selectedRate.price,
   }
 
   // Proceed with creating the order

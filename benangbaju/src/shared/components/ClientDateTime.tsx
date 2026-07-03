@@ -9,7 +9,11 @@ interface ClientDateTimeProps {
   locale?: string
 }
 
-export function ClientDateTime({ date, options, locale = 'id-ID' }: ClientDateTimeProps) : React.JSX.Element {
+export function ClientDateTime({
+  date,
+  options,
+  locale = 'id-ID',
+}: ClientDateTimeProps): React.JSX.Element {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {

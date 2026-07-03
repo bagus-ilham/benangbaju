@@ -15,7 +15,7 @@ async function getCachedCollections() {
   return getActiveCollections(supabase)
 }
 
-export default async function CollectionsIndexPage() : Promise<React.JSX.Element> {
+export default async function CollectionsIndexPage(): Promise<React.JSX.Element> {
   const collectionsRes = await getCachedCollections()
   const collections = collectionsRes.data || []
 
@@ -46,7 +46,9 @@ export default async function CollectionsIndexPage() : Promise<React.JSX.Element
                 />
               ) : (
                 <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
-                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">{col.name}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">
+                    {col.name}
+                  </span>
                 </div>
               )}
               <div className="absolute inset-0 gradient-overlay-dark opacity-70 group-hover:opacity-90 transition-opacity duration-500" />

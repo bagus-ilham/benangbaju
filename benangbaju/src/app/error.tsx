@@ -12,20 +12,20 @@ export default function RootError({
 }: {
   error: Error & { digest?: string }
   reset: () => void
-}) : React.JSX.Element {
+}): React.JSX.Element {
   useEffect(() => {
     console.error('Root application error:', error.digest || 'unknown')
   }, [error])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-white font-sans">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="max-w-md space-y-6 flex flex-col items-center"
       >
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.8, rotate: -10 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
@@ -33,7 +33,7 @@ export default function RootError({
         >
           <AlertTriangle className="h-8 w-8" />
         </motion.div>
-        
+
         <div className="space-y-2">
           <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
             Terjadi Kesalahan
@@ -44,18 +44,11 @@ export default function RootError({
         </div>
 
         <div className="flex justify-center space-x-3 w-full max-w-xs pt-2">
-          <Button
-            onClick={() => reset()}
-            variant="primary"
-            className="flex-1 text-[10px] py-3"
-          >
+          <Button onClick={() => reset()} variant="primary" className="flex-1 text-[10px] py-3">
             Coba Lagi
           </Button>
           <Link href="/" className="flex-1">
-            <Button
-              variant="outline"
-              className="w-full text-[10px] py-3"
-            >
+            <Button variant="outline" className="w-full text-[10px] py-3">
               Ke Beranda
             </Button>
           </Link>
@@ -64,4 +57,3 @@ export default function RootError({
     </div>
   )
 }
-
