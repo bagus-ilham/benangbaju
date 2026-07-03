@@ -40,14 +40,13 @@ export function ProductImageManager({
         </Button>
       </div>
 
-      {!images.some((img) => !img.variant_id) ? (
+      {images.length === 0 ? (
         <p className="text-[11px] text-neutral-400 italic">
           Belum ada gambar ditambahkan. Silakan tambah url gambar.
         </p>
       ) : (
         <div className="space-y-4">
           {images.map((img, idx) => {
-            if (img.variant_id) return null
             return (
               <div
                 key={idx}
@@ -154,6 +153,20 @@ export function ProductImageManager({
                   </div>
                 </div>
 
+                <div className="space-y-1">
+                  <Select
+                    label="Tautkan ke Varian"
+                    value={img.variant_id || ''}
+                    onChange={(val) => onUpdateImageField(idx, 'variant_id', val || null)}
+                    options={[
+                      { label: 'Semua Varian (Gambar Umum)', value: '' },
+                      ...variants.map((v, vIdx) => ({
+                        label: `${v.name || `Varian #${vIdx + 1}`} (${v.sku || 'Tanpa SKU'})`,
+                        value: v.id || `temp-${vIdx}`,
+                      })),
+                    ]}
+                  />
+                </div>
 
                 <div className="flex items-center space-x-1.5 pt-1">
                   <Checkbox
