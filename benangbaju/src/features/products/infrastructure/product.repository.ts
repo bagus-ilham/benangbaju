@@ -515,7 +515,7 @@ export async function adminUpdateProduct(
   // Variants
   const variantsToUpsert = variants.map((v) => ({
     ...v,
-    id: v.id?.startsWith('temp-') ? null : v.id,
+    id: !v.id || v.id.startsWith('temp-') ? null : v.id,
   }))
 
   const { data: dbVariants } = await supabase
@@ -529,7 +529,8 @@ export async function adminUpdateProduct(
   // Images
   const imagesToUpsert = images.map((img) => ({
     ...img,
-    id: (img as any).id?.startsWith('temp-') ? null : (img as any).id,
+    id: !(img as any).id || (img as any).id.startsWith('temp-') ? null : (img as any).id,
+    variant_id: !(img as any).variant_id || (img as any).variant_id === '' || (img as any).variant_id.startsWith('temp-') ? null : (img as any).variant_id,
   }))
 
   const { data: dbImages } = await supabase
@@ -543,7 +544,7 @@ export async function adminUpdateProduct(
   // Links
   const linksToUpsert = marketplaceLinks.map((link) => ({
     ...link,
-    id: (link as any).id?.startsWith('temp-') ? null : (link as any).id,
+    id: !(link as any).id || (link as any).id.startsWith('temp-') ? null : (link as any).id,
   }))
 
   const { data: dbLinks } = await supabase

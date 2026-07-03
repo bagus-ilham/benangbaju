@@ -108,7 +108,7 @@ BEGIN
   -- 5. Insert collections
   IF array_length(p_collections, 1) > 0 THEN
     FOREACH v_collection_id IN ARRAY p_collections LOOP
-      INSERT INTO product_collection_mapping (
+      INSERT INTO collection_products (
         product_id, collection_id
       ) VALUES (
         v_product_id,

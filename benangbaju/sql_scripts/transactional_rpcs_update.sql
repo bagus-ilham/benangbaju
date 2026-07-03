@@ -62,8 +62,7 @@ BEGIN
           compare_price = (v_variant->>'compare_price')::numeric,
           stock = COALESCE((v_variant->>'stock')::int, stock),
           weight_gram = COALESCE((v_variant->>'weight_gram')::numeric, weight_gram),
-          is_active = COALESCE((v_variant->>'is_active')::boolean, is_active),
-          updated_at = NOW()
+          is_active = COALESCE((v_variant->>'is_active')::boolean, is_active)
         WHERE id = (v_variant->>'id')::uuid;
         v_variant_id := (v_variant->>'id')::uuid;
         
@@ -151,10 +150,10 @@ BEGIN
   END IF;
 
   -- 6. Update collections (wipe and recreate)
-  DELETE FROM product_collection_mapping WHERE product_id = p_product_id;
+  DELETE FROM collection_products WHERE product_id = p_product_id;
   IF array_length(p_collections, 1) > 0 THEN
     FOREACH v_collection_id IN ARRAY p_collections LOOP
-      INSERT INTO product_collection_mapping (
+      INSERT INTO collection_products (
         product_id, collection_id
       ) VALUES (
         p_product_id,
