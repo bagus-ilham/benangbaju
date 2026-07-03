@@ -97,7 +97,7 @@ export function ProductImageManager({
                     </div>
 
                     {/* File Upload Button */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <input
                         type="file"
                         id={`file-upload-${idx}`}

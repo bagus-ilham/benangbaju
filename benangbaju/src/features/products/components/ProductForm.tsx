@@ -329,7 +329,8 @@ export function ProductForm({
     )
   }
 
-  const handleAddImage = () => {
+  const handleAddImage = (variantId?: string | null | React.MouseEvent) => {
+    const vId = typeof variantId === 'string' ? variantId : null
     setImages((prev) => [
       ...prev,
       {
@@ -337,7 +338,7 @@ export function ProductForm({
         alt_text: '',
         sort_order: prev.length,
         is_primary: prev.length === 0,
-        variant_id: null,
+        variant_id: vId,
       },
     ])
   }
