@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
-import { Button } from '@/components/shared/Button'
+import { Button } from '@/shared/components/Button'
 import Link from 'next/link'
 
 export default function CustomerError({

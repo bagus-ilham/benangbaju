@@ -3,10 +3,10 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getCollectionBySlug } from '@/services/collections'
-import { getProducts } from '@/services/products'
-import { ProductCard } from '@/components/product/ProductCard'
-import { PageHero, PageContainer, EmptyState } from '@/components/shared'
+import { getCollectionBySlug } from '@/features/marketing/services/collections'
+import { getProducts } from '@/features/products/services'
+import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
 interface CollectionPageProps {
   params: Promise<{

@@ -1,8 +1,8 @@
 'use client'
 
 import React, { use } from 'react'
-import { useAdminCustomerDetail } from '@/hooks/useAdmin'
-import { AdminPageHeader, Button } from '@/components/shared'
+import { useAdminCustomerDetail } from '@/shared/hooks/useAdmin'
+import { AdminPageHeader, Button } from '@/shared/components'
 import { ArrowLeft, MapPin, ShoppingBag, Heart, AlertCircle, Package } from 'lucide-react'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils/format'

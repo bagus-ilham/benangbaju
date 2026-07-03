@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useMemo, Suspense } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { ProductForm } from '@/components/admin/ProductForm'
-import { useAdminCreateProduct } from '@/hooks/useAdmin'
-import type { ProductPayload } from '@/types/product'
+import { ProductForm } from '@/features/products/components/ProductForm'
+import { useAdminCreateProduct } from '@/shared/hooks/useAdmin'
+import type { ProductPayload } from '@/entities/product/model/product.types'
 import { useQuery } from '@tanstack/react-query'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -33,45 +33,40 @@ function AdminProductTambahContent() : React.JSX.Element {
         .single()
 
       if (error) throw error
-      return data
+
+      // Transform data here to avoid impure functions during render
+      const copy = { ...data }
+      copy.name = `${copy.name} (Copy)`
+      copy.slug = `${copy.slug}-copy`
+      
+      if (copy.product_variants) {
+        const oldToNewIdMap = new Map<string, string>()
+        copy.product_variants = copy.product_variants.map((v: any) => {
+          const newId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+          oldToNewIdMap.set(v.id, newId)
+          return {
+            ...v,
+            id: newId,
+            sku: v.sku ? `${v.sku}-COPY` : ''
+          }
+        })
+        if (copy.product_images) {
+          copy.product_images = copy.product_images.map((img: any) => {
+            if (img.variant_id && oldToNewIdMap.has(img.variant_id)) {
+              return {
+                ...img,
+                variant_id: oldToNewIdMap.get(img.variant_id)
+              }
+            }
+            return img
+          })
+        }
+      }
+
+      return copy
     },
     enabled: !!duplicateId
   })
-
-  const initialData = useMemo(() => {
-    if (!duplicateProduct) return undefined
-    
-    // Create a copy and clean up specific fields
-    const copy = { ...duplicateProduct }
-    copy.name = `${copy.name} (Copy)`
-    copy.slug = `${copy.slug}-copy`
-    
-    if (copy.product_variants) {
-      const oldToNewIdMap = new Map<string, string>()
-      copy.product_variants = copy.product_variants.map((v: any) => {
-        const newId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-        oldToNewIdMap.set(v.id, newId)
-        return {
-          ...v,
-          id: newId,
-          sku: v.sku ? `${v.sku}-COPY` : ''
-        }
-      })
-      if (copy.product_images) {
-        copy.product_images = copy.product_images.map((img: any) => {
-          if (img.variant_id && oldToNewIdMap.has(img.variant_id)) {
-            return {
-              ...img,
-              variant_id: oldToNewIdMap.get(img.variant_id)
-            }
-          }
-          return img
-        })
-      }
-    }
-    
-    return copy
-  }, [duplicateProduct])
 
   const handleCreateProduct = async (payload: ProductPayload) => {
     toast.loading('Menambahkan produk...', { id: 'create-product' })
@@ -97,7 +92,7 @@ function AdminProductTambahContent() : React.JSX.Element {
   return (
     <ProductForm
       title={duplicateId ? "Duplikat Produk" : "Tambah Produk Baru"}
-      initialData={initialData}
+      initialData={duplicateProduct}
       onSubmit={handleCreateProduct}
       isSubmitting={createMutation.isPending}
     />
@@ -111,4 +106,3 @@ export default function AdminProductTambahPage() : React.JSX.Element {
     </Suspense>
   )
 }
-

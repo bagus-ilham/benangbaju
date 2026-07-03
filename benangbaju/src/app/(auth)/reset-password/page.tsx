@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, Input, Card } from '@/components/shared'
+import { Button, Input, Card } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 export default function ResetPasswordPage() : React.JSX.Element {

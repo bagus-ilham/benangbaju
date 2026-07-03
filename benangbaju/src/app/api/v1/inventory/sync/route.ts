@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { ApiErrorCode } from '@/lib/api-errors'
+import { bulkUpdateStock } from '@/entities/product/api/inventory.repository'
 
 // This endpoint receives bulk stock updates from the ERP system.
 // It is protected by an API Key check in middleware.ts.
@@ -28,20 +29,13 @@ export async function POST(req: Request) {
       }
     }
 
-    // Process updates using the optimized bulk_update_stock RPC
-    const { error } = await supabase.rpc('bulk_update_stock', {
-      updates: updates
-    })
+    const result = await bulkUpdateStock(supabase, updates)
 
-    if (error) {
-      console.error('Failed to bulk update stock via RPC:', error)
-      return NextResponse.json(
-        { success: false, error: { code: ApiErrorCode.INTERNAL_ERROR, message: 'Gagal mengupdate stok ke database.' } },
-        { status: 500 }
-      )
+    if (!result.success) {
+      return NextResponse.json(result, { status: result.status })
     }
 
-    return NextResponse.json({ success: true, data: { message: `Successfully updated ${updates.length} items` } }, { status: 200 })
+    return NextResponse.json(result, { status: 200 })
   } catch (err: any) {
     console.error('Inventory Sync API error:', err)
     return NextResponse.json(

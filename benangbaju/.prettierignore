@@ -1,0 +1,12 @@
+node_modules
+.next
+dist
+build
+public
+*.min.js
+coverage
+.env*
+!*.example
+lint_report*.txt
+unused_vars.json
+eslint_report*.json

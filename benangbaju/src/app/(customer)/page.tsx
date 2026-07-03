@@ -1,23 +1,21 @@
 import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveBanners } from '@/services/banners'
-import { getActiveCategories } from '@/services/categories'
-import { getActiveCollections, getCollectionBySlug } from '@/services/collections'
-import { getActiveFlashSale } from '@/services/flashSales'
-import { getProducts } from '@/services/products'
-import { getSiteSettings } from '@/services/settings'
-import {
-  HeroSection,
-  TrustStrip,
-  FlashSaleSection,
-  CategorySection,
-  FeaturedProductsSection,
-  NewArrivalsSection,
-  CollectionSpotlight,
-  ProductGridSection,
-  RecentlyViewedSection
-} from '@/components/home'
+import { getActiveBanners } from '@/features/marketing/services/banners'
+import { getActiveCategories } from '@/features/marketing/services/categories'
+import { getActiveCollections, getCollectionBySlug } from '@/features/marketing/services/collections'
+import { getActiveFlashSale } from '@/features/marketing/services/flashSales'
+import { getProducts } from '@/features/products/services'
+import { getSiteSettings } from '@/features/core/services/settings'
+import { HeroSection } from '@/features/marketing/components/HeroSection';
+import { CategorySection } from '@/features/marketing/components/CategorySection';
+import { FlashSaleSection } from '@/features/marketing/components/FlashSaleSection';
+import { CollectionSpotlight } from '@/features/marketing/components/CollectionSpotlight';
+import { TrustStrip } from '@/features/marketing/components/TrustStrip';
+import { FeaturedProductsSection } from '@/features/products/components/FeaturedProductsSection';
+import { NewArrivalsSection } from '@/features/products/components/NewArrivalsSection';
+import { ProductGridSection } from '@/features/products/components/ProductGridSection';
+import { RecentlyViewedSection } from '@/features/products/components/RecentlyViewedSection';
 
 async function getCachedHomepageData() {
   'use cache'
@@ -55,8 +53,8 @@ async function getCachedHomepageData() {
     spotlight2Slug ? getCollectionBySlug(supabase, spotlight2Slug) : Promise.resolve(null),
   ])
 
-  let col1 = col1Res?.data || collections[0] || null
-  let col2 = col2Res?.data || collections[1] || null
+  const col1 = col1Res?.data || collections[0] || null
+  const col2 = col2Res?.data || collections[1] || null
 
 
   const [collection1Products, collection2Products] = await Promise.all([

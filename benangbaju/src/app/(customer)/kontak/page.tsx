@@ -3,7 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Clock, Mail, MessageSquare } from 'lucide-react'
-import { PageContainer, PageHero } from '@/components/shared'
+import { PageContainer, PageHero } from '@/shared/components'
 
 export default function KontakPage() : React.JSX.Element {
   const whatsappNumber = '6281234567890'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { PageHero, PageContainer } from '@/components/shared'
+import { PageHero, PageContainer } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Kebijakan Privasi — Benangbaju',

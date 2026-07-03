@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { CustomerLayout } from '@/components/layout/CustomerLayout'
+import { CustomerLayout } from '@/shared/components/CustomerLayout'
 
 export default function CustomerGroupLayout({
   children,

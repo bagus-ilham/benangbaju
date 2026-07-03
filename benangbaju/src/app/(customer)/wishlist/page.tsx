@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useWishlistStore } from '@/stores/wishlistStore'
-import { useProducts } from '@/hooks/useProducts'
-import { ProductCard } from '@/components/product/ProductCard'
-import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
+import { useWishlistStore } from '@/features/products/stores/wishlistStore'
+import { useProducts } from '@/features/products/hooks/useProducts'
+import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
 import { Heart } from 'lucide-react'
 
 export default function WishlistPage() : React.JSX.Element {

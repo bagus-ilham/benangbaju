@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { ProductListItem } from '@/services/products'
-import { ProductCard } from '@/components/product/ProductCard'
-import { SectionHeader } from '@/components/shared'
+import { ProductListItem } from '@/entities/product/model/product.types'
+import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { SectionHeader } from '@/shared/components'
 import { motion } from 'framer-motion'
 
 interface RelatedProductsProps {

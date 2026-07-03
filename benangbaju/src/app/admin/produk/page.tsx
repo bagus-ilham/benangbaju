@@ -6,8 +6,8 @@ import {
   useAdminDeleteProduct,
   useAdminUpdateProductActiveStatus,
   useAdminUpdateProductFeaturedStatus
-} from '@/hooks/useAdmin'
-import type { AdminProductListItem } from '@/services/products'
+} from '@/shared/hooks/useAdmin'
+import type { AdminProductListItem } from '@/features/products/services'
 import { 
   Button, 
   AdminPageHeader, 
@@ -16,11 +16,11 @@ import {
   DropdownMenuTrigger, 
   DropdownMenuContent, 
   DropdownMenuItem 
-} from '@/components/shared'
+} from '@/shared/components'
 import { Plus, Search, Edit2, Trash2, ArrowLeft, ArrowRight, Eye, Star, Copy, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import type { Column } from '@/components/shared/DataTable'
+import type { Column } from '@/shared/components/DataTable'
  
 export default function AdminProductListPage() : React.JSX.Element {
   const [search, setSearch] = useState('')

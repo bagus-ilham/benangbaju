@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminAnalytics } from '@/hooks/useAdmin'
-import { AdminPageHeader } from '@/components/shared'
+import { useAdminAnalytics } from '@/shared/hooks/useAdmin'
+import { AdminPageHeader } from '@/shared/components'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import { formatIDR } from '@/lib/utils/format'
 import { TrendingUp, ShoppingBag, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'

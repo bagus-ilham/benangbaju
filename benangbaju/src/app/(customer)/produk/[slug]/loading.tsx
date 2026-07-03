@@ -1,5 +1,5 @@
-import { PageContainer } from '@/components/shared/PageContainer'
-import { ProductGridSkeleton } from '@/components/shared/ProductGridSkeleton'
+import { PageContainer } from '@/shared/components/PageContainer'
+import { ProductGridSkeleton } from '@/shared/components/ProductGridSkeleton'
 
 export default function ProductDetailLoading() : React.JSX.Element {
   return (

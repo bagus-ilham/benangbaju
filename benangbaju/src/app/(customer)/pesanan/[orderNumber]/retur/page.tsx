@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import ReturnPageClient from './ReturnClient'
-import { AuthLoading } from '@/components/shared'
+import { AuthLoading } from '@/shared/components'
 
 interface ReturnPageProps {
   params: Promise<{

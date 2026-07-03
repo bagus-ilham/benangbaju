@@ -6,7 +6,7 @@ export type ApiErrorDetails = {
   details?: Record<string, string[]>
 }
 
-export type ApiErrorResponse<T = any> = {
+export type ApiErrorResponse<T = unknown> = {
   success: false
   error: ApiErrorDetails
   data?: T
@@ -49,13 +49,13 @@ export function ok<T>(data?: T): ApiResponse<T> {
  * Returns a standardized error response.
  * Can be constructed from a known ApiError, an Error, or raw strings.
  */
-export function fail(error: ApiError | Error | unknown): ApiErrorResponse
-export function fail(code: string, message: string, details?: Record<string, string[]>): ApiErrorResponse
-export function fail(
+export function fail<T = unknown>(error: ApiError | Error | unknown): ApiErrorResponse<T>
+export function fail<T = unknown>(code: string, message: string, details?: Record<string, string[]>): ApiErrorResponse<T>
+export function fail<T = unknown>(
   errOrCode: unknown,
   message?: string,
   details?: Record<string, string[]>
-): ApiErrorResponse {
+): ApiErrorResponse<T> {
   if (typeof errOrCode === 'string') {
     return {
       success: false,

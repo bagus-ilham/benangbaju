@@ -2,10 +2,10 @@ import React, { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getProductBySlug, getRelatedProducts } from '@/services/products'
+import { getProductBySlug, getRelatedProducts } from '@/features/products/services'
 import { ProductDetailClient } from './ProductDetailClient'
 import { RelatedProducts } from './RelatedProducts'
-import { ProductGridSkeleton } from '@/components/shared'
+import { ProductGridSkeleton } from '@/shared/components'
 
 interface ProductPageProps {
   params: Promise<{

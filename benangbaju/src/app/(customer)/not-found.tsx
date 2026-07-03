@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { HelpCircle } from 'lucide-react'
-import { Button, PageContainer } from '@/components/shared'
+import { Button, PageContainer } from '@/shared/components'
 
 export default function CustomerNotFound() : React.JSX.Element {
   return (

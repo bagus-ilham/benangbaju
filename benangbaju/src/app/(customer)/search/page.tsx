@@ -4,9 +4,9 @@ import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
-import { useProducts } from '@/hooks/useProducts'
-import { ProductCard } from '@/components/product/ProductCard'
-import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/components/shared'
+import { useProducts } from '@/features/products/hooks/useProducts'
+import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
 
 const gridVariants = {
   hidden: { opacity: 0 },

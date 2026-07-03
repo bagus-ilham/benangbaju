@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
-import { Button } from '@/components/shared/Button'
+import { Button } from '@/shared/components/Button'
 
 export default function RootError({
   error,

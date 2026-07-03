@@ -2,13 +2,13 @@
 
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore } from '@/entities/user/model/authStore'
 import {
   useUserNotifications,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
-} from '@/hooks/useNotifications'
-import { AuthLoading, PageContainer, PageHero } from '@/components/shared'
+} from '@/features/core/hooks/useNotifications'
+import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
 import { Bell, ClipboardList, Heart, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -19,7 +19,7 @@ import { motion } from 'framer-motion'
 export default function NotifikasiPage() : React.JSX.Element {
   const router = useRouter()
   const supabase = createBrowserClient()
-  const { user, profile, clearAuth, isAuthenticated, isLoading: authLoading } = useAuthStore()
+  const { user,  clearAuth, isAuthenticated, isLoading: authLoading } = useAuthStore()
 
   // Redirect if not authenticated
   useEffect(() => {

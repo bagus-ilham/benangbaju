@@ -6,7 +6,7 @@ import {
   useAdminCreateVoucher,
   useAdminUpdateVoucher,
   useAdminDeleteVoucher,
-} from '@/hooks/useAdmin'
+} from '@/shared/hooks/useAdmin'
 import { 
   Button, 
   Input, 
@@ -19,13 +19,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem
-} from '@/components/shared'
-import { Plus, Edit2, Trash2, Copy, MoreHorizontal } from 'lucide-react'
+} from '@/shared/components'
+import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
-import type { Column } from '@/components/shared/DataTable'
-import { Voucher } from '@/modules/voucher/domain/voucher.types'
+import type {} from '@/shared/components/DataTable'
+import { Voucher } from '@/features/marketing/domain/voucher.types'
 
 const supabase = createBrowserClient()
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { AlertCircle, Calendar, CheckCircle2 } from 'lucide-react'
-import { PageHero, PageContainer } from '@/components/shared'
+import { PageHero, PageContainer } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Kebijakan Pengembalian (Retur) — Benangbaju',

@@ -2,8 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveCollections } from '@/services/collections'
-import { PageHero, PageContainer } from '@/components/shared'
+import { getActiveCollections } from '@/features/marketing/services/collections'
+import { PageHero, PageContainer } from '@/shared/components'
 
 import { cacheLife, cacheTag } from 'next/cache'
 

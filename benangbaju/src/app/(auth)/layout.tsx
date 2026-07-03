@@ -1,5 +1,5 @@
 import { ReactNode, Suspense } from 'react'
-import { AuthLayout } from '@/components/layout/AuthLayout'
+import { AuthLayout } from '@/shared/components/AuthLayout'
 
 export default function AuthGroupLayout({ children }: { children: ReactNode }) : React.JSX.Element {
   return (

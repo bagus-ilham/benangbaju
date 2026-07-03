@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { getProducts } from '@/modules/product/infrastructure/product.repository'
+import { getProducts } from '@/features/products/infrastructure/product.repository'
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function GET(req: Request) {

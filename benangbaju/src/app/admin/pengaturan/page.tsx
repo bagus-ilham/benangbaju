@@ -7,8 +7,8 @@ import {
   useAdminActivityLogs,
   useAdminCollections,
   useAdminUpsertSettings,
-} from '@/hooks/useAdmin'
-import type { SiteSetting } from '@/services/settings'
+} from '@/shared/hooks/useAdmin'
+import type { SiteSetting } from '@/features/core/services/settings'
 import { 
   Button, 
   Input, 
@@ -19,10 +19,10 @@ import {
   TabsTrigger,
   DataTable,
   Select
-} from '@/components/shared'
+} from '@/shared/components'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
-import type { Column } from '@/components/shared/DataTable'
+import type {} from '@/shared/components/DataTable'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },

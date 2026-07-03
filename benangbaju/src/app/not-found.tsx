@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { HelpCircle } from 'lucide-react'
-import { Button } from '@/components/shared'
+import { Button } from '@/shared/components'
 
 export default function RootNotFound() : React.JSX.Element {
   return (

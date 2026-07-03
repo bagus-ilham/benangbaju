@@ -2,7 +2,7 @@ import React from 'react'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { ShoppingBag, Tag, Truck, CreditCard, ClipboardList } from 'lucide-react'
-import { PageHero, PageContainer } from '@/components/shared'
+import { PageHero, PageContainer } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Cara Belanja — Benangbaju',

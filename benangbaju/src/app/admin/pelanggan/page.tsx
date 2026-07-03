@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/hooks/useAdmin'
-import { Button, AdminPageHeader } from '@/components/shared'
+import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/shared/hooks/useAdmin'
+import { Button, AdminPageHeader } from '@/shared/components'
 import { Search, UserCheck, UserX, RefreshCw, Mail, Phone, Calendar, Eye } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'

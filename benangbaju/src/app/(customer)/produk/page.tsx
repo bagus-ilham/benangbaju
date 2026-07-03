@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getProducts } from '@/services/products'
-import { getActiveCategories } from '@/services/categories'
+import { getProducts } from '@/features/products/services'
+import { getActiveCategories } from '@/features/marketing/services/categories'
 import { CatalogClient } from './CatalogClient'
-import { PageContainer, PageHero } from '@/components/shared'
-import { ProductCardSkeleton } from '@/components/product/ProductCardSkeleton'
+import { PageContainer, PageHero } from '@/shared/components'
+import { ProductCardSkeleton } from '@/entities/product/ui/ProductCardSkeleton'
 
 interface CatalogPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>

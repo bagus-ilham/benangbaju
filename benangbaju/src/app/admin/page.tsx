@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminDashboardStats, LowStockVariant, RecentOrder, RecentActivityLog } from '@/hooks/useAdmin'
+import { useAdminDashboardStats } from '@/shared/hooks/useAdmin'
+import type { LowStockVariant, RecentOrder, RecentActivityLog } from '@/features/core/actions/dashboard'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, AdminPageHeader, AdminStatCard, AdminPanel, ClientDateTime } from '@/components/shared'
+import { Button, AdminPageHeader, AdminStatCard, AdminPanel, ClientDateTime } from '@/shared/components'
 import { TrendingUp, ShoppingBag, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'

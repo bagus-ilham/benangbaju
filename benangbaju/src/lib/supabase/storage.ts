@@ -13,7 +13,7 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
   const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
   const fileName = `${Date.now()}_${cleanName}`
   
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(targetBucket)
     .upload(fileName, file, {
       cacheControl: '3600',

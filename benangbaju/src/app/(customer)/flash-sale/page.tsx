@@ -1,9 +1,9 @@
 import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveFlashSale } from '@/services/flashSales'
-import { FlashSaleSection } from '@/components/home/FlashSaleSection'
-import { PageHero, PageContainer, EmptyState } from '@/components/shared'
+import { getActiveFlashSale } from '@/features/marketing/services/flashSales'
+import { FlashSaleSection } from '@/features/marketing/components/FlashSaleSection'
+import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
 async function getCachedFlashSale() {
   'use cache'

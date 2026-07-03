@@ -1,15 +1,15 @@
 'use client'
 
 import React, { use, Suspense } from 'react'
-import { ProductForm } from '@/components/admin/ProductForm'
-import { useAdminUpdateProduct } from '@/hooks/useAdmin'
+import { ProductForm } from '@/features/products/components/ProductForm'
+import { useAdminUpdateProduct } from '@/shared/hooks/useAdmin'
 import { useQuery } from '@tanstack/react-query'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
-import { Button } from '@/components/shared/Button'
+import { Button } from '@/shared/components/Button'
 import { ArrowLeft } from 'lucide-react'
-import type { ProductPayload } from '@/types/product'
+import type { ProductPayload } from '@/entities/product/model/product.types'
 
 const supabase = createBrowserClient()
 

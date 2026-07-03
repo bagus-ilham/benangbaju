@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
-import type { Database } from '@/types/database'
+import type { Database } from '@/shared/types/database'
 import {
   useAdminCategories,
   useAdminCreateCategory,
   useAdminUpdateCategory,
   useAdminDeleteCategory,
-} from '@/hooks/useAdmin'
+} from '@/shared/hooks/useAdmin'
 import { 
   Button, 
   Input, 
@@ -22,12 +22,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   TableSkeleton
-} from '@/components/shared'
-import { Plus, Edit2, Trash2, Copy, MoreHorizontal } from 'lucide-react'
+} from '@/shared/components'
+import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { uploadImage } from '@/lib/supabase/storage'
-import type { Column } from '@/components/shared/DataTable'
+import type {} from '@/shared/components/DataTable'
 
 const supabase = createBrowserClient()
 

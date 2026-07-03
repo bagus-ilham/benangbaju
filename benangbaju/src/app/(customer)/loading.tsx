@@ -1,5 +1,5 @@
 import React from 'react'
-import { AuthLoading } from '@/components/shared/AuthLoading'
+import { AuthLoading } from '@/shared/components/AuthLoading'
 
 export default function Loading() {
   return (

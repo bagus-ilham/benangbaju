@@ -1,13 +1,13 @@
 'use client'
 
-import React, { use, useState, useEffect } from 'react'
+import React, { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useOrderDetail } from '@/hooks/useOrders'
-import { useAdminUpdateOrderStatus, useAdminUpdateTrackingNumber } from '@/hooks/admin/useAdminOrders'
+import { useOrderDetail } from '@/features/orders/hooks/useOrders'
+import { useAdminUpdateOrderStatus, useAdminUpdateTrackingNumber } from '@/features/orders/hooks/useAdminOrders'
 
-import { Button, Input, AdminPageHeader, AdminPanel } from '@/components/shared'
+import { Button, Input, AdminPageHeader, AdminPanel } from '@/shared/components'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle, FileText, Download, Edit2, X, Check } from 'lucide-react'
+import { ArrowLeft, Clock, Package, Truck, CheckCircle, XCircle,  Download, Edit2, X, Check } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 
@@ -32,21 +32,15 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps) : React.
   const [isEditingResi, setIsEditingResi] = useState(false)
   const [editResiNumber, setEditResiNumber] = useState('')
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
-  const [formattedDate, setFormattedDate] = useState('')
-
-  useEffect(() => {
-    if (order?.created_at) {
-      setFormattedDate(
-        new Date(order.created_at).toLocaleString('id-ID', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      )
-    }
-  }, [order?.created_at])
+  const formattedDate = order?.created_at
+    ? new Date(order.created_at).toLocaleString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    : '-'
 
   const handleUpdateStatus = async (status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled') => {
     if (!order) return

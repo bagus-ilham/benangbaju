@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { PageHero, PageContainer } from '@/components/shared'
+import { PageHero, PageContainer } from '@/shared/components'
 import { EASE_PREMIUM } from '@/lib/motion'
 
 const fadeUp = {
