@@ -24,13 +24,12 @@ BEGIN
     FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
       INSERT INTO flash_sale_items (
         flash_sale_id, variant_id, original_price,
-        sale_price, discount_percent, quota, sold_count
+        sale_price, quota, sold_count
       ) VALUES (
         v_flash_sale_id,
         (v_item->>'variant_id')::uuid,
         (v_item->>'original_price')::numeric,
         (v_item->>'sale_price')::numeric,
-        (v_item->>'discount_percent')::numeric,
         (v_item->>'quota')::int,
         COALESCE((v_item->>'sold_count')::int, 0)
       );
@@ -77,20 +76,18 @@ BEGIN
     FOR v_item IN SELECT * FROM jsonb_array_elements(p_items_to_upsert) LOOP
       INSERT INTO flash_sale_items (
         flash_sale_id, variant_id, original_price,
-        sale_price, discount_percent, quota, sold_count
+        sale_price, quota, sold_count
       ) VALUES (
         p_flash_sale_id,
         (v_item->>'variant_id')::uuid,
         (v_item->>'original_price')::numeric,
         (v_item->>'sale_price')::numeric,
-        (v_item->>'discount_percent')::numeric,
         (v_item->>'quota')::int,
         COALESCE((v_item->>'sold_count')::int, 0)
       )
       ON CONFLICT (flash_sale_id, variant_id) DO UPDATE SET
         original_price = EXCLUDED.original_price,
         sale_price = EXCLUDED.sale_price,
-        discount_percent = EXCLUDED.discount_percent,
         quota = EXCLUDED.quota,
         sold_count = EXCLUDED.sold_count;
     END LOOP;
