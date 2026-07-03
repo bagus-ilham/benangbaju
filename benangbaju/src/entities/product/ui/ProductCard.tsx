@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Heart } from 'lucide-react'
 import { useWishlistStore } from '@/features/products/stores/wishlistStore'
@@ -20,6 +21,7 @@ export const ProductCard = React.memo(function ProductCard({
   product,
   className,
 }: ProductCardProps): React.JSX.Element {
+  const router = useRouter()
   const isLiked = useWishlistStore((state) => state.productIds.includes(product.id))
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist)
   const addItem = useCartStore((state) => state.addItem)
@@ -127,19 +129,27 @@ export const ProductCard = React.memo(function ProductCard({
     }
   }
 
+  const productUrl = `/produk/${product.slug}`
+
   return (
     <div
       className={cn(
-        'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] gold-border-hover rounded-xl overflow-hidden',
+        'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] rounded-xl overflow-hidden',
         className
       )}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => {
+        setIsHovered(true)
+        // Smart Prefetch: Pre-load the product page data in the background instantly on hover
+        router.prefetch(productUrl)
+      }}
       onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={() => router.prefetch(productUrl)} // Prefetch on touch start for mobile
     >
       {/* Product Image Area */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 transition-colors duration-300">
         <Link
-          href={`/produk/${product.slug}`}
+          href={productUrl}
+          prefetch={true}
           className="block w-full h-full"
           onClick={() => {
             if (hoverImage && hoverImage !== primaryImage) {
@@ -302,7 +312,7 @@ export const ProductCard = React.memo(function ProductCard({
         )}
 
         {/* Product Title */}
-        <Link href={`/produk/${product.slug}`} className="block">
+        <Link href={productUrl} prefetch={true} className="block">
           <h3 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-black hover:text-brand-gray transition-colors truncate">
             {product.name}
           </h3>
