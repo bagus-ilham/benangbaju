@@ -5,12 +5,12 @@ import {
   useAdminReviews,
   useAdminUpdateReviewStatus,
   useAdminReplyToReview,
-} from '@/shared/hooks/useAdmin'
+} from '@/app/admin/hooks/useAdmin'
 import { Button, Modal, AdminPageHeader, Textarea } from '@/shared/components'
 import { Star, MessageSquare } from 'lucide-react'
-import { useAuthStore } from '@/entities/user/model/authStore'
+import { useAuthStore } from '@/modules/users/stores/authStore'
 import toast from 'react-hot-toast'
-import type { AdminReviewListItem } from '@/features/core/services/reviews'
+import type { AdminReviewListItem } from '@/modules/reviews/types'
 import Image from 'next/image'
 export default function AdminReviewsPage(): React.JSX.Element {
   const { data: reviewsRes, isLoading, isError, refetch } = useAdminReviews()

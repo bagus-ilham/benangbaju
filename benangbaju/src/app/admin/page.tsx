@@ -1,12 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminDashboardStats } from '@/shared/hooks/useAdmin'
-import type {
-  LowStockVariant,
-  RecentOrder,
-  RecentActivityLog,
-} from '@/features/core/actions/dashboard'
+import { useAdminDashboardStats } from '@/app/admin/hooks/useAdmin'
+import type { LowStockVariant, RecentOrder, RecentActivityLog } from '@/modules/analytics/actions'
 import { createBrowserClient } from '@/lib/supabase/client'
 import {
   Button,

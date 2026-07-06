@@ -1,24 +1,21 @@
 import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveBanners } from '@/features/marketing/services/banners'
-import { getActiveCategories } from '@/features/marketing/services/categories'
-import {
-  getActiveCollections,
-  getCollectionBySlug,
-} from '@/features/marketing/services/collections'
-import { getActiveFlashSale } from '@/features/marketing/services/flashSales'
-import { getProducts } from '@/features/products/services'
-import { getSiteSettings } from '@/features/core/services/settings'
-import { HeroSection } from '@/features/marketing/components/HeroSection'
-import { CategorySection } from '@/features/marketing/components/CategorySection'
-import { FlashSaleSection } from '@/features/marketing/components/FlashSaleSection'
-import { CollectionSpotlight } from '@/features/marketing/components/CollectionSpotlight'
-import { TrustStrip } from '@/features/marketing/components/TrustStrip'
-import { FeaturedProductsSection } from '@/features/products/components/FeaturedProductsSection'
-import { NewArrivalsSection } from '@/features/products/components/NewArrivalsSection'
-import { ProductGridSection } from '@/features/products/components/ProductGridSection'
-import { RecentlyViewedSection } from '@/features/products/components/RecentlyViewedSection'
+import { getActiveBanners } from '@/modules/banners/services'
+import { getActiveCategories } from '@/modules/categories/services'
+import { getActiveCollections, getCollectionBySlug } from '@/modules/collections/services'
+import { getActiveFlashSale } from '@/modules/flash-sales/services'
+import { getProducts } from '@/modules/products/services'
+import { getSiteSettings } from '@/modules/settings/services'
+import { HeroSection } from '@/modules/banners/components/HeroSection'
+import { CategorySection } from '@/modules/categories/components/CategorySection'
+import { FlashSaleSection } from '@/modules/flash-sales/components/FlashSaleSection'
+import { CollectionSpotlight } from '@/modules/collections/components/CollectionSpotlight'
+import { TrustStrip } from '@/modules/banners/components/TrustStrip'
+import { FeaturedProductsSection } from '@/modules/products/components/FeaturedProductsSection'
+import { NewArrivalsSection } from '@/modules/products/components/NewArrivalsSection'
+import { ProductGridSection } from '@/modules/products/components/ProductGridSection'
+import { RecentlyViewedSection } from '@/modules/products/components/RecentlyViewedSection'
 
 async function getCachedHomepageData() {
   'use cache'
@@ -37,7 +34,7 @@ async function getCachedHomepageData() {
 
   const [
     bannersRes,
-    categories,
+    categoriesRes,
     collectionsRes,
     flashSaleRes,
     featuredResponse,
@@ -80,7 +77,7 @@ async function getCachedHomepageData() {
 
   return {
     banners: bannersRes.data || [],
-    categories,
+    categories: categoriesRes.data || [],
     collections,
     flashSale,
     featuredProducts: featuredResponse.data || [],

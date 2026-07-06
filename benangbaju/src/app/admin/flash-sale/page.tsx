@@ -6,8 +6,8 @@ import {
   useAdminCreateFlashSale,
   useAdminUpdateFlashSale,
   useAdminDeleteFlashSale,
-} from '@/shared/hooks/useAdmin'
-import type { AdminFlashSaleListItem } from '@/features/marketing/services/flashSales'
+} from '@/app/admin/hooks/useAdmin'
+import type { AdminFlashSaleListItem } from '@/modules/flash-sales/types'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { FlashSaleListTable, FlashSaleFormModal, type FlashSaleFormItem } from './components'
 import { Plus } from 'lucide-react'

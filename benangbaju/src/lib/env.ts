@@ -1,3 +1,5 @@
+import { safeLogError } from './logger'
+
 const requiredEnvVars = [
   'NEXT_PUBLIC_SUPABASE_URL',
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
@@ -29,7 +31,7 @@ export function validateEnv(): void {
       missing.map((key) => `   - ${key}`).join('\n') +
       `\n\nPlease check your .env.local file.`
 
-    console.error(errorMessage)
+    safeLogError('[Env Validation]', errorMessage)
     const hasMissingServer = serverEnvVars.some((key) => missing.includes(key))
     if (hasMissingServer) {
       // Throw error if server secrets are missing even during build

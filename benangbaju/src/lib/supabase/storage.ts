@@ -1,3 +1,5 @@
+import { SupabaseClient } from '@supabase/supabase-js'
+import { safeLogError } from '../logger'
 import { createBrowserClient } from './client'
 
 /**
@@ -19,7 +21,7 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
   })
 
   if (error) {
-    console.error('Storage upload error')
+    safeLogError('Storage upload error', error)
     throw new Error(
       'Gagal mengunggah gambar. Silakan periksa ukuran dan format gambar atau coba lagi nanti.'
     )
@@ -41,7 +43,7 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
  * @param bucket The storage bucket name (defaults to 'products')
  */
 export async function deleteImageByUrl(
-  supabase: any,
+  supabase: SupabaseClient,
   url: string,
   bucket: string = 'products'
 ): Promise<void> {
@@ -56,9 +58,9 @@ export async function deleteImageByUrl(
 
     const { error } = await supabase.storage.from(bucket).remove([fileName])
     if (error) {
-      console.error(`Failed to delete image ${fileName} from ${bucket}:`, error.message)
+      safeLogError(`Failed to delete image ${fileName} from ${bucket}:`, error.message)
     }
   } catch (err) {
-    console.error('Error in deleteImageByUrl:', err)
+    safeLogError('Error in deleteImageByUrl:', err)
   }
 }

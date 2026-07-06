@@ -5,8 +5,7 @@ import NextLink, { LinkProps } from 'next/link'
 import { useRouter } from 'next/navigation'
 
 interface SmartLinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>,
-    LinkProps {
+  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>, LinkProps {
   children: React.ReactNode
 }
 

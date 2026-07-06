@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import React, { useState, useEffect } from 'react'
+import { safeLogError } from '@/lib/logger'
 
 interface ClientDateTimeProps {
   date: string | Date
@@ -30,7 +31,7 @@ export function ClientDateTime({
     const d = typeof date === 'string' ? new Date(date) : date
     formatted = d.toLocaleString(locale, options)
   } catch (err) {
-    console.error('ClientDateTime formatting error:', err)
+    safeLogError('ClientDateTime formatting error:', err)
     formatted = String(date)
   }
 

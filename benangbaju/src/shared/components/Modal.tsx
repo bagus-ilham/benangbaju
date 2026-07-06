@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
 interface ModalProps {
   isOpen: boolean
@@ -32,69 +33,10 @@ export function Modal({
 
   const titleId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
-  const previousFocusRef = useRef<HTMLElement | null>(null)
 
-  useEffect(() => {
-    let originalOverflow = ''
-    if (isOpen) {
-      originalOverflow = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
-      if (document.activeElement instanceof HTMLElement) {
-        previousFocusRef.current = document.activeElement
-      } else {
-        previousFocusRef.current = null
-      }
-      // Small timeout to ensure DOM is ready for focus
-      setTimeout(() => dialogRef.current?.focus(), 10)
-    } else {
-      previousFocusRef.current?.focus()
-    }
-
-    return () => {
-      if (isOpen) {
-        document.body.style.overflow = originalOverflow
-      }
-    }
-  }, [isOpen])
-
-  useEffect(() => {
-    if (!isOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-        return
-      }
-
-      if (event.key !== 'Tab' || !dialogRef.current) return
-
-      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      const focusableList = Array.from(focusable).filter((el) => {
-        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
-      })
-
-      if (focusableList.length === 0) {
-        event.preventDefault()
-        return
-      }
-
-      const first = focusableList[0]
-      const last = focusableList[focusableList.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  useFocusTrap(isOpen, dialogRef, {
+    onClose,
+  })
 
   if (!mounted) return null
 

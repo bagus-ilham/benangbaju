@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
 export interface DrawerProps {
   isOpen: boolean
@@ -34,61 +35,10 @@ export function Drawer({
 
   const titleId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
-  const previousFocusRef = useRef<HTMLElement | null>(null)
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-      if (document.activeElement instanceof HTMLElement) {
-        previousFocusRef.current = document.activeElement
-      } else {
-        previousFocusRef.current = null
-      }
-      // Delay focus to allow animation to start
-      setTimeout(() => dialogRef.current?.focus(), 10)
-    } else {
-      document.body.style.overflow = 'unset'
-      previousFocusRef.current?.focus()
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
-
-  useEffect(() => {
-    if (!isOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-        return
-      }
-
-      if (event.key !== 'Tab' || !dialogRef.current) return
-
-      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      const focusableList = Array.from(focusable).filter((el) => !el.hasAttribute('disabled'))
-
-      if (focusableList.length === 0) return
-
-      const first = focusableList[0]
-      const last = focusableList[focusableList.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  useFocusTrap(isOpen, dialogRef, {
+    onClose,
+  })
 
   if (!mounted) return null
 

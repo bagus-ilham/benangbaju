@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useAuthStore } from '@/entities/user/model/authStore'
+import { useAuthStore } from '@/modules/users/stores/authStore'
 import {
   useOrderDetail,
   useCancelOrder,
   useConfirmDelivery,
   useGeneratePaymentToken,
   useCheckPaymentStatus,
-} from '@/features/orders/hooks/useOrders'
-import { useSubmitReview } from '@/entities/review/api/useReviews'
+} from '@/modules/orders/hooks/useOrders'
+import { useSubmitReview } from '@/modules/reviews/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/shared/components/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState, Modal } from '@/shared/components'
@@ -19,8 +19,10 @@ import { OrderTrackingSection } from './components/OrderTrackingSection'
 import { OrderPaymentSection } from './components/OrderPaymentSection'
 import { OrderItemsList } from './components/OrderItemsList'
 import { OrderReviewModal } from './components/OrderReviewModal'
+import { OrderShippingSection } from './components/OrderShippingSection'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
+import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
 
 const supabase = createBrowserClient()
 
@@ -150,18 +152,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   }
 
   // Load Midtrans Snap.js Script dynamically
-  useEffect(() => {
-    const snapScriptUrl =
-      process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
-    const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
-    if (!existingScript) {
-      const script = document.createElement('script')
-      script.src = snapScriptUrl
-      script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '')
-      script.async = true
-      document.body.appendChild(script)
-    }
-  }, [])
+  useMidtransScript()
 
   // Trigger verification if page is loaded with verifying query param
   useEffect(() => {
@@ -344,53 +335,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         <OrderTrackingSection status={order.status} cancelReason={order.cancel_reason} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
-              <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
-                Informasi Pengiriman
-              </h2>
-              {order.order_shipping ? (
-                <div className="text-sm space-y-2 text-neutral-600">
-                  <p className="font-semibold text-neutral-800">
-                    {order.order_shipping.recipient_name} ({order.order_shipping.phone})
-                  </p>
-                  <p>{order.order_shipping.full_address}</p>
-                  <p className="text-xs text-neutral-500 font-medium">
-                    {order.order_shipping.district_name}, {order.order_shipping.city_name},{' '}
-                    {order.order_shipping.province_name} {order.order_shipping.postal_code}
-                  </p>
-                  <div className="pt-2 text-xs border-t border-neutral-100 mt-2 space-y-1 text-neutral-500">
-                    <p>
-                      Kurir:{' '}
-                      <span className="font-semibold text-neutral-700 uppercase">
-                        {order.order_shipping.courier_name}
-                      </span>
-                    </p>
-                    {order.order_shipping.tracking_number && (
-                      <p>
-                        No. Resi:{' '}
-                        <span className="font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 select-all">
-                          {order.order_shipping.tracking_number}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-neutral-500 italic">Data pengiriman tidak ditemukan.</p>
-              )}
-            </div>
-
-            {order.notes && (
-              <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-brand-cream/30 space-y-2">
-                <h3 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold">
-                  Catatan dari Anda
-                </h3>
-                <p className="text-sm text-neutral-700 whitespace-pre-wrap">{order.notes}</p>
-              </div>
-            )}
-          </div>
+          <OrderShippingSection orderShipping={order.order_shipping} notes={order.notes} />
 
           <OrderPaymentSection
             order={order}

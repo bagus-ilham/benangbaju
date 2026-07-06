@@ -2,12 +2,12 @@
 
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/entities/user/model/authStore'
+import { useAuthStore } from '@/modules/users/stores/authStore'
 import {
   useUserNotifications,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
-} from '@/features/core/hooks/useNotifications'
+} from '@/modules/notifications/hooks/useNotifications'
 import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
 import { Bell, ClipboardList, Heart, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'

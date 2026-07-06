@@ -4,8 +4,8 @@ import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
-import { useProducts } from '@/features/products/hooks/useProducts'
-import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { useProducts } from '@/modules/products/hooks/useProducts'
+import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
 
 const gridVariants = {

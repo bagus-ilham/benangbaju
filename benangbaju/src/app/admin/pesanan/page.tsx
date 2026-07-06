@@ -6,8 +6,8 @@ import {
   useAdminReturnRequests,
   useAdminUpdateReturnRequest,
   useAdminUpdateOrderStatus,
-} from '@/shared/hooks/useAdmin'
-import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/features/orders/services'
+} from '@/app/admin/hooks/useAdmin'
+import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/modules/orders/types'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { Search } from 'lucide-react'
 import toast from 'react-hot-toast'

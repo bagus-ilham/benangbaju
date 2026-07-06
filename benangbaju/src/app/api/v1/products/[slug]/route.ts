@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { getProductBySlug } from '@/features/products/infrastructure/product.repository'
+import { getProductBySlug } from '@/modules/products/services'
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {

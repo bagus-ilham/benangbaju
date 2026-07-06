@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { ApiErrorCode } from '@/lib/api-errors'
-import { bulkUpdateStock } from '@/entities/product/api/inventory.repository'
+import { bulkUpdateStock } from '@/modules/products/inventory.repository'
 
 // This endpoint receives bulk stock updates from the ERP system.
 // It is protected by an API Key check in middleware.ts.

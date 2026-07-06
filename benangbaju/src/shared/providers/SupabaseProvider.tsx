@@ -2,17 +2,41 @@
 
 import React, { useEffect } from 'react'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { useAuthStore } from '@/entities/user/model/authStore'
-import { useCartStore } from '@/entities/cart/model/cartStore'
-import { useWishlistStore } from '@/features/products/stores/wishlistStore'
+import { useAuthStore } from '@/modules/users/stores/authStore'
+import { useCartStore } from '@/modules/cart/stores/cartStore'
+import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 
-import { AuthChangeEvent, Session } from '@supabase/supabase-js'
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js'
+import { safeLogError } from '@/lib/logger'
 
 export function SupabaseProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const supabase = createBrowserClient()
   const { setUser, setProfile, setLoading, clearAuth } = useAuthStore()
 
   useEffect(() => {
+    const handleUserSession = async (user: User | null) => {
+      if (user) {
+        setUser(user)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, name, phone, avatar_url, role, is_active, created_at, updated_at')
+          .eq('id', user.id)
+          .single()
+
+        if (profile) {
+          const role = profile.role === 'admin' ? 'admin' : 'customer'
+          setProfile({ ...profile, role })
+        }
+
+        useCartStore.getState().syncCart(user.id, true)
+        useWishlistStore.getState().syncWishlist(user.id)
+      } else {
+        clearAuth()
+        useWishlistStore.getState().clearWishlist()
+        useCartStore.getState().resetCart()
+      }
+    }
+
     // 1. Check current session immediately on load
     const syncSession = async () => {
       setLoading(true)
@@ -21,34 +45,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
           data: { user },
         } = await supabase.auth.getUser()
 
-        if (user) {
-          setUser(user)
-
-          // Fetch profile details
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('id, name, phone, avatar_url, role, is_active, created_at, updated_at')
-            .eq('id', user.id)
-            .single()
-
-          if (profile) {
-            const role = profile.role === 'admin' ? 'admin' : 'customer'
-            setProfile({
-              ...profile,
-              role,
-            })
-          }
-
-          // Sync cart and wishlist with database
-          useCartStore.getState().syncCart(user.id, true)
-          useWishlistStore.getState().syncWishlist(user.id)
-        } else {
-          clearAuth()
-          useWishlistStore.getState().clearWishlist()
-          useCartStore.getState().resetCart()
-        }
+        await handleUserSession(user)
       } catch (error) {
-        console.error('Error syncing Supabase session:', error)
+        safeLogError('Error syncing Supabase session:', error)
         clearAuth()
       } finally {
         setLoading(false)
@@ -61,32 +60,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-      if (session?.user) {
-        setUser(session.user)
-
-        // Fetch profile
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('id, name, phone, avatar_url, role, is_active, created_at, updated_at')
-          .eq('id', session.user.id)
-          .single()
-
-        if (profile) {
-          const role = profile.role === 'admin' ? 'admin' : 'customer'
-          setProfile({
-            ...profile,
-            role,
-          })
-        }
-
-        // Sync cart and wishlist with database
-        useCartStore.getState().syncCart(session.user.id, true)
-        useWishlistStore.getState().syncWishlist(session.user.id)
-      } else {
-        clearAuth()
-        useWishlistStore.getState().clearWishlist()
-        useCartStore.getState().resetCart()
-      }
+      await handleUserSession(session?.user ?? null)
       setLoading(false)
     })
 

@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Tag, ShoppingBag } from 'lucide-react'
 import { Button } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
-import type { CartItem } from '@/entities/cart/model/cartStore'
+import type { CartItem } from '@/modules/cart/stores/cartStore'
 
 interface AppliedVoucher {
   code: string

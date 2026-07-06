@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/shared/hooks/useAdmin'
+import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/app/admin/hooks/useAdmin'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { Search, UserCheck, UserX, RefreshCw, Mail, Phone, Calendar, Eye } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'

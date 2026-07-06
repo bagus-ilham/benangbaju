@@ -10,8 +10,8 @@ import {
   useAdminCreateShippingRate,
   useAdminUpdateShippingRate,
   useAdminDeleteShippingRate,
-} from '@/shared/hooks/useAdmin'
-import type { ShippingZone, ShippingRate } from '@/entities/shipping/lib/shipping'
+} from '@/app/admin/hooks/useAdmin'
+import type { ShippingZone, ShippingRate } from '@/modules/shipping/types'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { Plus, MapPin, Truck, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'

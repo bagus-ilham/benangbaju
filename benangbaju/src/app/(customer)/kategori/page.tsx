@@ -2,7 +2,7 @@ import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveCategories } from '@/features/marketing/services/categories'
+import { getActiveCategories } from '@/modules/categories/services'
 import { PageHero, PageContainer } from '@/shared/components'
 
 import { cacheLife, cacheTag } from 'next/cache'
@@ -16,7 +16,8 @@ async function getCachedCategories() {
 }
 
 export default async function CategoriesIndexPage(): Promise<React.JSX.Element> {
-  const categories = await getCachedCategories()
+  const categoriesRes = await getCachedCategories()
+  const categories = categoriesRes.data || []
   const parentCategories = categories.filter((cat) => !cat.parent_id)
 
   return (

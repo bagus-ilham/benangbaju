@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { ProductForm, type InitialProductData } from '@/features/products/components/ProductForm'
-import { useAdminCreateProduct } from '@/shared/hooks/useAdmin'
-import type { ProductPayload } from '@/entities/product/model/product.types'
+import { ProductForm, type InitialProductData } from '@/modules/products/components/ProductForm'
+import { useAdminCreateProduct } from '@/app/admin/hooks/useAdmin'
+import type { ProductPayload } from '@/modules/products/types'
 import { useQuery } from '@tanstack/react-query'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'

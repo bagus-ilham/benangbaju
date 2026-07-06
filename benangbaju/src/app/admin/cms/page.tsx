@@ -10,8 +10,8 @@ import {
   useAdminCreateLandingPage,
   useAdminUpdateLandingPage,
   useAdminDeleteLandingPage,
-} from '@/shared/hooks/useAdmin'
-import type { RedirectRule, LandingPage } from '@/features/marketing/services/cms'
+} from '@/app/admin/hooks/useAdmin'
+import type { RedirectRule, LandingPage } from '@/modules/cms/types'
 import type { Json } from '@/shared/types/database'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { Link2, FileCode, RefreshCw } from 'lucide-react'

@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Menu, Search, Heart, ShoppingBag, User, LogOut } from 'lucide-react'
+import { Menu, Search, Heart, ShoppingBag, User as UserIcon, LogOut } from 'lucide-react'
+import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
 
 interface DesktopNavbarProps {
@@ -21,8 +22,8 @@ interface DesktopNavbarProps {
   onOpenCart: () => void
   isMounted: boolean
   isAuthenticated: boolean
-  profile: any
-  user: any
+  profile: Record<string, any> | null
+  user: User | null
   onLogout: () => void
 }
 
@@ -171,7 +172,7 @@ export function DesktopNavbar({
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
                   >
-                    <User className="h-4 w-4 md:h-5 md:w-5" />
+                    <UserIcon className="h-4 w-4 md:h-5 md:w-5" />
                   </button>
 
                   {isUserMenuOpen && (

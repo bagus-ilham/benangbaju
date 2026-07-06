@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getCategoryBySlug } from '@/features/marketing/services/categories'
-import { getProducts } from '@/features/products/services'
-import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { getCategoryBySlug } from '@/modules/categories/services'
+import { getProducts } from '@/modules/products/services'
+import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
 interface CategoryPageProps {
@@ -20,11 +20,11 @@ async function getCachedCategory(slug: string) {
   cacheTag('categories', `category-${slug}`)
 
   const supabase = createStaticClient()
-  const category = await getCategoryBySlug(supabase, slug)
-  if (!category) {
+  const categoryRes = await getCategoryBySlug(supabase, slug)
+  if (!categoryRes.success || !categoryRes.data) {
     throw new Error(`Category ${slug} not found`)
   }
-  return category
+  return categoryRes.data
 }
 
 async function getCachedCategoryProducts(slug: string) {

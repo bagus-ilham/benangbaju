@@ -7,7 +7,7 @@ import {
   useAdminCreateCategory,
   useAdminUpdateCategory,
   useAdminDeleteCategory,
-} from '@/shared/hooks/useAdmin'
+} from '@/app/admin/hooks/useAdmin'
 import {
   Button,
   Input,
@@ -27,6 +27,7 @@ import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { uploadImage } from '@/lib/supabase/storage'
+import { CategoryFormModal } from './components/CategoryFormModal'
 import type {} from '@/shared/components/DataTable'
 
 const supabase = createBrowserClient()
@@ -34,7 +35,8 @@ const supabase = createBrowserClient()
 type CategoryRow = Database['public']['Tables']['categories']['Row']
 
 export default function AdminCategoryPage(): React.JSX.Element {
-  const { data: categories = [], isLoading, isError, refetch } = useAdminCategories()
+  const { data: categoriesResponse, isLoading, isError, refetch } = useAdminCategories()
+  const categories = categoriesResponse?.data || []
 
   const createMutation = useAdminCreateCategory()
   const updateMutation = useAdminUpdateCategory()
@@ -286,128 +288,29 @@ export default function AdminCategoryPage(): React.JSX.Element {
       </div>
 
       {/* Modal Form editor */}
-      <Modal
+      <CategoryFormModal
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title={editingCategory ? 'Ubah Kategori' : 'Tambah Kategori Baru'}
-      >
-        <form onSubmit={handleSubmit} className="space-y-5 text-xs font-sans">
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Nama Kategori*"
-              value={name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="cth: Kemeja Linen"
-              required
-            />
-            <Input
-              label="Slug URL*"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="cth: kemeja-linen"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Select
-                label="Kategori Induk (Parent)"
-                value={parent_id || ''}
-                onChange={(val) => setParentId(val || null)}
-                options={[
-                  { label: 'Tidak ada (Kategori Utama)', value: '' },
-                  ...parentOptions.map((c) => ({ label: c.name, value: c.id })),
-                ]}
-              />
-            </div>
-
-            <Input
-              label="Nomor Urut Tampil*"
-              type="number"
-              value={sort_order}
-              onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <Input
-              label="URL Gambar"
-              value={image_url}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://... atau unggah gambar"
-            />
-            <div className="flex items-center gap-2 mt-1">
-              <input
-                type="file"
-                id="category-image-upload"
-                accept="image/*"
-                className="hidden"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0]
-                  if (!file) return
-
-                  const toastId = toast.loading('Mengunggah gambar kategori...')
-                  try {
-                    const publicUrl = await uploadImage(file, 'products')
-                    setImageUrl(publicUrl)
-                    toast.success('Gambar kategori berhasil diunggah!', { id: toastId })
-                  } catch (err: unknown) {
-                    const message =
-                      err instanceof Error ? err.message : 'Gagal mengunggah gambar kategori'
-                    toast.error(message, { id: toastId })
-                  }
-                }}
-              />
-              <label
-                htmlFor="category-image-upload"
-                className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none bg-white"
-              >
-                Unggah Gambar
-              </label>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <Textarea
-              label="Deskripsi Kategori"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tulis deskripsi singkat..."
-              rows={3}
-            />
-          </div>
-
-          <div className="flex items-center space-x-2 py-1">
-            <Switch
-              id="cat_is_active"
-              checked={is_active}
-              onChange={(e) => setIsActive(e.target.checked)}
-            />
-            <label
-              htmlFor="cat_is_active"
-              className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
-            >
-              Kategori Aktif
-            </label>
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-3 border-t border-neutral-100">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsOpen(false)}
-              disabled={createMutation.isPending || updateMutation.isPending}
-            >
-              Batal
-            </Button>
-            <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
-              Simpan
-            </Button>
-          </div>
-        </form>
-      </Modal>
+        setIsOpen={setIsOpen}
+        editingCategory={editingCategory}
+        name={name}
+        setName={setName}
+        slug={slug}
+        setSlug={setSlug}
+        parent_id={parent_id}
+        setParentId={setParentId}
+        description={description}
+        setDescription={setDescription}
+        image_url={image_url}
+        setImageUrl={setImageUrl}
+        sort_order={sort_order}
+        setSortOrder={setSortOrder}
+        is_active={is_active}
+        setIsActive={setIsActive}
+        handleNameChange={handleNameChange}
+        handleSubmit={handleSubmit}
+        parentOptions={parentOptions}
+        isPending={createMutation.isPending || updateMutation.isPending}
+      />
     </div>
   )
 }

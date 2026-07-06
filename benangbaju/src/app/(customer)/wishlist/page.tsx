@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useWishlistStore } from '@/features/products/stores/wishlistStore'
-import { useProducts } from '@/features/products/hooks/useProducts'
-import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
+import { useProducts } from '@/modules/products/hooks/useProducts'
+import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
 import { Heart } from 'lucide-react'
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { createOrder } from '@/features/orders/infrastructure/order.repository'
+import { createOrder } from '@/modules/orders/services'
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function POST(req: Request) {

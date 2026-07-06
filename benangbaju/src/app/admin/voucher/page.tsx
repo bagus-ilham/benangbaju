@@ -6,26 +6,14 @@ import {
   useAdminCreateVoucher,
   useAdminUpdateVoucher,
   useAdminDeleteVoucher,
-} from '@/shared/hooks/useAdmin'
-import {
-  Button,
-  Input,
-  Modal,
-  AdminPageHeader,
-  DataTable,
-  Select,
-  Switch,
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/shared/components'
+} from '@/app/admin/hooks/useAdmin'
+import { Button, AdminPageHeader } from '@/shared/components'
 import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
-import type {} from '@/shared/components/DataTable'
-import { Voucher } from '@/features/marketing/domain/voucher.types'
+import { Voucher } from '@/modules/vouchers/types'
+import { VoucherFormModal } from './components/VoucherFormModal'
 
 const supabase = createBrowserClient()
 
@@ -314,141 +302,35 @@ export default function AdminVouchersPage(): React.JSX.Element {
       </div>
 
       {/* Modal Form editor */}
-      <Modal
+      <VoucherFormModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title={editingVoucher ? 'Ubah Voucher' : 'Tambah Voucher Baru'}
-      >
-        <form onSubmit={handleSubmit} className="space-y-5 text-xs font-sans">
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Kode Voucher (Huruf Besar)*"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="cth: DISKON10"
-              required
-            />
-            <Input
-              label="Nama Promosi*"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="cth: Promo Gajian Juni"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-1">
-              <Select
-                label="Tipe Potongan*"
-                required
-                value={discount_type}
-                onChange={(val) => {
-                  if (val === 'percentage' || val === 'fixed') {
-                    setDiscountType(val)
-                  }
-                }}
-                options={[
-                  { label: 'Persentase (%)', value: 'percentage' },
-                  { label: 'Nominal Flat (Rp)', value: 'fixed' },
-                ]}
-              />
-            </div>
-
-            <Input
-              label="Nilai Potongan*"
-              type="number"
-              value={value}
-              onChange={(e) => setValue(Math.max(0, parseFloat(e.target.value) || 0))}
-              placeholder="cth: 10 atau 50000"
-              required
-            />
-
-            <Input
-              label="Minimal Belanja (Rp)*"
-              type="number"
-              value={min_purchase}
-              onChange={(e) => setMinPurchase(Math.max(0, parseFloat(e.target.value) || 0))}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <Input
-              label="Maksimal Potongan (Maks Rp)"
-              type="number"
-              value={max_discount || ''}
-              onChange={(e) =>
-                setMaxDiscount(e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null)
-              }
-              placeholder="Kosongkan jika tidak dibatasi"
-            />
-
-            <Input
-              label="Batas Penggunaan Total"
-              type="number"
-              value={usage_limit || ''}
-              onChange={(e) =>
-                setUsageLimit(e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null)
-              }
-              placeholder="Kosongkan jika tidak dibatasi"
-            />
-
-            <Input
-              label="Batas per Pengguna*"
-              type="number"
-              value={usage_per_user}
-              onChange={(e) => setUsagePerUser(Math.max(1, parseInt(e.target.value) || 1))}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Mulai Aktif*"
-              type="datetime-local"
-              value={starts_at}
-              onChange={(e) => setStartsAt(e.target.value)}
-              required
-            />
-            <Input
-              label="Akhir Berlaku (Expired)*"
-              type="datetime-local"
-              value={expires_at}
-              onChange={(e) => setExpiresAt(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="flex items-center space-x-2 py-1">
-            <Switch
-              id="voucher_is_active"
-              checked={is_active}
-              onChange={(e) => setIsActive(e.target.checked)}
-            />
-            <label
-              htmlFor="voucher_is_active"
-              className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
-            >
-              Voucher Aktif & Dapat Digunakan
-            </label>
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-3 border-t border-neutral-100">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsOpen(false)}
-              disabled={createMutation.isPending || updateMutation.isPending}
-            >
-              Batal
-            </Button>
-            <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending}>
-              Simpan
-            </Button>
-          </div>
-        </form>
-      </Modal>
+        isEditing={!!editingVoucher}
+        isPending={createMutation.isPending || updateMutation.isPending}
+        onSubmit={handleSubmit}
+        code={code}
+        setCode={setCode}
+        name={name}
+        setName={setName}
+        discount_type={discount_type}
+        setDiscountType={setDiscountType}
+        value={value}
+        setValue={setValue}
+        min_purchase={min_purchase}
+        setMinPurchase={setMinPurchase}
+        max_discount={max_discount}
+        setMaxDiscount={setMaxDiscount}
+        usage_limit={usage_limit}
+        setUsageLimit={setUsageLimit}
+        usage_per_user={usage_per_user}
+        setUsagePerUser={setUsagePerUser}
+        starts_at={starts_at}
+        setStartsAt={setStartsAt}
+        expires_at={expires_at}
+        setExpiresAt={setExpiresAt}
+        is_active={is_active}
+        setIsActive={setIsActive}
+      />
     </div>
   )
 }

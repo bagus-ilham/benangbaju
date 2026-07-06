@@ -4,7 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Edit, Trash2 } from 'lucide-react'
 import { Button } from '@/shared/components'
-import type { ShippingZone } from '@/entities/shipping/lib/shipping'
+import type { ShippingZone } from '@/modules/shipping/types'
 
 interface ShippingZonesTableProps {
   zones: ShippingZone[]

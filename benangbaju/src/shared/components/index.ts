@@ -15,6 +15,7 @@ export {
 } from './DropdownMenu'
 export { Drawer } from './Drawer'
 export { Tooltip } from './Tooltip'
+export { FloatingWhatsApp } from './FloatingWhatsApp'
 export { Card } from './Card'
 export { Badge } from './Badge'
 export { Skeleton } from './Skeleton'

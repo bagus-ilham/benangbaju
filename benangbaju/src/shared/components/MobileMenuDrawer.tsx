@@ -5,6 +5,7 @@ import { SmartLink as Link } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
 interface MobileMenuDrawerProps {
   isOpen: boolean
@@ -23,17 +24,28 @@ export function MobileMenuDrawer({
   isAuthenticated,
   isMounted,
 }: MobileMenuDrawerProps) {
+  const drawerRef = React.useRef<HTMLDivElement>(null)
+
+  useFocusTrap(isOpen, drawerRef, {
+    onClose,
+  })
+
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs" onClick={onClose} />
           <motion.div
+            ref={drawerRef}
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-            className="relative flex w-full max-w-xs flex-col bg-white py-4 shadow-xl border-r border-neutral-100"
+            className="relative flex w-full max-w-xs flex-col bg-white py-4 shadow-xl border-r border-neutral-100 outline-none"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu navigasi utama"
+            tabIndex={-1}
           >
             <div className="flex items-center justify-between px-6 pb-4 border-b border-neutral-100">
               <span className="font-heading text-sm font-bold tracking-[0.2em] text-brand-black uppercase">

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useAdminAnalytics } from '@/shared/hooks/useAdmin'
+import { useAdminAnalytics } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
 import {
   LineChart,

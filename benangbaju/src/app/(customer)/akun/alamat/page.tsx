@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/entities/user/model/authStore'
+import { useAuthStore } from '@/modules/users/stores/authStore'
 import {
   useUserAddresses,
   useDeleteUserAddress,
   useSetDefaultAddress,
-} from '@/entities/shipping/api/useShipping'
-import { UserAddress } from '@/entities/shipping/lib/shipping'
-import { AddressCard } from '@/features/users/components/AddressCard'
-import { AddressModal } from '@/features/users/components/AddressModal'
+} from '@/modules/shipping/hooks/useShipping'
+import type { UserAddress } from '@/modules/shipping/types'
+import { AddressCard } from '@/modules/users/components/AddressCard'
+import { AddressModal } from '@/modules/users/components/AddressModal'
 import { AuthLoading, Button, PageContainer, PageHero } from '@/shared/components'
 import { ArrowLeft, Plus } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'

@@ -7,7 +7,7 @@ import {
   useAdminCreateBanner,
   useAdminUpdateBanner,
   useAdminDeleteBanner,
-} from '@/shared/hooks/useAdmin'
+} from '@/app/admin/hooks/useAdmin'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { Plus } from 'lucide-react'
 import toast from 'react-hot-toast'

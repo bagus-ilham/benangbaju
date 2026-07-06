@@ -4,7 +4,7 @@ import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { Eye, Truck } from 'lucide-react'
 import { Button, TableSkeleton } from '@/shared/components'
-import type { AdminOrderListItem } from '@/features/orders/services'
+import type { AdminOrderListItem } from '@/modules/orders/types'
 
 interface AdminOrdersTableProps {
   orders: AdminOrderListItem[]

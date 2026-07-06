@@ -2,28 +2,19 @@
 
 import React, { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useOrderDetail } from '@/features/orders/hooks/useOrders'
+import { useOrderDetail } from '@/modules/orders/hooks/useOrders'
 import {
   useAdminUpdateOrderStatus,
   useAdminUpdateTrackingNumber,
-} from '@/features/orders/hooks/useAdminOrders'
+} from '@/modules/orders/hooks/useAdminOrders'
 
 import { Button, Input, AdminPageHeader, AdminPanel } from '@/shared/components'
 import { createBrowserClient } from '@/lib/supabase/client'
-import {
-  ArrowLeft,
-  Clock,
-  Package,
-  Truck,
-  CheckCircle,
-  XCircle,
-  Download,
-  Edit2,
-  X,
-  Check,
-} from 'lucide-react'
+import { ArrowLeft, Download } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
+import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
+import { AdminOrderStatusPanel } from './components/AdminOrderStatusPanel'
 
 const supabase = createBrowserClient()
 
@@ -206,76 +197,15 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
             </div>
           </AdminPanel>
 
-          <AdminPanel title="Alamat Pengiriman">
-            {order.order_shipping ? (
-              <div className="text-sm space-y-2 text-neutral-600 font-medium">
-                <p className="font-bold text-neutral-800">
-                  {order.order_shipping.recipient_name} ({order.order_shipping.phone})
-                </p>
-                <p className="leading-relaxed">{order.order_shipping.full_address}</p>
-                <p className="text-xs text-neutral-500">
-                  Kecamatan {order.order_shipping.district_name}, {order.order_shipping.city_name},{' '}
-                  {order.order_shipping.province_name} {order.order_shipping.postal_code}
-                </p>
-                <div className="pt-2 border-t border-neutral-100 mt-2 space-y-1 text-neutral-500 text-xs">
-                  <p>
-                    Kurir:{' '}
-                    <span className="font-bold text-neutral-700 uppercase">
-                      {order.order_shipping.courier_name}
-                    </span>
-                  </p>
-                  {order.order_shipping.tracking_number && (
-                    <div className="flex items-center gap-2">
-                      <p>No. Resi: </p>
-                      {isEditingResi ? (
-                        <div className="flex items-center gap-1">
-                          <Input
-                            value={editResiNumber}
-                            onChange={(e) => setEditResiNumber(e.target.value)}
-                            className="w-32 py-1"
-                            autoFocus
-                          />
-                          <button
-                            onClick={handleUpdateResi}
-                            disabled={updateTrackingMutation.isPending}
-                            className="text-green-600 hover:text-green-700 p-0.5"
-                            title="Simpan"
-                          >
-                            <Check size={14} />
-                          </button>
-                          <button
-                            onClick={() => setIsEditingResi(false)}
-                            className="text-red-500 hover:text-red-600 p-0.5"
-                            title="Batal"
-                          >
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-neutral-900 bg-neutral-100 px-1.5 py-0.5 select-all">
-                            {order.order_shipping.tracking_number}
-                          </span>
-                          <button
-                            onClick={() => {
-                              setEditResiNumber(order.order_shipping!.tracking_number!)
-                              setIsEditingResi(true)
-                            }}
-                            className="text-neutral-400 hover:text-brand-gold transition"
-                            title="Edit Resi"
-                          >
-                            <Edit2 size={12} />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="text-xs text-neutral-400 italic">Data pengiriman tidak ditemukan.</p>
-            )}
-          </AdminPanel>
+          <AdminOrderShippingPanel
+            orderShipping={order.order_shipping}
+            isEditingResi={isEditingResi}
+            editResiNumber={editResiNumber}
+            setEditResiNumber={setEditResiNumber}
+            setIsEditingResi={setIsEditingResi}
+            handleUpdateResi={handleUpdateResi}
+            isUpdatingTracking={updateTrackingMutation.isPending}
+          />
 
           {order.notes && (
             <AdminPanel title="Catatan Pelanggan" className="bg-brand-cream/20">
@@ -287,92 +217,12 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
         </div>
 
         <div className="space-y-8">
-          <AdminPanel title="Status Alur Kerja">
-            <div className="flex items-center space-x-2 text-sm text-neutral-800 font-bold uppercase tracking-wider">
-              {order.status === 'pending_payment' && <Clock size={16} className="text-amber-500" />}
-              {order.status === 'processing' && <Package size={16} className="text-neutral-800" />}
-              {order.status === 'shipped' && <Truck size={16} className="text-neutral-800" />}
-              {order.status === 'completed' && <CheckCircle size={16} className="text-green-500" />}
-              {order.status === 'cancelled' && <XCircle size={16} className="text-red-500" />}
-              <span>
-                {order.status === 'pending_payment'
-                  ? 'Belum Bayar'
-                  : order.status === 'processing'
-                    ? 'Diproses'
-                    : order.status === 'shipped'
-                      ? 'Dikirim'
-                      : order.status === 'completed'
-                        ? 'Selesai'
-                        : 'Batal'}
-              </span>
-            </div>
-
-            {/* Logical action workflow buttons */}
-            <div className="space-y-2 pt-2 border-t border-neutral-100">
-              {order.status === 'pending_payment' && (
-                <>
-                  <Button
-                    onClick={() => handleUpdateStatus('processing')}
-                    className="w-full py-3 text-[10px] uppercase tracking-wider font-bold"
-                  >
-                    Konfirmasi Pembayaran Manual
-                  </Button>
-                  <Button
-                    onClick={() => handleUpdateStatus('cancelled')}
-                    variant="outline"
-                    className="w-full py-3 text-[10px] uppercase tracking-wider font-bold border-red-150 text-red-500 hover:bg-red-50"
-                  >
-                    Batalkan Transaksi
-                  </Button>
-                </>
-              )}
-
-              {order.status === 'processing' && (
-                <div className="space-y-4">
-                  <Input
-                    label="Nomor Resi Pengiriman (Aksi Kirim)*"
-                    value={trackingNumber}
-                    onChange={(e) => setTrackingNumber(e.target.value)}
-                    placeholder="Masukkan no resi kurir..."
-                  />
-                  <Button
-                    onClick={() => handleUpdateStatus('shipped')}
-                    className="w-full py-3 text-[10px] uppercase tracking-wider font-bold"
-                  >
-                    Kirim & Input Resi
-                  </Button>
-                  <Button
-                    onClick={() => handleUpdateStatus('cancelled')}
-                    variant="outline"
-                    className="w-full py-3 text-[10px] uppercase tracking-wider font-bold border-red-150 text-red-500 hover:bg-red-50"
-                  >
-                    Batalkan Transaksi
-                  </Button>
-                </div>
-              )}
-
-              {order.status === 'shipped' && (
-                <Button
-                  onClick={() => handleUpdateStatus('completed')}
-                  className="w-full py-3 text-[10px] uppercase tracking-wider font-bold"
-                >
-                  Tandai Selesai (Diterima)
-                </Button>
-              )}
-
-              {order.status === 'completed' && (
-                <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold select-none rounded-none text-center">
-                  Transaksi Selesai.
-                </div>
-              )}
-
-              {order.status === 'cancelled' && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold select-none rounded-none text-center">
-                  Pesanan Dibatalkan.
-                </div>
-              )}
-            </div>
-          </AdminPanel>
+          <AdminOrderStatusPanel
+            status={order.status}
+            trackingNumber={trackingNumber}
+            setTrackingNumber={setTrackingNumber}
+            handleUpdateStatus={handleUpdateStatus}
+          />
 
           <AdminPanel title="Rincian Biaya">
             <div className="space-y-3 text-neutral-600 font-medium">

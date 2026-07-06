@@ -7,8 +7,8 @@ import {
   useAdminActivityLogs,
   useAdminCollections,
   useAdminUpsertSettings,
-} from '@/shared/hooks/useAdmin'
-import type { SiteSetting } from '@/features/core/services/settings'
+} from '@/app/admin/hooks/useAdmin'
+import type { SiteSetting } from '@/modules/settings/types'
 import {
   Button,
   Input,
@@ -22,6 +22,8 @@ import {
 } from '@/shared/components'
 import { Settings, ClipboardList } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { ActivityLogsTable } from './components/ActivityLogsTable'
+import { SettingsForm } from './components/SettingsForm'
 import type {} from '@/shared/components/DataTable'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
@@ -230,70 +232,15 @@ export default function AdminSettingsPage(): React.JSX.Element {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl">
-            {Object.entries(settingsByGroup).map(([group, list]) => (
-              <div
-                key={group}
-                className="border border-neutral-200 bg-white p-5 rounded-none space-y-4"
-              >
-                <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
-                  {groupLabels[group] || group}
-                </h3>
-
-                <div className="space-y-4">
-                  {list.map((setting) => (
-                    <div key={setting.key} className="space-y-1">
-                      {setting.key === 'homepage_spotlight_collection_1' ||
-                      setting.key === 'homepage_spotlight_collection_2' ? (
-                        <Select
-                          label={setting.label || setting.key}
-                          value={fields[setting.key] || ''}
-                          onChange={(val) => handleFieldChange(setting.key, val)}
-                          options={[
-                            { label: 'Pilih Koleksi (Gunakan Urutan Default)', value: '' },
-                            ...collections
-                              .filter((col) => col.is_active)
-                              .map((col) => ({
-                                label: `${col.name} (${col.slug})`,
-                                value: col.slug,
-                              })),
-                          ]}
-                        />
-                      ) : setting.type === 'boolean' ? (
-                        <Select
-                          label={setting.label || setting.key}
-                          value={fields[setting.key] || 'false'}
-                          onChange={(val) => handleFieldChange(setting.key, val)}
-                          options={[
-                            { label: 'Aktif (True)', value: 'true' },
-                            { label: 'Nonaktif (False)', value: 'false' },
-                          ]}
-                        />
-                      ) : (
-                        <Input
-                          label={setting.label || setting.key}
-                          type={setting.type === 'number' ? 'number' : 'text'}
-                          value={fields[setting.key] || ''}
-                          onChange={(e) => handleFieldChange(setting.key, e.target.value)}
-                          placeholder={`Masukkan ${setting.label || setting.key}`}
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <div className="flex justify-end pt-3 border-t border-neutral-100">
-              <Button
-                type="submit"
-                isLoading={updateMutation.isPending}
-                className="text-xs uppercase font-bold tracking-widest py-3 px-6"
-              >
-                Simpan Semua Pengaturan
-              </Button>
-            </div>
-          </form>
+          <SettingsForm
+            settingsByGroup={settingsByGroup}
+            groupLabels={groupLabels}
+            fields={fields}
+            collections={collections}
+            isPending={updateMutation.isPending}
+            handleFieldChange={handleFieldChange}
+            handleSaveSettings={handleSaveSettings}
+          />
         )
       ) : // Logs viewport
       logsLoading ? (
@@ -307,56 +254,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
           Belum ada aktivitas admin terekam.
         </div>
       ) : (
-        <div className="border border-neutral-200 bg-white rounded-none overflow-hidden max-w-4xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-sans">
-              <thead>
-                <tr className="bg-neutral-50/50 border-b border-neutral-200 text-neutral-400 uppercase tracking-widest font-bold text-[10px]">
-                  <th className="py-3 px-5">Waktu Tulis</th>
-                  <th className="py-3 px-4">Operator</th>
-                  <th className="py-3 px-4">Tindakan / Resource</th>
-                  <th className="py-3 px-4 text-center">IP Address</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {logsList.map((log) => (
-                  <tr key={log.id} className="hover:bg-neutral-50/20 transition">
-                    <td className="py-3 px-5 text-neutral-500 whitespace-nowrap">
-                      <ClientDateTime
-                        date={log.created_at}
-                        options={{
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit',
-                        }}
-                      />
-                    </td>
-                    <td className="py-3 px-4">
-                      <p>{log.profiles?.name || 'Administrator'}</p>
-                      <p className="text-[10px] text-neutral-400 font-normal">
-                        {log.profiles?.email || 'admin@site.com'}
-                      </p>
-                    </td>
-                    <td className="py-3 px-4 leading-relaxed">
-                      <span className="font-semibold text-neutral-900 font-mono text-[10px] bg-neutral-100 px-1 py-0.5 select-all">
-                        {log.action}
-                      </span>
-                      <p className="text-[10px] text-neutral-400 font-normal mt-0.5">
-                        Tipe: {log.resource_type} | ID: {log.resource_id || '-'}
-                      </p>
-                    </td>
-                    <td className="py-3 px-4 text-center text-neutral-500">
-                      {log.ip_address || '-'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ActivityLogsTable logsList={logsList} />
       )}
     </div>
   )

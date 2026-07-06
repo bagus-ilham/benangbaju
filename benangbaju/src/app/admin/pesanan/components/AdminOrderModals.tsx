@@ -3,7 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { Button, Input, Textarea, Modal } from '@/shared/components'
-import type { AdminOrderListItem, AdminReturnRequestListItem } from '@/features/orders/services'
+import type { AdminOrderListItem, AdminReturnRequestListItem } from '@/modules/orders/types'
 
 interface QuickResiModalProps {
   order: AdminOrderListItem | null

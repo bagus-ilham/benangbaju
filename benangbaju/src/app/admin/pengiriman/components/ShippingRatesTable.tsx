@@ -4,7 +4,7 @@ import React from 'react'
 import { Edit, Trash2 } from 'lucide-react'
 import { Button } from '@/shared/components'
 import { formatIDR } from '@/lib/utils/format'
-import type { ShippingRate } from '@/entities/shipping/lib/shipping'
+import type { ShippingRate } from '@/modules/shipping/types'
 
 interface ShippingRatesTableProps {
   rates: ShippingRate[]

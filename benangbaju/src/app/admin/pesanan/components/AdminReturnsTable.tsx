@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button, TableSkeleton } from '@/shared/components'
-import type { AdminReturnRequestListItem } from '@/features/orders/services'
+import type { AdminReturnRequestListItem } from '@/modules/orders/types'
 
 interface AdminReturnsTableProps {
   returnsData: AdminReturnRequestListItem[]

@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getProducts } from '@/features/products/services'
-import { getActiveCategories } from '@/features/marketing/services/categories'
+import { getProducts } from '@/modules/products/services'
+import { getActiveCategories } from '@/modules/categories/services'
 import { CatalogClient } from './CatalogClient'
 import { PageContainer, PageHero } from '@/shared/components'
-import { ProductCardSkeleton } from '@/entities/product/ui/ProductCardSkeleton'
+import { ProductCardSkeleton } from '@/modules/products/components/ProductCardSkeleton'
 
 interface CatalogPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -23,7 +23,7 @@ async function getCachedCatalogData(
 
   const supabase = createStaticClient()
 
-  const [productsRes, categories] = await Promise.all([
+  const [productsRes, categoriesRes] = await Promise.all([
     getProducts(supabase, {
       categorySlug,
       sortBy,
@@ -36,7 +36,7 @@ async function getCachedCatalogData(
   return {
     products: productsRes.data || [],
     totalCount: productsRes.pagination?.total_count || 0,
-    categories,
+    categories: categoriesRes.data || [],
   }
 }
 

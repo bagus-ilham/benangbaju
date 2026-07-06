@@ -3,18 +3,19 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { useAuthStore } from '@/entities/user/model/authStore'
-import { useCartStore } from '@/entities/cart/model/cartStore'
-import type { CartItem } from '@/entities/cart/model/cartStore'
-import { useUserAddresses, useShippingRates } from '@/entities/shipping/api/useShipping'
-import type { UserAddress, ShippingOption } from '@/entities/shipping/lib/shipping'
-import { useCreateOrder, useGeneratePaymentToken } from '@/features/orders/hooks/useOrders'
-import { validateVoucher } from '@/features/marketing/services/vouchers'
+import { useAuthStore } from '@/modules/users/stores/authStore'
+import { useCartStore } from '@/modules/cart/stores/cartStore'
+import type { CartItem } from '@/modules/cart/stores/cartStore'
+import { useUserAddresses, useShippingRates } from '@/modules/shipping/hooks/useShipping'
+import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
+import { useCreateOrder, useGeneratePaymentToken } from '@/modules/orders/hooks/useOrders'
+import { validateVoucher } from '@/modules/vouchers/services'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { AddressModal } from '@/features/users/components/AddressModal'
+import { AddressModal } from '@/modules/users/components/AddressModal'
 import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
-import { CheckoutAddressForm, CheckoutSummaryCard } from './components'
+import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar } from './components'
 import { SmartLink as Link } from '@/shared/components'
+import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -96,18 +97,7 @@ export default function CheckoutPage(): React.JSX.Element {
   ])
 
   // 3. Load Midtrans Snap.js Script
-  useEffect(() => {
-    const snapScriptUrl =
-      process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'
-    const existingScript = document.querySelector(`script[src="${snapScriptUrl}"]`)
-    if (!existingScript) {
-      const script = document.createElement('script')
-      script.src = snapScriptUrl
-      script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '')
-      script.async = true
-      document.body.appendChild(script)
-    }
-  }, [])
+  useMidtransScript()
 
   // 4. Fetch Addresses
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
@@ -369,60 +359,7 @@ export default function CheckoutPage(): React.JSX.Element {
         subtitle="Lengkapi alamat pengiriman dan selesaikan pembayaran."
       />
       <PageContainer size="lg" className="py-10 page-content">
-        {/* 🎨 PALETTE ENHANCEMENT
-        Problem: Visual progress bar pada checkout tidak menggunakan atribut aria-current="step" untuk screen reader.
-        Fix: Menambahkan role="list" pada kontainer dan aria-current="step" pada langkah aktif
-        Impact: Screen reader dapat mengidentifikasi langkah saat ini dengan benar */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          role="list"
-          className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto"
-        >
-          <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
-            <div className="w-5 h-5 rounded-full border border-neutral-300 flex items-center justify-center text-[10px] text-neutral-400 font-sans group-hover:border-brand-black group-hover:text-brand-black transition-colors">
-              1
-            </div>
-            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-heading group-hover:text-brand-black transition-colors">
-              Keranjang
-            </span>
-          </Link>
-          <div className="w-8 md:w-12 h-px bg-neutral-200" aria-hidden="true" />
-          <div
-            role="listitem"
-            aria-current={checkoutStep === 'shipping' ? 'step' : undefined}
-            className="flex items-center space-x-2"
-          >
-            <div
-              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'shipping' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}
-            >
-              2
-            </div>
-            <span
-              className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'shipping' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}
-            >
-              Pengiriman
-            </span>
-          </div>
-          <div className="w-8 md:w-12 h-px bg-neutral-200" aria-hidden="true" />
-          <div
-            role="listitem"
-            aria-current={checkoutStep === 'payment' ? 'step' : undefined}
-            className="flex items-center space-x-2"
-          >
-            <div
-              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold ${checkoutStep === 'payment' ? 'bg-brand-gold text-white shadow-[0_0_10px_rgba(154,123,79,0.3)]' : 'border border-neutral-300 text-neutral-400'}`}
-            >
-              3
-            </div>
-            <span
-              className={`text-[10px] uppercase tracking-wider font-heading ${checkoutStep === 'payment' ? 'font-semibold text-brand-gold' : 'text-neutral-400'}`}
-            >
-              Pembayaran
-            </span>
-          </div>
-        </motion.div>
+        <CheckoutProgressBar checkoutStep={checkoutStep} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT: SHIPPING DETAILS */}

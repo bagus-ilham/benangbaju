@@ -8,7 +8,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, Loader2, ChevronRight } from 'lucide-react'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
-import { getProducts, type ProductListItem } from '@/features/products/services'
+import { safeLogError } from '@/lib/logger'
+import { getProducts, type ProductListItem } from '@/modules/products/services'
 import { createBrowserClient } from '@/lib/supabase/client'
 
 interface SearchOverlayProps {
@@ -39,7 +40,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         const res = await getProducts(supabase, { searchQuery: searchQuery.trim(), limit: 3 })
         setInstantResults(res.data || [])
       } catch (err) {
-        console.error('Instant search error:', err)
+        safeLogError('Instant search error:', err)
       } finally {
         setIsSearchingInstant(false)
       }

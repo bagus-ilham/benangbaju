@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ProductDetailItem, ProductVariant } from '@/features/products/services'
+import { ProductDetailItem, ProductVariant } from '@/modules/products/services'
 import {
   ProductGallery,
   MarketplaceLinks,
@@ -14,14 +14,14 @@ import {
   ProductAccordionTabs,
   ProductStickyAction,
   ProductSizeGuideModal,
-} from '@/features/products/components'
+} from '@/modules/products/components'
 import { PageContainer } from '@/shared/components'
-import { useCartStore } from '@/entities/cart/model/cartStore'
-import { useWishlistStore } from '@/features/products/stores/wishlistStore'
+import { useCartStore } from '@/modules/cart/stores/cartStore'
+import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import {
   useRecentlyViewedStore,
   RecentlyViewedState,
-} from '@/features/products/stores/recentlyViewedStore'
+} from '@/modules/products/stores/recentlyViewedStore'
 
 import toast from 'react-hot-toast'
 

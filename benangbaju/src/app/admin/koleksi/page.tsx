@@ -6,8 +6,8 @@ import {
   useAdminCreateCollection,
   useAdminUpdateCollection,
   useAdminDeleteCollection,
-} from '@/shared/hooks/useAdmin'
-import type { AdminCollectionItem } from '@/features/marketing/services/collections'
+} from '@/app/admin/hooks/useAdmin'
+import type { AdminCollectionItem } from '@/modules/collections/types'
 import { Button, AdminPageHeader } from '@/shared/components'
 import { Plus } from 'lucide-react'
 import toast from 'react-hot-toast'

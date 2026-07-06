@@ -55,7 +55,7 @@ export function DropdownMenuTrigger({
     // Basic implementation of asChild pattern
     const child = React.Children.only(children) as React.ReactElement<any>
     return React.cloneElement(child, {
-      onClick: (e: any) => {
+      onClick: (e: React.MouseEvent) => {
         if (child.props && typeof child.props.onClick === 'function') {
           child.props.onClick(e)
         }

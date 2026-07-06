@@ -4,55 +4,10 @@ import Image from 'next/image'
 import { Button, Input, CurrentYear } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import toast from 'react-hot-toast'
-import { useQuery } from '@tanstack/react-query'
-import { createBrowserClient } from '@/lib/supabase/client'
-import { getSiteSettings } from '@/features/core/services/settings'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 
 export function Footer(): React.JSX.Element {
-  const supabase = createBrowserClient()
-  const { data: settingsResponse } = useQuery({
-    queryKey: ['site-settings'],
-    queryFn: () => getSiteSettings(supabase),
-  })
-  const settings = settingsResponse?.data || []
-
-  const logoSetting = settings.find((s) => s.key === 'store_logo_url')
-  const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null
-
-  const instagramSetting = settings.find(
-    (s) => s.key === 'social_instagram' || s.key === 'instagram_username'
-  )
-  const tiktokSetting = settings.find(
-    (s) => s.key === 'social_tiktok' || s.key === 'tiktok_username'
-  )
-  const whatsappSetting = settings.find(
-    (s) => s.key === 'store_whatsapp' || s.key === 'whatsapp_number'
-  )
-  const shopeeSetting = settings.find((s) => s.key === 'social_shopee')
-
-  const instagramUrl = instagramSetting?.value
-    ? instagramSetting.value.startsWith('http')
-      ? instagramSetting.value
-      : `https://instagram.com/${instagramSetting.value}`
-    : SOCIAL_LINKS.instagram
-
-  const tiktokUrl = tiktokSetting?.value
-    ? tiktokSetting.value.startsWith('http')
-      ? tiktokSetting.value
-      : `https://tiktok.com/@${tiktokSetting.value}`
-    : SOCIAL_LINKS.tiktok
-
-  const whatsappUrl = whatsappSetting?.value
-    ? whatsappSetting.value.startsWith('http')
-      ? whatsappSetting.value
-      : `https://wa.me/${whatsappSetting.value}`
-    : SOCIAL_LINKS.whatsapp
-
-  const shopeeUrl = shopeeSetting?.value
-    ? shopeeSetting.value.startsWith('http')
-      ? shopeeSetting.value
-      : `https://shopee.co.id/${shopeeSetting.value}`
-    : SOCIAL_LINKS.shopee
+  const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl } = useSiteSettings()
 
   return (
     <footer className="bg-brand-cream border-t border-neutral-200">

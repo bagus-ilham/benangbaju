@@ -1,8 +1,8 @@
 import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveFlashSale } from '@/features/marketing/services/flashSales'
-import { FlashSaleSection } from '@/features/marketing/components/FlashSaleSection'
+import { getActiveFlashSale } from '@/modules/flash-sales/services'
+import { FlashSaleSection } from '@/modules/flash-sales/components/FlashSaleSection'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
 async function getCachedFlashSale() {

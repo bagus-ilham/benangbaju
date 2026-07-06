@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { MapPin, Truck, Plus, Check } from 'lucide-react'
 import { Button, Textarea } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
-import type { UserAddress, ShippingOption } from '@/entities/shipping/lib/shipping'
+import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 
 interface CheckoutAddressFormProps {
   addresses: UserAddress[]

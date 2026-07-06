@@ -5,9 +5,10 @@ import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, X, Trash2, Plus, Minus, ArrowRight } from 'lucide-react'
-import { useCartStore } from '@/entities/cart/model/cartStore'
+import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR } from '@/lib/utils'
+import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
 export function MiniCartDrawer(): React.JSX.Element {
   const items = useCartStore((state) => state.items)
@@ -20,7 +21,6 @@ export function MiniCartDrawer(): React.JSX.Element {
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
 
   const drawerRef = useRef<HTMLDivElement>(null)
-  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   const handleQtyChange = async (
     variantId: string,
@@ -38,66 +38,9 @@ export function MiniCartDrawer(): React.JSX.Element {
   }
 
   // Focus trap logic
-  useEffect(() => {
-    let originalOverflow = ''
-    if (isCartDrawerOpen) {
-      originalOverflow = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
-      if (document.activeElement instanceof HTMLElement) {
-        previousFocusRef.current = document.activeElement
-      } else {
-        previousFocusRef.current = null
-      }
-      setTimeout(() => drawerRef.current?.focus(), 10)
-    } else {
-      previousFocusRef.current?.focus()
-    }
-
-    return () => {
-      if (isCartDrawerOpen) {
-        document.body.style.overflow = originalOverflow
-      }
-    }
-  }, [isCartDrawerOpen])
-
-  useEffect(() => {
-    if (!isCartDrawerOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setCartDrawerOpen(false)
-        return
-      }
-
-      if (event.key !== 'Tab' || !drawerRef.current) return
-
-      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      const focusableList = Array.from(focusable).filter((el) => {
-        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
-      })
-
-      if (focusableList.length === 0) {
-        event.preventDefault()
-        return
-      }
-
-      const first = focusableList[0]
-      const last = focusableList[focusableList.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isCartDrawerOpen, setCartDrawerOpen])
+  useFocusTrap(isCartDrawerOpen, drawerRef, {
+    onClose: () => setCartDrawerOpen(false),
+  })
 
   return (
     <AnimatePresence>

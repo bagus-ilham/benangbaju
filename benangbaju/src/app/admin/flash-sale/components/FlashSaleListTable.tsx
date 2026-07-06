@@ -3,7 +3,7 @@
 import React from 'react'
 import { Copy, Edit2, Trash2 } from 'lucide-react'
 import { Button } from '@/shared/components'
-import type { AdminFlashSaleListItem } from '@/features/marketing/services/flashSales'
+import type { AdminFlashSaleListItem } from '@/modules/flash-sales/types'
 
 interface FlashSaleListTableProps {
   campaigns: AdminFlashSaleListItem[]

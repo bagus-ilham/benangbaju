@@ -3,7 +3,7 @@
 import React from 'react'
 import { Edit2, Trash2, Copy } from 'lucide-react'
 import { Button } from '@/shared/components'
-import type { AdminCollectionItem } from '@/features/marketing/services/collections'
+import type { AdminCollectionItem } from '@/modules/collections/types'
 
 interface CollectionListTableProps {
   collections: AdminCollectionItem[]

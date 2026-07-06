@@ -1,7 +1,7 @@
 'use client'
 
 import React, { use } from 'react'
-import { useAdminCustomerDetail } from '@/shared/hooks/useAdmin'
+import { useAdminCustomerDetail } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader, Button } from '@/shared/components'
 import { ArrowLeft, MapPin, ShoppingBag, Heart, AlertCircle, Package } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'

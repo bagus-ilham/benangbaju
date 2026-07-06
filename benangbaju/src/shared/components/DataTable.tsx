@@ -25,7 +25,7 @@ export interface DataTableProps<T> {
   sortDirection?: 'asc' | 'desc'
   emptyTitle?: string
   emptyDescription?: string
-  emptyIcon?: any
+  emptyIcon?: React.ElementType | any
   onRowClick?: (item: T) => void
   className?: string
 }
@@ -128,7 +128,9 @@ export function DataTable<T extends { id?: string | number }>({
                       key={String(col.key) || cIdx}
                       className={cn('px-6 py-4 text-xs font-sans text-neutral-700', col.className)}
                     >
-                      {col.render ? col.render(row) : (row as any)[col.key]}
+                      {col.render
+                        ? col.render(row)
+                        : (row as unknown as Record<string, React.ReactNode>)[String(col.key)]}
                     </td>
                   ))}
                 </motion.tr>

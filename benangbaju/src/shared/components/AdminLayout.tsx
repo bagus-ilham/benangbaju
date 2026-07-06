@@ -25,17 +25,34 @@ import {
   Layers,
   TrendingUp,
 } from 'lucide-react'
-import { useAuthStore } from '@/entities/user/model/authStore'
+import { useAuthStore } from '@/modules/users/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary'
-import { useQuery } from '@tanstack/react-query'
-import { getSiteSettings } from '@/features/core/services/settings'
+import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 
 interface AdminLayoutProps {
   children: React.ReactNode
 }
+
+const menuItems = [
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Analitik Penjualan', href: '/admin/analytics', icon: TrendingUp },
+  { name: 'Pesanan', href: '/admin/pesanan', icon: ShoppingBag },
+  { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
+  { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
+  { name: 'Produk', href: '/admin/produk', icon: Package },
+  { name: 'Voucher', href: '/admin/voucher', icon: Ticket },
+  { name: 'Flash Sale', href: '/admin/flash-sale', icon: Percent },
+  { name: 'Banner Promo', href: '/admin/banner', icon: Image },
+  { name: 'Ulasan Produk', href: '/admin/review', icon: MessageSquare },
+  { name: 'Pelanggan', href: '/admin/pelanggan', icon: Users },
+  { name: 'Pengiriman', href: '/admin/pengiriman', icon: Truck },
+  { name: 'Konten & SEO', href: '/admin/cms', icon: Globe },
+  { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
+]
 
 export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   const pathname = usePathname()
@@ -45,16 +62,8 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const sidebarRef = useRef<HTMLDivElement>(null)
-  const previousFocusRef = useRef<HTMLElement | null>(null)
 
-  const { data: settingsResponse } = useQuery({
-    queryKey: ['site-settings'],
-    queryFn: () => getSiteSettings(supabase),
-  })
-  const settings = settingsResponse?.data || []
-
-  const logoSetting = settings.find((s) => s.key === 'store_logo_url')
-  const logoUrl = logoSetting?.value && logoSetting.value.trim() !== '' ? logoSetting.value : null
+  const { logoUrl } = useSiteSettings()
 
   const handleLogout = async () => {
     try {
@@ -70,84 +79,10 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   }
 
   // Mobile sidebar focus trap
-  useEffect(() => {
-    let originalOverflow = ''
-    if (isSidebarOpen && window.innerWidth < 1024) {
-      // lg breakpoint is 1024px
-      originalOverflow = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
-      if (document.activeElement instanceof HTMLElement) {
-        previousFocusRef.current = document.activeElement
-      } else {
-        previousFocusRef.current = null
-      }
-      setTimeout(() => sidebarRef.current?.focus(), 10)
-    } else if (!isSidebarOpen) {
-      previousFocusRef.current?.focus()
-    }
-
-    return () => {
-      if (isSidebarOpen && window.innerWidth < 1024) {
-        document.body.style.overflow = originalOverflow
-      }
-    }
-  }, [isSidebarOpen])
-
-  useEffect(() => {
-    if (!isSidebarOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsSidebarOpen(false)
-        return
-      }
-
-      if (event.key !== 'Tab' || !sidebarRef.current) return
-
-      const focusable = sidebarRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      const focusableList = Array.from(focusable).filter((el) => {
-        return !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true'
-      })
-
-      if (focusableList.length === 0) {
-        event.preventDefault()
-        return
-      }
-
-      const first = focusableList[0]
-      const last = focusableList[focusableList.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isSidebarOpen])
-
-  const menuItems = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { name: 'Analitik Penjualan', href: '/admin/analytics', icon: TrendingUp },
-    { name: 'Pesanan', href: '/admin/pesanan', icon: ShoppingBag },
-    { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
-    { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
-    { name: 'Produk', href: '/admin/produk', icon: Package },
-    { name: 'Voucher', href: '/admin/voucher', icon: Ticket },
-    { name: 'Flash Sale', href: '/admin/flash-sale', icon: Percent },
-    { name: 'Banner Promo', href: '/admin/banner', icon: Image },
-    { name: 'Ulasan Produk', href: '/admin/review', icon: MessageSquare },
-    { name: 'Pelanggan', href: '/admin/pelanggan', icon: Users },
-    { name: 'Pengiriman', href: '/admin/pengiriman', icon: Truck },
-    { name: 'Konten & SEO', href: '/admin/cms', icon: Globe },
-    { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
-  ]
+  useFocusTrap(isSidebarOpen, sidebarRef, {
+    onClose: () => setIsSidebarOpen(false),
+    condition: () => window.innerWidth < 1024,
+  })
 
   const renderNavLink = (item: (typeof menuItems)[0], onNavigate?: () => void) => {
     const Icon = item.icon

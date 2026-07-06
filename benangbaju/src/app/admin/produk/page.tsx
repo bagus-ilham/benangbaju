@@ -6,8 +6,8 @@ import {
   useAdminDeleteProduct,
   useAdminUpdateProductActiveStatus,
   useAdminUpdateProductFeaturedStatus,
-} from '@/shared/hooks/useAdmin'
-import type { AdminProductListItem } from '@/features/products/services'
+} from '@/app/admin/hooks/useAdmin'
+import type { AdminProductListItem } from '@/modules/products/types'
 import {
   Button,
   AdminPageHeader,

@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getCollectionBySlug } from '@/features/marketing/services/collections'
-import { getProducts } from '@/features/products/services'
-import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { getCollectionBySlug } from '@/modules/collections/services'
+import { getProducts } from '@/modules/products/services'
+import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
 interface CollectionPageProps {

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Edit, Trash2, FileCode } from 'lucide-react'
 import { Button } from '@/shared/components'
 import { formatDate } from '@/lib/utils/format'
-import type { LandingPage } from '@/features/marketing/services/cms'
+import type { LandingPage } from '@/modules/cms/types'
 
 interface AdminLandingPagesTableProps {
   landingPages: LandingPage[]

@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { ProductListItem } from '@/entities/product/model/product.types'
-import { ProductCard } from '@/entities/product/ui/ProductCard'
+import { ProductListItem } from '@/modules/products/types'
+import { ProductCard } from '@/modules/products/components/ProductCard'
 import { SectionHeader } from '@/shared/components'
 import { motion } from 'framer-motion'
 

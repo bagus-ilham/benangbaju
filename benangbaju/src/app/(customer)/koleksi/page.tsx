@@ -2,7 +2,7 @@ import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveCollections } from '@/features/marketing/services/collections'
+import { getActiveCollections } from '@/modules/collections/services'
 import { PageHero, PageContainer } from '@/shared/components'
 
 import { cacheLife, cacheTag } from 'next/cache'

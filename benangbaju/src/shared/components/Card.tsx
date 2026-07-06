@@ -22,13 +22,17 @@ export function Card({
       className={cn(
         // Base styles dengan custom bezier curve untuk animasi super halus
         'rounded-none transition-all duration-500 ease-[0.16,1,0.3,1]',
-        
+
         // Varian Warna
         variant === 'solid' && 'bg-white',
         variant === 'glass' && 'bg-white/80 backdrop-blur-md',
 
         // Border state (tidak akan menghitam saat di-hover)
-        bordered ? (variant === 'glass' ? 'border border-white/40' : 'border border-neutral-200') : '',
+        bordered
+          ? variant === 'glass'
+            ? 'border border-white/40'
+            : 'border border-neutral-200'
+          : '',
 
         // Hover Effect Premium
         hoverEffect && [

@@ -6,7 +6,9 @@ import { Plus, Trash2, Search } from 'lucide-react'
 import { Button, Input, Modal } from '@/shared/components'
 import { uploadImage } from '@/lib/supabase/storage'
 import toast from 'react-hot-toast'
-import type { AdminFlashSaleListItem } from '@/features/marketing/services/flashSales'
+import { FlashSaleVariantSearch } from './FlashSaleVariantSearch'
+import { FlashSaleItemsTable } from './FlashSaleItemsTable'
+import type { AdminFlashSaleListItem } from '@/modules/flash-sales/types'
 
 export interface FlashSaleFormItem {
   variant_id: string
@@ -271,118 +273,20 @@ export function FlashSaleFormModal({
 
           {/* Pencarian Varian Cepat */}
           {showVariantList && (
-            <div className="mb-4 border border-brand-gold/30 p-3 bg-brand-gold-muted/5 relative">
-              <div className="relative">
-                <Search size={14} className="absolute left-2.5 top-2.5 text-neutral-400" />
-                <input
-                  type="text"
-                  placeholder="Cari SKU atau nama produk..."
-                  className="w-full pl-8 pr-3 py-2 border border-neutral-200 focus:border-brand-gold outline-none text-xs"
-                  value={variantSearch}
-                  onChange={(e) => setVariantSearch(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              {variantSearch.length > 0 && (
-                <div className="mt-2 space-y-1 max-h-40 overflow-y-auto pr-1">
-                  {filteredVariants.map((v) => (
-                    <div
-                      key={v.id}
-                      className="flex justify-between items-center p-2 border border-neutral-100 bg-white hover:border-brand-gold transition cursor-pointer"
-                      onClick={() => handleAddVariantItem(v)}
-                    >
-                      <div>
-                        <p className="font-bold text-[10px] uppercase tracking-wider text-brand-black">
-                          {v.sku}
-                        </p>
-                        <p className="text-[10px] text-neutral-600 line-clamp-1">
-                          {v.products?.name} - {v.name}
-                        </p>
-                      </div>
-                      <div className="text-right pl-2 shrink-0">
-                        <p className="text-[10px] font-bold text-neutral-800">
-                          Rp {v.price.toLocaleString()}
-                        </p>
-                        <p className="text-[9px] text-neutral-400">Stok: {v.stock}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {filteredVariants.length === 0 && (
-                    <p className="text-[10px] text-center py-2 text-neutral-400">
-                      Tidak ada varian cocok.
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
+            <FlashSaleVariantSearch
+              variantSearch={variantSearch}
+              setVariantSearch={setVariantSearch}
+              filteredVariants={filteredVariants}
+              handleAddVariantItem={handleAddVariantItem}
+            />
           )}
 
           {/* Table List Items */}
-          <div className="border border-neutral-200 bg-neutral-50/50">
-            {items.length === 0 ? (
-              <p className="text-center text-neutral-400 py-6 text-[10px] italic uppercase tracking-wider">
-                Belum ada produk untuk promo ini
-              </p>
-            ) : (
-              <div className="overflow-x-auto max-h-60">
-                <table className="w-full text-left">
-                  <thead className="bg-neutral-100 border-b border-neutral-200 text-[9px] uppercase tracking-widest text-neutral-500 font-bold sticky top-0">
-                    <tr>
-                      <th className="py-2 px-3">Produk & Varian</th>
-                      <th className="py-2 px-3">Harga Asli</th>
-                      <th className="py-2 px-3">Harga Sale</th>
-                      <th className="py-2 px-3">Kuota</th>
-                      <th className="py-2 px-3">Hapus</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100 text-[11px] font-medium bg-white">
-                    {items.map((it, idx) => (
-                      <tr key={it.variant_id}>
-                        <td className="py-2 px-3">
-                          <span className="block font-bold text-neutral-800 line-clamp-1">
-                            {it.prodName}
-                          </span>
-                          <span className="text-[9px] text-neutral-500 uppercase">{it.name}</span>
-                        </td>
-                        <td className="py-2 px-3 text-neutral-500">
-                          Rp {it.original_price.toLocaleString()}
-                        </td>
-                        <td className="py-2 px-3">
-                          <input
-                            type="number"
-                            className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-gold text-[10px]"
-                            value={it.sale_price}
-                            onChange={(e) =>
-                              handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
-                            }
-                          />
-                        </td>
-                        <td className="py-2 px-3">
-                          <input
-                            type="number"
-                            className="w-16 border border-neutral-200 p-1 outline-none focus:border-brand-gold text-[10px]"
-                            value={it.quota}
-                            onChange={(e) =>
-                              handleUpdateItemField(idx, 'quota', Number(e.target.value))
-                            }
-                          />
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveItem(idx)}
-                            className="text-red-400 hover:text-red-600 p-1 transition"
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+          <FlashSaleItemsTable
+            items={items}
+            handleUpdateItemField={handleUpdateItemField}
+            handleRemoveItem={handleRemoveItem}
+          />
         </div>
 
         <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-100">

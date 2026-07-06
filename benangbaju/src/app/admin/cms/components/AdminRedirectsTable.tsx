@@ -3,7 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Edit, Trash2 } from 'lucide-react'
-import type { RedirectRule } from '@/features/marketing/services/cms'
+import type { RedirectRule } from '@/modules/cms/types'
 
 interface AdminRedirectsTableProps {
   redirects: RedirectRule[]
