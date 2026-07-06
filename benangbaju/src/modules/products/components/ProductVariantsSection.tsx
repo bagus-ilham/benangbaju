@@ -159,7 +159,7 @@ export function ProductVariantsSection({
                     if (img.variant_id !== v.id) return null
                     return (
                       <div
-                        key={imgIdx}
+                        key={`variant-${v.id}-img-${imgIdx}`}
                         className="flex flex-wrap sm:flex-nowrap gap-2 items-center border border-neutral-100 p-2 bg-white"
                       >
                         <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">

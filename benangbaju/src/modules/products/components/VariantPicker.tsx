@@ -89,7 +89,14 @@ export function VariantPicker({
   }, [selectedValues, variants])
 
   const handleSelect = (attrName: string, value: string) => {
-    setSelectedValues((prev) => ({ ...prev, [attrName]: value }))
+    setSelectedValues((prev) => {
+      if (prev[attrName] === value) {
+        const next = { ...prev }
+        delete next[attrName]
+        return next
+      }
+      return { ...prev, [attrName]: value }
+    })
   }
 
   const attributeKeys = useMemo(() => Object.keys(attributeGroups), [attributeGroups])
