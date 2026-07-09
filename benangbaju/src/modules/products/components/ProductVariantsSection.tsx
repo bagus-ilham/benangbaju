@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Input, Switch } from '@/shared/components'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Copy } from 'lucide-react'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -12,6 +12,7 @@ interface ProductVariantsSectionProps {
   onAddVariant: () => void
   onUpdateVariantField: (idx: number, field: string, value: any) => void
   onRemoveVariant: (idx: number) => void
+  onDuplicateVariant: (idx: number) => void
   onAddVariantAttr: (vIdx: number) => void
   onUpdateVariantAttrField: (vIdx: number, aIdx: number, field: string, value: string) => void
   onRemoveVariantAttr: (vIdx: number, aIdx: number) => void
@@ -26,6 +27,7 @@ export function ProductVariantsSection({
   onAddVariant,
   onUpdateVariantField,
   onRemoveVariant,
+  onDuplicateVariant,
   onAddVariantAttr,
   onUpdateVariantAttrField,
   onRemoveVariantAttr,
@@ -55,15 +57,26 @@ export function ProductVariantsSection({
             key={vIdx}
             className="border border-neutral-200 p-4 relative bg-neutral-50/20 space-y-4 rounded-none"
           >
-            {variants.length > 1 && (
+            <div className="absolute right-3.5 top-3.5 flex items-center space-x-1">
               <button
                 type="button"
-                onClick={() => onRemoveVariant(vIdx)}
-                className="absolute right-3.5 top-3.5 text-neutral-400 hover:text-red-600 p-1"
+                onClick={() => onDuplicateVariant(vIdx)}
+                className="text-neutral-400 hover:text-neutral-900 p-1"
+                title="Duplikat Varian"
               >
-                <Trash2 size={14} />
+                <Copy size={14} />
               </button>
-            )}
+              {variants.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => onRemoveVariant(vIdx)}
+                  className="text-neutral-400 hover:text-red-600 p-1"
+                  title="Hapus Varian"
+                >
+                  <Trash2 size={14} />
+                </button>
+              )}
+            </div>
 
             <p className="font-semibold text-neutral-900 uppercase tracking-widest text-[10px]">
               Varian #{vIdx + 1}

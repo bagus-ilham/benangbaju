@@ -120,13 +120,14 @@ export default function AdminCategoryPage(): React.JSX.Element {
   }
 
   const handleDelete = async (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menonaktifkan kategori ini?')) {
+    if (confirm('Apakah Anda yakin ingin menghapus kategori ini? (Tidak bisa dihapus jika masih ada produk di dalamnya)')) {
       try {
         await deleteMutation.mutateAsync(id)
-        toast.success('Kategori dinonaktifkan')
+        toast.success('Kategori berhasil dihapus')
         refetch()
-      } catch (err) {
-        toast.error('Gagal menonaktifkan kategori')
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : 'Gagal menghapus kategori'
+        toast.error(errMsg)
       }
     }
   }

@@ -58,7 +58,7 @@ export function DesktopNavbar({
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center md:flex-1">
+          <div className="flex items-center flex-1">
             <button
               type="button"
               onClick={onOpenMobileMenu}
@@ -86,7 +86,7 @@ export function DesktopNavbar({
             </nav>
           </div>
 
-          <div className="flex justify-center flex-shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2">
+          <div className="flex justify-center flex-shrink-0 px-4">
             <Link
               href="/"
               className="font-heading text-base md:text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none hover:text-brand-gold transition-colors duration-300 flex items-center justify-center"
@@ -108,7 +108,7 @@ export function DesktopNavbar({
             </Link>
           </div>
 
-          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4 md:flex-1">
+          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4 flex-1">
             <button
               onClick={onToggleSearch}
               className="text-neutral-500 hover:text-brand-black p-2"

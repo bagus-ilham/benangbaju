@@ -283,6 +283,38 @@ export function ProductForm({
     }
   }
 
+  const handleDuplicateVariant = (idx: number) => {
+    const variantToCopy = variants[idx]
+    if (!variantToCopy) return
+
+    const newId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+    
+    // Copy the variant
+    setVariants((prev) => {
+      const copy = {
+        ...variantToCopy,
+        id: newId,
+        sku: variantToCopy.sku ? `${variantToCopy.sku}-COPY` : '',
+        name: variantToCopy.name ? `${variantToCopy.name} (Copy)` : '',
+        attrs: variantToCopy.attrs.map(a => ({ ...a }))
+      }
+      return [...prev, copy]
+    })
+
+    // Copy the variant's images if any
+    const variantImages = images.filter((img) => img.variant_id === variantToCopy.id)
+    if (variantImages.length > 0) {
+      setImages((prev) => {
+        const newImages = variantImages.map((img) => ({
+          ...img,
+          variant_id: newId,
+        }))
+        return [...prev, ...newImages]
+      })
+    }
+    toast.success('Varian berhasil diduplikat')
+  }
+
   // Variant attributes handlers
   const handleAddVariantAttr = (vIdx: number) => {
     setVariants((prev) =>
@@ -528,6 +560,7 @@ export function ProductForm({
             onAddVariant={handleAddVariant}
             onUpdateVariantField={handleUpdateVariantField}
             onRemoveVariant={handleRemoveVariant}
+            onDuplicateVariant={handleDuplicateVariant}
             onAddVariantAttr={handleAddVariantAttr}
             onUpdateVariantAttrField={handleUpdateVariantAttrField}
             onRemoveVariantAttr={handleRemoveVariantAttr}

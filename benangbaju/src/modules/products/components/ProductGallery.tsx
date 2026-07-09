@@ -46,9 +46,17 @@ export function ProductGallery({
         setHasIntentToZoom(false) // Reset HD intent on image change
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setActiveImage(variantImage.url)
+        
+        if (isMobile) {
+          const mobileGallery = document.getElementById('mobile-product-gallery')
+          const targetImg = document.getElementById(`gallery-img-${variantImage.id}`)
+          if (mobileGallery && targetImg) {
+            mobileGallery.scrollTo({ left: targetImg.offsetLeft, behavior: 'smooth' })
+          }
+        }
       }
     }
-  }, [selectedVariantId, images, activeImage])
+  }, [selectedVariantId, images, activeImage, isMobile])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile) return // Disable zoom on mobile
@@ -95,20 +103,58 @@ export function ProductGallery({
 
   return (
     <div className="flex flex-col w-full group">
-      {/* Main Focus Image */}
-      <div
-        className={cn(
-          'relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100',
-          !isMobile && 'cursor-zoom-in',
-          isMobile && 'touch-pan-y'
+      {/* Mobile Swipe Gallery (Native Scroll Snap) */}
+      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-neutral-50 border border-neutral-100">
+        <div 
+          id="mobile-product-gallery"
+          className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
+          onScroll={(e) => {
+             const target = e.target as HTMLDivElement;
+             const index = Math.round(target.scrollLeft / target.clientWidth);
+             if (images[index] && images[index].url !== activeImage) {
+               setActiveImage(images[index].url);
+             }
+          }}
+        >
+          {images.map((img) => (
+            <div key={img.id} id={`gallery-img-${img.id}`} className="w-full h-full flex-shrink-0 snap-center relative">
+              <Image 
+                src={img.url} 
+                alt={productName} 
+                fill 
+                quality={75}
+                sizes="(max-width: 768px) 100vw, 500px"
+                className="object-cover" 
+                priority={img.is_primary || images[0].id === img.id} 
+              />
+            </div>
+          ))}
+        </div>
+        
+        {/* Mobile Swipe Indicators (Dots) */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-1.5 z-10 pointer-events-none">
+            {images.map((img) => (
+              <div
+                key={`dot-${img.id}`}
+                className={cn(
+                  'h-1 transition-all duration-300 rounded-full',
+                  activeImage === img.url ? 'w-4 bg-brand-dark' : 'w-1.5 bg-neutral-300/80'
+                )}
+              />
+            ))}
+          </div>
         )}
+      </div>
+
+      {/* Desktop Focus Image (Framer Motion) */}
+      <div
+        className="hidden md:block relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in"
         onMouseEnter={() => {
-          if (!isMobile) {
-            setIsZoomed(true)
-            setHasIntentToZoom(true) // Trigger lazy load of HD image
-          }
+          setIsZoomed(true)
+          setHasIntentToZoom(true) // Trigger lazy load of HD image
         }}
-        onMouseLeave={() => !isMobile && setIsZoomed(false)}
+        onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
       >
         <AnimatePresence initial={false} custom={direction}>
@@ -123,18 +169,6 @@ export function ProductGallery({
               transition={{
                 x: { type: 'spring', stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
-              }}
-              drag={isMobile ? 'x' : false}
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={1}
-              onDragEnd={(e, { offset, velocity }) => {
-                if (!isMobile) return
-                const swipe = offset.x
-                if (swipe < -50) {
-                  paginate(1)
-                } else if (swipe > 50) {
-                  paginate(-1)
-                }
               }}
               className="absolute inset-0 w-full h-full"
             >
@@ -174,21 +208,6 @@ export function ProductGallery({
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Mobile Swipe Indicators (Dots) */}
-        {images.length > 1 && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-1.5 md:hidden z-10 pointer-events-none">
-            {images.map((img, idx) => (
-              <div
-                key={img.id}
-                className={cn(
-                  'h-1 transition-all duration-300 rounded-full',
-                  activeImage === img.url ? 'w-4 bg-brand-gold' : 'w-1.5 bg-neutral-300'
-                )}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Thumbnails (Horizontal Row below the main image) */}

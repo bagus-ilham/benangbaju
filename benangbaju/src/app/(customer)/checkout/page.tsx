@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 'use client'
 
 import React, { useState, useEffect, useMemo, useRef } from 'react'
@@ -341,12 +342,14 @@ export default function CheckoutPage(): React.JSX.Element {
     createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
   // eslint-disable-next-line react-hooks/refs
+  const isCheckoutInitiated = checkoutInitiated.current
+
   if (
     authLoading ||
     !isAuthenticated ||
     isSyncing ||
     !hasSynced ||
-    (cartItems.length === 0 && !orderPlaced && !checkoutInitiated.current)
+    (cartItems.length === 0 && !orderPlaced && !isCheckoutInitiated)
   ) {
     return <AuthLoading message="Memuat Checkout..." />
   }
