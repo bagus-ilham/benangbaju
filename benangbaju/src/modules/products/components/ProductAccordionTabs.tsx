@@ -102,7 +102,18 @@ export function ProductAccordionTabs({
             {activeTab === 'shipping' && (
               <div className="space-y-1 whitespace-pre-line">
                 {product.size_guide ? (
-                  formatProductDescription(product.size_guide)
+                  product.size_guide.trim().startsWith('http') ? (
+                    <div className="w-full flex justify-start my-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={product.size_guide.trim()} 
+                        alt="Panduan Ukuran" 
+                        className="max-w-full h-auto object-contain border border-neutral-100 bg-neutral-50"
+                      />
+                    </div>
+                  ) : (
+                    formatProductDescription(product.size_guide)
+                  )
                 ) : (
                   <>
                     <p>
