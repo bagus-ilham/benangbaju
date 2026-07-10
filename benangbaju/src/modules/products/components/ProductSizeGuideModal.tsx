@@ -59,9 +59,20 @@ export function ProductSizeGuideModal({
               </div>
 
               {productSizeGuide ? (
-                <div className="whitespace-pre-line text-xs text-neutral-600 font-sans leading-relaxed border border-neutral-100 p-4 bg-neutral-50/30">
-                  {formatProductDescription(productSizeGuide)}
-                </div>
+                productSizeGuide.trim().startsWith('http') ? (
+                  <div className="w-full overflow-hidden border border-neutral-100 bg-neutral-50 p-2 flex justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={productSizeGuide.trim()}
+                      alt="Panduan Ukuran"
+                      className="w-full max-w-full h-auto object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="whitespace-pre-line text-xs text-neutral-600 font-sans leading-relaxed border border-neutral-100 p-4 bg-neutral-50/30">
+                    {formatProductDescription(productSizeGuide)}
+                  </div>
+                )
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-[10px] font-sans">
