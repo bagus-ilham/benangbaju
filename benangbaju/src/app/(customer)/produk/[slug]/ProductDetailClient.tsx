@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
+
 import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ProductDetailItem, ProductVariant } from '@/modules/products/services'
+import { ProductDetailItem, ProductVariant } from '@/modules/products/types'
 import {
   ProductGallery,
   MarketplaceLinks,
@@ -15,7 +15,7 @@ import {
   ProductStickyAction,
   ProductSizeGuideModal,
 } from '@/modules/products/components'
-import { PageContainer } from '@/shared/components'
+import { PageContainer, CustomToast } from '@/shared/components'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import {
@@ -68,58 +68,18 @@ export function ProductDetailClient({
         toast.success('Dihapus dari wishlist.')
       } else {
         toast.custom((t) => (
-          <div
-            className={`${
-              t.visible ? 'animate-enter' : 'animate-leave'
-            } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
-          >
-            <div className="flex-1 w-0 p-4">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 pt-0.5">
-                  {product.product_images[0]?.url ? (
-                    <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
-                      <Image
-                        className="object-cover"
-                        src={product.product_images[0].url}
-                        alt={product.name}
-                        fill
-                        sizes="40px"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">
-                      No Img
-                    </div>
-                  )}
-                </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
-                    Ditambahkan ke Wishlist
-                  </p>
-                  <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
-                    {product.name}
-                  </p>
-                  <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
-                    Tersimpan di daftar impian Anda.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex border-l border-neutral-100">
-              <button
-                onClick={() => {
-                  toast.dismiss(t.id)
-                  router.push('/wishlist')
-                }}
-                className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
-              >
-                Lihat
-              </button>
-            </div>
-          </div>
+          <CustomToast
+            t={t}
+            title="Ditambahkan ke Wishlist"
+            subtitle={product.name}
+            description="Tersimpan di daftar impian Anda."
+            imageUrl={product.product_images[0]?.url}
+            actionLabel="Lihat"
+            onAction={() => router.push('/wishlist')}
+          />
         ))
       }
-    } catch (err) {
+    } catch {
       toast.error('Gagal memperbarui wishlist.')
     }
   }
@@ -181,57 +141,17 @@ export function ProductDetailClient({
 
       await addItem(cartItem, quantity)
       toast.custom((t) => (
-        <div
-          className={`${
-            t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
-        >
-          <div className="flex-1 w-0 p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 pt-0.5">
-                {product.product_images[0]?.url ? (
-                  <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
-                    <Image
-                      className="object-cover"
-                      src={product.product_images[0].url}
-                      alt={product.name}
-                      fill
-                      sizes="40px"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">
-                    No Img
-                  </div>
-                )}
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
-                  Berhasil Ditambahkan!
-                </p>
-                <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
-                  {product.name}
-                </p>
-                <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
-                  Varian: {selectedVariant.name} &bull; Qty: {quantity}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex border-l border-neutral-100">
-            <button
-              onClick={() => {
-                toast.dismiss(t.id)
-                setCartDrawerOpen(true)
-              }}
-              className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
-            >
-              Lihat
-            </button>
-          </div>
-        </div>
+        <CustomToast
+          t={t}
+          title="Berhasil Ditambahkan!"
+          subtitle={product.name}
+          description={`Varian: ${selectedVariant.name} • Qty: ${quantity}`}
+          imageUrl={product.product_images[0]?.url}
+          actionLabel="Lihat"
+          onAction={() => setCartDrawerOpen(true)}
+        />
       ))
-    } catch (error) {
+    } catch {
       toast.error('Gagal menambahkan ke keranjang.')
     } finally {
       setIsAdding(false)
@@ -267,7 +187,7 @@ export function ProductDetailClient({
 
       await addItem(cartItem, quantity)
       router.push('/checkout')
-    } catch (error) {
+    } catch {
       toast.error('Gagal memproses pembelian.')
     } finally {
       setIsBuying(false)

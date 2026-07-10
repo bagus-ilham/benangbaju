@@ -5,26 +5,25 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetFlashSales,
-  adminCreateFlashSale,
-  adminUpdateFlashSale,
-  adminDeleteFlashSale,
-} from '@/modules/flash-sales/services'
+  adminGetFlashSalesAction,
+  adminCreateFlashSaleAction,
+  adminUpdateFlashSaleAction,
+  adminDeleteFlashSaleAction,
+} from '@/modules/flash-sales/actions'
 import { AdminFlashSaleListItem } from '@/modules/flash-sales/types'
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
 export interface AdminCreateFlashSaleInput {
-  saleData: Parameters<typeof adminCreateFlashSale>[1]
-  items: Parameters<typeof adminCreateFlashSale>[2]
+  saleData: Parameters<typeof adminCreateFlashSaleAction>[0]
+  items: Parameters<typeof adminCreateFlashSaleAction>[1]
 }
 
 export interface AdminUpdateFlashSaleInput {
   saleId: string
-  saleData: Parameters<typeof adminUpdateFlashSale>[2]
-  items: Parameters<typeof adminUpdateFlashSale>[3]
+  saleData: Parameters<typeof adminUpdateFlashSaleAction>[1]
+  items: Parameters<typeof adminUpdateFlashSaleAction>[2]
 }
 
 export function useAdminFlashSales(): UseQueryResult<
@@ -33,12 +32,12 @@ export function useAdminFlashSales(): UseQueryResult<
 > {
   return useQuery({
     queryKey: ['admin', 'flash-sales'],
-    queryFn: () => adminGetFlashSales(getAdminSupabase()),
+    queryFn: () => adminGetFlashSalesAction(),
   })
 }
 
 export function useAdminCreateFlashSale(): UseMutationResult<
-  Awaited<ReturnType<typeof adminCreateFlashSale>>,
+  Awaited<ReturnType<typeof adminCreateFlashSaleAction>>,
   Error,
   AdminCreateFlashSaleInput,
   unknown
@@ -46,7 +45,7 @@ export function useAdminCreateFlashSale(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ saleData, items }: AdminCreateFlashSaleInput) => {
-      const res = await adminCreateFlashSale(getAdminSupabase(), saleData, items)
+      const res = await adminCreateFlashSaleAction(saleData, items)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat flash sale')
       return res
     },
@@ -57,7 +56,7 @@ export function useAdminCreateFlashSale(): UseMutationResult<
 }
 
 export function useAdminUpdateFlashSale(): UseMutationResult<
-  Awaited<ReturnType<typeof adminUpdateFlashSale>>,
+  Awaited<ReturnType<typeof adminUpdateFlashSaleAction>>,
   Error,
   AdminUpdateFlashSaleInput,
   unknown
@@ -65,7 +64,7 @@ export function useAdminUpdateFlashSale(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ saleId, saleData, items }: AdminUpdateFlashSaleInput) => {
-      const res = await adminUpdateFlashSale(getAdminSupabase(), saleId, saleData, items)
+      const res = await adminUpdateFlashSaleAction(saleId, saleData, items)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui flash sale')
       return res
     },
@@ -84,7 +83,7 @@ export function useAdminDeleteFlashSale(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (saleId: string) => {
-      const res = await adminDeleteFlashSale(getAdminSupabase(), saleId)
+      const res = await adminDeleteFlashSaleAction(saleId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus flash sale')
       return res
     },

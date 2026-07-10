@@ -1,6 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-import type { Category } from '@/modules/categories/services'
+import type { Category } from '@/modules/categories/types'
 
 interface CatalogDesktopFiltersProps {
   categories: Category[]

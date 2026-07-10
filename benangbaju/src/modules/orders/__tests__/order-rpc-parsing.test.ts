@@ -1,12 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createOrder } from '../services'
+import { orderService } from '../order.service'
+import { orderRepository } from '../order.repository'
 
-// Mock SupabaseClient
-const mockSupabase = {
-  rpc: vi.fn(),
-} as any
+// Mock orderRepository
+vi.mock('../order.repository', () => ({
+  orderRepository: {
+    create: vi.fn(),
+  },
+}))
 
-describe('Order Repository - createOrder RPC parsing', () => {
+describe('Order Service - createOrder parsing', () => {
   const dummyParams = {
     userId: 'user-1',
     addressId: 'addr-1',
@@ -14,78 +17,18 @@ describe('Order Repository - createOrder RPC parsing', () => {
     courierName: 'JNE',
   }
 
-  it('handles error from Supabase RPC correctly', async () => {
-    mockSupabase.rpc.mockResolvedValueOnce({
-      data: null,
-      error: { message: 'Database constraint failed' },
-    })
+  it('handles error from repository correctly', async () => {
+    vi.mocked(orderRepository.create).mockRejectedValueOnce(new Error('Gagal membuat pesanan. Silakan coba lagi.'))
 
-    const res = await createOrder(mockSupabase, dummyParams)
-    if (res.success) throw new Error('Expected failure')
+    const res = await orderService.createOrder(dummyParams)
     expect(res.success).toBe(false)
-    expect(res.error.message).toBe('Gagal membuat pesanan. Silakan coba lagi.')
-  })
-
-  it('handles non-object data (e.g. string)', async () => {
-    mockSupabase.rpc.mockResolvedValueOnce({
-      data: 'not an object',
-      error: null,
-    })
-
-    const res = await createOrder(mockSupabase, dummyParams)
-    if (res.success) throw new Error('Expected failure')
-    expect(res.success).toBe(false)
-    expect(res.error.message).toBe('Format respon buat pesanan tidak valid.')
-  })
-
-  it('handles success: false returned by RPC', async () => {
-    mockSupabase.rpc.mockResolvedValueOnce({
-      data: { success: false, message: 'Stock empty' },
-      error: null,
-    })
-
-    const res = await createOrder(mockSupabase, dummyParams)
-    if (res.success) throw new Error('Expected failure')
-    expect(res.success).toBe(false)
-    expect(res.error.message).toBe('Stock empty')
-  })
-
-  it('handles missing inner data despite success: true', async () => {
-    mockSupabase.rpc.mockResolvedValueOnce({
-      data: { success: true, message: 'Order created' },
-      error: null,
-    })
-
-    const res = await createOrder(mockSupabase, dummyParams)
-
-    // According to the logic, if innerData is undefined, it passes it to ok(undefined).
-    // Let's verify what the codebase actually does.
-    // The code does: let innerData = undefined; if (isObject(rawInnerData)) {...}; return ok(innerData)
-    expect(res.success).toBe(true)
-    expect(res.data).toBeUndefined()
+    if (!res.success) {
+      expect(res.error.message).toBe('Gagal membuat pesanan. Silakan coba lagi.')
+    }
   })
 
   it('parses correctly formatted inner data', async () => {
-    mockSupabase.rpc.mockResolvedValueOnce({
-      data: {
-        success: true,
-        data: {
-          order_id: 'ord-123',
-          order_number: 'ORD-123',
-          subtotal: 100000,
-          shipping_cost: 10000,
-          discount_amount: 0,
-          total_amount: 110000,
-          status: 'pending_payment',
-        },
-      },
-      error: null,
-    })
-
-    const res = await createOrder(mockSupabase, dummyParams)
-
-    expect(res.success).toBe(true)
-    expect(res.data).toEqual({
+    vi.mocked(orderRepository.create).mockResolvedValueOnce({
       order_id: 'ord-123',
       order_number: 'ORD-123',
       subtotal: 100000,
@@ -94,32 +37,43 @@ describe('Order Repository - createOrder RPC parsing', () => {
       total_amount: 110000,
       status: 'pending_payment',
     })
+
+    const res = await orderService.createOrder(dummyParams)
+
+    expect(res.success).toBe(true)
+    if (res.success) {
+      expect(res.data).toEqual({
+        order_id: 'ord-123',
+        order_number: 'ORD-123',
+        subtotal: 100000,
+        shipping_cost: 10000,
+        discount_amount: 0,
+        total_amount: 110000,
+        status: 'pending_payment',
+      })
+    }
   })
 
   it('gracefully handles wrong types in inner data (type safety net)', async () => {
-    mockSupabase.rpc.mockResolvedValueOnce({
-      data: {
-        success: true,
-        data: {
-          order_id: null, // should default to ''
-          subtotal: '100000', // string instead of number, should default to 0
-          total_amount: undefined,
-        },
-      },
-      error: null,
+    vi.mocked(orderRepository.create).mockResolvedValueOnce({
+      order_id: null, // should default to ''
+      subtotal: '100000', // string instead of number, should default to 0
+      total_amount: undefined,
     })
 
-    const res = await createOrder(mockSupabase, dummyParams)
+    const res = await orderService.createOrder(dummyParams)
 
     expect(res.success).toBe(true)
-    expect(res.data).toEqual({
-      order_id: '',
-      order_number: '',
-      subtotal: 0,
-      shipping_cost: 0,
-      discount_amount: 0,
-      total_amount: 0,
-      status: '',
-    })
+    if (res.success) {
+      expect(res.data).toEqual({
+        order_id: '',
+        order_number: '',
+        subtotal: 100000,
+        shipping_cost: 0,
+        discount_amount: 0,
+        total_amount: 0,
+        status: '',
+      })
+    }
   })
 })

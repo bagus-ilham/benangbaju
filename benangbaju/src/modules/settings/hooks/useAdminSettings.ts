@@ -1,13 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetSettings,
-  adminUpdateSettings,
-  adminGetActivityLogs,
-  adminUpsertSettings,
-  SiteSetting,
-} from '@/modules/settings/services'
+  adminGetSettingsAction,
+  adminUpdateSettingsAction,
+  adminUpsertSettingsAction,
+} from '@/modules/settings/actions'
+import type { SiteSetting } from '@/modules/settings/types'
 
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
@@ -17,7 +15,7 @@ export function useAdminSettings(): import('@tanstack/react-query').UseQueryResu
 > {
   return useQuery({
     queryKey: ['admin', 'settings'],
-    queryFn: () => adminGetSettings(getAdminSupabase()),
+    queryFn: () => adminGetSettingsAction(),
   })
 }
 
@@ -30,7 +28,7 @@ export function useAdminUpdateSettings(): import('@tanstack/react-query').UseMut
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (settings: Record<string, string>) => {
-      const res = await adminUpdateSettings(getAdminSupabase(), settings)
+      const res = await adminUpdateSettingsAction(settings)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui pengaturan')
       return res
     },
@@ -49,7 +47,7 @@ export function useAdminUpsertSettings(): import('@tanstack/react-query').UseMut
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (settings: SiteSetting[]) => {
-      const res = await adminUpsertSettings(getAdminSupabase(), settings)
+      const res = await adminUpsertSettingsAction(settings)
       if (!res.success) throw new Error(res.error?.message || 'Gagal upsert pengaturan')
       return res
     },
@@ -59,12 +57,3 @@ export function useAdminUpsertSettings(): import('@tanstack/react-query').UseMut
   })
 }
 
-export function useAdminActivityLogs(): import('@tanstack/react-query').UseQueryResult<
-  NoInfer<ApiListResponse<import('@/modules/settings/services').ActivityLog>>,
-  Error
-> {
-  return useQuery({
-    queryKey: ['admin', 'activity-logs'],
-    queryFn: () => adminGetActivityLogs(getAdminSupabase()),
-  })
-}

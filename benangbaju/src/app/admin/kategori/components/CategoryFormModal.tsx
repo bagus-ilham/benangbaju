@@ -35,6 +35,7 @@ export function CategoryFormModal({
   setIsOpen,
   editingCategory,
   name,
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   setName,
   slug,
   setSlug,

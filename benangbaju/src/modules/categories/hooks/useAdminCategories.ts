@@ -5,35 +5,34 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetCategories,
-  adminCreateCategory,
-  adminUpdateCategory,
-  adminDeleteCategory,
-} from '@/modules/categories/services'
+  getAdminCategoriesAction,
+  createAdminCategoryAction,
+  updateAdminCategoryAction,
+  deleteAdminCategoryAction,
+} from '@/modules/categories/actions'
 import { ApiResponse } from '@/lib/api-response'
 
-export type AdminCreateCategoryInput = Parameters<typeof adminCreateCategory>[1]
+export type AdminCreateCategoryInput = Parameters<typeof createAdminCategoryAction>[0]
 
 export interface AdminUpdateCategoryInput {
   categoryId: string
-  categoryData: Parameters<typeof adminUpdateCategory>[2]
+  categoryData: Parameters<typeof updateAdminCategoryAction>[1]
 }
 
 export function useAdminCategories(): UseQueryResult<
-  Awaited<ReturnType<typeof adminGetCategories>>,
+  Awaited<ReturnType<typeof getAdminCategoriesAction>>,
   Error
 > {
   return useQuery({
     queryKey: ['admin', 'categories'],
-    queryFn: () => adminGetCategories(getAdminSupabase()),
+    queryFn: () => getAdminCategoriesAction(),
   })
 }
 
 export function useAdminCreateCategory(): UseMutationResult<
-  Awaited<ReturnType<typeof adminCreateCategory>>,
+  Awaited<ReturnType<typeof createAdminCategoryAction>>,
   Error,
   AdminCreateCategoryInput,
   unknown
@@ -41,7 +40,7 @@ export function useAdminCreateCategory(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (categoryData: AdminCreateCategoryInput) => {
-      const res = await adminCreateCategory(getAdminSupabase(), categoryData)
+      const res = await createAdminCategoryAction(categoryData)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat kategori')
       return res
     },
@@ -53,7 +52,7 @@ export function useAdminCreateCategory(): UseMutationResult<
 }
 
 export function useAdminUpdateCategory(): UseMutationResult<
-  Awaited<ReturnType<typeof adminUpdateCategory>>,
+  Awaited<ReturnType<typeof updateAdminCategoryAction>>,
   Error,
   AdminUpdateCategoryInput,
   unknown
@@ -61,7 +60,7 @@ export function useAdminUpdateCategory(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ categoryId, categoryData }: AdminUpdateCategoryInput) => {
-      const res = await adminUpdateCategory(getAdminSupabase(), categoryId, categoryData)
+      const res = await updateAdminCategoryAction(categoryId, categoryData)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui kategori')
       return res
     },
@@ -81,7 +80,7 @@ export function useAdminDeleteCategory(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (categoryId: string) => {
-      const res = await adminDeleteCategory(getAdminSupabase(), categoryId)
+      const res = await deleteAdminCategoryAction(categoryId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus kategori')
       return res
     },

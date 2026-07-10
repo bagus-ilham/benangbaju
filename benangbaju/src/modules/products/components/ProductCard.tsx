@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Heart } from 'lucide-react'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
-import { ProductListItem, ProductVariant } from '@/modules/products/services'
+import { ProductListItem, ProductVariant } from '@/modules/products/types'
 import { cn, formatIDR } from '@/lib/utils'
 import { Badge } from '@/shared/components/Badge'
 import toast from 'react-hot-toast'
@@ -21,6 +21,7 @@ export const ProductCard = React.memo(function ProductCard({
   product,
   className,
 }: ProductCardProps): React.JSX.Element {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const isLiked = useWishlistStore((state) => state.productIds.includes(product.id))
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist)

@@ -78,7 +78,9 @@ export function ShippingZonesTable({
               </p>
               {zone.shipping_zone_coverage && zone.shipping_zone_coverage.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-                  {zone.shipping_zone_coverage.map((c: any) => (
+                  {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    zone.shipping_zone_coverage.map((c: any) => (
                     <span
                       key={c.province_name}
                       className="bg-neutral-100 text-neutral-700 text-[10px] px-2 py-0.5 font-medium border border-neutral-200"

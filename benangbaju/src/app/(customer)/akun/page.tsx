@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Button, Input, AuthLoading, PageContainer, PageHero } from '@/shared/components'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { AccountNavMenu, EditProfileForm, ChangePasswordForm } from './components'
@@ -149,6 +151,7 @@ export default function AkunPage(): React.JSX.Element {
       clearAuth()
       toast.success('Berhasil keluar')
       router.push('/')
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal keluar dari akun')
     }

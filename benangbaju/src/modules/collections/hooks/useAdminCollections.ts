@@ -5,32 +5,31 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetCollections,
-  adminCreateCollection,
-  adminUpdateCollection,
-  adminDeleteCollection,
-  AdminCollectionItem,
-} from '@/modules/collections/services'
+  getAdminCollectionsAction,
+  createAdminCollectionAction,
+  updateAdminCollectionAction,
+  deleteAdminCollectionAction,
+} from '@/modules/collections/actions'
+import { AdminCollectionItem } from '@/modules/collections/types'
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
 export interface AdminCreateCollectionInput {
-  collectionData: Parameters<typeof adminCreateCollection>[1]
+  collectionData: Parameters<typeof createAdminCollectionAction>[0]
   productIds: string[]
 }
 
 export interface AdminUpdateCollectionInput {
   collectionId: string
-  collectionData: Parameters<typeof adminUpdateCollection>[2]
+  collectionData: Parameters<typeof updateAdminCollectionAction>[1]
   productIds: string[]
 }
 
 export function useAdminCollections(): UseQueryResult<ApiListResponse<AdminCollectionItem>, Error> {
   return useQuery({
     queryKey: ['admin', 'collections'],
-    queryFn: () => adminGetCollections(getAdminSupabase()),
+    queryFn: () => getAdminCollectionsAction(),
   })
 }
 
@@ -43,7 +42,7 @@ export function useAdminCreateCollection(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ collectionData, productIds }: AdminCreateCollectionInput) => {
-      const res = await adminCreateCollection(getAdminSupabase(), collectionData, productIds)
+      const res = await createAdminCollectionAction(collectionData, productIds)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat koleksi')
       return res
     },
@@ -67,12 +66,7 @@ export function useAdminUpdateCollection(): UseMutationResult<
       collectionData,
       productIds,
     }: AdminUpdateCollectionInput) => {
-      const res = await adminUpdateCollection(
-        getAdminSupabase(),
-        collectionId,
-        collectionData,
-        productIds
-      )
+      const res = await updateAdminCollectionAction(collectionId, collectionData, productIds)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui koleksi')
       return res
     },
@@ -92,7 +86,7 @@ export function useAdminDeleteCollection(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (collectionId: string) => {
-      const res = await adminDeleteCollection(getAdminSupabase(), collectionId)
+      const res = await deleteAdminCollectionAction(collectionId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus koleksi')
       return res
     },

@@ -5,7 +5,7 @@ import { getImageProps } from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Banner } from '@/modules/banners/services'
+import { Banner } from '@/modules/banners/types'
 import { Button } from '@/shared/components'
 import { cn } from '@/lib/utils'
 
@@ -85,6 +85,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
   })
 
   const {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     props: { srcSet: mobileSrcSet, alt, ...restMobile },
   } = getImageProps({
     ...commonProps,

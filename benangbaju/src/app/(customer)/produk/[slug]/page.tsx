@@ -2,7 +2,7 @@ import React, { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getProductBySlug, getRelatedProducts } from '@/modules/products/services'
+import { productService } from '@/modules/products/product.service'
 import { ProductDetailClient } from './ProductDetailClient'
 import { RelatedProducts } from './RelatedProducts'
 import { ProductGridSkeleton } from '@/shared/components'
@@ -18,8 +18,7 @@ async function getCachedProduct(slug: string) {
   cacheLife('weeks')
   cacheTag('products', `product-${slug}`)
 
-  const supabase = createStaticClient()
-  const res = await getProductBySlug(supabase, slug)
+  const res = await productService.getProductBySlug(slug)
   if (!res.success || !res.data) {
     throw new Error(`Product ${slug} not found`)
   }
@@ -31,8 +30,7 @@ async function getCachedRelatedProducts(productId: string, categoryId: string) {
   cacheLife('weeks')
   cacheTag('products')
 
-  const supabase = createStaticClient()
-  const res = await getRelatedProducts(supabase, productId, categoryId, 4)
+  const res = await productService.getRelatedProducts(productId, categoryId, 4)
   return res.success ? res.data : []
 }
 
@@ -95,7 +93,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
         images: imageUrl ? [imageUrl] : [],
       },
     }
-  } catch (e) {
+  } catch {
     return {
       title: 'Produk Tidak Ditemukan | Benangbaju',
     }
@@ -112,7 +110,7 @@ export default async function ProductDetailPage({
   let product
   try {
     product = await getCachedProduct(slug)
-  } catch (err) {
+  } catch {
     notFound()
   }
 

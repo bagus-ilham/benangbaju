@@ -9,6 +9,7 @@ export interface StockUpdate {
 
 export async function bulkUpdateStock(supabase: SupabaseClient<Database>, updates: StockUpdate[]) {
   const { error } = await supabase.rpc('bulk_update_stock', {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updates: updates as any,
   })
 

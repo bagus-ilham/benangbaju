@@ -5,34 +5,32 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetBanners,
-  adminCreateBanner,
-  adminUpdateBanner,
-  adminDeleteBanner,
-} from '@/modules/banners/services'
+  getAdminBannersAction,
+  createAdminBannerAction,
+  updateAdminBannerAction,
+  deleteAdminBannerAction,
+} from '@/modules/banners/actions'
 import { Banner } from '@/modules/banners/types'
+import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
-export type AdminCreateBannerInput = Parameters<typeof adminCreateBanner>[1]
+export type AdminCreateBannerInput = Parameters<typeof createAdminBannerAction>[0]
 
 export interface AdminUpdateBannerInput {
   bannerId: string
-  bannerData: Parameters<typeof adminUpdateBanner>[2]
+  bannerData: Parameters<typeof updateAdminBannerAction>[1]
 }
-
-import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
 export function useAdminBanners(): UseQueryResult<ApiListResponse<Banner>, Error> {
   return useQuery({
     queryKey: ['admin', 'banners'],
-    queryFn: () => adminGetBanners(getAdminSupabase()),
+    queryFn: () => getAdminBannersAction(),
   })
 }
 
 export function useAdminCreateBanner(): UseMutationResult<
-  Awaited<ReturnType<typeof adminCreateBanner>>,
+  Awaited<ReturnType<typeof createAdminBannerAction>>,
   Error,
   AdminCreateBannerInput,
   unknown
@@ -40,7 +38,7 @@ export function useAdminCreateBanner(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (bannerData: AdminCreateBannerInput) => {
-      const res = await adminCreateBanner(getAdminSupabase(), bannerData)
+      const res = await createAdminBannerAction(bannerData)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat banner')
       return res
     },
@@ -52,7 +50,7 @@ export function useAdminCreateBanner(): UseMutationResult<
 }
 
 export function useAdminUpdateBanner(): UseMutationResult<
-  Awaited<ReturnType<typeof adminUpdateBanner>>,
+  Awaited<ReturnType<typeof updateAdminBannerAction>>,
   Error,
   AdminUpdateBannerInput,
   unknown
@@ -60,7 +58,7 @@ export function useAdminUpdateBanner(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ bannerId, bannerData }: AdminUpdateBannerInput) => {
-      const res = await adminUpdateBanner(getAdminSupabase(), bannerId, bannerData)
+      const res = await updateAdminBannerAction(bannerId, bannerData)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui banner')
       return res
     },
@@ -80,7 +78,7 @@ export function useAdminDeleteBanner(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (bannerId: string) => {
-      const res = await adminDeleteBanner(getAdminSupabase(), bannerId)
+      const res = await deleteAdminBannerAction(bannerId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus banner')
       return res
     },

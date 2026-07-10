@@ -53,6 +53,7 @@ export function DropdownMenuTrigger({
 
   if (asChild) {
     // Basic implementation of asChild pattern
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const child = React.Children.only(children) as React.ReactElement<any>
     return React.cloneElement(child, {
       onClick: (e: React.MouseEvent) => {

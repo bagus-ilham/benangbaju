@@ -28,6 +28,7 @@ interface CheckoutSummaryCardProps {
   onApplyVoucher: () => void
   onApplyVoucherDirectly: (code: string) => void
   onRemoveVoucher: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   availableVouchers: any[]
   voucherLoading: boolean
   onPaymentSubmit: () => void

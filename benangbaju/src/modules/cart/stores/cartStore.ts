@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { createBrowserClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/modules/users/stores/authStore'
+import { syncCartAction, clearCartAction } from '../actions'
 
 export interface CartItem {
   id?: string
@@ -121,16 +121,10 @@ export const useCartStore = create<CartState>()(
         // DB Sync if authenticated
         const user = useAuthStore.getState().user
         if (user) {
-          const supabase = createBrowserClient()
-          // Find user's cart and delete items
-          const { data: cart } = await supabase
-            .from('carts')
-            .select('id')
-            .eq('user_id', user.id)
-            .maybeSingle()
-
-          if (cart) {
-            await supabase.from('cart_items').delete().eq('cart_id', cart.id)
+          try {
+            await clearCartAction()
+          } catch (error) {
+            console.error('Failed to clear cart:', error)
           }
         }
       },
@@ -148,7 +142,6 @@ export const useCartStore = create<CartState>()(
         if (get().isSyncing) return
 
         set({ isSyncing: true, needsResync: false })
-        const supabase = createBrowserClient()
         let keepSyncing = true
 
         try {
@@ -156,163 +149,23 @@ export const useCartStore = create<CartState>()(
             set({ needsResync: false })
             const localItems = get().items
 
-            // 1. Get or create user cart in DB
-            let { data: cart } = await supabase
-              .from('carts')
-              .select('id')
-              .eq('user_id', userId)
-              .maybeSingle()
-
-            if (!cart) {
-              const { data: newCart, error: createError } = await supabase
-                .from('carts')
-                .insert({ user_id: userId })
-                .select('id')
-                .single()
-
-              if (createError) {
-                const { data: retryCart } = await supabase
-                  .from('carts')
-                  .select('id')
-                  .eq('user_id', userId)
-                  .maybeSingle()
-
-                if (!retryCart) throw createError
-                cart = retryCart
-              } else {
-                cart = newCart
-              }
+            const res = await syncCartAction(localItems, merge)
+            
+            if (res.success && res.data) {
+              set({ items: res.data })
             }
 
-            const cartId = cart.id
-
-            if (merge) {
-              // MERGE = TRUE (e.g. Login sync)
-              // Needs to read DB to merge quantities, then write, then read back full product details
-              const { data: dbItems, error: fetchError } = await supabase
-                .from('cart_items')
-                .select('id, variant_id, quantity')
-                .eq('cart_id', cartId)
-
-              if (fetchError) throw fetchError
-
-              const dbItemsMap = new Map<string, number>()
-              if (dbItems) {
-                dbItems.forEach((item) => dbItemsMap.set(item.variant_id, item.quantity))
-              }
-
-              if (localItems.length > 0) {
-                const upsertData = localItems.map((localItem) => {
-                  const dbQty = dbItemsMap.get(localItem.variantId)
-                  const combinedQty = dbQty
-                    ? Math.min(Math.max(dbQty, localItem.quantity), localItem.stock || 9999)
-                    : localItem.quantity
-
-                  return {
-                    cart_id: cartId,
-                    variant_id: localItem.variantId,
-                    quantity: combinedQty,
-                  }
-                })
-
-                const { error: upsertError } = await supabase
-                  .from('cart_items')
-                  .upsert(upsertData, { onConflict: 'cart_id,variant_id' })
-
-                if (upsertError) throw upsertError
-              }
-
-              // Read back the final merged cart from database to synchronize Zustand state
-              const { data: finalDbItems } = await supabase
-                .from('cart_items')
-                .select(
-                  `
-                  id, variant_id, quantity,
-                  product_variants (
-                    id, sku, name, price, compare_price, stock,
-                    products (name, slug, product_images (url, is_primary))
-                  )
-                `
-                )
-                .eq('cart_id', cartId)
-
-              if (finalDbItems) {
-                const synchronizedItems: CartItem[] = finalDbItems.map((item) => {
-                  const pv = item.product_variants
-                  let prod = null
-                  let imagesList: Array<{ url: string; is_primary: boolean }> = []
-                  if (pv && !Array.isArray(pv)) {
-                    prod = pv.products
-                    if (prod && !Array.isArray(prod)) {
-                      imagesList = Array.isArray(prod.product_images) ? prod.product_images : []
-                    }
-                  }
-                  const primaryImg =
-                    imagesList.find((img) => img.is_primary)?.url || imagesList[0]?.url || null
-
-                  const prodObj = prod && !Array.isArray(prod) ? prod : null
-                  const pvObj = pv && !Array.isArray(pv) ? pv : null
-
-                  return {
-                    id: item.id,
-                    variantId: item.variant_id,
-                    productName: prodObj?.name || 'Produk',
-                    variantName: pvObj?.name || 'Default',
-                    name: prodObj?.name || pvObj?.name || 'Produk',
-                    sku: pvObj?.sku || '',
-                    price: Number(pvObj?.price || 0),
-                    comparePrice: pvObj?.compare_price ? Number(pvObj.compare_price) : null,
-                    quantity: item.quantity,
-                    imageUrl: primaryImg,
-                    slug: prodObj?.slug || '',
-                    stock: pvObj?.stock || 0,
-                  }
-                })
-
-                set({ items: synchronizedItems, hasSynced: true })
-              } else {
-                set({ hasSynced: true })
-              }
+            if (get().needsResync) {
+              keepSyncing = true
             } else {
-              // MERGE = FALSE (Standard debounced update from Cart Drawer)
-              // FAST PATH: Fire-and-forget UPSERT, no heavy SELECT needed
-
-              // 1. Upsert all local items with exact local quantity
-              if (localItems.length > 0) {
-                const upsertData = localItems.map((localItem) => ({
-                  cart_id: cartId,
-                  variant_id: localItem.variantId,
-                  quantity: localItem.quantity,
-                }))
-
-                const { error: upsertError } = await supabase
-                  .from('cart_items')
-                  .upsert(upsertData, { onConflict: 'cart_id,variant_id' })
-
-                if (upsertError) throw upsertError
-              }
-
-              // 2. Delete DB items that are no longer in local items
-              const localVariantIds = localItems.map((item) => item.variantId)
-              let deleteQuery = supabase.from('cart_items').delete().eq('cart_id', cartId)
-
-              if (localVariantIds.length > 0) {
-                deleteQuery = deleteQuery.not('variant_id', 'in', `(${localVariantIds.join(',')})`)
-              }
-
-              const { error: deleteError } = await deleteQuery
-              if (deleteError) throw deleteError
-
-              // We are done! Local state is already accurate.
               set({ hasSynced: true })
-            }
-
-            if (!get().needsResync) {
               keepSyncing = false
             }
           }
         } catch (error) {
-          console.error('Error syncing cart with Supabase:', error)
+          console.error('Error syncing cart:', error)
+          // Don't mark as hasSynced if there's an error,
+          // so it can retry later
         } finally {
           set({ isSyncing: false, needsResync: false })
         }

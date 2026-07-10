@@ -1,10 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import React from 'react'
 import Image from 'next/image'
 import { Star, CheckCircle, ThumbsUp } from 'lucide-react'
 import { useReviews } from '@/modules/reviews/hooks/useReviews'
-import { ProductRatingSummary } from '@/modules/products/services'
+import { ProductRatingSummary } from '@/modules/products/types'
 import { cn, formatDate } from '@/lib/utils'
 
 interface ReviewSectionProps {

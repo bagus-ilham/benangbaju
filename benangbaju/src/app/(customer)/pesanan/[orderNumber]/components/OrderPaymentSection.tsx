@@ -4,6 +4,7 @@ import { Loader2, CheckCircle2 } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 
 interface OrderPaymentSectionProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   order: any
   isVerifyingPayment: boolean
   isGeneratingToken: boolean

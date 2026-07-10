@@ -1,7 +1,7 @@
 import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveFlashSale } from '@/modules/flash-sales/services'
+import { flashSaleService } from '@/modules/flash-sales/flash-sale.service'
 import { FlashSaleSection } from '@/modules/flash-sales/components/FlashSaleSection'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
@@ -11,7 +11,7 @@ async function getCachedFlashSale() {
   cacheTag('flash-sales')
 
   const supabase = createStaticClient()
-  return getActiveFlashSale(supabase)
+  return flashSaleService.getActiveFlashSale(supabase)
 }
 
 export default async function FlashSalePage(): Promise<React.JSX.Element> {

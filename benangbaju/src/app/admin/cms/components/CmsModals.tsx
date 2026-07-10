@@ -18,6 +18,7 @@ export function RedirectFormModal({
   redirectActive,
   setRedirectActive,
   isPending,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   if (!isOpen) return null
 
@@ -117,6 +118,7 @@ export function LandingPageFormModal({
   pageActive,
   setPageActive,
   isPending,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   if (!isOpen) return null
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ProductImage } from '@/modules/products/services'
+import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
 
 interface ProductGalleryProps {
@@ -31,6 +31,7 @@ export function ProductGallery({
   useEffect(() => {
     // Check if device is mobile to enable drag and disable zoom
     const mql = window.matchMedia('(max-width: 768px)')
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(mql.matches)
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
     mql.addEventListener('change', handler)
@@ -42,9 +43,11 @@ export function ProductGallery({
     if (selectedVariantId) {
       const variantImage = images.find((img) => img.variant_id === selectedVariantId)
       if (variantImage && variantImage.url !== activeImage) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
         setDirection(1)
         setHasIntentToZoom(false) // Reset HD intent on image change
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+ 
+         
         setActiveImage(variantImage.url)
         
         if (isMobile) {
@@ -66,6 +69,7 @@ export function ProductGallery({
     setZoomPos({ x, y })
   }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginate = (newDirection: number) => {
     const currentIndex = images.findIndex((img) => img.url === activeImage)
     let nextIndex = currentIndex + newDirection

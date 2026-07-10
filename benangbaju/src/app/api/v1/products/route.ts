@@ -1,20 +1,19 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
-import { getProducts } from '@/modules/products/services'
+import { productService } from '@/modules/products/product.service'
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const page = parseInt(searchParams.get('page') || '1', 10)
   const limit = parseInt(searchParams.get('limit') || '20', 10)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sortBy = (searchParams.get('sortBy') as any) || 'newest'
   const searchQuery = searchParams.get('q') || undefined
   const categorySlug = searchParams.get('category') || undefined
   const collectionSlug = searchParams.get('collection') || undefined
 
   try {
-    const supabase = await createServerClient()
-    const result = await getProducts(supabase, {
+    const result = await productService.getProducts({
       page,
       limit,
       sortBy,
@@ -34,6 +33,7 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json(result)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Products API error:', err)
     return NextResponse.json(

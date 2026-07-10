@@ -11,6 +11,7 @@ interface ProductImageManagerProps {
   variants: ProductVariantPayload[]
   onAddImage: () => void
   onRemoveImage: (index: number) => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateImageField: (index: number, field: keyof ProductImagePayload, value: any) => void
 }
 

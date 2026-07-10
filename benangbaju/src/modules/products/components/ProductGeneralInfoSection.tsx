@@ -25,8 +25,10 @@ interface ProductGeneralInfoSectionProps {
   onIsActiveChange: (val: boolean) => void
   isFeatured: boolean
   onIsFeaturedChange: (val: boolean) => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   categories: any[] | undefined
   catsLoading: boolean
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   collections: any[] | undefined
   colsLoading: boolean
   selectedCollections: string[]

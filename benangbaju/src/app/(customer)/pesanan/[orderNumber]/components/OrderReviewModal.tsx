@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import React, { useState } from 'react'
 import { Modal, Button, Input, Textarea, Checkbox } from '@/shared/components'
 import { Image as ImageIcon, X } from 'lucide-react'

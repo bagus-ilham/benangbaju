@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import {
   useOrdersList,
@@ -10,8 +9,7 @@ import {
   useConfirmDelivery,
   useGeneratePaymentToken,
 } from '@/modules/orders/hooks/useOrders'
-import { lazyCancelExpiredOrders } from '@/modules/orders/services'
-import { createBrowserClient } from '@/lib/supabase/client'
+import { lazyCancelExpiredOrdersAction } from '@/modules/orders/actions'
 import {
   Button,
   AuthLoading,
@@ -23,11 +21,10 @@ import {
 import { ArrowLeft, ClipboardList } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
-import { formatIDR } from '@/lib/utils'
 import { OrderCard } from './components/OrderCard'
 import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
 
-const supabase = createBrowserClient()
+
 
 const STATUS_TABS = [
   { id: 'all', label: 'Semua' },
@@ -61,7 +58,7 @@ export default function PesananPage(): React.JSX.Element {
   // 2. Trigger Lazy Cancellation of Expired Orders on Load
   useEffect(() => {
     if (user?.id) {
-      lazyCancelExpiredOrders(supabase, user.id)
+      lazyCancelExpiredOrdersAction()
     }
   }, [user])
 
@@ -103,8 +100,9 @@ export default function PesananPage(): React.JSX.Element {
       })
       toast.success('Pesanan berhasil dibatalkan')
       refetch()
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal membatalkan pesanan')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Gagal membatalkan pesanan'
+      toast.error(errorMessage)
     } finally {
       setCancelOrderInfo(null)
     }
@@ -121,8 +119,9 @@ export default function PesananPage(): React.JSX.Element {
       await confirmMutation.mutateAsync(receiptOrderInfo.id)
       toast.success('Pesanan berhasil dikonfirmasi')
       refetch()
-    } catch (err: any) {
-      toast.error(err.message || 'Gagal mengkonfirmasi pesanan')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Gagal mengkonfirmasi pesanan'
+      toast.error(errorMessage)
     } finally {
       setReceiptOrderInfo(null)
     }
@@ -167,7 +166,7 @@ export default function PesananPage(): React.JSX.Element {
       } else {
         toast.error('Gagal memuat pembayaran. Coba lagi.')
       }
-    } catch (err) {
+    } catch {
       toast.dismiss('payment-loading')
       toast.error('Gagal memproses pembayaran')
     }

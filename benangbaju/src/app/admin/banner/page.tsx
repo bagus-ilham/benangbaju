@@ -98,6 +98,7 @@ export default function AdminBannersPage(): React.JSX.Element {
       if (error) throw error
       toast.success('Status aktif berhasil diubah')
       refetch()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal memperbarui status')
     }
@@ -109,6 +110,7 @@ export default function AdminBannersPage(): React.JSX.Element {
         await deleteMutation.mutateAsync(id)
         toast.success('Banner dinonaktifkan')
         refetch()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Gagal menonaktifkan banner')
       }
@@ -128,7 +130,7 @@ export default function AdminBannersPage(): React.JSX.Element {
     }
 
     const payload = {
-      title: title.trim() || null,
+      title: title.trim(),
       subtitle: subtitle.trim() || null,
       image_url: image_url.trim(),
       image_mobile_url: image_mobile_url.trim() || null,

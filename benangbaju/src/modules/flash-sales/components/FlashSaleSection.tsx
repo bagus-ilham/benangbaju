@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
-import { FlashSaleDetail } from '@/modules/flash-sales/services'
+import { FlashSaleDetail } from '@/modules/flash-sales/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
 import { Button, PageContainer, SectionHeader } from '@/shared/components'

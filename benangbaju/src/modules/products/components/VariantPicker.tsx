@@ -4,7 +4,7 @@
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { ProductVariant } from '@/modules/products/services'
+import { ProductVariant } from '@/modules/products/types'
 
 interface VariantPickerProps {
   variants: ProductVariant[]

@@ -1,16 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetShippingZones,
-  adminCreateShippingZone,
-  adminUpdateShippingZone,
-  adminDeleteShippingZone,
-  adminGetShippingRates,
-  adminCreateShippingRate,
-  adminUpdateShippingRate,
-  adminDeleteShippingRate,
-} from '@/modules/shipping/services'
+  adminGetShippingZonesAction,
+  adminCreateShippingZoneAction,
+  adminUpdateShippingZoneAction,
+  adminDeleteShippingZoneAction,
+  adminGetShippingRatesAction,
+  adminCreateShippingRateAction,
+  adminUpdateShippingRateAction,
+  adminDeleteShippingRateAction,
+} from '@/modules/shipping/actions'
 import { ShippingZone, ShippingRate } from '@/modules/shipping/types'
 
 import { ApiListResponse } from '@/lib/api-response'
@@ -21,7 +20,7 @@ export function useAdminShippingZones(
 ): import('@tanstack/react-query').UseQueryResult<ApiListResponse<ShippingZone>, Error> {
   return useQuery({
     queryKey: ['admin', 'shipping-zones', page, limit],
-    queryFn: () => adminGetShippingZones(getAdminSupabase(), page, limit),
+    queryFn: () => adminGetShippingZonesAction(page, limit),
   })
 }
 
@@ -35,7 +34,7 @@ export function useAdminCreateShippingZone() {
       zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>
       provinces: string[]
     }) => {
-      const res = await adminCreateShippingZone(getAdminSupabase(), zone, provinces)
+      const res = await adminCreateShippingZoneAction(zone, provinces)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat zona pengiriman')
       return res
     },
@@ -57,7 +56,7 @@ export function useAdminUpdateShippingZone() {
       zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>
       provinces?: string[]
     }) => {
-      const res = await adminUpdateShippingZone(getAdminSupabase(), zoneId, zone, provinces)
+      const res = await adminUpdateShippingZoneAction(zoneId, zone, provinces)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui zona pengiriman')
       return res
     },
@@ -72,7 +71,7 @@ export function useAdminDeleteShippingZone() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (zoneId: string) => {
-      const res = await adminDeleteShippingZone(getAdminSupabase(), zoneId)
+      const res = await adminDeleteShippingZoneAction(zoneId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus zona pengiriman')
       return res
     },
@@ -88,7 +87,7 @@ export function useAdminShippingRates(
 ): import('@tanstack/react-query').UseQueryResult<ApiListResponse<ShippingRate>, Error> {
   return useQuery({
     queryKey: ['admin', 'shipping-rates', page, limit],
-    queryFn: () => adminGetShippingRates(getAdminSupabase(), page, limit),
+    queryFn: () => adminGetShippingRatesAction(page, limit),
   })
 }
 
@@ -96,7 +95,7 @@ export function useAdminCreateShippingRate() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (rate: Omit<ShippingRate, 'id' | 'shipping_zones'>) => {
-      const res = await adminCreateShippingRate(getAdminSupabase(), rate)
+      const res = await adminCreateShippingRateAction(rate)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat tarif pengiriman')
       return res
     },
@@ -117,7 +116,7 @@ export function useAdminUpdateShippingRate() {
       rateId: string
       rate: Partial<Omit<ShippingRate, 'id' | 'shipping_zones'>>
     }) => {
-      const res = await adminUpdateShippingRate(getAdminSupabase(), rateId, rate)
+      const res = await adminUpdateShippingRateAction(rateId, rate)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui tarif pengiriman')
       return res
     },
@@ -132,7 +131,7 @@ export function useAdminDeleteShippingRate() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (rateId: string) => {
-      const res = await adminDeleteShippingRate(getAdminSupabase(), rateId)
+      const res = await adminDeleteShippingRateAction(rateId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus tarif pengiriman')
       return res
     },

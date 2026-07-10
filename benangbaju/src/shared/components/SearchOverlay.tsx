@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -9,7 +10,8 @@ import { Search, X, Loader2, ChevronRight } from 'lucide-react'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
-import { getProducts, type ProductListItem } from '@/modules/products/services'
+import { getProductsAction } from '@/modules/products/actions'
+import { type ProductListItem } from '@/modules/products/types'
 import { createBrowserClient } from '@/lib/supabase/client'
 
 interface SearchOverlayProps {
@@ -37,7 +39,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const startTimer = setTimeout(() => setIsSearchingInstant(true), 0)
     const delayDebounceFn = setTimeout(async () => {
       try {
-        const res = await getProducts(supabase, { searchQuery: searchQuery.trim(), limit: 3 })
+        const res = await getProductsAction({ searchQuery: searchQuery.trim(), limit: 3 })
         setInstantResults(res.data || [])
       } catch (err) {
         safeLogError('Instant search error:', err)

@@ -4,7 +4,7 @@ import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Collection } from '@/modules/collections/services'
+import { Collection } from '@/modules/collections/types'
 import { PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 

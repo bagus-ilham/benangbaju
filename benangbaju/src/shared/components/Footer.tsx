@@ -2,7 +2,7 @@ import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { Button, Input, CurrentYear } from '@/shared/components'
-import { SOCIAL_LINKS } from '@/lib/constants'
+
 import toast from 'react-hot-toast'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 

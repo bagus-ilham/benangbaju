@@ -22,6 +22,7 @@ export class DuplicateSKUError extends ProductError {
   }
 }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function handleProductSupabaseError(err: any, context: string): never {
   if (err?.code === '23505') {
     if (err.message?.includes('products_slug_key')) {

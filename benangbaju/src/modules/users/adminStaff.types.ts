@@ -9,3 +9,10 @@ export interface StaffProfile {
   created_at: string
   updated_at: string
 }
+
+export interface CreateStaffPayload {
+  email: string
+  name: string
+  role: string
+  password?: string
+}

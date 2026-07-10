@@ -1,7 +1,7 @@
 import React from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Category } from '@/modules/categories/services'
+import type { Category } from '@/modules/categories/types'
 
 interface CatalogMobileFiltersProps {
   showMobileFilters: boolean

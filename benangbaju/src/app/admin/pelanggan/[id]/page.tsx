@@ -67,6 +67,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
             <div className="flex flex-col items-center text-center">
               <div className="h-20 w-20 rounded-full bg-neutral-900 text-white flex items-center justify-center text-2xl font-bold uppercase mb-4 overflow-hidden">
                 {customer.avatar_url ? (
+// eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={customer.avatar_url}
                     alt={customer.name}

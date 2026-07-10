@@ -12,6 +12,32 @@ import { useAuthStore } from '@/modules/users/stores/authStore'
 import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/modules/reviews/types'
 import Image from 'next/image'
+
+const getStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'bg-green-50 text-green-700 border border-green-200'
+    case 'rejected':
+    case 'hidden':
+      return 'bg-red-50 text-red-700 border border-red-200'
+    default:
+      return 'bg-amber-50 text-amber-700 border border-amber-200'
+  }
+}
+
+const getStatusLabel = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'Disetujui'
+    case 'hidden':
+      return 'Disembunyikan'
+    case 'rejected':
+      return 'Ditolak'
+    default:
+      return 'Menunggu'
+  }
+}
+
 export default function AdminReviewsPage(): React.JSX.Element {
   const { data: reviewsRes, isLoading, isError, refetch } = useAdminReviews()
   const reviews = reviewsRes?.data || []
@@ -39,7 +65,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
       await updateStatusMutation.mutateAsync({ reviewId, status })
       toast.success('Status ulasan berhasil diperbarui!', { id: 'update-status' })
       refetch()
-    } catch (err) {
+    } catch {
       toast.error('Gagal memperbarui status ulasan', { id: 'update-status' })
     }
   }
@@ -57,12 +83,11 @@ export default function AdminReviewsPage(): React.JSX.Element {
       await replyMutation.mutateAsync({
         reviewId: selectedReview.id,
         body: replyText.trim(),
-        adminId: user.id,
       })
       toast.success('Balasan berhasil disimpan!', { id: 'save-reply' })
       setSelectedReview(null)
       refetch()
-    } catch (err) {
+    } catch {
       toast.error('Gagal menyimpan balasan', { id: 'save-reply' })
     }
   }
@@ -174,21 +199,9 @@ export default function AdminReviewsPage(): React.JSX.Element {
                     </td>
                     <td className="py-4 px-4 text-center">
                       <span
-                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${
-                          rev.status === 'approved'
-                            ? 'bg-green-50 text-green-700 border border-green-200'
-                            : rev.status === 'rejected' || rev.status === 'hidden'
-                              ? 'bg-red-50 text-red-700 border border-red-200'
-                              : 'bg-amber-50 text-amber-700 border border-amber-200'
-                        }`}
+                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${getStatusBadgeClass(rev.status)}`}
                       >
-                        {rev.status === 'approved'
-                          ? 'Disetujui'
-                          : rev.status === 'hidden'
-                            ? 'Disembunyikan'
-                            : rev.status === 'rejected'
-                              ? 'Ditolak'
-                              : 'Menunggu'}
+                        {getStatusLabel(rev.status)}
                       </span>
                     </td>
                     <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
@@ -243,7 +256,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
           <form onSubmit={handleSaveReply} className="space-y-4 text-xs font-sans">
             <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-none leading-relaxed text-neutral-600 font-normal">
               <span className="font-bold text-neutral-800 block">Ulasan Pelanggan:</span>
-              <span className="italic block mt-1">"{selectedReview.body}"</span>
+              <span className="italic block mt-1">&quot;{selectedReview.body}&quot;</span>
             </div>
 
             <Textarea

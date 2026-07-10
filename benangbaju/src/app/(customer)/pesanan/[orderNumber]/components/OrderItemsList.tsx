@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react/no-unescaped-entities */
 import React from 'react'
 import { Button } from '@/shared/components'
 

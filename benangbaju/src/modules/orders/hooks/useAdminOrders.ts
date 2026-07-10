@@ -1,12 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetOrders,
-  adminGetReturnRequests,
-  adminUpdateReturnRequest,
-} from '@/modules/orders/services'
-import {
+  adminGetOrdersAction,
+  adminGetReturnRequestsAction,
+  adminUpdateReturnRequestAction,
   adminUpdateOrderStatusAction,
   adminUpdateTrackingNumberAction,
 } from '@/modules/orders/actions'
@@ -27,7 +24,7 @@ export interface AdminUpdateReturnRequestInput {
 export function useAdminOrders(status = 'all', search = '', page = 1, limit = 20) {
   return useQuery({
     queryKey: ['admin', 'orders', status, search, page, limit],
-    queryFn: () => adminGetOrders(getAdminSupabase(), { status, search, page, limit }),
+    queryFn: () => adminGetOrdersAction({ status, search, page, limit }),
   })
 }
 
@@ -68,7 +65,7 @@ export function useAdminUpdateTrackingNumber() {
 export function useAdminReturnRequests() {
   return useQuery({
     queryKey: ['admin', 'return-requests'],
-    queryFn: () => adminGetReturnRequests(getAdminSupabase()),
+    queryFn: () => adminGetReturnRequestsAction(),
   })
 }
 
@@ -81,7 +78,7 @@ export function useAdminUpdateReturnRequest() {
       adminNotes,
       refundAmount,
     }: AdminUpdateReturnRequestInput) => {
-      const res = await adminUpdateReturnRequest(getAdminSupabase(), requestId, {
+      const res = await adminUpdateReturnRequestAction(requestId, {
         status,
         adminNotes,
         refundAmount,

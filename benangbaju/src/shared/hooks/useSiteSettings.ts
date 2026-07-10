@@ -1,15 +1,12 @@
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { createBrowserClient } from '@/lib/supabase/client'
-import { getSiteSettings } from '@/modules/settings/services'
+import { getSiteSettingsAction } from '@/modules/settings/actions'
 import { SOCIAL_LINKS } from '@/lib/constants'
 
 export function useSiteSettings() {
-  const [supabase] = useState(() => createBrowserClient())
 
   const query = useQuery({
     queryKey: ['site-settings'],
-    queryFn: () => getSiteSettings(supabase),
+    queryFn: () => getSiteSettingsAction(),
     staleTime: 1000 * 60 * 10, // 10 minutes
   })
 

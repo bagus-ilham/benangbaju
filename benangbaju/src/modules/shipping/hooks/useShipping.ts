@@ -1,39 +1,36 @@
 import { useQuery, useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query'
-import { createBrowserClient } from '@/lib/supabase/client'
 import {
-  getUserAddresses,
-  addUserAddress,
-  updateUserAddress,
-  deleteUserAddress,
-  setDefaultAddress,
-  searchDistricts,
-  calculateShippingRates,
-  UserAddress,
-} from '@/modules/shipping/services'
+  getUserAddressesAction,
+  addUserAddressAction,
+  updateUserAddressAction,
+  deleteUserAddressAction,
+  setDefaultAddressAction,
+  searchDistrictsAction,
+  calculateShippingRatesAction,
+} from '@/modules/shipping/actions'
+import { UserAddress, District, ShippingOption } from '@/modules/shipping/types'
 import { ApiResponse } from '@/lib/api-response'
 
 export function useUserAddresses(
   userId: string
 ): import('@tanstack/react-query').UseQueryResult<ApiResponse<UserAddress[]>, Error> {
-  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['addresses', userId],
-    queryFn: () => getUserAddresses(supabase, userId),
+    queryFn: () => getUserAddressesAction(userId),
     enabled: !!userId,
   })
 }
 
 export function useAddUserAddress(): UseMutationResult<
-  Awaited<ReturnType<typeof addUserAddress>>,
+  Awaited<ReturnType<typeof addUserAddressAction>>,
   Error,
   Omit<UserAddress, 'id' | 'created_at'>,
   unknown
 > {
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: async (address: Omit<UserAddress, 'id' | 'created_at'>) => {
-      const res = await addUserAddress(supabase, address)
+      const res = await addUserAddressAction(address)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menambahkan alamat')
       return res
     },
@@ -44,7 +41,7 @@ export function useAddUserAddress(): UseMutationResult<
 }
 
 export function useUpdateUserAddress(): UseMutationResult<
-  Awaited<ReturnType<typeof updateUserAddress>>,
+  Awaited<ReturnType<typeof updateUserAddressAction>>,
   Error,
   {
     addressId: string
@@ -54,7 +51,6 @@ export function useUpdateUserAddress(): UseMutationResult<
   unknown
 > {
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: async ({
       addressId,
@@ -65,7 +61,7 @@ export function useUpdateUserAddress(): UseMutationResult<
       userId: string
       address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
     }) => {
-      const res = await updateUserAddress(supabase, addressId, userId, address)
+      const res = await updateUserAddressAction(addressId, userId, address)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui alamat')
       return res
     },
@@ -76,16 +72,15 @@ export function useUpdateUserAddress(): UseMutationResult<
 }
 
 export function useDeleteUserAddress(): UseMutationResult<
-  Awaited<ReturnType<typeof deleteUserAddress>>,
+  Awaited<ReturnType<typeof deleteUserAddressAction>>,
   Error,
   { addressId: string; userId: string },
   unknown
 > {
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: async ({ addressId, userId }: { addressId: string; userId: string }) => {
-      const res = await deleteUserAddress(supabase, addressId, userId)
+      const res = await deleteUserAddressAction(addressId, userId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus alamat')
       return res
     },
@@ -96,16 +91,15 @@ export function useDeleteUserAddress(): UseMutationResult<
 }
 
 export function useSetDefaultAddress(): UseMutationResult<
-  Awaited<ReturnType<typeof setDefaultAddress>>,
+  Awaited<ReturnType<typeof setDefaultAddressAction>>,
   Error,
   { addressId: string; userId: string },
   unknown
 > {
   const queryClient = useQueryClient()
-  const supabase = createBrowserClient()
   return useMutation({
     mutationFn: async ({ addressId, userId }: { addressId: string; userId: string }) => {
-      const res = await setDefaultAddress(supabase, addressId, userId)
+      const res = await setDefaultAddressAction(addressId, userId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal mengatur alamat utama')
       return res
     },
@@ -118,13 +112,12 @@ export function useSetDefaultAddress(): UseMutationResult<
 export function useDistrictSearch(
   searchQuery: string
 ): import('@tanstack/react-query').UseQueryResult<
-  ApiResponse<import('@/modules/shipping/services').District[]>,
+  ApiResponse<District[]>,
   Error
 > {
-  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['districts-search', searchQuery],
-    queryFn: () => searchDistricts(supabase, searchQuery),
+    queryFn: () => searchDistrictsAction(searchQuery),
     enabled: searchQuery.trim().length >= 2,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })
@@ -134,13 +127,12 @@ export function useShippingRates(
   zoneId: string | null,
   weightGram: number
 ): import('@tanstack/react-query').UseQueryResult<
-  ApiResponse<import('@/modules/shipping/services').ShippingOption[]>,
+  ApiResponse<ShippingOption[]>,
   Error
 > {
-  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['shipping-rates', zoneId, weightGram],
-    queryFn: () => calculateShippingRates(supabase, zoneId!, weightGram),
+    queryFn: () => calculateShippingRatesAction(zoneId!, weightGram),
     enabled: !!zoneId && weightGram > 0,
     staleTime: 1000 * 60 * 15, // Cache for 15 minutes
   })

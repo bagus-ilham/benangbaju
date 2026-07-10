@@ -7,15 +7,16 @@ import { useOrderDetail } from '@/modules/orders/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
 import {
   Button,
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   Input,
   PageHero,
   PageContainer,
   EmptyState,
   AuthLoading,
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
-  Textarea,
 } from '@/shared/components'
-import { ArrowLeft, AlertTriangle, ShieldCheck, Image as ImageIcon, X } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, ShieldCheck } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -26,14 +27,6 @@ import { ReturnReasonForm } from './components/ReturnReasonForm'
 
 const supabase = createBrowserClient()
 
-const RETURN_REASONS = [
-  { value: 'wrong_item', label: 'Salah Kirim Produk / Varian' },
-  { value: 'damaged_item', label: 'Produk Rusak / Cacat' },
-  { value: 'missing_item', label: 'Barang Kurang / Hilang' },
-  { value: 'not_as_described', label: 'Produk Tidak Sesuai Deskripsi' },
-  { value: 'size_issue', label: 'Ukuran Tidak Pas' },
-  { value: 'other', label: 'Lainnya' },
-]
 
 interface ReturnPageProps {
   params: {
@@ -96,10 +89,12 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         initialChecked[item.id] = false
         initialQty[item.id] = 1
       })
+    // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedItems(initialChecked)
       setQuantities(initialQty)
     }
-  }, [order, selectedItems])
+// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order])
 
   const handleToggleItem = (itemId: string) => {
     setSelectedItems((prev) => ({

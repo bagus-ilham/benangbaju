@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getCategoryBySlug } from '@/modules/categories/services'
-import { getProducts } from '@/modules/products/services'
+import { getCategoryBySlugAction } from '@/modules/categories/actions'
+import { getProductsAction } from '@/modules/products/actions'
+import { Category } from '@/modules/categories/types'
+import { PageContainer, PageHero, EmptyState } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { PageHero, PageContainer, EmptyState } from '@/shared/components'
+import { PackageX } from 'lucide-react'
 
 interface CategoryPageProps {
   params: Promise<{
@@ -19,8 +22,7 @@ async function getCachedCategory(slug: string) {
   cacheLife('weeks')
   cacheTag('categories', `category-${slug}`)
 
-  const supabase = createStaticClient()
-  const categoryRes = await getCategoryBySlug(supabase, slug)
+  const categoryRes = await getCategoryBySlugAction(slug)
   if (!categoryRes.success || !categoryRes.data) {
     throw new Error(`Category ${slug} not found`)
   }
@@ -32,8 +34,7 @@ async function getCachedCategoryProducts(slug: string) {
   cacheLife('weeks')
   cacheTag('products', 'categories')
 
-  const supabase = createStaticClient()
-  return getProducts(supabase, {
+  return getProductsAction({
     categorySlug: slug,
     limit: 40,
   })

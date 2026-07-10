@@ -1,22 +1,24 @@
 import React from 'react'
+import { Metadata } from 'next'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
-import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveCategories } from '@/modules/categories/services'
-import { PageHero, PageContainer } from '@/shared/components'
+import { getActiveCategoriesAction } from '@/modules/categories/actions'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { PageHero, PageContainer, EmptyState } from '@/shared/components'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Layers } from 'lucide-react'
 
-import { cacheLife, cacheTag } from 'next/cache'
+export const metadata: Metadata = {
+  title: 'Kategori Produk | Ansania',
+  description: 'Jelajahi berbagai kategori produk terbaik dari Ansania',
+}
 
-async function getCachedCategories() {
-  'use cache'
-  cacheLife('weeks')
-  cacheTag('categories')
-  const supabase = createStaticClient()
-  return getActiveCategories(supabase)
+async function getCategories() {
+  return await getActiveCategoriesAction()
 }
 
 export default async function CategoriesIndexPage(): Promise<React.JSX.Element> {
-  const categoriesRes = await getCachedCategories()
+  const categoriesRes = await getCategories()
   const categories = categoriesRes.data || []
   const parentCategories = categories.filter((cat) => !cat.parent_id)
 

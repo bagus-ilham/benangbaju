@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getCollectionBySlug } from '@/modules/collections/services'
-import { getProducts } from '@/modules/products/services'
+import { getCollectionBySlugAction } from '@/modules/collections/actions'
+import { getProductsAction } from '@/modules/products/actions'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 
@@ -19,8 +19,7 @@ async function getCachedCollection(slug: string) {
   cacheLife('weeks')
   cacheTag('collections', `collection-${slug}`)
 
-  const supabase = createStaticClient()
-  const res = await getCollectionBySlug(supabase, slug)
+  const res = await getCollectionBySlugAction(slug)
   const collection = res.data
   if (!res.success || !collection) {
     throw new Error(`Collection ${slug} not found`)
@@ -33,8 +32,7 @@ async function getCachedCollectionProducts(slug: string) {
   cacheLife('weeks')
   cacheTag('products', 'collections')
 
-  const supabase = createStaticClient()
-  return getProducts(supabase, {
+  return getProductsAction({
     collectionSlug: slug,
     limit: 40,
   })
@@ -62,6 +60,7 @@ export default async function CollectionDetailPage({
     ])
     collection = colRes
     products = prodRes.data || []
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     notFound()
   }
@@ -117,7 +116,9 @@ export default async function CollectionDetailPage({
           />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
-            {products.map((product: any) => (
+            {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              products.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

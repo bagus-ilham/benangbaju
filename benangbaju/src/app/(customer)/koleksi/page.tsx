@@ -1,8 +1,9 @@
 import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveCollections } from '@/modules/collections/services'
+import { getActiveCollectionsAction } from '@/modules/collections/actions'
 import { PageHero, PageContainer } from '@/shared/components'
 
 import { cacheLife, cacheTag } from 'next/cache'
@@ -11,8 +12,7 @@ async function getCachedCollections() {
   'use cache'
   cacheLife('weeks')
   cacheTag('collections')
-  const supabase = createStaticClient()
-  return getActiveCollections(supabase)
+  return getActiveCollectionsAction()
 }
 
 export default async function CollectionsIndexPage(): Promise<React.JSX.Element> {

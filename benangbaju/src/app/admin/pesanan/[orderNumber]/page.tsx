@@ -1,14 +1,14 @@
 'use client'
 
 import React, { use, useState } from 'react'
-import { useRouter } from 'next/navigation'
+
 import { useOrderDetail } from '@/modules/orders/hooks/useOrders'
 import {
   useAdminUpdateOrderStatus,
   useAdminUpdateTrackingNumber,
 } from '@/modules/orders/hooks/useAdminOrders'
 
-import { Button, Input, AdminPageHeader, AdminPanel } from '@/shared/components'
+import { Button, AdminPageHeader, AdminPanel } from '@/shared/components'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { ArrowLeft, Download } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
@@ -26,7 +26,7 @@ interface AdminOrderDetailPageProps {
 
 function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.JSX.Element {
   const { orderNumber } = use(params)
-  const router = useRouter()
+
 
   const { data: orderResponse, isLoading, isError, refetch } = useOrderDetail(orderNumber as string)
   const order = orderResponse?.data
@@ -67,9 +67,8 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
         })
         toast.success('Status pesanan berhasil diubah', { id: 'status-update' })
         refetch()
-      } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Gagal mengubah status'
-        toast.error(errorMessage, { id: 'status-update' })
+      } catch {
+        toast.error('Gagal mengubah status', { id: 'status-update' })
       }
     }
   }
@@ -90,7 +89,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
       toast.success('Resi berhasil diperbarui', { id: 'resi-update' })
       setIsEditingResi(false)
       refetch()
-    } catch (err: unknown) {
+    } catch {
       toast.error('Gagal memperbarui resi', { id: 'resi-update' })
     }
   }

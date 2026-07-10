@@ -25,7 +25,7 @@ export const SmartLink = React.forwardRef<HTMLAnchorElement, SmartLinkProps>(
         } else if (href && typeof href === 'object' && href.pathname) {
           router.prefetch(href.pathname)
         }
-      } catch (error) {
+      } catch {
         // Ignore prefetch errors silently
       }
     }

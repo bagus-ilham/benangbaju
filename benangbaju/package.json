@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > src/shared/types/database.ts",
+    "setup": "npm ci && npm run db:reset && npm run db:types"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.5.0",
@@ -24,7 +27,7 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-hook-form": "^7.80.0",
+    "react-hook-form": "^7.81.0",
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.9.0",
     "swagger-ui-react": "^5.32.8",
@@ -34,6 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -41,9 +45,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "eslint-config-prettier": "^10.1.8",
+    "jest": "^30.4.2",
     "prettier": "^3.9.4",
     "tailwindcss": "^4",
-    "ts-morph": "^28.0.0",
+    "ts-jest": "^29.4.11",
     "typescript": "^5",
     "vitest": "^4.1.9"
   }

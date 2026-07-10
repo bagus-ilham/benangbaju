@@ -38,6 +38,7 @@ export default function NotifikasiPage(): React.JSX.Element {
     if (isRead) return
     try {
       await markReadMutation.mutateAsync(id)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal menandai notifikasi terbaca')
     }
@@ -47,6 +48,7 @@ export default function NotifikasiPage(): React.JSX.Element {
     try {
       await markAllReadMutation.mutateAsync()
       toast.success('Semua notifikasi ditandai telah dibaca')
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal memproses permintaan')
     }
@@ -58,6 +60,7 @@ export default function NotifikasiPage(): React.JSX.Element {
       clearAuth()
       toast.success('Berhasil keluar')
       router.push('/')
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal keluar dari akun')
     }

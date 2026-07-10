@@ -1,31 +1,44 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
-// Basic in-memory rate limiting for Edge (Warning: memory resets per isolate/instance)
-// In a real production setup with Vercel, this should be replaced with @upstash/ratelimit
-const rateLimitMap = new Map<string, { count: number; expiresAt: number }>()
+import { createServerClient } from '@supabase/ssr'
 
-function checkRateLimit(ip: string, maxRequests: number, windowSec: number): boolean {
-  const now = Date.now()
-  const record = rateLimitMap.get(ip)
-
-  // Clean up expired records occasionally to prevent memory leaks in long-running instances
-  if (Math.random() < 0.1) {
-    for (const [key, val] of rateLimitMap.entries()) {
-      if (now > val.expiresAt) rateLimitMap.delete(key)
+async function checkRateLimit(request: NextRequest, ip: string, route: string, maxRequests: number, windowSec: number): Promise<boolean> {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: () => {},
+      },
     }
-  }
+  )
 
-  if (!record || now > record.expiresAt) {
-    rateLimitMap.set(ip, { count: 1, expiresAt: now + windowSec * 1000 })
+  const windowStart = new Date(Date.now() - windowSec * 1000).toISOString()
+
+  const { count, error: countError } = await supabase
+    .from('rate_limit_logs')
+    .select('id', { count: 'exact', head: true })
+    .eq('ip_address', ip)
+    .eq('route', route)
+    .gte('created_at', windowStart)
+
+  if (countError) {
+    console.error('Rate limit count error:', countError)
     return true
   }
 
-  if (record.count >= maxRequests) {
+  if (count !== null && count >= maxRequests) {
     return false
   }
 
-  record.count++
+  const { error: insertError } = await supabase
+    .from('rate_limit_logs')
+    .insert({ ip_address: ip, route })
+
+  if (insertError) console.error('Rate limit insert error:', insertError)
+
   return true
 }
 
@@ -36,7 +49,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   const authPaths = ['/masuk', '/daftar', '/lupa-password', '/reset-password']
   if (authPaths.some((p) => pathname.startsWith(p) || pathname === `/api/auth/callback`)) {
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const allowed = checkRateLimit(ip, 5, 60) // 5 requests per minute
+    const allowed = await checkRateLimit(request, ip, 'auth', 5, 60) // 5 requests per minute
 
     if (!allowed) {
       if (pathname.startsWith('/api/')) {
@@ -56,7 +69,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   // API v1 Rate Limiting & Auth
   if (pathname.startsWith('/api/v1/')) {
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const allowed = checkRateLimit(ip + '_v1', 60, 60) // 60 requests per minute
+    const allowed = await checkRateLimit(request, ip, 'api_v1', 60, 60) // 60 requests per minute
 
     if (!allowed) {
       return NextResponse.json(
@@ -67,10 +80,17 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
     // specific check for M2M endpoints
     if (pathname.startsWith('/api/v1/inventory/sync')) {
-      const apiKey = request.headers.get('x-api-key')
-      const validKey = process.env.ERP_API_KEY
+      const apiKey = request.headers.get('x-api-key') || ''
+      const validKey = process.env.ERP_API_KEY || ''
+ 
 
-      if (!validKey || apiKey !== validKey) {
+      let isAuthorized = false
+      if (apiKey.length > 0 && validKey.length > 0) {
+        isAuthorized = apiKey === validKey
+      }
+
+      if (!isAuthorized) {
+ 
         return NextResponse.json(
           {
             success: false,

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ShoppingBag } from 'lucide-react'
-import { ProductMarketplaceLink } from '@/modules/products/services'
+import { ProductMarketplaceLink } from '@/modules/products/types'
 
 interface MarketplaceLinksProps {
   links: ProductMarketplaceLink[]

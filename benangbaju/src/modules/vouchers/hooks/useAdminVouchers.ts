@@ -5,34 +5,33 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetVouchers,
-  adminCreateVoucher,
-  adminUpdateVoucher,
-  adminDeleteVoucher,
-} from '@/modules/vouchers/services'
+  getAdminVouchersAction,
+  createAdminVoucherAction,
+  updateAdminVoucherAction,
+  deleteAdminVoucherAction,
+} from '@/modules/vouchers/actions'
 
-export type AdminCreateVoucherInput = Parameters<typeof adminCreateVoucher>[1]
+export type AdminCreateVoucherInput = Parameters<typeof createAdminVoucherAction>[0]
 
 export interface AdminUpdateVoucherInput {
   voucherId: string
-  voucherData: Parameters<typeof adminUpdateVoucher>[2]
+  voucherData: Parameters<typeof updateAdminVoucherAction>[1]
 }
 
 export function useAdminVouchers(): UseQueryResult<
-  Awaited<ReturnType<typeof adminGetVouchers>>,
+  Awaited<ReturnType<typeof getAdminVouchersAction>>,
   Error
 > {
   return useQuery({
     queryKey: ['admin', 'vouchers'],
-    queryFn: () => adminGetVouchers(getAdminSupabase()),
+    queryFn: () => getAdminVouchersAction(),
   })
 }
 
 export function useAdminCreateVoucher(): UseMutationResult<
-  Awaited<ReturnType<typeof adminCreateVoucher>>,
+  Awaited<ReturnType<typeof createAdminVoucherAction>>,
   Error,
   AdminCreateVoucherInput,
   unknown
@@ -40,7 +39,7 @@ export function useAdminCreateVoucher(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (voucherData: AdminCreateVoucherInput) => {
-      const res = await adminCreateVoucher(getAdminSupabase(), voucherData)
+      const res = await createAdminVoucherAction(voucherData)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat voucher')
       return res
     },
@@ -51,7 +50,7 @@ export function useAdminCreateVoucher(): UseMutationResult<
 }
 
 export function useAdminUpdateVoucher(): UseMutationResult<
-  Awaited<ReturnType<typeof adminUpdateVoucher>>,
+  Awaited<ReturnType<typeof updateAdminVoucherAction>>,
   Error,
   AdminUpdateVoucherInput,
   unknown
@@ -59,7 +58,7 @@ export function useAdminUpdateVoucher(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ voucherId, voucherData }: AdminUpdateVoucherInput) => {
-      const res = await adminUpdateVoucher(getAdminSupabase(), voucherId, voucherData)
+      const res = await updateAdminVoucherAction(voucherId, voucherData)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui voucher')
       return res
     },
@@ -70,7 +69,7 @@ export function useAdminUpdateVoucher(): UseMutationResult<
 }
 
 export function useAdminDeleteVoucher(): UseMutationResult<
-  Awaited<ReturnType<typeof adminDeleteVoucher>>,
+  Awaited<ReturnType<typeof deleteAdminVoucherAction>>,
   Error,
   string,
   unknown
@@ -78,7 +77,7 @@ export function useAdminDeleteVoucher(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (voucherId: string) => {
-      const res = await adminDeleteVoucher(getAdminSupabase(), voucherId)
+      const res = await deleteAdminVoucherAction(voucherId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus voucher')
       return res
     },

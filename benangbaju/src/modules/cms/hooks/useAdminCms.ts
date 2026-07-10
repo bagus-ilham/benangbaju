@@ -1,22 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetRedirects,
-  adminCreateRedirect,
-  adminUpdateRedirect,
-  adminDeleteRedirect,
-  adminGetLandingPages,
-  adminCreateLandingPage,
-  adminUpdateLandingPage,
-  adminDeleteLandingPage,
-} from '@/modules/cms/services'
+  adminGetRedirectsAction,
+  adminCreateRedirectAction,
+  adminUpdateRedirectAction,
+  adminDeleteRedirectAction,
+  adminGetLandingPagesAction,
+  adminCreateLandingPageAction,
+  adminUpdateLandingPageAction,
+  adminDeleteLandingPageAction,
+} from '@/modules/cms/actions'
 import { RedirectRule, LandingPage } from '@/modules/cms/types'
 
 export function useAdminRedirects() {
   return useQuery({
     queryKey: ['admin', 'redirects'],
-    queryFn: () => adminGetRedirects(getAdminSupabase()),
+    queryFn: () => adminGetRedirectsAction(),
   })
 }
 
@@ -24,7 +23,7 @@ export function useAdminCreateRedirect() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (redirect: Omit<RedirectRule, 'id' | 'created_at'>) => {
-      const res = await adminCreateRedirect(getAdminSupabase(), redirect)
+      const res = await adminCreateRedirectAction(redirect)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat redirect')
       return res
     },
@@ -44,7 +43,7 @@ export function useAdminUpdateRedirect() {
       redirectId: string
       redirect: Partial<Omit<RedirectRule, 'id' | 'created_at'>>
     }) => {
-      const res = await adminUpdateRedirect(getAdminSupabase(), redirectId, redirect)
+      const res = await adminUpdateRedirectAction(redirectId, redirect)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui redirect')
       return res
     },
@@ -58,7 +57,7 @@ export function useAdminDeleteRedirect() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (redirectId: string) => {
-      const res = await adminDeleteRedirect(getAdminSupabase(), redirectId)
+      const res = await adminDeleteRedirectAction(redirectId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus redirect')
       return res
     },
@@ -71,7 +70,7 @@ export function useAdminDeleteRedirect() {
 export function useAdminLandingPages() {
   return useQuery({
     queryKey: ['admin', 'landing-pages'],
-    queryFn: () => adminGetLandingPages(getAdminSupabase()),
+    queryFn: () => adminGetLandingPagesAction(),
   })
 }
 
@@ -79,7 +78,7 @@ export function useAdminCreateLandingPage() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (landingPage: Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>) => {
-      const res = await adminCreateLandingPage(getAdminSupabase(), landingPage)
+      const res = await adminCreateLandingPageAction(landingPage)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membuat landing page')
       return res
     },
@@ -99,7 +98,7 @@ export function useAdminUpdateLandingPage() {
       landingPageId: string
       landingPage: Partial<Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>>
     }) => {
-      const res = await adminUpdateLandingPage(getAdminSupabase(), landingPageId, landingPage)
+      const res = await adminUpdateLandingPageAction(landingPageId, landingPage)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui landing page')
       return res
     },
@@ -113,7 +112,7 @@ export function useAdminDeleteLandingPage() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (landingPageId: string) => {
-      const res = await adminDeleteLandingPage(getAdminSupabase(), landingPageId)
+      const res = await adminDeleteLandingPageAction(landingPageId)
       if (!res.success) throw new Error(res.error?.message || 'Gagal menghapus landing page')
       return res
     },

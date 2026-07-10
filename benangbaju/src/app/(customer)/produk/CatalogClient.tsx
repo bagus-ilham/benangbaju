@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ProductListItem } from '@/modules/products/types'
-import { Category } from '@/modules/categories/services'
+import { Category } from '@/modules/categories/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import {
   PageContainer,
@@ -19,7 +19,6 @@ import {
   SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
-  X,
   PackageSearch,
   ChevronDown,
 } from 'lucide-react'
@@ -125,7 +124,7 @@ export function CatalogClient({
       >
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
-            Hasil pencarian untuk: <strong className="text-brand-black">"{searchQuery}"</strong> (
+            Hasil pencarian untuk: <strong className="text-brand-black">&quot;{searchQuery}&quot;</strong> (
             {totalCount} produk)
           </p>
         )}

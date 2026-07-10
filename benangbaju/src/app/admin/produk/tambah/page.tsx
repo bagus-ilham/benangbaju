@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react'
+import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ProductForm, type InitialProductData } from '@/modules/products/components/ProductForm'
 import { useAdminCreateProduct } from '@/app/admin/hooks/useAdmin'
@@ -43,6 +43,7 @@ function AdminProductTambahContent(): React.JSX.Element {
 
       if (copy.product_variants) {
         const oldToNewIdMap = new Map<string, string>()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
         copy.product_variants = copy.product_variants.map((v: any) => {
           const newId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
           oldToNewIdMap.set(v.id, newId)
@@ -53,6 +54,7 @@ function AdminProductTambahContent(): React.JSX.Element {
           }
         })
         if (copy.product_images) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
           copy.product_images = copy.product_images.map((img: any) => {
             if (img.variant_id && oldToNewIdMap.has(img.variant_id)) {
               return {

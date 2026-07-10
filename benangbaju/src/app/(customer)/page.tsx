@@ -1,12 +1,12 @@
 import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
-import { getActiveBanners } from '@/modules/banners/services'
-import { getActiveCategories } from '@/modules/categories/services'
-import { getActiveCollections, getCollectionBySlug } from '@/modules/collections/services'
-import { getActiveFlashSale } from '@/modules/flash-sales/services'
-import { getProducts } from '@/modules/products/services'
-import { getSiteSettings } from '@/modules/settings/services'
+import { getActiveBannersAction } from '@/modules/banners/actions'
+import { getActiveCategoriesAction } from '@/modules/categories/actions'
+import { getActiveCollectionsAction, getCollectionBySlugAction } from '@/modules/collections/actions'
+import { flashSaleService } from '@/modules/flash-sales/flash-sale.service'
+import { getProductsAction } from '@/modules/products/actions'
+import { settingsService } from '@/modules/settings/settings.service'
 import { HeroSection } from '@/modules/banners/components/HeroSection'
 import { CategorySection } from '@/modules/categories/components/CategorySection'
 import { FlashSaleSection } from '@/modules/flash-sales/components/FlashSaleSection'
@@ -41,26 +41,28 @@ async function getCachedHomepageData() {
     newestResponse,
     settingsRes,
   ] = await Promise.all([
-    getActiveBanners(supabase),
-    getActiveCategories(supabase),
-    getActiveCollections(supabase),
-    getActiveFlashSale(supabase),
-    getProducts(supabase, { sortBy: 'featured', limit: 4 }),
-    getProducts(supabase, { sortBy: 'newest', limit: 4 }),
-    getSiteSettings(supabase),
+    getActiveBannersAction(),
+    getActiveCategoriesAction(),
+    getActiveCollectionsAction(),
+    flashSaleService.getActiveFlashSale(supabase),
+    getProductsAction({ sortBy: 'featured', limit: 4 }),
+    getProductsAction({ sortBy: 'newest', limit: 4 }),
+    settingsService.getSiteSettings(),
   ])
 
   const settings = settingsRes.data || []
   const collections = collectionsRes.data || []
   const flashSale = flashSaleRes.data || null
   const spotlight1Slug =
-    settings.find((s) => s.key === 'homepage_spotlight_collection_1')?.value || ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    settings.find((s: any) => s.key === 'homepage_spotlight_collection_1')?.value || ''
   const spotlight2Slug =
-    settings.find((s) => s.key === 'homepage_spotlight_collection_2')?.value || ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    settings.find((s: any) => s.key === 'homepage_spotlight_collection_2')?.value || ''
 
   const [col1Res, col2Res] = await Promise.all([
-    spotlight1Slug ? getCollectionBySlug(supabase, spotlight1Slug) : Promise.resolve(null),
-    spotlight2Slug ? getCollectionBySlug(supabase, spotlight2Slug) : Promise.resolve(null),
+    spotlight1Slug ? getCollectionBySlugAction(spotlight1Slug) : Promise.resolve(null),
+    spotlight2Slug ? getCollectionBySlugAction(spotlight2Slug) : Promise.resolve(null),
   ])
 
   const col1 = col1Res?.data || collections[0] || null
@@ -68,10 +70,10 @@ async function getCachedHomepageData() {
 
   const [collection1Products, collection2Products] = await Promise.all([
     col1
-      ? getProducts(supabase, { collectionSlug: col1.slug, limit: 4 })
+      ? getProductsAction({ collectionSlug: col1.slug, limit: 4 })
       : Promise.resolve({ data: [], success: true }),
     col2
-      ? getProducts(supabase, { collectionSlug: col2.slug, limit: 4 })
+      ? getProductsAction({ collectionSlug: col2.slug, limit: 4 })
       : Promise.resolve({ data: [], success: true }),
   ])
 
@@ -108,6 +110,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
   const {
     banners,
     categories,
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     collections,
     flashSale,
     featuredProducts,

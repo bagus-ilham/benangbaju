@@ -1,24 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  getApprovedReviews,
-  customerSubmitReview,
-  SubmitReviewParams,
-} from '@/modules/reviews/services'
-import { createBrowserClient } from '@/lib/supabase/client'
-
+  getApprovedReviewsAction,
+  submitReviewAction,
+} from '@/modules/reviews/actions'
+import { SubmitReviewParams } from '@/modules/reviews/types'
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
-import { ProductReview } from '@/modules/reviews/types'
+import { ProductReview, ReviewDetail } from '@/modules/reviews/types'
 
 export function useReviews(
   productId: string
 ): import('@tanstack/react-query').UseQueryResult<
-  ApiListResponse<import('@/modules/reviews/services').ReviewDetail>,
+  ApiListResponse<ReviewDetail>,
   Error
 > {
-  const supabase = createBrowserClient()
   return useQuery({
     queryKey: ['reviews', productId],
-    queryFn: () => getApprovedReviews(supabase, productId),
+    queryFn: () => getApprovedReviewsAction(productId),
     enabled: !!productId,
   })
 }
@@ -26,15 +23,14 @@ export function useReviews(
 export function useSubmitReview(): import('@tanstack/react-query').UseMutationResult<
   ApiResponse<ProductReview>,
   Error,
-  SubmitReviewParams,
+  Omit<SubmitReviewParams, 'userId'>,
   unknown
 > {
-  const supabase = createBrowserClient()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (params: SubmitReviewParams) => {
-      const res = await customerSubmitReview(supabase, params)
+    mutationFn: async (params: Omit<SubmitReviewParams, 'userId'>) => {
+      const res = await submitReviewAction(params)
       if (!res.success) throw new Error(res.error?.message || 'Gagal mengirim ulasan')
       return res
     },

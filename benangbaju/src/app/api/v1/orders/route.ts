@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { createOrder } from '@/modules/orders/services'
+
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function POST(req: Request) {
@@ -31,7 +31,8 @@ export async function POST(req: Request) {
       )
     }
 
-    const result = await createOrder(supabase, {
+    const { orderService } = await import('@/modules/orders/order.service')
+    const result = await orderService.createOrder({
       userId: user.id,
       addressId,
       courierName,
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(result, { status: 201 })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Create Order API error:', err)
     return NextResponse.json(

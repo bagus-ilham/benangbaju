@@ -30,6 +30,7 @@ export function CollectionFormModal({
   handleToggleProduct,
   allProducts,
   isPending,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   return (
     <Modal
@@ -137,6 +138,7 @@ export function CollectionFormModal({
             {allProducts.length === 0 ? (
               <p className="text-neutral-400 italic">Belum ada produk aktif.</p>
             ) : (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
               allProducts.map((p: any) => (
                 <div key={p.id} className="flex items-center space-x-2">
                   <Checkbox

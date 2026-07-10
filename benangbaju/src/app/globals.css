@@ -481,3 +481,8 @@ select:focus {
     animation: none !important;
   }
 }
+/* Firefox Scrollbar Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand-cream) transparent;
+}

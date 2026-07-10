@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import {
   useAdminProducts,
   useAdminDeleteProduct,
@@ -39,48 +39,48 @@ export default function AdminProductListPage(): React.JSX.Element {
   const limit = 10
 
   const { data: dataRes, isLoading, isError, refetch } = useAdminProducts(page, limit, search)
-  const data = dataRes?.data
+
   const deleteMutation = useAdminDeleteProduct()
   const updateActiveStatusMutation = useAdminUpdateProductActiveStatus()
   const updateFeaturedStatusMutation = useAdminUpdateProductFeaturedStatus()
 
-  const handleToggleActive = async (productId: string, currentStatus: boolean) => {
+  const handleToggleActive = useCallback(async (productId: string, currentStatus: boolean) => {
     try {
       await updateActiveStatusMutation.mutateAsync({ productId, isActive: !currentStatus })
       toast.success('Status aktif berhasil diubah')
       refetch()
-    } catch (err) {
+    } catch {
       toast.error('Gagal memperbarui status')
     }
-  }
+  }, [updateActiveStatusMutation, refetch])
 
-  const handleToggleFeatured = async (productId: string, currentStatus: boolean) => {
+  const handleToggleFeatured = useCallback(async (productId: string, currentStatus: boolean) => {
     try {
       await updateFeaturedStatusMutation.mutateAsync({ productId, isFeatured: !currentStatus })
       toast.success('Status unggulan berhasil diubah')
       refetch()
-    } catch (err) {
+    } catch {
       toast.error('Gagal memperbarui status unggulan')
     }
-  }
+  }, [updateFeaturedStatusMutation, refetch])
 
-  const handleDeleteProduct = async (id: string) => {
+  const handleDeleteProduct = useCallback(async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menonaktifkan produk ini?')) {
       try {
         await deleteMutation.mutateAsync(id)
         toast.success('Produk dinonaktifkan')
         refetch()
-      } catch (err) {
+      } catch {
         toast.error('Gagal menonaktifkan produk')
       }
     }
-  }
+  }, [deleteMutation, refetch])
 
   const products = dataRes?.data || []
   const totalCount = dataRes?.pagination?.total_count || 0
   const totalPages = Math.ceil(totalCount / limit)
 
-  const columns: Column<AdminProductListItem>[] = [
+  const columns: Column<AdminProductListItem>[] = useMemo(() => [
     {
       key: 'name',
       header: 'Nama Produk',
@@ -189,7 +189,7 @@ export default function AdminProductListPage(): React.JSX.Element {
         </div>
       ),
     },
-  ]
+  ], [handleToggleActive, handleToggleFeatured, handleDeleteProduct])
 
   return (
     <div className="space-y-6">

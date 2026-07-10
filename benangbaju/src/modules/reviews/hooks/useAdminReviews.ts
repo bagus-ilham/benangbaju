@@ -5,13 +5,12 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query'
-import { getAdminSupabase } from '@/shared/hooks/supabaseClient'
 import { invalidateAdminQueries } from '@/shared/hooks/invalidation'
 import {
-  adminGetReviews,
-  adminUpdateReviewStatus,
-  adminReplyToReview,
-} from '@/modules/reviews/services'
+  getAdminReviewsAction,
+  updateAdminReviewStatusAction,
+  adminReplyToReviewAction,
+} from '@/modules/reviews/actions'
 import { AdminReviewListItem } from '@/modules/reviews/types'
 import { ApiListResponse } from '@/lib/api-response'
 
@@ -23,18 +22,17 @@ export interface AdminUpdateReviewStatusInput {
 export interface AdminReplyToReviewInput {
   reviewId: string
   body: string
-  adminId: string
 }
 
 export function useAdminReviews(): UseQueryResult<ApiListResponse<AdminReviewListItem>, Error> {
   return useQuery({
     queryKey: ['admin', 'reviews'],
-    queryFn: () => adminGetReviews(getAdminSupabase()),
+    queryFn: () => getAdminReviewsAction(),
   })
 }
 
 export function useAdminUpdateReviewStatus(): UseMutationResult<
-  Awaited<ReturnType<typeof adminUpdateReviewStatus>>,
+  Awaited<ReturnType<typeof updateAdminReviewStatusAction>>,
   Error,
   AdminUpdateReviewStatusInput,
   unknown
@@ -42,7 +40,7 @@ export function useAdminUpdateReviewStatus(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ reviewId, status }: AdminUpdateReviewStatusInput) => {
-      const res = await adminUpdateReviewStatus(getAdminSupabase(), reviewId, status)
+      const res = await updateAdminReviewStatusAction(reviewId, status)
       if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui status review')
       return res
     },
@@ -53,15 +51,15 @@ export function useAdminUpdateReviewStatus(): UseMutationResult<
 }
 
 export function useAdminReplyToReview(): UseMutationResult<
-  Awaited<ReturnType<typeof adminReplyToReview>>,
+  Awaited<ReturnType<typeof adminReplyToReviewAction>>,
   Error,
   AdminReplyToReviewInput,
   unknown
 > {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ reviewId, body, adminId }: AdminReplyToReviewInput) => {
-      const res = await adminReplyToReview(getAdminSupabase(), reviewId, body, adminId)
+    mutationFn: async ({ reviewId, body }: AdminReplyToReviewInput) => {
+      const res = await adminReplyToReviewAction(reviewId, body)
       if (!res.success) throw new Error(res.error?.message || 'Gagal membalas review')
       return res
     },

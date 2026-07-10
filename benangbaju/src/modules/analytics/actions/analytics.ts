@@ -51,15 +51,15 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
   if (rpcRes.error) throw new Error(rpcRes.error.message)
   if (cartsRes.error) throw new Error(cartsRes.error.message)
 
-  const data = (rpcRes.data as any) || {}
+  const data = (rpcRes.data as Record<string, unknown>) || {}
 
   // Parse dates for revenue trends if needed to match previous format
-  const revenueTrends = (data.revenue_trends || []).map((item: any) => ({
+  const revenueTrends = ((data.revenue_trends as Array<{ date: string; revenue: number | string }>) || []).map((item) => ({
     date: new Date(item.date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }),
     revenue: Number(item.revenue),
   }))
 
-  const topProducts = (data.top_products || []).map((item: any) => ({
+  const topProducts = ((data.top_products as Array<{ name: string; quantity: number | string; revenue: number | string }>) || []).map((item) => ({
     name: item.name,
     quantity: Number(item.quantity),
     revenue: Number(item.revenue),
@@ -72,7 +72,7 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
       // Access the voucher code from the joined table
       const voucherCode = Array.isArray(order.vouchers)
         ? order.vouchers[0]?.code
-        : (order.vouchers as any)?.code || order.voucher_id
+        : (order.vouchers as { code?: string })?.code || order.voucher_id
 
       const current = voucherMap.get(voucherCode) || { count: 0, totalDiscount: 0 }
       voucherMap.set(voucherCode, {

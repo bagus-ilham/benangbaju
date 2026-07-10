@@ -1,8 +1,7 @@
 import React, { Suspense } from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
-import { createStaticClient } from '@/lib/supabase/static'
-import { getProducts } from '@/modules/products/services'
-import { getActiveCategories } from '@/modules/categories/services'
+import { getProductsAction } from '@/modules/products/actions'
+import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { CatalogClient } from './CatalogClient'
 import { PageContainer, PageHero } from '@/shared/components'
 import { ProductCardSkeleton } from '@/modules/products/components/ProductCardSkeleton'
@@ -21,16 +20,14 @@ async function getCachedCatalogData(
   cacheLife('minutes')
   cacheTag('products', 'catalog', 'categories')
 
-  const supabase = createStaticClient()
-
   const [productsRes, categoriesRes] = await Promise.all([
-    getProducts(supabase, {
+    getProductsAction({
       categorySlug,
       sortBy,
       page,
       limit,
     }),
-    getActiveCategories(supabase),
+    getActiveCategoriesAction(),
   ])
 
   return {

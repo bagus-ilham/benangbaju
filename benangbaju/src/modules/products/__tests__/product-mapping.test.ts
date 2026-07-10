@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mapProductListItem } from '../services'
+import { mapProductListItem } from '../product.mapper'
 
 describe('Product Repository - mapProductListItem', () => {
   const baseProduct = {

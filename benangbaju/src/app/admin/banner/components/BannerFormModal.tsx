@@ -32,6 +32,7 @@ export function BannerFormModal({
   is_active,
   setIsActive,
   isPending,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   return (
     <Modal

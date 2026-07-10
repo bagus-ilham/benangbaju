@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from 'react'
 import { Select, Textarea } from '@/shared/components'
 import { Image as ImageIcon, X } from 'lucide-react'

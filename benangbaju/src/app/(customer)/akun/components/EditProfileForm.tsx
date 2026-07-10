@@ -4,6 +4,7 @@ import { User } from 'lucide-react'
 import { Input, Button } from '@/shared/components'
 
 interface EditProfileFormProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   itemVariants: any
   email: string
   name: string

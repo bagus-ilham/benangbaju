@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { getProductBySlug } from '@/modules/products/services'
+import { productService } from '@/modules/products/product.service'
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
   try {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
     const supabase = await createServerClient()
-    const result = await getProductBySlug(supabase, slug)
+    const result = await productService.getProductBySlug(slug)
 
     if (!result.success) {
       if (result.error?.code === ApiErrorCode.NOT_FOUND) {
@@ -18,6 +19,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     }
 
     return NextResponse.json(result)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Product Detail API error:', err)
     return NextResponse.json(

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import NextImage from 'next/image'
@@ -53,6 +53,65 @@ const menuItems = [
   { name: 'Konten & SEO', href: '/admin/cms', icon: Globe },
   { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
 ]
+
+const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null, isMobile?: boolean }) => {
+  if (isMobile) {
+    return logoUrl ? (
+      <div className="flex items-center space-x-2">
+        <div className="relative h-6 w-20">
+          <NextImage src={logoUrl} alt="Logo" fill sizes="80px" className="object-contain object-left" />
+        </div>
+        <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
+          CMS
+        </span>
+      </div>
+    ) : (
+      <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+        BENANGBAJU <span className="text-brand-gold">CMS</span>
+      </span>
+    )
+  }
+
+  return logoUrl ? (
+    <Link href="/admin" className="flex items-center space-x-2">
+      <div className="relative h-8 w-24">
+        <NextImage src={logoUrl} alt="Logo" fill sizes="96px" className="object-contain object-left" />
+      </div>
+      <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
+        CMS
+      </span>
+    </Link>
+  ) : (
+    <Link href="/admin" className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+      BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
+    </Link>
+  )
+}
+
+const SidebarFooter = ({ onLogout, onNavigate }: { onLogout: () => void, onNavigate?: () => void }) => {
+  return (
+    <div className="flex-shrink-0 p-4 border-t border-neutral-200 bg-brand-cream/50">
+      <Link
+        href="/"
+        onClick={onNavigate}
+        className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-black transition-colors"
+      >
+        <ExternalLink className="mr-3 h-4 w-4 text-neutral-400" aria-hidden="true" />
+        Ke Halaman Toko
+      </Link>
+      <button
+        onClick={() => {
+          if (onNavigate) onNavigate()
+          onLogout()
+        }}
+        className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
+      >
+        <LogOut className="mr-3 h-4 w-4" aria-hidden="true" />
+        Keluar
+      </button>
+    </div>
+  )
+}
 
 export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   const pathname = usePathname()
@@ -119,29 +178,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
       {/* Sidebar for Desktop */}
       <aside className="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 border-r border-neutral-200 bg-white">
         <div className="flex h-16 items-center px-6 border-b border-neutral-200">
-          {logoUrl ? (
-            <Link href="/admin" className="flex items-center space-x-2">
-              <div className="relative h-8 w-24">
-                <NextImage
-                  src={logoUrl}
-                  alt="Logo"
-                  fill
-                  sizes="96px"
-                  className="object-contain object-left"
-                />
-              </div>
-              <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
-                CMS
-              </span>
-            </Link>
-          ) : (
-            <Link
-              href="/admin"
-              className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase"
-            >
-              BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
-            </Link>
-          )}
+          <SidebarLogo logoUrl={logoUrl} />
         </div>
 
         <div className="flex flex-col flex-1 overflow-y-auto pt-5 pb-4">
@@ -150,22 +187,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
           </nav>
         </div>
 
-        <div className="flex-shrink-0 p-4 border-t border-neutral-200 bg-brand-cream/50">
-          <Link
-            href="/"
-            className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-black transition-colors"
-          >
-            <ExternalLink className="mr-3 h-4 w-4 text-neutral-400" aria-hidden="true" />
-            Ke Halaman Toko
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
-          >
-            <LogOut className="mr-3 h-4 w-4" aria-hidden="true" />
-            Keluar
-          </button>
-        </div>
+        <SidebarFooter onLogout={handleLogout} />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -193,26 +215,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
               tabIndex={-1}
             >
               <div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200">
-                {logoUrl ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="relative h-6 w-20">
-                      <NextImage
-                        src={logoUrl}
-                        alt="Logo"
-                        fill
-                        sizes="80px"
-                        className="object-contain object-left"
-                      />
-                    </div>
-                    <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
-                      CMS
-                    </span>
-                  </div>
-                ) : (
-                  <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-                    BENANGBAJU <span className="text-brand-gold">CMS</span>
-                  </span>
-                )}
+                <SidebarLogo logoUrl={logoUrl} isMobile />
                 <button
                   onClick={() => setIsSidebarOpen(false)}
                   className="text-neutral-400 hover:text-brand-black p-1"
@@ -228,26 +231,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
                 </nav>
               </div>
 
-              <div className="p-4 border-t border-neutral-200 bg-brand-cream/50">
-                <Link
-                  href="/"
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="flex items-center px-3 py-2 text-xs font-medium text-neutral-600"
-                >
-                  <ExternalLink className="mr-3 h-4 w-4" aria-hidden="true" />
-                  Ke Halaman Toko
-                </Link>
-                <button
-                  onClick={() => {
-                    setIsSidebarOpen(false)
-                    handleLogout()
-                  }}
-                  className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600"
-                >
-                  <LogOut className="mr-3 h-4 w-4" aria-hidden="true" />
-                  Keluar
-                </button>
-              </div>
+              <SidebarFooter onLogout={handleLogout} onNavigate={() => setIsSidebarOpen(false)} />
             </motion.div>
           </div>
         )}

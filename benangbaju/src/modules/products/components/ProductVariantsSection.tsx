@@ -10,6 +10,7 @@ interface ProductVariantsSectionProps {
   variants: ProductVariantPayload[]
   images: ProductImagePayload[]
   onAddVariant: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateVariantField: (idx: number, field: string, value: any) => void
   onRemoveVariant: (idx: number) => void
   onDuplicateVariant: (idx: number) => void
@@ -17,6 +18,7 @@ interface ProductVariantsSectionProps {
   onUpdateVariantAttrField: (vIdx: number, aIdx: number, field: string, value: string) => void
   onRemoveVariantAttr: (vIdx: number, aIdx: number) => void
   onAddImage: (variantId?: string | null) => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateImageField: (idx: number, field: string, value: any) => void
   onRemoveImage: (idx: number) => void
 }

@@ -1,6 +1,8 @@
 'use server'
 
 import { createServerClient } from '@/lib/supabase/server'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { parseOneToOne, parseOneToMany } from '@/shared/utils/supabase-parser'
 
 export interface LowStockVariant {
   id: string
@@ -24,7 +26,6 @@ export interface RecentActivityLog {
   action: string
   resource_type: string
   resource_id: string | null
-  details: string | null
   created_at: string
   profiles: { name: string | null; email: string | null } | null
 }
@@ -37,6 +38,62 @@ export interface AdminDashboardData {
   lowStockVariants: LowStockVariant[]
   recentOrders: RecentOrder[]
   recentLogs: RecentActivityLog[]
+}
+
+const LOW_STOCK_THRESHOLD = 5
+const LOW_STOCK_LIMIT = 10
+const RECENT_ORDERS_LIMIT = 5
+const RECENT_LOGS_LIMIT = 5
+
+// Helper functions for mapping nested Supabase relationships
+const extractProduct = (item: unknown) => {
+  const product = parseOneToOne<{ name?: string }>(item)
+  return product ? { name: product.name || '' } : null
+}
+
+const extractShipping = (item: unknown) => {
+  const shipping = parseOneToOne<{ recipient_name?: string }>(item)
+  return shipping ? { recipient_name: shipping.recipient_name || '' } : null
+}
+
+const extractProfile = (item: unknown) => {
+  const profile = parseOneToOne<{ name?: string | null; email?: string | null }>(item)
+  return profile ? { name: profile.name || null, email: profile.email || null } : null
+}
+
+const mapLowStockVariants = (data: unknown[]): LowStockVariant[] => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((v: any) => ({
+    id: v.id,
+    name: v.name,
+    sku: v.sku,
+    stock: v.stock,
+    products: extractProduct(v.products),
+  }))
+}
+
+const mapRecentOrders = (data: unknown[]): RecentOrder[] => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((o: any) => ({
+    id: o.id,
+    order_number: o.order_number,
+    total_amount: Number(o.total_amount),
+    status: o.status,
+    created_at: o.created_at,
+    order_shipping: extractShipping(o.order_shipping),
+  }))
+}
+
+const mapRecentLogs = (data: unknown[]): RecentActivityLog[] => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((l: any) => ({
+    id: l.id,
+    action: l.action,
+    resource_type: l.resource_type,
+    resource_id: l.resource_id,
+    created_at: l.created_at,
+    profiles: extractProfile(l.profiles),
+  }))
 }
 
 export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData> {
@@ -55,21 +112,21 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
         .from('product_variants')
         .select('id, name, sku, stock, products(name)')
         .eq('is_active', true)
-        .lt('stock', 5)
+        .lt('stock', LOW_STOCK_THRESHOLD)
         .order('stock', { ascending: true })
-        .limit(10),
+        .limit(LOW_STOCK_LIMIT),
       supabase
         .from('orders')
         .select(
           'id, order_number, total_amount, status, created_at, order_shipping(recipient_name)'
         )
         .order('created_at', { ascending: false })
-        .limit(5),
+        .limit(RECENT_ORDERS_LIMIT),
       supabase
         .from('admin_activity_logs')
         .select('*, profiles(name, email)')
         .order('created_at', { ascending: false })
-        .limit(5),
+        .limit(RECENT_LOGS_LIMIT),
     ])
 
   if (revRes.error) throw new Error(revRes.error.message)
@@ -80,55 +137,13 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
   if (ordersRes.error) throw new Error(ordersRes.error.message)
   if (logsRes.error) throw new Error(logsRes.error.message)
 
-  const totalRevenue = Number(revRes.data || 0)
-
-  // Explicit type mapping to match AdminDashboardData
-  const lowStockVariants = (stockRes.data || []).map((v: any) => ({
-    id: v.id,
-    name: v.name,
-    sku: v.sku,
-    stock: v.stock,
-    products: v.products
-      ? Array.isArray(v.products)
-        ? { name: v.products[0]?.name || '' }
-        : { name: v.products.name || '' }
-      : null,
-  }))
-
-  const recentOrders = (ordersRes.data || []).map((o: any) => ({
-    id: o.id,
-    order_number: o.order_number,
-    total_amount: Number(o.total_amount),
-    status: o.status,
-    created_at: o.created_at,
-    order_shipping: o.order_shipping
-      ? Array.isArray(o.order_shipping)
-        ? { recipient_name: o.order_shipping[0]?.recipient_name || '' }
-        : { recipient_name: o.order_shipping.recipient_name || '' }
-      : null,
-  }))
-
-  const recentLogs = (logsRes.data || []).map((l: any) => ({
-    id: l.id,
-    action: l.action,
-    resource_type: l.resource_type,
-    resource_id: l.resource_id,
-    details: l.details,
-    created_at: l.created_at,
-    profiles: l.profiles
-      ? Array.isArray(l.profiles)
-        ? { name: l.profiles[0]?.name || null, email: l.profiles[0]?.email || null }
-        : { name: l.profiles.name || null, email: l.profiles.email || null }
-      : null,
-  }))
-
   return {
-    totalRevenue,
+    totalRevenue: Number(revRes.data || 0),
     activeOrdersCount: activeRes.count || 0,
     completedOrdersCount: completedRes.count || 0,
     customersCount: custRes.count || 0,
-    lowStockVariants,
-    recentOrders,
-    recentLogs,
+    lowStockVariants: mapLowStockVariants(stockRes.data || []),
+    recentOrders: mapRecentOrders(ordersRes.data || []),
+    recentLogs: mapRecentLogs(logsRes.data || []),
   }
 }

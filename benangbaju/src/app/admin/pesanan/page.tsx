@@ -84,7 +84,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
       toast.success('Resi diinput dan pesanan dikirim!', { id: 'quick-resi' })
       setQuickResiOrder(null)
       refetchOrders()
-    } catch (err) {
+    } catch {
       toast.error('Gagal menginput resi', { id: 'quick-resi' })
     }
   }
@@ -110,7 +110,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
       setSelectedReturn(null)
       refetchReturns()
       refetchOrders()
-    } catch (err) {
+    } catch {
       toast.error('Gagal memperbarui status retur', { id: 'update-return' })
     }
   }
