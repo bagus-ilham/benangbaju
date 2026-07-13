@@ -131,6 +131,7 @@ export interface ProductVariantPayload {
 }
 
 export interface ProductImagePayload {
+  id?: string
   url: string
   alt_text: string | null
   sort_order: number
@@ -139,6 +140,7 @@ export interface ProductImagePayload {
 }
 
 export interface ProductLinkPayload {
+  id?: string
   platform: string
   url: string
   label: string | null

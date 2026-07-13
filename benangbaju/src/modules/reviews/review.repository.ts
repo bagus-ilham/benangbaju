@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
@@ -48,8 +48,8 @@ export class ReviewRepository {
       let profiles: { name: string; avatar_url: string | null } | null = null
       if (rawProfile && !Array.isArray(rawProfile)) {
         profiles = {
-          name: rawProfile.name,
-          avatar_url: rawProfile.avatar_url,
+          name: (rawProfile as any).name,
+          avatar_url: (rawProfile as any).avatar_url,
         }
       }
 
@@ -67,7 +67,7 @@ export class ReviewRepository {
         const rawRProfile = r.profiles
         let rProfiles: { name: string } | null = null
         if (rawRProfile && !Array.isArray(rawRProfile)) {
-          rProfiles = { name: rawRProfile.name }
+          rProfiles = { name: (rawRProfile as any).name }
         }
         return {
           id: r.id,
@@ -130,8 +130,8 @@ export class ReviewRepository {
       let profiles: { name: string; email: string | null } | null = null
       if (rawProfile && !Array.isArray(rawProfile)) {
         profiles = {
-          name: rawProfile.name,
-          email: rawProfile.email,
+          name: (rawProfile as any).name,
+          email: (rawProfile as any).email,
         }
       }
 
@@ -139,7 +139,7 @@ export class ReviewRepository {
       let products: { name: string } | null = null
       if (rawProduct && !Array.isArray(rawProduct)) {
         products = {
-          name: rawProduct.name,
+          name: (rawProduct as any).name,
         }
       }
 
@@ -157,7 +157,7 @@ export class ReviewRepository {
         const rawRProfile = r.profiles
         let rProfiles: { name: string } | null = null
         if (rawRProfile && !Array.isArray(rawRProfile)) {
-          rProfiles = { name: rawRProfile.name }
+          rProfiles = { name: (rawRProfile as any).name }
         }
         return {
           id: r.id,
@@ -211,7 +211,7 @@ export class ReviewRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui status review')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'review',
@@ -247,7 +247,7 @@ export class ReviewRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membalas review')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'review_reply',

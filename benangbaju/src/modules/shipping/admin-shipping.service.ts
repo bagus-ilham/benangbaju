@@ -4,7 +4,7 @@ import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-res
 import { ApiErrorCode } from '@/lib/api-errors'
 import { shippingRepository } from './shipping.repository'
 import { createServerClient } from '@/lib/supabase/server'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 
 export class AdminShippingService {
   async getShippingZones(page = 1, limit = 20): Promise<ApiListResponse<ShippingZone>> {
@@ -52,7 +52,7 @@ export class AdminShippingService {
 
       const newZone = res?.data
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'create',
         'shipping_zone',
@@ -60,7 +60,7 @@ export class AdminShippingService {
         `Created shipping zone ${newZone.name}`
       )
 
-      return ok(newZone)
+      return ok(newZone as ShippingZone)
     } catch (error) {
       safeLogError('Error creating shipping zone:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat zona pengiriman')
@@ -83,7 +83,7 @@ export class AdminShippingService {
       }
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'update',
         'shipping_zone',
@@ -103,7 +103,7 @@ export class AdminShippingService {
       await shippingRepository.adminDeleteShippingZone(zoneId)
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'delete',
         'shipping_zone',
@@ -155,7 +155,7 @@ export class AdminShippingService {
       const data = await shippingRepository.adminCreateShippingRate(rate)
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'create',
         'shipping_rate',
@@ -178,7 +178,7 @@ export class AdminShippingService {
       const data = await shippingRepository.adminUpdateShippingRate(rateId, rate)
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'update',
         'shipping_rate',
@@ -198,7 +198,7 @@ export class AdminShippingService {
       await shippingRepository.adminDeleteShippingRate(rateId)
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'delete',
         'shipping_rate',

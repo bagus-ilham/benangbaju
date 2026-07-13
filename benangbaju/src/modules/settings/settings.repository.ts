@@ -1,6 +1,6 @@
 import type { SiteSetting } from './types'
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
 import { createServerClient } from '@/lib/supabase/server'
@@ -76,7 +76,7 @@ export class SettingsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui pengaturan')
     }
 
-    await insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Updated site settings')
+    await adminLogRepository.insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Updated site settings')
     return ok()
   }
 
@@ -89,7 +89,7 @@ export class SettingsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal upsert pengaturan')
     }
 
-    await insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Upserted site settings')
+    await adminLogRepository.insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Upserted site settings')
     return ok()
   }
 

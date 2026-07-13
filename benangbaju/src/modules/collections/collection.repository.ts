@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
@@ -134,7 +134,7 @@ export class CollectionRepository {
       }
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'collection',
@@ -195,7 +195,7 @@ export class CollectionRepository {
       }
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'collection',
@@ -229,7 +229,7 @@ export class CollectionRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus koleksi')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'collection',

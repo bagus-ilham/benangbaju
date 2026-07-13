@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { StaffProfile } from './types'
 import { InternalError } from '@/lib/api-errors'
@@ -89,7 +89,7 @@ export class AdminStaffRepository {
         return { success: false, error: 'Failed to update user profile' }
       }
 
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabaseAdmin,
         'create',
         'staff',
@@ -127,7 +127,7 @@ export class AdminStaffRepository {
       return { success: false, error: new Error('Gagal memperbarui profil staf.') }
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'staff',
@@ -152,7 +152,7 @@ export class AdminStaffRepository {
       return { success: false, error: new Error('Gagal menonaktifkan akun staf.') }
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'staff',

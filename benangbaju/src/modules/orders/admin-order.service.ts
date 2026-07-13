@@ -1,7 +1,7 @@
 import { safeLogError } from '@/lib/logger'
 import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { orderRepository } from './order.repository'
 import { AdminOrderListItem, AdminReturnRequestListItem } from './types'
@@ -99,7 +99,7 @@ export class AdminOrderService {
       await orderRepository.adminUpdateStatus(orderId, status, trackingNumber)
       
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'update',
         'order',
@@ -111,7 +111,7 @@ export class AdminOrderService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error updating order status:', error)
-      return fail('Gagal mengupdate pesanan', error.message)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengupdate pesanan')
     }
   }
 
@@ -223,7 +223,7 @@ export class AdminOrderService {
       await orderRepository.adminUpdateReturnRequest(requestId, params)
       
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'update',
         'return_request',
@@ -235,7 +235,7 @@ export class AdminOrderService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error updating return request:', error)
-      return fail('Gagal mengupdate permintaan retur', error.message)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengupdate permintaan retur')
     }
   }
 
@@ -244,13 +244,13 @@ export class AdminOrderService {
       await orderRepository.adminUpdateTrackingNumber(orderId, trackingNumber)
       
       const supabase = await createServerClient()
-      await insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated tracking number`)
+      await adminLogRepository.insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated tracking number`)
 
       return ok(null)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error updating tracking number:', error)
-      return fail('Gagal menyimpan nomor resi', error.message)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menyimpan nomor resi')
     }
   }
 }

@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
 import { FlashSaleItemDetail, FlashSaleDetail, AdminFlashSaleListItem } from './types'
@@ -52,12 +52,12 @@ export class FlashSaleRepository {
 
     for (const item of itemsList) {
       if (!item) continue
-      const pv = item.product_variants
+      const pv = item.product_variants as any
       if (!pv) continue
-      const prod = pv.products
+      const prod = pv.products as any
       if (!prod) continue
 
-      const rawImages = prod.product_images
+      const rawImages = prod.product_images as any
       const imagesList = Array.isArray(rawImages) ? rawImages : []
       const product_images = imagesList.map((img) => ({
         url: img.url,
@@ -135,8 +135,8 @@ export class FlashSaleRepository {
       const rawItems = sale.flash_sale_items
       const itemsList = Array.isArray(rawItems) ? rawItems : []
       const flash_sale_items = itemsList.map((item) => {
-        const pv = item.product_variants
-        const prod = pv?.products
+        const pv = item.product_variants as any
+        const prod = pv?.products as any
         return {
           id: item.id,
           variant_id: item.variant_id,
@@ -206,7 +206,7 @@ export class FlashSaleRepository {
 
     const flashSaleId = res?.data?.id
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'flash_sale',
@@ -274,7 +274,7 @@ export class FlashSaleRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, res.error?.message || 'Transaction failed')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'flash_sale',
@@ -308,7 +308,7 @@ export class FlashSaleRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus flash sale')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'flash_sale',

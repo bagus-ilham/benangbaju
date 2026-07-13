@@ -1,9 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { createAdminClient } from '@/lib/supabase/admin'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Database, Json } from '@/shared/types/database'
+import type { Json } from '@/shared/types/database'
 import { ProductFilters, ProductPayload } from './types'
 
 export class ProductRepository {
@@ -40,18 +37,8 @@ export class ProductRepository {
       .eq('is_active', true)
       .eq('product_variants.is_active', true)
 
-    // Parallel fetch for category/collection IDs
-    const [categoriesRes, collectionRes] = await Promise.all([
-      categorySlug
-        ? supabase.from('categories').select('id, slug, parent_id')
-        : Promise.resolve(null),
-      collectionSlug
-        ? supabase.from('collections').select('id').eq('slug', collectionSlug).single()
-        : Promise.resolve(null),
-    ])
-
-    if (categorySlug && categoriesRes) {
-      const { data: categories } = categoriesRes
+    if (categorySlug) {
+      const { data: categories } = await supabase.from('categories').select('id, slug, parent_id')
       const category = categories?.find((c) => c.slug === categorySlug)
       if (category) {
         const categoryIds = [
@@ -64,20 +51,15 @@ export class ProductRepository {
       }
     }
 
-    if (collectionSlug && collectionRes) {
-      const { data: collection } = collectionRes
-      if (collection) {
-        const { data: junction } = await supabase
-          .from('collection_products')
-          .select('product_id')
-          .eq('collection_id', collection.id)
+    if (collectionSlug) {
+      const { data: junction } = await supabase
+        .from('collection_products')
+        .select('product_id, collections!inner(id, slug)')
+        .eq('collections.slug', collectionSlug)
 
-        const pIds = junction?.map((j) => j.product_id) || []
-        if (pIds.length > 0) {
-          query = query.in('id', pIds)
-        } else {
-          return { data: [], count: 0 }
-        }
+      const pIds = junction?.map((j) => j.product_id) || []
+      if (pIds.length > 0) {
+        query = query.in('id', pIds)
       } else {
         return { data: [], count: 0 }
       }
@@ -289,7 +271,7 @@ export class ProductRepository {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('product_images')
-      .select('url')
+      .select('id, url')
       .eq('product_id', productId)
     if (error) throw error
     return data
@@ -315,7 +297,7 @@ export class ProductRepository {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('product_marketplace_links')
-      .select('id')
+      .select('id, url')
       .eq('product_id', productId)
     if (error) throw error
     return data

@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CustomerProfile, CustomerDetail } from './types'
 
@@ -61,7 +61,7 @@ export class AdminCustomerRepository {
       })
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'customer',

@@ -1,11 +1,15 @@
-// @ts-nocheck
 // =============================================================
 // Edge Function: midtrans-webhook
 // Handles Midtrans payment notification callbacks
 // =============================================================
 
+// @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+// @ts-ignore
 import { encode as hexEncode } from "https://deno.land/std@0.208.0/encoding/hex.ts";
+
+// Declare Deno to satisfy TypeScript in non-Deno workspace
+declare const Deno: any;
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") {
@@ -13,7 +17,18 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const payload = await req.json();
+    interface MidtransNotificationPayload {
+      order_id: string;
+      transaction_id: string;
+      transaction_status: string;
+      fraud_status?: string;
+      payment_type: string;
+      gross_amount: string | number;
+      signature_key: string;
+      status_code: string;
+    }
+
+    const payload = (await req.json()) as MidtransNotificationPayload;
 
     const {
       order_id: midtransOrderId,
@@ -54,9 +69,6 @@ Deno.serve(async (req: Request) => {
 
     if (signatureKey !== expectedSignature) {
       console.error("Invalid signature for order:", midtransOrderId);
-      console.error("Received signature_key:", signatureKey);
-      console.error("Expected signature:", expectedSignature);
-      console.error("Signature input string:", signatureInput);
       return new Response(
         JSON.stringify({ success: false, message: "Invalid signature" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -96,21 +108,6 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({ success: true, message: "Already processed" }),
         { status: 200, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // ========== LOG WEBHOOK ==========
-    const { error: logInsertError } = await supabase.from("payment_logs").insert({
-      midtrans_order_id: midtransOrderId,
-      event_type: transactionStatus,
-      raw_payload: payload,
-    });
-
-    if (logInsertError) {
-      console.error("Error inserting payment log:", logInsertError);
-      return new Response(
-        JSON.stringify({ success: false, message: "Database query error during log insert" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -170,7 +167,7 @@ Deno.serve(async (req: Request) => {
       paymentUpdate.expired_at = new Date().toISOString();
     }
 
-    // Update payment_logs with payment_id
+    // Get payment_id
     const { data: payment, error: paymentFetchError } = await supabase
       .from("payments")
       .select("id")
@@ -196,17 +193,6 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ success: false, message: "Payment update failure" }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       );
-    }
-
-    // Link log to payment
-    const { error: logUpdateError } = await supabase
-      .from("payment_logs")
-      .update({ payment_id: payment.id })
-      .eq("midtrans_order_id", midtransOrderId)
-      .eq("event_type", transactionStatus);
-
-    if (logUpdateError) {
-      console.error("Error updating payment log link:", logUpdateError);
     }
 
     // ========== UPDATE ORDER STATUS ==========
@@ -359,6 +345,21 @@ Deno.serve(async (req: Request) => {
           console.error("Error sending order cancelled email:", err);
         }
       }
+    }
+
+    // ========== LOG WEBHOOK ==========
+    // Log is inserted AFTER all processing is completed.
+    // If anything fails above, this won't be reached, leaving the idempotency check open for retry.
+    const { error: logInsertError } = await supabase.from("payment_logs").insert({
+      midtrans_order_id: midtransOrderId,
+      event_type: transactionStatus,
+      raw_payload: payload,
+      payment_id: payment.id,
+    });
+
+    if (logInsertError) {
+      console.error("Error inserting payment log:", logInsertError);
+      // We don't return 500 here because the operation actually succeeded.
     }
 
     console.log(

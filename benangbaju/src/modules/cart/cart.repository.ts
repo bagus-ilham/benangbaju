@@ -78,27 +78,22 @@ export class CartRepository {
   async replaceItems(cartId: string, items: CartItemDbData[]) {
     const supabase = await createServerClient()
     
-    // Delete all
-    const { error: delError } = await supabase
-      .from('cart_items')
-      .delete()
-      .eq('cart_id', cartId)
-
-    if (delError) throw delError
-
-    // Insert new
-    if (items.length > 0) {
-      const insertData = items.map((item) => ({
-        cart_id: cartId,
-        variant_id: item.variant_id,
-        quantity: item.quantity,
-      }))
-      const { error: insError } = await supabase
+    if (items.length === 0) {
+      // Just delete all if items array is empty
+      const { error: delError } = await supabase
         .from('cart_items')
-        .insert(insertData)
-
-      if (insError) throw insError
+        .delete()
+        .eq('cart_id', cartId)
+      if (delError) throw delError
+      return
     }
+
+    const { error } = await supabase.rpc('replace_cart_items', {
+      p_cart_id: cartId,
+      p_items: items,
+    })
+
+    if (error) throw error
   }
 
   async clearCart(userId: string) {

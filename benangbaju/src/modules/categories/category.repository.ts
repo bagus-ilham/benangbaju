@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
@@ -76,7 +76,7 @@ export class CategoryRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat kategori')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'category',
@@ -112,7 +112,7 @@ export class CategoryRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui kategori')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'category',
@@ -146,7 +146,7 @@ export class CategoryRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus kategori')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'category',

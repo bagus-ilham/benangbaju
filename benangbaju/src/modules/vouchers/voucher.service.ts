@@ -1,21 +1,35 @@
 import { voucherRepository } from './voucher.repository'
-import { ApiListResponse, ApiResponse } from '@/lib/api-response'
+import { ApiListResponse, ApiResponse, ok, fail, paginated } from '@/lib/api-response'
+import { ApiErrorCode } from '@/lib/api-errors'
 import type { Voucher, VoucherValidationResult } from './types'
+import { safeLogError } from '@/lib/logger'
 
 export class VoucherService {
   async validateVoucher(
     code: string,
     subtotal: number,
     userId: string
-  ): Promise<VoucherValidationResult> {
-    return voucherRepository.validateVoucher(code, subtotal, userId)
+  ): Promise<ApiResponse<VoucherValidationResult>> {
+    try {
+      const result = await voucherRepository.validateVoucher(code, subtotal, userId)
+      return ok(result)
+    } catch (error: any) {
+      safeLogError('Error in VoucherService.validateVoucher:', error)
+      return fail(ApiErrorCode.VALIDATION_ERROR, error.message || 'Voucher tidak valid')
+    }
   }
 
   async adminGetVouchers(
     page = 1,
     limit = 20
   ): Promise<ApiListResponse<Voucher>> {
-    return voucherRepository.adminGetVouchers(page, limit)
+    try {
+      const { data, count } = await voucherRepository.adminGetVouchers(page, limit)
+      return paginated(data, page, limit, count)
+    } catch (error) {
+      safeLogError('Error in VoucherService.adminGetVouchers:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar voucher')
+    }
   }
 
   async adminCreateVoucher(
@@ -33,7 +47,13 @@ export class VoucherService {
       expires_at: string
     }
   ): Promise<ApiResponse<Voucher>> {
-    return voucherRepository.adminCreateVoucher(voucherData)
+    try {
+      const voucher = await voucherRepository.adminCreateVoucher(voucherData)
+      return ok(voucher)
+    } catch (error) {
+      safeLogError('Error in VoucherService.adminCreateVoucher:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat voucher')
+    }
   }
 
   async adminUpdateVoucher(
@@ -52,11 +72,23 @@ export class VoucherService {
       expires_at: string
     }
   ): Promise<ApiResponse<Voucher>> {
-    return voucherRepository.adminUpdateVoucher(voucherId, voucherData)
+    try {
+      const voucher = await voucherRepository.adminUpdateVoucher(voucherId, voucherData)
+      return ok(voucher)
+    } catch (error) {
+      safeLogError('Error in VoucherService.adminUpdateVoucher:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui voucher')
+    }
   }
 
   async adminDeleteVoucher(voucherId: string): Promise<ApiResponse<void>> {
-    return voucherRepository.adminDeleteVoucher(voucherId)
+    try {
+      await voucherRepository.adminDeleteVoucher(voucherId)
+      return ok()
+    } catch (error) {
+      safeLogError('Error in VoucherService.adminDeleteVoucher:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus voucher')
+    }
   }
 }
 

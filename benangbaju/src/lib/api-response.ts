@@ -13,12 +13,11 @@ export type ApiErrorResponse<T = unknown> = {
   pagination?: ApiPaginationParams
 }
 
-export type ApiResponse<T = undefined> =
-  | {
-      success: true
-      data?: T
-    }
-  | ApiErrorResponse<T>
+export type ApiSuccessResponse<T> = T extends undefined
+  ? { success: true; data?: never }
+  : { success: true; data: T }
+
+export type ApiResponse<T = undefined> = ApiSuccessResponse<T> | ApiErrorResponse<T>
 
 export type ApiPaginationParams = {
   page: number
@@ -40,7 +39,7 @@ export type ApiListResponse<T> =
  */
 export function ok<T>(data?: T): ApiResponse<T> {
   if (data !== undefined) {
-    return { success: true, data }
+    return { success: true, data } as unknown as ApiResponse<T>
   }
   return { success: true } as ApiResponse<T>
 }
@@ -113,7 +112,8 @@ export function paginated<T>(
   total?: number
 ): ApiListResponse<T> {
   if (page !== undefined && limit !== undefined && total !== undefined) {
-    const total_pages = Math.max(1, Math.ceil(total / limit))
+    const safeLimit = limit && limit > 0 ? limit : 10
+    const total_pages = Math.max(1, Math.ceil(total / safeLimit))
     return {
       success: true,
       data,

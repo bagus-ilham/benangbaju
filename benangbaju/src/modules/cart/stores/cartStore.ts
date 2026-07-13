@@ -8,7 +8,6 @@ export interface CartItem {
   variantId: string
   productName: string
   variantName: string
-  /** @deprecated Use productName instead */
   name: string
   sku: string
   price: number
@@ -26,6 +25,8 @@ interface CartState {
   isSyncing: boolean
   hasSynced: boolean
   needsResync: boolean
+  syncTimeoutId: ReturnType<typeof setTimeout> | null
+  debouncedSyncCart: (userId: string) => void
   setCartDrawerOpen: (open: boolean) => void
   addItem: (item: Omit<CartItem, 'quantity'>, qty?: number) => Promise<void>
   updateQuantity: (variantId: string, quantity: number) => Promise<void>
@@ -35,14 +36,6 @@ interface CartState {
   resetCart: () => void
 }
 
-let syncTimeout: ReturnType<typeof setTimeout> | null = null
-
-const debouncedSyncCart = (userId: string) => {
-  if (syncTimeout) clearTimeout(syncTimeout)
-  syncTimeout = setTimeout(async () => {
-    await useCartStore.getState().syncCart(userId, false)
-  }, 1000)
-}
 
 // Helper to generate a random session ID for guests
 const generateSessionId = () => {
@@ -58,6 +51,16 @@ export const useCartStore = create<CartState>()(
       isSyncing: false,
       hasSynced: false,
       needsResync: false,
+      syncTimeoutId: null,
+      
+      debouncedSyncCart: (userId: string) => {
+        const { syncTimeoutId } = get()
+        if (syncTimeoutId) clearTimeout(syncTimeoutId)
+        const newTimeout = setTimeout(async () => {
+          await get().syncCart(userId, false)
+        }, 1000)
+        set({ syncTimeoutId: newTimeout })
+      },
       setCartDrawerOpen: (open) => set({ isCartDrawerOpen: open }),
 
       addItem: async (newItem, qty = 1) => {
@@ -78,7 +81,7 @@ export const useCartStore = create<CartState>()(
         // DB Sync if authenticated
         const user = useAuthStore.getState().user
         if (user) {
-          debouncedSyncCart(user.id)
+          get().debouncedSyncCart(user.id)
         }
       },
 
@@ -95,7 +98,7 @@ export const useCartStore = create<CartState>()(
         // DB Sync if authenticated
         const user = useAuthStore.getState().user
         if (user) {
-          debouncedSyncCart(user.id)
+          get().debouncedSyncCart(user.id)
         }
       },
 
@@ -108,7 +111,7 @@ export const useCartStore = create<CartState>()(
         // DB Sync if authenticated
         const user = useAuthStore.getState().user
         if (user) {
-          debouncedSyncCart(user.id)
+          get().debouncedSyncCart(user.id)
         }
       },
 

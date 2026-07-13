@@ -3,16 +3,14 @@
 Terima kasih telah bergabung! Silakan ikuti panduan berikut agar kode tetap bersih dan seragam.
 
 ## Setup Lokal
-1. Copy .env.example ke .env.local dan isi nilainya.
-2. Jalankan \ash scripts/setup.sh\ untuk menginstall dependensi dan sync tipe database.
-3. Jalankan \
-pm run dev\.
+1. Copy `.env.example` ke `.env.local` dan isi nilainya.
+2. Jalankan `npm install` untuk menginstall dependensi.
+3. Jalankan `npm run dev`.
 
 ## Konvensi Kode
-- Jangan menggunakan \ny\! Gunakan tipe asli dari Supabase.
-- Setiap modul bisnis memiliki components, hooks, ctions, dan 	ypes.ts di dalam src/modules/<nama_modul>.
-- Baca panduan lengkap di [docs/05_conventions.md](docs/05_conventions.md).
+- Jangan menggunakan `any`! Gunakan tipe asli dari Supabase.
+- Setiap modul bisnis memiliki `components`, `hooks`, `actions`, dan `types.ts` di dalam `src/modules/<nama_modul>`.
 
 ## Standar PR
-- Selalu buat branch dari main dengan format eature/nama-fitur atau ix/nama-bug.
-- Isi checklist pada Pull Request template saat mengajukan PR.
+- Selalu buat branch dari `main` dengan format `feature/nama-fitur` atau `fix/nama-bug`.
+- Pastikan kode melewati pengecekan statis (`npm run build`) dan pengujian (`npm run test`) sebelum membuat Pull Request.

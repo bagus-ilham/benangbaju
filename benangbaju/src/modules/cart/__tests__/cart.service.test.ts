@@ -1,32 +1,33 @@
+import { vi, describe, beforeEach, it, expect } from 'vitest'
 import { cartService } from '../cart.service'
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createServerClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ data: { id: 'mock-cart-id' }, error: null }),
-      update: jest.fn().mockResolvedValue({ error: null }),
-      delete: jest.fn().mockResolvedValue({ error: null }),
+vi.mock('@/lib/supabase/server', () => ({
+  createServerClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn().mockResolvedValue({ data: { id: 'mock-cart-id' }, error: null }),
+      update: vi.fn().mockResolvedValue({ error: null }),
+      delete: vi.fn().mockResolvedValue({ error: null }),
     })),
   })),
 }))
 
-jest.mock('@/lib/supabase/static', () => ({
-  createStaticClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      in: jest.fn().mockResolvedValue({ data: [], error: null }),
+vi.mock('@/lib/supabase/static', () => ({
+  createStaticClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      in: vi.fn().mockResolvedValue({ data: [], error: null }),
     })),
   })),
 }))
 
 describe('CartService', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should initialize successfully', () => {

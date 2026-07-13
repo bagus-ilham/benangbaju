@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
@@ -53,7 +53,7 @@ export class AdminProductService {
       const productId = await productRepository.adminCreate(productData, variants, images, marketplaceLinks, collectionIds)
       
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'create',
         'product',
@@ -91,45 +91,27 @@ export class AdminProductService {
       // Images
       const imagesToUpsert = images.map((img) => ({
         ...img,
- 
-     
- 
-     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        id: !(img as any).id || (img as any).id.startsWith('temp-') ? null : (img as any).id,
+        id: !img.id || img.id.startsWith('temp-') ? null : img.id,
         variant_id:
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          !(img as any).variant_id ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (img as any).variant_id === '' ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (img as any).variant_id.startsWith('temp-')
+          !img.variant_id ||
+          img.variant_id === '' ||
+          img.variant_id.startsWith('temp-')
             ? null
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            : (img as any).variant_id,
+            : img.variant_id,
       }))
       const dbImages = await productRepository.getProductImages(productId)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const dbImageIds = (dbImages || []).map((i) => (i as any).id).filter(Boolean) as string[]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const incomingImageIds = imagesToUpsert.map((i) => (i as any).id).filter((id) => id) as string[]
+      const dbImageIds = (dbImages || []).map((i) => i.id).filter(Boolean) as string[]
+      const incomingImageIds = imagesToUpsert.map((i) => i.id).filter((id) => id) as string[]
       const imageIdsToDelete = dbImageIds.filter((id) => !incomingImageIds.includes(id))
 
       // Links
       const linksToUpsert = marketplaceLinks.map((link) => ({
         ...link,
- 
-     
- 
-     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        id: !(link as any).id || (link as any).id.startsWith('temp-') ? null : (link as any).id,
+        id: !link.id || link.id.startsWith('temp-') ? null : link.id,
       }))
       const dbLinks = await productRepository.getProductLinks(productId)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const dbLinkIds = (dbLinks || []).map((l) => (l as any).id).filter(Boolean) as string[]
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const incomingLinkIds = linksToUpsert.map((l) => (l as any).id).filter((id) => id) as string[]
+      const dbLinkIds = (dbLinks || []).map((l) => l.id).filter(Boolean) as string[]
+      const incomingLinkIds = linksToUpsert.map((l) => l.id).filter((id) => id) as string[]
       const linkIdsToDelete = dbLinkIds.filter((id) => !incomingLinkIds.includes(id))
 
       await productRepository.adminUpdate(
@@ -145,7 +127,7 @@ export class AdminProductService {
       )
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'update',
         'product',
@@ -174,7 +156,7 @@ export class AdminProductService {
       await productRepository.adminDelete(productId)
 
       const supabase = await createServerClient()
-      await insertAdminActivityLog(
+      await adminLogRepository.insertAdminActivityLog(
         supabase,
         'delete',
         'product',

@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS payment_logs (
 );
 
 COMMENT ON TABLE payment_logs IS 'Audit log of all Midtrans webhook events for idempotency';
+COMMENT ON COLUMN payment_logs.payment_id IS 'Can be null if the payment record is not yet created during webhook processing or if the linked payment was deleted';
 
 CREATE INDEX IF NOT EXISTS idx_payment_logs_midtrans_order_id ON payment_logs(midtrans_order_id);
 CREATE INDEX IF NOT EXISTS idx_payment_logs_event_type ON payment_logs(event_type);

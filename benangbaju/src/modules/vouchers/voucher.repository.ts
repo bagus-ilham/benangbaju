@@ -1,8 +1,6 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
-import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
-import { ApiErrorCode } from '@/lib/api-errors'
 import type { Voucher, VoucherValidationResult } from './types'
 
 export class VoucherRepository {
@@ -20,11 +18,7 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error validating voucher:', error)
-      return {
-        success: false,
-        valid: false,
-        message: 'Gagal memvalidasi voucher. Coba beberapa saat lagi.',
-      }
+      throw new Error('Gagal memvalidasi voucher. Coba beberapa saat lagi.')
     }
 
     if (data && typeof data === 'object' && !Array.isArray(data)) {
@@ -37,35 +31,30 @@ export class VoucherRepository {
         discount_amount,
         final_total,
         message,
-        code_error,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } = data as Record<string, any>
 
+      if (!success || !valid) {
+        throw new Error(message || 'Voucher tidak valid atau tidak dapat digunakan.')
+      }
+
       return {
-        success: Boolean(success),
-        valid: Boolean(valid),
         voucher_id,
         code: rpcCode,
         discount_type:
-          discount_type === 'fixed' || discount_type === 'percentage' ? discount_type : undefined,
+          discount_type === 'fixed' || discount_type === 'percentage' ? discount_type : 'fixed',
         discount_amount,
         final_total,
-        message,
-        code_error,
       }
     }
 
-    return {
-      success: false,
-      valid: false,
-      message: 'Format respon voucher tidak valid.',
-    }
+    throw new Error('Format respon voucher tidak valid.')
   }
 
   async adminGetVouchers(
     page = 1,
     limit = 20
-  ): Promise<ApiListResponse<Voucher>> {
+  ): Promise<{ data: Voucher[]; count: number }> {
     const supabase = await createServerClient()
     const from = (page - 1) * limit
     const to = from + limit - 1
@@ -80,10 +69,10 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error fetching admin vouchers:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar voucher')
+      throw error
     }
 
-    return paginated((data as Voucher[]) || [], page, limit, count || 0)
+    return { data: (data as Voucher[]) || [], count: count || 0 }
   }
 
   async adminCreateVoucher(
@@ -100,7 +89,7 @@ export class VoucherRepository {
       starts_at: string
       expires_at: string
     }
-  ): Promise<ApiResponse<Voucher>> {
+  ): Promise<Voucher> {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('vouchers')
@@ -112,10 +101,10 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error creating voucher:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat voucher')
+      throw error
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'voucher',
@@ -123,7 +112,7 @@ export class VoucherRepository {
       `Created voucher ${voucherData.code}`
     )
 
-    return ok(data as Voucher)
+    return data as Voucher
   }
 
   async adminUpdateVoucher(
@@ -141,7 +130,7 @@ export class VoucherRepository {
       starts_at: string
       expires_at: string
     }
-  ): Promise<ApiResponse<Voucher>> {
+  ): Promise<Voucher> {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('vouchers')
@@ -154,10 +143,10 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error updating voucher:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui voucher')
+      throw error
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'voucher',
@@ -165,27 +154,25 @@ export class VoucherRepository {
       `Updated voucher ${voucherData.code}`
     )
 
-    return ok(data as Voucher)
+    return data as Voucher
   }
 
-  async adminDeleteVoucher(voucherId: string): Promise<ApiResponse<void>> {
+  async adminDeleteVoucher(voucherId: string): Promise<void> {
     const supabase = await createServerClient()
     const { error } = await supabase.from('vouchers').delete().eq('id', voucherId)
 
     if (error) {
       safeLogError('Error deleting voucher:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus voucher')
+      throw error
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'voucher',
       voucherId,
       `Deleted voucher ${voucherId}`
     )
-
-    return ok()
   }
 }
 

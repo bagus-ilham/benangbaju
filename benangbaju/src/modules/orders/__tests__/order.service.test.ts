@@ -1,19 +1,20 @@
+import { vi, describe, beforeEach, it, expect } from 'vitest'
 import { orderService } from '../order.service'
 
-jest.mock('@/lib/supabase/server', () => ({
-  createServerClient: jest.fn(() => ({
-    rpc: jest.fn().mockResolvedValue({ data: { success: true }, error: null }),
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+vi.mock('@/lib/supabase/server', () => ({
+  createServerClient: vi.fn(() => ({
+    rpc: vi.fn().mockResolvedValue({ data: { success: true }, error: null }),
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
     })),
   })),
 }))
 
 describe('OrderService', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should initialize successfully', () => {

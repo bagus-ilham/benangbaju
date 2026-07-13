@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Database } from '@/shared/types/database'
 import { createServerClient } from '@/lib/supabase/server'
@@ -124,7 +124,7 @@ export class NotificationRepository {
       throw new InternalError('Gagal membuat template notifikasi')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'notification_template',
@@ -157,7 +157,7 @@ export class NotificationRepository {
       throw new InternalError('Gagal memperbarui template notifikasi')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'notification_template',
@@ -186,7 +186,7 @@ export class NotificationRepository {
       throw new InternalError('Gagal menghapus template notifikasi')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'notification_template',

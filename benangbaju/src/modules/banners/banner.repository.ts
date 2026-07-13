@@ -1,5 +1,5 @@
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
@@ -89,7 +89,7 @@ export class BannerRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat banner')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'banner',
@@ -130,7 +130,7 @@ export class BannerRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui banner')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'banner',
@@ -171,7 +171,7 @@ export class BannerRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus banner')
     }
 
-    await insertAdminActivityLog(supabase, 'delete', 'banner', bannerId, `Deleted banner ${bannerId}`)
+    await adminLogRepository.insertAdminActivityLog(supabase, 'delete', 'banner', bannerId, `Deleted banner ${bannerId}`)
 
     return ok()
   }

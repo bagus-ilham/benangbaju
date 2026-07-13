@@ -110,9 +110,9 @@ describe('api-response helpers', () => {
 
     it('handles division by zero (limit = 0) gracefully (infinity -> 1 or max)', () => {
       const res = paginated([{ id: 1 }], 1, 0, 10)
-      // Math.ceil(10 / 0) is Infinity.
-      // This is a known edge case, but we expect it to not crash and return Infinity.
-      expect(res.pagination?.total_pages).toBe(Infinity)
+      // Math.ceil(10 / 10) is 1.
+      // We expect it to not crash and return 1 due to safe fallback.
+      expect(res.pagination?.total_pages).toBe(1)
     })
   })
 })

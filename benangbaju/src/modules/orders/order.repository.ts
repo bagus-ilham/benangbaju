@@ -29,7 +29,7 @@ export class OrderRepository {
     let query = supabase
       .from('orders')
       .select(
-        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal, product_reviews(id, rating, body)), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)',
+        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)',
         { count: 'exact' }
       )
       .eq('user_id', userId)
@@ -72,7 +72,7 @@ export class OrderRepository {
     const { data, error } = await supabase.rpc('create_order', {
       p_user_id: params.userId,
       p_address_id: params.addressId,
-      p_voucher_code: params.voucherCode || undefined,
+      p_voucher_code: params.voucherCode === '' ? null : (params.voucherCode || undefined),
       p_courier_name: params.courierName || undefined,
       p_shipping_cost: params.shippingCost || 0,
       p_notes: params.notes || undefined,

@@ -1,19 +1,20 @@
+import { vi, describe, beforeEach, it, expect } from 'vitest'
 import { productService } from '../product.service'
 
-jest.mock('@/lib/supabase/static', () => ({
-  createStaticClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnThis(),
-      range: jest.fn().mockResolvedValue({ data: [], count: 0, error: null }),
+vi.mock('@/lib/supabase/static', () => ({
+  createStaticClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      range: vi.fn().mockResolvedValue({ data: [], count: 0, error: null }),
     })),
   })),
 }))
 
 describe('ProductService', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should initialize successfully', () => {

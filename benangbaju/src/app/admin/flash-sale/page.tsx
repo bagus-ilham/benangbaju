@@ -206,7 +206,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
         onClose={() => setIsOpen(false)}
         editingCampaign={editingCampaign}
         onSubmit={handleSubmit}
-        allVariants={allVariants}
+        allVariants={allVariants as unknown as VariantSimple[]}
         name={name}
         setName={setName}
         description={description}

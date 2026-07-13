@@ -2,8 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2026-07-10
+## [Unreleased] - 2026-07-13
 ### Added
+- **Security**: Atomic rate limit RPC via `atomic_rate_limit.sql` to prevent race conditions in `proxy.ts`.
+- **Security**: Transactional `replace_cart_items` RPC via `cart_replace_transaction.sql` for safe cart replacements.
+- **Security**: RLS policy for `return_requests` via `return_requests_rls.sql` to protect bank data.
+- **Security**: `getUser()` enforcement over `getSession()` in `admin-log.repository.ts`.
+- **Security**: Removed signature leak logging in `midtrans-webhook`.
+- **Observability**: Structured JSON logging in production via `logger.ts`.
+- **Observability**: Created `docs/runbook.md` for Incident and Disaster Recovery.
+- **Architecture**: Merged `actions/checkout.ts` into `actions.ts` for consistency.
+- **Architecture**: Unified `benangbaju/.env.example` and removed root clone.
+- **Schema**: Added `created_at` and `updated_at` to `order_shipping`.
+- **Schema**: Casted monetary columns to `numeric` in `product_variants`, `flash_sale_items`, `shipping_rates`.
+
+### Changed
+- **Optimization**: Resolved N+1 query problem in `product.repository.ts` by removing serial fetches.
+- **Optimization**: Extracted cart mapping logic in `cart.service.ts` to `mapDbCartItemToLocal`.
+- **Bugfix**: Improved TOCTOU mitigation in checkout to check `variant_id` identity.
+- **Bugfix**: Fixed `p_voucher_code` bug where empty string `""` became `undefined`.
+- **Bugfix**: Refactored `voucher.repository.ts` to return raw data and removed `ApiResponse` mixing.
+- **Security**: Tightened `next.config.ts` CSP by removing broad wildcards (`https://*`).
+
+### Added (Previous)
 - **Security**: Added PostgreSQL `CHECK` constraints via `add_check_constraints.sql` for money and dates.
 - **Security**: Upgraded CSP in `next.config.ts` (removed `unsafe-eval`).
 - **Idempotency**: Added unique constraint via `webhook_idempotency.sql` to prevent duplicate payment webhooks.

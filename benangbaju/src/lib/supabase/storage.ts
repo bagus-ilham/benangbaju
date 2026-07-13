@@ -13,7 +13,7 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
 
   // Clean file name to prevent issues with special characters
   const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-  const fileName = `${Date.now()}_${cleanName}`
+  const fileName = `${crypto.randomUUID()}_${cleanName}`
 
   const { error } = await supabase.storage.from(targetBucket).upload(fileName, file, {
     cacheControl: '3600',

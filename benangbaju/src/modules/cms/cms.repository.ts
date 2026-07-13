@@ -1,6 +1,6 @@
 import type { RedirectRule, LandingPage } from './types'
 import { safeLogError } from '@/lib/logger'
-import { insertAdminActivityLog } from '@/modules/admin-logs/admin-log.repository'
+import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Database } from '@/shared/types/database'
 import { createServerClient } from '@/lib/supabase/server'
@@ -60,7 +60,7 @@ export class CmsRepository {
       created_at: data.created_at,
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'redirect',
@@ -83,7 +83,7 @@ export class CmsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui redirect')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'redirect',
@@ -102,7 +102,7 @@ export class CmsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus redirect')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'redirect',
@@ -177,7 +177,7 @@ export class CmsRepository {
       updated_at: data.updated_at,
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'create',
       'landing_page',
@@ -200,7 +200,7 @@ export class CmsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui landing page')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
       'landing_page',
@@ -219,7 +219,7 @@ export class CmsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus landing page')
     }
 
-    await insertAdminActivityLog(
+    await adminLogRepository.insertAdminActivityLog(
       supabase,
       'delete',
       'landing_page',

@@ -213,7 +213,8 @@ export default function CheckoutPage(): React.JSX.Element {
     setVoucherLoading(true)
     try {
       const result = await validateVoucherAction(code, subtotal)
-      if (result.success && result.valid) {
+      if (result.success) {
+        const validVoucher = result.data
         // Fetch full details of the voucher to know constraints
         const { data: voucherInfo } = await supabase
           .from('vouchers')
@@ -222,15 +223,15 @@ export default function CheckoutPage(): React.JSX.Element {
           .single()
 
         setAppliedVoucher({
-          code: result.code || code.toUpperCase(),
-          discount_amount: result.discount_amount || 0,
+          code: validVoucher.code || code.toUpperCase(),
+          discount_amount: validVoucher.discount_amount || 0,
           discount_type: voucherInfo?.discount_type,
           value: voucherInfo?.value || 0,
           max_discount: voucherInfo?.max_discount,
         })
-        toast.success(`Voucher ${result.code} berhasil digunakan!`)
+        toast.success(`Voucher ${validVoucher.code} berhasil digunakan!`)
       } else {
-        toast.error(result.message || 'Voucher tidak valid')
+        toast.error(result.error?.message || 'Voucher tidak valid')
         setAppliedVoucher(null)
       }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

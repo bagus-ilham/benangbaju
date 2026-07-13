@@ -71,7 +71,7 @@ export class OrderService {
 
   async createOrder(
     params: CreateOrderParams
-  ): Promise<ApiResponse<OrderRpcResponse['data']>> {
+  ): Promise<ApiResponse<NonNullable<OrderRpcResponse['data']>>> {
     try {
       const innerData = await orderRepository.create(params)
       

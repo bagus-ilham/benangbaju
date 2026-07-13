@@ -8,9 +8,8 @@ export function mapOrder(
     payments?: Database['public']['Tables']['payments']['Row'][]
   }
 ): Order {
-  const order_items: OrderItem[] = row.order_items.map((item) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rawReview = (item as any).product_reviews
+  const order_items: OrderItem[] = row.order_items.map((item: any) => {
+    const rawReview = item.product_reviews
     const review = Array.isArray(rawReview) ? rawReview[0] : rawReview ? rawReview : null
 
     return {
@@ -56,7 +55,7 @@ export function mapOrder(
 
   const rawPayments = row.payments
   const paymentsList = Array.isArray(rawPayments) ? rawPayments : []
-  const payments = paymentsList.map((p) => {
+  const payments = paymentsList.map((p: any) => {
     const paymentStatusMap: Record<string, PaymentInfo['status']> = {
       pending: 'pending',
       success: 'success',
@@ -71,16 +70,11 @@ export function mapOrder(
       status: paymentStatusMap[p.status] || 'pending',
       amount: p.amount,
       payment_type: p.payment_type,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      va_number: (p as any).va_number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      biller_code: (p as any).biller_code,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      payment_code: (p as any).payment_code,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      qr_url: (p as any).qr_url,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      snap_token: (p as any).snap_token,
+      va_number: p.va_number,
+      biller_code: p.biller_code,
+      payment_code: p.payment_code,
+      qr_url: p.qr_url,
+      snap_token: p.snap_token,
       created_at: p.created_at,
       updated_at: p.updated_at,
     }

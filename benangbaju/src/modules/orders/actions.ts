@@ -3,6 +3,18 @@
 import { requireAdmin, requireAuth } from '@/lib/auth-guard'
 import { adminOrderService } from './admin-order.service'
 import { orderService } from './order.service'
+import type { CreateOrderParams } from '@/modules/orders/types'
+import { validateAndGetShippingRate, calculateCartWeight, type CartItemWithWeight } from '@/modules/shipping/shipping.utils'
+import { fail, type ApiResponse } from '@/lib/api-response'
+
+const ERROR_CODES = {
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  INVALID_ADDRESS: 'INVALID_ADDRESS',
+  INVALID_SHIPPING: 'INVALID_SHIPPING',
+  CHECKOUT_IN_PROGRESS: 'CHECKOUT_IN_PROGRESS',
+  EMPTY_CART: 'EMPTY_CART',
+  CART_CHANGED: 'CART_CHANGED',
+} as const
 
 export async function adminUpdateOrderStatusAction(
   orderId: string,
@@ -54,13 +66,25 @@ export async function getOrderDetailAction(orderNumber: string, userId?: string)
   return orderService.getOrderDetail(orderNumber, userId)
 }
 
-export async function cancelOrderAction(orderId: string, reason?: string) {
-  await requireAuth()
+export async function cancelOrderAction(orderId: string, reason?: string): Promise<ApiResponse<null>> {
+  const { user, supabase } = await requireAuth()
+  
+  const { data: order, error } = await supabase.from('orders').select('user_id').eq('id', orderId).single()
+  if (error || !order || order.user_id !== user.id) {
+    throw new Error('Unauthorized')
+  }
+
   return orderService.cancelOrder(orderId, reason)
 }
 
-export async function confirmDeliveryAction(orderId: string) {
-  await requireAuth()
+export async function confirmDeliveryAction(orderId: string): Promise<ApiResponse<null>> {
+  const { user, supabase } = await requireAuth()
+  
+  const { data: order, error } = await supabase.from('orders').select('user_id').eq('id', orderId).single()
+  if (error || !order || order.user_id !== user.id) {
+    throw new Error('Unauthorized')
+  }
+
   return orderService.confirmDelivery(orderId)
 }
 
@@ -77,4 +101,88 @@ export async function checkPaymentStatusAction(orderNumber: string) {
 export async function lazyCancelExpiredOrdersAction() {
   const { user } = await requireAuth()
   return orderService.lazyCancelExpiredOrders(user.id)
+}
+
+export async function createSecureOrderAction(params: CreateOrderParams) {
+  const { user, supabase } = await requireAuth()
+
+  if (user.id !== params.userId) {
+    return fail(ERROR_CODES.UNAUTHORIZED, 'Unauthorized')
+  }
+
+  // Idempotency / Double-Submit Lock (Database-backed)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: lockError } = await supabase.from('checkout_locks' as any).insert({ user_id: user.id })
+  if (lockError) {
+    return fail(ERROR_CODES.CHECKOUT_IN_PROGRESS, 'Sedang memproses pesanan Anda. Silakan tunggu.')
+  }
+
+  try {
+    // Verify shipping cost server-side
+    // 1 & 2. Get address zone and cart concurrently
+    const [addressRes, cartRes] = await Promise.all([
+      supabase.from('user_addresses').select('zone_id').eq('id', params.addressId).single(),
+      supabase
+        .from('carts')
+        .select('id, cart_items(variant_id, quantity, product_variants(weight_gram, products(weight_gram)))')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+    ])
+
+    const address = addressRes.data
+    const userCart = cartRes.data
+
+    if (!address || !address.zone_id) {
+      return fail(ERROR_CODES.INVALID_ADDRESS, 'Invalid address or missing shipping zone')
+    }
+
+    const cartItems = Array.isArray(userCart?.cart_items) ? userCart.cart_items : []
+    
+    if (cartItems.length === 0) {
+      return fail(ERROR_CODES.EMPTY_CART, 'Keranjang belanja kosong')
+    }
+
+    const totalWeight = calculateCartWeight(cartItems as CartItemWithWeight[])
+
+    // 3 & 4. Validate and get shipping rate
+    const selectedRate = await validateAndGetShippingRate(address.zone_id, totalWeight, params)
+
+    if (!selectedRate) {
+      return fail(ERROR_CODES.INVALID_SHIPPING, 'Invalid shipping method selected')
+    }
+
+    // TOCTOU Mitigation: Re-verify cart state right before ordering
+    // This minimizes the window for the cart to change while shipping API was being called
+    const cartResCheck = await supabase
+      .from('carts')
+      .select('id, cart_items(variant_id, quantity, product_variants(weight_gram, products(weight_gram)))')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    const newCartItems = Array.isArray(cartResCheck.data?.cart_items) ? cartResCheck.data.cart_items : []
+    const newTotalWeight = calculateCartWeight(newCartItems as CartItemWithWeight[])
+
+    // TOCTOU Fix: Verify item identities and quantities match
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const originalItemsStr = cartItems.map((i: any) => `${i.variant_id}:${i.quantity}`).sort().join(',')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const newItemsStr = newCartItems.map((i: any) => `${i.variant_id}:${i.quantity}`).sort().join(',')
+
+    if (totalWeight !== newTotalWeight || originalItemsStr !== newItemsStr) {
+      return fail(ERROR_CODES.CART_CHANGED, 'Keranjang Anda telah berubah. Silakan ulangi proses checkout.')
+    }
+
+    // 5. Override the client-provided cost with the server-calculated cost
+    const secureParams = {
+      ...params,
+      shippingCost: selectedRate.price,
+    }
+
+    // Proceed with creating the order
+    return await orderService.createOrder(secureParams)
+  } finally {
+    // Release the lock
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await supabase.from('checkout_locks' as any).delete().eq('user_id', user.id)
+  }
 }

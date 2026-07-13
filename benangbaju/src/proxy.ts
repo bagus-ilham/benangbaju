@@ -15,31 +15,28 @@ async function checkRateLimit(request: NextRequest, ip: string, route: string, m
     }
   )
 
-  const windowStart = new Date(Date.now() - windowSec * 1000).toISOString()
+  const { data, error } = await supabase.rpc('check_rate_limit', {
+    p_ip: ip,
+    p_route: route,
+    p_window_sec: windowSec,
+    p_max_requests: maxRequests,
+  })
 
-  const { count, error: countError } = await supabase
-    .from('rate_limit_logs')
-    .select('id', { count: 'exact', head: true })
-    .eq('ip_address', ip)
-    .eq('route', route)
-    .gte('created_at', windowStart)
-
-  if (countError) {
-    console.error('Rate limit count error:', countError)
-    return true
+  if (error) {
+    console.error('Rate limit error:', error)
+    return true // fail open
   }
 
-  if (count !== null && count >= maxRequests) {
-    return false
+  return data === true
+}
+
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  let result = 0
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
   }
-
-  const { error: insertError } = await supabase
-    .from('rate_limit_logs')
-    .insert({ ip_address: ip, route })
-
-  if (insertError) console.error('Rate limit insert error:', insertError)
-
-  return true
+  return result === 0
 }
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
@@ -86,7 +83,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
       let isAuthorized = false
       if (apiKey.length > 0 && validKey.length > 0) {
-        isAuthorized = apiKey === validKey
+        isAuthorized = timingSafeEqual(apiKey, validKey)
       }
 
       if (!isAuthorized) {

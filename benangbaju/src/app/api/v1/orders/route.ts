@@ -1,25 +1,14 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
-
 import { ApiErrorCode } from '@/lib/api-errors'
+import { requireAuth } from '@/lib/auth-guard'
+import { createSecureOrderAction } from '@/modules/orders/actions'
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createServerClient()
-
-    // Auth check: mobile app users must send a valid Bearer token which Supabase middleware validates
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: { code: ApiErrorCode.UNAUTHORIZED, message: 'Unauthorized' } },
-        { status: 401 }
-      )
-    }
+    const { user } = await requireAuth()
 
     const body = await req.json()
-    const { addressId, courierName, shippingCost, notes, voucherCode } = body
+    const { addressId, courierName, shippingCost, notes, voucherCode, shippingRateId } = body
 
     if (!addressId || !courierName || shippingCost === undefined) {
       return NextResponse.json(
@@ -31,11 +20,11 @@ export async function POST(req: Request) {
       )
     }
 
-    const { orderService } = await import('@/modules/orders/order.service')
-    const result = await orderService.createOrder({
+    const result = await createSecureOrderAction({
       userId: user.id,
       addressId,
       courierName,
+      shippingRateId,
       shippingCost,
       notes,
       voucherCode,
@@ -49,6 +38,15 @@ export async function POST(req: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Create Order API error:', err)
+    
+    // If it's an auth error from requireAuth
+    if (err.name === 'UnauthorizedError') {
+      return NextResponse.json(
+        { success: false, error: { code: ApiErrorCode.UNAUTHORIZED, message: 'Unauthorized' } },
+        { status: 401 }
+      )
+    }
+
     return NextResponse.json(
       {
         success: false,
