@@ -109,6 +109,8 @@ Deno.serve(async (req: Request) => {
       payment = newPayment;
     }
 
+    const midtransMode = Deno.env.get("MIDTRANS_MODE") || "sandbox";
+
     if (payment.status === "pending" && payment.midtrans_response) {
       let snapToken = null;
       let redirectUrl = "";
@@ -127,7 +129,12 @@ Deno.serve(async (req: Request) => {
 
           if (tokenAge < TOKEN_TTL_MS) {
             snapToken = responseObj.token;
-            redirectUrl = responseObj.redirect_url || `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}`;
+            
+            const midtransSnapBaseUrl = midtransMode === "production"
+              ? "https://app.midtrans.com/snap/v2/vtweb"
+              : "https://app.sandbox.midtrans.com/snap/v2/vtweb";
+              
+            redirectUrl = responseObj.redirect_url || `${midtransSnapBaseUrl}/${snapToken}`;
           } else {
             console.log(`Snap token for order ${order.order_number} is stale (${Math.round(tokenAge / 60000)}min old), generating new one`);
           }
@@ -152,7 +159,6 @@ Deno.serve(async (req: Request) => {
     }
 
     // Build Midtrans Snap parameters
-    const midtransMode = Deno.env.get("MIDTRANS_MODE") || "sandbox";
     const serverKey = Deno.env.get("MIDTRANS_SERVER_KEY")!;
     const snapApiUrl = Deno.env.get("MIDTRANS_SNAP_API_URL")!;
 

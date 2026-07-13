@@ -54,7 +54,7 @@ export class OrderRepository {
     const { data, error } = await supabase.rpc('create_order', {
       p_user_id: params.userId,
       p_address_id: params.addressId,
-      p_voucher_code: params.voucherCode === '' ? null : params.voucherCode || undefined,
+      p_voucher_code: params.voucherCode || undefined,
       p_courier_name: params.courierName || undefined,
       p_shipping_cost: params.shippingCost || 0,
       p_notes: params.notes || undefined,

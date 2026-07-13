@@ -202,8 +202,8 @@ export class ProductRepository {
       p_variants: variants as unknown as Json,
       p_images: images as unknown as Json,
       p_links: marketplaceLinks as unknown as Json,
-      p_collections: collectionIds as unknown as Json,
-    })
+      p_collections: collectionIds as any,
+    } as any)
 
     if (rpcErr) throw rpcErr
     const res = result as Record<string, unknown>
@@ -242,8 +242,8 @@ export class ProductRepository {
       p_image_ids_to_delete: imageIdsToDelete as unknown as Json,
       p_links_to_upsert: linksToUpsert as unknown as Json,
       p_link_ids_to_delete: linkIdsToDelete as unknown as Json,
-      p_collections: collectionIds as unknown as Json,
-    })
+      p_collections: collectionIds as any,
+    } as any)
 
     if (rpcErr) throw rpcErr
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

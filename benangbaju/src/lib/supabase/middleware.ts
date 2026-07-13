@@ -2,6 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Cache for database-driven redirects
+// Max size prevents unbounded memory growth in long-lived server processes
+const MAX_CACHE_SIZE = 500
 const redirectCache = new Map<string, { to_path: string; status_code: number; expiresAt: number }>()
 const CACHE_TTL = 60 * 1000 // 1 minute
 const NEGATIVE_CACHE_TTL = 10 * 1000 // 10 seconds
@@ -61,14 +63,14 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
         .limit(1)
         .maybeSingle()
 
-      if (redirectCache.size > 1000) {
+      if (redirectCache.size > MAX_CACHE_SIZE) {
         const now = Date.now()
         for (const [key, val] of redirectCache.entries()) {
           if (val.expiresAt < now) {
             redirectCache.delete(key)
           }
         }
-        if (redirectCache.size > 1000) {
+        if (redirectCache.size > MAX_CACHE_SIZE) {
           redirectCache.clear()
         }
       }

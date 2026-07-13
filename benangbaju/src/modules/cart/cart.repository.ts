@@ -67,7 +67,7 @@ export class CartRepository {
 
     const { error } = await supabase.rpc('replace_cart_items', {
       p_cart_id: cartId,
-      p_items: items,
+      p_items: items as any,
     })
 
     if (error) throw error

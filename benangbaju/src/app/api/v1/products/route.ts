@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { productService } from '@/modules/products/product.service'
+import { safeLogError } from '@/lib/logger'
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export async function GET(req: Request) {
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
     return NextResponse.json(result)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error('Products API error:', err)
+    safeLogError('Products API error:', err)
     return NextResponse.json(
       {
         success: false,

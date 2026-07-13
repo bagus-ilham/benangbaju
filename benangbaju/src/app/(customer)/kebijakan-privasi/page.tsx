@@ -40,6 +40,26 @@ export default function KebijakanPrivasiPage(): React.JSX.Element {
       content:
         'Anda memiliki hak untuk melihat, mengedit, atau menghapus informasi pribadi Anda kapan saja melalui halaman profil akun Anda di situs web Benangbaju. Jika Anda ingin menonaktifkan akun Anda secara permanen atau berhenti berlangganan newsletter promo, silakan kirim permohonan ke tim customer service kami.',
     },
+    {
+      title: '7. Dasar Pemrosesan Data',
+      content:
+        'Sesuai dengan UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP), kami memproses data pribadi Anda berdasarkan persetujuan yang Anda berikan saat mendaftar akun dan/atau melakukan pemesanan, serta untuk pelaksanaan perjanjian jual beli antara Anda dan Benangbaju.',
+    },
+    {
+      title: '8. Retensi Data',
+      content:
+        'Data transaksi Anda disimpan selama diperlukan untuk memenuhi kewajiban hukum kami (termasuk perpajakan dan pelaporan keuangan), minimal 5 tahun sejak transaksi terakhir. Data akun yang tidak aktif selama lebih dari 2 tahun akan dihapus secara otomatis kecuali terdapat kewajiban hukum untuk menyimpannya lebih lama.',
+    },
+    {
+      title: '9. Hak Subjek Data Pribadi',
+      content:
+        'Sebagaimana diatur dalam UU PDP, Anda memiliki hak untuk: (a) mengakses dan mendapatkan salinan data pribadi Anda; (b) memperbarui atau memperbaiki ketidakakuratan data; (c) mengakhiri pemrosesan dan menghapus data pribadi Anda; (d) menarik kembali persetujuan pemrosesan data; (e) mengajukan keberatan atas pemrosesan data; (f) mendapatkan dan memindahkan data pribadi Anda. Untuk menggunakan hak-hak tersebut, silakan hubungi kami melalui cs@benangbaju.com.',
+    },
+    {
+      title: '10. Transfer Data',
+      content:
+        'Data Anda diproses dan disimpan di server yang dikelola oleh Supabase (Singapore region). Pembayaran diproses oleh Midtrans (PT Midtrans Indonesia). Kedua penyedia layanan ini memiliki standar keamanan data yang memadai sesuai regulasi yang berlaku.',
+    },
   ]
 
   return (
@@ -54,7 +74,7 @@ export default function KebijakanPrivasiPage(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           <div className="text-xs leading-relaxed text-neutral-500 font-sans">
             <p className="text-neutral-400 text-[10px] uppercase tracking-widest mb-3">
-              Terakhir diperbarui: 10 Juni 2026
+              Terakhir diperbarui: 13 Juli 2026
             </p>
             <p>
               Benangbaju sangat menghargai privasi dan kepercayaan Anda. Kami berkomitmen untuk

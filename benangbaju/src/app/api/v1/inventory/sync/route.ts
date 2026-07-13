@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { ApiErrorCode } from '@/lib/api-errors'
 import { bulkUpdateStock } from '@/modules/products/inventory.repository'
+import { safeLogError } from '@/lib/logger'
 
 // This endpoint receives bulk stock updates from the ERP system.
 // It is protected by an API Key check in middleware.ts.
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
     return NextResponse.json(result, { status: 200 })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error('Inventory Sync API error:', err)
+    safeLogError('Inventory Sync API error:', err)
     return NextResponse.json(
       {
         success: false,

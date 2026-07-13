@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { ApiErrorCode } from '@/lib/api-errors'
 import { requireAuth } from '@/lib/auth-guard'
 import { createSecureOrderAction } from '@/modules/orders/actions'
+import { safeLogError } from '@/lib/logger'
 
 export async function POST(req: Request) {
   try {
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json(result, { status: 201 })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error('Create Order API error:', err)
+    safeLogError('Create Order API error:', err)
 
     // If it's an auth error from requireAuth
     if (err.name === 'UnauthorizedError') {

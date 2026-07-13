@@ -62,15 +62,18 @@ export default async function Homepage(): Promise<React.JSX.Element> {
     },
   }
 
+  const sanitizeJsonLd = (obj: Record<string, unknown>) =>
+    JSON.stringify(obj).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(organizationJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(websiteJsonLd) }}
       />
       <div className="flex-1 flex flex-col min-h-screen bg-white">
         {/* 1. Banner */}

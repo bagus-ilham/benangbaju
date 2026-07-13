@@ -11,7 +11,7 @@ import { getProductsAction } from '@/modules/products/actions'
 import { settingsService } from '@/modules/settings/settings.service'
 
 export class HomeService {
-  async getCachedHomepageData() {
+  getCachedHomepageData = async () => {
     'use cache'
     cacheLife('hours')
     cacheTag(

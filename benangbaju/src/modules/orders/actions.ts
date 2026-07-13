@@ -65,11 +65,11 @@ export async function getOrdersAction(userId: string, status?: string, page = 1,
 }
 
 export async function getOrderDetailAction(orderNumber: string, userId?: string) {
-  if (userId) {
-    const { user } = await requireAuth()
-    if (user.id !== userId) throw new Error('Unauthorized')
-  }
-  return orderService.getOrderDetail(orderNumber, userId)
+  const { user } = await requireAuth()
+  // If userId is provided, verify ownership. Otherwise use the authenticated user's ID.
+  const effectiveUserId = userId || user.id
+  if (user.id !== effectiveUserId) throw new Error('Unauthorized')
+  return orderService.getOrderDetail(orderNumber, effectiveUserId)
 }
 
 export async function cancelOrderAction(

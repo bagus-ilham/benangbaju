@@ -10,6 +10,17 @@ jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key-for-ci
+      NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: Mid-client-dummy
+      NEXT_PUBLIC_MIDTRANS_SNAP_URL: https://app.sandbox.midtrans.com/snap/snap.js
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_BASE_URL: http://localhost:3000
+      MIDTRANS_SERVER_KEY: dummy-server-key-for-ci
+      SUPABASE_SERVICE_ROLE_KEY: dummy-service-role-key-for-ci
+      ERP_API_KEY: dummy-erp-key-for-ci
+
     steps:
     - uses: actions/checkout@v4
     
@@ -27,6 +38,10 @@ jobs:
     - name: Lint
       working-directory: ./benangbaju
       run: npm run lint
+      
+    - name: Test
+      working-directory: ./benangbaju
+      run: npm run test
       
     - name: Build
       working-directory: ./benangbaju

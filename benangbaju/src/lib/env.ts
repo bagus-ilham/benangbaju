@@ -6,6 +6,7 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_MIDTRANS_CLIENT_KEY',
   'NEXT_PUBLIC_MIDTRANS_SNAP_URL',
   'NEXT_PUBLIC_APP_URL',
+  'NEXT_PUBLIC_BASE_URL',
 ] as const
 
 const serverEnvVars = ['MIDTRANS_SERVER_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'ERP_API_KEY'] as const

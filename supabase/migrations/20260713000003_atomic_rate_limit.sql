@@ -10,9 +10,6 @@ DECLARE
 BEGIN
   v_window_start := (now() - (p_window_sec || ' seconds')::interval);
 
-  -- Delete old logs outside the window to keep table small
-  DELETE FROM public.rate_limit_logs WHERE created_at < v_window_start;
-
   -- Lock the row representing this IP and route (or just rely on the count if we insert blindly)
   -- Actually, to avoid race conditions, we count and insert in a single transaction
   SELECT count(*) INTO v_count

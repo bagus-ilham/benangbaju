@@ -1,7 +1,8 @@
 'use server'
 
 import { requireAuth } from '@/lib/auth-guard'
-import { cartService, LocalCartItem } from './cart.service'
+import { cartService } from './cart.service'
+import type { LocalCartItem } from './cart.types'
 
 export async function syncCartAction(localItems: LocalCartItem[], merge = false) {
   const { user } = await requireAuth()
