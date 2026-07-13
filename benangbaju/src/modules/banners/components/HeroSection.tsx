@@ -29,7 +29,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
   if (banners.length === 0) {
     // Elegant high fashion fallback placeholder banner
     return (
-      <div className="relative h-[60vh] md:h-[80vh] w-full bg-brand-cream flex items-center justify-center">
+      <div className="relative w-full bg-brand-cream flex items-center justify-center aspect-[21/9] md:aspect-[16/9]">
         <div className="text-center space-y-4 max-w-lg px-4">
           <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
             Koleksi Baru
@@ -68,6 +68,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     fill: true,
     sizes: '100vw',
     priority: true,
+    quality: 100,
     className: 'object-cover',
     style: {
       width: '100%',
@@ -94,7 +95,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
 
   return (
     <div
-      className="relative w-full overflow-hidden bg-brand-black md:h-[90vh]"
+      className="relative w-full overflow-hidden bg-brand-black"
       role="region"
       aria-roledescription="carousel"
       aria-label="Koleksi Banner Utama"
@@ -106,17 +107,19 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { duration: 0.8 } }}
           exit={{ opacity: 0, transition: { duration: 0.5 } }}
-          className="relative w-full h-full md:absolute md:inset-0"
+          className="relative w-full h-full"
           role="group"
           aria-roledescription="slide"
           aria-label={`Slide ${currentIndex + 1} dari ${banners.length}`}
         >
-          <picture className="block w-full h-auto md:absolute md:inset-0 md:h-full">
-            <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
+          <picture className="block w-full h-auto">
+            <source media="(min-width: 768px)" srcSet={desktopSrcSet} sizes="100vw" />
             <img
+              src={restMobile.src}
               srcSet={mobileSrcSet}
+              sizes="100vw"
               alt={alt || 'Banner'}
-              className="w-full h-auto md:object-cover md:h-full"
+              className="block w-full h-auto"
             />
           </picture>
 

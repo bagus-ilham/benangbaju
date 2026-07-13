@@ -1,16 +1,37 @@
 import '@/lib/env'
 import type { Metadata } from 'next'
-import { Mulish } from 'next/font/google'
 import { Providers } from '@/shared/providers'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import localFont from 'next/font/local'
 import './globals.css'
 
-const mulish = Mulish({
+const mulish = localFont({
   variable: '--font-mulish',
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  style: ['normal', 'italic'],
+  display: 'swap',
+  adjustFontFallback: false,
+  src: [
+    {
+      path: '../../public/font/Mulish-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/font/Mulish-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../public/font/Mulish-SemiBoldItalic.ttf',
+      weight: '600',
+      style: 'italic',
+    },
+    {
+      path: '../../public/font/Mulish-Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    }
+  ],
 })
 
 export const metadata: Metadata = {

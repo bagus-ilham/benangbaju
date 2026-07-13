@@ -19,6 +19,7 @@ import { ScrollToTopButton } from './ScrollToTopButton'
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { FloatingWhatsApp } from './FloatingWhatsApp'
+import { cn } from '@/lib/utils'
 
 interface CustomerLayoutProps {
   children: React.ReactNode
@@ -164,7 +165,10 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       />
 
       {/* Main Page Area */}
-      <main id="main-content" className="flex-1 flex flex-col">
+      <main
+        id="main-content"
+        className={cn('flex-1 flex flex-col relative', pathname === '/' ? '-mt-16 z-0' : '')}
+      >
         <ErrorBoundary>{children}</ErrorBoundary>
       </main>
 

@@ -47,13 +47,14 @@ export function DesktopNavbar({
   onLogout,
 }: DesktopNavbarProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const isTransparentHome = pathname === '/' && !isScrolled
 
   return (
     <header
       className={cn(
         'sticky top-0 z-40 w-full transition-all duration-300 border-b',
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md border-neutral-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
+          ? 'bg-white/80 backdrop-blur-md border-neutral-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
           : 'bg-transparent border-transparent'
       )}
     >
@@ -63,7 +64,12 @@ export function DesktopNavbar({
             <button
               type="button"
               onClick={onOpenMobileMenu}
-              className="text-neutral-500 hover:text-brand-black md:hidden p-2 -ml-2"
+              className={cn(
+                'md:hidden p-2 -ml-2',
+                isTransparentHome
+                  ? 'text-white/90 hover:text-white'
+                  : 'text-neutral-500 hover:text-brand-black'
+              )}
               aria-label="Buka menu"
             >
               <Menu className="h-5 w-5" />
@@ -78,7 +84,9 @@ export function DesktopNavbar({
                     'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 nav-link-underline',
                     pathname === link.href
                       ? 'text-brand-gold font-semibold font-bold'
-                      : 'text-neutral-500 hover:text-brand-gold'
+                      : isTransparentHome
+                        ? 'text-white/90 hover:text-white'
+                        : 'text-neutral-500 hover:text-brand-gold'
                   )}
                 >
                   {link.name}
@@ -90,7 +98,12 @@ export function DesktopNavbar({
           <div className="flex justify-center flex-shrink-0 px-4">
             <Link
               href="/"
-              className="font-heading text-base md:text-lg font-bold tracking-[0.2em] text-brand-black uppercase select-none hover:text-brand-gold transition-colors duration-300 flex items-center justify-center"
+              className={cn(
+                'font-heading text-base md:text-lg font-bold tracking-[0.2em] uppercase select-none transition-colors duration-300 flex items-center justify-center',
+                isTransparentHome
+                  ? 'text-white hover:text-neutral-200'
+                  : 'text-brand-black hover:text-brand-gold'
+              )}
             >
               {logoUrl ? (
                 <div className="relative h-10 md:h-14 w-[110px] sm:w-[130px] md:w-[200px]">
@@ -100,7 +113,10 @@ export function DesktopNavbar({
                     fill
                     priority
                     sizes="(max-width: 768px) 150px, 200px"
-                    className="object-contain"
+                    className={cn(
+                      'object-contain text-transparent transition-all duration-300',
+                      isTransparentHome && 'brightness-0 invert'
+                    )}
                   />
                 </div>
               ) : (
@@ -112,7 +128,12 @@ export function DesktopNavbar({
           <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4 flex-1">
             <button
               onClick={onToggleSearch}
-              className="text-neutral-500 hover:text-brand-black p-2"
+              className={cn(
+                'p-2',
+                isTransparentHome
+                  ? 'text-white/90 hover:text-white'
+                  : 'text-neutral-500 hover:text-brand-black'
+              )}
               aria-label="Cari produk"
               aria-expanded={isSearchOpen}
             >
@@ -121,7 +142,12 @@ export function DesktopNavbar({
 
             <Link
               href="/wishlist"
-              className="text-neutral-500 hover:text-brand-black p-2 relative group"
+              className={cn(
+                'p-2 relative group',
+                isTransparentHome
+                  ? 'text-white/90 hover:text-white'
+                  : 'text-neutral-500 hover:text-brand-black'
+              )}
               aria-label="Wishlist"
             >
               <Heart className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
@@ -140,7 +166,12 @@ export function DesktopNavbar({
 
             <button
               onClick={onOpenCart}
-              className="text-neutral-500 hover:text-brand-black p-2 relative group cursor-pointer"
+              className={cn(
+                'p-2 relative group cursor-pointer',
+                isTransparentHome
+                  ? 'text-white/90 hover:text-white'
+                  : 'text-neutral-500 hover:text-brand-black'
+              )}
               aria-label="Keranjang"
             >
               <motion.div
@@ -168,7 +199,12 @@ export function DesktopNavbar({
                 <div>
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="text-neutral-500 hover:text-brand-black p-2 flex items-center"
+                    className={cn(
+                      'p-2 flex items-center',
+                      isTransparentHome
+                        ? 'text-white/90 hover:text-white'
+                        : 'text-neutral-500 hover:text-brand-black'
+                    )}
                     aria-label="Menu pengguna"
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
@@ -235,7 +271,12 @@ export function DesktopNavbar({
               ) : (
                 <Link
                   href="/masuk"
-                  className="text-[10px] font-heading font-medium uppercase tracking-widest text-neutral-500 hover:text-brand-black py-2 hidden sm:block"
+                  className={cn(
+                    'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block',
+                    isTransparentHome
+                      ? 'text-white/90 hover:text-white'
+                      : 'text-neutral-500 hover:text-brand-black'
+                  )}
                 >
                   Masuk
                 </Link>
