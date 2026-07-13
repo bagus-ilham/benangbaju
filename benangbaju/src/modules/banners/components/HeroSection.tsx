@@ -85,7 +85,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
   })
 
   const {
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     props: { srcSet: mobileSrcSet, alt, ...restMobile },
   } = getImageProps({
     ...commonProps,
@@ -113,7 +113,11 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
         >
           <picture className="block w-full h-auto md:absolute md:inset-0 md:h-full">
             <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
-            <img srcSet={mobileSrcSet} alt={alt || 'Banner'} className="w-full h-auto md:object-cover md:h-full" />
+            <img
+              srcSet={mobileSrcSet}
+              alt={alt || 'Banner'}
+              className="w-full h-auto md:object-cover md:h-full"
+            />
           </picture>
 
           {/* Elegant overlay */}

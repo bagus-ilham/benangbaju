@@ -17,9 +17,7 @@ export class SettingsService {
     return settingsRepository.adminUpsertSettings(settings)
   }
 
-  async getSiteSettings(
-    client?: SupabaseClient<Database>
-  ): Promise<ApiListResponse<SiteSetting>> {
+  async getSiteSettings(client?: SupabaseClient<Database>): Promise<ApiListResponse<SiteSetting>> {
     return settingsRepository.getSiteSettings(client)
   }
 }

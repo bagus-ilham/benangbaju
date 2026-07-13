@@ -33,11 +33,11 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
   )
 
   const pathname = request.nextUrl.pathname
-  
+
   // Skip database checks for static assets and API routes
   if (
-    pathname.startsWith('/_next') || 
-    pathname.startsWith('/api') || 
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
     pathname.includes('.') // like favicon.ico, images, etc
   ) {
     return supabaseResponse

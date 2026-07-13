@@ -78,7 +78,7 @@ export default function AdminShippingPage(): React.JSX.Element {
       setZoneName(zone.name)
       setZoneDesc(zone.description || '')
       setZoneActive(zone.is_active)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setSelectedProvinces(zone.shipping_zone_coverage?.map((c: any) => c.province_name) || [])
     } else {
       setEditingZone(null)

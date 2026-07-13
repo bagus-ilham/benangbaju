@@ -17,10 +17,7 @@ export class ReviewService {
     return reviewRepository.getApprovedReviews(productId, page, limit)
   }
 
-  async adminGetReviews(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<AdminReviewListItem>> {
+  async adminGetReviews(page = 1, limit = 20): Promise<ApiListResponse<AdminReviewListItem>> {
     return reviewRepository.adminGetReviews(page, limit)
   }
 
@@ -39,9 +36,7 @@ export class ReviewService {
     return reviewRepository.adminReplyToReview(reviewId, body, adminId)
   }
 
-  async customerSubmitReview(
-    params: SubmitReviewParams
-  ): Promise<ApiResponse<ProductReview>> {
+  async customerSubmitReview(params: SubmitReviewParams): Promise<ApiResponse<ProductReview>> {
     return reviewRepository.customerSubmitReview(params)
   }
 }

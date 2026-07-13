@@ -62,7 +62,7 @@ const extractProfile = (item: unknown) => {
 }
 
 const mapLowStockVariants = (data: unknown[]): LowStockVariant[] => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.map((v: any) => ({
     id: v.id,
     name: v.name,
@@ -73,7 +73,7 @@ const mapLowStockVariants = (data: unknown[]): LowStockVariant[] => {
 }
 
 const mapRecentOrders = (data: unknown[]): RecentOrder[] => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.map((o: any) => ({
     id: o.id,
     order_number: o.order_number,
@@ -85,7 +85,7 @@ const mapRecentOrders = (data: unknown[]): RecentOrder[] => {
 }
 
 const mapRecentLogs = (data: unknown[]): RecentActivityLog[] => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return data.map((l: any) => ({
     id: l.id,
     action: l.action,

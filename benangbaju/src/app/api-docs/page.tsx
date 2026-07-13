@@ -5,7 +5,7 @@ import SwaggerUI from 'swagger-ui-react'
 import 'swagger-ui-react/swagger-ui.css'
 
 export default function ApiDocsPage() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [spec, setSpec] = useState<any>(null)
 
   useEffect(() => {

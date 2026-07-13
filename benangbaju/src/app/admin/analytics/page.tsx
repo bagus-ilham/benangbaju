@@ -124,7 +124,7 @@ export default function AdminAnalyticsPage() {
                   tickFormatter={(val) => `Rp${(val / 1000000).toFixed(0)}M`}
                 />
                 <Tooltip
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   formatter={(value: any) => [formatIDR(Number(value) || 0), 'Pendapatan']}
                   contentStyle={{
                     fontSize: '12px',

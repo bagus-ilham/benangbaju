@@ -98,7 +98,7 @@ export class AdminStaffRepository {
       )
 
       return { success: true, data: profileData }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       safeLogError('Error creating staff:', err)
       return { success: false, error: err.message }

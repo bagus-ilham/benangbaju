@@ -18,7 +18,9 @@ describe('Order Service - createOrder parsing', () => {
   }
 
   it('handles error from repository correctly', async () => {
-    vi.mocked(orderRepository.create).mockRejectedValueOnce(new Error('Gagal membuat pesanan. Silakan coba lagi.'))
+    vi.mocked(orderRepository.create).mockRejectedValueOnce(
+      new Error('Gagal membuat pesanan. Silakan coba lagi.')
+    )
 
     const res = await orderService.createOrder(dummyParams)
     expect(res.success).toBe(false)

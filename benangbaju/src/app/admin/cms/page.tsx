@@ -165,7 +165,7 @@ export default function AdminCmsPage(): React.JSX.Element {
     let parsedContent: Json = null
     try {
       parsedContent = JSON.parse(jsonContent)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Format konten JSON tidak valid')
       return

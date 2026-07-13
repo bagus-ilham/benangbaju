@@ -6,6 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 ## Project Context & Rules
+
 - **Tech Stack**: Next.js 16 (App Router), Supabase (PostgreSQL), Tailwind CSS v4, TypeScript.
 - **Architecture**: Domain-driven design. Keep business logic in `src/modules/`.
 - **Testing**: Use Vitest for all unit testing. Aim for high coverage on new features.

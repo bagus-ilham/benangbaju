@@ -3,10 +3,6 @@ import { invokeWithRetry } from '@/lib/utils/retry'
 import { createServerClient } from '@/lib/supabase/server'
 import { CreateOrderParams } from './types'
 
- 
-     
-
-
 export class OrderRepository {
   async findMany(userId: string, status?: string, page = 1, limit = 10) {
     const supabase = await createServerClient()
@@ -39,7 +35,9 @@ export class OrderRepository {
     const supabase = await createServerClient()
     let query = supabase
       .from('orders')
-      .select('*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*)')
+      .select(
+        '*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*)'
+      )
       .eq('order_number', orderNumber)
 
     if (userId) {
@@ -56,18 +54,20 @@ export class OrderRepository {
     const { data, error } = await supabase.rpc('create_order', {
       p_user_id: params.userId,
       p_address_id: params.addressId,
-      p_voucher_code: params.voucherCode === '' ? null : (params.voucherCode || undefined),
+      p_voucher_code: params.voucherCode === '' ? null : params.voucherCode || undefined,
       p_courier_name: params.courierName || undefined,
       p_shipping_cost: params.shippingCost || 0,
       p_notes: params.notes || undefined,
     })
 
     if (error) throw error
-    
+
     if (data && isObject(data)) {
       const success = typeof data['success'] === 'boolean' ? data['success'] : false
       if (!success) {
-        throw new Error(typeof data['message'] === 'string' ? data['message'] : 'Gagal membuat pesanan')
+        throw new Error(
+          typeof data['message'] === 'string' ? data['message'] : 'Gagal membuat pesanan'
+        )
       }
       return data['data']
     }
@@ -82,11 +82,13 @@ export class OrderRepository {
     })
 
     if (error) throw error
-    
+
     if (data && isObject(data)) {
       const success = typeof data['success'] === 'boolean' ? data['success'] : false
       if (!success) {
-        throw new Error(typeof data['message'] === 'string' ? data['message'] : 'Gagal membatalkan pesanan')
+        throw new Error(
+          typeof data['message'] === 'string' ? data['message'] : 'Gagal membatalkan pesanan'
+        )
       }
       return true
     }
@@ -100,11 +102,13 @@ export class OrderRepository {
     })
 
     if (error) throw error
-    
+
     if (data && isObject(data)) {
       const success = typeof data['success'] === 'boolean' ? data['success'] : false
       if (!success) {
-        throw new Error(typeof data['message'] === 'string' ? data['message'] : 'Gagal mengkonfirmasi pesanan')
+        throw new Error(
+          typeof data['message'] === 'string' ? data['message'] : 'Gagal mengkonfirmasi pesanan'
+        )
       }
       return true
     }
@@ -127,7 +131,7 @@ export class OrderRepository {
         timeout: 15000,
         headers: {
           'Idempotency-Key': `payment_${orderNumber}`,
-        }
+        },
       })
       if (error) throw error
       return data
@@ -146,7 +150,9 @@ export class OrderRepository {
     })
   }
 
-  async adminFindMany(params: { status?: string; escapedSearch?: string; offset?: number; limit?: number } = {}) {
+  async adminFindMany(
+    params: { status?: string; escapedSearch?: string; offset?: number; limit?: number } = {}
+  ) {
     const supabase = await createServerClient()
     const { status = 'all', escapedSearch = '', offset = 0, limit = 20 } = params
 
@@ -184,7 +190,7 @@ export class OrderRepository {
     trackingNumber?: string
   ) {
     const supabase = await createServerClient()
-    
+
     // State machine validation
     const { data: order, error: fetchErr } = await supabase
       .from('orders')
@@ -196,9 +202,11 @@ export class OrderRepository {
 
     const terminalStates = ['cancelled', 'completed', 'refunded']
     if (terminalStates.includes(order.status)) {
-      throw new Error(`Invalid state transition: Cannot change status from ${order.status} to ${status}`)
+      throw new Error(
+        `Invalid state transition: Cannot change status from ${order.status} to ${status}`
+      )
     }
-    
+
     if (status === 'cancelled') {
       return this.cancel(orderId, 'Dibatalkan oleh Admin')
     }

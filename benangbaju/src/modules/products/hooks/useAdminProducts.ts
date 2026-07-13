@@ -43,13 +43,7 @@ export function useAdminCreateProduct(): UseMutationResult<
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ productData, variants, images, links, collectionIds }: ProductPayload) => {
-      return adminCreateProductAction(
-        productData,
-        variants,
-        images,
-        links,
-        collectionIds
-      )
+      return adminCreateProductAction(productData, variants, images, links, collectionIds)
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['products', 'dashboard'], ['products', 'homepage-data'])

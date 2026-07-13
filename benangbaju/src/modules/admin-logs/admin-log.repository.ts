@@ -52,10 +52,7 @@ export class AdminLogRepository {
     }
   }
 
-  async adminGetActivityLogs(
-    page = 1,
-    limit = 100
-  ): Promise<ApiListResponse<ActivityLog>> {
+  async adminGetActivityLogs(page = 1, limit = 100): Promise<ApiListResponse<ActivityLog>> {
     const supabase = await createServerClient()
     const from = (page - 1) * limit
     const to = from + limit - 1

@@ -25,7 +25,7 @@ export interface DataTableProps<T> {
   sortDirection?: 'asc' | 'desc'
   emptyTitle?: string
   emptyDescription?: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emptyIcon?: React.ElementType | any
   onRowClick?: (item: T) => void
   className?: string

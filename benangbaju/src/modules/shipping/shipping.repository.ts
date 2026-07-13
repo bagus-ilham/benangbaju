@@ -22,7 +22,11 @@ export class ShippingRepository {
 
   async addUserAddress(address: Omit<UserAddress, 'id' | 'created_at'>) {
     const supabase = await createServerClient()
-    const { data, error } = await supabase.from('user_addresses').insert([address]).select().single()
+    const { data, error } = await supabase
+      .from('user_addresses')
+      .insert([address])
+      .select()
+      .single()
     if (error) throw error
     return data
   }
@@ -110,10 +114,13 @@ export class ShippingRepository {
     return { data, count }
   }
 
-  async adminCreateShippingZone(zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>, provinces: string[]) {
+  async adminCreateShippingZone(
+    zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>,
+    provinces: string[]
+  ) {
     const supabase = await createServerClient()
     const { data, error } = await supabase.rpc('admin_create_shipping_zone', {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_zone: zone as any,
       p_provinces: provinces,
     })
@@ -128,11 +135,11 @@ export class ShippingRepository {
   ) {
     const supabase = await createServerClient()
     const { data, error } = await supabase.rpc('admin_update_shipping_zone', {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_zone_id: zoneId as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_zone: zone as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_provinces: provinces as any,
     })
     if (error) throw error
@@ -162,7 +169,11 @@ export class ShippingRepository {
   async adminCreateShippingRate(rate: Omit<ShippingRate, 'id'>) {
     const supabase = await createServerClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await supabase.from('shipping_rates').insert([rate as any]).select().single()
+    const { data, error } = await supabase
+      .from('shipping_rates')
+      .insert([rate as any])
+      .select()
+      .single()
     if (error) throw error
     return data
   }
@@ -170,7 +181,12 @@ export class ShippingRepository {
   async adminUpdateShippingRate(rateId: string, rate: Partial<Omit<ShippingRate, 'id'>>) {
     const supabase = await createServerClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await supabase.from('shipping_rates').update(rate as any).eq('id', rateId).select().single()
+    const { data, error } = await supabase
+      .from('shipping_rates')
+      .update(rate as any)
+      .eq('id', rateId)
+      .select()
+      .single()
     if (error) throw error
     return data
   }

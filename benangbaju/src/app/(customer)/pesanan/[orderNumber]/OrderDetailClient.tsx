@@ -39,7 +39,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
   const [receiptConfirmOpen, setReceiptConfirmOpen] = useState(false)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedReviewItem, setSelectedReviewItem] = useState<any | null>(null)
   const [isVerifyingPayment, setIsVerifyingPayment] = useState(
     () => searchParams.get('verifying') === '1'
@@ -59,7 +59,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
 
   useEffect(() => {
     if (order?.created_at) {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormattedDate(
         new Date(order.created_at).toLocaleDateString('id-ID', {
           year: 'numeric',
@@ -138,7 +138,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         }
       }
       refetch()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.dismiss('manual-check')
       toast.error(err.message || 'Gagal memverifikasi status pembayaran')
@@ -146,7 +146,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   }
 
   // Review handlers
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleOpenReviewModal = (item: any) => {
     setSelectedReviewItem(item)
   }
@@ -189,7 +189,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       await cancelMutation.mutateAsync({ orderId: order.id, reason: 'Dibatalkan oleh customer' })
       toast.success('Pesanan berhasil dibatalkan')
       refetch()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.message || 'Gagal membatalkan pesanan')
     } finally {
@@ -205,7 +205,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       await confirmMutation.mutateAsync(order.id)
       toast.success('Pesanan berhasil diselesaikan!')
       refetch()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error(err.message || 'Gagal menyelesaikan pesanan')
     } finally {
@@ -248,7 +248,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       } else {
         toast.error('Gagal memuat pembayaran. Coba lagi.')
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.dismiss('payment-loading')
       toast.error(err.message || 'Gagal memproses pembayaran')

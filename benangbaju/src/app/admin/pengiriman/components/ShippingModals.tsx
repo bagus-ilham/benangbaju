@@ -54,7 +54,7 @@ export function ShippingZoneModal({
   zoneActive,
   setZoneActive,
   isPending,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   return (
     <Modal
@@ -157,7 +157,7 @@ export function ShippingRateModal({
   rateActive,
   setRateActive,
   isPending,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
   return (
     <Modal
@@ -173,7 +173,7 @@ export function ShippingRateModal({
             required
             value={rateZoneId}
             onChange={setRateZoneId}
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             options={zones?.map((z: any) => ({ label: z.name, value: z.id })) || []}
           />
         </div>

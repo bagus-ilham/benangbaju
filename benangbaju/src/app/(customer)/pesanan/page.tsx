@@ -24,8 +24,6 @@ import toast from 'react-hot-toast'
 import { OrderCard } from './components/OrderCard'
 import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
 
-
-
 const STATUS_TABS = [
   { id: 'all', label: 'Semua' },
   { id: 'pending_payment', label: 'Menunggu Pembayaran' },

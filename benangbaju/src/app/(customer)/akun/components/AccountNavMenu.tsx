@@ -4,7 +4,7 @@ import { SmartLink as Link } from '@/shared/components'
 import { ClipboardList, MapPin, Heart, Bell, LogOut } from 'lucide-react'
 
 interface AccountNavMenuProps {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   itemVariants: any
   handleSignOut: () => void
 }

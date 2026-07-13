@@ -19,7 +19,7 @@ export class CartService {
         const dbItems = await cartRepository.getCartItems(cartId)
         const dbItemsMap = new Map<string, number>()
         if (dbItems) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           dbItems.forEach((item: any) => dbItemsMap.set(item.variant_id, item.quantity))
         }
 
@@ -48,10 +48,10 @@ export class CartService {
 
       // Read back final synchronized items
       const finalDbItems = await cartRepository.getCartItems(cartId)
-      
+
       let synchronizedItems: LocalCartItem[] = []
       if (finalDbItems) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         synchronizedItems = finalDbItems.map((item: any) => mapDbCartItemToLocal(item))
       }
 

@@ -139,7 +139,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
       if (error) throw error
       toast.success('Status aktif berhasil diubah')
       refetch()
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal memperbarui status')
     }
@@ -151,7 +151,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
         await deleteMutation.mutateAsync(id)
         toast.success('Koleksi dinonaktifkan')
         refetch()
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Gagal menonaktifkan koleksi')
       }

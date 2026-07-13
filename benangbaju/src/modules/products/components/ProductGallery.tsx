@@ -43,13 +43,12 @@ export function ProductGallery({
     if (selectedVariantId) {
       const variantImage = images.find((img) => img.variant_id === selectedVariantId)
       if (variantImage && variantImage.url !== activeImage) {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDirection(1)
         setHasIntentToZoom(false) // Reset HD intent on image change
- 
-         
+
         setActiveImage(variantImage.url)
-        
+
         if (isMobile) {
           const mobileGallery = document.getElementById('mobile-product-gallery')
           const targetImg = document.getElementById(`gallery-img-${variantImage.id}`)
@@ -69,7 +68,7 @@ export function ProductGallery({
     setZoomPos({ x, y })
   }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginate = (newDirection: number) => {
     const currentIndex = images.findIndex((img) => img.url === activeImage)
     let nextIndex = currentIndex + newDirection
@@ -109,32 +108,36 @@ export function ProductGallery({
     <div className="flex flex-col w-full group">
       {/* Mobile Swipe Gallery (Native Scroll Snap) */}
       <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-neutral-50 border border-neutral-100">
-        <div 
+        <div
           id="mobile-product-gallery"
           className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
           onScroll={(e) => {
-             const target = e.target as HTMLDivElement;
-             const index = Math.round(target.scrollLeft / target.clientWidth);
-             if (images[index] && images[index].url !== activeImage) {
-               setActiveImage(images[index].url);
-             }
+            const target = e.target as HTMLDivElement
+            const index = Math.round(target.scrollLeft / target.clientWidth)
+            if (images[index] && images[index].url !== activeImage) {
+              setActiveImage(images[index].url)
+            }
           }}
         >
           {images.map((img) => (
-            <div key={img.id} id={`gallery-img-${img.id}`} className="w-full h-full flex-shrink-0 snap-center relative">
-              <Image 
-                src={img.url} 
-                alt={productName} 
-                fill 
+            <div
+              key={img.id}
+              id={`gallery-img-${img.id}`}
+              className="w-full h-full flex-shrink-0 snap-center relative"
+            >
+              <Image
+                src={img.url}
+                alt={productName}
+                fill
                 quality={75}
                 sizes="(max-width: 768px) 100vw, 500px"
-                className="object-cover" 
-                priority={img.is_primary || images[0].id === img.id} 
+                className="object-cover"
+                priority={img.is_primary || images[0].id === img.id}
               />
             </div>
           ))}
         </div>
-        
+
         {/* Mobile Swipe Indicators (Dots) */}
         {images.length > 1 && (
           <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-1.5 z-10 pointer-events-none">

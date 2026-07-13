@@ -21,7 +21,7 @@ export const ProductCard = React.memo(function ProductCard({
   product,
   className,
 }: ProductCardProps): React.JSX.Element {
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const isLiked = useWishlistStore((state) => state.productIds.includes(product.id))
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist)

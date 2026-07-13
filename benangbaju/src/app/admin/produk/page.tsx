@@ -44,152 +44,164 @@ export default function AdminProductListPage(): React.JSX.Element {
   const updateActiveStatusMutation = useAdminUpdateProductActiveStatus()
   const updateFeaturedStatusMutation = useAdminUpdateProductFeaturedStatus()
 
-  const handleToggleActive = useCallback(async (productId: string, currentStatus: boolean) => {
-    try {
-      await updateActiveStatusMutation.mutateAsync({ productId, isActive: !currentStatus })
-      toast.success('Status aktif berhasil diubah')
-      refetch()
-    } catch {
-      toast.error('Gagal memperbarui status')
-    }
-  }, [updateActiveStatusMutation, refetch])
-
-  const handleToggleFeatured = useCallback(async (productId: string, currentStatus: boolean) => {
-    try {
-      await updateFeaturedStatusMutation.mutateAsync({ productId, isFeatured: !currentStatus })
-      toast.success('Status unggulan berhasil diubah')
-      refetch()
-    } catch {
-      toast.error('Gagal memperbarui status unggulan')
-    }
-  }, [updateFeaturedStatusMutation, refetch])
-
-  const handleDeleteProduct = useCallback(async (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menonaktifkan produk ini?')) {
+  const handleToggleActive = useCallback(
+    async (productId: string, currentStatus: boolean) => {
       try {
-        await deleteMutation.mutateAsync(id)
-        toast.success('Produk dinonaktifkan')
+        await updateActiveStatusMutation.mutateAsync({ productId, isActive: !currentStatus })
+        toast.success('Status aktif berhasil diubah')
         refetch()
       } catch {
-        toast.error('Gagal menonaktifkan produk')
+        toast.error('Gagal memperbarui status')
       }
-    }
-  }, [deleteMutation, refetch])
+    },
+    [updateActiveStatusMutation, refetch]
+  )
+
+  const handleToggleFeatured = useCallback(
+    async (productId: string, currentStatus: boolean) => {
+      try {
+        await updateFeaturedStatusMutation.mutateAsync({ productId, isFeatured: !currentStatus })
+        toast.success('Status unggulan berhasil diubah')
+        refetch()
+      } catch {
+        toast.error('Gagal memperbarui status unggulan')
+      }
+    },
+    [updateFeaturedStatusMutation, refetch]
+  )
+
+  const handleDeleteProduct = useCallback(
+    async (id: string) => {
+      if (confirm('Apakah Anda yakin ingin menonaktifkan produk ini?')) {
+        try {
+          await deleteMutation.mutateAsync(id)
+          toast.success('Produk dinonaktifkan')
+          refetch()
+        } catch {
+          toast.error('Gagal menonaktifkan produk')
+        }
+      }
+    },
+    [deleteMutation, refetch]
+  )
 
   const products = dataRes?.data || []
   const totalCount = dataRes?.pagination?.total_count || 0
   const totalPages = Math.ceil(totalCount / limit)
 
-  const columns: Column<AdminProductListItem>[] = useMemo(() => [
-    {
-      key: 'name',
-      header: 'Nama Produk',
-      render: (p) => (
-        <div>
-          <span className="font-semibold text-neutral-900 text-sm block hover:text-neutral-600 transition">
-            {p.name}
-          </span>
-          <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block font-mono uppercase">
-            Slug: {p.slug}
-          </span>
-        </div>
-      ),
-    },
-    {
-      key: 'categories',
-      header: 'Kategori',
-      render: (p) => p.categories?.name || '-',
-    },
-    {
-      key: 'stock',
-      header: <div className="text-center w-full">Total Stok</div>,
-      className: 'text-center',
-      render: (p) => {
-        const totalStock = p.product_variants?.reduce((sum: number, v) => sum + v.stock, 0) || 0
-        return (
-          <span
-            className={
-              totalStock === 0 ? 'text-red-500 bg-red-50 px-2 py-0.5 font-bold' : 'font-bold'
-            }
-          >
-            {totalStock}
-          </span>
-        )
+  const columns: Column<AdminProductListItem>[] = useMemo(
+    () => [
+      {
+        key: 'name',
+        header: 'Nama Produk',
+        render: (p) => (
+          <div>
+            <span className="font-semibold text-neutral-900 text-sm block hover:text-neutral-600 transition">
+              {p.name}
+            </span>
+            <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block font-mono uppercase">
+              Slug: {p.slug}
+            </span>
+          </div>
+        ),
       },
-    },
-    {
-      key: 'featured',
-      header: <div className="text-center w-full">Unggulan</div>,
-      className: 'text-center',
-      render: (p) => (
-        <button
-          onClick={() => handleToggleFeatured(p.id, p.is_featured)}
-          className={`inline-flex items-center justify-center p-1.5 transition ${
-            p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
-          }`}
-        >
-          <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
-        </button>
-      ),
-    },
-    {
-      key: 'status',
-      header: <div className="text-center w-full">Status</div>,
-      className: 'text-center',
-      render: (p) => (
-        <button
-          onClick={() => handleToggleActive(p.id, p.is_active)}
-          className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
-            p.is_active
-              ? 'bg-neutral-900 text-white border border-neutral-900'
-              : 'bg-white text-neutral-400 border border-neutral-200'
-          }`}
-        >
-          {p.is_active ? 'Aktif' : 'Nonaktif'}
-        </button>
-      ),
-    },
-    {
-      key: 'actions',
-      header: <div className="text-right w-full">Aksi</div>,
-      className: 'text-right',
-      render: (p) => (
-        <div className="flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
-                title="Opsi"
-              >
-                <MoreHorizontal size={14} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="right">
-              <Link href={`/produk/${p.slug}`} target="_blank">
-                <DropdownMenuItem>
-                  <Eye size={14} className="text-neutral-500" /> Lihat di Web
+      {
+        key: 'categories',
+        header: 'Kategori',
+        render: (p) => p.categories?.name || '-',
+      },
+      {
+        key: 'stock',
+        header: <div className="text-center w-full">Total Stok</div>,
+        className: 'text-center',
+        render: (p) => {
+          const totalStock = p.product_variants?.reduce((sum: number, v) => sum + v.stock, 0) || 0
+          return (
+            <span
+              className={
+                totalStock === 0 ? 'text-red-500 bg-red-50 px-2 py-0.5 font-bold' : 'font-bold'
+              }
+            >
+              {totalStock}
+            </span>
+          )
+        },
+      },
+      {
+        key: 'featured',
+        header: <div className="text-center w-full">Unggulan</div>,
+        className: 'text-center',
+        render: (p) => (
+          <button
+            onClick={() => handleToggleFeatured(p.id, p.is_featured)}
+            className={`inline-flex items-center justify-center p-1.5 transition ${
+              p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
+            }`}
+          >
+            <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
+          </button>
+        ),
+      },
+      {
+        key: 'status',
+        header: <div className="text-center w-full">Status</div>,
+        className: 'text-center',
+        render: (p) => (
+          <button
+            onClick={() => handleToggleActive(p.id, p.is_active)}
+            className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
+              p.is_active
+                ? 'bg-neutral-900 text-white border border-neutral-900'
+                : 'bg-white text-neutral-400 border border-neutral-200'
+            }`}
+          >
+            {p.is_active ? 'Aktif' : 'Nonaktif'}
+          </button>
+        ),
+      },
+      {
+        key: 'actions',
+        header: <div className="text-right w-full">Aksi</div>,
+        className: 'text-right',
+        render: (p) => (
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
+                  title="Opsi"
+                >
+                  <MoreHorizontal size={14} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="right">
+                <Link href={`/produk/${p.slug}`} target="_blank">
+                  <DropdownMenuItem>
+                    <Eye size={14} className="text-neutral-500" /> Lihat di Web
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
+                  <DropdownMenuItem>
+                    <Copy size={14} className="text-neutral-500" /> Duplikat
+                  </DropdownMenuItem>
+                </Link>
+                <Link href={`/admin/produk/${p.id}`}>
+                  <DropdownMenuItem>
+                    <Edit2 size={14} className="text-neutral-500" /> Edit
+                  </DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem destructive onClick={() => handleDeleteProduct(p.id)}>
+                  <Trash2 size={14} /> Nonaktifkan
                 </DropdownMenuItem>
-              </Link>
-              <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
-                <DropdownMenuItem>
-                  <Copy size={14} className="text-neutral-500" /> Duplikat
-                </DropdownMenuItem>
-              </Link>
-              <Link href={`/admin/produk/${p.id}`}>
-                <DropdownMenuItem>
-                  <Edit2 size={14} className="text-neutral-500" /> Edit
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem destructive onClick={() => handleDeleteProduct(p.id)}>
-                <Trash2 size={14} /> Nonaktifkan
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
-    },
-  ], [handleToggleActive, handleToggleFeatured, handleDeleteProduct])
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ),
+      },
+    ],
+    [handleToggleActive, handleToggleFeatured, handleDeleteProduct]
+  )
 
   return (
     <div className="space-y-6">

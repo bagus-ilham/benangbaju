@@ -27,7 +27,6 @@ interface AdminOrderDetailPageProps {
 function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.JSX.Element {
   const { orderNumber } = use(params)
 
-
   const { data: orderResponse, isLoading, isError, refetch } = useOrderDetail(orderNumber as string)
   const order = orderResponse?.data
   const updateStatusMutation = useAdminUpdateOrderStatus()

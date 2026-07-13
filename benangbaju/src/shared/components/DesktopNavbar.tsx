@@ -22,7 +22,7 @@ interface DesktopNavbarProps {
   onOpenCart: () => void
   isMounted: boolean
   isAuthenticated: boolean
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   profile: Record<string, any> | null
   user: User | null
   onLogout: () => void

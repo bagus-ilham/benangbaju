@@ -8,7 +8,7 @@ import { createStaticClient } from '@/lib/supabase/static'
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapSiteSetting(row: any): SiteSetting {
   const typeMap: Record<string, SiteSetting['type']> = {
     text: 'text',
@@ -76,7 +76,13 @@ export class SettingsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui pengaturan')
     }
 
-    await adminLogRepository.insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Updated site settings')
+    await adminLogRepository.insertAdminActivityLog(
+      supabase,
+      'update',
+      'settings',
+      'bulk',
+      'Updated site settings'
+    )
     return ok()
   }
 
@@ -89,13 +95,17 @@ export class SettingsRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal upsert pengaturan')
     }
 
-    await adminLogRepository.insertAdminActivityLog(supabase, 'update', 'settings', 'bulk', 'Upserted site settings')
+    await adminLogRepository.insertAdminActivityLog(
+      supabase,
+      'update',
+      'settings',
+      'bulk',
+      'Upserted site settings'
+    )
     return ok()
   }
 
-  async getSiteSettings(
-    client?: SupabaseClient<Database>
-  ): Promise<ApiListResponse<SiteSetting>> {
+  async getSiteSettings(client?: SupabaseClient<Database>): Promise<ApiListResponse<SiteSetting>> {
     const supabase = client || createStaticClient()
     const { data, error } = await supabase
       .from('site_settings')

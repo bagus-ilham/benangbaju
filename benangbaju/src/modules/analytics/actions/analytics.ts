@@ -54,12 +54,20 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
   const data = (rpcRes.data as Record<string, unknown>) || {}
 
   // Parse dates for revenue trends if needed to match previous format
-  const revenueTrends = ((data.revenue_trends as Array<{ date: string; revenue: number | string }>) || []).map((item) => ({
+  const revenueTrends = (
+    (data.revenue_trends as Array<{ date: string; revenue: number | string }>) || []
+  ).map((item) => ({
     date: new Date(item.date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' }),
     revenue: Number(item.revenue),
   }))
 
-  const topProducts = ((data.top_products as Array<{ name: string; quantity: number | string; revenue: number | string }>) || []).map((item) => ({
+  const topProducts = (
+    (data.top_products as Array<{
+      name: string
+      quantity: number | string
+      revenue: number | string
+    }>) || []
+  ).map((item) => ({
     name: item.name,
     quantity: Number(item.quantity),
     revenue: Number(item.revenue),

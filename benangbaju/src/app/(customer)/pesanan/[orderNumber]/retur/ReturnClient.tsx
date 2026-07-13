@@ -7,13 +7,13 @@ import { useOrderDetail } from '@/modules/orders/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
 import {
   Button,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Input,
   PageHero,
   PageContainer,
   EmptyState,
   AuthLoading,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
 } from '@/shared/components'
 import { ArrowLeft, AlertTriangle, ShieldCheck } from 'lucide-react'
@@ -26,7 +26,6 @@ import { ReturnItemSelection } from './components/ReturnItemSelection'
 import { ReturnReasonForm } from './components/ReturnReasonForm'
 
 const supabase = createBrowserClient()
-
 
 interface ReturnPageProps {
   params: {
@@ -89,11 +88,11 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         initialChecked[item.id] = false
         initialQty[item.id] = 1
       })
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedItems(initialChecked)
       setQuantities(initialQty)
     }
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order])
 
   const handleToggleItem = (itemId: string) => {

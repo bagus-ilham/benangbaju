@@ -95,10 +95,7 @@ export class ReviewRepository {
     return paginated(result, page, limit, count || 0)
   }
 
-  async adminGetReviews(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<AdminReviewListItem>> {
+  async adminGetReviews(page = 1, limit = 20): Promise<ApiListResponse<AdminReviewListItem>> {
     const supabase = await createServerClient()
     const from = (page - 1) * limit
     const to = from + limit - 1
@@ -258,9 +255,7 @@ export class ReviewRepository {
     return ok(data as ReviewReply)
   }
 
-  async customerSubmitReview(
-    params: SubmitReviewParams
-  ): Promise<ApiResponse<ProductReview>> {
+  async customerSubmitReview(params: SubmitReviewParams): Promise<ApiResponse<ProductReview>> {
     const supabase = await createServerClient()
     // 1. Insert review into product_reviews
     const { data: review, error: reviewErr } = await supabase

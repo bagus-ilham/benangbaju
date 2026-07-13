@@ -18,11 +18,11 @@ export class OrderService {
 
       if (!data) return paginated([], page, limit, 0)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const orders = data.map((row: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const order_items = parseOneToMany<any>(row.order_items)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const order_shipping = parseOneToOne<any>(row.order_shipping)
 
         return mapOrder({
@@ -39,20 +39,17 @@ export class OrderService {
     }
   }
 
-  async getOrderDetail(
-    orderNumber: string,
-    userId?: string
-  ): Promise<ApiResponse<Order | null>> {
+  async getOrderDetail(orderNumber: string, userId?: string): Promise<ApiResponse<Order | null>> {
     try {
       const data = await orderRepository.findOneByOrderNumber(orderNumber, userId)
 
       if (!data) return ok(null)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const order_items = parseOneToMany<any>(data.order_items)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const order_shipping = parseOneToOne<any>(data.order_shipping)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payments = parseOneToMany<any>(data.payments)
 
       return ok(
@@ -74,12 +71,12 @@ export class OrderService {
   ): Promise<ApiResponse<NonNullable<OrderRpcResponse['data']>>> {
     try {
       const innerData = await orderRepository.create(params)
-      
+
       if (!innerData || typeof innerData !== 'object' || !('order_id' in innerData)) {
         throw new Error('Invalid response format from database')
       }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const inner = innerData as Record<string, any>
       const parsedData: OrderRpcResponse['data'] = {
         order_id: String(inner.order_id || ''),
@@ -92,7 +89,7 @@ export class OrderService {
       }
 
       return ok(parsedData)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error creating order:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, error.message || 'Gagal membuat pesanan')
@@ -106,7 +103,7 @@ export class OrderService {
     try {
       await orderRepository.cancel(orderId, reason)
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error cancelling order:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, error.message || 'Gagal membatalkan pesanan')
@@ -117,7 +114,7 @@ export class OrderService {
     try {
       await orderRepository.confirmDelivery(orderId)
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error confirming delivery:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, error.message || 'Gagal mengkonfirmasi pesanan')
@@ -137,7 +134,7 @@ export class OrderService {
   ): Promise<ApiResponse<{ token?: string; redirect_url?: string }>> {
     try {
       const data = await orderRepository.generatePaymentToken(orderNumber)
-      
+
       const res = data as {
         success: boolean
         message?: string
@@ -155,10 +152,13 @@ export class OrderService {
         token: res.data.token,
         redirect_url: res.data.redirect_url,
       })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error generating payment token:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghubungi server pembayaran. Silakan coba lagi.')
+      return fail(
+        ApiErrorCode.INTERNAL_ERROR,
+        'Gagal menghubungi server pembayaran. Silakan coba lagi.'
+      )
     }
   }
 
@@ -167,7 +167,7 @@ export class OrderService {
   ): Promise<ApiResponse<{ order_status?: string; payment_status?: string }>> {
     try {
       const data = await orderRepository.checkPaymentStatus(orderNumber)
-      
+
       const res = data as {
         success: boolean
         message?: string
@@ -179,7 +179,10 @@ export class OrderService {
       } | null
 
       if (!res || !res.success || !res.data) {
-        return fail(ApiErrorCode.INTERNAL_ERROR, res?.message || 'Gagal mengecek status pembayaran.')
+        return fail(
+          ApiErrorCode.INTERNAL_ERROR,
+          res?.message || 'Gagal mengecek status pembayaran.'
+        )
       }
 
       return ok({

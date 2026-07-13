@@ -1,6 +1,6 @@
 /**
  * Supabase Join Parser Utilities
- * 
+ *
  * Helper functions to safely extract joined relational data from Supabase queries
  * and enforce type safety without manual Array.isArray checks everywhere.
  */

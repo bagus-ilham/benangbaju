@@ -1,6 +1,6 @@
 import { ProductVariant, ProductImage, ProductListItem } from './types'
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapCategory(rawCat: any): { name: string; slug: string } | null {
   if (rawCat && !Array.isArray(rawCat)) {
     return { name: rawCat.name, slug: rawCat.slug }
@@ -8,10 +8,10 @@ export function mapCategory(rawCat: any): { name: string; slug: string } | null 
   return null
 }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapVariants(rawVariants: any, includeAttrs = true): ProductVariant[] {
   const variantsList = Array.isArray(rawVariants) ? rawVariants : []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return variantsList.map((v: any) => ({
     id: v.id,
     sku: v.sku,
@@ -22,7 +22,7 @@ export function mapVariants(rawVariants: any, includeAttrs = true): ProductVaria
     weight_gram: v.weight_gram || null,
     is_active: v.is_active,
     ...(includeAttrs && {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       product_variant_attrs: (v.product_variant_attrs || []).map((attr: any) => ({
         id: attr.id,
         attr_name: attr.attr_name,
@@ -32,26 +32,27 @@ export function mapVariants(rawVariants: any, includeAttrs = true): ProductVaria
   }))
 }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapImages(rawImages: any): ProductImage[] {
   const imagesList = Array.isArray(rawImages) ? rawImages : []
-  return imagesList
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .map((img: any) => ({
-      id: img.id,
-      url: img.url,
-      alt_text: img.alt_text,
-      sort_order: img.sort_order,
-      is_primary: img.is_primary,
-      variant_id: img.variant_id,
-    }))
- 
-     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .sort((a: any, b: any) => a.sort_order - b.sort_order)
+  return (
+    imagesList
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((img: any) => ({
+        id: img.id,
+        url: img.url,
+        alt_text: img.alt_text,
+        sort_order: img.sort_order,
+        is_primary: img.is_primary,
+        variant_id: img.variant_id,
+      }))
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .sort((a: any, b: any) => a.sort_order - b.sort_order)
+  )
 }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapProductListItem(p: any): ProductListItem {
   const categories = mapCategory(p.categories)
   const product_variants = mapVariants(p.product_variants)
@@ -111,7 +112,7 @@ export function mapProductListItem(p: any): ProductListItem {
 
   let hasMultipleColors = false
   const colorSet = new Set<string>()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sizeVariants: any[] = []
 
   for (let i = 0; i < product_variants.length; i++) {

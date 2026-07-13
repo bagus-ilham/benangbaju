@@ -12,7 +12,7 @@ export class NotificationRepository {
   // =============================================================
   // USER NOTIFICATIONS
   // =============================================================
-  
+
   async getUserNotifications(
     userId: string,
     page = 1,
@@ -50,10 +50,7 @@ export class NotificationRepository {
     return paginated(notifications, page, limit, count || 0)
   }
 
-  async markNotificationRead(
-    notificationId: string,
-    userId: string
-  ): Promise<ApiResponse<void>> {
+  async markNotificationRead(notificationId: string, userId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
     const { error } = await supabase
       .from('notifications')
@@ -69,9 +66,7 @@ export class NotificationRepository {
     return ok()
   }
 
-  async markAllNotificationsRead(
-    userId: string
-  ): Promise<ApiResponse<void>> {
+  async markAllNotificationsRead(userId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
     const { error } = await supabase
       .from('notifications')
@@ -168,9 +163,7 @@ export class NotificationRepository {
     return data
   }
 
-  async adminDeleteNotificationTemplate(
-    templateId: string
-  ): Promise<{ success: boolean }> {
+  async adminDeleteNotificationTemplate(templateId: string): Promise<{ success: boolean }> {
     const supabase = await createServerClient()
     // First, fetch the name for logging
     const { data: template } = await supabase

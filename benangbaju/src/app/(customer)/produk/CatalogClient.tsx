@@ -124,8 +124,9 @@ export function CatalogClient({
       >
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
-            Hasil pencarian untuk: <strong className="text-brand-black">&quot;{searchQuery}&quot;</strong> (
-            {totalCount} produk)
+            Hasil pencarian untuk:{' '}
+            <strong className="text-brand-black">&quot;{searchQuery}&quot;</strong> ({totalCount}{' '}
+            produk)
           </p>
         )}
 

@@ -4,7 +4,7 @@ import { Key } from 'lucide-react'
 import { Input, Button } from '@/shared/components'
 
 interface ChangePasswordFormProps {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   itemVariants: any
   newPassword: string
   setNewPassword: (val: string) => void

@@ -7,4 +7,3 @@ export interface SiteSetting {
   group: 'general' | 'seo' | 'payment' | 'social'
   label: string
 }
-

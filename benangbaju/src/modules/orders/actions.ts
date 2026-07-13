@@ -4,7 +4,11 @@ import { requireAdmin, requireAuth } from '@/lib/auth-guard'
 import { adminOrderService } from './admin-order.service'
 import { orderService } from './order.service'
 import type { CreateOrderParams } from '@/modules/orders/types'
-import { validateAndGetShippingRate, calculateCartWeight, type CartItemWithWeight } from '@/modules/shipping/shipping.utils'
+import {
+  validateAndGetShippingRate,
+  calculateCartWeight,
+  type CartItemWithWeight,
+} from '@/modules/shipping/shipping.utils'
 import { fail, type ApiResponse } from '@/lib/api-response'
 
 const ERROR_CODES = {
@@ -42,7 +46,9 @@ export async function adminUpdateReturnRequestAction(
   return adminOrderService.updateReturnRequest(requestId, params)
 }
 
-export async function adminGetOrdersAction(params: { status?: string; search?: string; page?: number; limit?: number } = {}) {
+export async function adminGetOrdersAction(
+  params: { status?: string; search?: string; page?: number; limit?: number } = {}
+) {
   await requireAdmin()
   return adminOrderService.getOrders(params)
 }
@@ -66,10 +72,17 @@ export async function getOrderDetailAction(orderNumber: string, userId?: string)
   return orderService.getOrderDetail(orderNumber, userId)
 }
 
-export async function cancelOrderAction(orderId: string, reason?: string): Promise<ApiResponse<null>> {
+export async function cancelOrderAction(
+  orderId: string,
+  reason?: string
+): Promise<ApiResponse<null>> {
   const { user, supabase } = await requireAuth()
-  
-  const { data: order, error } = await supabase.from('orders').select('user_id').eq('id', orderId).single()
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('user_id')
+    .eq('id', orderId)
+    .single()
   if (error || !order || order.user_id !== user.id) {
     throw new Error('Unauthorized')
   }
@@ -79,8 +92,12 @@ export async function cancelOrderAction(orderId: string, reason?: string): Promi
 
 export async function confirmDeliveryAction(orderId: string): Promise<ApiResponse<null>> {
   const { user, supabase } = await requireAuth()
-  
-  const { data: order, error } = await supabase.from('orders').select('user_id').eq('id', orderId).single()
+
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('user_id')
+    .eq('id', orderId)
+    .single()
   if (error || !order || order.user_id !== user.id) {
     throw new Error('Unauthorized')
   }
@@ -115,7 +132,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
   await supabase.rpc('cleanup_checkout_locks')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: lockError } = await supabase.from('checkout_locks' as any).insert({ user_id: user.id })
+  const { error: lockError } = await supabase
+    .from('checkout_locks' as any)
+    .insert({ user_id: user.id })
   if (lockError) {
     return fail(ERROR_CODES.CHECKOUT_IN_PROGRESS, 'Sedang memproses pesanan Anda. Silakan tunggu.')
   }
@@ -127,7 +146,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       supabase.from('user_addresses').select('zone_id').eq('id', params.addressId).single(),
       supabase
         .from('carts')
-        .select('id, cart_items(variant_id, quantity, product_variants(weight_gram, products(weight_gram)))')
+        .select(
+          'id, cart_items(variant_id, quantity, product_variants(weight_gram, products(weight_gram)))'
+        )
         .eq('user_id', user.id)
         .maybeSingle(),
     ])
@@ -140,7 +161,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     }
 
     const cartItems = Array.isArray(userCart?.cart_items) ? userCart.cart_items : []
-    
+
     if (cartItems.length === 0) {
       return fail(ERROR_CODES.EMPTY_CART, 'Keranjang belanja kosong')
     }
@@ -158,21 +179,31 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     // This minimizes the window for the cart to change while shipping API was being called
     const cartResCheck = await supabase
       .from('carts')
-      .select('id, cart_items(variant_id, quantity, product_variants(weight_gram, products(weight_gram)))')
+      .select(
+        'id, cart_items(variant_id, quantity, product_variants(weight_gram, products(weight_gram)))'
+      )
       .eq('user_id', user.id)
       .maybeSingle()
 
-    const newCartItems = Array.isArray(cartResCheck.data?.cart_items) ? cartResCheck.data.cart_items : []
+    const newCartItems = Array.isArray(cartResCheck.data?.cart_items)
+      ? cartResCheck.data.cart_items
+      : []
     const newTotalWeight = calculateCartWeight(newCartItems as CartItemWithWeight[])
 
     // TOCTOU Fix: Verify item identities and quantities match
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const extractSort = (items: any[]) => items.map(i => ({ id: i.variant_id, q: i.quantity })).sort((a, b) => String(a.id).localeCompare(String(b.id)))
+    const extractSort = (items: any[]) =>
+      items
+        .map((i) => ({ id: i.variant_id, q: i.quantity }))
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)))
     const originalItemsStr = JSON.stringify(extractSort(cartItems))
     const newItemsStr = JSON.stringify(extractSort(newCartItems))
 
     if (totalWeight !== newTotalWeight || originalItemsStr !== newItemsStr) {
-      return fail(ERROR_CODES.CART_CHANGED, 'Keranjang Anda telah berubah. Silakan ulangi proses checkout.')
+      return fail(
+        ERROR_CODES.CART_CHANGED,
+        'Keranjang Anda telah berubah. Silakan ulangi proses checkout.'
+      )
     }
 
     // 5. Override the client-provided cost with the server-calculated cost
@@ -186,6 +217,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
   } finally {
     // Release the lock
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await supabase.from('checkout_locks' as any).delete().eq('user_id', user.id)
+    await supabase
+      .from('checkout_locks' as any)
+      .delete()
+      .eq('user_id', user.id)
   }
 }

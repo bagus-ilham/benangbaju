@@ -8,7 +8,8 @@ export async function GET(req: Request) {
   const limit = parseInt(searchParams.get('limit') || '20', 10)
   const rawSortBy = searchParams.get('sortBy') || 'newest'
   const validSortBy = ['newest', 'featured', 'price-low', 'price-high', 'popular']
-  const sortBy = (validSortBy.includes(rawSortBy) ? rawSortBy : 'newest') as 'newest' | 'featured' | 'price-low' | 'price-high' | 'popular'
+  const sortBy = (validSortBy.includes(rawSortBy) ? rawSortBy : 'newest') as
+    'newest' | 'featured' | 'price-low' | 'price-high' | 'popular'
   const searchQuery = searchParams.get('q') || undefined
   const categorySlug = searchParams.get('category') || undefined
   const collectionSlug = searchParams.get('collection') || undefined

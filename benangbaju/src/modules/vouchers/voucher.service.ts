@@ -19,10 +19,7 @@ export class VoucherService {
     }
   }
 
-  async adminGetVouchers(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Voucher>> {
+  async adminGetVouchers(page = 1, limit = 20): Promise<ApiListResponse<Voucher>> {
     try {
       const { data, count } = await voucherRepository.adminGetVouchers(page, limit)
       return paginated(data, page, limit, count)
@@ -32,21 +29,19 @@ export class VoucherService {
     }
   }
 
-  async adminCreateVoucher(
-    voucherData: {
-      code: string
-      name: string
-      discount_type: 'percentage' | 'fixed'
-      value: number
-      min_purchase: number
-      max_discount: number | null
-      usage_limit: number | null
-      usage_per_user: number
-      is_active: boolean
-      starts_at: string
-      expires_at: string
-    }
-  ): Promise<ApiResponse<Voucher>> {
+  async adminCreateVoucher(voucherData: {
+    code: string
+    name: string
+    discount_type: 'percentage' | 'fixed'
+    value: number
+    min_purchase: number
+    max_discount: number | null
+    usage_limit: number | null
+    usage_per_user: number
+    is_active: boolean
+    starts_at: string
+    expires_at: string
+  }): Promise<ApiResponse<Voucher>> {
     try {
       const voucher = await voucherRepository.adminCreateVoucher(voucherData)
       return ok(voucher)

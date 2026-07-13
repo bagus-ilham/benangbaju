@@ -111,10 +111,7 @@ export function useSetDefaultAddress(): UseMutationResult<
 
 export function useDistrictSearch(
   searchQuery: string
-): import('@tanstack/react-query').UseQueryResult<
-  ApiResponse<District[]>,
-  Error
-> {
+): import('@tanstack/react-query').UseQueryResult<ApiResponse<District[]>, Error> {
   return useQuery({
     queryKey: ['districts-search', searchQuery],
     queryFn: () => searchDistrictsAction(searchQuery),
@@ -126,10 +123,7 @@ export function useDistrictSearch(
 export function useShippingRates(
   zoneId: string | null,
   weightGram: number
-): import('@tanstack/react-query').UseQueryResult<
-  ApiResponse<ShippingOption[]>,
-  Error
-> {
+): import('@tanstack/react-query').UseQueryResult<ApiResponse<ShippingOption[]>, Error> {
   return useQuery({
     queryKey: ['shipping-rates', zoneId, weightGram],
     queryFn: () => calculateShippingRatesAction(zoneId!, weightGram),

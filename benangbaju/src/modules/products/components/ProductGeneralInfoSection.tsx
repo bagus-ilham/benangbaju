@@ -25,10 +25,10 @@ interface ProductGeneralInfoSectionProps {
   onIsActiveChange: (val: boolean) => void
   isFeatured: boolean
   onIsFeaturedChange: (val: boolean) => void
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   categories: any[] | undefined
   catsLoading: boolean
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   collections: any[] | undefined
   colsLoading: boolean
   selectedCollections: string[]
@@ -198,8 +198,7 @@ export function ProductGeneralInfoSection({
                     onSizeGuideChange(publicUrl)
                     toast.success('Size guide berhasil diunggah!', { id: toastId })
                   } catch (err: unknown) {
-                    const message =
-                      err instanceof Error ? err.message : 'Gagal mengunggah gambar'
+                    const message = err instanceof Error ? err.message : 'Gagal mengunggah gambar'
                     toast.error(message, { id: toastId })
                   }
                 }}

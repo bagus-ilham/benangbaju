@@ -10,15 +10,13 @@ describe('shipping.utils', () => {
     it('should calculate weight correctly with provided variant weights', () => {
       const items = [
         { quantity: 2, product_variants: { weight_gram: 500 } },
-        { quantity: 1, product_variants: { weight_gram: 200 } }
+        { quantity: 1, product_variants: { weight_gram: 200 } },
       ]
       expect(calculateCartWeight(items as any)).toBe(1200)
     })
 
     it('should fallback to product weight if variant weight is missing', () => {
-      const items = [
-        { quantity: 2, product_variants: { products: { weight_gram: 600 } } }
-      ]
+      const items = [{ quantity: 2, product_variants: { products: { weight_gram: 600 } } }]
       expect(calculateCartWeight(items as any)).toBe(1200)
     })
 
@@ -44,10 +42,18 @@ describe('shipping.utils', () => {
     })
 
     it('should return rate matching shippingRateId', async () => {
-      const mockRates = [{ id: 'rate1', price: 10000 }, { id: 'rate2', price: 20000 }]
-      vi.mocked(shippingService.calculateShippingRates).mockResolvedValue({ success: true, data: mockRates } as any)
-      
-      const res = await validateAndGetShippingRate('zone1', 1000, { shippingRateId: 'rate2' } as any)
+      const mockRates = [
+        { id: 'rate1', price: 10000 },
+        { id: 'rate2', price: 20000 },
+      ]
+      vi.mocked(shippingService.calculateShippingRates).mockResolvedValue({
+        success: true,
+        data: mockRates,
+      } as any)
+
+      const res = await validateAndGetShippingRate('zone1', 1000, {
+        shippingRateId: 'rate2',
+      } as any)
       expect(res).toEqual(mockRates[1])
     })
   })

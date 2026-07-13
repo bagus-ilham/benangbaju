@@ -15,21 +15,19 @@ export async function getAdminVouchersAction(page = 1, limit = 20) {
   return voucherService.adminGetVouchers(page, limit)
 }
 
-export async function createAdminVoucherAction(
-  voucherData: {
-    code: string
-    name: string
-    discount_type: 'percentage' | 'fixed'
-    value: number
-    min_purchase: number
-    max_discount: number | null
-    usage_limit: number | null
-    usage_per_user: number
-    is_active: boolean
-    starts_at: string
-    expires_at: string
-  }
-) {
+export async function createAdminVoucherAction(voucherData: {
+  code: string
+  name: string
+  discount_type: 'percentage' | 'fixed'
+  value: number
+  min_purchase: number
+  max_discount: number | null
+  usage_limit: number | null
+  usage_per_user: number
+  is_active: boolean
+  starts_at: string
+  expires_at: string
+}) {
   await requireAdmin()
   return voucherService.adminCreateVoucher(voucherData)
 }

@@ -45,7 +45,7 @@ export default function AlamatPage(): React.JSX.Element {
       try {
         await deleteMutation.mutateAsync({ addressId, userId: user.id })
         toast.success('Alamat berhasil dihapus')
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Gagal menghapus alamat')
       }
@@ -57,7 +57,7 @@ export default function AlamatPage(): React.JSX.Element {
     try {
       await setDefaultMutation.mutateAsync({ addressId, userId: user.id })
       toast.success('Alamat utama berhasil diubah')
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal mengubah alamat utama')
     }

@@ -3,34 +3,26 @@ import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 import type { Banner } from './types'
 
 export class BannerService {
-  async getActiveBanners(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Banner>> {
+  async getActiveBanners(page = 1, limit = 20): Promise<ApiListResponse<Banner>> {
     return bannerRepository.getActiveBanners(page, limit)
   }
 
-  async adminGetBanners(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Banner>> {
+  async adminGetBanners(page = 1, limit = 20): Promise<ApiListResponse<Banner>> {
     return bannerRepository.adminGetBanners(page, limit)
   }
 
-  async adminCreateBanner(
-    bannerData: {
-      title: string
-      subtitle: string | null
-      image_url: string
-      image_mobile_url: string | null
-      link_url: string | null
-      position: string
-      sort_order: number
-      is_active: boolean
-      starts_at: string | null
-      ends_at: string | null
-    }
-  ): Promise<ApiResponse<Banner>> {
+  async adminCreateBanner(bannerData: {
+    title: string
+    subtitle: string | null
+    image_url: string
+    image_mobile_url: string | null
+    link_url: string | null
+    position: string
+    sort_order: number
+    is_active: boolean
+    starts_at: string | null
+    ends_at: string | null
+  }): Promise<ApiResponse<Banner>> {
     return bannerRepository.adminCreateBanner(bannerData)
   }
 

@@ -29,7 +29,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
   const {
     banners,
     categories,
-collections,
+    collections,
     flashSale,
     featuredProducts,
     newestProducts,

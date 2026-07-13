@@ -7,10 +7,7 @@ import { ApiErrorCode } from '@/lib/api-errors'
 import type { Banner } from './types'
 
 export class BannerRepository {
-  async getActiveBanners(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Banner>> {
+  async getActiveBanners(page = 1, limit = 20): Promise<ApiListResponse<Banner>> {
     const supabase = createStaticClient()
     const now = new Date().toISOString()
 
@@ -37,10 +34,7 @@ export class BannerRepository {
     return paginated(data || [], page, limit, count || 0)
   }
 
-  async adminGetBanners(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Banner>> {
+  async adminGetBanners(page = 1, limit = 20): Promise<ApiListResponse<Banner>> {
     const supabase = await createServerClient()
     const from = (page - 1) * limit
     const to = from + limit - 1
@@ -61,20 +55,18 @@ export class BannerRepository {
     return paginated(data || [], page, limit, count || 0)
   }
 
-  async adminCreateBanner(
-    bannerData: {
-      title: string
-      subtitle: string | null
-      image_url: string
-      image_mobile_url: string | null
-      link_url: string | null
-      position: string
-      sort_order: number
-      is_active: boolean
-      starts_at: string | null
-      ends_at: string | null
-    }
-  ): Promise<ApiResponse<Banner>> {
+  async adminCreateBanner(bannerData: {
+    title: string
+    subtitle: string | null
+    image_url: string
+    image_mobile_url: string | null
+    link_url: string | null
+    position: string
+    sort_order: number
+    is_active: boolean
+    starts_at: string | null
+    ends_at: string | null
+  }): Promise<ApiResponse<Banner>> {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('banners')
@@ -171,7 +163,13 @@ export class BannerRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus banner')
     }
 
-    await adminLogRepository.insertAdminActivityLog(supabase, 'delete', 'banner', bannerId, `Deleted banner ${bannerId}`)
+    await adminLogRepository.insertAdminActivityLog(
+      supabase,
+      'delete',
+      'banner',
+      bannerId,
+      `Deleted banner ${bannerId}`
+    )
 
     return ok()
   }

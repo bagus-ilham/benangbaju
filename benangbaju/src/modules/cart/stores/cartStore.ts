@@ -36,7 +36,6 @@ interface CartState {
   resetCart: () => void
 }
 
-
 // Helper to generate a random session ID for guests
 const generateSessionId = () => {
   return 'sess_' + crypto.randomUUID()
@@ -52,7 +51,7 @@ export const useCartStore = create<CartState>()(
       hasSynced: false,
       needsResync: false,
       syncTimeoutId: null,
-      
+
       debouncedSyncCart: (userId: string) => {
         const { syncTimeoutId } = get()
         if (syncTimeoutId) clearTimeout(syncTimeoutId)
@@ -153,7 +152,7 @@ export const useCartStore = create<CartState>()(
             const localItems = get().items
 
             const res = await syncCartAction(localItems, merge)
-            
+
             if (res.success && res.data) {
               set({ items: res.data })
             }

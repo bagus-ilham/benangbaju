@@ -7,10 +7,7 @@ import { ApiListResponse, ApiResponse, paginated, ok, fail } from '@/lib/api-res
 import { ApiErrorCode } from '@/lib/api-errors'
 
 export class AdminCustomerRepository {
-  async adminGetCustomers(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<CustomerProfile>> {
+  async adminGetCustomers(page = 1, limit = 20): Promise<ApiListResponse<CustomerProfile>> {
     const supabase = createAdminClient()
     const from = (page - 1) * limit
     const to = from + limit - 1
@@ -72,9 +69,7 @@ export class AdminCustomerRepository {
     return ok(null)
   }
 
-  async adminGetCustomerDetail(
-    customerId: string
-  ): Promise<ApiResponse<CustomerDetail>> {
+  async adminGetCustomerDetail(customerId: string): Promise<ApiResponse<CustomerDetail>> {
     const supabase = createAdminClient()
     const [profileRes, addressesRes, wishlistRes, cartRes] = await Promise.all([
       supabase

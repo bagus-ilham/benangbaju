@@ -208,7 +208,7 @@ export class ProductRepository {
     if (rpcErr) throw rpcErr
     const res = result as Record<string, unknown>
     if (res && res.success === false) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       throw new Error((res.error as any)?.message || 'Transaction failed')
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -289,7 +289,7 @@ export class ProductRepository {
     if (error) throw error
     return data
   }
-  
+
   /**
    * Mendapatkan links dari produk
    */

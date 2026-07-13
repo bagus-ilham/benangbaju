@@ -10,26 +10,26 @@ import {
 } from '@/app/admin/hooks/useAdmin'
 import {
   Button,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Input,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Modal,
   AdminPageHeader,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DataTable,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Textarea,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Switch,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DropdownMenu,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DropdownMenuTrigger,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DropdownMenuContent,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DropdownMenuItem,
   TableSkeleton,
 } from '@/shared/components'
@@ -125,14 +125,18 @@ export default function AdminCategoryPage(): React.JSX.Element {
       if (error) throw error
       toast.success('Status aktif berhasil diubah')
       refetch()
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal memperbarui status')
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menghapus kategori ini? (Tidak bisa dihapus jika masih ada produk di dalamnya)')) {
+    if (
+      confirm(
+        'Apakah Anda yakin ingin menghapus kategori ini? (Tidak bisa dihapus jika masih ada produk di dalamnya)'
+      )
+    ) {
       try {
         await deleteMutation.mutateAsync(id)
         toast.success('Kategori berhasil dihapus')

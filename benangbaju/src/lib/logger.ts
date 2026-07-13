@@ -9,16 +9,19 @@ export function safeLogError(context: string, error: unknown, ...args: unknown[]
   } else {
     // In production, output structured JSON logs for external observability tools (e.g. Datadog, ELK)
     // Mask sensitive details but log the error name, message (if safe), and context.
-    const errObj = error instanceof Error 
-      ? { name: error.name, message: error.message } 
-      : { message: 'Unknown error type' }
-      
-    console.error(JSON.stringify({
-      timestamp: new Date().toISOString(),
-      level: 'error',
-      context,
-      error: errObj,
-      // Note: intentionally avoiding logging full stack traces or args that might contain PII
-    }))
+    const errObj =
+      error instanceof Error
+        ? { name: error.name, message: error.message }
+        : { message: 'Unknown error type' }
+
+    console.error(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: 'error',
+        context,
+        error: errObj,
+        // Note: intentionally avoiding logging full stack traces or args that might contain PII
+      })
+    )
   }
 }

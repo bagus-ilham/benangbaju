@@ -75,35 +75,38 @@ export function mapInitialDataToForm(initialData?: InitialProductData): ProductF
         size_guide: initialData.size_guide || '',
         care_guide: initialData.care_guide || '',
       },
-      variants: initialData.product_variants?.map((v) => ({
-        id: v.id,
-        sku: v.sku || '',
-        name: v.name || '',
-        price: Number(v.price) || 0,
-        compare_price: v.compare_price ? Number(v.compare_price) : null,
-        stock: v.stock || 0,
-        weight_gram: v.weight_gram || null,
-        is_active: v.is_active !== false,
-        attrs:
-          v.product_variant_attrs?.map((a) => ({
-            attr_name: a.attr_name,
-            attr_value: a.attr_value,
-          })) || [],
-      })) || [],
-      images: initialData.product_images?.map((img) => ({
-        id: img.id,
-        url: img.url || '',
-        alt_text: img.alt_text || '',
-        sort_order: img.sort_order || 0,
-        is_primary: !!img.is_primary,
-        variant_id: img.variant_id || '',
-      })) || [],
-      links: initialData.product_marketplace_links?.map((link) => ({
-        platform: link.platform || 'shopee',
-        url: link.url || '',
-        label: link.label || '',
-        sort_order: link.sort_order || 0,
-      })) || [],
+      variants:
+        initialData.product_variants?.map((v) => ({
+          id: v.id,
+          sku: v.sku || '',
+          name: v.name || '',
+          price: Number(v.price) || 0,
+          compare_price: v.compare_price ? Number(v.compare_price) : null,
+          stock: v.stock || 0,
+          weight_gram: v.weight_gram || null,
+          is_active: v.is_active !== false,
+          attrs:
+            v.product_variant_attrs?.map((a) => ({
+              attr_name: a.attr_name,
+              attr_value: a.attr_value,
+            })) || [],
+        })) || [],
+      images:
+        initialData.product_images?.map((img) => ({
+          id: img.id,
+          url: img.url || '',
+          alt_text: img.alt_text || '',
+          sort_order: img.sort_order || 0,
+          is_primary: !!img.is_primary,
+          variant_id: img.variant_id || '',
+        })) || [],
+      links:
+        initialData.product_marketplace_links?.map((link) => ({
+          platform: link.platform || 'shopee',
+          url: link.url || '',
+          label: link.label || '',
+          sort_order: link.sort_order || 0,
+        })) || [],
       collectionIds: initialData.collection_products?.map((cp) => cp.collection_id) || [],
     }
   }

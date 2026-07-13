@@ -11,10 +11,7 @@ import type { UserNotification } from '@/modules/notifications/types'
 
 export function useUserNotifications(
   userId: string
-): import('@tanstack/react-query').UseQueryResult<
-  ApiListResponse<UserNotification>,
-  Error
-> {
+): import('@tanstack/react-query').UseQueryResult<ApiListResponse<UserNotification>, Error> {
   const queryClient = useQueryClient()
   const supabase = createBrowserClient()
 
@@ -51,7 +48,12 @@ export function useUserNotifications(
 
 export function useMarkNotificationRead(
   userId: string
-): UseMutationResult<Awaited<ReturnType<typeof markNotificationReadAction>>, Error, string, unknown> {
+): UseMutationResult<
+  Awaited<ReturnType<typeof markNotificationReadAction>>,
+  Error,
+  string,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (notificationId: string) => {
@@ -67,7 +69,12 @@ export function useMarkNotificationRead(
 
 export function useMarkAllNotificationsRead(
   userId: string
-): UseMutationResult<Awaited<ReturnType<typeof markAllNotificationsReadAction>>, Error, void, unknown> {
+): UseMutationResult<
+  Awaited<ReturnType<typeof markAllNotificationsReadAction>>,
+  Error,
+  void,
+  unknown
+> {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => {

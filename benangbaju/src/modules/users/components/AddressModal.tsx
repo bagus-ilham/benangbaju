@@ -96,7 +96,7 @@ export function AddressModal({
     control,
     handleSubmit,
     setValue,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     watch,
     reset,
     formState: { errors },
@@ -155,7 +155,7 @@ export function AddressModal({
           zone_id: addressToEdit.zone_id,
           is_default: addressToEdit.is_default,
         })
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSearchQuery(
           addressToEdit.district_name
             ? `${addressToEdit.district_name}, ${addressToEdit.city_name}`

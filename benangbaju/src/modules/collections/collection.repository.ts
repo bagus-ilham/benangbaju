@@ -7,10 +7,7 @@ import { ApiErrorCode } from '@/lib/api-errors'
 import type { Collection, AdminCollectionItem } from './types'
 
 export class CollectionRepository {
-  async getActiveCollections(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Collection>> {
+  async getActiveCollections(page = 1, limit = 20): Promise<ApiListResponse<Collection>> {
     const supabase = createStaticClient()
     const now = new Date().toISOString()
 
@@ -53,10 +50,7 @@ export class CollectionRepository {
     return ok(data)
   }
 
-  async adminGetCollections(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<AdminCollectionItem>> {
+  async adminGetCollections(page = 1, limit = 20): Promise<ApiListResponse<AdminCollectionItem>> {
     const supabase = await createServerClient()
     const from = (page - 1) * limit
     const to = from + limit - 1
@@ -75,7 +69,7 @@ export class CollectionRepository {
 
     const list = data.map((col) => {
       const products = col.collection_products
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const product_ids = Array.isArray(products) ? products.map((cp: any) => cp.product_id) : []
       return {
         id: col.id,

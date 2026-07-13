@@ -3,7 +3,6 @@ import { getSiteSettingsAction } from '@/modules/settings/actions'
 import { SOCIAL_LINKS } from '@/lib/constants'
 
 export function useSiteSettings() {
-
   const query = useQuery({
     queryKey: ['site-settings'],
     queryFn: () => getSiteSettingsAction(),

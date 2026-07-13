@@ -186,9 +186,9 @@ export class FlashSaleRepository {
   ): Promise<ApiResponse<{ id: string }>> {
     const supabase = await createServerClient()
     const { data: result, error: rpcErr } = await supabase.rpc('admin_create_flash_sale', {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_flash_sale: saleData as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_items: items as any,
     })
 
@@ -253,11 +253,11 @@ export class FlashSaleRepository {
       .map((item) => item.variant_id)
 
     const { data: result, error: rpcErr } = await supabase.rpc('admin_update_flash_sale', {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_flash_sale_id: saleId as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_flash_sale: saleData as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       p_items_to_upsert: items as any,
       p_variant_ids_to_delete: itemsToDelete,
     })

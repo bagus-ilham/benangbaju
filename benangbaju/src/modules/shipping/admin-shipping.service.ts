@@ -16,7 +16,7 @@ export class AdminShippingService {
       const result = data.map((row) => {
         const rawCoverage = row.shipping_zone_coverage
         const coverageList = Array.isArray(rawCoverage) ? rawCoverage : []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const shipping_zone_coverage = coverageList.map((c: any) => ({
           province_name: c.province_name,
         }))
@@ -43,7 +43,7 @@ export class AdminShippingService {
     try {
       const result = await shippingRepository.adminCreateShippingZone(zone, provinces)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = result as any
       if (res && res.success === false) {
         safeLogError('Error creating shipping zone (RPC transaction):', res.error)
@@ -75,7 +75,7 @@ export class AdminShippingService {
     try {
       const result = await shippingRepository.adminUpdateShippingZone(zoneId, zone, provinces)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = result as any
       if (res && res.success === false) {
         safeLogError('Error updating shipping zone (RPC transaction):', res.error)
@@ -123,7 +123,7 @@ export class AdminShippingService {
 
       if (!data) return paginated([], count || 0, page, limit)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = data.map((row: any) => {
         let shipping_zones = null
         if (row.shipping_zones && !Array.isArray(row.shipping_zones)) {

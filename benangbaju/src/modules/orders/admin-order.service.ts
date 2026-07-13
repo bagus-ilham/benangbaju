@@ -13,7 +13,7 @@ export class AdminOrderService {
     try {
       const { page = 1, limit = 20, status = 'all', search = '' } = params
       const offset = (page - 1) * limit
-      
+
       let escapedSearch = ''
       if (search) {
         escapedSearch = search
@@ -34,7 +34,7 @@ export class AdminOrderService {
 
       if (!data) return paginated([], 0, page, limit)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const orders: AdminOrderListItem[] = data.map((row: any) => {
         const rawCat = row.profiles
         let profiles: { name: string; email: string | null } | null = null
@@ -47,7 +47,7 @@ export class AdminOrderService {
 
         const rawItems = row.order_items
         const itemsList = Array.isArray(rawItems) ? rawItems : []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const order_items = itemsList.map((item: any) => ({
           id: item.id,
           order_id: item.order_id,
@@ -115,7 +115,7 @@ export class AdminOrderService {
   ): Promise<ApiResponse<null>> {
     try {
       await orderRepository.adminUpdateStatus(orderId, status, trackingNumber)
-      
+
       const supabase = await createServerClient()
       await adminLogRepository.insertAdminActivityLog(
         supabase,
@@ -126,7 +126,7 @@ export class AdminOrderService {
       )
 
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error updating order status:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengupdate pesanan')
@@ -140,7 +140,7 @@ export class AdminOrderService {
       if (!data) return ok([])
 
       return ok(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.map((row: any) => {
           const rawProfile = row.profiles
           let profiles: { name: string; email: string | null } | null = null
@@ -162,7 +162,7 @@ export class AdminOrderService {
 
           const rawItems = row.return_items
           const itemsList = Array.isArray(rawItems) ? rawItems : []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const return_items = itemsList.map((item: any) => {
             const rawOrderItem = item.order_items
             let order_items: {
@@ -191,7 +191,7 @@ export class AdminOrderService {
 
           const rawMedia = row.return_media
           const mediaList = Array.isArray(rawMedia) ? rawMedia : []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const return_media = mediaList.map((m: any) => ({
             id: m.id,
             url: m.url,
@@ -239,7 +239,7 @@ export class AdminOrderService {
   ): Promise<ApiResponse<null>> {
     try {
       await orderRepository.adminUpdateReturnRequest(requestId, params)
-      
+
       const supabase = await createServerClient()
       await adminLogRepository.insertAdminActivityLog(
         supabase,
@@ -250,7 +250,7 @@ export class AdminOrderService {
       )
 
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error updating return request:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengupdate permintaan retur')
@@ -260,12 +260,18 @@ export class AdminOrderService {
   async updateTrackingNumber(orderId: string, trackingNumber: string): Promise<ApiResponse<null>> {
     try {
       await orderRepository.adminUpdateTrackingNumber(orderId, trackingNumber)
-      
+
       const supabase = await createServerClient()
-      await adminLogRepository.insertAdminActivityLog(supabase, 'update', 'order', orderId, `Updated tracking number`)
+      await adminLogRepository.insertAdminActivityLog(
+        supabase,
+        'update',
+        'order',
+        orderId,
+        `Updated tracking number`
+      )
 
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error updating tracking number:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menyimpan nomor resi')

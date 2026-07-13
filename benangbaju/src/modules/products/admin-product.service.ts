@@ -9,7 +9,9 @@ import { mapCategory, mapVariants } from './product.mapper'
 import { AdminProductListItem, ProductPayload } from './types'
 
 export class AdminProductService {
-  async getProducts(params: { page?: number; limit?: number; search?: string } = {}): Promise<ApiListResponse<AdminProductListItem>> {
+  async getProducts(
+    params: { page?: number; limit?: number; search?: string } = {}
+  ): Promise<ApiListResponse<AdminProductListItem>> {
     try {
       const { page = 1, limit = 20 } = params
       const { data, count } = await productRepository.adminFindMany(params)
@@ -50,8 +52,14 @@ export class AdminProductService {
     collectionIds: string[] = []
   ): Promise<ApiResponse<{ id: string }>> {
     try {
-      const productId = await productRepository.adminCreate(productData, variants, images, marketplaceLinks, collectionIds)
-      
+      const productId = await productRepository.adminCreate(
+        productData,
+        variants,
+        images,
+        marketplaceLinks,
+        collectionIds
+      )
+
       const supabase = await createServerClient()
       await adminLogRepository.insertAdminActivityLog(
         supabase,
@@ -62,7 +70,7 @@ export class AdminProductService {
       )
 
       return ok({ id: productId })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Gagal membuat produk', error)
       return fail('Gagal membuat produk', error.message || 'Transaction failed')
@@ -93,9 +101,7 @@ export class AdminProductService {
         ...img,
         id: !img.id || img.id.startsWith('temp-') ? null : img.id,
         variant_id:
-          !img.variant_id ||
-          img.variant_id === '' ||
-          img.variant_id.startsWith('temp-')
+          !img.variant_id || img.variant_id === '' || img.variant_id.startsWith('temp-')
             ? null
             : img.variant_id,
       }))
@@ -136,7 +142,7 @@ export class AdminProductService {
       )
 
       return ok({ id: productId })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Gagal memperbarui produk', error)
       return fail('Gagal memperbarui produk', error.message || 'Transaction failed')
@@ -165,7 +171,7 @@ export class AdminProductService {
       )
 
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Delete error:', error)
       return fail('Gagal menghapus produk', error.message)
@@ -176,7 +182,7 @@ export class AdminProductService {
     try {
       await productRepository.adminUpdateActiveStatus(productId, isActive)
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Update status error:', error)
       return fail('Gagal memperbarui status produk', error.message)
@@ -187,7 +193,7 @@ export class AdminProductService {
     try {
       await productRepository.adminUpdateFeaturedStatus(productId, isFeatured)
       return ok(null)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Update featured error:', error)
       return fail('Gagal memperbarui status featured', error.message)

@@ -2,7 +2,10 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
 import { getActiveBannersAction } from '@/modules/banners/actions'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
-import { getActiveCollectionsAction, getCollectionBySlugAction } from '@/modules/collections/actions'
+import {
+  getActiveCollectionsAction,
+  getCollectionBySlugAction,
+} from '@/modules/collections/actions'
 import { flashSaleService } from '@/modules/flash-sales/flash-sale.service'
 import { getProductsAction } from '@/modules/products/actions'
 import { settingsService } from '@/modules/settings/settings.service'

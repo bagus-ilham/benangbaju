@@ -28,7 +28,7 @@ export async function getAdminStaffsAction() {
 
 export async function createAdminStaffAction(payload: CreateStaffPayload) {
   await requireAdmin()
-  
+
   if (!payload.email || !payload.name || !payload.role || !payload.password) {
     return {
       success: false,
@@ -36,7 +36,11 @@ export async function createAdminStaffAction(payload: CreateStaffPayload) {
     }
   }
 
-  if (payload.password.length < 12 || !/[A-Z]/.test(payload.password) || !/[0-9]/.test(payload.password)) {
+  if (
+    payload.password.length < 12 ||
+    !/[A-Z]/.test(payload.password) ||
+    !/[0-9]/.test(payload.password)
+  ) {
     return {
       success: false,
       error: 'Password must be at least 12 characters with uppercase and digits',

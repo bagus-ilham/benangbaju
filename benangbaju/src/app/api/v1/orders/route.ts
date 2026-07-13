@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Create Order API error:', err)
-    
+
     // If it's an auth error from requireAuth
     if (err.name === 'UnauthorizedError') {
       return NextResponse.json(

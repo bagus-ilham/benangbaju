@@ -56,4 +56,3 @@ export function useAdminUpsertSettings(): import('@tanstack/react-query').UseMut
     },
   })
 }
-

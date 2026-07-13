@@ -63,7 +63,9 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value:
-              `default-src 'self'; script-src 'self' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} https://app.sandbox.midtrans.com https://app.midtrans.com; style-src 'self'; img-src 'self' data: blob: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : 'https://jwvbzuoatffoxaahdwdx.supabase.co'} https://lh3.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://app.sandbox.midtrans.com https://app.midtrans.com; frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com;`.replace(/\s+/g, ' ').trim(),
+              `default-src 'self'; script-src 'self' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} https://app.sandbox.midtrans.com https://app.midtrans.com; style-src 'self'; img-src 'self' data: blob: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : 'https://jwvbzuoatffoxaahdwdx.supabase.co'} https://lh3.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://app.sandbox.midtrans.com https://app.midtrans.com; frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com;`
+                .replace(/\s+/g, ' ')
+                .trim(),
           },
         ],
       },

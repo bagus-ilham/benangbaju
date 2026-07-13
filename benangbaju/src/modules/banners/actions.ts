@@ -14,20 +14,18 @@ export async function getAdminBannersAction(page = 1, limit = 20) {
   return bannerService.adminGetBanners(page, limit)
 }
 
-export async function createAdminBannerAction(
-  bannerData: {
-    title: string
-    subtitle: string | null
-    image_url: string
-    image_mobile_url: string | null
-    link_url: string | null
-    position: string
-    sort_order: number
-    is_active: boolean
-    starts_at: string | null
-    ends_at: string | null
-  }
-) {
+export async function createAdminBannerAction(bannerData: {
+  title: string
+  subtitle: string | null
+  image_url: string
+  image_mobile_url: string | null
+  link_url: string | null
+  position: string
+  sort_order: number
+  is_active: boolean
+  starts_at: string | null
+  ends_at: string | null
+}) {
   await requireAdmin()
   return bannerService.adminCreateBanner(bannerData)
 }

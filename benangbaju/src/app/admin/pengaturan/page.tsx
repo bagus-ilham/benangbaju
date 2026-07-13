@@ -10,22 +10,22 @@ import {
 } from '@/app/admin/hooks/useAdmin'
 import type { SiteSetting } from '@/modules/settings/types'
 import {
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Button,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Input,
   AdminPageHeader,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ClientDateTime,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Tabs,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   TabsList,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   TabsTrigger,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DataTable,
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
 } from '@/shared/components'
 import { Settings, ClipboardList } from 'lucide-react'
@@ -150,7 +150,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
       }
       seedSettings()
     } else {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFields((prev) => {
         if (Object.keys(prev).length > 0) return prev
         const dict: Record<string, string> = {}
@@ -160,7 +160,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
         return dict
       })
     }
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsList, settingsLoading])
 
   const handleFieldChange = (key: string, value: string) => {
@@ -184,7 +184,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
         })
         setFields(dict)
       }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal menyimpan pengaturan', { id: 'save-settings' })
     }

@@ -3,7 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2026-07-13
+
 ### Added
+
 - **Security**: Atomic rate limit RPC via `atomic_rate_limit.sql` to prevent race conditions in `proxy.ts`. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Security**: Transactional `replace_cart_items` RPC via `cart_replace_transaction.sql` for safe cart replacements. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Security**: RLS policy for `return_requests` via `return_requests_rls.sql` to protect bank data. ([#42](https://github.com/aulia/benangbaju/pull/42))
@@ -17,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - **Schema**: Casted monetary columns to `numeric` in `product_variants`, `flash_sale_items`, `shipping_rates`. ([#42](https://github.com/aulia/benangbaju/pull/42))
 
 ### Changed
+
 - **Optimization**: Resolved N+1 query problem in `product.repository.ts` by removing serial fetches. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Optimization**: Extracted cart mapping logic in `cart.service.ts` to `mapDbCartItemToLocal`. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Bugfix**: Improved TOCTOU mitigation in checkout to check `variant_id` identity. ([#42](https://github.com/aulia/benangbaju/pull/42))
@@ -25,6 +28,7 @@ All notable changes to this project will be documented in this file.
 - **Security**: Tightened `next.config.ts` CSP by removing broad wildcards (`https://*`). ([#42](https://github.com/aulia/benangbaju/pull/42))
 
 ### Added (Previous)
+
 - **Security**: Added PostgreSQL `CHECK` constraints via `add_check_constraints.sql` for money and dates. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Security**: Upgraded CSP in `next.config.ts` (removed `unsafe-eval`). ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Idempotency**: Added unique constraint via `webhook_idempotency.sql` to prevent duplicate payment webhooks. ([#42](https://github.com/aulia/benangbaju/pull/42))
@@ -35,6 +39,7 @@ All notable changes to this project will be documented in this file.
 - **Utils**: Added unified `formatRupiah` in `src/shared/utils/currency.ts`. ([#42](https://github.com/aulia/benangbaju/pull/42))
 
 ### Changed
+
 - **Rate Limiting**: Migrated from memory-based to Edge (Supabase) in `rate_limit.sql` and `proxy.ts`. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Security**: Hardened inventory sync API (`src/proxy.ts`) using `crypto.timingSafeEqual` to prevent timing attacks. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Resilience**: Added a 10-second global fetch timeout to Supabase Client and Server instances to fail fast during outages. ([#42](https://github.com/aulia/benangbaju/pull/42))
@@ -44,6 +49,7 @@ All notable changes to this project will be documented in this file.
 - **Cleanup**: Moved JS scripts to `scripts/` directory. ([#42](https://github.com/aulia/benangbaju/pull/42))
 
 ### Removed
+
 - **Type Safety**: Purged `any` types from Dashboard components and Supabase parsers. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Cleanup**: Removed unused Supabase client initializations in API routes to save edge resources. ([#42](https://github.com/aulia/benangbaju/pull/42))
 - **Cleanup**: Removed dead backward compatibility exports from `product.service.ts`. ([#42](https://github.com/aulia/benangbaju/pull/42))

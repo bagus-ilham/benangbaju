@@ -8,7 +8,7 @@ export interface CartItemDbData {
 export class CartRepository {
   async getOrCreateCartId(userId: string): Promise<string> {
     const supabase = await createServerClient()
-    
+
     // Atomic UPSERT prevents race conditions
     const { data: cart, error } = await supabase
       .from('carts')
@@ -57,13 +57,10 @@ export class CartRepository {
 
   async replaceItems(cartId: string, items: CartItemDbData[]) {
     const supabase = await createServerClient()
-    
+
     if (items.length === 0) {
       // Just delete all if items array is empty
-      const { error: delError } = await supabase
-        .from('cart_items')
-        .delete()
-        .eq('cart_id', cartId)
+      const { error: delError } = await supabase.from('cart_items').delete().eq('cart_id', cartId)
       if (delError) throw delError
       return
     }
@@ -85,10 +82,7 @@ export class CartRepository {
       .maybeSingle()
 
     if (cart) {
-      const { error } = await supabase
-        .from('cart_items')
-        .delete()
-        .eq('cart_id', cart.id)
+      const { error } = await supabase.from('cart_items').delete().eq('cart_id', cart.id)
 
       if (error) throw error
     }

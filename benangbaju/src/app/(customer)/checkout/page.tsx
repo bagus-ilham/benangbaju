@@ -105,7 +105,7 @@ export default function CheckoutPage(): React.JSX.Element {
 
   // 4. Fetch Addresses
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
-// eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const addresses = addressesRes?.data || []
 
   // Fetch available active vouchers
@@ -129,7 +129,7 @@ export default function CheckoutPage(): React.JSX.Element {
   useEffect(() => {
     if (addresses && addresses.length > 0) {
       const defaultAddr = addresses.find((a) => a.is_default) || addresses[0]
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedAddress(defaultAddr)
     }
   }, [addresses])
@@ -164,12 +164,11 @@ export default function CheckoutPage(): React.JSX.Element {
   // Calculate total weight - wait until variantDetails is fetched to avoid double fetching shipping rates
   const totalWeight = useMemo(() => {
     if (!variantDetails) return 0
-    
+
     return displayItems.reduce((acc, item) => {
-     
       const detail = variantDetails.find((v) => v.id === item.variantId) as any
       const product = Array.isArray(detail?.products) ? detail.products[0] : detail?.products
-      
+
       const weight = detail?.weight_gram ?? product?.weight_gram ?? 1000
       return acc + (Number(weight) || 1000) * (item.quantity || 1)
     }, 0)
@@ -234,7 +233,7 @@ export default function CheckoutPage(): React.JSX.Element {
         toast.error(result.error?.message || 'Voucher tidak valid')
         setAppliedVoucher(null)
       }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Gagal memvalidasi voucher')
     } finally {
@@ -278,7 +277,7 @@ export default function CheckoutPage(): React.JSX.Element {
       })
 
       const orderNumber = orderRes.order_number
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const orderId = orderRes.order_id
 
       toast.success('Pesanan berhasil dibuat, memproses pembayaran...')
@@ -305,14 +304,13 @@ export default function CheckoutPage(): React.JSX.Element {
             router.push(`/pesanan/${orderNumber}?verifying=1`)
           },
 
-     
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           onPending: function (result: any) {
             toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
             router.push(`/pesanan/${orderNumber}`)
           },
-     
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           onError: function (result: any) {
             toast.error('Pembayaran gagal! Silakan coba lagi nanti.')
             router.push(`/pesanan/${orderNumber}`)
@@ -326,7 +324,6 @@ export default function CheckoutPage(): React.JSX.Element {
           window.location.href = redirect_url
         }
       }
-     
     } catch (err: any) {
       console.error(err)
       toast.error(err.message || 'Terjadi kesalahan saat memproses pesanan')
@@ -337,8 +334,6 @@ export default function CheckoutPage(): React.JSX.Element {
   const isCheckoutProcessing =
     createOrderMutation.isPending || generatePaymentTokenMutation.isPending
 
- 
-   
   const isCheckoutInitiated = checkoutInitiated.current
 
   if (

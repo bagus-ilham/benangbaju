@@ -193,7 +193,10 @@ export class CmsRepository {
     landingPage: Partial<Omit<LandingPage, 'id' | 'created_at' | 'updated_at'>>
   ): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
-    const { error } = await supabase.from('landing_pages').update(landingPage).eq('id', landingPageId)
+    const { error } = await supabase
+      .from('landing_pages')
+      .update(landingPage)
+      .eq('id', landingPageId)
 
     if (error) {
       safeLogError('Error updating landing page:', error)

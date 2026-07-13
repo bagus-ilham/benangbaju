@@ -3,9 +3,17 @@ import { updateSession } from '@/lib/supabase/middleware'
 
 import { createServerClient } from '@supabase/ssr'
 
-async function checkRateLimit(request: NextRequest, ip: string, route: string, maxRequests: number, windowSec: number): Promise<boolean> {
+async function checkRateLimit(
+  request: NextRequest,
+  ip: string,
+  route: string,
+  maxRequests: number,
+  windowSec: number
+): Promise<boolean> {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.warn('SUPABASE_SERVICE_ROLE_KEY is missing. Rate limiting requires service role to operate securely.')
+    console.warn(
+      'SUPABASE_SERVICE_ROLE_KEY is missing. Rate limiting requires service role to operate securely.'
+    )
     // If we fail open here, we lose rate limit protection but keep app running.
     // For strict security, we could return false (fail close).
     return true
@@ -41,10 +49,10 @@ async function timingSafeEqual(a: string, b: string): Promise<boolean> {
   const enc = new TextEncoder()
   const aHash = await crypto.subtle.digest('SHA-256', enc.encode(a))
   const bHash = await crypto.subtle.digest('SHA-256', enc.encode(b))
-  
+
   const aArr = new Uint8Array(aHash)
   const bArr = new Uint8Array(bHash)
-  
+
   let result = 0
   for (let i = 0; i < aArr.length; i++) {
     result |= aArr[i] ^ bArr[i]
@@ -92,7 +100,6 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     if (pathname.startsWith('/api/v1/inventory/sync')) {
       const apiKey = request.headers.get('x-api-key') || ''
       const validKey = process.env.ERP_API_KEY || ''
- 
 
       let isAuthorized = false
       if (apiKey.length > 0 && validKey.length > 0) {
@@ -100,7 +107,6 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
       }
 
       if (!isAuthorized) {
- 
         return NextResponse.json(
           {
             success: false,

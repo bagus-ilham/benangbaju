@@ -35,7 +35,7 @@ interface FlashSaleFormModalProps {
   isOpen: boolean
   onClose: () => void
   editingCampaign: AdminFlashSaleListItem | null
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit: (payload: any) => Promise<void>
   allVariants: VariantSimple[]
 
@@ -217,7 +217,7 @@ export function FlashSaleFormModal({
                   const url = await uploadImage(file, 'banners')
                   setBannerUrl(url)
                   toast.success('Banner berhasil diunggah', { id: 'upload-banner' })
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (err) {
                   toast.error('Gagal mengunggah banner', { id: 'upload-banner' })
                 }

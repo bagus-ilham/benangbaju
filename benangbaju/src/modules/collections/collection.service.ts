@@ -3,10 +3,7 @@ import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 import type { Collection, AdminCollectionItem } from './types'
 
 export class CollectionService {
-  async getActiveCollections(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<Collection>> {
+  async getActiveCollections(page = 1, limit = 20): Promise<ApiListResponse<Collection>> {
     return collectionRepository.getActiveCollections(page, limit)
   }
 
@@ -14,10 +11,7 @@ export class CollectionService {
     return collectionRepository.getCollectionBySlug(slug)
   }
 
-  async adminGetCollections(
-    page = 1,
-    limit = 20
-  ): Promise<ApiListResponse<AdminCollectionItem>> {
+  async adminGetCollections(page = 1, limit = 20): Promise<ApiListResponse<AdminCollectionItem>> {
     return collectionRepository.adminGetCollections(page, limit)
   }
 

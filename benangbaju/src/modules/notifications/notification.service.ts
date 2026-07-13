@@ -12,10 +12,7 @@ export class NotificationService {
     return notificationRepository.getUserNotifications(userId, page, limit)
   }
 
-  async markNotificationRead(
-    notificationId: string,
-    userId: string
-  ): Promise<ApiResponse<void>> {
+  async markNotificationRead(notificationId: string, userId: string): Promise<ApiResponse<void>> {
     return notificationRepository.markNotificationRead(notificationId, userId)
   }
 

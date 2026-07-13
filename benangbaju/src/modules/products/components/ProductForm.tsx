@@ -134,7 +134,7 @@ export function ProductForm({
   }
 
   const handleToggleCollection = (id: string, isChecked: boolean) => {
-// eslint-disable-next-line react-hooks/incompatible-library
+    // eslint-disable-next-line react-hooks/incompatible-library
     const current = watch('collectionIds')
     if (isChecked) {
       setValue('collectionIds', [...current, id])
@@ -359,7 +359,7 @@ export function ProductForm({
       compare_price: v.compare_price ?? null,
       weight_gram: v.weight_gram ?? null,
       attrs: v.attrs.filter((a) => a.attr_name.trim() !== '' && a.attr_value.trim() !== ''),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     })) as any
 
     const payload: ProductPayload = {
@@ -378,17 +378,21 @@ export function ProductForm({
         care_guide: data.productData.care_guide?.trim() || null,
       },
       variants: cleanedVariants,
-      images: data.images.filter((img) => img.url.trim() !== '').map(img => ({
-        ...img,
-        alt_text: img.alt_text ?? null,
-        variant_id: img.variant_id ?? null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      })) as any,
-      links: data.links.filter((link) => link.url.trim() !== '').map(link => ({
-        ...link,
-        label: link.label ?? null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      })) as any,
+      images: data.images
+        .filter((img) => img.url.trim() !== '')
+        .map((img) => ({
+          ...img,
+          alt_text: img.alt_text ?? null,
+          variant_id: img.variant_id ?? null,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        })) as any,
+      links: data.links
+        .filter((link) => link.url.trim() !== '')
+        .map((link) => ({
+          ...link,
+          label: link.label ?? null,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        })) as any,
       collectionIds: data.collectionIds,
     }
 
@@ -402,7 +406,7 @@ export function ProductForm({
     }
   }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleInvalidSubmit = (errors: any) => {
     console.error('Form validation errors:', errors)
     // Display the first error message
@@ -474,9 +478,9 @@ export function ProductForm({
           />
 
           <ProductVariantsSection
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             variants={variants as any}
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             images={images as any}
             onAddVariant={handleAddVariant}
             onUpdateVariantField={handleUpdateVariantField}
@@ -493,9 +497,9 @@ export function ProductForm({
 
         <div className="space-y-8">
           <ProductImageManager
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             images={images as any}
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             variants={variants as any}
             onAddImage={handleAddImage}
             onRemoveImage={handleRemoveImage}
@@ -503,7 +507,7 @@ export function ProductForm({
           />
 
           <ProductMarketplaceLinks
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             marketplaceLinks={links as any}
             onAddLink={handleAddLink}
             onRemoveLink={handleRemoveLink}

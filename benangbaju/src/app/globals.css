@@ -4,15 +4,15 @@
   --font-sans: var(--font-mulish), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-mulish), ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-black: #1A1A1A;
-  --color-brand-dark: #3F3F3F;
-  --color-brand-gray: #D1D3D4;
-  --color-brand-light: #FAFAFA;
-  --color-brand-cream: #F8F9FA;
-  --color-brand-beige: #E9ECEF;
+  --color-brand-black: #1a1a1a;
+  --color-brand-dark: #3f3f3f;
+  --color-brand-gray: #d1d3d4;
+  --color-brand-light: #fafafa;
+  --color-brand-cream: #f8f9fa;
+  --color-brand-beige: #e9ecef;
   --color-brand-gold: #495057;
-  --color-brand-gold-light: #6C757D;
-  --color-brand-gold-muted: #F1F3F5;
+  --color-brand-gold-light: #6c757d;
+  --color-brand-gold-muted: #f1f3f5;
 
   --color-success: #065f46;
   --color-success-bg: #ecfdf5;

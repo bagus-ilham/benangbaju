@@ -60,7 +60,7 @@ export default async function CollectionDetailPage({
     ])
     collection = colRes
     products = prodRes.data || []
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     notFound()
   }
@@ -119,8 +119,9 @@ export default async function CollectionDetailPage({
             {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               products.map((product: any) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+                <ProductCard key={product.id} product={product} />
+              ))
+            }
           </div>
         )}
       </PageContainer>

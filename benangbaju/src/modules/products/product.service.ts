@@ -7,8 +7,6 @@ import { mapCategory, mapVariants, mapImages, mapProductListItem } from './produ
 import { parseOneToMany } from '@/shared/utils/supabase-parser'
 import { ProductFilters, ProductListItem, ProductDetailItem } from './types'
 
-
-
 export class ProductService {
   async getProducts(filters: ProductFilters = {}): Promise<ApiListResponse<ProductListItem>> {
     try {
@@ -36,7 +34,7 @@ export class ProductService {
       const product_variants = mapVariants(data.product_variants)
       const sortedImages = mapImages(data.product_images)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const linksList = parseOneToMany<any>(data.product_marketplace_links)
       const product_marketplace_links = linksList.map((link) => ({
         id: link.id,
@@ -45,7 +43,7 @@ export class ProductService {
         label: link.label,
       }))
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const summaryList = parseOneToMany<any>(data.product_rating_summary)
       const firstSummary = summaryList[0] || null
       const product_rating_summary = firstSummary

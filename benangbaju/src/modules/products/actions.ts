@@ -29,7 +29,9 @@ export async function getRelatedProductsAction(productId: string, categoryId: st
   return productService.getRelatedProducts(productId, categoryId, limit)
 }
 
-export async function adminGetProductsAction(params: { page?: number; limit?: number; search?: string } = {}) {
+export async function adminGetProductsAction(
+  params: { page?: number; limit?: number; search?: string } = {}
+) {
   await requireAdmin()
   return adminProductService.getProducts(params)
 }
@@ -42,7 +44,13 @@ export async function adminCreateProductAction(
   collectionIds: string[] = []
 ) {
   await requireAdmin()
-  const res = await adminProductService.createProduct(productData, variants, images, marketplaceLinks, collectionIds)
+  const res = await adminProductService.createProduct(
+    productData,
+    variants,
+    images,
+    marketplaceLinks,
+    collectionIds
+  )
   if (!res.success) throw new Error(res.error?.message)
   return res.data!
 }
@@ -56,7 +64,14 @@ export async function adminUpdateProductAction(
   collectionIds: string[] = []
 ) {
   await requireAdmin()
-  const res = await adminProductService.updateProduct(productId, productData, variants, images, marketplaceLinks, collectionIds)
+  const res = await adminProductService.updateProduct(
+    productId,
+    productData,
+    variants,
+    images,
+    marketplaceLinks,
+    collectionIds
+  )
   if (!res.success) throw new Error(res.error?.message)
   return res.data!
 }

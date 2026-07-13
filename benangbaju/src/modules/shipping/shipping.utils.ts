@@ -10,11 +10,14 @@ export type CartItemWithWeight = {
   }
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function validateAndGetShippingRate(zoneId: any, totalWeight: number, params: CreateOrderParams) {
+export async function validateAndGetShippingRate(
+  zoneId: any,
+  totalWeight: number,
+  params: CreateOrderParams
+) {
   const shippingRes = await shippingService.calculateShippingRates(zoneId, totalWeight)
-  if (!shippingRes.success || !shippingRes.data) return undefined;
+  if (!shippingRes.success || !shippingRes.data) return undefined
   const validRates = shippingRes.data
 
   return params.shippingRateId
@@ -28,10 +31,10 @@ export function calculateCartWeight(cartItems: CartItemWithWeight[]): number {
   return cartItems.reduce((acc, item) => {
     const variant = item.product_variants
     const product = Array.isArray(variant?.products) ? variant.products[0] : variant?.products
-    
+
     const weight = variant?.weight_gram ?? product?.weight_gram ?? DEFAULT_WEIGHT_GRAM
     const parsedWeight = Number(weight) || DEFAULT_WEIGHT_GRAM
-    
-    return acc + (parsedWeight * (item.quantity || 1))
+
+    return acc + parsedWeight * (item.quantity || 1)
   }, 0)
 }

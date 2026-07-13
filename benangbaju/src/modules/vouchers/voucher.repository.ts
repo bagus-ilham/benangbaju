@@ -31,7 +31,7 @@ export class VoucherRepository {
         discount_amount,
         final_total,
         message,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } = data as Record<string, any>
 
       if (!success || !valid) {
@@ -51,10 +51,7 @@ export class VoucherRepository {
     throw new Error('Format respon voucher tidak valid.')
   }
 
-  async adminGetVouchers(
-    page = 1,
-    limit = 20
-  ): Promise<{ data: Voucher[]; count: number }> {
+  async adminGetVouchers(page = 1, limit = 20): Promise<{ data: Voucher[]; count: number }> {
     const supabase = await createServerClient()
     const from = (page - 1) * limit
     const to = from + limit - 1
@@ -75,21 +72,19 @@ export class VoucherRepository {
     return { data: (data as Voucher[]) || [], count: count || 0 }
   }
 
-  async adminCreateVoucher(
-    voucherData: {
-      code: string
-      name: string
-      discount_type: 'percentage' | 'fixed'
-      value: number
-      min_purchase: number
-      max_discount: number | null
-      usage_limit: number | null
-      usage_per_user: number
-      is_active: boolean
-      starts_at: string
-      expires_at: string
-    }
-  ): Promise<Voucher> {
+  async adminCreateVoucher(voucherData: {
+    code: string
+    name: string
+    discount_type: 'percentage' | 'fixed'
+    value: number
+    min_purchase: number
+    max_discount: number | null
+    usage_limit: number | null
+    usage_per_user: number
+    is_active: boolean
+    starts_at: string
+    expires_at: string
+  }): Promise<Voucher> {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('vouchers')

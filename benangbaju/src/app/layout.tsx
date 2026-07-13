@@ -28,11 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>): React.JSX.Element {
   return (
-    <html
-      lang="id"
-      className={`${mulish.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
+    <html lang="id" className={`${mulish.variable} h-full antialiased`} suppressHydrationWarning>
       <body
         className="min-h-full flex flex-col font-sans bg-neutral-50 text-neutral-900 selection:bg-neutral-900 selection:text-white"
         suppressHydrationWarning

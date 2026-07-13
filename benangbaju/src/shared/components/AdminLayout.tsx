@@ -54,12 +54,18 @@ const menuItems = [
   { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
 ]
 
-const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null, isMobile?: boolean }) => {
+const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?: boolean }) => {
   if (isMobile) {
     return logoUrl ? (
       <div className="flex items-center space-x-2">
         <div className="relative h-6 w-20">
-          <NextImage src={logoUrl} alt="Logo" fill sizes="80px" className="object-contain object-left" />
+          <NextImage
+            src={logoUrl}
+            alt="Logo"
+            fill
+            sizes="80px"
+            className="object-contain object-left"
+          />
         </div>
         <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
           CMS
@@ -75,20 +81,35 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null, isMobile?
   return logoUrl ? (
     <Link href="/admin" className="flex items-center space-x-2">
       <div className="relative h-8 w-24">
-        <NextImage src={logoUrl} alt="Logo" fill sizes="96px" className="object-contain object-left" />
+        <NextImage
+          src={logoUrl}
+          alt="Logo"
+          fill
+          sizes="96px"
+          className="object-contain object-left"
+        />
       </div>
       <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
         CMS
       </span>
     </Link>
   ) : (
-    <Link href="/admin" className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
+    <Link
+      href="/admin"
+      className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase"
+    >
       BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
     </Link>
   )
 }
 
-const SidebarFooter = ({ onLogout, onNavigate }: { onLogout: () => void, onNavigate?: () => void }) => {
+const SidebarFooter = ({
+  onLogout,
+  onNavigate,
+}: {
+  onLogout: () => void
+  onNavigate?: () => void
+}) => {
   return (
     <div className="flex-shrink-0 p-4 border-t border-neutral-200 bg-brand-cream/50">
       <Link
