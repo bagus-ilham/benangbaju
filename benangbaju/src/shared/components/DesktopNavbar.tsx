@@ -51,10 +51,10 @@ export function DesktopNavbar({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 w-full border-b bg-white/95 backdrop-blur-md transition-all duration-300',
+        'sticky top-0 z-40 w-full transition-all duration-300 border-b',
         isScrolled
-          ? 'border-neutral-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
-          : 'border-neutral-100'
+          ? 'bg-white/95 backdrop-blur-md border-neutral-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
+          : 'bg-transparent border-transparent'
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
