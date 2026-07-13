@@ -13,6 +13,7 @@ import { safeLogError } from '@/lib/logger'
 import { getProductsAction } from '@/modules/products/actions'
 import { type ProductListItem } from '@/modules/products/types'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
 interface SearchOverlayProps {
   isOpen: boolean
@@ -26,6 +27,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [instantResults, setInstantResults] = useState<ProductListItem[]>([])
   const [isSearchingInstant, setIsSearchingInstant] = useState(false)
+
+  const overlayRef = React.useRef<HTMLDivElement>(null)
+  useFocusTrap(isOpen, overlayRef, { onClose })
 
   useEffect(() => {
     if (!isOpen || searchQuery.trim().length < 2) {
@@ -73,6 +77,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           <div className="absolute inset-0 -z-10" onClick={onClose} />
 
           <motion.div
+            ref={overlayRef}
             initial={{ y: -50, scale: 0.95 }}
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.95 }}

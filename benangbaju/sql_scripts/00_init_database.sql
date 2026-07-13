@@ -836,3 +836,30 @@ $$;
 -- Note: Untuk menjalankan fungsi ini secara otomatis, Anda bisa mengaktifkan ekstensi pg_cron di Supabase
 -- CREATE EXTENSION IF NOT EXISTS pg_cron;
 -- SELECT cron.schedule('0 0 * * *', $$SELECT clean_old_logs()$$);
+
+
+-- ==========================================
+-- LEDGER SCHEMA FIX MIGRATION (V4 - MISSING TABLES & CLEANUP)
+-- ==========================================
+
+BEGIN;
+
+-- 1. Add checkout_locks table for concurrency control
+CREATE TABLE IF NOT EXISTS public.checkout_locks (
+    user_id UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Drop session_id from carts (Guest cart is not implemented)
+ALTER TABLE public.carts DROP COLUMN IF EXISTS session_id;
+
+COMMIT;
+
+-- 3. Create function to clean up stale checkout locks (> 5 mins)
+CREATE OR REPLACE FUNCTION public.cleanup_checkout_locks()
+RETURNS void AS 
+BEGIN
+    DELETE FROM public.checkout_locks 
+    WHERE created_at < NOW() - INTERVAL '5 minutes';
+END;
+ LANGUAGE plpgsql;

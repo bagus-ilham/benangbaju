@@ -11,8 +11,26 @@ export class AdminOrderService {
     params: { status?: string; search?: string; page?: number; limit?: number } = {}
   ): Promise<ApiListResponse<AdminOrderListItem>> {
     try {
-      const { page = 1, limit = 20 } = params
-      const { data, count } = await orderRepository.adminFindMany(params)
+      const { page = 1, limit = 20, status = 'all', search = '' } = params
+      const offset = (page - 1) * limit
+      
+      let escapedSearch = ''
+      if (search) {
+        escapedSearch = search
+          .replace(/\\/g, '\\\\')
+          .replace(/%/g, '\\%')
+          .replace(/_/g, '\\_')
+          .replace(/,/g, '\\,')
+          .replace(/\(/g, '\\(')
+          .replace(/\)/g, '\\)')
+      }
+
+      const { data, count } = await orderRepository.adminFindMany({
+        status,
+        escapedSearch,
+        offset,
+        limit,
+      })
 
       if (!data) return paginated([], 0, page, limit)
 

@@ -1,12 +1,9 @@
+import { isObject } from '@/lib/utils/validation'
 import { safeLogError } from '@/lib/logger'
 import { UserAddress, District, ShippingOption } from './types'
 import { ApiResponse, ok, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 import { shippingRepository } from './shipping.repository'
-
-function isObject(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null && !Array.isArray(val)
-}
 
 export class ShippingService {
   async getUserAddresses(userId: string): Promise<ApiResponse<UserAddress[]>> {

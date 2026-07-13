@@ -54,3 +54,5 @@ export const SOCIAL_LINKS = {
   whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || 'https://wa.me/6281234567890',
   shopee: process.env.NEXT_PUBLIC_SOCIAL_SHOPEE || 'https://shopee.co.id/benangbaju',
 } as const
+
+export const DEFAULT_WEIGHT_GRAM = 1000

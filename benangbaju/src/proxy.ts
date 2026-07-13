@@ -4,9 +4,16 @@ import { updateSession } from '@/lib/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 
 async function checkRateLimit(request: NextRequest, ip: string, route: string, maxRequests: number, windowSec: number): Promise<boolean> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn('SUPABASE_SERVICE_ROLE_KEY is missing. Rate limiting requires service role to operate securely.')
+    // If we fail open here, we lose rate limit protection but keep app running.
+    // For strict security, we could return false (fail close).
+    return true
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
@@ -30,11 +37,17 @@ async function checkRateLimit(request: NextRequest, ip: string, route: string, m
   return data === true
 }
 
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false
+async function timingSafeEqual(a: string, b: string): Promise<boolean> {
+  const enc = new TextEncoder()
+  const aHash = await crypto.subtle.digest('SHA-256', enc.encode(a))
+  const bHash = await crypto.subtle.digest('SHA-256', enc.encode(b))
+  
+  const aArr = new Uint8Array(aHash)
+  const bArr = new Uint8Array(bHash)
+  
   let result = 0
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  for (let i = 0; i < aArr.length; i++) {
+    result |= aArr[i] ^ bArr[i]
   }
   return result === 0
 }
@@ -71,7 +84,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     if (!allowed) {
       return NextResponse.json(
         { success: false, error: { code: 'RATE_LIMITED', message: 'Terlalu banyak permintaan' } },
-        { status: 429 }
+        { status: 429, headers: { 'x-api-version': '1.0' } }
       )
     }
 
@@ -83,7 +96,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
       let isAuthorized = false
       if (apiKey.length > 0 && validKey.length > 0) {
-        isAuthorized = timingSafeEqual(apiKey, validKey)
+        isAuthorized = await timingSafeEqual(apiKey, validKey)
       }
 
       if (!isAuthorized) {
@@ -93,14 +106,20 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
             success: false,
             error: { code: 'UNAUTHORIZED', message: 'Invalid or missing API Key' },
           },
-          { status: 401 }
+          { status: 401, headers: { 'x-api-version': '1.0' } }
         )
       }
     }
   }
 
   // Continue to updateSession (which internally creates response and passes through)
-  return await updateSession(request)
+  const response = await updateSession(request)
+
+  if (pathname.startsWith('/api/v1/')) {
+    response.headers.set('x-api-version', '1.0')
+  }
+
+  return response
 }
 
 export const config = {

@@ -10,7 +10,7 @@ export async function GET() {
     info: {
       title: 'Benangbaju API',
       version: '1.0.0',
-      description: 'API endpoints for external consumers (Mobile App, ERP Sync)',
+      description: 'API endpoints for external consumers (Mobile App, ERP Sync).\n\n**Versioning & Deprecation Policy**:\nAll endpoints under `/api/v1` are guaranteed to be stable. If breaking changes are introduced, we will release a `/api/v2` namespace. Deprecated v1 endpoints will remain active for at least 6 months after a deprecation notice is published. All responses include the `x-api-version` header to explicitly state the active version.',
     },
     servers: [
       {
@@ -29,6 +29,15 @@ export async function GET() {
           type: 'apiKey',
           in: 'header',
           name: 'x-api-key',
+        },
+      },
+      headers: {
+        ApiVersionHeader: {
+          description: 'The API version of the response.',
+          schema: {
+            type: 'string',
+            example: '1.0',
+          },
         },
       },
       schemas: {
@@ -62,12 +71,17 @@ export async function GET() {
           parameters: [
             { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
             { name: 'limit', in: 'query', schema: { type: 'integer', default: 20 } },
-            { name: 'category', in: 'query', schema: { type: 'string' } },
-            { name: 'q', in: 'query', schema: { type: 'string' } },
+            { name: 'category', in: 'query', schema: { type: 'string' }, description: 'Category slug' },
+            { name: 'collection', in: 'query', schema: { type: 'string' }, description: 'Collection slug' },
+            { name: 'q', in: 'query', schema: { type: 'string' }, description: 'Search query' },
+            { name: 'sortBy', in: 'query', schema: { type: 'string', enum: ['newest', 'featured', 'price-low', 'price-high', 'popular'], default: 'newest' } },
           ],
           responses: {
             '200': {
               description: 'Successful response',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
               content: {
                 'application/json': { schema: { $ref: '#/components/schemas/SuccessResponse' } },
               },
@@ -78,7 +92,7 @@ export async function GET() {
       '/orders': {
         post: {
           summary: 'Create Order',
-          description: 'Create a new order. Required Bearer token.',
+          description: 'Create a new secure order. Requires Bearer token.',
           security: [{ BearerAuth: [] }],
           requestBody: {
             required: true,
@@ -87,13 +101,14 @@ export async function GET() {
                 schema: {
                   type: 'object',
                   properties: {
-                    items: { type: 'array', items: { type: 'object' } },
-                    shippingAddressId: { type: 'string' },
-                    courier: { type: 'string' },
-                    service: { type: 'string' },
-                    shippingCost: { type: 'integer' },
-                    paymentMethod: { type: 'string' },
+                    addressId: { type: 'string', description: 'UUID of the user address' },
+                    courierName: { type: 'string', description: 'Name of the courier (e.g., JNE, Sicepat)' },
+                    shippingCost: { type: 'integer', description: 'Shipping cost in Rupiah' },
+                    notes: { type: 'string', description: 'Optional order notes', nullable: true },
+                    voucherCode: { type: 'string', description: 'Optional voucher code', nullable: true },
+                    shippingRateId: { type: 'string', description: 'Optional UUID of the specific shipping rate', nullable: true },
                   },
+                  required: ['addressId', 'courierName', 'shippingCost']
                 },
               },
             },
@@ -101,12 +116,27 @@ export async function GET() {
           responses: {
             '201': {
               description: 'Order created',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
               content: {
                 'application/json': { schema: { $ref: '#/components/schemas/SuccessResponse' } },
               },
             },
+            '400': {
+              description: 'Validation Error',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
+              content: {
+                'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } },
+              },
+            },
             '401': {
               description: 'Unauthorized',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
               content: {
                 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } },
               },
@@ -138,6 +168,7 @@ export async function GET() {
                       },
                     },
                   },
+                  required: ['updates']
                 },
               },
             },
@@ -145,12 +176,27 @@ export async function GET() {
           responses: {
             '200': {
               description: 'Inventory synced successfully',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
               content: {
                 'application/json': { schema: { $ref: '#/components/schemas/SuccessResponse' } },
               },
             },
+            '400': {
+              description: 'Validation Error',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
+              content: {
+                'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } },
+              },
+            },
             '401': {
               description: 'Unauthorized - Invalid API Key',
+              headers: {
+                'x-api-version': { $ref: '#/components/headers/ApiVersionHeader' }
+              },
               content: {
                 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } },
               },

@@ -21,3 +21,7 @@ export function validatePostalCode(postalCode: string): boolean {
 export function validateRequired(value: string): boolean {
   return value.trim().length > 0
 }
+
+export function isObject(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null && !Array.isArray(val)
+}

@@ -11,6 +11,7 @@
     "test": "vitest run",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > src/shared/types/database.ts",
+    "audit:licenses": "npx license-checker --summary",
     "setup": "npm ci && npm run db:reset && npm run db:types"
   },
   "dependencies": {

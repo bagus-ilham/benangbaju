@@ -1,12 +1,9 @@
+import { isObject } from '@/lib/utils/validation'
 import { createServerClient } from '@/lib/supabase/server'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserAddress, District, ShippingOption, ShippingZone, ShippingRate } from './types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isObject(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null && !Array.isArray(val)
-}
-
 export class ShippingRepository {
   async getUserAddresses(userId: string) {
     const supabase = await createServerClient()

@@ -111,6 +111,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
   }
 
   // Idempotency / Double-Submit Lock (Database-backed)
+  // Clean up any stale locks (TTL 5 mins) before trying to acquire a new one
+  await supabase.rpc('cleanup_checkout_locks')
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error: lockError } = await supabase.from('checkout_locks' as any).insert({ user_id: user.id })
   if (lockError) {
@@ -164,9 +167,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
 
     // TOCTOU Fix: Verify item identities and quantities match
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const originalItemsStr = cartItems.map((i: any) => `${i.variant_id}:${i.quantity}`).sort().join(',')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const newItemsStr = newCartItems.map((i: any) => `${i.variant_id}:${i.quantity}`).sort().join(',')
+    const extractSort = (items: any[]) => items.map(i => ({ id: i.variant_id, q: i.quantity })).sort((a, b) => String(a.id).localeCompare(String(b.id)))
+    const originalItemsStr = JSON.stringify(extractSort(cartItems))
+    const newItemsStr = JSON.stringify(extractSort(newCartItems))
 
     if (totalWeight !== newTotalWeight || originalItemsStr !== newItemsStr) {
       return fail(ERROR_CODES.CART_CHANGED, 'Keranjang Anda telah berubah. Silakan ulangi proses checkout.')

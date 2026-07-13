@@ -1,3 +1,4 @@
+import { DEFAULT_WEIGHT_GRAM } from '@/lib/constants'
 import { shippingService } from './shipping.service'
 import type { CreateOrderParams } from '@/modules/orders/types'
 
@@ -9,12 +10,12 @@ export type CartItemWithWeight = {
   }
 }
 
-const DEFAULT_WEIGHT_GRAM = 1000
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function validateAndGetShippingRate(zoneId: any, totalWeight: number, params: CreateOrderParams) {
   const shippingRes = await shippingService.calculateShippingRates(zoneId, totalWeight)
-  const validRates = shippingRes.data || []
+  if (!shippingRes.success || !shippingRes.data) return undefined;
+  const validRates = shippingRes.data
 
   return params.shippingRateId
     ? validRates.find((r) => r.id === params.shippingRateId)

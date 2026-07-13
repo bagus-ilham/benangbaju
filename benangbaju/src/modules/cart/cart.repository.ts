@@ -9,35 +9,15 @@ export class CartRepository {
   async getOrCreateCartId(userId: string): Promise<string> {
     const supabase = await createServerClient()
     
-    // Get existing
-    const { data: cart } = await supabase
+    // Atomic UPSERT prevents race conditions
+    const { data: cart, error } = await supabase
       .from('carts')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle()
-
-    if (cart) return cart.id
-
-    // Create new
-    const { data: newCart, error } = await supabase
-      .from('carts')
-      .insert({ user_id: userId })
+      .upsert({ user_id: userId }, { onConflict: 'user_id', ignoreDuplicates: false })
       .select('id')
       .single()
 
-    if (error) {
-      // Possible race condition
-      const { data: retryCart } = await supabase
-        .from('carts')
-        .select('id')
-        .eq('user_id', userId)
-        .maybeSingle()
-        
-      if (retryCart) return retryCart.id
-      throw error
-    }
-
-    return newCart.id
+    if (error) throw error
+    return cart.id
   }
 
   async getCartItems(cartId: string) {

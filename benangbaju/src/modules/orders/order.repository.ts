@@ -1,27 +1,11 @@
+import { isObject } from '@/lib/utils/validation'
+import { invokeWithRetry } from '@/lib/utils/retry'
 import { createServerClient } from '@/lib/supabase/server'
 import { CreateOrderParams } from './types'
 
-function isObject(val: unknown): val is Record<string, unknown> {
-  return typeof val === 'object' && val !== null && !Array.isArray(val)
-}
-
  
      
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function invokeWithRetry(supabase: any, functionName: string, options: any, maxRetries = 3) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let lastError: any
-  let delayMs = 1000
-  for (let i = 0; i < maxRetries; i++) {
-    const { data, error } = await supabase.functions.invoke(functionName, options)
-    if (!error) return { data, error: null }
-    lastError = error
-    if (i === maxRetries - 1) break
-    await new Promise((resolve) => setTimeout(resolve, delayMs))
-    delayMs *= 2
-  }
-  return { data: null, error: lastError }
-}
+
 
 export class OrderRepository {
   async findMany(userId: string, status?: string, page = 1, limit = 10) {
@@ -137,28 +121,34 @@ export class OrderRepository {
 
   async generatePaymentToken(orderNumber: string) {
     const supabase = await createServerClient()
-    const { data, error } = await invokeWithRetry(supabase, 'generate-payment', {
-      body: { order_number: orderNumber },
+    return await invokeWithRetry(async () => {
+      const { data, error } = await supabase.functions.invoke('generate-payment', {
+        body: { order_number: orderNumber },
+        timeout: 15000,
+        headers: {
+          'Idempotency-Key': `payment_${orderNumber}`,
+        }
+      })
+      if (error) throw error
+      return data
     })
-
-    if (error) throw error
-    return data
   }
 
   async checkPaymentStatus(orderNumber: string) {
     const supabase = await createServerClient()
-    const { data, error } = await invokeWithRetry(supabase, 'check-payment-status', {
-      body: { order_number: orderNumber },
+    return await invokeWithRetry(async () => {
+      const { data, error } = await supabase.functions.invoke('check-payment-status', {
+        body: { order_number: orderNumber },
+        timeout: 10000,
+      })
+      if (error) throw error
+      return data
     })
-
-    if (error) throw error
-    return data
   }
 
-  async adminFindMany(params: { status?: string; search?: string; page?: number; limit?: number } = {}) {
+  async adminFindMany(params: { status?: string; escapedSearch?: string; offset?: number; limit?: number } = {}) {
     const supabase = await createServerClient()
-    const { status = 'all', search = '', page = 1, limit = 20 } = params
-    const offset = (page - 1) * limit
+    const { status = 'all', escapedSearch = '', offset = 0, limit = 20 } = params
 
     let query = supabase.from('orders').select(
       `
@@ -174,14 +164,7 @@ export class OrderRepository {
       query = query.eq('status', status)
     }
 
-    if (search) {
-      const escapedSearch = search
-        .replace(/\\/g, '\\\\')
-        .replace(/%/g, '\\%')
-        .replace(/_/g, '\\_')
-        .replace(/,/g, '\\,')
-        .replace(/\(/g, '\\(')
-        .replace(/\)/g, '\\)')
+    if (escapedSearch) {
       query = query.or(
         `order_number.ilike.%${escapedSearch}%,order_shipping.recipient_name.ilike.%${escapedSearch}%`
       )
@@ -201,6 +184,20 @@ export class OrderRepository {
     trackingNumber?: string
   ) {
     const supabase = await createServerClient()
+    
+    // State machine validation
+    const { data: order, error: fetchErr } = await supabase
+      .from('orders')
+      .select('status')
+      .eq('id', orderId)
+      .single()
+
+    if (fetchErr) throw fetchErr
+
+    const terminalStates = ['cancelled', 'completed', 'refunded']
+    if (terminalStates.includes(order.status)) {
+      throw new Error(`Invalid state transition: Cannot change status from ${order.status} to ${status}`)
+    }
     
     if (status === 'cancelled') {
       return this.cancel(orderId, 'Dibatalkan oleh Admin')

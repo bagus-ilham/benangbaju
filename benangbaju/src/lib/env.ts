@@ -8,7 +8,7 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_APP_URL',
 ] as const
 
-const serverEnvVars = ['MIDTRANS_SERVER_KEY', 'SUPABASE_SERVICE_ROLE_KEY'] as const
+const serverEnvVars = ['MIDTRANS_SERVER_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'ERP_API_KEY'] as const
 
 export function validateEnv(): void {
   const missing: string[] = requiredEnvVars.filter((key) => {

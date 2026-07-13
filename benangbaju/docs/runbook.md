@@ -35,8 +35,13 @@ Dokumen ini berisi panduan penanganan insiden operasional, prosedur pemulihan be
   3. Masukkan timestamp sebelum insiden terjadi.
   4. Periksa log *migration* untuk menemukan penyebab dan *revert* kode yang relevan.
 
-### 3.2 Migrasi Skema Darurat
-Gunakan `supabase migration up` dengan file migrasi hotfix. Bila perlu menggunakan SQL mentah untuk *bypass* migrasi, catat semua aktivitas pada `CHANGELOG.md` dan buat file `supabase_schema.txt` agar konsisten.
+### 3.2 Rollback & Down Migrations Policy
+- **Kebijakan**: Kami **TIDAK** menggunakan *down migrations* (misalnya `supabase migration down`). *Down migrations* berisiko tinggi menghapus data transaksi pelanggan secara tidak sengaja.
+- **Strategi Rollback**: Jika terjadi kegagalan skema di produksi, rollback **wajib** dilakukan menggunakan Supabase PITR (Point-in-Time Recovery). 
+- **Prasyarat**: Pastikan Supabase Backup Policy di *dashboard* diatur minimal **7 hari PITR aktif** untuk *environment* produksi.
+
+### 3.3 Migrasi Skema Darurat
+Gunakan `supabase migration up` dengan file migrasi hotfix (seperti `05_ledger_hotfix.sql`) untuk memperbaiki masalah secara *forward-only* (tanpa menghapus tabel lama). Bila perlu menggunakan SQL mentah untuk *bypass* migrasi, catat semua aktivitas pada `CHANGELOG.md` dan buat file `supabase_schema.txt` agar konsisten.
 
 ## 4. Escalation
 - Level 1: Backend Engineer On-call
