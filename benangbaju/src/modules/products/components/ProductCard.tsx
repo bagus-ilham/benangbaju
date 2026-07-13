@@ -70,7 +70,7 @@ export const ProductCard = React.memo(function ProductCard({
         <div
           className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
+          } max-w-sm w-full bg-white shadow-2xl rounded-xl overflow-hidden border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
         >
           <div className="flex-1 w-0 p-4">
             <div className="flex items-start">

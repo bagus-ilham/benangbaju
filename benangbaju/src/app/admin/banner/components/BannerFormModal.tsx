@@ -71,7 +71,7 @@ export function BannerFormModal({
                     fill
                     sizes="80px"
                     unoptimized
-                    className="object-cover"
+                    className="object-contain"
                     onError={(e) => {
                       e.currentTarget.src = 'https://placehold.co/150?text=Error'
                     }}
@@ -130,7 +130,7 @@ export function BannerFormModal({
               Gambar Mobile (Opsional)
             </span>
             <div className="flex gap-3 items-start">
-              <div className="w-12 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+              <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                 {image_mobile_url ? (
                   <Image
                     src={image_mobile_url}
@@ -138,7 +138,7 @@ export function BannerFormModal({
                     fill
                     sizes="40px"
                     unoptimized
-                    className="object-cover"
+                    className="object-contain"
                     onError={(e) => {
                       e.currentTarget.src = 'https://placehold.co/150?text=Error'
                     }}

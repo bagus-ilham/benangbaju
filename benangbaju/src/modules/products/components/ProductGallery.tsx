@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ProductImage } from '@/modules/products/types'
@@ -38,11 +38,14 @@ export function ProductGallery({
     return () => mql.removeEventListener('change', handler)
   }, [])
 
+  const prevVariantIdRef = useRef<string | null>(null)
+
   // Auto-switch active image when a variant is selected and has a matching variant_id image
   useEffect(() => {
-    if (selectedVariantId) {
+    if (selectedVariantId && selectedVariantId !== prevVariantIdRef.current) {
+      prevVariantIdRef.current = selectedVariantId
       const variantImage = images.find((img) => img.variant_id === selectedVariantId)
-      if (variantImage && variantImage.url !== activeImage) {
+      if (variantImage) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setDirection(1)
         setHasIntentToZoom(false) // Reset HD intent on image change
@@ -58,7 +61,7 @@ export function ProductGallery({
         }
       }
     }
-  }, [selectedVariantId, images, activeImage, isMobile])
+  }, [selectedVariantId, images, isMobile])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile) return // Disable zoom on mobile

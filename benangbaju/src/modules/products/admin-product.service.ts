@@ -37,7 +37,7 @@ export class AdminProductService {
         }
       })
 
-      return paginated(products, count || 0, page, limit)
+      return paginated(products, page, limit, count || 0)
     } catch (error) {
       safeLogError('Error in adminGetProducts:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat daftar produk')

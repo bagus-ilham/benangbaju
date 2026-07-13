@@ -125,6 +125,37 @@ export class CategoryRepository {
 
   async adminDeleteCategory(categoryId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
+    
+    // Pre-check for subcategories
+    const { count: subcategoriesCount, error: subError } = await supabase
+      .from('categories')
+      .select('*', { count: 'exact', head: true })
+      .eq('parent_id', categoryId)
+
+    if (subError) {
+      safeLogError('Error checking subcategories:', subError)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengecek sub-kategori')
+    }
+
+    if (subcategoriesCount && subcategoriesCount > 0) {
+      return fail(ApiErrorCode.VALIDATION_ERROR, 'Kategori tidak bisa dihapus karena masih memiliki sub-kategori')
+    }
+
+    // Pre-check for products
+    const { count: productsCount, error: prodError } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('category_id', categoryId)
+
+    if (prodError) {
+      safeLogError('Error checking products:', prodError)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengecek produk')
+    }
+
+    if (productsCount && productsCount > 0) {
+      return fail(ApiErrorCode.VALIDATION_ERROR, 'Kategori tidak bisa dihapus karena masih ada produk di dalamnya')
+    }
+
     // 1. Fetch images associated with this category to clean up storage
     const { data: category } = await supabase
       .from('categories')
@@ -134,8 +165,12 @@ export class CategoryRepository {
 
     // 2. Delete the physical image from Supabase Storage
     if (category && category.image_url) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-      await deleteImageByUrl(supabase, category.image_url, 'categories')
+      try {
+        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+        await deleteImageByUrl(supabase, category.image_url, 'categories')
+      } catch (err) {
+        safeLogError('Failed to delete category image, proceeding with DB deletion:', err)
+      }
     }
 
     // 3. Delete category record

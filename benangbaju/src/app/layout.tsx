@@ -9,7 +9,8 @@ import './globals.css'
 const mulish = Mulish({
   variable: '--font-mulish',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'],
+  style: ['normal', 'italic'],
 })
 
 export const metadata: Metadata = {
