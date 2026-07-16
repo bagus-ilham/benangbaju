@@ -18,7 +18,7 @@ export function TentangClient(): React.JSX.Element {
       <PageHero
         eyebrow="Kisah & Visi"
         title="Tentang Kami"
-        subtitle="Kenali perjalanan Benangbaju dalam menghadirkan fashion muslim premium modern."
+        subtitle="Kenali perjalanan Benangbaju sebagai brand fashion asal Bandung yang memadukan kesederhanaan dan gaya unik."
       />
 
       <PageContainer size="md" className="py-12 md:py-16 page-content">
@@ -28,16 +28,11 @@ export function TentangClient(): React.JSX.Element {
             className="space-y-6 text-sm leading-relaxed text-neutral-600 font-medium"
           >
             <p>
-              Didirikan dengan visi untuk menghadirkan alternatif pakaian muslim yang bersahaja
-              namun tetap berkarakter,{' '}
-              <span className="font-semibold text-brand-black">Benangbaju</span> lahir dari
-              perpaduan kecintaan terhadap tekstil berkualitas dan kebutuhan akan fashion yang
-              praktis serta elegan untuk wanita modern Indonesia.
+              Kami adalah brand fashion asal Bandung yang berdiri tahun 2021.
+              Sesuai dengan tagline kami, <span className="font-semibold text-brand-black">"Show How Really Well-Dressed You Are,"</span> Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.
             </p>
             <p>
-              Kami percaya bahwa kesederhanaan adalah bentuk kemewahan yang abadi. Oleh karena itu,
-              setiap koleksi kami dirancang dengan pendekatan desain minimalis modern, garis
-              potongan yang bersih, serta palet warna bumi yang netral dan menenangkan.
+              Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.
             </p>
           </motion.div>
 
@@ -87,7 +82,7 @@ export function TentangClient(): React.JSX.Element {
             className="border-t border-neutral-200 pt-10 text-center"
           >
             <p className="text-sm md:text-base font-heading font-light uppercase tracking-[0.2em] text-brand-black leading-relaxed">
-              &ldquo;Elegan dalam Kesederhanaan&rdquo;
+              &ldquo;Show How Really Well-Dressed You Are&rdquo;
             </p>
             <div className="accent-line accent-line-center mt-4" />
             <p className="text-[10px] text-neutral-400 uppercase tracking-widest font-heading mt-4">

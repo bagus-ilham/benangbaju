@@ -25,9 +25,9 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
   return (
     <div className="bg-white min-h-screen">
       <PageHero
-        eyebrow="Daftar Kategori"
-        title="Kategori Pilihan"
-        subtitle="Temukan koleksi busana muslim terbaik berdasarkan kategori pilihan Anda."
+        eyebrow="Kategori"
+        title="Jelajahi Kategori"
+        subtitle="Temukan koleksi pakaian sederhana namun unik berdasarkan kategori pilihan Anda."
       />
 
       <PageContainer className="py-12 md:py-16 page-content">

@@ -29,15 +29,14 @@ export function AuthLayout({ children }: AuthLayoutProps): React.JSX.Element {
           <div className="space-y-6 max-w-md">
             <div className="accent-line">
               <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold-light">
-                Fashion Muslim Premium
+                Show How Really Well-Dressed You Are
               </span>
             </div>
             <h1 className="text-3xl xl:text-4xl font-heading font-light uppercase tracking-wider text-white leading-tight">
               Elegan dalam Setiap Benang
             </h1>
             <p className="text-sm text-neutral-400 font-sans leading-relaxed">
-              Temukan koleksi busana muslim wanita dengan desain minimalis, bahan berkualitas
-              premium, dan kenyamanan sepanjang hari.
+              Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju yang mengedepankan kesederhanaan.
             </p>
           </div>
 

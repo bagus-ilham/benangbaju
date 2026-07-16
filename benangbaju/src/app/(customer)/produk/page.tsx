@@ -71,9 +71,9 @@ async function CatalogContent({
     return (
       <div className="bg-white min-h-screen">
         <PageHero
-          eyebrow="Katalog Busana"
-          title="Semua Produk"
-          subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
+          eyebrow="Katalog Pakaian"
+          title="Koleksi Kami"
+          subtitle="Jelajahi koleksi pakaian sederhana namun unik dari Benangbaju."
         />
         <PageContainer className="py-10 page-content">
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -111,9 +111,9 @@ export default function CatalogPage({ searchParams }: CatalogPageProps): React.J
       fallback={
         <div className="bg-white min-h-screen">
           <PageHero
-            eyebrow="Katalog Busana"
-            title="Semua Produk"
-            subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
+            eyebrow="Katalog Pakaian"
+            title="Koleksi Kami"
+            subtitle="Jelajahi koleksi pakaian sederhana namun unik dari Benangbaju."
           />
           <PageContainer className="py-10 page-content">
             <div className="flex flex-col md:flex-row md:space-x-8">

@@ -70,8 +70,7 @@ export function Footer(): React.JSX.Element {
                 </span>
               )}
               <p className="text-[11px] text-neutral-500 leading-relaxed max-w-xs font-sans">
-                Benangbaju menghadirkan fashion muslim premium modern untuk wanita Indonesia dengan
-                desain minimalis, bahan berkualitas, dan kenyamanan terbaik.
+                Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.
               </p>
             </div>
 
@@ -154,8 +153,8 @@ export function Footer(): React.JSX.Element {
               <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
                 Ikuti Kami
               </h4>
-              <p className="text-[11px] text-neutral-500 font-sans">
-                Temukan inspirasi gaya modest di media sosial kami.
+              <p className="text-[11px] text-neutral-400 font-sans mt-3">
+                Temukan inspirasi gaya unik di media sosial kami.
               </p>
               <div className="flex space-x-3 pt-1">
                 {instagramUrl && (

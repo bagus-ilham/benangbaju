@@ -38,7 +38,7 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
   {
     key: 'store_tagline',
-    value: 'Fashion Muslim Premium Indonesia',
+    value: 'Show How Really Well-Dressed You Are',
     type: 'text',
     group: 'general',
     label: 'Slogan Toko',
@@ -59,14 +59,14 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   },
   {
     key: 'meta_title',
-    value: 'Benangbaju — Fashion Muslim Premium Indonesia',
+    value: 'Benangbaju — Show How Really Well-Dressed You Are',
     type: 'text',
     group: 'seo',
     label: 'Meta Title Default',
   },
   {
     key: 'meta_description',
-    value: 'Belanja busana muslim premium dengan desain minimalis dan bahan berkualitas.',
+    value: 'Belanja koleksi pakaian sederhana namun unik dari Benangbaju.',
     type: 'text',
     group: 'seo',
     label: 'Meta Description Default',

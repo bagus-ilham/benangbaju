@@ -13,12 +13,12 @@ import { RecentlyViewedSection } from '@/modules/products/components/RecentlyVie
 export async function generateMetadata() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
   return {
-    title: 'Benangbaju - Premium Modest Fashion',
+    title: 'Benangbaju - Show How Really Well-Dressed You Are',
     description:
-      'Temukan koleksi modest fashion terbaik, kemeja linen, dan gaya busana premium di Benangbaju. Belanja mudah, cepat, dan aman.',
+      'Belanja koleksi pakaian sederhana namun unik dari Benangbaju. Belanja mudah, cepat, dan aman.',
     openGraph: {
-      title: 'Benangbaju - Premium Modest Fashion',
-      description: 'Temukan koleksi modest fashion terbaik di Benangbaju.',
+      title: 'Benangbaju - Show How Really Well-Dressed You Are',
+      description: 'Temukan koleksi pakaian sederhana namun unik di Benangbaju.',
       url: baseUrl,
       type: 'website',
     },

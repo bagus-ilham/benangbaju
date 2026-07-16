@@ -112,9 +112,9 @@ export function CatalogClient({
   return (
     <div className="bg-white min-h-screen">
       <PageHero
-        eyebrow="Katalog Busana"
-        title="Semua Produk"
-        subtitle="Jelajahi koleksi fashion muslim premium dengan desain minimalis dan bahan berkualitas."
+        eyebrow="Katalog Pakaian"
+        title={categorySlug ? 'Kategori Produk' : 'Koleksi Kami'}
+        subtitle="Jelajahi koleksi pakaian sederhana namun unik dari Benangbaju."
       />
       <PageContainer
         className={cn(

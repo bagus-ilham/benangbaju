@@ -107,7 +107,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   label="Kata kunci"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Masukkan kata kunci produk (cth: linen, kemeja, hijab)..."
+                  placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
+                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"
                   rightIcon={
                     <button type="submit" aria-label="Cari produk">
                       <Search className="h-4 w-4" />

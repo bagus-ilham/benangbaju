@@ -36,9 +36,9 @@ const mulish = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'),
-  title: 'Benangbaju — Fashion Muslim Premium Indonesia',
+  title: 'Benangbaju — Show How Really Well-Dressed You Are',
   description:
-    'Temukan koleksi busana muslim wanita premium, modern, dan elegan hanya di Benangbaju.',
+    'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
   icons: {
     icon: '/logo_favicon.PNG',
   },

@@ -5,7 +5,7 @@ import { TentangClient } from './TentangClient'
 export const metadata: Metadata = {
   title: 'Tentang Kami — Benangbaju',
   description:
-    'Kenali kisah di balik Benangbaju, produsen fashion muslim premium modern dengan desain minimalis, bahan berkualitas tinggi, dan kenyamanan terbaik.',
+    'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
 }
 
 export default function TentangPage(): React.JSX.Element {

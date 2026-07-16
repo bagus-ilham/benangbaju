@@ -7,7 +7,7 @@ import { PageHero, PageContainer } from '@/shared/components'
 export const metadata: Metadata = {
   title: 'Cara Belanja — Benangbaju',
   description:
-    'Ikuti panduan mudah cara berbelanja pakaian muslim premium di toko online Benangbaju.',
+    'Ikuti panduan mudah cara berbelanja produk dari Benangbaju secara online.',
 }
 
 const steps = [
