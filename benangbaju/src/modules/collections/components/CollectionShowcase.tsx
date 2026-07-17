@@ -21,6 +21,15 @@ export function CollectionShowcase({
   index = 0,
 }: CollectionShowcaseProps): React.JSX.Element {
   const isReversed = index % 2 === 1
+  const bgColor = isReversed ? 'bg-brand-black' : 'bg-white'
+  const textColor = isReversed ? 'text-white' : 'text-brand-black'
+  const textMuted = isReversed ? 'text-white/80' : 'text-brand-black/80'
+  const borderColor = isReversed ? 'border-white' : 'border-brand-black'
+  const btnBg = isReversed ? 'bg-white' : 'bg-brand-black'
+  const btnText = isReversed ? 'text-brand-black' : 'text-white'
+  const btnHover = isReversed ? 'hover:bg-neutral-200' : 'hover:bg-brand-dark'
+  const cardContainerClass = isReversed ? 'bg-white rounded p-2' : '' // For product card visibility
+
   const sliderRef = useRef<HTMLDivElement>(null)
 
   const scrollLeft = () => {
@@ -36,7 +45,7 @@ export function CollectionShowcase({
   }
 
   return (
-    <section className="relative w-full bg-[#f4f1ea] overflow-hidden">
+    <section className={cn('relative w-full overflow-hidden transition-colors duration-500', bgColor)}>
       <div
         className={cn(
           'flex flex-col lg:flex-row min-h-[600px] lg:h-[800px]',
@@ -66,17 +75,17 @@ export function CollectionShowcase({
           
           {/* Top Text */}
           <div className="max-w-xl mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-medium text-[#601b33] mb-6">
+            <h2 className={cn('text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 transition-colors duration-500', textColor)}>
               {collection.name}
             </h2>
             {collection.description && (
-              <p className="text-[#601b33]/80 font-sans text-sm md:text-base leading-relaxed mb-8">
+              <p className={cn('font-sans text-sm md:text-base leading-relaxed mb-8 transition-colors duration-500', textMuted)}>
                 {collection.description}
               </p>
             )}
             <Link
               href={`/koleksi/${collection.slug}`}
-              className="inline-block text-[#601b33] font-medium border-b border-[#601b33] pb-1 transition-opacity hover:opacity-70"
+              className={cn('inline-block font-medium border-b pb-1 transition-all hover:opacity-70', textColor, borderColor)}
             >
               Explore the {collection.name} Edit
             </Link>
@@ -90,19 +99,19 @@ export function CollectionShowcase({
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {products.map((product) => (
-                <div key={product.id} className="w-[200px] md:w-[260px] shrink-0 snap-start">
+                <div key={product.id} className={cn('w-[200px] md:w-[260px] shrink-0 snap-start', cardContainerClass)}>
                   <ProductCard product={product} />
                 </div>
               ))}
               
               {/* Optional "View More" card at the end */}
               {products.length > 0 && (
-                <div className="w-[200px] md:w-[260px] shrink-0 snap-start flex items-center justify-center bg-[#601b33]/5 group hover:bg-[#601b33]/10 transition-colors">
+                <div className="w-[200px] md:w-[260px] shrink-0 snap-start flex items-center justify-center group transition-colors">
                   <Link
                     href={`/koleksi/${collection.slug}`}
-                    className="flex flex-col items-center justify-center text-[#601b33] gap-2 h-full w-full py-20"
+                    className={cn('flex flex-col items-center justify-center gap-2 h-full w-full py-20', textColor)}
                   >
-                    <div className="p-4 rounded-full bg-[#601b33] text-[#f4f1ea] group-hover:scale-110 transition-transform">
+                    <div className={cn('p-4 rounded-full group-hover:scale-110 transition-transform shadow-sm', btnBg, btnText)}>
                       <ArrowRight className="w-5 h-5" />
                     </div>
                     <span className="font-medium text-sm">Lihat Semua</span>
@@ -115,16 +124,15 @@ export function CollectionShowcase({
             {products.length > 2 && (
               <div 
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 z-10 hidden lg:block",
-                  isReversed ? "left-0 -translate-x-1/2" : "right-0 translate-x-1/2"
+                  "absolute top-1/2 -translate-y-1/2 z-10 hidden lg:block right-0 translate-x-1/2"
                 )}
               >
                 <button
-                  onClick={isReversed ? scrollLeft : scrollRight}
-                  className="w-12 h-12 bg-[#601b33] text-[#f4f1ea] rounded-full flex items-center justify-center shadow-lg hover:bg-[#4a1527] transition-colors"
-                  aria-label={isReversed ? "Scroll Left" : "Scroll Right"}
+                  onClick={scrollRight}
+                  className={cn("w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-colors", btnBg, btnText, btnHover)}
+                  aria-label="Scroll Right"
                 >
-                  {isReversed ? <ArrowLeft className="w-6 h-6" /> : <ArrowRight className="w-6 h-6" />}
+                  <ArrowRight className="w-6 h-6" />
                 </button>
               </div>
             )}
