@@ -1,13 +1,13 @@
 import React from 'react'
 import { homeService } from '@/modules/home/home.service'
 import { HeroSection } from '@/modules/banners/components/HeroSection'
+import { MidBannerSection } from '@/modules/banners/components/MidBannerSection'
 import { CategorySection } from '@/modules/categories/components/CategorySection'
 import { FlashSaleSection } from '@/modules/flash-sales/components/FlashSaleSection'
-import { CollectionSpotlight } from '@/modules/collections/components/CollectionSpotlight'
+import { CollectionShowcase } from '@/modules/collections/components/CollectionShowcase'
 import { TrustStrip } from '@/modules/banners/components/TrustStrip'
 import { FeaturedProductsSection } from '@/modules/products/components/FeaturedProductsSection'
 import { NewArrivalsSection } from '@/modules/products/components/NewArrivalsSection'
-import { ProductGridSection } from '@/modules/products/components/ProductGridSection'
 import { RecentlyViewedSection } from '@/modules/products/components/RecentlyViewedSection'
 
 export async function generateMetadata() {
@@ -40,6 +40,9 @@ export default async function Homepage(): Promise<React.JSX.Element> {
   } = await homeService.getCachedHomepageData()
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
+
+  const heroBanners = banners.filter((b) => b.position === 'homepage_hero' || !b.position)
+  const midBanners = banners.filter((b) => b.position === 'mid_banner')
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
@@ -77,7 +80,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
       />
       <div className="flex-1 flex flex-col min-h-screen bg-white">
         {/* 1. Banner */}
-        <HeroSection banners={banners} />
+        <HeroSection banners={heroBanners} />
 
         {/* Trust strip right after banner */}
         <TrustStrip />
@@ -86,33 +89,13 @@ export default async function Homepage(): Promise<React.JSX.Element> {
         <FeaturedProductsSection products={featuredProducts} />
 
         {/* 3. Collection 1 */}
-        {col1 && <CollectionSpotlight collection={col1} index={0} />}
+        {col1 && <CollectionShowcase collection={col1} products={collection1Products} index={0} />}
 
-        {/* 4. Produk dari Collection 1 */}
-        {col1 && (
-          <ProductGridSection
-            products={collection1Products}
-            eyebrow="Dari Koleksi"
-            title={`Produk ${col1.name}`}
-            viewAllHref={`/koleksi/${col1.slug}`}
-            viewAllLabel={`Lihat Semua ${col1.name}`}
-            variant="alt"
-          />
-        )}
+        {/* Mid Banner */}
+        <MidBannerSection banners={midBanners} />
 
         {/* 5. Collection 2 */}
-        {col2 && <CollectionSpotlight collection={col2} variant="dark" index={1} />}
-
-        {/* 6. Produk dari Collection 2 */}
-        {col2 && (
-          <ProductGridSection
-            products={collection2Products}
-            eyebrow="Dari Koleksi"
-            title={`Produk ${col2.name}`}
-            viewAllHref={`/koleksi/${col2.slug}`}
-            viewAllLabel={`Lihat Semua ${col2.name}`}
-          />
-        )}
+        {col2 && <CollectionShowcase collection={col2} products={collection2Products} index={1} />}
 
         {/* Additional sections */}
         <FlashSaleSection flashSale={flashSale} />

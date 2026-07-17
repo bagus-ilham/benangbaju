@@ -7,6 +7,7 @@ import {
   useUpdateUserAddress,
   useDistrictSearch,
 } from '@/modules/shipping/hooks/useShipping'
+import { useDebounce } from '@/shared/hooks/useDebounce'
 import type { UserAddress } from '@/modules/shipping/types'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
@@ -122,10 +123,11 @@ export function AddressModal({
   })
 
   const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearchQuery = useDebounce(searchQuery, 400)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
 
-  const { data: searchResultsRes } = useDistrictSearch(searchQuery)
+  const { data: searchResultsRes, isFetching: isSearching } = useDistrictSearch(debouncedSearchQuery)
   const searchResults = searchResultsRes?.data || []
 
   const skipProvinceFetchRef = useRef(false)

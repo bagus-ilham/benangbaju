@@ -118,6 +118,7 @@ export default function CheckoutPage(): React.JSX.Element {
           'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at'
         )
         .eq('is_active', true)
+        .eq('is_hidden', false)
         .gte('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
       if (error) throw error

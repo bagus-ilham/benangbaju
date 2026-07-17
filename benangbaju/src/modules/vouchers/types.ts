@@ -20,5 +20,6 @@ export interface Voucher {
   usage_per_user: number
   used_count: number
   is_active: boolean
+  is_hidden: boolean
   created_at: string
 }

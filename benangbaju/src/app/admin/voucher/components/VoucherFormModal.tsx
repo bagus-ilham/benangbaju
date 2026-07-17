@@ -30,6 +30,8 @@ interface VoucherFormModalProps {
   setExpiresAt: (val: string) => void
   is_active: boolean
   setIsActive: (val: boolean) => void
+  is_hidden: boolean
+  setIsHidden: (val: boolean) => void
 }
 
 export function VoucherFormModal({
@@ -60,6 +62,8 @@ export function VoucherFormModal({
   setExpiresAt,
   is_active,
   setIsActive,
+  is_hidden,
+  setIsHidden,
 }: VoucherFormModalProps): React.JSX.Element {
   return (
     <Modal
@@ -179,6 +183,20 @@ export function VoucherFormModal({
             className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
           >
             Voucher Aktif & Dapat Digunakan
+          </label>
+        </div>
+
+        <div className="flex items-center space-x-2 py-1">
+          <Switch
+            id="voucher_is_hidden"
+            checked={is_hidden}
+            onChange={(e) => setIsHidden(e.target.checked)}
+          />
+          <label
+            htmlFor="voucher_is_hidden"
+            className="select-none text-[10px] text-neutral-700 font-semibold uppercase tracking-wider cursor-pointer"
+          >
+            Sembunyikan Voucher di Halaman Checkout (Hidden)
           </label>
         </div>
 

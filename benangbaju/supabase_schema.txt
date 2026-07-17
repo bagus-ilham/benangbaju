@@ -391,6 +391,7 @@ This is a Primary Key.<pk/>
   - usage_per_user (integer) 
   - used_count (integer) 
   - is_active (boolean) 
+  - is_hidden (boolean) 
   - starts_at (string) 
   - expires_at (string) 
   - created_at (string) 

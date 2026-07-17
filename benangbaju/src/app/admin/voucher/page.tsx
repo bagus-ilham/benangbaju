@@ -41,6 +41,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
   const [starts_at, setStartsAt] = useState('')
   const [expires_at, setExpiresAt] = useState('')
   const [is_active, setIsActive] = useState(true)
+  const [is_hidden, setIsHidden] = useState(false)
 
   const handleOpenAdd = () => {
     setEditingVoucher(null)
@@ -55,6 +56,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
     setStartsAt('')
     setExpiresAt('')
     setIsActive(true)
+    setIsHidden(false)
     setIsOpen(true)
   }
 
@@ -75,6 +77,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
     setStartsAt(formatLocalISO(v.starts_at))
     setExpiresAt(formatLocalISO(v.expires_at))
     setIsActive(v.is_active !== false)
+    setIsHidden(v.is_hidden === true)
     setIsOpen(true)
   }
 
@@ -95,6 +98,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
     setStartsAt(formatLocalISO(v.starts_at || ''))
     setExpiresAt(formatLocalISO(v.expires_at || ''))
     setIsActive(v.is_active !== false)
+    setIsHidden(v.is_hidden === true)
     setIsOpen(true)
   }
 
@@ -151,6 +155,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
       starts_at: new Date(starts_at).toISOString(),
       expires_at: new Date(expires_at).toISOString(),
       is_active,
+      is_hidden,
     }
 
     try {
@@ -233,6 +238,11 @@ export default function AdminVouchersPage(): React.JSX.Element {
                       <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
                         {v.name}
                       </span>
+                      {v.is_hidden && (
+                        <span className="inline-block mt-1 px-1.5 py-0.5 bg-neutral-200 text-neutral-600 text-[9px] font-bold tracking-widest uppercase rounded">
+                          Tersembunyi
+                        </span>
+                      )}
                     </td>
                     <td className="py-4 px-4 text-neutral-600">
                       <p className="font-bold text-neutral-850">
@@ -332,6 +342,8 @@ export default function AdminVouchersPage(): React.JSX.Element {
         setExpiresAt={setExpiresAt}
         is_active={is_active}
         setIsActive={setIsActive}
+        is_hidden={is_hidden}
+        setIsHidden={setIsHidden}
       />
     </div>
   )

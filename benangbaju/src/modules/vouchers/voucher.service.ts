@@ -39,6 +39,7 @@ export class VoucherService {
     usage_limit: number | null
     usage_per_user: number
     is_active: boolean
+    is_hidden: boolean
     starts_at: string
     expires_at: string
   }): Promise<ApiResponse<Voucher>> {
@@ -63,6 +64,7 @@ export class VoucherService {
       usage_limit: number | null
       usage_per_user: number
       is_active: boolean
+      is_hidden: boolean
       starts_at: string
       expires_at: string
     }

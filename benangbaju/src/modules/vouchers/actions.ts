@@ -25,6 +25,7 @@ export async function createAdminVoucherAction(voucherData: {
   usage_limit: number | null
   usage_per_user: number
   is_active: boolean
+  is_hidden: boolean
   starts_at: string
   expires_at: string
 }) {
@@ -44,6 +45,7 @@ export async function updateAdminVoucherAction(
     usage_limit: number | null
     usage_per_user: number
     is_active: boolean
+    is_hidden: boolean
     starts_at: string
     expires_at: string
   }

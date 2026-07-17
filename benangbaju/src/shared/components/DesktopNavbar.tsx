@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Menu, Search, Heart, ShoppingBag, User as UserIcon, LogOut } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
+import { MegaMenuNavItem } from './MegaMenuNavItem'
 
 interface DesktopNavbarProps {
   isScrolled: boolean
@@ -76,22 +77,39 @@ export function DesktopNavbar({
             </button>
 
             <nav className="hidden md:flex space-x-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={cn(
-                    'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 nav-link-underline',
-                    pathname === link.href
-                      ? 'text-brand-gold font-semibold font-bold'
-                      : isTransparentHome
-                        ? 'text-white/90 hover:text-white'
-                        : 'text-neutral-500 hover:text-brand-gold'
-                  )}
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isMegaMenu =
+                  link.name.toUpperCase() === 'KATEGORI' || link.name.toUpperCase() === 'KOLEKSI'
+                
+                if (isMegaMenu) {
+                  return (
+                    <MegaMenuNavItem
+                      key={link.name}
+                      label={link.name}
+                      href={link.href}
+                      isActive={pathname === link.href}
+                      isTransparentHome={isTransparentHome}
+                    />
+                  )
+                }
+
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={cn(
+                      'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16',
+                      pathname === link.href
+                        ? 'text-brand-gold font-semibold font-bold'
+                        : isTransparentHome
+                          ? 'text-white/90 hover:text-white'
+                          : 'text-neutral-500 hover:text-brand-gold'
+                    )}
+                  >
+                    {link.name}
+                  </Link>
+                )
+              })}
             </nav>
           </div>
 

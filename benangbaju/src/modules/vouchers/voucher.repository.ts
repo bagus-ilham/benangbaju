@@ -58,7 +58,7 @@ export class VoucherRepository {
     const { data, error, count } = await supabase
       .from('vouchers')
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at',
+        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at',
         { count: 'exact' }
       )
       .order('created_at', { ascending: false })
@@ -82,6 +82,7 @@ export class VoucherRepository {
     usage_limit: number | null
     usage_per_user: number
     is_active: boolean
+    is_hidden: boolean
     starts_at: string
     expires_at: string
   }): Promise<Voucher> {
@@ -90,7 +91,7 @@ export class VoucherRepository {
       .from('vouchers')
       .insert(voucherData)
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at'
+        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at'
       )
       .single()
 
@@ -122,6 +123,7 @@ export class VoucherRepository {
       usage_limit: number | null
       usage_per_user: number
       is_active: boolean
+      is_hidden: boolean
       starts_at: string
       expires_at: string
     }
@@ -132,7 +134,7 @@ export class VoucherRepository {
       .update(voucherData)
       .eq('id', voucherId)
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at'
+        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at'
       )
       .single()
 

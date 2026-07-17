@@ -223,7 +223,9 @@ export function ProductGallery({
       {/* Thumbnails (Horizontal Row below the main image) */}
       {images.length > 1 && (
         <div className="flex flex-row space-x-2 mt-4 overflow-x-auto pb-2 scrollbar-thin">
-          {images.map((img) => (
+          {images
+            .filter((img) => !img.variant_id)
+            .map((img) => (
             <button
               key={img.id}
               onClick={() => setActiveImage(img.url)}
