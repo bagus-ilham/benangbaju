@@ -1,4 +1,4 @@
-export { ProductGallery } from './ProductGallery'
+export { ProductGallery, ProductThumbnails } from './ProductGallery'
 export { VariantPicker } from './VariantPicker'
 export { MarketplaceLinks } from './MarketplaceLinks'
 export { ReviewSection } from './ReviewSection'

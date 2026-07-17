@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
 
@@ -10,16 +11,30 @@ interface ProductGalleryProps {
   images: ProductImage[]
   productName: string
   selectedVariantId?: string | null
+  activeImage?: string | null
+  setActiveImage?: (url: string) => void
+  hideThumbnailsOnDesktop?: boolean
 }
 
 export function ProductGallery({
   images,
   productName,
   selectedVariantId,
+  activeImage: controlledActiveImage,
+  setActiveImage: controlledSetActiveImage,
+  hideThumbnailsOnDesktop,
 }: ProductGalleryProps): React.JSX.Element {
-  const [activeImage, setActiveImage] = useState<string | null>(
+  const [internalActiveImage, setInternalActiveImage] = useState<string | null>(
     images.find((img) => img.is_primary)?.url || images[0]?.url || null
   )
+
+  const activeImage = controlledActiveImage !== undefined ? controlledActiveImage : internalActiveImage
+  const setActiveImage = (url: string) => {
+    if (controlledSetActiveImage) {
+      controlledSetActiveImage(url)
+    }
+    setInternalActiveImage(url)
+  }
 
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 })
   const [isZoomed, setIsZoomed] = useState(false)
@@ -222,30 +237,106 @@ export function ProductGallery({
 
       {/* Thumbnails (Horizontal Row below the main image) */}
       {images.length > 1 && (
-        <div className="flex flex-row space-x-2 mt-4 overflow-x-auto pb-2 scrollbar-thin">
-          {images
-            .filter((img) => !img.variant_id)
-            .map((img) => (
-            <button
-              key={img.id}
-              onClick={() => setActiveImage(img.url)}
-              className={cn(
-                'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300',
-                activeImage === img.url
-                  ? 'border-brand-black opacity-100'
-                  : 'border-neutral-200 opacity-60 hover:opacity-100'
-              )}
-            >
-              <Image
-                src={img.url}
-                alt={img.alt_text || productName}
-                fill
-                sizes="80px"
-                className="object-cover"
-              />
-            </button>
-          ))}
+        <div className={cn(hideThumbnailsOnDesktop && 'md:hidden')}>
+          <ProductThumbnails 
+            images={images} 
+            activeImage={activeImage} 
+            setActiveImage={(url) => {
+              setActiveImage(url)
+              if (isMobile) {
+                const img = images.find((i) => i.url === url)
+                if (img) {
+                  const mobileGallery = document.getElementById('mobile-product-gallery')
+                  const targetImg = document.getElementById(`gallery-img-${img.id}`)
+                  if (mobileGallery && targetImg) {
+                    mobileGallery.scrollTo({ left: targetImg.offsetLeft, behavior: 'smooth' })
+                  }
+                }
+              }
+            }} 
+            productName={productName} 
+          />
         </div>
+      )}
+    </div>
+  )
+}
+
+interface ProductThumbnailsProps {
+  images: ProductImage[]
+  activeImage: string | null
+  setActiveImage: (url: string) => void
+  productName: string
+}
+
+export function ProductThumbnails({
+  images,
+  activeImage,
+  setActiveImage,
+  productName,
+}: ProductThumbnailsProps): React.JSX.Element {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  
+  if (images.length <= 1) return <></>
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === 'left' ? -200 : 200
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  const displayImages = images.filter((img) => !img.variant_id)
+
+  return (
+    <div className="relative mt-4 flex items-center group">
+      {displayImages.length > 4 && (
+        <button
+          type="button"
+          onClick={() => scroll('left')}
+          className="hidden md:flex absolute left-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-r-md opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          aria-label="Scroll left"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+      )}
+
+      <div 
+        ref={scrollRef}
+        className="flex flex-row space-x-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth w-full px-1"
+      >
+        {displayImages.map((img) => (
+          <button
+            type="button"
+            key={img.id}
+            onClick={() => setActiveImage(img.url)}
+            className={cn(
+              'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300',
+              activeImage === img.url
+                ? 'border-brand-black opacity-100'
+                : 'border-neutral-200 opacity-60 hover:opacity-100'
+            )}
+          >
+            <Image
+              src={img.url}
+              alt={img.alt_text || productName}
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
+          </button>
+        ))}
+      </div>
+
+      {displayImages.length > 4 && (
+        <button
+          type="button"
+          onClick={() => scroll('right')}
+          className="hidden md:flex absolute right-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-l-md opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          aria-label="Scroll right"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       )}
     </div>
   )

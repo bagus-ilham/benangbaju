@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { ProductDetailItem, ProductVariant } from '@/modules/products/types'
 import {
   ProductGallery,
+  ProductThumbnails,
   MarketplaceLinks,
   ReviewSection,
   ProductInfoSection,
@@ -60,6 +61,10 @@ export function ProductDetailClient({
   const [isBuying, setIsBuying] = useState(false)
   const [showStickyBar, setShowStickyBar] = useState(false)
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
+
+  const [activeImage, setActiveImage] = useState<string | null>(
+    product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || null
+  )
 
   const handleToggleWishlist = async () => {
     try {
@@ -246,13 +251,23 @@ export function ProductDetailClient({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="md:col-span-7"
+            className="md:col-span-7 space-y-8"
           >
             <ProductGallery
               images={product.product_images}
               productName={product.name}
               selectedVariantId={selectedVariant?.id || null}
+              activeImage={activeImage}
+              setActiveImage={setActiveImage}
+              hideThumbnailsOnDesktop={true}
             />
+
+            <div className="hidden md:block space-y-8">
+              <motion.div variants={itemVariants}>
+                <MarketplaceLinks links={product.product_marketplace_links} />
+              </motion.div>
+              <ProductAccordionTabs product={product} selectedVariant={selectedVariant} />
+            </div>
           </motion.div>
 
           {/* Right sticky Details column (takes 5 cols) */}
@@ -288,13 +303,22 @@ export function ProductDetailClient({
               onToggleWishlist={handleToggleWishlist}
               onAddToCart={handleAddToCart}
               onBuyNow={handleBuyNow}
+              thumbnailsNode={
+                <ProductThumbnails
+                  images={product.product_images}
+                  activeImage={activeImage}
+                  setActiveImage={setActiveImage}
+                  productName={product.name}
+                />
+              }
             />
 
-            <motion.div variants={itemVariants}>
-              <MarketplaceLinks links={product.product_marketplace_links} />
-            </motion.div>
-
-            <ProductAccordionTabs product={product} selectedVariant={selectedVariant} />
+            <div className="md:hidden space-y-6 pt-4 border-t border-neutral-100">
+              <motion.div variants={itemVariants}>
+                <MarketplaceLinks links={product.product_marketplace_links} />
+              </motion.div>
+              <ProductAccordionTabs product={product} selectedVariant={selectedVariant} />
+            </div>
           </motion.div>
         </div>
 

@@ -9,8 +9,8 @@ import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 import { Layers } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Kategori Produk | Ansania',
-  description: 'Jelajahi berbagai kategori produk terbaik dari Ansania',
+  title: 'Kategori Produk | Benangbaju',
+  description: 'Jelajahi berbagai kategori produk terbaik dari Benangbaju',
 }
 
 async function getCategories() {

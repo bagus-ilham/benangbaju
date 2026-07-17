@@ -24,6 +24,7 @@ interface ProductInfoSectionProps {
   onToggleWishlist: () => void
   onAddToCart: () => void
   onBuyNow: () => void
+  thumbnailsNode?: React.ReactNode
 }
 
 const itemVariants = {
@@ -51,6 +52,7 @@ export function ProductInfoSection({
   onToggleWishlist,
   onAddToCart,
   onBuyNow,
+  thumbnailsNode,
 }: ProductInfoSectionProps): React.JSX.Element {
   return (
     <>
@@ -98,6 +100,13 @@ export function ProductInfoSection({
         >
           {product.short_description}
         </motion.p>
+      )}
+
+      {/* Thumbnails */}
+      {thumbnailsNode && (
+        <motion.div variants={itemVariants} className="hidden md:block">
+          {thumbnailsNode}
+        </motion.div>
       )}
 
       {/* Varian Picker */}
