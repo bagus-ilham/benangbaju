@@ -18,9 +18,9 @@ export function NewArrivalsSection({
   if (products.length === 0) return null
 
   return (
-    <section className="bg-brand-cream section-texture py-16 md:py-20 border-b border-neutral-200">
+    <section className="bg-brand-black section-texture py-16 md:py-20 border-b border-neutral-800">
       <PageContainer>
-        <SectionHeader eyebrow="Koleksi Terbaru" title="Keluaran Terbaru" />
+        <SectionHeader eyebrow="Koleksi Terbaru" title="Keluaran Terbaru" className="[&_h2]:text-white" />
 
         <motion.div
           variants={staggerContainer}
@@ -33,7 +33,7 @@ export function NewArrivalsSection({
             <motion.div
               key={product.id}
               variants={fadeUpItem}
-              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start"
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start bg-white rounded p-2"
             >
               <ProductCard product={product} />
             </motion.div>
@@ -48,8 +48,8 @@ export function NewArrivalsSection({
           className="flex justify-center mt-12"
         >
           <Link href="/produk?urutkan=newest">
-            <Button variant="outline" size="md">
-              Lihat Koleksi Terbaru
+            <Button variant="secondary" size="lg" className="min-w-[200px]">
+              Lihat Semua Koleksi Terbaru
             </Button>
           </Link>
         </motion.div>

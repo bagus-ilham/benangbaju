@@ -140,7 +140,7 @@ export function MegaMenuNavItem({
                   <div className="pt-6 mt-auto">
                     <Link
                       href={href}
-                      className="text-xs font-heading font-semibold uppercase tracking-widest text-[#601b33] hover:opacity-70 transition-opacity flex items-center gap-2"
+                      className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-gold hover:opacity-70 transition-opacity flex items-center gap-2"
                     >
                       JELAJAHI SEMUA &rarr;
                     </Link>

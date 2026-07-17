@@ -263,9 +263,20 @@ export const ProductCard = React.memo(function ProductCard({
               <div className="flex flex-wrap gap-1 justify-center">
                 {sizeVariants.map((v) => {
                   const sizeAttr = v.product_variant_attrs?.find((a) =>
-                    a.attr_name.toLowerCase().includes('ukuran')
+                    a.attr_name.toLowerCase().includes('ukuran') || a.attr_name.toLowerCase().includes('size')
                   )
-                  const sizeLabel = sizeAttr ? sizeAttr.attr_value : v.name
+                  let sizeLabel = ''
+                  if (sizeAttr && sizeAttr.attr_value) {
+                    sizeLabel = sizeAttr.attr_value
+                  } else if (v.product_variant_attrs && v.product_variant_attrs.length > 0) {
+                    sizeLabel = v.product_variant_attrs[0].attr_value
+                  } else if (v.name && v.name.toLowerCase() !== 'default title') {
+                    const parts = v.name.split('-')
+                    sizeLabel = parts.length > 1 ? parts[parts.length - 1].trim() : v.name
+                  }
+                  if (!sizeLabel || sizeLabel.trim() === '') {
+                    sizeLabel = 'OS'
+                  }
                   const isCurrentAdding = isAdding === v.id
                   return (
                     <button
