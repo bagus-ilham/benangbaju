@@ -12,7 +12,7 @@ import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oau
 
 export default function RegisterPage(): React.JSX.Element {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
-  
+
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <RegisterContent />
@@ -85,14 +85,14 @@ function RegisterContent(): React.JSX.Element {
       if (!credentialResponse.credential) {
         throw new Error('Token otentikasi Google tidak ditemukan.')
       }
-      
+
       const { data, error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: credentialResponse.credential,
       })
-      
+
       if (error) throw error
-      
+
       if (data.user) {
         toast.success('Berhasil daftar dengan Google!')
         router.push('/')

@@ -263,8 +263,10 @@ export const ProductCard = React.memo(function ProductCard({
               </span>
               <div className="flex flex-wrap gap-1 justify-center">
                 {sizeVariants.map((v) => {
-                  const sizeAttr = v.product_variant_attrs?.find((a) =>
-                    a.attr_name.toLowerCase().includes('ukuran') || a.attr_name.toLowerCase().includes('size')
+                  const sizeAttr = v.product_variant_attrs?.find(
+                    (a) =>
+                      a.attr_name.toLowerCase().includes('ukuran') ||
+                      a.attr_name.toLowerCase().includes('size')
                   )
                   let sizeLabel = ''
                   if (sizeAttr && sizeAttr.attr_value) {

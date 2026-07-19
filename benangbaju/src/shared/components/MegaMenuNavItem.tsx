@@ -110,13 +110,12 @@ export function MegaMenuNavItem({
           >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
               <div className="grid grid-cols-12 gap-8">
-                
                 {/* Left Column: Link List */}
                 <div className="col-span-3 flex flex-col space-y-6">
                   <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-black mb-2">
                     {isKategori ? 'Kategori Produk' : 'Koleksi Terbatas'}
                   </h3>
-                  
+
                   {isLoading ? (
                     <div className="space-y-4">
                       <div className="h-4 bg-neutral-100 animate-pulse w-3/4 rounded" />
@@ -137,7 +136,7 @@ export function MegaMenuNavItem({
                       ))}
                     </ul>
                   )}
-                  
+
                   <div className="pt-6 mt-auto">
                     <Link
                       href={href}

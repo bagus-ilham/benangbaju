@@ -30,7 +30,7 @@ const mulish = localFont({
       path: '../../public/font/Mulish-Bold.ttf',
       weight: '700',
       style: 'normal',
-    }
+    },
   ],
 })
 

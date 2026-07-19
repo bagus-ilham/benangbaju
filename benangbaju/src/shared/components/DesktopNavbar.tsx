@@ -81,7 +81,7 @@ export function DesktopNavbar({
               {navLinks.map((link) => {
                 const isMegaMenu =
                   link.name.toUpperCase() === 'KATEGORI' || link.name.toUpperCase() === 'KOLEKSI'
-                
+
                 if (isMegaMenu) {
                   return (
                     <MegaMenuNavItem

@@ -203,7 +203,12 @@ export function FlashSaleFormModal({
           <div className="flex items-center space-x-3">
             {banner_url && (
               <div className="relative w-16 h-10 bg-neutral-100 border border-neutral-200">
-                <Image src={getProxiedImageUrl(banner_url)} alt="Banner" fill className="object-cover" />
+                <Image
+                  src={getProxiedImageUrl(banner_url)}
+                  alt="Banner"
+                  fill
+                  className="object-cover"
+                />
               </div>
             )}
             <Input

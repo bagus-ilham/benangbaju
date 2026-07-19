@@ -63,7 +63,9 @@ export function ProductDetailClient({
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
 
   const [activeImage, setActiveImage] = useState<string | null>(
-    product.product_images.find((img) => img.is_primary)?.url || product.product_images[0]?.url || null
+    product.product_images.find((img) => img.is_primary)?.url ||
+      product.product_images[0]?.url ||
+      null
   )
 
   const handleToggleWishlist = async () => {

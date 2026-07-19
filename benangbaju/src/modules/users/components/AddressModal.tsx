@@ -127,7 +127,8 @@ export function AddressModal({
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
 
-  const { data: searchResultsRes, isFetching: isSearching } = useDistrictSearch(debouncedSearchQuery)
+  const { data: searchResultsRes, isFetching: isSearching } =
+    useDistrictSearch(debouncedSearchQuery)
   const searchResults = searchResultsRes?.data || []
 
   const skipProvinceFetchRef = useRef(false)

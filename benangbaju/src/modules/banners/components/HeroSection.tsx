@@ -38,8 +38,8 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
             Elegan dalam Kesederhanaan
           </h2>
           <p className="text-xs text-neutral-500 font-sans max-w-sm mx-auto">
-            Temukan paduan pakaian sederhana namun unik yang nyaman untuk aktivitas
-            harian hingga acara spesial Anda.
+            Temukan paduan pakaian sederhana namun unik yang nyaman untuk aktivitas harian hingga
+            acara spesial Anda.
           </p>
           <div className="pt-4">
             <Link href="/produk">

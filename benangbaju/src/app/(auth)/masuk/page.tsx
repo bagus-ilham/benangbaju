@@ -71,14 +71,14 @@ function LoginContent() {
       if (!credentialResponse.credential) {
         throw new Error('Token otentikasi Google tidak ditemukan.')
       }
-      
+
       const { data, error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: credentialResponse.credential,
       })
-      
+
       if (error) throw error
-      
+
       if (data.user) {
         toast.success('Berhasil masuk dengan Google!')
         router.push(redirectPath)
@@ -200,7 +200,7 @@ function LoginContent() {
 
 export default function LoginPage(): React.JSX.Element {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
-  
+
   return (
     <Suspense fallback={<AuthLoading message="Memuat halaman masuk..." />}>
       <GoogleOAuthProvider clientId={clientId}>

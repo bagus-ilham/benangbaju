@@ -46,8 +46,8 @@ export function ProductStickyAction({
                 <Image
                   src={getProxiedImageUrl(
                     product.product_images.find((img) => img.is_primary)?.url ||
-                    product.product_images[0]?.url ||
-                    ''
+                      product.product_images[0]?.url ||
+                      ''
                   )}
                   alt={product.name}
                   className="object-cover"

@@ -29,7 +29,8 @@ export function ProductGallery({
     images.find((img) => img.is_primary)?.url || images[0]?.url || null
   )
 
-  const activeImage = controlledActiveImage !== undefined ? controlledActiveImage : internalActiveImage
+  const activeImage =
+    controlledActiveImage !== undefined ? controlledActiveImage : internalActiveImage
   const setActiveImage = (url: string) => {
     if (controlledSetActiveImage) {
       controlledSetActiveImage(url)
@@ -239,9 +240,9 @@ export function ProductGallery({
       {/* Thumbnails (Horizontal Row below the main image) */}
       {images.length > 1 && (
         <div className={cn(hideThumbnailsOnDesktop && 'md:hidden')}>
-          <ProductThumbnails 
-            images={images} 
-            activeImage={activeImage} 
+          <ProductThumbnails
+            images={images}
+            activeImage={activeImage}
             setActiveImage={(url) => {
               setActiveImage(url)
               if (isMobile) {
@@ -254,8 +255,8 @@ export function ProductGallery({
                   }
                 }
               }
-            }} 
-            productName={productName} 
+            }}
+            productName={productName}
           />
         </div>
       )}
@@ -277,7 +278,7 @@ export function ProductThumbnails({
   productName,
 }: ProductThumbnailsProps): React.JSX.Element {
   const scrollRef = useRef<HTMLDivElement>(null)
-  
+
   if (images.length <= 1) return <></>
 
   const scroll = (direction: 'left' | 'right') => {
@@ -302,7 +303,7 @@ export function ProductThumbnails({
         </button>
       )}
 
-      <div 
+      <div
         ref={scrollRef}
         className="flex flex-row space-x-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth w-full px-1"
       >

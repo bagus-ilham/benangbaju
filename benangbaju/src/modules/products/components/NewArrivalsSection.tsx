@@ -20,7 +20,11 @@ export function NewArrivalsSection({
   return (
     <section className="bg-brand-black section-texture py-16 md:py-20 border-b border-neutral-800">
       <PageContainer>
-        <SectionHeader eyebrow="Koleksi Terbaru" title="Keluaran Terbaru" className="[&_h2]:text-white" />
+        <SectionHeader
+          eyebrow="Koleksi Terbaru"
+          title="Keluaran Terbaru"
+          className="[&_h2]:text-white"
+        />
 
         <motion.div
           variants={staggerContainer}

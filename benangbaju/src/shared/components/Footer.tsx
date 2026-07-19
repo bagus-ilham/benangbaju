@@ -71,7 +71,8 @@ export function Footer(): React.JSX.Element {
                 </span>
               )}
               <p className="text-[11px] text-neutral-500 leading-relaxed max-w-xs font-sans">
-                Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.
+                Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
+                diri lewat sepotong pakaian yang sederhana namun unik.
               </p>
             </div>
 
@@ -242,7 +243,7 @@ export function Footer(): React.JSX.Element {
 
           <div className="border-t border-neutral-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-[10px] text-neutral-400 font-sans">
-              &copy; <CurrentYear /> Benangbaju Store. All rights reserved.
+              &copy; <CurrentYear /> Benangbaju . All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
               <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">

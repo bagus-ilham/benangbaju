@@ -28,12 +28,15 @@ export function TentangClient(): React.JSX.Element {
             className="space-y-6 text-sm leading-relaxed text-neutral-600 font-medium"
           >
             <p>
-              Kami adalah brand fashion asal Bandung yang berdiri tahun 2021.
-              Sesuai dengan tagline kami, <span className="font-semibold text-brand-black">"Show How Really Well-Dressed You Are,"</span> Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.
+              Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Sesuai dengan tagline
+              kami,{' '}
+              <span className="font-semibold text-brand-black">
+                "Show How Really Well-Dressed You Are,"
+              </span>{' '}
+              Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri
+              lewat sepotong pakaian yang sederhana namun unik.
             </p>
-            <p>
-              Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.
-            </p>
+            <p>Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">

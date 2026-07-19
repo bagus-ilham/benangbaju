@@ -46,7 +46,9 @@ export function CollectionShowcase({
   }
 
   return (
-    <section className={cn('relative w-full overflow-hidden transition-colors duration-500', bgColor)}>
+    <section
+      className={cn('relative w-full overflow-hidden transition-colors duration-500', bgColor)}
+    >
       <div
         className={cn(
           'flex flex-col lg:flex-row min-h-[600px] lg:h-[800px]',
@@ -73,20 +75,33 @@ export function CollectionShowcase({
 
         {/* Content & Products Section */}
         <div className="flex flex-col justify-between w-full lg:w-1/2 py-12 lg:py-20 px-6 lg:px-16 overflow-hidden">
-          
           {/* Top Text */}
           <div className="max-w-xl mb-12">
-            <h2 className={cn('text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 transition-colors duration-500', textColor)}>
+            <h2
+              className={cn(
+                'text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 transition-colors duration-500',
+                textColor
+              )}
+            >
               {collection.name}
             </h2>
             {collection.description && (
-              <p className={cn('font-sans text-sm md:text-base leading-relaxed mb-8 transition-colors duration-500', textMuted)}>
+              <p
+                className={cn(
+                  'font-sans text-sm md:text-base leading-relaxed mb-8 transition-colors duration-500',
+                  textMuted
+                )}
+              >
                 {collection.description}
               </p>
             )}
             <Link
               href={`/koleksi/${collection.slug}`}
-              className={cn('inline-block font-medium border-b pb-1 transition-all hover:opacity-70', textColor, borderColor)}
+              className={cn(
+                'inline-block font-medium border-b pb-1 transition-all hover:opacity-70',
+                textColor,
+                borderColor
+              )}
             >
               Explore the {collection.name} Edit
             </Link>
@@ -100,19 +115,31 @@ export function CollectionShowcase({
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {products.map((product) => (
-                <div key={product.id} className={cn('w-[200px] md:w-[260px] shrink-0 snap-start', cardContainerClass)}>
+                <div
+                  key={product.id}
+                  className={cn('w-[200px] md:w-[260px] shrink-0 snap-start', cardContainerClass)}
+                >
                   <ProductCard product={product} />
                 </div>
               ))}
-              
+
               {/* Optional "View More" card at the end */}
               {products.length > 0 && (
                 <div className="w-[200px] md:w-[260px] shrink-0 snap-start flex items-center justify-center group transition-colors">
                   <Link
                     href={`/koleksi/${collection.slug}`}
-                    className={cn('flex flex-col items-center justify-center gap-2 h-full w-full py-20', textColor)}
+                    className={cn(
+                      'flex flex-col items-center justify-center gap-2 h-full w-full py-20',
+                      textColor
+                    )}
                   >
-                    <div className={cn('p-4 rounded-full group-hover:scale-110 transition-transform shadow-sm', btnBg, btnText)}>
+                    <div
+                      className={cn(
+                        'p-4 rounded-full group-hover:scale-110 transition-transform shadow-sm',
+                        btnBg,
+                        btnText
+                      )}
+                    >
                       <ArrowRight className="w-5 h-5" />
                     </div>
                     <span className="font-medium text-sm">Lihat Semua</span>
@@ -123,14 +150,19 @@ export function CollectionShowcase({
 
             {/* Navigation Button */}
             {products.length > 2 && (
-              <div 
+              <div
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 z-10 hidden lg:block right-0 translate-x-1/2"
+                  'absolute top-1/2 -translate-y-1/2 z-10 hidden lg:block right-0 translate-x-1/2'
                 )}
               >
                 <button
                   onClick={scrollRight}
-                  className={cn("w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-colors", btnBg, btnText, btnHover)}
+                  className={cn(
+                    'w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-colors',
+                    btnBg,
+                    btnText,
+                    btnHover
+                  )}
                   aria-label="Scroll Right"
                 >
                   <ArrowRight className="w-6 h-6" />

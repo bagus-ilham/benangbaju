@@ -36,12 +36,13 @@ export function AuthLayout({ children }: AuthLayoutProps): React.JSX.Element {
               Elegan dalam Setiap Benang
             </h1>
             <p className="text-sm text-neutral-400 font-sans leading-relaxed">
-              Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju yang mengedepankan kesederhanaan.
+              Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju yang
+              mengedepankan kesederhanaan.
             </p>
           </div>
 
           <p className="text-[10px] text-neutral-500 font-sans tracking-wide">
-            &copy; <CurrentYear /> Benangbaju Store
+            &copy; <CurrentYear /> Benangbaju
           </p>
         </div>
       </div>

@@ -56,7 +56,7 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
           className="block w-full h-full object-cover"
         />
       </picture>
-      
+
       {/* Optional Overlay if there is text, but for mid banners often the image contains the text itself.
           If we want to show title/subtitle, we can add it here. For now, we keep it simple. */}
       {(banner.title || banner.subtitle) && (

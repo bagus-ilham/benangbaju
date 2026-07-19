@@ -125,7 +125,7 @@ export class CategoryRepository {
 
   async adminDeleteCategory(categoryId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
-    
+
     // Pre-check for subcategories
     const { count: subcategoriesCount, error: subError } = await supabase
       .from('categories')
@@ -138,7 +138,10 @@ export class CategoryRepository {
     }
 
     if (subcategoriesCount && subcategoriesCount > 0) {
-      return fail(ApiErrorCode.VALIDATION_ERROR, 'Kategori tidak bisa dihapus karena masih memiliki sub-kategori')
+      return fail(
+        ApiErrorCode.VALIDATION_ERROR,
+        'Kategori tidak bisa dihapus karena masih memiliki sub-kategori'
+      )
     }
 
     // Pre-check for products
@@ -153,7 +156,10 @@ export class CategoryRepository {
     }
 
     if (productsCount && productsCount > 0) {
-      return fail(ApiErrorCode.VALIDATION_ERROR, 'Kategori tidak bisa dihapus karena masih ada produk di dalamnya')
+      return fail(
+        ApiErrorCode.VALIDATION_ERROR,
+        'Kategori tidak bisa dihapus karena masih ada produk di dalamnya'
+      )
     }
 
     // 1. Fetch images associated with this category to clean up storage
