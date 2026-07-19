@@ -7,6 +7,7 @@ import { Tag, ShoppingBag } from 'lucide-react'
 import { Button } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface AppliedVoucher {
   code: string
@@ -70,7 +71,7 @@ export function CheckoutSummaryCard({
             {item.imageUrl && (
               <div className="relative w-10 h-14 border border-neutral-100 rounded-none bg-neutral-50 flex-shrink-0">
                 <Image
-                  src={item.imageUrl}
+                  src={getProxiedImageUrl(item.imageUrl)}
                   alt={item.productName || item.name}
                   className="object-cover"
                   fill

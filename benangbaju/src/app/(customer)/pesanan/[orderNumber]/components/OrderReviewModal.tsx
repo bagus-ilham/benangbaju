@@ -5,6 +5,7 @@ import { Image as ImageIcon, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface OrderReviewModalProps {
   selectedReviewItem: any

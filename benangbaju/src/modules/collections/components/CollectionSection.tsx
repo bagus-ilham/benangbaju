@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Collection } from '@/modules/collections/types'
 import { PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CollectionSectionProps {
   collections: Collection[]
@@ -39,7 +40,7 @@ export function CollectionSection({
               >
                 {col.image_url ? (
                   <Image
-                    src={col.image_url}
+                    src={getProxiedImageUrl(col.image_url)}
                     alt={col.name}
                     fill
                     sizes="(max-w-7xl) 50vw, 100vw"

@@ -7,6 +7,7 @@ import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Layers } from 'lucide-react'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export const metadata: Metadata = {
   title: 'Kategori Produk | Benangbaju',
@@ -40,7 +41,7 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
             >
               {cat.image_url ? (
                 <Image
-                  src={cat.image_url}
+                  src={getProxiedImageUrl(cat.image_url)}
                   alt={cat.name}
                   fill
                   sizes="(max-w-7xl) 33vw, 100vw"

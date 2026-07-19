@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Category } from '@/modules/categories/types'
 import { PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CategorySectionProps {
   categories: Category[]
@@ -37,7 +38,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               >
                 {cat.image_url ? (
                   <Image
-                    src={cat.image_url}
+                    src={getProxiedImageUrl(cat.image_url)}
                     alt={cat.name}
                     fill
                     sizes="(max-w-7xl) 25vw, 50vw"

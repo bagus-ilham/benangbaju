@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { getActiveCollectionsAction } from '@/modules/collections/actions'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface MegaMenuItem {
   name: string
@@ -161,7 +162,7 @@ export function MegaMenuNavItem({
                         >
                           {item.image_url ? (
                             <Image
-                              src={item.image_url}
+                              src={getProxiedImageUrl(item.image_url)}
                               alt={item.name}
                               fill
                               sizes="(max-width: 1200px) 25vw, 300px"

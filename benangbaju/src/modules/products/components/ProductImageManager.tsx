@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import type { ProductImagePayload, ProductVariantPayload } from '@/modules/products/types'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductImageManagerProps {
   images: ProductImagePayload[]
@@ -63,7 +64,7 @@ export function ProductImageManager({
                   <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                     {img.url ? (
                       <Image
-                        src={img.url}
+                        src={getProxiedImageUrl(img.url)}
                         alt={img.alt_text || 'Preview'}
                         fill
                         sizes="64px"

@@ -2,6 +2,7 @@
 import React from 'react'
 import { Select, Textarea } from '@/shared/components'
 import { Image as ImageIcon, X } from 'lucide-react'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 const RETURN_REASONS = [
   { value: 'wrong_item', label: 'Salah Kirim Produk / Varian' },

@@ -7,6 +7,7 @@ import { Star, CheckCircle, ThumbsUp } from 'lucide-react'
 import { useReviews } from '@/modules/reviews/hooks/useReviews'
 import { ProductRatingSummary } from '@/modules/products/types'
 import { cn, formatDate } from '@/lib/utils'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ReviewSectionProps {
   productId: string
@@ -121,7 +122,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                           className="relative aspect-square w-16 bg-neutral-100 border border-neutral-100 overflow-hidden"
                         >
                           <Image
-                            src={media.url}
+                            src={getProxiedImageUrl(media.url)}
                             alt="Media review"
                             fill
                             sizes="64px"

@@ -4,6 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Button, Input, Textarea, Modal } from '@/shared/components'
 import type { AdminOrderListItem, AdminReturnRequestListItem } from '@/modules/orders/types'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface QuickResiModalProps {
   order: AdminOrderListItem | null
@@ -132,7 +133,7 @@ export function ReturnReviewModal({
                     className="block w-16 h-16 border border-neutral-200 overflow-hidden hover:border-brand-gold transition-colors relative"
                   >
                     <Image
-                      src={media.url}
+                      src={getProxiedImageUrl(media.url)}
                       alt="Bukti Retur"
                       fill
                       sizes="64px"

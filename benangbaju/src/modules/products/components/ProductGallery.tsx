@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductGalleryProps {
   images: ProductImage[]
@@ -144,7 +145,7 @@ export function ProductGallery({
               className="w-full h-full flex-shrink-0 snap-center relative"
             >
               <Image
-                src={img.url}
+                src={getProxiedImageUrl(img.url)}
                 alt={productName}
                 fill
                 quality={75}
@@ -199,7 +200,7 @@ export function ProductGallery({
             >
               {/* 1. Base Image (Fast Load, Compressed) */}
               <Image
-                src={activeImage}
+                src={getProxiedImageUrl(activeImage)}
                 alt={productName}
                 fill
                 quality={75}
@@ -216,7 +217,7 @@ export function ProductGallery({
               {/* 2. HD Image (Lazy Loaded on Hover, Unoptimized) */}
               {hasIntentToZoom && !isMobile && (
                 <Image
-                  src={activeImage}
+                  src={getProxiedImageUrl(activeImage)}
                   alt={`${productName} HD`}
                   fill
                   unoptimized={true}
@@ -318,7 +319,7 @@ export function ProductThumbnails({
             )}
           >
             <Image
-              src={img.url}
+              src={getProxiedImageUrl(img.url)}
               alt={img.alt_text || productName}
               fill
               sizes="80px"

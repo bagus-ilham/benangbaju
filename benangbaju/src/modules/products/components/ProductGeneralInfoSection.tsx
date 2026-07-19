@@ -3,6 +3,7 @@ import { Input, Select, Checkbox, Textarea, Switch } from '@/shared/components'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductGeneralInfoSectionProps {
   name: string
@@ -158,7 +159,7 @@ export function ProductGeneralInfoSection({
           <div className="w-20 h-20 bg-white border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
             {sizeGuide ? (
               <Image
-                src={sizeGuide}
+                src={getProxiedImageUrl(sizeGuide)}
                 alt="Size Guide"
                 fill
                 sizes="80px"

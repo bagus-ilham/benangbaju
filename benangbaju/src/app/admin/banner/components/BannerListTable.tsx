@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Edit2, Trash2, Copy } from 'lucide-react'
 import { Button } from '@/shared/components'
 import type { Database } from '@/shared/types/database'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 type BannerRow = Database['public']['Tables']['banners']['Row']
 
@@ -83,7 +84,7 @@ export function BannerListTable({
               <td className="py-4 px-5 flex items-center space-x-3.5">
                 <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none">
                   <Image
-                    src={b.image_url || ''}
+                    src={getProxiedImageUrl(b.image_url || '')}
                     alt={b.title || ''}
                     fill
                     sizes="96px"

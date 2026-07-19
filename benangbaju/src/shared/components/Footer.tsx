@@ -5,6 +5,7 @@ import { Button, Input, CurrentYear } from '@/shared/components'
 
 import toast from 'react-hot-toast'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export function Footer(): React.JSX.Element {
   const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl } = useSiteSettings()
@@ -57,7 +58,7 @@ export function Footer(): React.JSX.Element {
               {logoUrl ? (
                 <div className="relative h-10 md:h-14 w-full max-w-[200px] animate-fade-in">
                   <Image
-                    src={logoUrl}
+                    src={getProxiedImageUrl(logoUrl)}
                     alt="Benangbaju Logo"
                     fill
                     sizes="200px"

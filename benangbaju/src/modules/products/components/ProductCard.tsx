@@ -11,6 +11,7 @@ import { ProductListItem, ProductVariant } from '@/modules/products/types'
 import { cn, formatIDR } from '@/lib/utils'
 import { Badge } from '@/shared/components/Badge'
 import toast from 'react-hot-toast'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductCardProps {
   product: ProductListItem
@@ -82,7 +83,7 @@ export const ProductCard = React.memo(function ProductCard({
                   >
                     <Image
                       className="object-cover"
-                      src={primaryImage}
+                      src={getProxiedImageUrl(primaryImage)}
                       alt={product.name}
                       fill
                       sizes="40px"
@@ -162,7 +163,7 @@ export const ProductCard = React.memo(function ProductCard({
             >
               {/* Primary Image */}
               <Image
-                src={primaryImage}
+                src={getProxiedImageUrl(primaryImage)}
                 alt={product.name}
                 fill
                 sizes="(max-w-7xl) 33vw, 50vw"
@@ -180,7 +181,7 @@ export const ProductCard = React.memo(function ProductCard({
               {/* Hover Swap Image */}
               {hoverImage && hoverImage !== primaryImage && (
                 <Image
-                  src={hoverImage}
+                  src={getProxiedImageUrl(hoverImage)}
                   alt={`${product.name} detail`}
                   fill
                   sizes="(max-w-7xl) 33vw, 50vw"

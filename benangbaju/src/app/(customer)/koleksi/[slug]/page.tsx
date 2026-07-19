@@ -7,6 +7,7 @@ import { getCollectionBySlugAction } from '@/modules/collections/actions'
 import { getProductsAction } from '@/modules/products/actions'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageHero, PageContainer, EmptyState } from '@/shared/components'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CollectionPageProps {
   params: Promise<{
@@ -70,7 +71,7 @@ export default async function CollectionDetailPage({
       {collection.image_url ? (
         <div className="relative h-[35vh] md:h-[50vh] w-full bg-neutral-100 overflow-hidden border-b border-neutral-200">
           <Image
-            src={collection.image_url}
+            src={getProxiedImageUrl(collection.image_url)}
             alt={collection.name}
             fill
             priority

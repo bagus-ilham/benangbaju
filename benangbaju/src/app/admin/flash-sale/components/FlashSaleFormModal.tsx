@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 import { FlashSaleVariantSearch } from './FlashSaleVariantSearch'
 import { FlashSaleItemsTable } from './FlashSaleItemsTable'
 import type { AdminFlashSaleListItem } from '@/modules/flash-sales/types'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export interface FlashSaleFormItem {
   variant_id: string
@@ -202,7 +203,7 @@ export function FlashSaleFormModal({
           <div className="flex items-center space-x-3">
             {banner_url && (
               <div className="relative w-16 h-10 bg-neutral-100 border border-neutral-200">
-                <Image src={banner_url} alt="Banner" fill className="object-cover" />
+                <Image src={getProxiedImageUrl(banner_url)} alt="Banner" fill className="object-cover" />
               </div>
             )}
             <Input

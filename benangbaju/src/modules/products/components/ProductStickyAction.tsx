@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductStickyActionProps {
   showStickyBar: boolean
@@ -43,11 +44,11 @@ export function ProductStickyAction({
             <div className="hidden sm:flex items-center space-x-3">
               <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0">
                 <Image
-                  src={
+                  src={getProxiedImageUrl(
                     product.product_images.find((img) => img.is_primary)?.url ||
                     product.product_images[0]?.url ||
                     ''
-                  }
+                  )}
                   alt={product.name}
                   className="object-cover"
                   fill

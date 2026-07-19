@@ -8,6 +8,7 @@ import { SmartLink as Link } from '@/shared/components'
 import { formatDate } from '@/lib/utils/format'
 import { formatIDR } from '@/lib/utils/format'
 import Image from 'next/image'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface AdminCustomerDetailPageProps {
   params: Promise<{ id: string }>
@@ -174,7 +175,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                       <div className="w-12 h-12 bg-neutral-100 flex-shrink-0 relative overflow-hidden">
                         {item.variant?.product?.image_url ? (
                           <Image
-                            src={item.variant.product.image_url}
+                            src={getProxiedImageUrl(item.variant.product.image_url)}
                             alt="Product"
                             fill
                             className="object-cover"
@@ -227,7 +228,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                       <div className="aspect-[3/4] bg-neutral-100 relative overflow-hidden">
                         {item.product?.image_url ? (
                           <Image
-                            src={item.product.image_url}
+                            src={getProxiedImageUrl(item.product.image_url)}
                             alt="Product"
                             fill
                             className="object-cover group-hover:scale-105 transition-transform duration-300"

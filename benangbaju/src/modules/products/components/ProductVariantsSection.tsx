@@ -5,6 +5,7 @@ import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import type { ProductVariantPayload, ProductImagePayload } from '@/modules/products/types'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductVariantsSectionProps {
   variants: ProductVariantPayload[]
@@ -180,7 +181,7 @@ export function ProductVariantsSection({
                         <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                           {img.url ? (
                             <Image
-                              src={img.url}
+                              src={getProxiedImageUrl(img.url)}
                               alt={img.alt_text || 'Preview'}
                               fill
                               sizes="40px"

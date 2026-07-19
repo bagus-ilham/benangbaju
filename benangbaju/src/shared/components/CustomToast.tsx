@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import toast, { Toast } from 'react-hot-toast'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CustomToastProps {
   t: Toast
@@ -32,7 +33,7 @@ export function CustomToast({
           <div className="flex-shrink-0 pt-0.5">
             {imageUrl ? (
               <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
-                <Image className="object-cover" src={imageUrl} alt={subtitle} fill sizes="40px" />
+                <Image className="object-cover" src={getProxiedImageUrl(imageUrl)} alt={subtitle} fill sizes="40px" />
               </div>
             ) : (
               <div className="h-10 w-10 bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-400 font-sans">

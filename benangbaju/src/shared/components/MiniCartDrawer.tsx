@@ -9,6 +9,7 @@ import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR } from '@/lib/utils'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export function MiniCartDrawer(): React.JSX.Element {
   const items = useCartStore((state) => state.items)
@@ -132,7 +133,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                     >
                       {item.imageUrl ? (
                         <Image
-                          src={item.imageUrl}
+                          src={getProxiedImageUrl(item.imageUrl)}
                           alt=""
                           fill
                           sizes="80px"

@@ -9,6 +9,7 @@ import { Collection } from '@/modules/collections/types'
 import { PageContainer } from '@/shared/components'
 import { EASE_PREMIUM } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CollectionSpotlightProps {
   collection: Collection
@@ -52,7 +53,7 @@ export function CollectionSpotlight({
             >
               {collection.image_url ? (
                 <Image
-                  src={collection.image_url}
+                  src={getProxiedImageUrl(collection.image_url)}
                   alt={collection.name}
                   fill
                   sizes="(max-w-7xl) 50vw, 100vw"

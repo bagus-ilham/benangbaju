@@ -10,6 +10,7 @@ import { Category } from '@/modules/categories/types'
 import { PageContainer, PageHero, EmptyState } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PackageX } from 'lucide-react'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CategoryPageProps {
   params: Promise<{
@@ -71,7 +72,7 @@ export default async function CategoryDetailPage({
       {category.image_url ? (
         <div className="relative h-[35vh] md:h-[45vh] w-full bg-neutral-100 overflow-hidden border-b border-neutral-200">
           <Image
-            src={category.image_url}
+            src={getProxiedImageUrl(category.image_url)}
             alt={category.name}
             fill
             priority

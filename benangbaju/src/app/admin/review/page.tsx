@@ -12,6 +12,7 @@ import { useAuthStore } from '@/modules/users/stores/authStore'
 import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/modules/reviews/types'
 import Image from 'next/image'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 const getStatusBadgeClass = (status: string) => {
   switch (status) {
@@ -175,7 +176,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
                               className="block border border-neutral-200 hover:border-brand-gold transition-colors relative w-12 h-12"
                             >
                               <Image
-                                src={media.url}
+                                src={getProxiedImageUrl(media.url)}
                                 alt="Review attachment"
                                 fill
                                 sizes="48px"

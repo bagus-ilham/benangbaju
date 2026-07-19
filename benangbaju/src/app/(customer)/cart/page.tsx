@@ -9,6 +9,7 @@ import { Button, Card, PageContainer, EmptyState, PageHero } from '@/shared/comp
 import { formatIDR } from '@/lib/utils'
 import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export default function CartPage(): React.JSX.Element {
   const items = useCartStore((state) => state.items)
@@ -112,7 +113,7 @@ export default function CartPage(): React.JSX.Element {
                       <div className="relative aspect-[3/4] w-20 md:w-24 bg-neutral-100 flex-shrink-0 overflow-hidden border border-neutral-100">
                         {item.imageUrl ? (
                           <Image
-                            src={item.imageUrl}
+                            src={getProxiedImageUrl(item.imageUrl)}
                             alt={item.name}
                             fill
                             sizes="100px"

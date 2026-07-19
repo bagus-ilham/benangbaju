@@ -8,6 +8,7 @@ import { ProductListItem } from '@/modules/products/types'
 import { SmartLink as Link } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { cn } from '@/lib/utils'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CollectionShowcaseProps {
   collection: Collection
@@ -56,7 +57,7 @@ export function CollectionShowcase({
         <div className="relative w-full lg:w-1/2 h-[400px] lg:h-full shrink-0">
           {collection.image_url ? (
             <Image
-              src={collection.image_url}
+              src={getProxiedImageUrl(collection.image_url)}
               alt={collection.name}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"

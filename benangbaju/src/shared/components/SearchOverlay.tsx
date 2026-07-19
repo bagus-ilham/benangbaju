@@ -14,6 +14,7 @@ import { getProductsAction } from '@/modules/products/actions'
 import { type ProductListItem } from '@/modules/products/types'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface SearchOverlayProps {
   isOpen: boolean
@@ -155,7 +156,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0">
                               {primaryImg ? (
                                 <Image
-                                  src={primaryImg}
+                                  src={getProxiedImageUrl(primaryImg)}
                                   alt={product.name}
                                   fill
                                   sizes="40px"

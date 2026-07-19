@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Modal, Input, Select, Switch, Button } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export function BannerFormModal({
   isOpen,
@@ -66,7 +67,7 @@ export function BannerFormModal({
               <div className="w-20 h-10 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                 {image_url ? (
                   <Image
-                    src={image_url}
+                    src={getProxiedImageUrl(image_url)}
                     alt="Desktop Preview"
                     fill
                     sizes="80px"
@@ -133,7 +134,7 @@ export function BannerFormModal({
               <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                 {image_mobile_url ? (
                   <Image
-                    src={image_mobile_url}
+                    src={getProxiedImageUrl(image_mobile_url)}
                     alt="Mobile Preview"
                     fill
                     sizes="40px"

@@ -19,6 +19,18 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 
+// Tambahkan domain Cloudflare Worker untuk Cache Gambar
+remotePatterns.push({
+  protocol: 'https',
+  hostname: 'cdn.benangbaju.com',
+  pathname: '/**',
+})
+remotePatterns.push({
+  protocol: 'https',
+  hostname: 'benangbaju-cdn.bagusilham74.workers.dev',
+  pathname: '/**',
+})
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns,

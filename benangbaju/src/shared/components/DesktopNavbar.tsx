@@ -8,6 +8,7 @@ import { Menu, Search, Heart, ShoppingBag, User as UserIcon, LogOut } from 'luci
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
 import { MegaMenuNavItem } from './MegaMenuNavItem'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface DesktopNavbarProps {
   isScrolled: boolean
@@ -126,7 +127,7 @@ export function DesktopNavbar({
               {logoUrl ? (
                 <div className="relative h-10 md:h-14 w-[110px] sm:w-[130px] md:w-[200px]">
                   <Image
-                    src={logoUrl}
+                    src={getProxiedImageUrl(logoUrl)}
                     alt="Benangbaju Logo"
                     fill
                     priority

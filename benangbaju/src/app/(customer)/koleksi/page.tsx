@@ -7,6 +7,7 @@ import { getActiveCollectionsAction } from '@/modules/collections/actions'
 import { PageHero, PageContainer } from '@/shared/components'
 
 import { cacheLife, cacheTag } from 'next/cache'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 async function getCachedCollections() {
   'use cache'
@@ -38,7 +39,7 @@ export default async function CollectionsIndexPage(): Promise<React.JSX.Element>
             >
               {col.image_url ? (
                 <Image
-                  src={col.image_url}
+                  src={getProxiedImageUrl(col.image_url)}
                   alt={col.name}
                   fill
                   sizes="(max-w-7xl) 33vw, 100vw"
