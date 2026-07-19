@@ -8,8 +8,19 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, Card } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import toast from 'react-hot-toast'
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google'
 
 export default function RegisterPage(): React.JSX.Element {
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
+  
+  return (
+    <GoogleOAuthProvider clientId={clientId}>
+      <RegisterContent />
+    </GoogleOAuthProvider>
+  )
+}
+
+function RegisterContent(): React.JSX.Element {
   const router = useRouter()
   const supabase = createBrowserClient()
 
@@ -69,19 +80,32 @@ export default function RegisterPage(): React.JSX.Element {
     }
   }
 
-  const handleGoogleRegister = async () => {
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      if (!credentialResponse.credential) {
+        throw new Error('Token otentikasi Google tidak ditemukan.')
+      }
+      
+      const { data, error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent('/')}`,
-        },
+        token: credentialResponse.credential,
       })
+      
       if (error) throw error
+      
+      if (data.user) {
+        toast.success('Berhasil daftar dengan Google!')
+        router.push('/')
+        router.refresh()
+      }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Gagal memulai daftar dengan Google.'
       toast.error(message)
     }
+  }
+
+  const handleGoogleError = () => {
+    toast.error('Daftar dengan Google dibatalkan atau gagal.')
   }
 
   return (
@@ -179,42 +203,15 @@ export default function RegisterPage(): React.JSX.Element {
             </div>
           </motion.div>
 
-          <motion.div variants={fadeUpItem}>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleGoogleRegister}
-              className="w-full flex items-center justify-center space-x-2 border-neutral-300"
-            >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <g transform="matrix(1, 0, 0, 1, 0, 0)">
-                  <path
-                    d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.58h3.3c1.93,-1.78 3.04,-4.4 3.04,-7.4C21.68,11.85 21.56,11.4 21.35,11.1z"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M12,20.5c2.3,0 4.23,-0.76 5.64,-2.08l-3.3,-2.58c-0.91,0.61 -2.08,0.98 -3.34,0.98 -2.57,0 -4.75,-1.74 -5.53,-4.07H2.07v2.66C3.54,17.34 7.48,20.5 12,20.5z"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M6.47,12.75c-0.2,-0.61 -0.31,-1.26 -0.31,-1.93s0.11,-1.32 0.31,-1.93V6.26H2.07C1.31,7.77 0.88,9.47 0.88,11.27s0.43,3.5 1.19,5.01L6.47,12.75z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M12,4.68c1.25,0 2.37,0.43 3.25,1.27l2.44,-2.44C16.22,2.12 14.29,1.27 12,1.27 7.48,1.27 3.54,4.43 2.07,7.35l4.4,3.47C7.25,6.42 9.43,4.68 12,4.68z"
-                    fill="#EA4335"
-                  />
-                </g>
-              </svg>
-              <span>Google</span>
-            </Button>
+          <motion.div variants={fadeUpItem} className="flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              text="signup_with"
+              shape="rectangular"
+            />
           </motion.div>
 
           {/* Footer Link */}
