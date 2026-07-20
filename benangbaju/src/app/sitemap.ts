@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (productsRes.data) {
       productsRes.data.forEach((product) => {
         sitemapEntries.push({
-          url: `${baseUrl}/produk/${product.slug}`,
+          url: `${baseUrl}/produk/${encodeURIComponent(product.slug)}`,
           lastModified: new Date(product.updated_at),
           changeFrequency: 'weekly',
           priority: 0.7,
@@ -54,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (categoriesRes.data) {
       categoriesRes.data.forEach((category) => {
         sitemapEntries.push({
-          url: `${baseUrl}/kategori/${category.slug}`,
+          url: `${baseUrl}/kategori/${encodeURIComponent(category.slug)}`,
           lastModified: new Date(),
           changeFrequency: 'weekly',
           priority: 0.6,
@@ -65,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (collectionsRes.data) {
       collectionsRes.data.forEach((collection) => {
         sitemapEntries.push({
-          url: `${baseUrl}/koleksi/${collection.slug}`,
+          url: `${baseUrl}/koleksi/${encodeURIComponent(collection.slug)}`,
           lastModified: new Date(),
           changeFrequency: 'weekly',
           priority: 0.6,
