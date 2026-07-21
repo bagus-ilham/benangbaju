@@ -35,7 +35,7 @@ export interface OrderShipping {
 export interface PaymentInfo {
   id: string
   order_id: string
-  midtrans_order_id: string
+  gateway_order_id: string
   status: 'pending' | 'success' | 'failed' | 'expired' | 'refunded'
   amount: number
   payment_type: string | null

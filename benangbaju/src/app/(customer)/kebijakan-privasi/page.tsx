@@ -18,12 +18,12 @@ export default function KebijakanPrivasiPage(): React.JSX.Element {
     {
       title: '2. Penggunaan Data Anda',
       content:
-        'Data pribadi Anda digunakan semata-mata untuk memproses transaksi pesanan Anda, mengirimkan paket melalui kurir mitra ekspedisi, melakukan verifikasi pembayaran otomatis (Midtrans), memberikan pembaruan status pesanan, serta memberikan rekomendasi produk atau promosi yang dipersonalisasi apabila Anda menyetujui berlangganan newsletter.',
+        'Data pribadi Anda digunakan semata-mata untuk memproses transaksi pesanan Anda, mengirimkan paket melalui kurir mitra ekspedisi, melakukan verifikasi pembayaran otomatis (DOKU), memberikan pembaruan status pesanan, serta memberikan rekomendasi produk atau promosi yang dipersonalisasi apabila Anda menyetujui berlangganan newsletter.',
     },
     {
       title: '3. Keamanan & Penyimpanan Data',
       content:
-        'Kami mengambil langkah-langkah keamanan teknis yang wajar untuk melindungi informasi Anda dari akses ilegal, pengungkapan tanpa izin, perubahan, atau kerusakan. Akun Anda dilindungi dengan enkripsi kata sandi. Transaksi keuangan Anda diproses secara terenkripsi oleh payment gateway bersertifikasi PCI-DSS (Midtrans) sehingga kami tidak menyimpan detail kartu kredit atau virtual account Anda.',
+        'Kami mengambil langkah-langkah keamanan teknis yang wajar untuk melindungi informasi Anda dari akses ilegal, pengungkapan tanpa izin, perubahan, atau kerusakan. Akun Anda dilindungi dengan enkripsi kata sandi. Transaksi keuangan Anda diproses secara terenkripsi oleh payment gateway bersertifikasi PCI-DSS (DOKU) sehingga kami tidak menyimpan detail kartu kredit atau virtual account Anda.',
     },
     {
       title: '4. Penggunaan Cookies',
@@ -58,7 +58,7 @@ export default function KebijakanPrivasiPage(): React.JSX.Element {
     {
       title: '10. Transfer Data',
       content:
-        'Data Anda diproses dan disimpan di server yang dikelola oleh Supabase (Singapore region). Pembayaran diproses oleh Midtrans (PT Midtrans Indonesia). Kedua penyedia layanan ini memiliki standar keamanan data yang memadai sesuai regulasi yang berlaku.',
+        'Data Anda diproses dan disimpan di server yang dikelola oleh Supabase (Singapore region). Pembayaran diproses oleh DOKU (PT Nusa Satu Inti Artha). Kedua penyedia layanan ini memiliki standar keamanan data yang memadai sesuai regulasi yang berlaku.',
     },
   ]
 

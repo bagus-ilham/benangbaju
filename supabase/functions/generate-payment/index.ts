@@ -1,263 +1,148 @@
 // @ts-nocheck
-// =============================================================
-// Edge Function: generate-payment
-// Generates Midtrans Snap token for an order
-// =============================================================
+// supabase/functions/generate-payment/index.ts
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { corsHeaders } from "../_shared/cors.ts";
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { generateDokuSignature } from "../_shared/doku-signature.ts";
 
-Deno.serve(async (req: Request) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Idempotency-Key',
+};
+
+serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { order_number } = await req.json();
-
-    if (!order_number) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Order number diperlukan" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Init Supabase admin client
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get order + user data
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .select(`
-        *,
-        profiles!inner(name, phone),
-        order_items(*),
-        payments(id, status, midtrans_response, updated_at, created_at)
-      `)
-      .eq("order_number", order_number)
+    const authHeader = req.headers.get('Authorization')!;
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+
+    if (userError || !user) {
+      throw new Error('Unauthorized');
+    }
+
+    const body = await req.json();
+    const { order_number } = body;
+
+    if (!order_number) {
+      throw new Error('order_number is required');
+    }
+
+    // Ambil data order
+    const { data: order, error: orderError } = await supabaseClient
+      .from('orders')
+      .select('*, order_shipping(*), profiles:user_id(name, email)')
+      .eq('order_number', order_number)
       .single();
 
     if (orderError || !order) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Pesanan tidak ditemukan", code: "ORDER_NOT_FOUND" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error('Order not found');
     }
 
-    // Validate order status
-    if (order.status !== "pending_payment") {
-      return new Response(
-        JSON.stringify({ success: false, message: "Pesanan tidak dalam status menunggu pembayaran", code: "ORDER_WRONG_STATUS" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Get auth user from request and validate JWT
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Check order ownership
     if (order.user_id !== user.id) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Akses ditolak: Anda bukan pemilik pesanan ini" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error('Unauthorized');
     }
 
-    // Check if there is an existing pending snap token to reuse
-    let payment = Array.isArray(order.payments) ? order.payments[0] : order.payments;
+    // Persiapan parameter DOKU
+    const clientId = Deno.env.get('DOKU_CLIENT_ID') ?? '';
+    const secretKey = Deno.env.get('DOKU_SECRET_KEY') ?? '';
+    // Assuming Sandbox for now based on context
+    const dokuEndpoint = 'https://api-sandbox.doku.com'; 
+    const requestTarget = '/checkout/v1/payment';
     
-    // If no payment record exists, dynamically create one (self-healing)
-    if (!payment) {
-      console.log(`Creating missing payment record for order ${order.order_number}`);
-      const { data: newPayment, error: insertPayError } = await supabase
-        .from("payments")
-        .insert({
-          order_id: order.id,
-          midtrans_order_id: order.order_number,
-          status: "pending",
-          amount: order.total_amount,
-        })
-        .select("id, status, snap_token, midtrans_response")
-        .single();
+    // Idempotency: use the header or generate a new random uuid
+    const requestId = req.headers.get('Idempotency-Key') || crypto.randomUUID();
+    const requestTimestamp = new Date().toISOString().substring(0, 19) + "Z"; // YYYY-MM-DDThh:mm:ssZ
 
-      if (insertPayError || !newPayment) {
-        console.error("Failed to create missing payment record:", insertPayError);
-        return new Response(
-          JSON.stringify({ success: false, message: "Gagal membuat data pembayaran", code: "PAYMENT_CREATE_ERROR" }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      payment = newPayment;
-    }
+    // Hitung dueDate dalam menit (misal 60 menit)
+    const paymentDueDate = 60;
 
-    const midtransMode = Deno.env.get("MIDTRANS_MODE") || "sandbox";
-
-    if (payment.status === "pending" && payment.midtrans_response) {
-      let snapToken = null;
-      let redirectUrl = "";
-      try {
-        const responseObj = typeof payment.midtrans_response === "string"
-          ? JSON.parse(payment.midtrans_response)
-          : payment.midtrans_response;
-        if (responseObj && responseObj.token) {
-          // Check if the token is still fresh (less than 20 minutes old)
-          // Midtrans Snap tokens can expire, so we use a conservative TTL
-          const paymentUpdatedAt = payment.updated_at || payment.created_at;
-          const tokenAge = paymentUpdatedAt 
-            ? Date.now() - new Date(paymentUpdatedAt).getTime()
-            : Infinity;
-          const TOKEN_TTL_MS = 20 * 60 * 1000; // 20 minutes
-
-          if (tokenAge < TOKEN_TTL_MS) {
-            snapToken = responseObj.token;
-            
-            const midtransSnapBaseUrl = midtransMode === "production"
-              ? "https://app.midtrans.com/snap/v2/vtweb"
-              : "https://app.sandbox.midtrans.com/snap/v2/vtweb";
-              
-            redirectUrl = responseObj.redirect_url || `${midtransSnapBaseUrl}/${snapToken}`;
-          } else {
-            console.log(`Snap token for order ${order.order_number} is stale (${Math.round(tokenAge / 60000)}min old), generating new one`);
-          }
-        }
-      } catch (e) {
-        console.error("Error parsing midtrans_response:", e);
-      }
-
-      if (snapToken) {
-        console.log(`Reusing existing Snap token for order ${order.order_number}`);
-        return new Response(
-          JSON.stringify({
-            success: true,
-            data: {
-              token: snapToken,
-              redirect_url: redirectUrl,
-            },
-          }),
-          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-    }
-
-    // Build Midtrans Snap parameters
-    const serverKey = Deno.env.get("MIDTRANS_SERVER_KEY")!;
-    const snapApiUrl = Deno.env.get("MIDTRANS_SNAP_API_URL")!;
-
-    // Calculate rounded item details to avoid any mismatch with Midtrans
-    const itemDetails = order.order_items.map((item: Record<string, unknown>) => ({
-      id: item.sku,
-      price: Math.round(Number(item.price)),
-      quantity: Number(item.quantity),
-      name: `${item.product_name} - ${item.variant_name}`.substring(0, 50),
-    }));
-
-    // Add shipping as item if > 0
-    if (Number(order.shipping_cost) > 0) {
-      itemDetails.push({
-        id: "SHIPPING",
-        price: Math.round(Number(order.shipping_cost)),
-        quantity: 1,
-        name: "Ongkos Kirim",
-      });
-    }
-
-    // Add discount as negative item if > 0
-    if (Number(order.discount_amount) > 0) {
-      itemDetails.push({
-        id: "DISCOUNT",
-        price: -Math.round(Number(order.discount_amount)),
-        quantity: 1,
-        name: "Diskon Voucher",
-      });
-    }
-
-    // Calculate total gross amount as the sum of all items in item_details to prevent rounding errors
-    const calculatedGrossAmount = itemDetails.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
-
-    const transactionDetails = {
-      transaction_details: {
-        order_id: order.order_number,
-        gross_amount: calculatedGrossAmount,
+    const dokuPayload = {
+      order: {
+        amount: order.total_amount,
+        invoice_number: order.order_number,
       },
-      customer_details: {
-        first_name: order.profiles.name,
-        phone: order.profiles.phone || "",
+      payment: {
+        payment_due_date: paymentDueDate,
       },
-      item_details: itemDetails,
-      callbacks: {
-        finish: `${Deno.env.get("APP_URL") || "http://localhost:3000"}/pesanan/${order.order_number}`,
-      },
+      customer: {
+        id: user.id,
+        name: order.order_shipping?.recipient_name || order.profiles?.name || 'Customer',
+        email: order.profiles?.email || 'customer@example.com',
+        phone: order.order_shipping?.phone || '',
+      }
     };
 
-    console.log("Sending transactionDetails to Midtrans Snap:", JSON.stringify(transactionDetails));
+    const signature = await generateDokuSignature(
+      clientId,
+      secretKey,
+      requestId,
+      requestTimestamp,
+      requestTarget,
+      dokuPayload
+    );
 
-    // Call Midtrans Snap API
-    const auth = btoa(`${serverKey}:`);
-    const midtransResponse = await fetch(snapApiUrl, {
-      method: "POST",
+    const dokuResponse = await fetch(`${dokuEndpoint}${requestTarget}`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${auth}`,
+        'Client-Id': clientId,
+        'Request-Id': requestId,
+        'Request-Timestamp': requestTimestamp,
+        'Signature': signature,
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(transactionDetails),
+      body: JSON.stringify(dokuPayload)
     });
 
-    const midtransData = await midtransResponse.json();
+    const dokuData = await dokuResponse.json();
 
-    if (!midtransResponse.ok) {
-      console.error("Midtrans error:", JSON.stringify(midtransData));
-      return new Response(
-        JSON.stringify({ success: false, message: "Gagal membuat transaksi pembayaran", code: "PAYMENT_ERROR" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!dokuResponse.ok || !dokuData.response || !dokuData.response.payment || !dokuData.response.payment.url) {
+      console.error('DOKU Error:', dokuData);
+      throw new Error('Failed to generate payment URL from DOKU');
     }
 
-    // Save token response to payments table (in midtrans_response)
-    const { error: updatePaymentError } = await supabase
-      .from("payments")
-      .update({
-        midtrans_response: midtransData,
-      })
-      .eq("id", payment.id);
+    const paymentUrl = dokuData.response.payment.url;
 
-    if (updatePaymentError) {
-      console.error("Error saving midtrans_response to database:", updatePaymentError);
+    // Simpan gateway reference di tabel payments
+    const { error: insertError } = await supabaseClient
+      .from('payments')
+      .insert({
+        order_id: order.id,
+        gateway_order_id: order.order_number, // usually we use order_number as gateway order ID
+        amount: order.total_amount,
+        status: 'pending',
+        gateway_response: dokuData
+      });
+
+    if (insertError) {
+      console.error('Insert payment error:', insertError);
     }
 
     return new Response(
       JSON.stringify({
         success: true,
         data: {
-          token: midtransData.token,
-          redirect_url: midtransData.redirect_url,
-        },
+          token: dokuData.response.payment.token_id || '', 
+          redirect_url: paymentUrl
+        }
       }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
-  } catch (error) {
-    console.error("generate-payment error:", error);
+
+  } catch (error: any) {
+    console.error('Error generating payment:', error.message);
     return new Response(
-      JSON.stringify({ success: false, message: "Internal server error", code: "INTERNAL_ERROR" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ success: false, message: error.message }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
     );
   }
 });

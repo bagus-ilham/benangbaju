@@ -72,11 +72,11 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
     label: 'Meta Description Default',
   },
   {
-    key: 'enable_midtrans',
+    key: 'enable_doku',
     value: 'true',
     type: 'boolean',
     group: 'payment',
-    label: 'Aktifkan Midtrans Sandbox',
+    label: 'Aktifkan DOKU Sandbox',
   },
   {
     key: 'whatsapp_number',

@@ -228,7 +228,7 @@ export function CheckoutSummaryCard({
         variant="primary"
         onClick={onPaymentSubmit}
         isLoading={isCheckoutProcessing}
-        loadingText={isPaymentTokenLoading ? 'Menghubungi Midtrans...' : 'Memproses Pesanan...'}
+        loadingText={isPaymentTokenLoading ? 'Menghubungi DOKU...' : 'Memproses Pesanan...'}
         className="w-full py-4 text-xs uppercase tracking-widest font-semibold"
         disabled={!canSubmit}
       >

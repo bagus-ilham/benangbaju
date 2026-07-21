@@ -18,7 +18,7 @@ import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
 import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar } from './components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SmartLink as Link } from '@/shared/components'
-import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
+import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -100,8 +100,8 @@ export default function CheckoutPage(): React.JSX.Element {
     hasSynced,
   ])
 
-  // 3. Load Midtrans Snap.js Script
-  useMidtransScript()
+  // 3. Load DOKU Checkout Script
+  useDokuCheckoutScript()
 
   // 4. Fetch Addresses
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
@@ -287,43 +287,23 @@ export default function CheckoutPage(): React.JSX.Element {
       clearCart()
       setCheckoutStep('payment')
 
-      // 2. Generate Midtrans payment token
-      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      // 2. Generate DOKU payment URL
+      const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
 
-      if (!token) {
-        toast.error('Gagal mendapatkan token pembayaran. Silakan coba di halaman riwayat pesanan.')
+      if (!redirect_url) {
+        toast.error('Gagal mendapatkan tautan pembayaran. Silakan coba di halaman riwayat pesanan.')
         clearCart()
         router.push(`/pesanan/${orderNumber}`)
         return
       }
 
-      // 3. Open Midtrans Snap pop-up
-      if (window.snap) {
-        window.snap.pay(token, {
-          onSuccess: () => {
-            toast.success('Pembayaran berhasil! Memverifikasi...')
-            router.push(`/pesanan/${orderNumber}?verifying=1`)
-          },
-
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          onPending: function (result: any) {
-            toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-            router.push(`/pesanan/${orderNumber}`)
-          },
-
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          onError: function (result: any) {
-            toast.error('Pembayaran gagal! Silakan coba lagi nanti.')
-            router.push(`/pesanan/${orderNumber}`)
-          },
-          onClose: function () {
-            router.push(`/pesanan/${orderNumber}`)
-          },
-        })
+      // 3. Open DOKU Checkout pop-up or redirect
+      if (window.loadJokulCheckout) {
+        // We push to the order page with verifying flag so it checks status in background or when popup closes
+        router.push(`/pesanan/${orderNumber}?verifying=1`)
+        window.loadJokulCheckout(redirect_url)
       } else {
-        if (redirect_url) {
-          window.location.href = redirect_url
-        }
+        window.location.href = redirect_url
       }
     } catch (err: any) {
       console.error(err)

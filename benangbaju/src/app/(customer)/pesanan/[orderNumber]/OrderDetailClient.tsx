@@ -22,7 +22,7 @@ import { OrderReviewModal } from './components/OrderReviewModal'
 import { OrderShippingSection } from './components/OrderShippingSection'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
-import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
+import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 
 const supabase = createBrowserClient()
 
@@ -155,8 +155,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     setSelectedReviewItem(null)
   }
 
-  // Load Midtrans Snap.js Script dynamically
-  useMidtransScript()
+  // Load DOKU Checkout Script dynamically
+  useDokuCheckoutScript()
 
   // Trigger verification if page is loaded with verifying query param
   useEffect(() => {
@@ -218,31 +218,15 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     if (!order) return
     try {
       toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
-      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(
+      const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(
         order.order_number
       )
       toast.dismiss('payment-loading')
 
-      if (token) {
-        if (window.snap) {
-          window.snap.pay(token, {
-            onSuccess: () => {
-              toast.success('Pembayaran berhasil! Memverifikasi...')
-              startPaymentVerification()
-            },
-            onPending: () => {
-              toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-              startPaymentVerification()
-            },
-            onError: () => {
-              toast.error('Pembayaran gagal! Coba lagi.')
-            },
-            onClose: () => {
-              // User closed Snap popup — start verifying in case payment was made
-              startPaymentVerification()
-            },
-          })
-        } else if (redirect_url) {
+      if (redirect_url) {
+        if (window.loadJokulCheckout) {
+          window.loadJokulCheckout(redirect_url)
+        } else {
           window.location.href = redirect_url
         }
       } else {

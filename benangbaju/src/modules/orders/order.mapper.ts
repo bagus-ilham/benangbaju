@@ -66,7 +66,7 @@ export function mapOrder(
     return {
       id: p.id,
       order_id: p.order_id,
-      midtrans_order_id: p.midtrans_order_id || '',
+      gateway_order_id: p.gateway_order_id || p.midtrans_order_id || '',
       status: paymentStatusMap[p.status] || 'pending',
       amount: p.amount,
       payment_type: p.payment_type,

@@ -27,8 +27,8 @@ const steps = [
   },
   {
     icon: CreditCard,
-    title: '4. Lakukan Pembayaran Instan (Midtrans Snap)',
-    desc: 'Tinjau total biaya, lalu klik tombol pembayaran. Layanan Midtrans Snap pop-up akan muncul secara otomatis. Anda bisa membayar dengan Bank Transfer, e-Wallet, atau Kartu Kredit.',
+    title: '4. Lakukan Pembayaran Instan (DOKU Checkout)',
+    desc: 'Tinjau total biaya, lalu klik tombol pembayaran. Layanan DOKU Checkout pop-up akan muncul secara otomatis. Anda bisa membayar dengan Bank Transfer, e-Wallet, atau Kartu Kredit.',
   },
   {
     icon: ClipboardList,

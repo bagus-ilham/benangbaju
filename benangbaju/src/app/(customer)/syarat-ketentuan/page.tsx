@@ -28,7 +28,7 @@ export default function SyaratKetentuanPage(): React.JSX.Element {
     {
       title: '4. Harga & Pembayaran',
       content:
-        'Harga yang tertera di situs kami dinyatakan dalam Rupiah (IDR) dan belum termasuk ongkos kirim. Ongkos kirim dihitung otomatis saat checkout berdasarkan alamat tujuan dan ekspedisi pilihan. Pembayaran dilakukan secara instan melalui payment gateway Midtrans. Batas waktu transfer mengikuti instruksi masing-masing metode bayar, dan kegagalan membayar dalam tenggat waktu tersebut akan menyebabkan pesanan batal otomatis.',
+        'Harga yang tertera di situs kami dinyatakan dalam Rupiah (IDR) dan belum termasuk ongkos kirim. Ongkos kirim dihitung otomatis saat checkout berdasarkan alamat tujuan dan ekspedisi pilihan. Pembayaran dilakukan secara instan melalui payment gateway DOKU. Batas waktu transfer mengikuti instruksi masing-masing metode bayar, dan kegagalan membayar dalam tenggat waktu tersebut akan menyebabkan pesanan batal otomatis.',
     },
     {
       title: '5. Hak Pembatalan Pesanan',

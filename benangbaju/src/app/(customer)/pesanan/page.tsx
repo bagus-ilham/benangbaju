@@ -22,7 +22,7 @@ import { ArrowLeft, ClipboardList } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { OrderCard } from './components/OrderCard'
-import { useMidtransScript } from '@/shared/hooks/useMidtransScript'
+import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 
 const STATUS_TABS = [
   { id: 'all', label: 'Semua' },
@@ -75,8 +75,8 @@ export default function PesananPage(): React.JSX.Element {
   const confirmMutation = useConfirmDelivery()
   const generatePaymentTokenMutation = useGeneratePaymentToken()
 
-  // Load Midtrans Snap.js Script dynamically
-  useMidtransScript()
+  // Load DOKU Checkout Script dynamically
+  useDokuCheckoutScript()
 
   // Reset page when tab changes
   const handleTabChange = (tabId: string) => {
