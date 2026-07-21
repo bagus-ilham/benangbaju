@@ -31,14 +31,14 @@ export function PageHeader({
     >
       <div className="flex flex-col space-y-2">
         {eyebrow && (
-          <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold">
+          <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent">
             {eyebrow}
           </span>
         )}
         <h2 className="text-lg md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
           {title}
         </h2>
-        <div className="accent-line pt-1" />
+        <div className="stitch-divider pt-1" />
         {subtitle && (
           <p className="text-xs text-neutral-500 font-sans max-w-xl leading-relaxed pt-1">
             {subtitle}

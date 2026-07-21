@@ -46,8 +46,8 @@ export function TrustStrip(): React.JSX.Element {
               variants={fadeUpItem}
               className="flex flex-col items-center text-center md:flex-row md:items-center md:text-left gap-2.5 md:gap-3 group"
             >
-              <div className="flex-shrink-0 p-2 border border-brand-gold/30 bg-brand-gold/10 transition-all duration-300 group-hover:border-brand-gold group-hover:bg-brand-gold/20">
-                <item.icon className="h-3.5 w-3.5 text-brand-gold-light" strokeWidth={1.5} />
+              <div className="flex-shrink-0 p-2 border border-brand-accent/30 bg-brand-accent/10 transition-all duration-300 group-hover:border-brand-accent group-hover:bg-brand-accent/20">
+                <item.icon className="h-3.5 w-3.5 text-brand-accent-light" strokeWidth={1.5} />
               </div>
               <div className="space-y-0.5">
                 <h3 className="text-[9px] md:text-[10px] font-heading font-semibold uppercase tracking-widest text-white">

@@ -60,9 +60,9 @@ export function CheckoutAddressForm({
             {selectedAddress ? (
               <motion.div
                 layoutId="selectedAddressBox"
-                className="border border-brand-gold bg-brand-gold-muted/10 p-4 relative rounded-none shadow-sm"
+                className="border border-brand-accent bg-brand-accent-muted/10 p-4 relative rounded-none shadow-sm"
               >
-                <p className="font-heading font-semibold text-xs text-brand-gold uppercase tracking-wider">
+                <p className="font-heading font-semibold text-xs text-brand-accent uppercase tracking-wider">
                   {selectedAddress.label} (Pilihan)
                 </p>
                 <p className="font-sans font-medium text-neutral-700 mt-1.5">
@@ -124,13 +124,13 @@ export function CheckoutAddressForm({
           </div>
         ) : (
           <div className="text-center py-8 border border-dashed border-neutral-200">
-            <p className="text-xs text-neutral-400 mb-3">Belum ada alamat pengiriman.</p>
+            <p className="text-xs text-neutral-400 mb-3">Anda belum menambahkan alamat pengiriman.</p>
             <Button
               onClick={onAddNewAddress}
               variant="outline"
               className="text-xs uppercase font-semibold"
             >
-              Tambah Alamat Pertama
+              Tambah Alamat Baru
             </Button>
           </div>
         )}
@@ -144,7 +144,7 @@ export function CheckoutAddressForm({
 
         {!selectedAddress ? (
           <p className="text-xs text-neutral-400 italic">
-            Harap pilih alamat terlebih dahulu untuk menampilkan opsi pengiriman.
+            Pilih alamat pengiriman untuk melihat opsi kurir.
           </p>
         ) : shippingLoading ? (
           <div className="space-y-2">
@@ -173,7 +173,7 @@ export function CheckoutAddressForm({
                 }}
                 className={`p-4 border cursor-pointer transition-all duration-300 relative rounded-none ${
                   selectedCourier?.id === option.id
-                    ? 'border-brand-gold bg-brand-gold-muted/10 ring-1 ring-brand-gold'
+                    ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent'
                     : 'border-neutral-200 bg-white'
                 }`}
               >
@@ -189,7 +189,7 @@ export function CheckoutAddressForm({
                   Estimasi tiba: {option.etd_min} - {option.etd_max} Hari
                 </p>
                 {selectedCourier?.id === option.id && (
-                  <div className="absolute top-2 right-2 bg-brand-gold text-white rounded-full p-0.5">
+                  <div className="absolute top-2 right-2 bg-brand-accent text-white rounded-full p-0.5">
                     <Check size={8} />
                   </div>
                 )}
@@ -198,7 +198,7 @@ export function CheckoutAddressForm({
           </div>
         ) : (
           <p className="text-xs text-red-500 font-semibold">
-            Pengiriman tidak tersedia untuk zona alamat Anda. Harap hubungi Admin.
+            Mohon maaf, kurir belum tersedia untuk wilayah ini. Silakan hubungi admin kami.
           </p>
         )}
       </div>

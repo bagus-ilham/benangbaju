@@ -296,7 +296,7 @@ export function ProductThumbnails({
         <button
           type="button"
           onClick={() => scroll('left')}
-          className="hidden md:flex absolute left-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-r-md opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          className="hidden md:flex absolute left-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-none opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -334,7 +334,7 @@ export function ProductThumbnails({
         <button
           type="button"
           onClick={() => scroll('right')}
-          className="hidden md:flex absolute right-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-l-md opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          className="hidden md:flex absolute right-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-none opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-5 h-5" />

@@ -41,8 +41,8 @@ export default function PengirimanPage(): React.JSX.Element {
           {/* Delivery Terms Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div className="border border-neutral-200 p-6 space-y-3 card-hover-lift bg-brand-cream/30">
-              <div className="p-2 bg-brand-gold-muted border border-brand-gold/20 w-max">
-                <Scale className="h-4 w-4 text-brand-gold" strokeWidth={1.5} />
+              <div className="p-2 bg-brand-accent-muted border border-brand-accent/20 w-max">
+                <Scale className="h-4 w-4 text-brand-accent" strokeWidth={1.5} />
               </div>
               <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
                 Perhitungan Berat

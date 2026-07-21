@@ -67,13 +67,13 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
             className="object-contain object-left"
           />
         </div>
-        <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
+        <span className="text-brand-accent font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-accent-muted/10 px-1.5 py-0.5 rounded-xs">
           CMS
         </span>
       </div>
     ) : (
       <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-        BENANGBAJU <span className="text-brand-gold">CMS</span>
+        BENANGBAJU <span className="text-brand-accent">CMS</span>
       </span>
     )
   }
@@ -89,7 +89,7 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
           className="object-contain object-left"
         />
       </div>
-      <span className="text-brand-gold font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-gold-muted/10 px-1.5 py-0.5 rounded-xs">
+      <span className="text-brand-accent font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-accent-muted/10 px-1.5 py-0.5 rounded-xs">
         CMS
       </span>
     </Link>
@@ -98,7 +98,7 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
       href="/admin"
       className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase"
     >
-      BENANGBAJU <span className="text-brand-gold font-normal">CMS</span>
+      BENANGBAJU <span className="text-brand-accent font-normal">CMS</span>
     </Link>
   )
 }
@@ -176,19 +176,19 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
           'group flex items-center px-3 py-2.5 text-xs font-heading font-medium rounded-none transition-all duration-200',
           isActive
             ? 'bg-brand-black text-white font-semibold shadow-sm'
-            : 'text-neutral-600 hover:bg-brand-gold-muted hover:text-brand-black'
+            : 'text-neutral-600 hover:bg-brand-accent-muted hover:text-brand-black'
         )}
       >
         <Icon
           className={cn(
             'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
-            isActive ? 'text-brand-gold-light' : 'text-neutral-400 group-hover:text-brand-gold'
+            isActive ? 'text-brand-accent-light' : 'text-neutral-400 group-hover:text-brand-accent'
           )}
           aria-hidden="true"
         />
         {item.name}
         {isActive && (
-          <span className="ml-auto w-1 h-1 bg-brand-gold-light rounded-full" aria-hidden="true" />
+          <span className="ml-auto w-1 h-1 bg-brand-accent-light rounded-full" aria-hidden="true" />
         )}
       </Link>
     )
@@ -280,7 +280,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
             <div className="ml-4 flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <div
-                  className="h-8 w-8 bg-brand-black text-brand-gold-light flex items-center justify-center text-xs font-heading font-bold uppercase"
+                  className="h-8 w-8 bg-brand-black text-brand-accent-light flex items-center justify-center text-xs font-heading font-bold uppercase"
                   aria-hidden="true"
                 >
                   {profile?.name?.substring(0, 2) || user?.email?.substring(0, 2) || 'AD'}

@@ -78,7 +78,7 @@ export function CollectionSpotlight({
             <div
               className={cn(
                 'absolute -bottom-3 -right-3 w-full h-full border pointer-events-none hidden md:block',
-                isDark ? 'border-brand-gold/30' : 'border-brand-gold/40'
+                isDark ? 'border-brand-accent/30' : 'border-brand-accent/40'
               )}
               aria-hidden
             />
@@ -96,7 +96,7 @@ export function CollectionSpotlight({
               <span
                 className={cn(
                   'inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium',
-                  isDark ? 'text-brand-gold-light' : 'text-brand-gold'
+                  isDark ? 'text-brand-accent-light' : 'text-brand-accent'
                 )}
               >
                 Koleksi Kurasi
@@ -109,7 +109,7 @@ export function CollectionSpotlight({
               >
                 {collection.name}
               </h2>
-              <div className="accent-line" />
+              <div className="stitch-divider" />
             </div>
 
             {collection.description && (
@@ -128,8 +128,8 @@ export function CollectionSpotlight({
               className={cn(
                 'inline-flex items-center gap-2 text-[10px] font-heading font-semibold uppercase tracking-[0.2em] transition-all duration-300 group/link',
                 isDark
-                  ? 'text-white hover:text-brand-gold-light'
-                  : 'text-brand-black hover:text-brand-gold'
+                  ? 'text-white hover:text-brand-accent-light'
+                  : 'text-brand-black hover:text-brand-accent'
               )}
             >
               <span className="border-b border-current pb-0.5">Jelajahi Koleksi</span>

@@ -59,7 +59,7 @@ export function ProductStickyAction({
                 <h4 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black line-clamp-1">
                   {product.name}
                 </h4>
-                <p className="text-xs font-sans font-semibold text-brand-gold mt-0.5">
+                <p className="text-xs font-sans font-semibold text-brand-accent mt-0.5">
                   {selectedVariant ? formatIDR(selectedVariant.price) : formatIDR(minPrice)}
                 </p>
               </div>

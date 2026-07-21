@@ -15,7 +15,7 @@ export function Footer(): React.JSX.Element {
       {/* Newsletter CTA band */}
       <div className="border-b border-neutral-200 bg-brand-black py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-gold-light">
+          <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent-light">
             Tetap Terhubung
           </span>
           <h3 className="text-lg md:text-xl font-heading font-light uppercase tracking-wider text-white">
@@ -42,7 +42,7 @@ export function Footer(): React.JSX.Element {
               type="submit"
               variant="primary"
               size="sm"
-              className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-gold hover:text-white hover:border-brand-gold transition-all duration-300"
+              className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all duration-300"
             >
               Daftar
             </Button>
@@ -85,7 +85,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/cara-belanja"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Cara Belanja
                   </Link>
@@ -93,7 +93,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/pengiriman"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Informasi Pengiriman
                   </Link>
@@ -101,7 +101,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/retur"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Kebijakan Pengembalian (Retur)
                   </Link>
@@ -109,7 +109,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kontak"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Hubungi Kami
                   </Link>
@@ -126,7 +126,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/syarat-ketentuan"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Syarat & Ketentuan
                   </Link>
@@ -134,7 +134,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kebijakan-privasi"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Kebijakan Privasi
                   </Link>
@@ -142,7 +142,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/tentang"
-                    className="text-[11px] text-neutral-500 hover:text-brand-gold transition-colors font-sans"
+                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
                   >
                     Tentang Kami
                   </Link>
@@ -164,7 +164,7 @@ export function Footer(): React.JSX.Element {
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="Instagram"
                   >
                     <svg
@@ -187,7 +187,7 @@ export function Footer(): React.JSX.Element {
                     href={tiktokUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="TikTok"
                   >
                     <svg
@@ -208,7 +208,7 @@ export function Footer(): React.JSX.Element {
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="WhatsApp"
                   >
                     <svg
@@ -229,7 +229,7 @@ export function Footer(): React.JSX.Element {
                     href={shopeeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-gold hover:text-brand-gold hover:bg-brand-gold-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="Shopee"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -246,13 +246,13 @@ export function Footer(): React.JSX.Element {
               &copy; <CurrentYear /> Benangbaju . All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
-              <Link href="/syarat-ketentuan" className="hover:text-brand-gold transition-colors">
+              <Link href="/syarat-ketentuan" className="hover:text-brand-accent transition-colors">
                 Syarat
               </Link>
-              <Link href="/kebijakan-privasi" className="hover:text-brand-gold transition-colors">
+              <Link href="/kebijakan-privasi" className="hover:text-brand-accent transition-colors">
                 Privasi
               </Link>
-              <Link href="/kontak" className="hover:text-brand-gold transition-colors">
+              <Link href="/kontak" className="hover:text-brand-accent transition-colors">
                 Kontak
               </Link>
             </div>

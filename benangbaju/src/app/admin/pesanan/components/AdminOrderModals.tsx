@@ -130,7 +130,7 @@ export function ReturnReviewModal({
                     href={media.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="block w-16 h-16 border border-neutral-200 overflow-hidden hover:border-brand-gold transition-colors relative"
+                    className="block w-16 h-16 border border-neutral-200 overflow-hidden hover:border-brand-accent transition-colors relative"
                   >
                     <Image
                       src={getProxiedImageUrl(media.url)}

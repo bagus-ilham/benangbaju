@@ -77,7 +77,7 @@ export default function AlamatPage(): React.JSX.Element {
       <PageContainer size="lg" className="py-10 page-content">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-            <Link href="/akun" className="hover:text-brand-gold transition">
+            <Link href="/akun" className="hover:text-brand-accent transition">
               Akun Saya
             </Link>
             <span>/</span>
@@ -130,7 +130,7 @@ export default function AlamatPage(): React.JSX.Element {
         <div className="mt-12 pt-6 border-t border-neutral-100">
           <Link
             href="/akun"
-            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-gold transition duration-100"
+            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-accent transition duration-100"
           >
             <ArrowLeft size={14} className="mr-2" /> Kembali ke Akun
           </Link>

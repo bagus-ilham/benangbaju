@@ -243,7 +243,7 @@ export function ProductDetailClient({
               <span>/</span>
             </>
           )}
-          <span className="text-brand-gold font-semibold truncate max-w-xs">{product.name}</span>
+          <span className="text-brand-accent font-semibold truncate max-w-xs">{product.name}</span>
         </motion.nav>
 
         {/* Main Grid: Left Gallery, Right Details */}

@@ -59,7 +59,7 @@ export function ProductInfoSection({
       {/* Title, Category & Price */}
       <motion.div variants={itemVariants} className="space-y-2">
         {product.categories && (
-          <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold">
+          <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent">
             {product.categories.name}
           </span>
         )}
@@ -118,7 +118,7 @@ export function ProductInfoSection({
             <button
               type="button"
               onClick={onSizeGuideOpen}
-              className="text-[9px] uppercase tracking-wider font-heading font-semibold text-brand-gold hover:text-brand-gold-light transition-colors underline underline-offset-2 cursor-pointer"
+              className="text-[9px] uppercase tracking-wider font-heading font-semibold text-brand-accent hover:text-brand-accent-light transition-colors underline underline-offset-2 cursor-pointer"
             >
               Panduan Ukuran
             </button>
@@ -176,7 +176,7 @@ export function ProductInfoSection({
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={onToggleWishlist}
-            className="p-4 border border-neutral-200 hover:border-brand-gold bg-white transition-all text-neutral-500 hover:text-brand-gold relative gold-border-hover"
+            className="p-4 border border-neutral-200 hover:border-brand-accent bg-white transition-all text-neutral-500 hover:text-brand-accent relative gold-border-hover"
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
             <Heart
@@ -231,7 +231,7 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <Truck className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
+          <Truck className="h-4 w-4 text-brand-accent/70 group-hover:text-brand-accent transition-colors" />
           <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
             Ongkir Flat
           </span>
@@ -242,7 +242,7 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <RefreshCw className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
+          <RefreshCw className="h-4 w-4 text-brand-accent/70 group-hover:text-brand-accent transition-colors" />
           <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
             7 Hari Retur
           </span>
@@ -253,7 +253,7 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <Shield className="h-4 w-4 text-brand-gold/70 group-hover:text-brand-gold transition-colors" />
+          <Shield className="h-4 w-4 text-brand-accent/70 group-hover:text-brand-accent transition-colors" />
           <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
             Kualitas Premium
           </span>

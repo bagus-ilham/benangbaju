@@ -46,7 +46,7 @@ export function FlashSaleItemsTable({
                   <td className="py-2 px-3">
                     <input
                       type="number"
-                      className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-gold text-[10px]"
+                      className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px]"
                       value={it.sale_price}
                       onChange={(e) =>
                         handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
@@ -56,7 +56,7 @@ export function FlashSaleItemsTable({
                   <td className="py-2 px-3">
                     <input
                       type="number"
-                      className="w-16 border border-neutral-200 p-1 outline-none focus:border-brand-gold text-[10px]"
+                      className="w-16 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px]"
                       value={it.quota}
                       onChange={(e) => handleUpdateItemField(idx, 'quota', Number(e.target.value))}
                     />

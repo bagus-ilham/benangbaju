@@ -85,13 +85,13 @@ export default async function CategoryDetailPage({
           />
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-10 md:pb-14">
-              <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold-light">
+              <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent-light">
                 Kategori Pilihan
               </span>
               <h1 className="text-2xl md:text-4xl font-heading font-light uppercase tracking-wider text-white mt-2 leading-tight">
                 {category.name}
               </h1>
-              <div className="w-12 h-px bg-brand-gold-light mt-3" />
+              <div className="w-12 h-px bg-brand-accent-light mt-3" />
               {category.description && (
                 <p className="text-xs text-neutral-300 font-sans max-w-lg leading-relaxed mt-3">
                   {category.description}

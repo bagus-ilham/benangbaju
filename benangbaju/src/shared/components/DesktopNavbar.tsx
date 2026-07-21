@@ -101,10 +101,10 @@ export function DesktopNavbar({
                     className={cn(
                       'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16',
                       pathname === link.href
-                        ? 'text-brand-gold font-semibold font-bold'
+                        ? 'text-brand-accent font-semibold font-bold'
                         : isTransparentHome
                           ? 'text-white/90 hover:text-white'
-                          : 'text-neutral-500 hover:text-brand-gold'
+                          : 'text-neutral-500 hover:text-brand-accent'
                     )}
                   >
                     {link.name}
@@ -121,7 +121,7 @@ export function DesktopNavbar({
                 'font-heading text-base md:text-lg font-bold tracking-[0.2em] uppercase select-none transition-colors duration-300 flex items-center justify-center',
                 isTransparentHome
                   ? 'text-white hover:text-neutral-200'
-                  : 'text-brand-black hover:text-brand-gold'
+                  : 'text-brand-black hover:text-brand-accent'
               )}
             >
               {logoUrl ? (
@@ -176,7 +176,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-white text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(154,123,79,0.3)]"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-accent text-white text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(163,144,128,0.3)]"
                 >
                   {wishlistCount}
                 </motion.span>
@@ -206,7 +206,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-white text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(154,123,79,0.3)]"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-accent text-white text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(163,144,128,0.3)]"
                 >
                   {totalQuantity}
                 </motion.span>
@@ -242,7 +242,7 @@ export function DesktopNavbar({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 border-t-2 border-t-brand-gold rounded-none shadow-lg py-1 z-20"
+                        className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 border-t-2 border-t-brand-accent rounded-none shadow-lg py-1 z-20"
                       >
                         <div className="px-4 py-2 border-b border-neutral-100">
                           <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">

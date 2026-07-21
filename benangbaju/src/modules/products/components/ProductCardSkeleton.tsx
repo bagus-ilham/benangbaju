@@ -10,7 +10,7 @@ export function ProductCardSkeleton({ className }: ProductCardSkeletonProps): Re
   return (
     <div
       className={cn(
-        'flex flex-col w-full text-left bg-white rounded-xl overflow-hidden border border-neutral-100',
+        'flex flex-col w-full text-left bg-white rounded-none overflow-hidden border border-neutral-100',
         className
       )}
     >

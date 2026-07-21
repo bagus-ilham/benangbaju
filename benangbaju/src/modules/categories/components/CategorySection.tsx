@@ -60,7 +60,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                       0{index + 1}
                     </span>
                   </div>
-                  <div className="w-0 group-hover:w-full h-px bg-brand-gold-light transition-all duration-500 mt-2" />
+                  <div className="w-0 group-hover:w-full h-px bg-brand-accent-light transition-all duration-500 mt-2" />
                 </div>
               </Link>
             </motion.div>

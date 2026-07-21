@@ -209,7 +209,7 @@ export default function CartPage(): React.JSX.Element {
                 bordered={true}
                 className="bg-neutral-50 border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden"
               >
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
                 <h3 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black border-b border-neutral-200 pb-4">
                   Ringkasan Belanja
                 </h3>
@@ -249,7 +249,7 @@ export default function CartPage(): React.JSX.Element {
                   </Button>
                 </Link>
 
-                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-gold p-4 rounded-none text-[10px] text-neutral-400 leading-relaxed font-sans">
+                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-accent p-4 rounded-none text-[10px] text-neutral-400 leading-relaxed font-sans">
                   Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank
                   otomatis, QRIS, GoPay, dan ShopeePay via Midtrans.
                 </div>

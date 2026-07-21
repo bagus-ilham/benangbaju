@@ -54,7 +54,7 @@ export default async function CollectionsIndexPage(): Promise<React.JSX.Element>
               )}
               <div className="absolute inset-0 gradient-overlay-dark opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
 
-              <div className="absolute top-4 left-4 px-3 py-1.5 bg-brand-gold/90 backdrop-blur-sm">
+              <div className="absolute top-4 left-4 px-3 py-1.5 bg-brand-accent/90 backdrop-blur-sm">
                 <span className="text-[9px] font-heading font-bold uppercase tracking-widest text-brand-black">
                   Koleksi
                 </span>
@@ -64,13 +64,13 @@ export default async function CollectionsIndexPage(): Promise<React.JSX.Element>
                 <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-widest leading-none">
                   {col.name}
                 </h2>
-                <div className="w-8 h-px bg-brand-gold-light group-hover:w-16 transition-all duration-500" />
+                <div className="w-8 h-px bg-brand-accent-light group-hover:w-16 transition-all duration-500" />
                 {col.description && (
                   <p className="text-[10px] text-neutral-300 font-sans line-clamp-2 max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     {col.description}
                   </p>
                 )}
-                <span className="text-[9px] font-heading uppercase tracking-[0.2em] text-brand-gold-light pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <span className="text-[9px] font-heading uppercase tracking-[0.2em] text-brand-accent-light pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   Lihat Koleksi &rarr;
                 </span>
               </div>

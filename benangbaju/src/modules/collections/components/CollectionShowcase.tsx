@@ -22,14 +22,14 @@ export function CollectionShowcase({
   index = 0,
 }: CollectionShowcaseProps): React.JSX.Element {
   const isReversed = index % 2 === 1
-  const bgColor = isReversed ? 'bg-brand-black' : 'bg-white'
+  const bgColor = isReversed ? 'bg-brand-black' : 'bg-brand-cream section-texture'
   const textColor = isReversed ? 'text-white' : 'text-brand-black'
   const textMuted = isReversed ? 'text-white/80' : 'text-brand-black/80'
-  const borderColor = isReversed ? 'border-white' : 'border-brand-black'
-  const btnBg = isReversed ? 'bg-white' : 'bg-brand-black'
-  const btnText = isReversed ? 'text-brand-black' : 'text-white'
-  const btnHover = isReversed ? 'hover:bg-neutral-200' : 'hover:bg-brand-dark'
-  const cardContainerClass = isReversed ? 'bg-white rounded p-2' : '' // For product card visibility
+  const borderColor = isReversed ? 'border-brand-accent-light' : 'border-brand-accent'
+  const btnBg = isReversed ? 'bg-brand-accent' : 'bg-brand-black'
+  const btnText = 'text-white'
+  const btnHover = isReversed ? 'hover:bg-brand-accent-light' : 'hover:bg-brand-dark'
+  const cardContainerClass = isReversed ? 'bg-white p-2 border border-neutral-100 rounded-none shadow-sm' : ''
 
   const sliderRef = useRef<HTMLDivElement>(null)
 
@@ -85,6 +85,7 @@ export function CollectionShowcase({
             >
               {collection.name}
             </h2>
+            <div className="stitch-divider mb-6 max-w-[200px]" />
             {collection.description && (
               <p
                 className={cn(
@@ -98,9 +99,10 @@ export function CollectionShowcase({
             <Link
               href={`/koleksi/${collection.slug}`}
               className={cn(
-                'inline-block font-medium border-b pb-1 transition-all hover:opacity-70',
+                'inline-block font-heading font-bold uppercase tracking-wider text-[10px] border-b pb-1 transition-all',
                 textColor,
-                borderColor
+                borderColor,
+                isReversed ? 'hover:text-brand-accent-light hover:border-brand-accent-light' : 'hover:text-brand-accent hover:border-brand-accent'
               )}
             >
               Explore the {collection.name} Edit

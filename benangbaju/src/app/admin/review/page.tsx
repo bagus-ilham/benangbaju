@@ -173,7 +173,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
                               href={media.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block border border-neutral-200 hover:border-brand-gold transition-colors relative w-12 h-12"
+                              className="block border border-neutral-200 hover:border-brand-accent transition-colors relative w-12 h-12"
                             >
                               <Image
                                 src={getProxiedImageUrl(media.url)}

@@ -76,10 +76,10 @@ export function MegaMenuNavItem({
         className={cn(
           'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center gap-1 nav-link-underline h-16',
           isActive
-            ? 'text-brand-gold font-semibold font-bold'
+            ? 'text-brand-accent font-semibold font-bold'
             : isTransparentHome
               ? 'text-white/90 hover:text-white'
-              : 'text-neutral-500 hover:text-brand-gold'
+              : 'text-neutral-500 hover:text-brand-accent'
         )}
       >
         {label}
@@ -128,7 +128,7 @@ export function MegaMenuNavItem({
                         <li key={item.slug}>
                           <Link
                             href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
-                            className="text-sm font-sans text-neutral-600 hover:text-brand-gold transition-colors block"
+                            className="text-sm font-sans text-neutral-600 hover:text-brand-accent transition-colors block"
                           >
                             {item.name}
                           </Link>
@@ -140,7 +140,7 @@ export function MegaMenuNavItem({
                   <div className="pt-6 mt-auto">
                     <Link
                       href={href}
-                      className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-gold hover:opacity-70 transition-opacity flex items-center gap-2"
+                      className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-accent hover:opacity-70 transition-opacity flex items-center gap-2"
                     >
                       JELAJAHI SEMUA &rarr;
                     </Link>

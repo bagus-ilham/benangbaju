@@ -34,8 +34,8 @@ export function ReturnReasonForm({
 }: ReturnReasonFormProps): React.JSX.Element {
   return (
     <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
-      <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-gold border-b border-neutral-100 pb-2">
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
+      <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent border-b border-neutral-100 pb-2">
         Alasan Pengembalian*
       </h2>
       <div className="space-y-4">
@@ -74,7 +74,7 @@ export function ReturnReasonForm({
           ))}
 
           {returnFiles.length < 2 && (
-            <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-gold hover:text-brand-gold transition group">
+            <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-accent hover:text-brand-accent transition group">
               <ImageIcon size={20} className="mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] uppercase font-bold tracking-wider">Tambah</span>
               <input

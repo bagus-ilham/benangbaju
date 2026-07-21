@@ -72,14 +72,14 @@ export function MiniCartDrawer(): React.JSX.Element {
           >
             {/* Top gold accent line */}
             <div
-              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold to-brand-gold-light"
+              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-accent to-brand-accent-light"
               aria-hidden="true"
             />
 
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-neutral-100 mt-[3px]">
               <div className="flex items-center space-x-2">
-                <ShoppingBag className="h-4 w-4 text-brand-gold" aria-hidden="true" />
+                <ShoppingBag className="h-4 w-4 text-brand-accent" aria-hidden="true" />
                 <span className="font-heading text-sm font-bold tracking-[0.15em] text-brand-black uppercase">
                   KERANJANG ({totalQuantity})
                 </span>
@@ -98,10 +98,10 @@ export function MiniCartDrawer(): React.JSX.Element {
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div
-                    className="relative p-4 bg-brand-cream border border-brand-gold/10 rounded-none animate-gentle-float"
+                    className="relative p-4 bg-brand-cream border border-brand-accent/10 rounded-none animate-gentle-float"
                     aria-hidden="true"
                   >
-                    <ShoppingBag className="h-8 w-8 text-brand-gold" strokeWidth={1.5} />
+                    <ShoppingBag className="h-8 w-8 text-brand-accent" strokeWidth={1.5} />
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black">
@@ -153,7 +153,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                           href={`/produk/${item.slug}`}
                           onClick={() => setCartDrawerOpen(false)}
                         >
-                          <h4 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-black hover:text-brand-gold transition-colors line-clamp-2">
+                          <h4 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-black hover:text-brand-accent transition-colors line-clamp-2">
                             {item.productName || item.name}
                           </h4>
                         </Link>

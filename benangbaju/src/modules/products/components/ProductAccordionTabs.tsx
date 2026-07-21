@@ -39,7 +39,7 @@ export function ProductAccordionTabs({
           {activeTab === 'details' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute bottom-0 left-0 right-4 h-[2px] bg-brand-gold"
+              className="absolute bottom-0 left-0 right-4 h-[2px] bg-brand-accent"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -55,7 +55,7 @@ export function ProductAccordionTabs({
           {activeTab === 'shipping' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute bottom-0 left-4 right-4 h-[2px] bg-brand-gold"
+              className="absolute bottom-0 left-4 right-4 h-[2px] bg-brand-accent"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -71,7 +71,7 @@ export function ProductAccordionTabs({
           {activeTab === 'care' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute bottom-0 left-4 right-4 h-[2px] bg-brand-gold"
+              className="absolute bottom-0 left-4 right-4 h-[2px] bg-brand-accent"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}

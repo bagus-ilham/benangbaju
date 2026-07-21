@@ -53,8 +53,8 @@ export default function CaraBelanjaPage(): React.JSX.Element {
               key={step.title}
               className="border border-neutral-200 p-6 md:p-8 flex items-start gap-5 card-hover-lift gold-border-hover bg-white"
             >
-              <div className="p-3 bg-brand-gold-muted border border-brand-gold/20 shrink-0">
-                <step.icon className="h-5 w-5 text-brand-gold" strokeWidth={1.5} />
+              <div className="p-3 bg-brand-accent-muted border border-brand-accent/20 shrink-0">
+                <step.icon className="h-5 w-5 text-brand-accent" strokeWidth={1.5} />
               </div>
               <div className="space-y-2">
                 <h3 className="font-heading text-sm font-semibold text-brand-black uppercase tracking-wide">
@@ -73,7 +73,7 @@ export default function CaraBelanjaPage(): React.JSX.Element {
             Service kami melalui halaman{' '}
             <Link
               href="/kontak"
-              className="text-brand-black underline font-semibold hover:text-brand-gold transition-colors"
+              className="text-brand-black underline font-semibold hover:text-brand-accent transition-colors"
             >
               Hubungi Kami
             </Link>{' '}

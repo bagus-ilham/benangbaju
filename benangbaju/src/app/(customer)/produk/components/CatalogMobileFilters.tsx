@@ -76,7 +76,7 @@ export function CatalogMobileFilters({
                     className={cn(
                       'text-sm font-sans tracking-wide text-left w-full',
                       categorySlug === cat.slug
-                        ? 'text-brand-black font-semibold'
+                        ? 'text-brand-accent font-bold'
                         : 'text-neutral-500'
                     )}
                   >

@@ -83,7 +83,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.95 }}
             transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
-            className="w-full max-w-2xl bg-white p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-gold border-neutral-100"
+            className="w-full max-w-2xl bg-white p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-accent border-neutral-100"
           >
             <button
               onClick={onClose}
@@ -126,7 +126,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       Hasil Pencarian Instan
                     </span>
                     {isSearchingInstant && (
-                      <div className="flex items-center space-x-1.5 text-brand-gold">
+                      <div className="flex items-center space-x-1.5 text-brand-accent">
                         <Loader2 className="h-3 w-3 animate-spin" />
                         <span className="text-[8px] font-heading font-semibold uppercase tracking-wider">
                           Mencari...
@@ -151,7 +151,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             key={product.id}
                             href={`/produk/${product.slug}`}
                             onClick={onClose}
-                            className="flex items-center space-x-3 p-2 bg-white border border-neutral-100 hover:border-brand-gold/50 transition-all duration-200 group"
+                            className="flex items-center space-x-3 p-2 bg-white border border-neutral-100 hover:border-brand-accent/50 transition-all duration-200 group"
                           >
                             <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0">
                               {primaryImg ? (
@@ -169,14 +169,14 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-[11px] font-heading font-semibold uppercase tracking-wider text-brand-black truncate group-hover:text-brand-gold transition-colors">
+                              <h4 className="text-[11px] font-heading font-semibold uppercase tracking-wider text-brand-black truncate group-hover:text-brand-accent transition-colors">
                                 {product.name}
                               </h4>
                               <p className="text-[10px] font-sans font-medium text-neutral-500 mt-0.5">
                                 {formatIDR(minPrice)}
                               </p>
                             </div>
-                            <div className="pr-2 text-neutral-300 group-hover:text-brand-gold transition-colors">
+                            <div className="pr-2 text-neutral-300 group-hover:text-brand-accent transition-colors">
                               <ChevronRight className="h-4 w-4" />
                             </div>
                           </Link>
@@ -185,7 +185,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
                       <button
                         onClick={handleSearchSubmit}
-                        className="w-full pt-2 pb-1 text-[10px] uppercase tracking-widest font-heading font-semibold text-brand-gold hover:text-brand-black transition-colors"
+                        className="w-full pt-2 pb-1 text-[10px] uppercase tracking-widest font-heading font-semibold text-brand-accent hover:text-brand-black transition-colors"
                       >
                         Lihat semua hasil untuk "{searchQuery}"
                       </button>

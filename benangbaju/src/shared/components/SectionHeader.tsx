@@ -37,16 +37,16 @@ export function SectionHeader({
       )}
     >
       {eyebrow && (
-        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-gold">
-          <span className="hidden sm:block w-6 h-px bg-brand-gold/50" aria-hidden />
+        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent">
+          <span className="hidden sm:block w-6 h-px bg-brand-accent/50" aria-hidden />
           {eyebrow}
-          <span className="hidden sm:block w-6 h-px bg-brand-gold/50" aria-hidden />
+          <span className="hidden sm:block w-6 h-px bg-brand-accent/50" aria-hidden />
         </span>
       )}
       <h2 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
         {title}
       </h2>
-      {showDivider && <div className={cn('accent-line pt-1', isCenter && 'accent-line-center')} />}
+      {showDivider && <div className={cn('stitch-divider pt-1', isCenter && 'stitch-divider-center')} />}
       {children}
     </motion.div>
   )

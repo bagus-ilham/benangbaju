@@ -66,7 +66,7 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
                 <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-widest leading-none">
                   {cat.name}
                 </h2>
-                <div className="w-8 h-px bg-brand-gold-light group-hover:w-16 transition-all duration-500" />
+                <div className="w-8 h-px bg-brand-accent-light group-hover:w-16 transition-all duration-500" />
                 {cat.description && (
                   <p className="text-[10px] text-neutral-300 font-sans line-clamp-2 max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     {cat.description}

@@ -87,7 +87,7 @@ export function AdminOrderShippingPanel({
                         setEditResiNumber(orderShipping.tracking_number!)
                         setIsEditingResi(true)
                       }}
-                      className="text-neutral-400 hover:text-brand-gold transition"
+                      className="text-neutral-400 hover:text-brand-accent transition"
                       title="Edit Resi"
                     >
                       <Edit2 size={12} />

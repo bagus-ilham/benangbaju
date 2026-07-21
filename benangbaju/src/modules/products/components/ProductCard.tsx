@@ -71,7 +71,7 @@ export const ProductCard = React.memo(function ProductCard({
         <div
           className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-sm w-full bg-white shadow-2xl rounded-xl overflow-hidden border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
+          } max-w-sm w-full bg-white shadow-2xl rounded-none overflow-hidden border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-accent`  }
         >
           <div className="flex-1 w-0 p-4">
             <div className="flex items-start">
@@ -99,8 +99,8 @@ export const ProductCard = React.memo(function ProductCard({
                 )}
               </div>
               <div className="ml-3 flex-1">
-                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
-                  Berhasil Ditambahkan!
+                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-accent">
+                  Produk Masuk Keranjang
                 </p>
                 <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
                   {product.name}
@@ -117,7 +117,7 @@ export const ProductCard = React.memo(function ProductCard({
                 toast.dismiss(t.id)
                 setCartDrawerOpen(true)
               }}
-              className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
+              className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-accent hover:text-brand-accent-light focus:outline-none cursor-pointer"
             >
               Lihat
             </button>
@@ -136,7 +136,7 @@ export const ProductCard = React.memo(function ProductCard({
   return (
     <div
       className={cn(
-        'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] rounded-xl overflow-hidden',
+        'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(23,23,23,0.12)] rounded-none overflow-hidden',
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
@@ -227,9 +227,9 @@ export const ProductCard = React.memo(function ProductCard({
             e.stopPropagation()
             toggleWishlist(product.id)
             if (liked) {
-              toast.success('Dihapus dari wishlist', { icon: '🤍' })
+              toast.success('Produk dihapus dari Wishlist', { icon: '🤍' })
             } else {
-              toast.success('Ditambahkan ke wishlist', { icon: '❤️' })
+              toast.success('Produk disimpan ke Wishlist', { icon: '❤️' })
             }
           }}
           className="absolute top-3 right-3 p-1.5 bg-white/85 hover:bg-white border border-neutral-100 transition-all rounded-none duration-300 hover:scale-110 active:scale-90 z-10"
@@ -258,7 +258,7 @@ export const ProductCard = React.memo(function ProductCard({
         <div className="absolute bottom-0 left-0 right-0 bg-brand-black/85 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 md:group-hover:translate-y-0 max-md:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
           {!hasMultipleColors && sizeVariants.length > 0 ? (
             <div className="w-full space-y-1 text-center">
-              <span className="text-[8px] font-heading font-medium uppercase tracking-widest text-brand-gold-light">
+              <span className="text-[8px] font-heading font-medium uppercase tracking-widest text-brand-accent-light">
                 + Keranjang Instan
               </span>
               <div className="flex flex-wrap gap-1 justify-center">
@@ -289,7 +289,7 @@ export const ProductCard = React.memo(function ProductCard({
                       aria-busy={isCurrentAdding}
                       aria-label={`Tambah ukuran ${sizeLabel} ke keranjang`}
                       onClick={(e) => handleQuickAdd(e, v)}
-                      className="px-2 py-0.5 bg-white hover:bg-brand-gold hover:text-white text-[9px] font-heading font-bold uppercase tracking-wider text-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] border border-neutral-100 flex items-center justify-center cursor-pointer"
+                      className="px-2 py-0.5 bg-white hover:bg-brand-accent hover:text-white text-[9px] font-heading font-bold uppercase tracking-wider text-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] border border-neutral-100 flex items-center justify-center cursor-pointer"
                     >
                       {isCurrentAdding ? (
                         <div

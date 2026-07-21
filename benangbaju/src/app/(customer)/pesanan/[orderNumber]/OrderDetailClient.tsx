@@ -321,7 +321,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         <div className="flex flex-wrap items-center gap-4 mt-2">
           <Link
             href="/pesanan"
-            className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-gold transition"
+            className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-accent transition"
           >
             <ArrowLeft size={13} className="mr-1" /> Kembali
           </Link>

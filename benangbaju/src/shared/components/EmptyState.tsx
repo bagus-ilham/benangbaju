@@ -72,18 +72,18 @@ export function EmptyState({
     >
       <div className="relative">
         <div
-          className="absolute inset-0 bg-brand-gold/10 blur-xl rounded-full scale-150"
+          className="absolute inset-0 bg-brand-accent/10 blur-xl rounded-full scale-150"
           aria-hidden
         />
-        <div className="relative p-5 bg-brand-cream border border-brand-gold/20 animate-gentle-float">
-          <Icon className="h-8 w-8 text-brand-gold" strokeWidth={1.5} />
+        <div className="relative p-5 bg-brand-cream border border-brand-accent/20 animate-gentle-float">
+          <Icon className="h-8 w-8 text-brand-accent" strokeWidth={1.5} />
         </div>
       </div>
       <div className="space-y-2">
         <h3 className="text-sm md:text-base font-heading font-semibold uppercase tracking-wider text-brand-black">
           {title}
         </h3>
-        <div className="accent-line accent-line-center" />
+        <div className="stitch-divider stitch-divider-center" />
         {description && (
           <p className="text-xs text-neutral-400 font-sans max-w-sm leading-relaxed pt-2">
             {description}

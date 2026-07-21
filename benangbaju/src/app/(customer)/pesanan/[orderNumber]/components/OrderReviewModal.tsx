@@ -136,7 +136,7 @@ export function OrderReviewModal({
       {selectedReviewItem && (
         <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-brand-gold font-semibold mb-1">
+            <p className="text-[10px] uppercase tracking-widest text-brand-accent font-semibold mb-1">
               Nama Produk
             </p>
             <h4 className="text-sm font-semibold text-neutral-800 font-heading">
@@ -230,7 +230,7 @@ export function OrderReviewModal({
               ))}
 
               {reviewFiles.length < 2 && (
-                <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-gold hover:border-brand-gold cursor-pointer transition-colors">
+                <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-accent hover:border-brand-accent cursor-pointer transition-colors">
                   <ImageIcon size={20} className="mb-1" />
                   <span className="text-[9px] uppercase tracking-wider font-semibold">Tambah</span>
                   <input

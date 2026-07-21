@@ -39,7 +39,7 @@ export function ScrollToTopButton() {
           exit={{ opacity: 0, y: 20 }}
           onClick={handleScrollToTop}
           className={cn(
-            'fixed right-6 flex items-center justify-center w-11 h-11 bg-white text-brand-black border border-neutral-200 shadow-lg hover:border-brand-gold hover:text-brand-gold hover:scale-110 active:scale-95 transition-all duration-300 z-50 rounded-full group',
+            'fixed right-6 flex items-center justify-center w-11 h-11 bg-white text-brand-black border border-neutral-200 shadow-lg hover:border-brand-accent hover:text-brand-accent hover:scale-110 active:scale-95 transition-all duration-300 z-50 rounded-full group',
             pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-6'
           )}
           aria-label="Kembali ke atas"

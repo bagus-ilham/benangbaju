@@ -45,7 +45,7 @@ export function TentangClient(): React.JSX.Element {
               transition={{ ...fadeUp.transition, delay: 0.1 }}
               className="border border-neutral-200 p-6 md:p-8 space-y-3 card-hover-lift gold-border-hover bg-brand-cream/50"
             >
-              <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-gold">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
                 Kualitas
               </span>
               <h3 className="font-heading text-brand-black font-semibold uppercase tracking-wider text-sm">
@@ -63,7 +63,7 @@ export function TentangClient(): React.JSX.Element {
               transition={{ ...fadeUp.transition, delay: 0.2 }}
               className="border border-neutral-200 p-6 md:p-8 space-y-3 card-hover-lift gold-border-hover bg-brand-cream/50"
             >
-              <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-gold">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
                 Craftsmanship
               </span>
               <h3 className="font-heading text-brand-black font-semibold uppercase tracking-wider text-sm">
@@ -87,7 +87,7 @@ export function TentangClient(): React.JSX.Element {
             <p className="text-sm md:text-base font-heading font-light uppercase tracking-[0.2em] text-brand-black leading-relaxed">
               &ldquo;Show How Really Well-Dressed You Are&rdquo;
             </p>
-            <div className="accent-line accent-line-center mt-4" />
+            <div className="stitch-divider stitch-divider-center mt-4" />
             <p className="text-[10px] text-neutral-400 uppercase tracking-widest font-heading mt-4">
               — Filosofi Benangbaju
             </p>

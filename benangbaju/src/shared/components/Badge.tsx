@@ -25,7 +25,7 @@ export function Badge({
           'bg-error-bg text-error border-error-border': variant === 'error',
           'bg-brand-black text-white': variant === 'brand',
           'bg-error text-white border-error': variant === 'sale',
-          'bg-brand-gold-muted text-brand-gold border-brand-gold/30': variant === 'gold',
+          'bg-brand-accent-muted text-brand-accent border-brand-accent/30': variant === 'gold',
 
           // Sizes
           'px-2 py-0.5': size === 'sm',

@@ -125,7 +125,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
           Gratis ongkir untuk pembelian di atas Rp 500.000 &mdash;{' '}
           <Link
             href="/produk"
-            className="underline underline-offset-2 hover:text-brand-gold-light transition-colors"
+            className="underline underline-offset-2 hover:text-brand-accent-light transition-colors"
           >
             Belanja Sekarang
           </Link>

@@ -31,7 +31,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
         key={i}
         className={cn(
           className,
-          i < Math.round(rating) ? 'fill-brand-gold text-brand-gold' : 'text-neutral-200'
+          i < Math.round(rating) ? 'fill-brand-accent text-brand-accent' : 'text-neutral-200'
         )}
       />
     ))
@@ -59,7 +59,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
       <div className="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0">
         {/* Left: Ratings Summary */}
         <div className="flex flex-col space-y-4 md:w-1/3 bg-neutral-50 border border-neutral-200/60 p-6 md:p-8 card-hover-lift gold-border-hover relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
           <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-black">
             Ulasan Pembeli
           </h3>
@@ -93,8 +93,8 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                       <div className="flex items-center space-x-2">
                         <div className="flex">{renderStars(review.rating)}</div>
                         {review.is_verified_purchase && (
-                          <span className="flex items-center text-[9px] uppercase tracking-wider text-brand-gold font-heading">
-                            <CheckCircle className="h-2.5 w-2.5 text-brand-gold mr-1" />
+                          <span className="flex items-center text-[9px] uppercase tracking-wider text-brand-accent font-heading">
+                            <CheckCircle className="h-2.5 w-2.5 text-brand-accent mr-1" />
                             Terverifikasi
                           </span>
                         )}
@@ -143,8 +143,8 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
 
                   {/* Admin Reply */}
                   {review.review_replies && review.review_replies.length > 0 && (
-                    <div className="bg-neutral-50 p-4 border-l-2 border-brand-gold mt-3 space-y-1">
-                      <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
+                    <div className="bg-neutral-50 p-4 border-l-2 border-brand-accent mt-3 space-y-1">
+                      <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-accent">
                         Balasan dari Benangbaju
                       </p>
                       <p className="text-xs text-neutral-600 font-sans leading-relaxed italic">

@@ -3,7 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Tag, ShoppingBag } from 'lucide-react'
+import { Tag, ShoppingBag, ShieldCheck, Lock } from 'lucide-react'
 import { Button } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
@@ -59,7 +59,7 @@ export function CheckoutSummaryCard({
 }: CheckoutSummaryCardProps): React.JSX.Element {
   return (
     <div className="border border-neutral-200 p-6 bg-white rounded-none shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-gold to-brand-gold-light" />
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
       <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center border-b border-neutral-100 pb-3">
         <ShoppingBag size={14} className="mr-2 text-neutral-500" /> Ringkasan Pesanan
       </h2>
@@ -102,7 +102,7 @@ export function CheckoutSummaryCard({
       {/* Voucher Code Form */}
       <div className="pb-6 border-b border-neutral-100 mb-6">
         <label className="block text-[10px] uppercase tracking-widest font-heading font-bold text-neutral-400 mb-2">
-          Punya Kode Voucher?
+          Masukkan Kode Voucher
         </label>
         <AnimatePresence mode="wait">
           {appliedVoucher ? (
@@ -112,9 +112,9 @@ export function CheckoutSummaryCard({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className="flex items-center justify-between bg-brand-gold-muted/10 border border-brand-gold px-4 py-2.5 rounded-none text-xs"
+              className="flex items-center justify-between bg-brand-accent-muted/10 border border-brand-accent px-4 py-2.5 rounded-none text-xs"
             >
-              <div className="flex items-center space-x-2 text-brand-gold font-heading font-medium uppercase tracking-wider text-[10px]">
+              <div className="flex items-center space-x-2 text-brand-accent font-heading font-medium uppercase tracking-wider text-[10px]">
                 <Tag size={12} className="text-neutral-500" />
                 <span>{appliedVoucher.code} diterapkan</span>
               </div>
@@ -152,7 +152,7 @@ export function CheckoutSummaryCard({
               {availableVouchers && availableVouchers.length > 0 && (
                 <div className="pt-1 space-y-1.5">
                   <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400 block">
-                    Voucher Tersedia (Klik untuk Memakai)
+                    Pilih Voucher Tersedia
                   </span>
                   <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
                     {availableVouchers.map((voucher) => {
@@ -165,12 +165,12 @@ export function CheckoutSummaryCard({
                           onClick={() => onApplyVoucherDirectly(voucher.code)}
                           className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-none relative overflow-hidden select-none ${
                             isSpendMet
-                              ? 'border-brand-gold/40 bg-brand-gold-muted/5 hover:bg-brand-gold-muted/10 cursor-pointer animate-pulse-gentle'
+                              ? 'border-brand-accent/40 bg-brand-accent-muted/5 hover:bg-brand-accent-muted/10 cursor-pointer animate-pulse-gentle'
                               : 'border-neutral-200 bg-neutral-50/50 opacity-40 cursor-not-allowed'
                           }`}
                         >
                           <div className="flex justify-between items-center mb-0.5">
-                            <span className="font-heading font-bold text-[10px] text-brand-gold uppercase tracking-wider">
+                            <span className="font-heading font-bold text-[10px] text-brand-accent uppercase tracking-wider">
                               {voucher.code}
                             </span>
                           </div>
@@ -234,6 +234,18 @@ export function CheckoutSummaryCard({
       >
         Bayar Sekarang
       </Button>
+
+      {/* Mini Trust Badges */}
+      <div className="flex items-center justify-center space-x-6 mt-6">
+        <div className="flex items-center space-x-1.5 text-neutral-400">
+          <Lock size={12} />
+          <span className="text-[9px] font-sans">Pembayaran Aman</span>
+        </div>
+        <div className="flex items-center space-x-1.5 text-neutral-400">
+          <ShieldCheck size={12} />
+          <span className="text-[9px] font-sans">100% Original</span>
+        </div>
+      </div>
     </div>
   )
 }

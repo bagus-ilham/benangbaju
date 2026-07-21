@@ -40,7 +40,7 @@ export function AddressCard({
       tabIndex={0}
       className={`p-5 border text-sm font-sans relative transition duration-150 rounded-none cursor-pointer card-hover-lift gold-border-hover ${
         isSelected
-          ? 'border-brand-gold bg-brand-gold-muted/10 ring-1 ring-brand-gold'
+          ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent'
           : 'border-neutral-200 bg-white'
       }`}
     >
@@ -54,7 +54,7 @@ export function AddressCard({
           )}
         </div>
         {isSelected && (
-          <span className="text-brand-gold">
+          <span className="text-brand-accent">
             <Check size={18} strokeWidth={2.5} />
           </span>
         )}
@@ -80,7 +80,7 @@ export function AddressCard({
                   e.stopPropagation()
                   onEdit(address)
                 }}
-                className="flex items-center text-xs text-neutral-600 hover:text-brand-gold transition duration-100"
+                className="flex items-center text-xs text-neutral-600 hover:text-brand-accent transition duration-100"
               >
                 <Edit2 size={13} className="mr-1" /> Ubah
               </button>
@@ -108,7 +108,7 @@ export function AddressCard({
                 e.stopPropagation()
                 onSetDefault(address.id)
               }}
-              className="text-xs text-neutral-600 hover:text-brand-gold hover:underline font-semibold transition duration-100"
+              className="text-xs text-neutral-600 hover:text-brand-accent hover:underline font-semibold transition duration-100"
             >
               Jadikan Utama
             </button>

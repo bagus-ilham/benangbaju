@@ -50,8 +50,8 @@ export function CatalogDesktopFilters({
             <button
               onClick={() => handleCategorySelect(cat.slug)}
               className={cn(
-                'text-xs font-sans tracking-wide hover:text-brand-black text-left w-full py-1',
-                categorySlug === cat.slug ? 'text-brand-black font-semibold' : 'text-neutral-500'
+                'text-xs font-sans tracking-wide hover:text-brand-accent text-left w-full py-1 transition-colors',
+                categorySlug === cat.slug ? 'text-brand-accent font-bold' : 'text-neutral-500'
               )}
             >
               {cat.name}

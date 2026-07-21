@@ -26,7 +26,7 @@ export function CustomToast({
     <div
       className={`${
         t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-gold`}
+      } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-accent`}
     >
       <div className="flex-1 w-0 p-4">
         <div className="flex items-start">
@@ -48,7 +48,7 @@ export function CustomToast({
             )}
           </div>
           <div className="ml-3 flex-1">
-            <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-gold">
+            <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-accent">
               {title}
             </p>
             <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
@@ -69,7 +69,7 @@ export function CustomToast({
               toast.dismiss(t.id)
               onAction()
             }}
-            className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-gold hover:text-brand-gold-light focus:outline-none cursor-pointer"
+            className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-accent hover:text-brand-accent-light focus:outline-none cursor-pointer"
           >
             {actionLabel}
           </button>

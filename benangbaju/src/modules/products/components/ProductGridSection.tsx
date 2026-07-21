@@ -46,7 +46,7 @@ export function ProductGridSection({
           eyebrow={eyebrow}
           title={title}
           align={align}
-          className={isDark ? '[&_h2]:text-white [&_span]:text-brand-gold-light' : undefined}
+          className={isDark ? '[&_h2]:text-white [&_span]:text-brand-accent-light' : undefined}
         />
 
         <motion.div

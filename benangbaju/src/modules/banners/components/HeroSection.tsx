@@ -137,7 +137,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                     opacity: 1,
                     transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
                   }}
-                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-gold-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-gold/30"
+                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-accent-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-accent/30"
                 >
                   {currentBanner.subtitle || 'Koleksi Terbaru'}
                 </motion.span>
@@ -210,7 +210,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                   className={cn(
                     'block h-0.5 transition-all duration-500 rounded-none',
                     idx === currentIndex
-                      ? 'w-10 bg-brand-gold-light'
+                      ? 'w-10 bg-brand-accent-light'
                       : 'w-3 bg-white/40 hover:bg-white/70'
                   )}
                 />

@@ -29,9 +29,9 @@ export function PageHero({
   }
 
   const textClasses = {
-    light: { eyebrow: 'text-brand-gold', title: 'text-brand-black', subtitle: 'text-neutral-500' },
-    cream: { eyebrow: 'text-brand-gold', title: 'text-brand-black', subtitle: 'text-neutral-500' },
-    dark: { eyebrow: 'text-brand-gold-light', title: 'text-white', subtitle: 'text-neutral-400' },
+    light: { eyebrow: 'text-brand-accent', title: 'text-brand-black', subtitle: 'text-neutral-500' },
+    cream: { eyebrow: 'text-brand-accent', title: 'text-brand-black', subtitle: 'text-neutral-500' },
+    dark: { eyebrow: 'text-brand-accent-light', title: 'text-white', subtitle: 'text-neutral-400' },
   }
 
   const colors = textClasses[variant]
@@ -41,11 +41,11 @@ export function PageHero({
       <div className="relative overflow-hidden">
         {/* Decorative orbs */}
         <div
-          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-gold/5 blur-3xl pointer-events-none"
+          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-accent/5 blur-3xl pointer-events-none"
           aria-hidden
         />
         <div
-          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-gold/8 blur-2xl pointer-events-none"
+          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-accent/8 blur-2xl pointer-events-none"
           aria-hidden
         />
 
@@ -74,7 +74,7 @@ export function PageHero({
             >
               {title}
             </h1>
-            <div className="accent-line" />
+            <div className="stitch-divider" />
             {subtitle && (
               <p
                 className={cn('text-xs md:text-sm font-sans leading-relaxed pt-1', colors.subtitle)}

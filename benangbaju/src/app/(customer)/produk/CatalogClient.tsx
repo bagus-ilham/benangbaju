@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  EmptyState,
 } from '@/shared/components'
 import { CatalogDesktopFilters, CatalogMobileFilters } from './components'
 import {
@@ -149,7 +150,7 @@ export function CatalogClient({
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-heading font-bold uppercase tracking-wider text-brand-black hover:text-brand-gold transition-colors p-1">
+                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-heading font-bold uppercase tracking-wider text-brand-black hover:text-brand-accent transition-colors p-1">
                   <span>
                     {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || 'Urutkan'}
                   </span>
@@ -196,26 +197,17 @@ export function CatalogClient({
           {/* 3. Product Grid */}
           <div className="flex-1">
             {initialProducts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-20 h-20 bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                  <PackageSearch className="w-8 h-8 text-neutral-300" />
-                </div>
-                <h3 className="text-lg font-heading font-bold text-neutral-900 mb-2">
-                  Produk Tidak Ditemukan
-                </h3>
-                <p className="text-neutral-500 text-sm max-w-sm">
-                  Maaf, tidak ada produk yang sesuai dengan kriteria pencarian Anda. Silakan coba
-                  filter lain.
-                </p>
-                {(categorySlug || searchQuery) && (
-                  <button
-                    onClick={handleClearAll}
-                    className="mt-6 text-xs font-heading font-bold uppercase tracking-widest text-brand-gold hover:text-brand-gold-light"
-                  >
-                    Hapus Semua Filter
-                  </button>
-                )}
-              </div>
+              <EmptyState
+                icon={PackageSearch}
+                title="Produk Tidak Ditemukan"
+                description="Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya."
+                action={
+                  (categorySlug || searchQuery)
+                    ? { label: 'Tampilkan Semua Produk', onClick: handleClearAll }
+                    : undefined
+                }
+                className="py-12 md:py-20"
+              />
             ) : (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 lg:gap-y-12">
                 {initialProducts.map((product, index) => (
