@@ -199,7 +199,7 @@ function LoginContent() {
 }
 
 export default function LoginPage(): React.JSX.Element {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
+  const clientId = (process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '').trim()
 
   return (
     <Suspense fallback={<AuthLoading message="Memuat halaman masuk..." />}>

@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google'
 
 export default function RegisterPage(): React.JSX.Element {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''
+  const clientId = (process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '').trim()
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
