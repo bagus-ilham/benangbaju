@@ -71,11 +71,12 @@ function RegisterContent(): React.JSX.Element {
         // Since email confirmation is required by default, tell the user to verify email.
         toast.success('Registrasi berhasil! Silakan cek email Anda untuk konfirmasi akun.')
         router.push('/masuk')
+      } else {
+        setIsLoading(false)
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Gagal mendaftar. Silakan coba lagi.'
       toast.error(message)
-    } finally {
       setIsLoading(false)
     }
   }

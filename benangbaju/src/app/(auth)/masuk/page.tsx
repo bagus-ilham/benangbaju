@@ -55,13 +55,16 @@ function LoginContent() {
 
       if (data.user) {
         toast.success('Berhasil masuk!')
-        router.push(redirectPath)
         router.refresh()
+        router.push(redirectPath)
+        // Kita tidak set isLoading(false) di sini agar spinner tetap 
+        // berputar selama proses redirect Next.js berlangsung.
+      } else {
+        setIsLoading(false)
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Email atau kata sandi salah.'
       toast.error(message)
-    } finally {
       setIsLoading(false)
     }
   }
