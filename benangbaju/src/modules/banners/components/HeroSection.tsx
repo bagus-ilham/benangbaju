@@ -69,6 +69,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     sizes: '100vw',
     priority: true,
     quality: 100,
+    fetchPriority: 'high' as const,
     className: 'object-cover',
     style: {
       width: '100%',
@@ -119,6 +120,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
               srcSet={mobileSrcSet}
               sizes="100vw"
               alt={alt || 'Banner'}
+              fetchPriority="high"
               className="block w-full h-auto"
             />
           </picture>

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Providers } from '@/shared/providers'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import localFont from 'next/font/local'
 import './globals.css'
 
@@ -76,10 +77,9 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
 
-        {/* TODO: Phase 2 & 3 - Google Analytics (GA4) & Google Tag Manager (GTM)
-            Menunggu User membuat akun dan memberikan Measurement ID (G-XXXX) serta GTM ID (GTM-XXXX).
-            Instalasi dilakukan menggunakan paket resmi @next/third-parties.
-        */}
+        {/* Phase 2: Google Analytics & Tag Manager (Placeholders) */}
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXX'} />
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || 'GTM-XXXXXXX'} />
       </body>
     </html>
   )
