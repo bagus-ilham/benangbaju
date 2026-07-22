@@ -37,10 +37,10 @@ export function MobileMenuAccordionItem({
   const isActive = pathname === href || pathname.startsWith(href + '/')
 
   useEffect(() => {
-    if (isAccordion && isExpanded && !hasFetched) {
+    if (isAccordion && !hasFetched) {
       let isMounted = true
       const fetchData = async () => {
-        setIsLoading(true)
+        setIsLoading(items.length === 0)
         try {
           if (isKategori) {
             const res = await getActiveCategoriesAction()
@@ -63,7 +63,7 @@ export function MobileMenuAccordionItem({
         isMounted = false
       }
     }
-  }, [isAccordion, isExpanded, hasFetched, isKategori, isKoleksi, label])
+  }, [isAccordion, hasFetched, isKategori, isKoleksi, label, items.length])
 
   if (!isAccordion) {
     return (
