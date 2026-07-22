@@ -132,7 +132,7 @@ export function CatalogClient({
         )}
 
         {/* Toolbar (Mobile Filter Trigger & Desktop Sort) */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-neutral-100">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-100">
           <button
             onClick={() => setShowMobileFilters(true)}
             className="flex items-center space-x-2 text-xs font-heading font-semibold uppercase tracking-wider text-brand-black md:hidden py-2"
@@ -173,6 +173,61 @@ export function CatalogClient({
             </DropdownMenu>
           </div>
         </div>
+
+        {/* Active Filter Chips / Pills Bar */}
+        {(categorySlug || searchQuery || (sortBy && sortBy !== 'newest')) && (
+          <div className="flex flex-wrap items-center gap-2 mb-8 p-3 bg-brand-cream/60 border border-neutral-100 rounded-xl">
+            <span className="text-[9px] font-heading font-semibold uppercase tracking-wider text-neutral-400">
+              Filter Aktif:
+            </span>
+
+            {categorySlug && (
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+                <span>Kategori: {categories.find((c) => c.slug === categorySlug)?.name || categorySlug}</span>
+                <button
+                  onClick={() => handleCategorySelect(null)}
+                  className="hover:text-red-500 transition-colors ml-1"
+                  aria-label="Hapus filter kategori"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+
+            {searchQuery && (
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+                <span>Cari: &quot;{searchQuery}&quot;</span>
+                <button
+                  onClick={() => updateFilters({ q: null })}
+                  className="hover:text-red-500 transition-colors ml-1"
+                  aria-label="Hapus filter pencarian"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+
+            {sortBy && sortBy !== 'newest' && (
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+                <span>Urutan: {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}</span>
+                <button
+                  onClick={() => handleSortSelect('newest')}
+                  className="hover:text-red-500 transition-colors ml-1"
+                  aria-label="Hapus filter urutan"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+
+            <button
+              onClick={handleClearAll}
+              className="text-[10px] font-heading font-semibold uppercase tracking-wider text-brand-accent hover:text-brand-black underline underline-offset-2 transition-colors ml-auto"
+            >
+              Hapus Semua
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-col md:flex-row md:space-x-8">
           {/* 1. Desktop Filters Sidebar */}

@@ -2,6 +2,7 @@
 
 import React, { useRef } from 'react'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { Collection } from '@/modules/collections/types'
 import { ProductListItem } from '@/modules/products/types'
@@ -9,6 +10,7 @@ import { SmartLink as Link } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { EASE_PREMIUM } from '@/lib/motion'
 
 interface CollectionShowcaseProps {
   collection: Collection
@@ -49,15 +51,21 @@ export function CollectionShowcase({
           isReversed && 'lg:flex-row-reverse'
         )}
       >
-        {/* Image Section */}
-        <div className="relative w-full lg:w-1/2 h-[400px] lg:h-full shrink-0">
+        {/* Image Section with Scroll Reveal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: EASE_PREMIUM }}
+          className="relative w-full lg:w-1/2 h-[400px] lg:h-full shrink-0 overflow-hidden"
+        >
           {collection.image_url ? (
             <Image
               src={getProxiedImageUrl(collection.image_url)}
               alt={collection.name}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
+              className="object-cover transition-transform duration-700 hover:scale-105"
               priority={index === 0}
             />
           ) : (
@@ -65,12 +73,18 @@ export function CollectionShowcase({
               <span className="text-neutral-500 uppercase tracking-widest">{collection.name}</span>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Content & Products Section */}
         <div className="flex flex-col justify-between w-full lg:w-1/2 py-12 lg:py-20 px-6 lg:px-16 overflow-hidden">
           {/* Top Text */}
-          <div className="max-w-xl mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: EASE_PREMIUM }}
+            className="max-w-xl mb-12"
+          >
             <h2
               className={cn(
                 'text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 transition-colors duration-500',
@@ -101,7 +115,7 @@ export function CollectionShowcase({
             >
               Explore the {collection.name} Edit
             </Link>
-          </div>
+          </motion.div>
 
           {/* Bottom Products Slider */}
           <div className="relative w-full mt-auto">

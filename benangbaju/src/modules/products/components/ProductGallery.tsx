@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react'
 import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -41,6 +41,7 @@ export function ProductGallery({
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 })
   const [isZoomed, setIsZoomed] = useState(false)
   const [hasIntentToZoom, setHasIntentToZoom] = useState(false)
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
 
   const [direction, setDirection] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
@@ -48,12 +49,23 @@ export function ProductGallery({
   useEffect(() => {
     // Check if device is mobile to enable drag and disable zoom
     const mql = window.matchMedia('(max-width: 768px)')
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(mql.matches)
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
     mql.addEventListener('change', handler)
     return () => mql.removeEventListener('change', handler)
   }, [])
+
+  // Keyboard shortcut listener for Lightbox (ESC and arrow keys)
+  useEffect(() => {
+    if (!isLightboxOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsLightboxOpen(false)
+      if (e.key === 'ArrowLeft') paginate(-1)
+      if (e.key === 'ArrowRight') paginate(1)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isLightboxOpen, activeImage])
 
   const prevVariantIdRef = useRef<string | null>(null)
 
@@ -63,7 +75,6 @@ export function ProductGallery({
       prevVariantIdRef.current = selectedVariantId
       const variantImage = images.find((img) => img.variant_id === selectedVariantId)
       if (variantImage) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDirection(1)
         setHasIntentToZoom(false) // Reset HD intent on image change
 
@@ -88,7 +99,6 @@ export function ProductGallery({
     setZoomPos({ x, y })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const paginate = (newDirection: number) => {
     const currentIndex = images.findIndex((img) => img.url === activeImage)
     let nextIndex = currentIndex + newDirection
@@ -124,6 +134,8 @@ export function ProductGallery({
     }),
   }
 
+  const currentImageIndex = images.findIndex((img) => img.url === activeImage)
+
   return (
     <div className="flex flex-col w-full group">
       {/* Mobile Swipe Gallery (Native Scroll Snap) */}
@@ -143,7 +155,8 @@ export function ProductGallery({
             <div
               key={img.id}
               id={`gallery-img-${img.id}`}
-              className="w-full h-full flex-shrink-0 snap-center relative"
+              className="w-full h-full flex-shrink-0 snap-center relative cursor-pointer"
+              onClick={() => setIsLightboxOpen(true)}
             >
               <Image
                 src={getProxiedImageUrl(img.url)}
@@ -157,6 +170,15 @@ export function ProductGallery({
             </div>
           ))}
         </div>
+
+        {/* Mobile Expand Hint */}
+        <button
+          onClick={() => setIsLightboxOpen(true)}
+          className="absolute top-3 right-3 p-2 bg-brand-black/60 backdrop-blur-xs text-white rounded-full z-10"
+          aria-label="Perbesar gambar"
+        >
+          <Maximize2 className="w-3.5 h-3.5" />
+        </button>
 
         {/* Mobile Swipe Indicators (Dots) */}
         {images.length > 1 && (
@@ -174,7 +196,7 @@ export function ProductGallery({
         )}
       </div>
 
-      {/* Desktop Focus Image (Framer Motion) */}
+      {/* Desktop Focus Image (Framer Motion + Lightbox Trigger) */}
       <div
         className="hidden md:block relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in rounded-2xl shadow-sm"
         onMouseEnter={() => {
@@ -183,6 +205,7 @@ export function ProductGallery({
         }}
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
+        onClick={() => setIsLightboxOpen(true)}
       >
         <AnimatePresence initial={false} custom={direction}>
           {activeImage && (
@@ -235,7 +258,73 @@ export function ProductGallery({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Desktop Expand Hint Badge */}
+        <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="inline-flex items-center space-x-1.5 text-[9px] font-heading font-medium uppercase tracking-wider text-white bg-brand-black/75 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/20 shadow-md">
+            <Maximize2 className="w-3 h-3 text-brand-accent-light" />
+            <span>Klik Layar Penuh</span>
+          </span>
+        </div>
       </div>
+
+      {/* Fullscreen Lightbox Modal */}
+      <AnimatePresence>
+        {isLightboxOpen && activeImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 md:p-8"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-3 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50 cursor-pointer"
+              aria-label="Tutup foto"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Counter */}
+            <div className="absolute top-6 left-6 text-white/70 text-xs font-heading font-medium uppercase tracking-widest z-50">
+              {currentImageIndex >= 0 ? `${currentImageIndex + 1} / ${images.length}` : ''}
+            </div>
+
+            {/* Image display */}
+            <div className="relative w-full max-w-4xl h-[75vh] md:h-[85vh] flex items-center justify-center">
+              <Image
+                src={getProxiedImageUrl(activeImage)}
+                alt={productName}
+                fill
+                sizes="100vw"
+                className="object-contain"
+                priority
+              />
+            </div>
+
+            {/* Nav Arrows */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={() => paginate(-1)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
+                  aria-label="Foto sebelumnya"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => paginate(1)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
+                  aria-label="Foto berikutnya"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Thumbnails (Horizontal Row below the main image) */}
       {images.length > 1 && (

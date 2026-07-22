@@ -14,7 +14,7 @@ import { useSubmitReview } from '@/modules/reviews/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/shared/components/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState, Modal } from '@/shared/components'
-import { ArrowLeft, Download, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Download, AlertCircle, RotateCcw } from 'lucide-react'
 import { OrderTrackingSection } from './components/OrderTrackingSection'
 import { OrderPaymentSection } from './components/OrderPaymentSection'
 import { OrderItemsList } from './components/OrderItemsList'
@@ -23,6 +23,7 @@ import { OrderShippingSection } from './components/OrderShippingSection'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
+import { useCartStore } from '@/modules/cart/stores/cartStore'
 
 const supabase = createBrowserClient()
 
@@ -46,6 +47,40 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   )
   const verifyTimeoutsRef = useRef<NodeJS.Timeout[]>([])
   const hasTriggeredVerification = useRef(false)
+
+  const addItem = useCartStore((state) => state.addItem)
+  const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
+
+  // Re-order handler
+  const handleReorder = async () => {
+    if (!order || !order.order_items || order.order_items.length === 0) return
+    try {
+      toast.loading('Menambahkan produk ke keranjang...', { id: 'reorder' })
+      for (const item of order.order_items) {
+        if (item.variant_id) {
+          await addItem(
+            {
+              variantId: item.variant_id,
+              productName: item.product_name || 'Produk',
+              variantName: item.variant_name || 'Default',
+              name: item.product_name || 'Produk',
+              sku: item.sku || '',
+              price: Number(item.price),
+              comparePrice: null,
+              imageUrl: null,
+              slug: '',
+              stock: 10,
+            },
+            item.quantity || 1
+          )
+        }
+      }
+      toast.success('Produk berhasil ditambahkan ke keranjang!', { id: 'reorder' })
+      setCartDrawerOpen(true)
+    } catch {
+      toast.error('Gagal menambahkan ke keranjang.', { id: 'reorder' })
+    }
+  }
 
   // 1. Fetch Order Details
   const {
@@ -310,14 +345,23 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             <ArrowLeft size={13} className="mr-1" /> Kembali
           </Link>
           {order.status !== 'pending_payment' && order.status !== 'cancelled' && (
-            <Button
-              onClick={handleDownloadInvoice}
-              variant="outline"
-              isLoading={isInvoiceLoading}
-              className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
-            >
-              <Download size={14} className="mr-2" /> Unduh Invoice
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={handleDownloadInvoice}
+                variant="outline"
+                isLoading={isInvoiceLoading}
+                className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
+              >
+                <Download size={14} className="mr-2" /> Unduh Invoice
+              </Button>
+              <Button
+                onClick={handleReorder}
+                variant="primary"
+                className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4 bg-brand-black hover:bg-brand-accent text-white transition-colors"
+              >
+                <RotateCcw size={13} className="mr-1.5" /> Beli Lagi
+              </Button>
+            </div>
           )}
         </div>
       </PageHero>

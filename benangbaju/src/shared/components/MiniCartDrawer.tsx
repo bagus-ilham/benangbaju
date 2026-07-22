@@ -93,6 +93,27 @@ export function MiniCartDrawer(): React.JSX.Element {
               </button>
             </div>
 
+            {/* Free Shipping Progress Bar */}
+            <div className="bg-brand-cream/60 px-6 py-3 border-b border-neutral-100 space-y-1.5">
+              <p className="text-[10px] font-heading font-medium uppercase tracking-wider text-brand-black text-center">
+                {subtotal >= 500000 ? (
+                  <span className="text-emerald-700 font-bold">🎉 Selamat! Anda Mendapatkan Gratis Ongkir</span>
+                ) : (
+                  <>
+                    Belanja <span className="font-bold text-brand-accent">{formatIDR(500000 - subtotal)}</span> lagi untuk <span className="font-bold">Gratis Ongkir</span>
+                  </>
+                )}
+              </p>
+              <div className="w-full h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-brand-accent to-brand-accent-light"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(100, (subtotal / 500000) * 100)}%` }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+
             {/* Items List */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
               {items.length === 0 ? (
@@ -215,6 +236,32 @@ export function MiniCartDrawer(): React.JSX.Element {
                     </div>
                   </div>
                 ))
+              )}
+
+              {/* Cross-Sell Recommendations */}
+              {items.length > 0 && (
+                <div className="pt-4 border-t border-neutral-100 space-y-2">
+                  <span className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-400 block">
+                    Lengkapi Gaya Anda
+                  </span>
+                  <div className="bg-brand-cream/80 p-3 rounded-xl border border-brand-accent/20 flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <p className="text-[11px] font-heading font-medium uppercase text-brand-black">
+                        Pashmina Silk Premium
+                      </p>
+                      <p className="text-[10px] font-sans font-semibold text-brand-accent">
+                        Rp 89.000
+                      </p>
+                    </div>
+                    <Link
+                      href="/produk"
+                      onClick={() => setCartDrawerOpen(false)}
+                      className="px-3 py-1 bg-brand-black text-white hover:bg-brand-accent text-[9px] font-heading font-bold uppercase tracking-wider rounded-lg transition-colors"
+                    >
+                      + Lihat
+                    </Link>
+                  </div>
+                </div>
               )}
             </div>
 

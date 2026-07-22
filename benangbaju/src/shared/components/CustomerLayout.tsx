@@ -19,6 +19,7 @@ import { ScrollToTopButton } from './ScrollToTopButton'
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { FloatingWhatsApp } from './FloatingWhatsApp'
+import { MobileBottomNav } from './MobileBottomNav'
 import { cn } from '@/lib/utils'
 
 interface CustomerLayoutProps {
@@ -170,7 +171,10 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       {/* Main Page Area */}
       <main
         id="main-content"
-        className={cn('flex-1 flex flex-col relative', pathname === '/' ? '-mt-16 z-0' : '')}
+        className={cn(
+          'flex-1 flex flex-col relative pb-14 md:pb-0',
+          pathname === '/' ? '-mt-16 z-0' : ''
+        )}
       >
         <ErrorBoundary>{children}</ErrorBoundary>
       </main>
@@ -178,6 +182,9 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       <Footer />
       <ScrollToTopButton />
       <MiniCartDrawer />
+
+      {/* Mobile Bottom Navigation */}
+      {isMounted && <MobileBottomNav onOpenSearch={() => setIsSearchOpen(true)} />}
 
       {/* Floating WhatsApp Bubble */}
       <AnimatePresence>
@@ -192,3 +199,4 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
     </div>
   )
 }
+

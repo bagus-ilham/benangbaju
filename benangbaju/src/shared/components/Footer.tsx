@@ -1,14 +1,25 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { Button, Input, CurrentYear } from '@/shared/components'
+import { CheckCircle2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
-import toast from 'react-hot-toast'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export function Footer(): React.JSX.Element {
   const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl } = useSiteSettings()
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [emailInput, setEmailInput] = useState('')
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!emailInput.trim()) return
+    setIsSubscribed(true)
+  }
 
   return (
     <footer className="bg-brand-cream border-t border-neutral-200">
@@ -24,29 +35,44 @@ export function Footer(): React.JSX.Element {
           <p className="text-xs text-neutral-400 font-sans max-w-md mx-auto">
             Berlangganan newsletter untuk promo eksklusif dan akses early ke koleksi baru.
           </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              toast.success('Terima kasih! Fitur newsletter segera hadir.')
-            }}
-            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2"
-          >
-            <Input
-              type="email"
-              label="Email"
-              placeholder="Email Anda"
-              required
-              className="flex-1 [&_input]:bg-white/10 [&_input]:border-white/20 [&_input]:text-white [&_input]:placeholder:text-neutral-500 [&_label]:text-neutral-400"
-            />
-            <Button
-              type="submit"
-              variant="primary"
-              size="sm"
-              className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all duration-300"
-            >
-              Daftar
-            </Button>
-          </form>
+          <AnimatePresence mode="wait">
+            {isSubscribed ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="inline-flex items-center justify-center space-x-2 bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-xl max-w-md mx-auto mt-2"
+              >
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <span className="text-xs font-heading font-semibold uppercase tracking-wider">
+                  Terima kasih! Anda telah terdaftar.
+                </span>
+              </motion.div>
+            ) : (
+              <form
+                onSubmit={handleNewsletterSubmit}
+                className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2"
+              >
+                <Input
+                  type="email"
+                  label="Email"
+                  placeholder="Masukkan Email Anda"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  required
+                  className="flex-1 [&_input]:bg-white/10 [&_input]:border-white/20 [&_input]:text-white [&_input]:placeholder:text-neutral-500 [&_label]:text-neutral-400"
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all duration-300"
+                >
+                  Daftar
+                </Button>
+              </form>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

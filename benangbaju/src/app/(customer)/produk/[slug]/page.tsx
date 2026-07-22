@@ -118,6 +118,7 @@ export default async function ProductDetailPage({
 
   const relatedNode = hasRelated ? (
     <Suspense
+      key="related-products-suspense"
       fallback={
         <div className="py-12 border-t border-neutral-100">
           <div className="h-8 w-48 bg-neutral-100 mx-auto mb-8 skeleton-shimmer rounded-md" />

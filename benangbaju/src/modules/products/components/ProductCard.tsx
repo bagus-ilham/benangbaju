@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
@@ -237,13 +238,20 @@ export const ProductCard = React.memo(function ProductCard({
           aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           aria-pressed={liked}
         >
-          <Heart
-            className={cn(
-              'h-3.5 w-3.5 transition-colors duration-300',
-              liked ? 'fill-red-500 text-red-500' : 'text-neutral-500 hover:text-brand-black'
-            )}
-            aria-hidden="true"
-          />
+          <motion.div
+            key={liked ? 'liked' : 'unliked'}
+            initial={{ scale: 0.6 }}
+            animate={{ scale: [0.6, 1.4, 1] }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+          >
+            <Heart
+              className={cn(
+                'h-3.5 w-3.5 transition-colors duration-300',
+                liked ? 'fill-red-500 text-red-500' : 'text-neutral-500 hover:text-brand-black'
+              )}
+              aria-hidden="true"
+            />
+          </motion.div>
         </button>
 
         {/* Special Out of Stock overlay */}
@@ -256,7 +264,7 @@ export const ProductCard = React.memo(function ProductCard({
         )}
 
         {/* Quick add or view details overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-brand-black/85 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 md:group-hover:translate-y-0 max-md:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
+        <div className="absolute bottom-0 left-0 right-0 bg-brand-black/85 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-active:translate-y-0 focus-within:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
           {!hasMultipleColors && sizeVariants.length > 0 ? (
             <div className="w-full space-y-1 text-center">
               <span className="text-[8px] font-heading font-medium uppercase tracking-widest text-brand-accent-light">

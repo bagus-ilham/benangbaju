@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -6,7 +5,7 @@ import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, Loader2, ChevronRight } from 'lucide-react'
+import { Search, X, Loader2, ChevronRight, History, Sparkles } from 'lucide-react'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
@@ -21,6 +20,8 @@ interface SearchOverlayProps {
   onClose: () => void
 }
 
+const POPULAR_SEARCH_TAGS = ['Kemeja', 'Blus', 'Dress', 'Rok', 'Hijab', 'Koleksi Terbaru']
+
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
@@ -28,9 +29,40 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [instantResults, setInstantResults] = useState<ProductListItem[]>([])
   const [isSearchingInstant, setIsSearchingInstant] = useState(false)
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
 
   const overlayRef = React.useRef<HTMLDivElement>(null)
   useFocusTrap(isOpen, overlayRef, { onClose })
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('benangbaju_recent_searches')
+      if (stored) {
+        setRecentSearches(JSON.parse(stored))
+      }
+    } catch {
+      // Ignore storage errors
+    }
+  }, [isOpen])
+
+  // Cmd+K / Ctrl+K keyboard shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        if (isOpen) {
+          onClose()
+        } else {
+          // Open handled by parent or trigger toggle
+          const searchBtn = document.querySelector('[aria-label="Cari produk"]') as HTMLButtonElement
+          searchBtn?.click()
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
 
   useEffect(() => {
     if (!isOpen || searchQuery.trim().length < 2) {
@@ -59,10 +91,34 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     }
   }, [searchQuery, isOpen, supabase])
 
+  const saveRecentSearch = (query: string) => {
+    try {
+      const updated = [query, ...recentSearches.filter((q) => q.toLowerCase() !== query.toLowerCase())].slice(0, 5)
+      setRecentSearches(updated)
+      localStorage.setItem('benangbaju_recent_searches', JSON.stringify(updated))
+    } catch {
+      // Ignore storage errors
+    }
+  }
+
+  const clearRecentSearches = () => {
+    setRecentSearches([])
+    localStorage.removeItem('benangbaju_recent_searches')
+  }
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!searchQuery.trim()) return
-    router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    const trimmed = searchQuery.trim()
+    if (!trimmed) return
+    saveRecentSearch(trimmed)
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`)
+    onClose()
+  }
+
+  const handleSelectTag = (tag: string) => {
+    setSearchQuery(tag)
+    saveRecentSearch(tag)
+    router.push(`/search?q=${encodeURIComponent(tag)}`)
     onClose()
   }
 
@@ -83,7 +139,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.95 }}
             transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
-            className="w-full max-w-2xl bg-white p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-accent border-neutral-100"
+            className="w-full max-w-2xl bg-white p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-accent border-neutral-100 rounded-2xl"
           >
             <button
               onClick={onClose}
@@ -94,13 +150,18 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             </button>
 
             <div className="space-y-6">
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-                  Cari Koleksi
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                    Cari Koleksi
+                  </span>
+                  <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
+                    Pencarian Produk
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-2 py-1 rounded hidden sm:inline-block">
+                  ⌘K / Ctrl+K
                 </span>
-                <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
-                  Pencarian Produk
-                </h3>
               </div>
 
               <form onSubmit={handleSearchSubmit} className="relative">
@@ -112,15 +173,72 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"
                   rightIcon={
                     <button type="submit" aria-label="Cari produk">
-                      <Search className="h-4 w-4" />
+                      <Search className="h-4 w-4 text-brand-accent" />
                     </button>
                   }
                   autoFocus
                 />
               </form>
 
+              {/* Popular Search Tags & Recent Searches when query is empty */}
+              {searchQuery.trim().length < 2 && (
+                <div className="space-y-4 pt-2 border-t border-neutral-100">
+                  {/* Recent Searches */}
+                  {recentSearches.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1.5 text-neutral-400">
+                          <History className="h-3 w-3" />
+                          <span className="text-[10px] font-heading font-medium uppercase tracking-wider">
+                            Pencarian Terakhir
+                          </span>
+                        </div>
+                        <button
+                          onClick={clearRecentSearches}
+                          className="text-[9px] text-neutral-400 hover:text-red-500 font-sans transition-colors"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {recentSearches.map((item) => (
+                          <button
+                            key={item}
+                            onClick={() => handleSelectTag(item)}
+                            className="text-[11px] font-sans bg-neutral-100 hover:bg-brand-accent/10 hover:text-brand-accent text-neutral-700 px-3 py-1 rounded-full transition-colors"
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Popular Tags */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-1.5 text-neutral-400">
+                      <Sparkles className="h-3 w-3 text-brand-accent" />
+                      <span className="text-[10px] font-heading font-medium uppercase tracking-wider">
+                        Pencarian Populer
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {POPULAR_SEARCH_TAGS.map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => handleSelectTag(tag)}
+                          className="text-[11px] font-sans bg-brand-cream hover:bg-brand-accent hover:text-white border border-brand-accent/20 text-brand-black px-3 py-1 rounded-full transition-all duration-200"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {searchQuery.trim().length >= 2 && (
-                <div className="border border-neutral-100 bg-neutral-50/50 p-4 -mt-2 space-y-3">
+                <div className="border border-neutral-100 bg-neutral-50/50 p-4 -mt-2 space-y-3 rounded-xl">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400">
                       Hasil Pencarian Instan

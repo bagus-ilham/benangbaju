@@ -38,3 +38,5 @@ export { MobileMenuDrawer } from './MobileMenuDrawer'
 export { DesktopNavbar } from './DesktopNavbar'
 export { SmartLink } from './SmartLink'
 export { CustomToast } from './CustomToast'
+export { MobileBottomNav } from './MobileBottomNav'
+
