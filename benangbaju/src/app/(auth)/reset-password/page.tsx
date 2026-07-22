@@ -17,6 +17,18 @@ export default function ResetPasswordPage(): React.JSX.Element {
 
   // Ensure user has a valid session (arrived from recovery flow)
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1))
+      const errorMsg = urlParams.get('error_description') || hashParams.get('error_description')
+
+      if (errorMsg) {
+        toast.error('Tautan reset kata sandi telah kadaluarsa atau tidak valid. Silakan minta tautan baru.')
+        router.push('/lupa-password')
+        return
+      }
+    }
+
     const checkSession = async () => {
       const {
         data: { session },
