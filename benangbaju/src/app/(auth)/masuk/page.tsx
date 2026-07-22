@@ -55,10 +55,7 @@ function LoginContent() {
 
       if (data.user) {
         toast.success('Berhasil masuk!')
-        router.refresh()
         router.push(redirectPath)
-        // Kita tidak set isLoading(false) di sini agar spinner tetap
-        // berputar selama proses redirect Next.js berlangsung.
       } else {
         setIsLoading(false)
       }

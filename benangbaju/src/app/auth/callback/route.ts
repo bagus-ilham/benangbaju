@@ -4,7 +4,7 @@ import { createServerClient } from '@/lib/supabase/server'
 export async function GET(request: NextRequest): Promise<NextResponse<unknown>> {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  let redirect = requestUrl.searchParams.get('redirect') || '/'
+  let redirect = requestUrl.searchParams.get('redirect') || requestUrl.searchParams.get('next') || '/'
 
   // Safe redirect validation: must start with / and not //
   if (!redirect.startsWith('/') || redirect.startsWith('//')) {
