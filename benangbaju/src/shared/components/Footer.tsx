@@ -23,7 +23,7 @@ export function Footer(): React.JSX.Element {
 
   return (
     <footer className="bg-brand-cream border-t border-neutral-200">
-      {/* Newsletter CTA band */}
+      {/* Newsletter CTA band (Disabled / Commented out for now)
       <div className="border-b border-neutral-200 bg-brand-black py-12 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-4">
           <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent-light">
@@ -75,6 +75,7 @@ export function Footer(): React.JSX.Element {
           </AnimatePresence>
         </div>
       </div>
+      */}
 
       <div className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
