@@ -31,29 +31,29 @@ const TRUST_ITEMS = [
 
 export function TrustStrip(): React.JSX.Element {
   return (
-    <section className="bg-brand-black border-b border-neutral-800 py-6 md:py-8">
+    <section className="bg-brand-black border-b border-neutral-800 py-3.5 md:py-8 overflow-hidden">
       <PageContainer>
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+          className="flex flex-nowrap items-center justify-between overflow-x-auto scrollbar-none snap-x gap-3 sm:gap-4 md:grid md:grid-cols-4 md:gap-6 py-1"
         >
           {TRUST_ITEMS.map((item) => (
             <motion.div
               key={item.title}
               variants={fadeUpItem}
-              className="flex flex-col items-center text-center md:flex-row md:items-center md:text-left gap-2.5 md:gap-3 group"
+              className="flex-none snap-start flex items-center text-left gap-2 md:gap-3 group"
             >
-              <div className="flex-shrink-0 p-2 border border-brand-accent/30 bg-brand-accent/10 transition-all duration-300 group-hover:border-brand-accent group-hover:bg-brand-accent/20 rounded-2xl group-hover:-translate-y-1 group-hover:shadow-sm">
+              <div className="flex-shrink-0 p-1.5 md:p-2 border border-brand-accent/30 bg-brand-accent/10 transition-all duration-300 group-hover:border-brand-accent group-hover:bg-brand-accent/20 rounded-xl group-hover:-translate-y-0.5">
                 <item.icon className="h-3.5 w-3.5 text-brand-accent-light" strokeWidth={1.5} />
               </div>
-              <div className="space-y-0.5">
+              <div className="space-y-0.5 whitespace-nowrap">
                 <h3 className="text-[9px] md:text-[10px] font-heading font-semibold uppercase tracking-widest text-white">
                   {item.title}
                 </h3>
-                <p className="text-[9px] text-neutral-500 font-sans leading-relaxed hidden sm:block">
+                <p className="text-[9px] text-neutral-400 font-sans leading-relaxed hidden md:block">
                   {item.description}
                 </p>
               </div>

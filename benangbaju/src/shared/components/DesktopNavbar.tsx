@@ -61,8 +61,9 @@ export function DesktopNavbar({
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center flex-1">
+        <div className="grid grid-cols-3 items-center h-16">
+          {/* Left Column: Navigation Links */}
+          <div className="flex items-center justify-start">
             <button
               type="button"
               onClick={onOpenMobileMenu}
@@ -114,7 +115,8 @@ export function DesktopNavbar({
             </nav>
           </div>
 
-          <div className="flex justify-center flex-shrink-0 px-4">
+          {/* Center Column: Logo */}
+          <div className="flex items-center justify-center text-center">
             <Link
               href="/"
               className={cn(
@@ -144,7 +146,8 @@ export function DesktopNavbar({
             </Link>
           </div>
 
-          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4 flex-1">
+          {/* Right Column: Action Icons */}
+          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4">
             <button
               onClick={onToggleSearch}
               className={cn(
