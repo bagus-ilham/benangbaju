@@ -46,7 +46,7 @@ export function MobileMenuAccordionItem({
             const res = await getActiveCategoriesAction()
             if (res.data && isMounted) setItems(res.data)
           } else if (isKoleksi) {
-            const res = await getActiveCollectionsAction(1, 20)
+            const res = await getActiveCollectionsAction(1, 50)
             if (res.data && isMounted) setItems(res.data)
           }
         } catch (error) {
