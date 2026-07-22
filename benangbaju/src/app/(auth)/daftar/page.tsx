@@ -67,10 +67,25 @@ function RegisterContent(): React.JSX.Element {
 
       if (error) throw error
 
-      if (data.user) {
-        // Since email confirmation is required by default, tell the user to verify email.
-        toast.success('Registrasi berhasil! Silakan cek email Anda untuk konfirmasi akun.')
-        router.push('/masuk')
+      if (data.session) {
+        toast.success('Registrasi berhasil! Selamat datang di Benangbaju.')
+        router.push('/')
+        router.refresh()
+      } else if (data.user) {
+        // Try auto-login in case email confirmation is disabled or auto-confirmed
+        const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        if (!loginError && loginData.session) {
+          toast.success('Registrasi berhasil! Selamat datang di Benangbaju.')
+          router.push('/')
+          router.refresh()
+        } else {
+          toast.success('Registrasi berhasil!')
+          router.push('/masuk')
+        }
       } else {
         setIsLoading(false)
       }

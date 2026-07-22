@@ -66,20 +66,23 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   // Rate limiting for authentication routes
   const authPaths = ['/masuk', '/daftar', '/lupa-password', '/reset-password']
   if (authPaths.some((p) => pathname.startsWith(p) || pathname === `/api/auth/callback`)) {
-    const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const allowed = await checkRateLimit(request, ip, 'auth', 5, 60) // 5 requests per minute
+    // Skip rate limiting in local development
+    if (process.env.NODE_ENV !== 'development') {
+      const ip = request.headers.get('x-forwarded-for') || 'unknown'
+      const allowed = await checkRateLimit(request, ip, 'auth', 15, 60) // 15 requests per minute
 
-    if (!allowed) {
-      if (pathname.startsWith('/api/')) {
-        return NextResponse.json(
-          { error: 'Terlalu banyak percobaan. Silakan coba lagi nanti.' },
-          { status: 429 }
-        )
-      } else {
-        return new NextResponse('Terlalu banyak percobaan. Silakan coba lagi dalam 1 menit.', {
-          status: 429,
-          headers: { 'Retry-After': '60' },
-        })
+      if (!allowed) {
+        if (pathname.startsWith('/api/')) {
+          return NextResponse.json(
+            { error: 'Terlalu banyak percobaan. Silakan coba lagi nanti.' },
+            { status: 429 }
+          )
+        } else {
+          return new NextResponse('Terlalu banyak percobaan. Silakan coba lagi dalam 1 menit.', {
+            status: 429,
+            headers: { 'Retry-After': '60' },
+          })
+        }
       }
     }
   }
