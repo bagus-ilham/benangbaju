@@ -17,9 +17,42 @@ import {
 import { formatIDR } from '@/lib/utils/format'
 import { TrendingUp, ShoppingBag, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
 
+import { Button } from '@/shared/components'
+
 export default function AdminAnalyticsPage() {
   const [days, setDays] = useState(30)
   const { data: analytics, isLoading, isError } = useAdminAnalytics(days)
+
+  const handleExportCSV = () => {
+    if (!analytics) return
+    const rows = [
+      ['--- RINGKASAN ANALITIK ---'],
+      ['Total Pendapatan', analytics.totalRevenue],
+      ['Total Pesanan Sukses', analytics.totalOrders],
+      ['Keranjang Ditinggalkan', analytics.abandonedCartsCount],
+      [],
+      ['--- TREN PENDAPATAN ---'],
+      ['Tanggal', 'Pendapatan (IDR)'],
+      ...analytics.revenueTrends.map((r) => [r.date, r.revenue]),
+      [],
+      ['--- PRODUK TERLARIS ---'],
+      ['Nama Produk', 'Jumlah Terjual', 'Total Pendapatan (IDR)'],
+      ...analytics.topProducts.map((p) => [p.name, p.quantity, p.revenue]),
+      [],
+      ['--- PENGGUNAAN VOUCHER ---'],
+      ['Kode Voucher', 'Jumlah Penggunaan', 'Total Diskon (IDR)'],
+      ...analytics.voucherUsage.map((v) => [v.code, v.count, v.totalDiscount]),
+    ]
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + rows.map((e) => e.map(val => `"${val}"`).join(',')).join('\n')
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement('a')
+    link.setAttribute('href', encodedUri)
+    link.setAttribute('download', `laporan-analitik-${days}hari.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   if (isLoading) {
     return (
@@ -42,20 +75,29 @@ export default function AdminAnalyticsPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <AdminPageHeader
           title="Analisis Penjualan & Performa"
           subtitle="Tinjauan mendalam performa bisnis berdasarkan data transaksi yang valid."
         />
-        <select
-          value={days}
-          onChange={(e) => setDays(Number(e.target.value))}
-          className="text-xs font-semibold py-2 px-3 border border-neutral-200 bg-white text-neutral-900 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-900"
-        >
-          <option value={7}>7 Hari Terakhir</option>
-          <option value={30}>30 Hari Terakhir</option>
-          <option value={90}>90 Hari Terakhir</option>
-        </select>
+        <div className="flex items-center space-x-2">
+          <Button
+            onClick={handleExportCSV}
+            variant="outline"
+            className="text-xs font-semibold py-2 px-3 border border-neutral-200"
+          >
+            Unduh CSV
+          </Button>
+          <select
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            className="text-xs font-semibold py-2 px-3 border border-neutral-200 bg-white text-neutral-900 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-900"
+          >
+            <option value={7}>7 Hari Terakhir</option>
+            <option value={30}>30 Hari Terakhir</option>
+            <option value={90}>90 Hari Terakhir</option>
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

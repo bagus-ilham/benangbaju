@@ -44,6 +44,10 @@ export class CmsService {
   async adminDeleteLandingPage(landingPageId: string): Promise<ApiResponse<void>> {
     return cmsRepository.adminDeleteLandingPage(landingPageId)
   }
+
+  async getLandingPageBySlug(slug: string): Promise<ApiResponse<LandingPage | null>> {
+    return cmsRepository.getLandingPageBySlug(slug)
+  }
 }
 
 export const cmsService = new CmsService()

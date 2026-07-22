@@ -82,6 +82,27 @@ export class NotificationRepository {
     return ok()
   }
 
+  async createNotification(params: {
+    userId: string
+    type: string
+    title: string
+    message: string
+    data?: Record<string, unknown>
+  }): Promise<void> {
+    const supabase = await createServerClient()
+    const { error } = await supabase.from('notifications').insert({
+      user_id: params.userId,
+      type: params.type,
+      title: params.title,
+      message: params.message,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: (params.data as any) || null,
+    })
+    if (error) {
+      safeLogError('Error creating notification:', error)
+    }
+  }
+
   // =============================================================
   // TEMPLATES CRUD
   // =============================================================

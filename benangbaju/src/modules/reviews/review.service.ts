@@ -39,6 +39,14 @@ export class ReviewService {
   async customerSubmitReview(params: SubmitReviewParams): Promise<ApiResponse<ProductReview>> {
     return reviewRepository.customerSubmitReview(params)
   }
+
+  async voteHelpful(reviewId: string): Promise<ApiResponse<number>> {
+    return reviewRepository.voteHelpful(reviewId)
+  }
+
+  async adminTogglePinned(reviewId: string, isPinned: boolean): Promise<ApiResponse<boolean>> {
+    return reviewRepository.adminTogglePinned(reviewId, isPinned)
+  }
 }
 
 export const reviewService = new ReviewService()

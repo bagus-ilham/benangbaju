@@ -36,6 +36,13 @@ export default function AdminDashboardPage(): React.JSX.Element {
 
       if (error) throw error
 
+      if (newStockVal > 0) {
+        import('@/modules/products/inventory.repository').then(({ checkAndDispatchStockNotifications }) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          checkAndDispatchStockNotifications(supabase as any, variantId, newStockVal).catch(() => {})
+        })
+      }
+
       toast.success('Stok berhasil diperbarui')
       refetch()
     } catch (err) {

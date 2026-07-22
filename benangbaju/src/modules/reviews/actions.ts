@@ -36,3 +36,12 @@ export async function adminReplyToReviewAction(reviewId: string, body: string) {
   const { user } = await requireAdmin()
   return reviewService.adminReplyToReview(reviewId, body, user.id)
 }
+
+export async function voteReviewHelpfulAction(reviewId: string) {
+  return reviewService.voteHelpful(reviewId)
+}
+
+export async function adminToggleReviewPinnedAction(reviewId: string, isPinned: boolean) {
+  await requireAdmin()
+  return reviewService.adminTogglePinned(reviewId, isPinned)
+}

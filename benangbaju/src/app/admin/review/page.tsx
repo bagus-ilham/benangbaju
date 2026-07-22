@@ -7,7 +7,8 @@ import {
   useAdminReplyToReview,
 } from '@/app/admin/hooks/useAdmin'
 import { Button, Modal, AdminPageHeader, Textarea } from '@/shared/components'
-import { Star, MessageSquare } from 'lucide-react'
+import { Star, MessageSquare, Pin } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/modules/reviews/types'
@@ -231,6 +232,25 @@ export default function AdminReviewsPage(): React.JSX.Element {
                           Sembunyikan
                         </Button>
                       )}
+                      <Button
+                        onClick={async () => {
+                          try {
+                            const { adminToggleReviewPinnedAction } = await import('@/modules/reviews/actions')
+                            await adminToggleReviewPinnedAction(rev.id, !rev.is_pinned)
+                            toast.success(rev.is_pinned ? 'Semat ulasan dibatalkan' : 'Ulasan disematkan ke atas!')
+                            refetch()
+                          } catch {
+                            toast.error('Gagal mengubah status pin')
+                          }
+                        }}
+                        variant="outline"
+                        className={cn(
+                          'text-[10px] py-1.5 px-2.5 font-bold uppercase border-neutral-200',
+                          rev.is_pinned ? 'bg-amber-50 text-amber-700 border-amber-300' : 'text-neutral-500 hover:text-neutral-900'
+                        )}
+                      >
+                        <Pin size={10} className="mr-1 inline" /> {rev.is_pinned ? 'Unpin' : 'Pin'}
+                      </Button>
                       <Button
                         onClick={() => handleOpenReplyModal(rev)}
                         variant="outline"

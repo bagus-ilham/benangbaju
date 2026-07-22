@@ -74,7 +74,7 @@ export class ProductRepository {
         .replace(/\\/g, '\\\\')
         .replace(/%/g, '\\%')
         .replace(/_/g, '\\_')
-      query = query.ilike('name', `%${escapedSearch}%`)
+      query = query.or(`name.ilike.%${escapedSearch}%,description.ilike.%${escapedSearch}%`)
     }
 
     if (minPrice !== undefined) {

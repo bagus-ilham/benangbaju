@@ -33,6 +33,7 @@ export class ReviewRepository {
       )
       .eq('product_id', productId)
       .eq('status', 'approved')
+      .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -300,6 +301,51 @@ export class ReviewRepository {
     }
 
     return ok(review as ProductReview)
+  }
+
+  async voteHelpful(reviewId: string): Promise<ApiResponse<number>> {
+    const supabase = await createServerClient()
+    const { data: review } = await supabase
+      .from('product_reviews')
+      .select('helpful_count')
+      .eq('id', reviewId)
+      .single()
+
+    const newCount = (review?.helpful_count || 0) + 1
+    const { error } = await supabase
+      .from('product_reviews')
+      .update({ helpful_count: newCount })
+      .eq('id', reviewId)
+
+    if (error) {
+      safeLogError('Error voting helpful:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menambahkan vote')
+    }
+
+    return ok(newCount)
+  }
+
+  async adminTogglePinned(reviewId: string, isPinned: boolean): Promise<ApiResponse<boolean>> {
+    const supabase = await createServerClient()
+    const { error } = await supabase
+      .from('product_reviews')
+      .update({ is_pinned: isPinned })
+      .eq('id', reviewId)
+
+    if (error) {
+      safeLogError('Error toggling pinned status:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengubah status pin review')
+    }
+
+    await adminLogRepository.insertAdminActivityLog(
+      supabase,
+      'update',
+      'review',
+      reviewId,
+      `${isPinned ? 'Pinned' : 'Unpinned'} review ${reviewId}`
+    )
+
+    return ok(isPinned)
   }
 }
 

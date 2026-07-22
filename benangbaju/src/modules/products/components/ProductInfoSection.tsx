@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Heart, Plus, Minus, Shield, RefreshCw, Truck } from 'lucide-react'
+import { Heart, Plus, Minus, Shield, RefreshCw, Truck, Bell, MessageCircle } from 'lucide-react'
+import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
 import { VariantPicker } from '@/modules/products/components'
 import { formatIDR, cn } from '@/lib/utils'
@@ -54,6 +55,37 @@ export function ProductInfoSection({
   onBuyNow,
   thumbnailsNode,
 }: ProductInfoSectionProps): React.JSX.Element {
+  const handleStockNotification = async () => {
+    if (!selectedVariant) return
+    try {
+      const { toggleStockNotificationAction } = await import('@/modules/products/actions')
+      const res = await toggleStockNotificationAction(selectedVariant.id)
+      if (res.isSubscribed) {
+        const { default: toast } = await import('react-hot-toast')
+        toast.success('Kami akan mengabari Anda jika stok produk ini telah tersedia kembali!')
+      } else {
+        const { default: toast } = await import('react-hot-toast')
+        toast.success('Langganan notifikasi restock dibatalkan.')
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const { default: toast } = await import('react-hot-toast')
+      if (err.name === 'UnauthorizedError') {
+        toast.error('Silakan masuk (login) terlebih dahulu untuk mengaktifkan notifikasi restock.')
+      } else {
+        toast.error('Gagal mengaktifkan notifikasi restock.')
+      }
+    }
+  }
+
+  const handleWhatsAppCS = () => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
+    const text = `Halo Admin Benangbaju, saya mau bertanya mengenai produk ${product.name}:\n${currentUrl}`
+    const waBase = SOCIAL_LINKS.whatsapp || 'https://wa.me/6281234567890'
+    const waUrl = `${waBase.includes('wa.me') ? waBase : `https://wa.me/${waBase}`}?text=${encodeURIComponent(text)}`
+    window.open(waUrl, '_blank')
+  }
+
   return (
     <>
       {/* Title, Category & Price */}
@@ -219,6 +251,24 @@ export function ProductInfoSection({
                 : 'Beli Sekarang'}
           </Button>
         </div>
+
+        {selectedVariant && selectedVariant.stock === 0 && (
+          <Button
+            onClick={handleStockNotification}
+            variant="outline"
+            className="w-full text-xs font-semibold uppercase tracking-wider text-brand-accent border-brand-accent/30 hover:bg-brand-cream/60 py-2.5 transition-all"
+          >
+            <Bell className="h-3.5 w-3.5 mr-1.5" /> Kabari Saya Saat Restock
+          </Button>
+        )}
+
+        <Button
+          onClick={handleWhatsAppCS}
+          variant="outline"
+          className="w-full text-xs font-semibold uppercase tracking-wider text-emerald-700 border-emerald-300 hover:bg-emerald-50 py-2.5 transition-all"
+        >
+          <MessageCircle className="h-3.5 w-3.5 mr-1.5 text-emerald-600" /> Tanya CS via WhatsApp
+        </Button>
       </motion.div>
 
       {/* Info Badges (Shipping / Return / Guarantee) */}

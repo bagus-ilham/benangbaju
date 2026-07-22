@@ -82,3 +82,50 @@ export async function adminDeleteProductAction(productId: string) {
   if (!res.success) throw new Error(res.error?.message)
   return res.data
 }
+
+export async function logSearchAction(query: string, resultsCount: number) {
+  try {
+    const { createServerClient } = await import('@/lib/supabase/server')
+    const { safeLogError } = await import('@/lib/logger')
+    const supabase = await createServerClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const trimmed = query.trim()
+    if (!trimmed) return
+
+    await supabase.from('search_logs').insert({
+      query: trimmed,
+      results_count: resultsCount,
+      user_id: user?.id || null,
+    })
+  } catch (error) {
+    // Non-blocking search logging error
+    console.error('Error logging search:', error)
+  }
+}
+
+export async function toggleStockNotificationAction(variantId: string) {
+  const { requireAuth } = await import('@/lib/auth-guard')
+  const { user, supabase } = await requireAuth()
+
+  const { data: existing } = await supabase
+    .from('stock_notifications')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('variant_id', variantId)
+    .maybeSingle()
+
+  if (existing) {
+    await supabase.from('stock_notifications').delete().eq('id', existing.id)
+    return { success: true, isSubscribed: false }
+  } else {
+    await supabase.from('stock_notifications').insert({
+      user_id: user.id,
+      variant_id: variantId,
+    })
+    return { success: true, isSubscribed: true }
+  }
+}
+

@@ -70,7 +70,7 @@ export function ProductDetailClient({
 
   const handleToggleWishlist = async () => {
     try {
-      await toggleWishlist(product.id)
+      await toggleWishlist(product.id, selectedVariant?.id)
       if (liked) {
         toast.success('Dihapus dari wishlist.')
       } else {
@@ -78,7 +78,7 @@ export function ProductDetailClient({
           <CustomToast
             t={t}
             title="Ditambahkan ke Wishlist"
-            subtitle={product.name}
+            subtitle={`${product.name}${selectedVariant ? ` (${selectedVariant.name})` : ''}`}
             description="Tersimpan di daftar impian Anda."
             imageUrl={product.product_images[0]?.url}
             actionLabel="Lihat"

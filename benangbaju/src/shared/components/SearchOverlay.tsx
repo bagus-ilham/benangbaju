@@ -9,7 +9,7 @@ import { Search, X, Loader2, ChevronRight, History, Sparkles } from 'lucide-reac
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
-import { getProductsAction } from '@/modules/products/actions'
+import { getProductsAction, logSearchAction } from '@/modules/products/actions'
 import { type ProductListItem } from '@/modules/products/types'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
@@ -111,6 +111,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const trimmed = searchQuery.trim()
     if (!trimmed) return
     saveRecentSearch(trimmed)
+    logSearchAction(trimmed, instantResults.length).catch(() => {})
     router.push(`/search?q=${encodeURIComponent(trimmed)}`)
     onClose()
   }
@@ -118,6 +119,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const handleSelectTag = (tag: string) => {
     setSearchQuery(tag)
     saveRecentSearch(tag)
+    logSearchAction(tag, 0).catch(() => {})
     router.push(`/search?q=${encodeURIComponent(tag)}`)
     onClose()
   }

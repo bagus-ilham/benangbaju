@@ -43,6 +43,14 @@ function SearchResultsContent() {
   const products = dataRes?.data || []
   const totalCount = dataRes?.pagination?.total_count || 0
 
+  React.useEffect(() => {
+    if (query && !isLoading && dataRes) {
+      import('@/modules/products/actions').then(({ logSearchAction }) => {
+        logSearchAction(query, totalCount).catch(() => {})
+      })
+    }
+  }, [query, isLoading, dataRes, totalCount])
+
   if (isError) {
     return (
       <div className="bg-white min-h-screen">

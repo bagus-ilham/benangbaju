@@ -9,6 +9,57 @@ import { ProductRatingSummary } from '@/modules/products/types'
 import { cn, formatDate } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
+import toast from 'react-hot-toast'
+import { voteReviewHelpfulAction } from '@/modules/reviews/actions'
+
+interface ReviewHelpfulButtonProps {
+  reviewId: string
+  initialCount: number
+}
+
+function ReviewHelpfulButton({ reviewId, initialCount }: ReviewHelpfulButtonProps) {
+  const [count, setCount] = React.useState(initialCount)
+  const [hasVoted, setHasVoted] = React.useState(false)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  const handleVote = async () => {
+    if (hasVoted || isSubmitting) return
+    setIsSubmitting(true)
+    try {
+      const res = await voteReviewHelpfulAction(reviewId)
+      if (res.success && res.data !== undefined) {
+        setCount(res.data)
+        setHasVoted(true)
+        toast.success('Terima kasih atas masukan Anda!')
+      } else {
+        toast.error('Gagal mengirim tanggapan.')
+      }
+    } catch {
+      toast.error('Terjadi kesalahan.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleVote}
+      disabled={hasVoted || isSubmitting}
+      className={cn(
+        'flex items-center text-[10px] space-x-1 font-sans transition-colors',
+        hasVoted
+          ? 'text-brand-accent font-semibold cursor-default'
+          : 'text-neutral-400 hover:text-brand-black cursor-pointer'
+      )}
+    >
+      <ThumbsUp className={cn('h-3 w-3', hasVoted && 'fill-brand-accent')} />
+      <span>
+        {hasVoted ? 'Terbantu' : 'Membantu'} ({count})
+      </span>
+    </button>
+  )
+}
+
 interface ReviewSectionProps {
   productId: string
   ratingSummary: ProductRatingSummary | null
@@ -135,10 +186,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
 
                   {/* Helpful and Admin Reply Section */}
                   <div className="flex items-center justify-between pt-2">
-                    <button className="flex items-center text-[10px] text-neutral-400 hover:text-brand-black space-x-1 font-sans">
-                      <ThumbsUp className="h-3 w-3" />
-                      <span>Membantu ({review.helpful_count})</span>
-                    </button>
+                    <ReviewHelpfulButton reviewId={review.id} initialCount={review.helpful_count} />
                   </div>
 
                   {/* Admin Reply */}

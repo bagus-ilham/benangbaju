@@ -4,7 +4,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 interface WishlistState {
   productIds: string[]
   setProductIds: (productIds: string[]) => void
-  toggleWishlist: (productId: string) => Promise<void>
+  toggleWishlist: (productId: string, variantId?: string | null) => Promise<void>
   clearWishlist: () => void
   syncWishlist: (userId: string | null) => Promise<void>
 }
@@ -14,7 +14,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
   setProductIds: (productIds) => set({ productIds }),
 
-  toggleWishlist: async (productId) => {
+  toggleWishlist: async (productId, variantId) => {
     const { productIds } = get()
     const supabase = createBrowserClient()
     const {
@@ -41,6 +41,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
           await supabase.from('wishlist_items').insert({
             user_id: user.id,
             product_id: productId,
+            variant_id: variantId || null,
           })
         }
       } catch (error) {

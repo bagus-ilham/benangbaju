@@ -231,6 +231,35 @@ export class CmsRepository {
     )
     return ok()
   }
+
+  async getLandingPageBySlug(slug: string): Promise<ApiResponse<LandingPage | null>> {
+    const supabase = await createServerClient()
+    const { data, error } = await supabase
+      .from('landing_pages')
+      .select('id, slug, title, content, meta_title, meta_description, is_active, created_at, updated_at')
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .maybeSingle()
+
+    if (error) {
+      safeLogError('Error fetching landing page by slug:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil data landing page')
+    }
+
+    if (!data) return ok(null)
+
+    return ok({
+      id: data.id,
+      slug: data.slug,
+      title: data.title,
+      content: data.content,
+      meta_title: data.meta_title,
+      meta_description: data.meta_description,
+      is_active: data.is_active,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    })
+  }
 }
 
 export const cmsRepository = new CmsRepository()

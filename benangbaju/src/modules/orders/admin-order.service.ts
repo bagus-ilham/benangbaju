@@ -125,6 +125,23 @@ export class AdminOrderService {
         `Updated order status to ${status}`
       )
 
+      // Send notification to customer
+      const { data: order } = await supabase
+        .from('orders')
+        .select('user_id, order_number')
+        .eq('id', orderId)
+        .single()
+
+      if (order?.user_id) {
+        const { notificationService } = await import('@/modules/notifications/notification.service')
+        await notificationService.sendOrderStatusNotification(
+          order.user_id,
+          order.order_number,
+          status,
+          trackingNumber
+        )
+      }
+
       return ok(null)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
