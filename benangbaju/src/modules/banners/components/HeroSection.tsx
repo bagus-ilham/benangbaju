@@ -31,9 +31,6 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     return (
       <div className="relative w-full bg-brand-cream flex items-center justify-center aspect-[21/9] md:aspect-[16/9]">
         <div className="text-center space-y-4 max-w-lg px-4">
-          <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-            Koleksi Baru
-          </span>
           <h2 className="text-3xl md:text-5xl font-heading font-light uppercase tracking-widest text-brand-black leading-tight">
             Elegan dalam Kesederhanaan
           </h2>
