@@ -264,10 +264,10 @@ export function ProductInfoSection({
 
         <Button
           onClick={handleWhatsAppCS}
-          variant="outline"
-          className="w-full text-xs font-semibold uppercase tracking-wider text-emerald-700 border-emerald-300 hover:bg-emerald-50 py-2.5 transition-all"
+          variant="ghost"
+          className="w-full text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50/80 border border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 py-2.5 transition-all group/wa"
         >
-          <MessageCircle className="h-3.5 w-3.5 mr-1.5 text-emerald-600" /> Tanya CS via WhatsApp
+          <MessageCircle className="h-3.5 w-3.5 mr-1.5 text-emerald-600 group-hover/wa:text-white transition-colors" /> Tanya CS via WhatsApp
         </Button>
       </motion.div>
 

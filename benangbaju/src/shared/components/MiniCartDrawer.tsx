@@ -11,15 +11,24 @@ import { formatIDR } from '@/lib/utils'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
+import { useProducts } from '@/modules/products/hooks/useProducts'
+
 export function MiniCartDrawer(): React.JSX.Element {
   const items = useCartStore((state) => state.items)
   const isCartDrawerOpen = useCartStore((state) => state.isCartDrawerOpen)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
   const updateQuantity = useCartStore((state) => state.updateQuantity)
   const removeItem = useCartStore((state) => state.removeItem)
+  const addItem = useCartStore((state) => state.addItem)
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
+
+  // Real Database Cross-Sell recommendations
+  const { data: recsData } = useProducts({ sortBy: 'featured', limit: 6 })
+  const recProducts = (recsData?.data || [])
+    .filter((p) => !items.some((item) => p.product_variants.some((v) => v.id === item.variantId)))
+    .slice(0, 2)
 
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -244,29 +253,76 @@ export function MiniCartDrawer(): React.JSX.Element {
                 ))
               )}
 
-              {/* Cross-Sell Recommendations */}
-              {items.length > 0 && (
+              {/* Cross-Sell Recommendations from Database */}
+              {items.length > 0 && recProducts.length > 0 && (
                 <div className="pt-4 border-t border-neutral-100 space-y-2">
                   <span className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-400 block">
                     Lengkapi Gaya Anda
                   </span>
-                  <div className="bg-brand-cream/80 p-3 rounded-xl border border-brand-accent/20 flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <p className="text-[11px] font-heading font-medium uppercase text-brand-black">
-                        Pashmina Silk Premium
-                      </p>
-                      <p className="text-[10px] font-sans font-semibold text-brand-accent">
-                        Rp 89.000
-                      </p>
-                    </div>
-                    <Link
-                      href="/produk"
-                      onClick={() => setCartDrawerOpen(false)}
-                      className="px-3 py-1 bg-brand-black text-white hover:bg-brand-accent text-[9px] font-heading font-bold uppercase tracking-wider rounded-lg transition-colors"
-                    >
-                      + Lihat
-                    </Link>
-                  </div>
+                  {recProducts.map((p) => {
+                    const availableVariant =
+                      p.product_variants.find((v) => v.stock > 0) || p.product_variants[0]
+                    const primaryImage =
+                      p.product_images?.find((img) => img.is_primary)?.url ||
+                      p.product_images?.[0]?.url ||
+                      null
+
+                    return (
+                      <div
+                        key={p.id}
+                        className="bg-brand-cream/80 p-2.5 rounded-xl border border-brand-accent/20 flex items-center justify-between gap-3"
+                      >
+                        <div className="flex items-center space-x-2.5 min-w-0">
+                          {primaryImage && (
+                            <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 border border-neutral-200">
+                              <Image
+                                src={getProxiedImageUrl(primaryImage)}
+                                alt={p.name}
+                                fill
+                                sizes="36px"
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="space-y-0.5 min-w-0">
+                            <p className="text-[11px] font-heading font-medium uppercase text-brand-black truncate">
+                              {p.name}
+                            </p>
+                            <p className="text-[10px] font-sans font-semibold text-brand-accent">
+                              {formatIDR(p.minPrice)}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={async () => {
+                            if (availableVariant) {
+                              await addItem(
+                                {
+                                  variantId: availableVariant.id,
+                                  productName: p.name,
+                                  variantName: availableVariant.name,
+                                  name: p.name,
+                                  sku: availableVariant.sku,
+                                  price: Number(availableVariant.price),
+                                  comparePrice: availableVariant.compare_price
+                                    ? Number(availableVariant.compare_price)
+                                    : null,
+                                  imageUrl: primaryImage,
+                                  slug: p.slug,
+                                  stock: availableVariant.stock,
+                                },
+                                1
+                              )
+                            }
+                          }}
+                          className="px-2.5 py-1 text-[9px] font-heading font-bold uppercase tracking-wider rounded-lg shrink-0"
+                        >
+                          + Tambah
+                        </Button>
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </div>
