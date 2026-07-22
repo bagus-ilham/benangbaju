@@ -80,7 +80,7 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   },
   {
     key: 'whatsapp_number',
-    value: '6281234567890',
+    value: '6285179747449',
     type: 'text',
     group: 'social',
     label: 'Nomor WhatsApp Chat',

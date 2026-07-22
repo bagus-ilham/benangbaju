@@ -81,7 +81,7 @@ export function ProductInfoSection({
   const handleWhatsAppCS = () => {
     const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
     const text = `Halo Admin Benangbaju, saya mau bertanya mengenai produk ${product.name}:\n${currentUrl}`
-    const waBase = SOCIAL_LINKS.whatsapp || 'https://wa.me/6281234567890'
+    const waBase = SOCIAL_LINKS.whatsapp || 'https://wa.me/6285179747449'
     const waUrl = `${waBase.includes('wa.me') ? waBase : `https://wa.me/${waBase}`}?text=${encodeURIComponent(text)}`
     window.open(waUrl, '_blank')
   }

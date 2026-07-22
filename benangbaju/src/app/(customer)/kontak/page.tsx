@@ -6,7 +6,7 @@ import { MapPin, Clock, Mail, MessageSquare } from 'lucide-react'
 import { PageContainer, PageHero } from '@/shared/components'
 
 export default function KontakPage(): React.JSX.Element {
-  const whatsappNumber = '6281234567890'
+  const whatsappNumber = '6285179747449'
   const whatsappMessage = encodeURIComponent(
     'Halo Benangbaju, saya ingin bertanya tentang produk / pesanan saya.'
   )
@@ -39,9 +39,9 @@ export default function KontakPage(): React.JSX.Element {
                 <Clock className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-semibold text-neutral-900 mb-0.5">Jam Operasional</p>
-                  <p>Senin – Jumat: 09:00 – 17:00 WIB</p>
+                  <p>Senin – Jumat: 08:00 – 15:00 WIB</p>
                   <p>Sabtu: 09:00 – 14:00 WIB</p>
-                  <p className="text-neutral-400 mt-1">Minggu &amp; Hari Libur Nasional: Tutup</p>
+                  <p className="text-neutral-400 mt-1">Minggu &amp; Hari Libur Nasional: Libur</p>
                 </div>
               </div>
 
@@ -61,10 +61,10 @@ export default function KontakPage(): React.JSX.Element {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Butik &amp; Kantor Pusat</p>
-                  <p>Benangbaju Studio</p>
-                  <p>Jl. Kemang Raya No. 45, Bangka, Mampang Prapatan</p>
-                  <p>Jakarta Selatan, DKI Jakarta 12730</p>
+                  <p className="font-semibold text-neutral-900 mb-0.5">Warehouse</p>
+                  <p>Benangbaju Warehouse</p>
+                  <p>Jl. Sarimadu Barat No. 155B, Sukawarna, Kecamatan Sukajadi</p>
+                  <p>Kota Bandung, Jawa Barat 40164</p>
                 </div>
               </div>
             </div>
