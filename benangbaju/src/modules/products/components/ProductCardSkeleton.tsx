@@ -10,24 +10,24 @@ export function ProductCardSkeleton({ className }: ProductCardSkeletonProps): Re
   return (
     <div
       className={cn(
-        'flex flex-col w-full text-left bg-white rounded-none overflow-hidden border border-neutral-100',
+        'flex flex-col w-full text-left bg-white rounded-2xl overflow-hidden border border-neutral-100',
         className
       )}
     >
       {/* Product Image Area */}
-      <Skeleton className="aspect-[3/4] w-full rounded-none" />
+      <Skeleton className="aspect-[3/4] w-full rounded-2xl" />
 
       {/* Product Details Area */}
       <div className="p-4 flex flex-col flex-1 space-y-3">
         {/* Title & Brand */}
         <div className="space-y-1.5">
-          <Skeleton className="h-3 w-1/4 rounded-none" />
-          <Skeleton className="h-4 w-3/4 rounded-none" />
+          <Skeleton className="h-3 w-1/4 rounded-xl" />
+          <Skeleton className="h-4 w-3/4 rounded-xl" />
         </div>
 
         {/* Price */}
         <div className="space-y-1 mt-auto pt-2">
-          <Skeleton className="h-4 w-1/2 rounded-none" />
+          <Skeleton className="h-4 w-1/2 rounded-xl" />
         </div>
       </div>
     </div>

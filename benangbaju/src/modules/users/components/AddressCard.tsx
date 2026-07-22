@@ -5,6 +5,7 @@ import type { UserAddress } from '@/modules/shipping/types'
 import { Badge } from '@/shared/components/Badge'
 import { Button } from '@/shared/components/Button'
 import { Edit2, Trash2, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface AddressCardProps {
   address: UserAddress
@@ -38,17 +39,18 @@ export function AddressCard({
       }}
       role="button"
       tabIndex={0}
-      className={`p-5 border text-sm font-sans relative transition duration-150 rounded-none cursor-pointer card-hover-lift gold-border-hover ${
+      className={cn(
+        'p-5 border text-sm font-sans relative transition-all duration-300 rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-md',
         isSelected
-          ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent'
+          ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent shadow-sm'
           : 'border-neutral-200 bg-white'
-      }`}
+      )}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center space-x-2">
           <span className="font-semibold text-neutral-800">{address.label}</span>
           {address.is_default && (
-            <Badge variant="gold" className="text-[10px] py-0 px-2 rounded-none">
+            <Badge variant="gold" className="text-[10px] py-0 px-2">
               Utama
             </Badge>
           )}

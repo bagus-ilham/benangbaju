@@ -204,7 +204,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
       </AdminPageHeader>
 
       {/* Main Table */}
-      <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
+      <div className="border border-neutral-200 bg-white rounded-xl overflow-hidden shadow-sm">
         {isLoading ? (
           <div className="py-8 bg-white border border-neutral-200">
             <TableSkeleton columns={5} rows={5} />
@@ -261,7 +261,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
                       <td className="py-4 px-4 text-center">
                         <button
                           onClick={() => handleToggleActive(cat)}
-                          className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
+                          className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition rounded-full ${
                             cat.is_active
                               ? 'bg-neutral-900 text-white border border-neutral-900'
                               : 'bg-white text-neutral-400 border border-neutral-200'

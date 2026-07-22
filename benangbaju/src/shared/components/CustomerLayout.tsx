@@ -162,6 +162,9 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
         pathname={pathname}
         isAuthenticated={isAuthenticated}
         isMounted={isMounted}
+        profile={profile}
+        user={user}
+        onLogout={handleLogout}
       />
 
       {/* Main Page Area */}

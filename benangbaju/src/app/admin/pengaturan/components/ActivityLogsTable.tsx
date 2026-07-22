@@ -20,7 +20,7 @@ interface ActivityLogsTableProps {
 
 export function ActivityLogsTable({ logsList }: ActivityLogsTableProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white rounded-none overflow-hidden max-w-4xl">
+    <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden max-w-4xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs font-sans">
           <thead>

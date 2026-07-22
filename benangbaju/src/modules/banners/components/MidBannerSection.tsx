@@ -44,7 +44,7 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
     src: banner.image_mobile_url || banner.image_url,
   })
 
-  const BannerContent = () => (
+  const bannerContentNode = (
     <div className="relative w-full overflow-hidden bg-neutral-100 aspect-[4/3] md:aspect-[21/9]">
       <picture className="block w-full h-full">
         <source media="(min-width: 768px)" srcSet={desktopSrcSet} sizes="100vw" />
@@ -80,17 +80,19 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
 
   if (banner.link_url) {
     return (
-      <section className="w-full">
-        <Link href={banner.link_url} className="block w-full hover:opacity-95 transition-opacity">
-          <BannerContent />
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <Link href={banner.link_url} className="block w-full hover:opacity-95 transition-opacity rounded-2xl overflow-hidden shadow-lg hover:shadow-xl hover:-translate-y-1 duration-300">
+          {bannerContentNode}
         </Link>
       </section>
     )
   }
 
   return (
-    <section className="w-full">
-      <BannerContent />
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="rounded-2xl overflow-hidden shadow-lg">
+        {bannerContentNode}
+      </div>
     </section>
   )
 }

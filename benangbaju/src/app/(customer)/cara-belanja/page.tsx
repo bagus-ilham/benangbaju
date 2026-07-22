@@ -51,9 +51,9 @@ export default function CaraBelanjaPage(): React.JSX.Element {
           {steps.map((step) => (
             <div
               key={step.title}
-              className="border border-neutral-200 p-6 md:p-8 flex items-start gap-5 card-hover-lift gold-border-hover bg-white"
+              className="border border-neutral-200 p-6 md:p-8 flex items-start gap-5 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
             >
-              <div className="p-3 bg-brand-accent-muted border border-brand-accent/20 shrink-0">
+              <div className="p-3 bg-brand-accent-muted border border-brand-accent/20 shrink-0 rounded-xl">
                 <step.icon className="h-5 w-5 text-brand-accent" strokeWidth={1.5} />
               </div>
               <div className="space-y-2">
@@ -65,7 +65,7 @@ export default function CaraBelanjaPage(): React.JSX.Element {
             </div>
           ))}
 
-          <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-500 leading-relaxed font-medium">
+          <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-500 leading-relaxed font-medium rounded-2xl shadow-sm">
             <p className="font-heading font-semibold text-brand-black mb-2 uppercase tracking-wider text-[10px]">
               Butuh Bantuan Lebih Lanjut?
             </p>

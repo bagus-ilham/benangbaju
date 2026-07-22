@@ -24,7 +24,7 @@ export function ProductImageManager({
   onUpdateImageField,
 }: ProductImageManagerProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-4">
+    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-4 shadow-sm">
       <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
         <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
           Daftar URL Gambar
@@ -49,7 +49,7 @@ export function ProductImageManager({
             return (
               <div
                 key={idx}
-                className="border border-neutral-200 p-3 relative rounded-none space-y-2 bg-neutral-50/10"
+                className="border border-neutral-200 p-3 relative rounded-xl space-y-2 bg-neutral-50/10"
               >
                 <button
                   type="button"
@@ -119,7 +119,7 @@ export function ProductImageManager({
                       />
                       <label
                         htmlFor={`file-upload-${idx}`}
-                        className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                        className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-lg"
                       >
                         Unggah File
                       </label>

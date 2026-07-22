@@ -39,7 +39,7 @@ export function ProductVariantsSection({
   onRemoveImage,
 }: ProductVariantsSectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-6">
+    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-6 shadow-sm">
       <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
         <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
           Spesifikasi Varian Produk
@@ -58,7 +58,7 @@ export function ProductVariantsSection({
         {variants.map((v, vIdx) => (
           <div
             key={vIdx}
-            className="border border-neutral-200 p-4 relative bg-neutral-50/20 space-y-4 rounded-none"
+            className="border border-neutral-200 p-4 relative bg-neutral-50/20 space-y-4 rounded-xl"
           >
             <div className="absolute right-3.5 top-3.5 flex items-center space-x-1">
               <button
@@ -230,7 +230,7 @@ export function ProductVariantsSection({
                         />
                         <label
                           htmlFor={`variant-${vIdx}-file-upload-${imgIdx}`}
-                          className="cursor-pointer inline-flex items-center text-[8px] font-bold uppercase tracking-wider py-1 px-2 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none bg-white"
+                          className="cursor-pointer inline-flex items-center text-[8px] font-bold uppercase tracking-wider py-1 px-2 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-lg bg-white"
                         >
                           Unggah
                         </label>

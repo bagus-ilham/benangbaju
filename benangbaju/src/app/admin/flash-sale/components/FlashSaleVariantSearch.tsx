@@ -16,13 +16,13 @@ export function FlashSaleVariantSearch({
   handleAddVariantItem,
 }: FlashSaleVariantSearchProps): React.JSX.Element {
   return (
-    <div className="mb-4 border border-brand-accent/30 p-3 bg-brand-accent-muted/5 relative">
+    <div className="mb-4 border border-brand-accent/30 p-3 bg-brand-accent-muted/5 relative rounded-xl">
       <div className="relative">
         <Search size={14} className="absolute left-2.5 top-2.5 text-neutral-400" />
         <input
           type="text"
           placeholder="Cari SKU atau nama produk..."
-          className="w-full pl-8 pr-3 py-2 border border-neutral-200 focus:border-brand-accent outline-none text-xs"
+          className="w-full pl-8 pr-3 py-2 border border-neutral-200 focus:border-brand-accent outline-none text-xs rounded-xl"
           value={variantSearch}
           onChange={(e) => setVariantSearch(e.target.value)}
           autoFocus
@@ -33,7 +33,7 @@ export function FlashSaleVariantSearch({
           {filteredVariants.map((v) => (
             <div
               key={v.id}
-              className="flex justify-between items-center p-2 border border-neutral-100 bg-white hover:border-brand-accent transition cursor-pointer"
+              className="flex justify-between items-center p-2 border border-neutral-100 bg-white hover:border-brand-accent transition cursor-pointer rounded-xl mb-1"
               onClick={() => handleAddVariantItem(v)}
             >
               <div>

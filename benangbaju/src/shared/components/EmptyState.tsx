@@ -75,7 +75,7 @@ export function EmptyState({
           className="absolute inset-0 bg-brand-accent/10 blur-xl rounded-full scale-150"
           aria-hidden
         />
-        <div className="relative p-5 bg-brand-cream border border-brand-accent/20 animate-gentle-float">
+        <div className="relative p-5 bg-brand-cream border border-brand-accent/20 animate-gentle-float rounded-2xl">
           <Icon className="h-8 w-8 text-brand-accent" strokeWidth={1.5} />
         </div>
       </div>

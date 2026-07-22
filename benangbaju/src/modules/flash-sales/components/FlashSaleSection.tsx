@@ -128,15 +128,15 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
               Berakhir Dalam:
             </span>
             <div className="flex items-center space-x-1.5 font-heading text-xs font-semibold">
-              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-none animate-pulse-glow min-w-[2.5rem] text-center">
+              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center">
                 {formatNumber(timeLeft.hours)}
               </span>
               <span className="text-brand-accent-light">:</span>
-              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-none animate-pulse-glow min-w-[2.5rem] text-center">
+              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center">
                 {formatNumber(timeLeft.minutes)}
               </span>
               <span className="text-brand-accent-light">:</span>
-              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-none animate-pulse-glow min-w-[2.5rem] text-center">
+              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center">
                 {formatNumber(timeLeft.seconds)}
               </span>
             </div>

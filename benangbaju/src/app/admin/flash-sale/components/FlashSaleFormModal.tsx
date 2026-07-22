@@ -202,7 +202,7 @@ export function FlashSaleFormModal({
           </label>
           <div className="flex items-center space-x-3">
             {banner_url && (
-              <div className="relative w-16 h-10 bg-neutral-100 border border-neutral-200">
+              <div className="relative w-16 h-10 bg-neutral-100 border border-neutral-200 rounded-xl overflow-hidden">
                 <Image
                   src={getProxiedImageUrl(banner_url)}
                   alt="Banner"
@@ -239,7 +239,7 @@ export function FlashSaleFormModal({
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-neutral-200 p-2.5 outline-none focus:border-neutral-800 transition min-h-[60px]"
+            className="w-full border border-neutral-200 p-2.5 outline-none focus:border-neutral-800 transition min-h-[60px] rounded-xl"
             placeholder="Keterangan singkat..."
           />
         </div>
@@ -250,7 +250,7 @@ export function FlashSaleFormModal({
             id="active-campaign"
             checked={is_active}
             onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 text-brand-accent focus:ring-brand-accent border-gray-300 rounded-none cursor-pointer"
+            className="h-4 w-4 text-brand-accent focus:ring-brand-accent border-gray-300 rounded cursor-pointer"
           />
           <label
             htmlFor="active-campaign"

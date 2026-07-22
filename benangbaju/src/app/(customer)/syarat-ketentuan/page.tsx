@@ -67,7 +67,7 @@ export default function SyaratKetentuanPage(): React.JSX.Element {
             {sections.map((section, idx) => (
               <div
                 key={idx}
-                className="border border-neutral-200 p-6 md:p-8 card-hover-lift gold-border-hover bg-white space-y-3"
+                className="border border-neutral-200 p-6 md:p-8 bg-white space-y-3 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
               >
                 <h3 className="font-heading text-sm font-semibold text-brand-black uppercase tracking-wide">
                   {section.title}

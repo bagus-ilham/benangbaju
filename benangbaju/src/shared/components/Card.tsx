@@ -21,24 +21,24 @@ export function Card({
     <div
       className={cn(
         // Base styles dengan custom bezier curve untuk animasi super halus
-        'rounded-none transition-all duration-500 ease-[0.16,1,0.3,1]',
+        'rounded-2xl transition-all duration-500 ease-[0.16,1,0.3,1]',
 
         // Varian Warna
         variant === 'solid' && 'bg-white',
-        variant === 'glass' && 'bg-white/80 backdrop-blur-md',
+        variant === 'glass' && 'bg-white/70 backdrop-blur-xl',
 
-        // Border state (tidak akan menghitam saat di-hover)
+        // Border state
         bordered
           ? variant === 'glass'
-            ? 'border border-white/40'
-            : 'border border-neutral-200'
+            ? 'border border-white/50 shadow-sm'
+            : 'border border-neutral-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]'
           : '',
 
         // Hover Effect Premium
         hoverEffect && [
-          'hover:-translate-y-1',
-          // Custom soft diffuse shadow (Bukan garis hitam, tapi bayangan lembut di bawah)
-          'hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)]',
+          'hover:-translate-y-1.5',
+          // Custom soft diffuse shadow
+          'hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)]',
         ],
 
         // Padding Options

@@ -53,14 +53,14 @@ export function CheckoutAddressForm({
         </div>
 
         {addressesLoading ? (
-          <div className="h-24 bg-neutral-100 animate-pulse rounded-none" />
+          <div className="h-24 bg-neutral-100 animate-pulse rounded-2xl" />
         ) : addresses && addresses.length > 0 ? (
           <div className="space-y-3">
             {/* Selected Address Display */}
             {selectedAddress ? (
               <motion.div
                 layoutId="selectedAddressBox"
-                className="border border-brand-accent bg-brand-accent-muted/10 p-4 relative rounded-none shadow-sm"
+                className="border border-brand-accent bg-brand-accent-muted/10 p-4 relative rounded-2xl shadow-sm"
               >
                 <p className="font-heading font-semibold text-xs text-brand-accent uppercase tracking-wider">
                   {selectedAddress.label} (Pilihan)
@@ -84,7 +84,7 @@ export function CheckoutAddressForm({
 
             {/* Other Addresses */}
             {addresses.length > 1 && (
-              <div className="border border-neutral-200 p-4 space-y-3 bg-white">
+              <div className="border border-neutral-200 p-4 space-y-3 bg-white rounded-2xl">
                 <p className="text-[10px] text-neutral-400 font-heading font-medium uppercase tracking-widest">
                   Pilih Alamat Lain:
                 </p>
@@ -105,7 +105,7 @@ export function CheckoutAddressForm({
                             onSelectAddress(address)
                           }
                         }}
-                        className="p-3 border border-neutral-200 text-xs cursor-pointer bg-white transition-all duration-200"
+                        className="p-3 border border-neutral-200 text-xs cursor-pointer bg-white transition-all duration-200 rounded-xl hover:shadow-sm"
                       >
                         <p className="font-heading font-medium text-[10px] text-brand-black uppercase tracking-wider">
                           {address.label}
@@ -148,8 +148,8 @@ export function CheckoutAddressForm({
           </p>
         ) : shippingLoading ? (
           <div className="space-y-2">
-            <div className="h-12 bg-neutral-100 animate-pulse rounded-none" />
-            <div className="h-12 bg-neutral-100 animate-pulse rounded-none" />
+            <div className="h-12 bg-neutral-100 animate-pulse rounded-xl" />
+            <div className="h-12 bg-neutral-100 animate-pulse rounded-xl" />
           </div>
         ) : shippingOptions.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -171,10 +171,10 @@ export function CheckoutAddressForm({
                     onSelectCourier(option)
                   }
                 }}
-                className={`p-4 border cursor-pointer transition-all duration-300 relative rounded-none ${
+                className={`p-4 border cursor-pointer transition-all duration-300 relative rounded-xl ${
                   selectedCourier?.id === option.id
                     ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent'
-                    : 'border-neutral-200 bg-white'
+                    : 'border-neutral-200 bg-white hover:border-brand-black'
                 }`}
               >
                 <div className="flex justify-between items-center mb-1">

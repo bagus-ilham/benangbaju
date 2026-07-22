@@ -33,7 +33,7 @@ export function ProductSizeGuideModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-white p-6 shadow-2xl z-10 border border-t-4 border-t-brand-accent border-neutral-100"
+            className="relative w-full max-w-lg bg-white p-6 shadow-2xl z-10 border border-neutral-100 rounded-2xl"
           >
             {/* Close Button */}
             <button

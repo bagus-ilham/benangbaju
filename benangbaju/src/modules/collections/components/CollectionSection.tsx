@@ -36,7 +36,7 @@ export function CollectionSection({
             <motion.div key={col.id} variants={fadeUpItem}>
               <Link
                 href={`/koleksi/${col.slug}`}
-                className="group relative aspect-[16/10] w-full overflow-hidden bg-neutral-100 border border-neutral-100 block"
+                className="group relative aspect-[16/10] w-full overflow-hidden bg-neutral-100 border border-neutral-100 block rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
               >
                 {col.image_url ? (
                   <Image

@@ -92,13 +92,13 @@ export function AdminOrderStatusPanel({
         )}
 
         {status === 'completed' && (
-          <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold select-none rounded-none text-center mt-2">
+          <div className="p-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold select-none rounded-2xl text-center mt-2">
             Transaksi Selesai.
           </div>
         )}
 
         {status === 'cancelled' && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold select-none rounded-none text-center mt-2">
+          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold select-none rounded-2xl text-center mt-2">
             Pesanan Dibatalkan.
           </div>
         )}

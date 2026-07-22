@@ -89,7 +89,7 @@ export function Tooltip({
             animate="visible"
             exit="exit"
             className={cn(
-              'absolute z-50 px-2.5 py-1.5 text-[10px] font-sans font-medium text-white bg-brand-black shadow-md whitespace-nowrap pointer-events-none',
+              'absolute z-50 px-3 py-2 text-[10px] font-sans font-medium text-white bg-brand-black shadow-lg rounded-xl whitespace-nowrap pointer-events-none',
               positionClasses[position],
               className
             )}

@@ -96,8 +96,8 @@ export default function AlamatPage(): React.JSX.Element {
 
         {addressesLoading ? (
           <div className="space-y-4">
-            <div className="h-32 bg-neutral-100 animate-pulse rounded-none" />
-            <div className="h-32 bg-neutral-100 animate-pulse rounded-none" />
+            <div className="h-32 bg-neutral-100 animate-pulse rounded-xl" />
+            <div className="h-32 bg-neutral-100 animate-pulse rounded-xl" />
           </div>
         ) : addresses && addresses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

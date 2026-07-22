@@ -59,12 +59,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             ref={ref}
             className={cn(
-              // Input styles — THENBLANK premium minimalist design (sharp corners, thin borders, fine transitions)
-              'w-full bg-white text-xs px-4 py-3 border border-neutral-200 rounded-none text-brand-black transition-all duration-300 placeholder:text-neutral-400 focus:border-brand-black focus:bg-neutral-50/50 focus-ring-premium',
+              // Input styles — Modern premium soft design
+              'w-full bg-neutral-50 text-xs px-4 py-3.5 border border-neutral-200 rounded-xl text-brand-black transition-all duration-300 placeholder:text-neutral-400 focus:bg-white focus:border-brand-accent/50 focus:outline-none focus:ring-4 focus:ring-brand-accent/10 focus:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]',
               {
-                'pl-10': leftIcon,
-                'pr-10': rightIcon,
-                'border-red-500 focus:border-red-500': error,
+                'pl-11': leftIcon,
+                'pr-11': rightIcon,
+                'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
               },
               className
             )}
@@ -72,9 +72,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             aria-describedby={describedBy}
             {...props}
           />
-
-          {/* Animated focus underline */}
-          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-black transform scale-x-0 transition-transform duration-300 origin-left group-focus-within:scale-x-100" />
 
           {rightIcon && (
             <div

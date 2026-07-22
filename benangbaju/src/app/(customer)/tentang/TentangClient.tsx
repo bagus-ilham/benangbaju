@@ -33,7 +33,7 @@ export function TentangClient(): React.JSX.Element {
               <span className="font-semibold text-brand-black">
                 "Show How Really Well-Dressed You Are,"
               </span>{' '}
-              Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri
+              Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri
               lewat sepotong pakaian yang sederhana namun unik.
             </p>
             <p>Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.</p>
@@ -43,7 +43,7 @@ export function TentangClient(): React.JSX.Element {
             <motion.div
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: 0.1 }}
-              className="border border-neutral-200 p-6 md:p-8 space-y-3 card-hover-lift gold-border-hover bg-brand-cream/50"
+              className="border border-neutral-200 p-6 md:p-8 space-y-3 bg-brand-cream/50 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
             >
               <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
                 Kualitas
@@ -61,7 +61,7 @@ export function TentangClient(): React.JSX.Element {
             <motion.div
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: 0.2 }}
-              className="border border-neutral-200 p-6 md:p-8 space-y-3 card-hover-lift gold-border-hover bg-brand-cream/50"
+              className="border border-neutral-200 p-6 md:p-8 space-y-3 bg-brand-cream/50 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
             >
               <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
                 Craftsmanship

@@ -53,8 +53,8 @@ export default function PengirimanPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200 p-6 rounded-none space-y-3">
-              <div className="p-2 bg-neutral-100/80 rounded-none w-max">
+            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
+              <div className="p-2 bg-neutral-100/80 rounded-xl w-max">
                 <Truck className="h-4 w-4 text-neutral-800" />
               </div>
               <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
@@ -66,8 +66,8 @@ export default function PengirimanPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200 p-6 rounded-none space-y-3">
-              <div className="p-2 bg-neutral-100/80 rounded-none w-max">
+            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
+              <div className="p-2 bg-neutral-100/80 rounded-xl w-max">
                 <ShieldCheck className="h-4 w-4 text-neutral-800" />
               </div>
               <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
@@ -86,7 +86,7 @@ export default function PengirimanPage(): React.JSX.Element {
               Mitra Ekspedisi & Estimasi Waktu (ETD)
             </h3>
 
-            <div className="border border-neutral-200 overflow-hidden rounded-none">
+            <div className="border border-neutral-200 overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-300 gold-border-hover">
               <table className="w-full text-left border-collapse text-xs font-sans">
                 <thead>
                   <tr className="bg-neutral-50 border-b border-neutral-200 text-neutral-900 font-bold uppercase tracking-wider text-[10px]">

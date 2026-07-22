@@ -85,7 +85,7 @@ export function ReturnReviewModal({
     <Modal isOpen={!!selectedReturn} onClose={onClose} title="Pemeriksaan Pengajuan Retur">
       <div className="space-y-6 text-xs font-sans">
         {/* Info Summary */}
-        <div className="border border-neutral-200 p-4 space-y-2.5 bg-neutral-50/30 rounded-none">
+        <div className="border border-neutral-200 p-4 space-y-2.5 bg-neutral-50/30 rounded-2xl">
           <div className="flex justify-between font-semibold">
             <span>No. Pesanan:</span>
             <span className="text-neutral-900">{selectedReturn.orders?.order_number}</span>
@@ -149,7 +149,7 @@ export function ReturnReviewModal({
         {/* Return Items List */}
         <div className="space-y-2">
           <p className="text-[10px] uppercase font-bold text-neutral-400">Daftar Item Retur:</p>
-          <div className="border border-neutral-200 divide-y divide-neutral-100 p-3 bg-white max-h-36 overflow-y-auto rounded-none">
+          <div className="border border-neutral-200 divide-y divide-neutral-100 p-3 bg-white max-h-36 overflow-y-auto rounded-2xl">
             {selectedReturn.return_items?.map((item) => (
               <div key={item.id} className="py-2.5 flex justify-between items-center text-[11px]">
                 <div>
@@ -167,7 +167,7 @@ export function ReturnReviewModal({
         </div>
 
         {/* Refund Bank Details */}
-        <div className="border border-neutral-200 p-4 space-y-2.5 bg-neutral-50/20 rounded-none">
+        <div className="border border-neutral-200 p-4 space-y-2.5 bg-neutral-50/20 rounded-2xl">
           <p className="text-[10px] uppercase font-bold text-neutral-400">
             Rekening Tujuan Refund:
           </p>
@@ -214,7 +214,7 @@ export function ReturnReviewModal({
           </div>
         ) : (
           selectedReturn.admin_notes && (
-            <div className="p-3 bg-neutral-100 text-neutral-600 rounded-none">
+            <div className="p-3 bg-neutral-100 text-neutral-600 rounded-2xl">
               <span className="font-bold text-neutral-700 block">Catatan Admin:</span>
               <span className="italic mt-1 block">{selectedReturn.admin_notes}</span>
             </div>

@@ -161,10 +161,9 @@ export function VariantPicker({
                   whileTap={!disabled ? { scale: 0.97 } : {}}
                   transition={{ duration: 0.2 }}
                   className={cn(
-                    // THENBLANK style variant picker buttons: sharp edges, clean text, minimal borders
-                    'relative px-4 py-2 border text-xs font-heading font-medium tracking-wide uppercase transition-colors duration-200 disabled:opacity-30 disabled:line-through focus:outline-none focus-ring-premium',
+                    'relative px-4 py-2 border text-xs font-heading font-medium tracking-wide uppercase transition-all duration-200 disabled:opacity-30 disabled:line-through focus:outline-none focus:ring-4 focus:ring-brand-accent/20 rounded-xl',
                     isSelected
-                      ? 'border-brand-black bg-brand-black text-white'
+                      ? 'border-brand-black bg-brand-black text-white shadow-md'
                       : 'border-neutral-200 text-brand-black hover:border-brand-black hover:bg-neutral-50'
                   )}
                 >
@@ -172,7 +171,7 @@ export function VariantPicker({
                   {isSelected && (
                     <motion.div
                       layoutId={`active-indicator-${name}`}
-                      className="absolute inset-0 border border-brand-black pointer-events-none"
+                      className="absolute inset-0 border border-brand-black pointer-events-none rounded-xl"
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                       aria-hidden="true"
                     />

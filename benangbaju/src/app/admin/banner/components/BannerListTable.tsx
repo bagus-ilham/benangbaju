@@ -82,7 +82,7 @@ export function BannerListTable({
           {banners.map((b: BannerRow) => (
             <tr key={b.id} className="hover:bg-neutral-50/20 transition duration-150">
               <td className="py-4 px-5 flex items-center space-x-3.5">
-                <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none">
+                <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none rounded-md">
                   <Image
                     src={getProxiedImageUrl(b.image_url || '')}
                     alt={b.title || ''}
@@ -127,7 +127,7 @@ export function BannerListTable({
               <td className="py-4 px-4 text-center">
                 <button
                   onClick={() => onToggleActive(b)}
-                  className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
+                  className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition rounded-full ${
                     b.is_active
                       ? 'bg-neutral-900 text-white border border-neutral-900'
                       : 'bg-white text-neutral-400 border border-neutral-200'

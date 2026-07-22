@@ -149,7 +149,7 @@ export function ProductInfoSection({
       <motion.div variants={itemVariants} className="space-y-3 pt-2">
         <div className="flex items-center space-x-3">
           {/* Quantity adjustments */}
-          <div className="flex items-center border border-neutral-200 bg-white gold-border-hover">
+          <div className="flex items-center border border-neutral-200 bg-white rounded-xl overflow-hidden shadow-sm hover:border-neutral-300 transition-colors">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onDecrement}
@@ -176,7 +176,7 @@ export function ProductInfoSection({
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={onToggleWishlist}
-            className="p-4 border border-neutral-200 hover:border-brand-accent bg-white transition-all text-neutral-500 hover:text-brand-accent relative gold-border-hover"
+            className="p-4 border border-neutral-200 hover:border-brand-accent bg-white transition-all text-neutral-500 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
             <Heart
@@ -224,7 +224,7 @@ export function ProductInfoSection({
       {/* Info Badges (Shipping / Return / Guarantee) */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-3 gap-2 border border-neutral-100 py-4 px-2 card-hover-lift gold-border-hover bg-brand-cream/30"
+        className="grid grid-cols-3 gap-2 border border-neutral-100 py-4 px-2 bg-brand-cream/30 rounded-2xl"
       >
         <motion.div
           whileHover={{ y: -3 }}

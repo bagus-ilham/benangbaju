@@ -39,14 +39,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'),
   title: 'Benangbaju — Show How Really Well-Dressed You Are',
   description:
-    'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
+    'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
   icons: {
     icon: '/logo_favicon.PNG',
   },
   openGraph: {
     title: 'Benangbaju — Show How Really Well-Dressed You Are',
     description:
-      'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
+      'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
     url: 'https://www.benangbaju.com',
     siteName: 'Benangbaju',
     locale: 'id_ID',
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Benangbaju — Show How Really Well-Dressed You Are',
     description:
-      'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
+      'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
   },
 }
 

@@ -58,7 +58,7 @@ export function CheckoutSummaryCard({
   canSubmit,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-6 bg-white rounded-none shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
+    <div className="border border-neutral-200 p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
       <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center border-b border-neutral-100 pb-3">
         <ShoppingBag size={14} className="mr-2 text-neutral-500" /> Ringkasan Pesanan
@@ -69,7 +69,7 @@ export function CheckoutSummaryCard({
         {displayItems.map((item) => (
           <div key={item.variantId} className="py-3 flex space-x-3 text-xs">
             {item.imageUrl && (
-              <div className="relative w-10 h-14 border border-neutral-100 rounded-none bg-neutral-50 flex-shrink-0">
+              <div className="relative w-10 h-14 border border-neutral-100 rounded-md bg-neutral-50 flex-shrink-0">
                 <Image
                   src={getProxiedImageUrl(item.imageUrl)}
                   alt={item.productName || item.name}
@@ -112,7 +112,7 @@ export function CheckoutSummaryCard({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className="flex items-center justify-between bg-brand-accent-muted/10 border border-brand-accent px-4 py-2.5 rounded-none text-xs"
+              className="flex items-center justify-between bg-brand-accent-muted/10 border border-brand-accent px-4 py-2.5 rounded-xl text-xs"
             >
               <div className="flex items-center space-x-2 text-brand-accent font-heading font-medium uppercase tracking-wider text-[10px]">
                 <Tag size={12} className="text-neutral-500" />
@@ -133,7 +133,7 @@ export function CheckoutSummaryCard({
                 <input
                   type="text"
                   placeholder="Masukkan kode voucher"
-                  className="flex-1 px-3 py-2 border border-neutral-200 focus:border-brand-black outline-none text-xs uppercase rounded-none transition-colors duration-200 focus-ring-premium"
+                  className="flex-1 px-3 py-2 border border-neutral-200 focus:border-brand-black outline-none text-xs uppercase rounded-xl transition-colors duration-200 focus-ring-premium"
                   value={voucherCodeInput}
                   onChange={(e) => onVoucherInputChange(e.target.value)}
                 />
@@ -163,7 +163,7 @@ export function CheckoutSummaryCard({
                           type="button"
                           disabled={!isSpendMet}
                           onClick={() => onApplyVoucherDirectly(voucher.code)}
-                          className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-none relative overflow-hidden select-none ${
+                          className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-xl relative overflow-hidden select-none ${
                             isSpendMet
                               ? 'border-brand-accent/40 bg-brand-accent-muted/5 hover:bg-brand-accent-muted/10 cursor-pointer animate-pulse-gentle'
                               : 'border-neutral-200 bg-neutral-50/50 opacity-40 cursor-not-allowed'

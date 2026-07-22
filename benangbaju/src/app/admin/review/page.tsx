@@ -101,7 +101,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
       />
 
       {/* Main Table */}
-      <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
+      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
         {isLoading ? (
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
@@ -255,7 +255,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
           title="Tulis Balasan Ulasan"
         >
           <form onSubmit={handleSaveReply} className="space-y-4 text-xs font-sans">
-            <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-none leading-relaxed text-neutral-600 font-normal">
+            <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-2xl leading-relaxed text-neutral-600 font-normal">
               <span className="font-bold text-neutral-800 block">Ulasan Pelanggan:</span>
               <span className="italic block mt-1">&quot;{selectedReview.body}&quot;</span>
             </div>

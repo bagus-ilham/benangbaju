@@ -15,7 +15,7 @@ export function ProductSeoFields({
   setMetaDescription,
 }: ProductSeoFieldsProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-4">
+    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-4 shadow-sm">
       <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2.5">
         Meta SEO Tags (Opsional)
       </h3>

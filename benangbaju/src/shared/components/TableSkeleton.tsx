@@ -13,7 +13,7 @@ export function TableSkeleton({ rows = 5, columns = 6 }: TableSkeletonProps): Re
       <div className="flex w-full border-b border-neutral-100 py-3 mb-2">
         {[...Array(columns)].map((_, i) => (
           <div key={`header-${i}`} className="flex-1 px-4">
-            <Skeleton className="h-4 w-3/4 rounded-none" />
+            <Skeleton className="h-4 w-3/4 rounded-2xl" />
           </div>
         ))}
       </div>
@@ -25,18 +25,18 @@ export function TableSkeleton({ rows = 5, columns = 6 }: TableSkeletonProps): Re
             <div key={`cell-${r}-${c}`} className="flex-1 px-4">
               {c === 0 ? (
                 <div className="flex items-center space-x-3">
-                  <Skeleton className="h-10 w-10 flex-shrink-0 rounded-none" />
+                  <Skeleton className="h-10 w-10 flex-shrink-0 rounded-2xl" />
                   <div className="space-y-2 flex-1">
-                    <Skeleton className="h-3 w-3/4 rounded-none" />
-                    <Skeleton className="h-3 w-1/2 rounded-none" />
+                    <Skeleton className="h-3 w-3/4 rounded-2xl" />
+                    <Skeleton className="h-3 w-1/2 rounded-2xl" />
                   </div>
                 </div>
               ) : c === columns - 1 ? (
                 <div className="flex justify-end space-x-2">
-                  <Skeleton className="h-8 w-16 rounded-none" />
+                  <Skeleton className="h-8 w-16 rounded-2xl" />
                 </div>
               ) : (
-                <Skeleton className="h-3 w-full max-w-[80%] rounded-none" />
+                <Skeleton className="h-3 w-full max-w-[80%] rounded-2xl" />
               )}
             </div>
           ))}

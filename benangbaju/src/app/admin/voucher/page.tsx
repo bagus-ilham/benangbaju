@@ -191,7 +191,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
       </AdminPageHeader>
 
       {/* Main Table */}
-      <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
+      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
         {isLoading ? (
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">

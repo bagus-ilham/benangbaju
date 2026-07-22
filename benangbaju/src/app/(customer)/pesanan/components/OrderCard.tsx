@@ -42,7 +42,7 @@ export function OrderCard({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-      className="border border-neutral-200 p-5 sm:p-6 bg-white hover:border-neutral-400 transition duration-200 rounded-none hover:shadow-sm"
+      className="border border-neutral-200 p-5 sm:p-6 bg-white transition-all duration-300 rounded-2xl shadow-sm hover:shadow-md card-hover-lift gold-border-hover"
     >
       {/* Header info */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-neutral-100 mb-4 text-sm gap-2">

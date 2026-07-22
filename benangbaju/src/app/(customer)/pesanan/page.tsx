@@ -211,8 +211,8 @@ export default function PesananPage(): React.JSX.Element {
         {/* Orders Listing */}
         {ordersLoading ? (
           <div className="space-y-4">
-            <div className="h-44 skeleton-shimmer border border-neutral-200 rounded-none" />
-            <div className="h-44 skeleton-shimmer border border-neutral-200 rounded-none" />
+            <div className="h-44 skeleton-shimmer border border-neutral-200 rounded-2xl" />
+            <div className="h-44 skeleton-shimmer border border-neutral-200 rounded-2xl" />
           </div>
         ) : orders.length > 0 ? (
           <div className="space-y-6">

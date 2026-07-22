@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import toast, { Toast } from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { cn } from '@/lib/utils'
 
 interface CustomToastProps {
   t: Toast
@@ -24,15 +25,16 @@ export function CustomToast({
 }: CustomToastProps): React.JSX.Element {
   return (
     <div
-      className={`${
-        t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-sm w-full bg-white shadow-2xl border border-neutral-100 flex pointer-events-auto border-t-2 border-t-brand-accent`}
+      className={cn(
+        t.visible ? 'animate-enter' : 'animate-leave',
+        'max-w-sm w-full bg-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] border border-neutral-200/50 rounded-2xl flex pointer-events-auto overflow-hidden'
+      )}
     >
       <div className="flex-1 w-0 p-4">
         <div className="flex items-start">
           <div className="flex-shrink-0 pt-0.5">
             {imageUrl ? (
-              <div className="relative aspect-[3/4] w-10 border border-neutral-100 overflow-hidden">
+              <div className="relative aspect-[3/4] w-10 border border-neutral-100 rounded-lg overflow-hidden">
                 <Image
                   className="object-cover"
                   src={getProxiedImageUrl(imageUrl)}
@@ -69,7 +71,7 @@ export function CustomToast({
               toast.dismiss(t.id)
               onAction()
             }}
-            className="w-full border border-transparent rounded-none p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-accent hover:text-brand-accent-light focus:outline-none cursor-pointer"
+            className="w-full border border-transparent rounded-2xl p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-accent hover:text-brand-accent-light focus:outline-none cursor-pointer"
           >
             {actionLabel}
           </button>

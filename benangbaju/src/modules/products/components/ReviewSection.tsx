@@ -58,8 +58,8 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
     <div className="py-10 border-t border-neutral-100 space-y-8">
       <div className="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0">
         {/* Left: Ratings Summary */}
-        <div className="flex flex-col space-y-4 md:w-1/3 bg-neutral-50 border border-neutral-200/60 p-6 md:p-8 card-hover-lift gold-border-hover relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
+        <div className="flex flex-col space-y-4 md:w-1/3 bg-neutral-50 border border-neutral-200/60 p-6 md:p-8 rounded-2xl hover:-translate-y-1 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
           <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-black">
             Ulasan Pembeli
           </h3>
@@ -119,7 +119,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                       {review.review_media.map((media) => (
                         <div
                           key={media.id}
-                          className="relative aspect-square w-16 bg-neutral-100 border border-neutral-100 overflow-hidden"
+                          className="relative aspect-square w-16 bg-neutral-100 border border-neutral-100 overflow-hidden rounded-lg shadow-sm"
                         >
                           <Image
                             src={getProxiedImageUrl(media.url)}
@@ -143,7 +143,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
 
                   {/* Admin Reply */}
                   {review.review_replies && review.review_replies.length > 0 && (
-                    <div className="bg-neutral-50 p-4 border-l-2 border-brand-accent mt-3 space-y-1">
+                    <div className="bg-neutral-50 p-4 border-l-4 border-brand-accent mt-3 space-y-1 rounded-r-xl rounded-l-sm">
                       <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-accent">
                         Balasan dari Benangbaju
                       </p>

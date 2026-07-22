@@ -34,7 +34,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
             <motion.div key={cat.id} variants={fadeUpItem}>
               <Link
                 href={`/kategori/${cat.slug}`}
-                className="group relative aspect-square md:aspect-[3/4] w-full overflow-hidden bg-neutral-100 border border-neutral-100 block gold-border-hover card-hover-lift"
+                className="group relative aspect-square md:aspect-[3/4] w-full overflow-hidden bg-neutral-100 border border-neutral-100 block rounded-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] transition-all duration-500"
               >
                 {cat.image_url ? (
                   <Image

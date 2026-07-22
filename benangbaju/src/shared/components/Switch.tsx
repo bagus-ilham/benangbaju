@@ -29,7 +29,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             {...props}
           />
 
-          <div className="relative flex items-center w-9 h-5 rounded-full border border-neutral-300 bg-neutral-200 transition-colors duration-300 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-black/20 peer-checked:bg-brand-black peer-checked:border-brand-black peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+          <div className="relative flex items-center w-9 h-5 rounded-full border border-neutral-200 bg-neutral-200 transition-colors duration-300 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-accent/20 peer-checked:bg-brand-accent peer-checked:border-brand-accent peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
             {/* Switch Thumb */}
             <motion.div
               layout
@@ -38,7 +38,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
                 stiffness: 700,
                 damping: 30,
               }}
-              className="w-4 h-4 bg-white rounded-full shadow-sm ml-0.5"
+              className="w-4 h-4 bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2)] ml-0.5"
               style={{
                 x: checked ? 14 : 0,
               }}

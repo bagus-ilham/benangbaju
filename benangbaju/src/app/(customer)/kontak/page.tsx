@@ -28,7 +28,7 @@ export default function KontakPage(): React.JSX.Element {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200 p-8 space-y-6 card-hover-lift gold-border-hover transition-all duration-300"
+            className="border border-neutral-200 p-8 space-y-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
           >
             <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Layanan Pelanggan
@@ -76,7 +76,7 @@ export default function KontakPage(): React.JSX.Element {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200 p-8 rounded-none flex flex-col justify-between space-y-6 bg-neutral-50/50 hover:border-neutral-400 hover:shadow-sm transition-all duration-300"
+            className="border border-neutral-200 p-8 flex flex-col justify-between space-y-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
           >
             <div className="space-y-4">
               <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
@@ -94,7 +94,7 @@ export default function KontakPage(): React.JSX.Element {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center space-x-2 bg-[#171717] text-white hover:bg-neutral-800 px-6 py-3.5 text-xs font-heading font-bold uppercase tracking-widest transition-all duration-300 rounded-none shadow-xs hover:shadow-md hover:-translate-y-[1px] active:translate-y-0 btn-shine"
+                className="w-full inline-flex items-center justify-center space-x-2 bg-[#171717] text-white hover:bg-neutral-800 px-6 py-3.5 text-xs font-heading font-bold uppercase tracking-widest transition-all duration-300 rounded-xl shadow-xs hover:shadow-md hover:-translate-y-[1px] active:translate-y-0 btn-shine"
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>Hubungi via WhatsApp</span>

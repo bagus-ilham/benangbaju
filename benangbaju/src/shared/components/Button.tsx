@@ -30,25 +30,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-disabled={disabled || isLoading}
         aria-busy={isLoading}
         className={cn(
-          // Base styles — THENBLANK premium minimalist design (sharp corners, elegant transitions)
-          'inline-flex items-center justify-center font-heading font-medium tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] active:translate-y-[1px] focus-ring-premium',
+          // Base styles — Modern premium rounded design (soft corners, elegant transitions)
+          'inline-flex items-center justify-center font-heading font-medium tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] active:translate-y-0.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:ring-offset-1',
           {
             // Variants
-            'bg-brand-black text-white hover:bg-neutral-800 border border-brand-black btn-shine hover:shadow-[0_4px_14px_rgba(23,23,23,0.15)]':
+            'bg-brand-black text-white hover:bg-neutral-800 border border-transparent shadow-[0_4px_14px_rgba(23,23,23,0.1)] hover:shadow-[0_6px_20px_rgba(23,23,23,0.15)]':
               variant === 'primary',
-            'bg-brand-cream text-brand-black hover:bg-brand-beige border border-brand-cream hover:shadow-sm':
+            'bg-brand-cream/80 backdrop-blur-sm text-brand-black hover:bg-brand-beige border border-brand-cream/50 shadow-sm hover:shadow-md':
               variant === 'secondary',
-            'bg-transparent text-brand-black border border-brand-black hover:bg-brand-black hover:text-white hover:shadow-[0_4px_14px_rgba(23,23,23,0.1)]':
+            'bg-transparent text-brand-black border border-neutral-300 hover:border-brand-black hover:bg-brand-black hover:text-white hover:shadow-[0_4px_14px_rgba(23,23,23,0.1)]':
               variant === 'outline',
             'bg-transparent text-brand-black hover:bg-neutral-100 border border-transparent':
               variant === 'ghost',
-            'bg-red-700 text-white hover:bg-red-800 border border-red-700 hover:shadow-[0_4px_14px_rgba(185,28,28,0.2)]':
+            'bg-red-600 text-white hover:bg-red-700 border border-transparent shadow-[0_4px_14px_rgba(220,38,38,0.2)] hover:shadow-[0_6px_20px_rgba(220,38,38,0.3)]':
               variant === 'danger',
 
             // Sizes
-            'text-[10px] px-4 py-2': size === 'sm',
+            'text-[10px] px-4 py-2 rounded-lg': size === 'sm',
             'text-xs px-6 py-3': size === 'md',
-            'text-xs md:text-sm px-8 py-4': size === 'lg',
+            'text-xs md:text-sm px-8 py-4 rounded-2xl': size === 'lg',
           },
           className
         )}

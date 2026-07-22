@@ -92,7 +92,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               <motion.div
                 whileHover={{ x: 4, borderColor: '#9a7b4f' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer"
               >
                 <ClipboardList size={14} className="text-neutral-400" />
                 <span>Pesanan Saya</span>
@@ -103,7 +103,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               <motion.div
                 whileHover={{ x: 4, borderColor: '#9a7b4f' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer"
               >
                 <MapPin size={14} className="text-neutral-400" />
                 <span>Daftar Alamat</span>
@@ -114,14 +114,14 @@ export default function NotifikasiPage(): React.JSX.Element {
               <motion.div
                 whileHover={{ x: 4, borderColor: '#9a7b4f' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-none text-xs bg-white cursor-pointer"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer"
               >
                 <Heart size={14} className="text-neutral-400" />
                 <span>Wishlist Saya</span>
               </motion.div>
             </Link>
 
-            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-black border border-brand-black border-l-4 border-l-brand-accent text-white font-heading font-semibold tracking-wide uppercase rounded-none text-xs">
+            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-black border border-brand-black border-l-4 border-l-brand-accent text-white font-heading font-semibold tracking-wide uppercase rounded-xl text-xs">
               <Bell size={14} className="text-brand-accent-light" />
               <span>Notifikasi Saya</span>
             </div>
@@ -134,7 +134,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-100 text-red-500 hover:text-red-700 font-heading font-medium tracking-wide uppercase transition-all duration-200 rounded-none text-xs text-left bg-white"
+              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-100 text-red-500 hover:text-red-700 font-heading font-medium tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-white"
             >
               <LogOut size={14} />
               <span>Keluar dari Akun</span>
@@ -142,7 +142,7 @@ export default function NotifikasiPage(): React.JSX.Element {
           </div>
 
           {/* Notifications Content */}
-          <div className="md:col-span-2 border border-neutral-200 p-6 sm:p-8 rounded-none bg-white card-hover-lift gold-border-hover relative overflow-hidden">
+          <div className="md:col-span-2 border border-neutral-200 p-6 sm:p-8 rounded-2xl bg-white card-hover-lift gold-border-hover relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-neutral-100">
               <h2 className="text-lg font-serif tracking-tight text-neutral-900 flex items-center">
@@ -175,7 +175,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: idx * 0.04 }}
                     whileHover={{ scale: 1.01, transition: { duration: 0.1 } }}
-                    className={`p-4 border text-xs font-sans transition relative cursor-pointer ${
+                    className={`p-4 border rounded-xl text-xs font-sans transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm relative cursor-pointer ${
                       n.is_read
                         ? 'border-neutral-100 bg-neutral-50/20 hover:bg-neutral-50/50 text-neutral-500'
                         : 'border-brand-accent bg-brand-accent-muted/10 hover:border-brand-accent-light text-neutral-900'

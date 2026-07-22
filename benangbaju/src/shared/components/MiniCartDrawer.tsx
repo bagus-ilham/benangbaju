@@ -98,7 +98,7 @@ export function MiniCartDrawer(): React.JSX.Element {
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div
-                    className="relative p-4 bg-brand-cream border border-brand-accent/10 rounded-none animate-gentle-float"
+                    className="relative p-4 bg-brand-cream border border-brand-accent/10 rounded-2xl animate-gentle-float"
                     aria-hidden="true"
                   >
                     <ShoppingBag className="h-8 w-8 text-brand-accent" strokeWidth={1.5} />

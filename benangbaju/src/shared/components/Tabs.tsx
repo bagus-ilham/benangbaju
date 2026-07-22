@@ -78,7 +78,7 @@ export function TabsList({
   return (
     <div
       className={cn(
-        'flex items-center border-b border-neutral-200 overflow-x-auto hide-scrollbar',
+        'flex items-center gap-1 p-1.5 bg-neutral-100/50 rounded-2xl overflow-x-auto hide-scrollbar w-full sm:w-max max-w-full border border-neutral-100',
         className
       )}
       role="tablist"
@@ -119,8 +119,8 @@ export function TabsTrigger({
       tabIndex={isActive ? 0 : -1}
       onClick={() => ctx.setActiveTab(value)}
       className={cn(
-        'relative px-6 py-4 text-xs font-heading font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap outline-none focus-visible:bg-neutral-50',
-        isActive ? 'text-brand-black' : 'text-neutral-400 hover:text-neutral-700',
+        'relative px-5 py-2.5 text-xs font-heading font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap outline-none rounded-xl z-10 flex-1 sm:flex-none text-center',
+        isActive ? 'text-brand-black' : 'text-neutral-500 hover:text-brand-black',
         className
       )}
     >
@@ -128,7 +128,7 @@ export function TabsTrigger({
       {isActive && (
         <motion.div
           layoutId={`activeTabIndicator-${ctx.baseId}`}
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-black"
+          className="absolute inset-0 bg-white rounded-xl shadow-sm border border-neutral-200/50 -z-10"
           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
         />
       )}

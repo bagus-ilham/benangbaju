@@ -40,7 +40,7 @@ export default function ReturPage(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Highlight Values Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-            <div className="border border-neutral-200 p-6 rounded-none space-y-3">
+            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4 text-neutral-800" />
                 <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
@@ -53,7 +53,7 @@ export default function ReturPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200 p-6 rounded-none space-y-3">
+            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="h-4 w-4 text-neutral-800" />
                 <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
@@ -69,7 +69,7 @@ export default function ReturPage(): React.JSX.Element {
           </div>
 
           {/* Acceptable Reasons Section */}
-          <div className="border border-neutral-200 p-8 rounded-none space-y-6">
+          <div className="border border-neutral-200 p-8 rounded-2xl space-y-6 bg-white shadow-sm hover:shadow-md transition-all duration-300 gold-border-hover">
             <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Kategori Retur Yang Diterima
             </h3>
@@ -118,7 +118,7 @@ export default function ReturPage(): React.JSX.Element {
               {steps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="border border-neutral-200 p-6 rounded-none space-y-2 bg-neutral-50/30"
+                  className="border border-neutral-200 p-6 rounded-xl space-y-2 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover"
                 >
                   <h4 className="font-serif text-xs font-bold text-neutral-950 uppercase tracking-wide">
                     {step.title}

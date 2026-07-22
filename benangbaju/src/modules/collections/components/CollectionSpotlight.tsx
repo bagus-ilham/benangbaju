@@ -49,7 +49,7 @@ export function CollectionSpotlight({
           >
             <Link
               href={`/koleksi/${collection.slug}`}
-              className="group relative block aspect-[4/5] md:aspect-[3/4] w-full overflow-hidden"
+              className="group relative block aspect-[4/5] md:aspect-[3/4] w-full overflow-hidden rounded-2xl"
             >
               {collection.image_url ? (
                 <Image
@@ -67,7 +67,7 @@ export function CollectionSpotlight({
               <div className="absolute inset-0 gradient-overlay-dark opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
               {/* Floating badge */}
-              <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm border border-white/50">
+              <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm border border-white/50 rounded-full">
                 <span className="text-[9px] font-heading font-semibold uppercase tracking-[0.2em] text-brand-black">
                   Koleksi Eksklusif
                 </span>
@@ -77,7 +77,7 @@ export function CollectionSpotlight({
             {/* Decorative frame offset */}
             <div
               className={cn(
-                'absolute -bottom-3 -right-3 w-full h-full border pointer-events-none hidden md:block',
+                'absolute -bottom-3 -right-3 w-full h-full border pointer-events-none hidden md:block rounded-2xl',
                 isDark ? 'border-brand-accent/30' : 'border-brand-accent/40'
               )}
               aria-hidden

@@ -86,10 +86,10 @@ export function Drawer({
             animate="visible"
             exit="exit"
             className={cn(
-              'fixed top-0 bottom-0 z-10 flex flex-col bg-white border-neutral-200 shadow-2xl outline-none',
+              'fixed top-0 bottom-0 z-10 flex flex-col bg-white border-neutral-200 shadow-[0_0_60px_-15px_rgba(0,0,0,0.3)] outline-none',
               {
-                'right-0 border-l': position === 'right',
-                'left-0 border-r': position === 'left',
+                'right-0 border-l rounded-l-2xl': position === 'right',
+                'left-0 border-r rounded-r-2xl': position === 'left',
                 'w-full sm:w-80': size === 'sm',
                 'w-full sm:w-96': size === 'md',
                 'w-full sm:w-[32rem]': size === 'lg',

@@ -139,7 +139,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                     opacity: 1,
                     transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
                   }}
-                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-accent-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-accent/30"
+                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-accent-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-accent/30 rounded-full"
                 >
                   {currentBanner.subtitle || 'Koleksi Terbaru'}
                 </motion.span>
@@ -184,7 +184,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
         <>
           <button
             onClick={handlePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-none hidden md:block"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
             aria-label="Slide sebelumnya"
           >
             <ChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -192,7 +192,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
 
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-none hidden md:block"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
             aria-label="Slide berikutnya"
           >
             <ChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -204,13 +204,13 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className="p-2 flex items-center justify-center focus-ring-premium rounded-none"
+                className="p-2 flex items-center justify-center focus:outline-none rounded-full"
                 aria-label={`Buka slide ${idx + 1}`}
                 aria-current={idx === currentIndex ? 'true' : undefined}
               >
                 <span
                   className={cn(
-                    'block h-0.5 transition-all duration-500 rounded-none',
+                    'block h-1.5 transition-all duration-500 rounded-full',
                     idx === currentIndex
                       ? 'w-10 bg-brand-accent-light'
                       : 'w-3 bg-white/40 hover:bg-white/70'

@@ -20,7 +20,7 @@ export function AdminPanel({
   return (
     <div
       className={cn(
-        'border border-neutral-200 bg-white transition-shadow duration-300 hover:shadow-sm',
+        'border border-neutral-200 bg-white transition-shadow duration-300 shadow-sm hover:shadow-md card-hover-lift gold-border-hover rounded-2xl',
         className
       )}
       {...props}

@@ -215,7 +215,7 @@ export function DesktopNavbar({
 
             <div className="relative">
               {isMounted && isAuthenticated ? (
-                <div>
+                <div className="hidden sm:block">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={cn(
@@ -242,47 +242,51 @@ export function DesktopNavbar({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 border-t-2 border-t-brand-accent rounded-none shadow-lg py-1 z-20"
+                        className="absolute right-0 mt-3 w-56 bg-white border border-neutral-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] py-1 z-20 overflow-hidden"
                       >
-                        <div className="px-4 py-2 border-b border-neutral-100">
-                          <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
+                        <div className="px-4 py-3 border-b border-neutral-100 bg-neutral-50/50">
+                          <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider mb-0.5">
                             Halo,
                           </p>
-                          <p className="text-xs font-semibold text-brand-black truncate">
+                          <p className="text-sm font-semibold text-brand-black truncate">
                             {profile?.name || user?.email}
                           </p>
                         </div>
 
-                        <Link
-                          href="/akun"
-                          onClick={() => setIsUserMenuOpen(false)}
-                          className="block px-4 py-2 text-xs text-neutral-600 hover:bg-neutral-50 hover:text-brand-black font-medium"
-                        >
-                          Akun Saya
-                        </Link>
-
-                        {profile?.role === 'admin' && (
+                        <div className="p-1.5">
                           <Link
-                            href="/admin"
+                            href="/akun"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="block px-4 py-2 text-xs text-neutral-600 hover:bg-neutral-50 hover:text-brand-black font-semibold border-t border-neutral-50"
+                            className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-cream/50 hover:text-brand-black font-medium rounded-md transition-colors"
                           >
-                            Admin Panel
+                            <UserIcon className="h-4 w-4" />
+                            <span>Akun Saya</span>
                           </Link>
-                        )}
 
-                        <button
-                          onClick={() => {
-                            setIsUserMenuOpen(false)
-                            onLogout()
-                          }}
-                          className="w-full text-left block px-4 py-2 text-xs text-red-600 hover:bg-neutral-50 font-medium border-t border-neutral-100"
-                        >
-                          <div className="flex items-center space-x-1">
-                            <LogOut className="h-3 w-3" />
+                          {profile?.role === 'admin' && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-cream/50 hover:text-brand-black font-semibold rounded-md transition-colors mt-0.5"
+                            >
+                              <div className="h-4 w-4 flex items-center justify-center bg-brand-accent text-white rounded-[4px] text-[8px]">A</div>
+                              <span>Admin Panel</span>
+                            </Link>
+                          )}
+                        </div>
+
+                        <div className="p-1.5 border-t border-neutral-100">
+                          <button
+                            onClick={() => {
+                              setIsUserMenuOpen(false)
+                              onLogout()
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-medium rounded-md transition-colors"
+                          >
+                            <LogOut className="h-4 w-4" />
                             <span>Keluar</span>
-                          </div>
-                        </button>
+                          </button>
+                        </div>
                       </motion.div>
                     </>
                   )}

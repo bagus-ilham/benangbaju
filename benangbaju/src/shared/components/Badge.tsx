@@ -16,16 +16,16 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center font-heading font-medium uppercase tracking-widest text-[9px] rounded-none border border-transparent select-none transition-all duration-200',
+        'inline-flex items-center font-heading font-bold uppercase tracking-widest text-[9px] rounded-full border border-transparent select-none transition-all duration-300',
         {
-          // Variants (THENBLANK muted elegant color schema)
-          'bg-neutral-100 text-neutral-600': variant === 'neutral',
-          'bg-success-bg text-success border-success-border': variant === 'success',
-          'bg-warning-bg text-warning border-warning-border': variant === 'warning',
-          'bg-error-bg text-error border-error-border': variant === 'error',
-          'bg-brand-black text-white': variant === 'brand',
-          'bg-error text-white border-error': variant === 'sale',
-          'bg-brand-accent-muted text-brand-accent border-brand-accent/30': variant === 'gold',
+          // Variants (Modern premium aesthetic)
+          'bg-neutral-100/80 text-neutral-600 backdrop-blur-sm border-neutral-200/50': variant === 'neutral',
+          'bg-green-50 text-green-700 border-green-200': variant === 'success',
+          'bg-yellow-50 text-yellow-700 border-yellow-200': variant === 'warning',
+          'bg-red-50 text-red-700 border-red-200': variant === 'error',
+          'bg-brand-black text-white shadow-md shadow-brand-black/20': variant === 'brand',
+          'bg-red-600 text-white shadow-md shadow-red-600/20': variant === 'sale',
+          'bg-amber-50 text-amber-700 border-amber-200 shadow-sm shadow-amber-900/5': variant === 'gold',
 
           // Sizes
           'px-2 py-0.5': size === 'sm',

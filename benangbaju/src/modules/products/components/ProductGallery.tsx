@@ -127,7 +127,7 @@ export function ProductGallery({
   return (
     <div className="flex flex-col w-full group">
       {/* Mobile Swipe Gallery (Native Scroll Snap) */}
-      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-neutral-50 border border-neutral-100">
+      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-neutral-50 border border-neutral-100 rounded-2xl">
         <div
           id="mobile-product-gallery"
           className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
@@ -176,7 +176,7 @@ export function ProductGallery({
 
       {/* Desktop Focus Image (Framer Motion) */}
       <div
-        className="hidden md:block relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in"
+        className="hidden md:block relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in rounded-2xl shadow-sm"
         onMouseEnter={() => {
           setIsZoomed(true)
           setHasIntentToZoom(true) // Trigger lazy load of HD image
@@ -296,7 +296,7 @@ export function ProductThumbnails({
         <button
           type="button"
           onClick={() => scroll('left')}
-          className="hidden md:flex absolute left-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-none opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          className="hidden md:flex absolute left-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -313,9 +313,9 @@ export function ProductThumbnails({
             key={img.id}
             onClick={() => setActiveImage(img.url)}
             className={cn(
-              'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300',
+              'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300 rounded-xl overflow-hidden',
               activeImage === img.url
-                ? 'border-brand-black opacity-100'
+                ? 'border-brand-black opacity-100 shadow-md ring-2 ring-brand-black/10'
                 : 'border-neutral-200 opacity-60 hover:opacity-100'
             )}
           >
@@ -334,7 +334,7 @@ export function ProductThumbnails({
         <button
           type="button"
           onClick={() => scroll('right')}
-          className="hidden md:flex absolute right-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-none opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          className="hidden md:flex absolute right-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-5 h-5" />

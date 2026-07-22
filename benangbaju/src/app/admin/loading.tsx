@@ -8,23 +8,23 @@ export default function AdminLoading(): React.JSX.Element {
       {/* Header Skeleton */}
       <div className="flex justify-between items-start">
         <div className="space-y-2 w-1/3">
-          <Skeleton className="h-6 w-3/4 rounded-none" />
-          <Skeleton className="h-4 w-1/2 rounded-none" />
+          <Skeleton className="h-6 w-3/4 rounded-2xl" />
+          <Skeleton className="h-4 w-1/2 rounded-2xl" />
         </div>
-        <Skeleton className="h-9 w-32 rounded-none" />
+        <Skeleton className="h-9 w-32 rounded-2xl" />
       </div>
 
       {/* Stats/Metrics Skeleton Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-28 w-full rounded-none" />
+          <Skeleton key={i} className="h-28 w-full rounded-2xl" />
         ))}
       </div>
 
       {/* Main Table/Content Skeleton */}
       <div className="space-y-4">
-        <Skeleton className="h-12 w-full rounded-none" />
-        <Skeleton className="h-[400px] w-full rounded-none" />
+        <Skeleton className="h-12 w-full rounded-2xl" />
+        <Skeleton className="h-[400px] w-full rounded-2xl" />
       </div>
     </div>
   )

@@ -29,7 +29,7 @@ export default function CustomerError({
           initial={{ scale: 0.8, rotate: -10 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="p-4 bg-red-50 border border-red-100 rounded-none text-red-600 mb-2"
+          className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 mb-2"
         >
           <AlertTriangle className="h-8 w-8" />
         </motion.div>

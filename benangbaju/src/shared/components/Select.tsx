@@ -198,10 +198,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             onKeyDown={handleKeyDown}
             className={cn(
               // Input styles matching Input.tsx
-              'w-full flex items-center justify-between bg-white text-xs px-4 py-3 border border-neutral-200 rounded-none text-left transition-all duration-300 focus-ring-premium disabled:opacity-50 disabled:cursor-not-allowed',
+              'w-full flex items-center justify-between bg-neutral-50 text-xs px-4 py-3.5 border border-neutral-200 rounded-xl text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-accent/10 focus:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] disabled:opacity-50 disabled:cursor-not-allowed',
               {
-                'border-brand-black bg-neutral-50/50': isOpen,
-                'border-red-500': error,
+                'border-brand-accent/50 bg-white ring-4 ring-brand-accent/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]': isOpen,
+                'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
                 'text-neutral-400': !selectedOption,
                 'text-brand-black': selectedOption,
               },
@@ -210,7 +210,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-controls={isOpen ? listboxId : undefined}
-
             aria-describedby={describedBy}
           >
             <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
@@ -218,14 +217,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               className={cn('w-4 h-4 text-neutral-400 transition-transform duration-300', {
                 'rotate-180': isOpen,
               })}
-              aria-hidden="true"
-            />
-            {/* Animated focus underline */}
-            <div
-              className={cn(
-                'absolute bottom-0 left-0 right-0 h-[2px] bg-brand-black transform origin-left transition-transform duration-300',
-                isOpen ? 'scale-x-100' : 'scale-x-0 group-focus-within:scale-x-100'
-              )}
               aria-hidden="true"
             />
           </button>
@@ -240,7 +231,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 animate={{ opacity: 1, y: 0, scaleY: 1 }}
                 exit={{ opacity: 0, y: -10, scaleY: 0.95 }}
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-50 w-full mt-1 bg-white border border-neutral-200 shadow-lg origin-top max-h-60 overflow-y-auto outline-none"
+                className="absolute z-50 w-full mt-2 bg-white border border-neutral-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] origin-top max-h-60 overflow-y-auto outline-none p-1.5"
                 role="listbox"
                 tabIndex={-1}
                 onKeyDown={handleKeyDown}
@@ -266,10 +257,10 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         onClick={() => handleSelect(opt.value)}
                         onMouseMove={() => setFocusedIndex(index)}
                         className={cn(
-                          'flex items-center justify-between px-4 py-2.5 text-xs font-sans cursor-pointer transition-colors',
+                          'flex items-center justify-between px-3 py-2 text-xs font-sans cursor-pointer transition-colors rounded-md',
                           isSelected || isFocused
-                            ? 'bg-neutral-50 text-brand-black font-medium'
-                            : 'text-neutral-600'
+                            ? 'bg-brand-cream/50 text-brand-black font-semibold'
+                            : 'text-neutral-600 hover:bg-neutral-50'
                         )}
                       >
                         <span className="truncate">{opt.label}</span>

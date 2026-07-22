@@ -65,7 +65,6 @@ export default function ResetPasswordPage(): React.JSX.Element {
       const message =
         error instanceof Error ? error.message : 'Gagal memperbarui kata sandi. Silakan coba lagi.'
       toast.error(message)
-    } finally {
       setIsLoading(false)
     }
   }

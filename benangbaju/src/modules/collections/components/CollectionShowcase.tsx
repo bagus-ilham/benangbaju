@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react'
 import Image from 'next/image'
-import { ArrowRight, ArrowLeft } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Collection } from '@/modules/collections/types'
 import { ProductListItem } from '@/modules/products/types'
 import { SmartLink as Link } from '@/shared/components'
@@ -29,15 +29,9 @@ export function CollectionShowcase({
   const btnBg = isReversed ? 'bg-brand-accent' : 'bg-brand-black'
   const btnText = 'text-white'
   const btnHover = isReversed ? 'hover:bg-brand-accent-light' : 'hover:bg-brand-dark'
-  const cardContainerClass = isReversed ? 'bg-white p-2 border border-neutral-100 rounded-none shadow-sm' : ''
+  const cardContainerClass = isReversed ? 'bg-white p-2 border border-neutral-100 rounded-2xl shadow-sm' : ''
 
   const sliderRef = useRef<HTMLDivElement>(null)
-
-  const scrollLeft = () => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' })
-    }
-  }
 
   const scrollRight = () => {
     if (sliderRef.current) {

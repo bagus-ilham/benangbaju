@@ -51,7 +51,7 @@ export function ShippingRatesTable({
   }
 
   return (
-    <div className="border border-neutral-200 bg-white rounded-none overflow-x-auto">
+    <div className="border border-neutral-200 bg-white rounded-2xl overflow-x-auto">
       <table className="w-full text-left text-xs font-sans">
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50/50 text-neutral-400 uppercase tracking-wider font-semibold">

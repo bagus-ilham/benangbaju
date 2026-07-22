@@ -49,7 +49,7 @@ export function Modal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-neutral-900/60 backdrop-blur-md"
             aria-hidden="true"
           />
 
@@ -59,21 +59,21 @@ export function Modal({
             aria-modal="true"
             aria-labelledby={title ? titleId : undefined}
             tabIndex={-1}
-            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{
               opacity: 1,
               y: 0,
               scale: 1,
-              transition: { type: 'spring', damping: 22, stiffness: 300, mass: 0.8 },
+              transition: { type: 'spring', damping: 25, stiffness: 350, mass: 0.8 },
             }}
             exit={{
               opacity: 0,
-              y: 12,
-              scale: 0.97,
+              y: 15,
+              scale: 0.95,
               transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
             }}
             className={cn(
-              'relative w-full bg-white border border-neutral-200 shadow-xl rounded-none flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
+              'relative w-full bg-white border border-neutral-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] rounded-2xl flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
               {
                 'max-w-sm': size === 'sm',
                 'max-w-md': size === 'md',
@@ -83,7 +83,7 @@ export function Modal({
               className
             )}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
               {title ? (
                 <h3
                   id={titleId}

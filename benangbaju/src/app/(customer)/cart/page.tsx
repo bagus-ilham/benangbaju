@@ -249,7 +249,7 @@ export default function CartPage(): React.JSX.Element {
                   </Button>
                 </Link>
 
-                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-accent p-4 rounded-none text-[10px] text-neutral-400 leading-relaxed font-sans">
+                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-accent p-4 rounded-xl text-[10px] text-neutral-400 leading-relaxed font-sans">
                   Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank
                   otomatis, QRIS, e-Wallet via DOKU.
                 </div>

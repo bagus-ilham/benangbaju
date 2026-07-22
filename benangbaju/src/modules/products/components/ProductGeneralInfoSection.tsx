@@ -65,7 +65,7 @@ export function ProductGeneralInfoSection({
   onToggleCollection,
 }: ProductGeneralInfoSectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-none space-y-5">
+    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-5 shadow-sm">
       <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2.5">
         Informasi Umum
       </h3>
@@ -206,7 +206,7 @@ export function ProductGeneralInfoSection({
               />
               <label
                 htmlFor="size-guide-upload"
-                className="cursor-pointer inline-flex items-center text-[10px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none bg-white"
+                className="cursor-pointer inline-flex items-center text-[10px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-xl bg-white"
               >
                 Unggah Gambar
               </label>

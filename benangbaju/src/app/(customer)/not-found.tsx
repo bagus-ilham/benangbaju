@@ -7,7 +7,7 @@ export default function CustomerNotFound(): React.JSX.Element {
   return (
     <PageContainer className="flex-1 min-h-[60vh] flex flex-col items-center justify-center text-center p-6 bg-white font-sans">
       <div className="max-w-md space-y-6 flex flex-col items-center py-12">
-        <div className="p-4 bg-neutral-50 border border-neutral-100 text-neutral-800 rounded-none mb-2">
+        <div className="p-4 bg-neutral-50 border border-neutral-100 text-neutral-800 rounded-xl mb-2">
           <HelpCircle className="h-10 w-10 text-neutral-450" />
         </div>
 
@@ -27,7 +27,7 @@ export default function CustomerNotFound(): React.JSX.Element {
           <Link href="/" className="flex-1">
             <Button
               variant="primary"
-              className="w-full text-[10px] py-3 uppercase tracking-wider font-bold rounded-none"
+              className="w-full text-[10px] py-3 uppercase tracking-wider font-bold rounded-xl"
             >
               Beranda
             </Button>
@@ -35,7 +35,7 @@ export default function CustomerNotFound(): React.JSX.Element {
           <Link href="/produk" className="flex-1">
             <Button
               variant="outline"
-              className="w-full text-[10px] py-3 uppercase tracking-wider font-bold border-neutral-200 rounded-none"
+              className="w-full text-[10px] py-3 uppercase tracking-wider font-bold border-neutral-200 rounded-xl"
             >
               Katalog
             </Button>

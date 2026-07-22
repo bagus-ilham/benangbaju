@@ -173,7 +173,7 @@ export default function AdminBannersPage(): React.JSX.Element {
         </Button>
       </AdminPageHeader>
 
-      <div className="border border-neutral-200 bg-white rounded-none overflow-hidden">
+      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
         <BannerListTable
           banners={banners}
           isLoading={isLoading}

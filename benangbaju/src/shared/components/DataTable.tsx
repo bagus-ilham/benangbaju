@@ -55,7 +55,7 @@ export function DataTable<T extends { id?: string | number }>({
   }
 
   return (
-    <div className={cn('w-full overflow-hidden bg-white border border-neutral-200', className)}>
+    <div className={cn('w-full overflow-hidden bg-white border border-neutral-200/60 rounded-2xl shadow-sm', className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -120,7 +120,7 @@ export function DataTable<T extends { id?: string | number }>({
                   transition={{ duration: 0.2, delay: rIdx * 0.03 }}
                   onClick={() => onRowClick?.(row)}
                   className={cn(
-                    'bg-white transition-colors duration-200 group hover:bg-neutral-50/80',
+                    'bg-white transition-colors duration-300 group hover:bg-neutral-50/80',
                     onRowClick && 'cursor-pointer'
                   )}
                 >

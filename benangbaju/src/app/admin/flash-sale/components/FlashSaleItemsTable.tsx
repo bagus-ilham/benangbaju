@@ -14,7 +14,7 @@ export function FlashSaleItemsTable({
   handleRemoveItem,
 }: FlashSaleItemsTableProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-neutral-50/50">
+    <div className="border border-neutral-200 bg-neutral-50/50 rounded-xl overflow-hidden">
       {items.length === 0 ? (
         <p className="text-center text-neutral-400 py-6 text-[10px] italic uppercase tracking-wider">
           Belum ada produk untuk promo ini
@@ -46,7 +46,7 @@ export function FlashSaleItemsTable({
                   <td className="py-2 px-3">
                     <input
                       type="number"
-                      className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px]"
+                      className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px] rounded-lg"
                       value={it.sale_price}
                       onChange={(e) =>
                         handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
@@ -56,7 +56,7 @@ export function FlashSaleItemsTable({
                   <td className="py-2 px-3">
                     <input
                       type="number"
-                      className="w-16 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px]"
+                      className="w-16 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px] rounded-lg"
                       value={it.quota}
                       onChange={(e) => handleUpdateItemField(idx, 'quota', Number(e.target.value))}
                     />

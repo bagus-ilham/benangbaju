@@ -35,10 +35,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             ref={ref}
             rows={rows}
             className={cn(
-              // Textarea styles — THENBLANK premium minimalist design
-              'w-full bg-white text-xs px-4 py-3 border border-neutral-200 rounded-none text-brand-black transition-all duration-300 placeholder:text-neutral-400 focus:border-brand-black focus:bg-neutral-50/50 focus-ring-premium resize-y min-h-[80px]',
+              // Textarea styles — Modern premium soft design
+              'w-full bg-neutral-50 text-xs px-4 py-3.5 border border-neutral-200 rounded-xl text-brand-black transition-all duration-300 placeholder:text-neutral-400 focus:bg-white focus:border-brand-accent/50 focus:outline-none focus:ring-4 focus:ring-brand-accent/10 focus:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] resize-y min-h-[80px]',
               {
-                'border-red-500 focus:border-red-500': error,
+                'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
               },
               className
             )}
@@ -46,9 +46,6 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             aria-describedby={describedBy}
             {...props}
           />
-
-          {/* Animated focus underline */}
-          <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-black transform scale-x-0 transition-transform duration-300 origin-left group-focus-within:scale-x-100" />
         </div>
 
         {error && (

@@ -36,7 +36,7 @@ export function ReturnItemSelection({
               id={`checkbox-${item.id}`}
               checked={!!selectedItems[item.id]}
               onChange={() => onToggleItem(item.id)}
-              className="mt-1 w-4 h-4 border-neutral-300 accent-neutral-900 focus:ring-0 rounded-none"
+              className="mt-1 w-4 h-4 border-neutral-300 accent-neutral-900 focus:ring-0 rounded"
             />
             <div className="flex-1 min-w-0 text-sm">
               <label
@@ -64,7 +64,7 @@ export function ReturnItemSelection({
                   max={item.quantity}
                   value={quantities[item.id] || 1}
                   onChange={(e) => onQtyChange(item.id, item.quantity, parseInt(e.target.value))}
-                  className="w-16 px-2 py-1.5 border border-neutral-200 text-center text-sm outline-none focus:border-neutral-900 rounded-none font-semibold"
+                  className="w-16 px-2 py-1.5 border border-neutral-200 text-center text-sm outline-none focus:border-neutral-900 rounded-xl font-semibold"
                 />
               </div>
             )}

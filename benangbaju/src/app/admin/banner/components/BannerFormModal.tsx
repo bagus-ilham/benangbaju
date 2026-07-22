@@ -59,7 +59,7 @@ export function BannerFormModal({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Desktop Banner Image Uploader & Preview */}
-          <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10">
+          <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10 rounded-2xl shadow-sm">
             <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
               Gambar Desktop*
             </span>
@@ -116,7 +116,7 @@ export function BannerFormModal({
                   />
                   <label
                     htmlFor="banner-upload-desktop"
-                    className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                    className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-xl"
                   >
                     Unggah Desktop
                   </label>
@@ -126,7 +126,7 @@ export function BannerFormModal({
           </div>
 
           {/* Mobile Banner Image Uploader & Preview */}
-          <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10">
+          <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10 rounded-2xl shadow-sm">
             <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
               Gambar Mobile (Opsional)
             </span>
@@ -182,7 +182,7 @@ export function BannerFormModal({
                   />
                   <label
                     htmlFor="banner-upload-mobile"
-                    className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-none"
+                    className="cursor-pointer inline-flex items-center text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-xl"
                   >
                     Unggah Mobile
                   </label>

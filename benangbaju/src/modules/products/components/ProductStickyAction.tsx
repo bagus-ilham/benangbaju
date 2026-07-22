@@ -37,12 +37,12 @@ export function ProductStickyAction({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 25 }}
-          className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-neutral-200 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] py-3 px-4 md:py-4 md:px-8"
+          className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-neutral-200 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] py-3 px-4 md:py-4 md:px-8 rounded-t-2xl"
         >
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
             {/* Product Info (Desktop/Tablet) */}
             <div className="hidden sm:flex items-center space-x-3">
-              <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0">
+              <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0 rounded-md overflow-hidden">
                 <Image
                   src={getProxiedImageUrl(
                     product.product_images.find((img) => img.is_primary)?.url ||
