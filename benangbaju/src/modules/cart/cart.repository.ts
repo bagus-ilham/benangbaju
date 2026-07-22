@@ -42,17 +42,43 @@ export class CartRepository {
   async upsertItems(cartId: string, items: CartItemDbData[]) {
     if (!items.length) return
     const supabase = await createServerClient()
-    const upsertData = items.map((item) => ({
-      cart_id: cartId,
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-    }))
 
-    const { error } = await supabase
+    // 1. Fetch existing cart items for this cart
+    const { data: existingItems, error: fetchErr } = await supabase
       .from('cart_items')
-      .upsert(upsertData, { onConflict: 'cart_id,variant_id' })
+      .select('id, variant_id, quantity')
+      .eq('cart_id', cartId)
 
-    if (error) throw error
+    if (fetchErr) throw fetchErr
+
+    const existingMap = new Map((existingItems || []).map((i) => [i.variant_id, i]))
+
+    const toUpdate: { id: string; quantity: number }[] = []
+    const toInsert: { cart_id: string; variant_id: string; quantity: number }[] = []
+
+    for (const item of items) {
+      const existing = existingMap.get(item.variant_id)
+      if (existing) {
+        toUpdate.push({ id: existing.id, quantity: item.quantity })
+      } else {
+        toInsert.push({ cart_id: cartId, variant_id: item.variant_id, quantity: item.quantity })
+      }
+    }
+
+    // 2. Perform updates for existing items
+    if (toUpdate.length > 0) {
+      await Promise.all(
+        toUpdate.map((u) =>
+          supabase.from('cart_items').update({ quantity: u.quantity }).eq('id', u.id)
+        )
+      )
+    }
+
+    // 3. Perform inserts for new items
+    if (toInsert.length > 0) {
+      const { error: insErr } = await supabase.from('cart_items').insert(toInsert)
+      if (insErr) throw insErr
+    }
   }
 
   async replaceItems(cartId: string, items: CartItemDbData[]) {
