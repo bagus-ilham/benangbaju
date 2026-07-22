@@ -40,7 +40,7 @@ export default function PengirimanPage(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Delivery Terms Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="border border-neutral-200 p-6 space-y-3 card-hover-lift bg-brand-cream/30">
+            <div className="border border-neutral-200 p-6 space-y-3 card-hover-lift bg-brand-cream/30 rounded-2xl">
               <div className="p-2 bg-brand-accent-muted border border-brand-accent/20 w-max">
                 <Scale className="h-4 w-4 text-brand-accent" strokeWidth={1.5} />
               </div>

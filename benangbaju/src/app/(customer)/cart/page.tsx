@@ -167,7 +167,7 @@ export default function CartPage(): React.JSX.Element {
                           </div>
 
                           {/* Qty adjustments */}
-                          <div className="flex items-center border border-neutral-200 bg-white gold-border-hover">
+                          <div className="flex items-center border border-neutral-200 bg-white gold-border-hover rounded-xl">
                             <motion.button
                               whileTap={{ scale: 0.9 }}
                               onClick={() =>
@@ -207,7 +207,7 @@ export default function CartPage(): React.JSX.Element {
             >
               <Card
                 bordered={true}
-                className="bg-neutral-50 border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden"
+                className="bg-neutral-50 border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden rounded-2xl"
               >
                 <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
                 <h3 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black border-b border-neutral-200 pb-4">

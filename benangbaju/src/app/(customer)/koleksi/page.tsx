@@ -35,7 +35,7 @@ export default async function CollectionsIndexPage(): Promise<React.JSX.Element>
             <Link
               key={col.id}
               href={`/koleksi/${col.slug}`}
-              className="group relative h-80 md:h-[28rem] w-full overflow-hidden bg-neutral-200 border border-neutral-100 card-hover-lift gold-border-hover block"
+              className="group relative h-80 md:h-[28rem] w-full overflow-hidden bg-neutral-200 border border-neutral-100 card-hover-lift gold-border-hover block rounded-2xl"
             >
               {col.image_url ? (
                 <Image
@@ -54,7 +54,7 @@ export default async function CollectionsIndexPage(): Promise<React.JSX.Element>
               )}
               <div className="absolute inset-0 gradient-overlay-dark opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
 
-              <div className="absolute top-4 left-4 px-3 py-1.5 bg-brand-accent/90 backdrop-blur-sm">
+              <div className="absolute top-4 left-4 px-3 py-1.5 bg-brand-accent/90 backdrop-blur-sm rounded-full">
                 <span className="text-[9px] font-heading font-bold uppercase tracking-widest text-brand-black">
                   Koleksi
                 </span>

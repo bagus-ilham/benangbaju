@@ -26,7 +26,7 @@ export function OrderPaymentSection({
   onConfirmDelivery,
 }: OrderPaymentSectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-white h-fit space-y-5 relative overflow-hidden">
+    <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-white h-fit space-y-5 relative overflow-hidden rounded-2xl">
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
       <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent border-b border-neutral-100 pb-2">
         Rincian Pembayaran

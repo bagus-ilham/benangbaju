@@ -37,7 +37,7 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
             <Link
               key={cat.id}
               href={`/kategori/${cat.slug}`}
-              className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-200 border border-neutral-100 card-hover-lift gold-border-hover block"
+              className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-200 border border-neutral-100 card-hover-lift gold-border-hover block rounded-2xl"
             >
               {cat.image_url ? (
                 <Image
@@ -56,7 +56,7 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
               )}
               <div className="absolute inset-0 gradient-overlay-dark opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
 
-              <div className="absolute top-4 left-4 px-2.5 py-1 bg-white/10 backdrop-blur-sm border border-white/20">
+              <div className="absolute top-4 left-4 px-2.5 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
                 <span className="text-[9px] font-heading font-semibold uppercase tracking-widest text-white/90">
                   0{index + 1}
                 </span>
