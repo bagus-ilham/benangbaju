@@ -65,12 +65,25 @@ export class CartRepository {
       return
     }
 
-    const { error } = await supabase.rpc('replace_cart_items', {
+    // Try RPC first, fallback to delete + insert if RPC is missing or fails
+    const { error: rpcError } = await supabase.rpc('replace_cart_items', {
       p_cart_id: cartId,
       p_items: items as any,
     })
 
-    if (error) throw error
+    if (rpcError) {
+      // Fallback: Delete existing items for this cart and insert new items
+      const { error: delError } = await supabase.from('cart_items').delete().eq('cart_id', cartId)
+      if (delError) throw delError
+
+      const insertData = items.map((i) => ({
+        cart_id: cartId,
+        variant_id: i.variant_id,
+        quantity: i.quantity,
+      }))
+      const { error: insError } = await supabase.from('cart_items').insert(insertData)
+      if (insError) throw insError
+    }
   }
 
   async clearCart(userId: string) {

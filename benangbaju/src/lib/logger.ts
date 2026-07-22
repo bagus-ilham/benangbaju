@@ -12,7 +12,9 @@ export function safeLogError(context: string, error: unknown, ...args: unknown[]
     const errObj =
       error instanceof Error
         ? { name: error.name, message: error.message }
-        : { message: 'Unknown error type' }
+        : typeof error === 'object' && error !== null && 'message' in error
+          ? { name: (error as any).code || 'DatabaseError', message: String((error as any).message) }
+          : { message: String(error || 'Unknown error type') }
 
     console.error(
       JSON.stringify({
@@ -20,7 +22,6 @@ export function safeLogError(context: string, error: unknown, ...args: unknown[]
         level: 'error',
         context,
         error: errObj,
-        // Note: intentionally avoiding logging full stack traces or args that might contain PII
       })
     )
   }
