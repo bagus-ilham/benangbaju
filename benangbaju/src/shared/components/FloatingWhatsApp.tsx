@@ -27,7 +27,7 @@ export function FloatingWhatsApp({
       rel="noopener noreferrer"
       className={cn(
         'fixed z-45 w-11 h-11 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-350 cursor-pointer',
-        pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-6'
+        pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-20 md:bottom-6'
       )}
       style={{
         right: showScrollTop ? '80px' : '24px',

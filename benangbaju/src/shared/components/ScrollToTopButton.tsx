@@ -40,7 +40,7 @@ export function ScrollToTopButton() {
           onClick={handleScrollToTop}
           className={cn(
             'fixed right-6 flex items-center justify-center w-11 h-11 bg-white text-brand-black border border-neutral-200/50 shadow-[0_8px_30px_-5px_rgba(0,0,0,0.15)] hover:border-brand-accent/50 hover:text-brand-accent hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] hover:-translate-y-1 active:scale-95 transition-all duration-500 z-50 rounded-full group',
-            pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-6'
+            pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-20 md:bottom-6'
           )}
           aria-label="Kembali ke atas"
         >

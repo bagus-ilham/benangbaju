@@ -40,7 +40,7 @@ export function MobileMenuDrawer({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
+        <div className="fixed inset-0 z-50 flex lg:hidden">
           <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs" onClick={onClose} />
           <motion.div
             ref={drawerRef}

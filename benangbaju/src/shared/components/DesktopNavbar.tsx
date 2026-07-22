@@ -61,14 +61,14 @@ export function DesktopNavbar({
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-3 items-center h-16">
-          {/* Left Column: Navigation Links */}
-          <div className="flex items-center justify-start">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 gap-2 sm:gap-4">
+          {/* Left Column: Navigation Links / Hamburger */}
+          <div className="flex items-center justify-start min-w-0">
             <button
               type="button"
               onClick={onOpenMobileMenu}
               className={cn(
-                'md:hidden p-2 -ml-2',
+                'lg:hidden p-2 -ml-2 shrink-0',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-500 hover:text-brand-black'
@@ -78,7 +78,7 @@ export function DesktopNavbar({
               <Menu className="h-5 w-5" />
             </button>
 
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden lg:flex items-center space-x-4 xl:space-x-7">
               {navLinks.map((link) => {
                 const isMegaMenu =
                   link.name.toUpperCase() === 'KATEGORI' || link.name.toUpperCase() === 'KOLEKSI'
@@ -100,9 +100,9 @@ export function DesktopNavbar({
                     key={link.name}
                     href={link.href}
                     className={cn(
-                      'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16',
+                      'text-[10px] xl:text-[11px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16 whitespace-nowrap',
                       pathname === link.href
-                        ? 'text-brand-accent font-semibold font-bold'
+                        ? 'text-brand-accent font-bold'
                         : isTransparentHome
                           ? 'text-white/90 hover:text-white'
                           : 'text-neutral-500 hover:text-brand-accent'
@@ -116,24 +116,24 @@ export function DesktopNavbar({
           </div>
 
           {/* Center Column: Logo */}
-          <div className="flex items-center justify-center text-center">
+          <div className="flex items-center justify-center shrink-0 px-2">
             <Link
               href="/"
               className={cn(
-                'font-heading text-base md:text-lg font-bold tracking-[0.2em] uppercase select-none transition-colors duration-300 flex items-center justify-center',
+                'font-heading text-sm sm:text-base md:text-lg font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase select-none transition-colors duration-300 flex items-center justify-center whitespace-nowrap',
                 isTransparentHome
                   ? 'text-white hover:text-neutral-200'
                   : 'text-brand-black hover:text-brand-accent'
               )}
             >
               {logoUrl ? (
-                <div className="relative h-10 md:h-14 w-[110px] sm:w-[130px] md:w-[200px]">
+                <div className="relative h-8 sm:h-9 md:h-11 lg:h-12 w-[100px] sm:w-[125px] md:w-[150px] lg:w-[175px] max-w-[40vw]">
                   <Image
                     src={getProxiedImageUrl(logoUrl)}
                     alt="Benangbaju Logo"
                     fill
                     priority
-                    sizes="(max-width: 768px) 150px, 200px"
+                    sizes="(max-width: 768px) 125px, 175px"
                     className={cn(
                       'object-contain text-transparent transition-all duration-300',
                       isTransparentHome && 'brightness-0 invert'

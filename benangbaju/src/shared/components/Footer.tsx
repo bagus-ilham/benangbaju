@@ -22,73 +22,19 @@ export function Footer(): React.JSX.Element {
   }
 
   return (
-    <footer className="bg-brand-cream border-t border-neutral-200">
-      {/* Newsletter CTA band (Disabled / Commented out for now)
-      <div className="border-b border-neutral-200 bg-brand-black py-12 md:py-14">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent-light">
-            Tetap Terhubung
-          </span>
-          <h3 className="text-lg md:text-xl font-heading font-light uppercase tracking-wider text-white">
-            Dapatkan Info Koleksi Terbaru
-          </h3>
-          <p className="text-xs text-neutral-400 font-sans max-w-md mx-auto">
-            Berlangganan newsletter untuk promo eksklusif dan akses early ke koleksi baru.
-          </p>
-          <AnimatePresence mode="wait">
-            {isSubscribed ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className="inline-flex items-center justify-center space-x-2 bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-xl max-w-md mx-auto mt-2"
-              >
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                <span className="text-xs font-heading font-semibold uppercase tracking-wider">
-                  Terima kasih! Anda telah terdaftar.
-                </span>
-              </motion.div>
-            ) : (
-              <form
-                onSubmit={handleNewsletterSubmit}
-                className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2"
-              >
-                <Input
-                  type="email"
-                  label="Email"
-                  placeholder="Masukkan Email Anda"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  required
-                  className="flex-1 [&_input]:bg-white/10 [&_input]:border-white/20 [&_input]:text-white [&_input]:placeholder:text-neutral-500 [&_label]:text-neutral-400"
-                />
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="sm"
-                  className="sm:self-end bg-white text-brand-black border-white hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all duration-300"
-                >
-                  Daftar
-                </Button>
-              </form>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-      */}
-
-      <div className="py-16">
+    <footer className="bg-brand-cream border-t border-neutral-200 pb-20 md:pb-0">
+      <div className="py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {/* Col 1: Brand Info */}
             <div className="flex flex-col space-y-4">
               {logoUrl ? (
-                <div className="relative h-10 md:h-14 w-full max-w-[200px] animate-fade-in">
+                <div className="relative h-9 sm:h-10 md:h-12 w-40 sm:w-44 md:w-48 max-w-full animate-fade-in">
                   <Image
                     src={getProxiedImageUrl(logoUrl)}
                     alt="Benangbaju Logo"
                     fill
-                    sizes="200px"
+                    sizes="(max-width: 768px) 160px, 200px"
                     className="object-contain object-left"
                   />
                 </div>
@@ -97,7 +43,7 @@ export function Footer(): React.JSX.Element {
                   BENANGBAJU
                 </span>
               )}
-              <p className="text-[11px] text-neutral-500 leading-relaxed max-w-xs font-sans">
+              <p className="text-xs text-neutral-500 leading-relaxed max-w-xs font-sans">
                 Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
                 diri lewat sepotong pakaian yang sederhana namun unik.
               </p>
@@ -105,14 +51,14 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 2: Pelayanan Pelanggan */}
             <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
+              <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Pelayanan
               </h4>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/cara-belanja"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Cara Belanja
                   </Link>
@@ -120,7 +66,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/pengiriman"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Informasi Pengiriman
                   </Link>
@@ -128,7 +74,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/retur"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Kebijakan Pengembalian (Retur)
                   </Link>
@@ -136,7 +82,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kontak"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Hubungi Kami
                   </Link>
@@ -146,14 +92,14 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 3: Kebijakan & Hukum */}
             <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
+              <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Informasi
               </h4>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/syarat-ketentuan"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Syarat & Ketentuan
                   </Link>
@@ -161,7 +107,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kebijakan-privasi"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Kebijakan Privasi
                   </Link>
@@ -169,7 +115,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/tentang"
-                    className="text-[11px] text-neutral-500 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
                   >
                     Tentang Kami
                   </Link>
@@ -178,11 +124,11 @@ export function Footer(): React.JSX.Element {
             </div>
 
             {/* Col 4: Social */}
-            <div className="flex flex-col space-y-4">
-              <h4 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
+            <div className="flex flex-col space-y-3">
+              <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Ikuti Kami
               </h4>
-              <p className="text-[11px] text-neutral-400 font-sans mt-3">
+              <p className="text-xs text-neutral-500 font-sans mt-1">
                 Temukan inspirasi gaya unik di media sosial kami.
               </p>
               <div className="flex space-x-3 pt-1">
@@ -268,9 +214,9 @@ export function Footer(): React.JSX.Element {
             </div>
           </div>
 
-          <div className="border-t border-neutral-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-[10px] text-neutral-400 font-sans">
-              &copy; <CurrentYear /> Benangbaju . All rights reserved.
+          <div className="border-t border-neutral-200 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+            <p className="text-[11px] text-neutral-400 font-sans">
+              &copy; <CurrentYear /> Benangbaju. All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
               <Link href="/syarat-ketentuan" className="hover:text-brand-accent transition-colors">
