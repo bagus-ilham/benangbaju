@@ -138,7 +138,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                   }}
                   className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-accent-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-accent/30 rounded-full"
                 >
-                  {currentBanner.subtitle || 'Koleksi Terbaru'}
+                  {currentBanner.subtitle}
                 </motion.span>
 
                 <motion.h1
