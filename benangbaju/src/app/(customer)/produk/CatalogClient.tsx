@@ -183,7 +183,9 @@ export function CatalogClient({
 
             {categorySlug && (
               <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
-                <span>Kategori: {categories.find((c) => c.slug === categorySlug)?.name || categorySlug}</span>
+                <span>
+                  Kategori: {categories.find((c) => c.slug === categorySlug)?.name || categorySlug}
+                </span>
                 <button
                   onClick={() => handleCategorySelect(null)}
                   className="hover:text-red-500 transition-colors ml-1"
@@ -257,7 +259,7 @@ export function CatalogClient({
                 title="Produk Tidak Ditemukan"
                 description="Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya."
                 action={
-                  (categorySlug || searchQuery)
+                  categorySlug || searchQuery
                     ? { label: 'Tampilkan Semua Produk', onClick: handleClearAll }
                     : undefined
                 }

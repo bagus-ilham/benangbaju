@@ -27,7 +27,10 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         </span>
       </Link>
 
-      <div className="relative w-8 md:w-12 h-0.5 bg-neutral-200 overflow-hidden rounded-full" aria-hidden="true">
+      <div
+        className="relative w-8 md:w-12 h-0.5 bg-neutral-200 overflow-hidden rounded-full"
+        aria-hidden="true"
+      >
         <motion.div
           className="h-full bg-brand-black"
           initial={{ width: '100%' }}
@@ -52,7 +55,10 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         </span>
       </div>
 
-      <div className="relative w-8 md:w-12 h-0.5 bg-neutral-200 overflow-hidden rounded-full" aria-hidden="true">
+      <div
+        className="relative w-8 md:w-12 h-0.5 bg-neutral-200 overflow-hidden rounded-full"
+        aria-hidden="true"
+      >
         <motion.div
           className="h-full bg-brand-accent"
           initial={{ width: isShippingDone ? '100%' : '0%' }}
@@ -80,4 +86,3 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
     </motion.div>
   )
 }
-

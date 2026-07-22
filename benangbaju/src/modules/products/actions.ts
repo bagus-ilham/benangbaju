@@ -128,4 +128,3 @@ export async function toggleStockNotificationAction(variantId: string) {
     return { success: true, isSubscribed: true }
   }
 }
-

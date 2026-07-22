@@ -269,7 +269,9 @@ export function DesktopNavbar({
                               onClick={() => setIsUserMenuOpen(false)}
                               className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-cream/50 hover:text-brand-black font-semibold rounded-md transition-colors mt-0.5"
                             >
-                              <div className="h-4 w-4 flex items-center justify-center bg-brand-accent text-white rounded-[4px] text-[8px]">A</div>
+                              <div className="h-4 w-4 flex items-center justify-center bg-brand-accent text-white rounded-[4px] text-[8px]">
+                                A
+                              </div>
                               <span>Admin Panel</span>
                             </Link>
                           )}

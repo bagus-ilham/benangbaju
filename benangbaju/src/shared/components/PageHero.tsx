@@ -29,8 +29,16 @@ export function PageHero({
   }
 
   const textClasses = {
-    light: { eyebrow: 'text-brand-accent', title: 'text-brand-black', subtitle: 'text-neutral-500' },
-    cream: { eyebrow: 'text-brand-accent', title: 'text-brand-black', subtitle: 'text-neutral-500' },
+    light: {
+      eyebrow: 'text-brand-accent',
+      title: 'text-brand-black',
+      subtitle: 'text-neutral-500',
+    },
+    cream: {
+      eyebrow: 'text-brand-accent',
+      title: 'text-brand-black',
+      subtitle: 'text-neutral-500',
+    },
     dark: { eyebrow: 'text-brand-accent-light', title: 'text-white', subtitle: 'text-neutral-400' },
   }
 

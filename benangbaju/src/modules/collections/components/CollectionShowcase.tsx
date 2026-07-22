@@ -31,7 +31,9 @@ export function CollectionShowcase({
   const btnBg = isReversed ? 'bg-brand-accent' : 'bg-brand-black'
   const btnText = 'text-white'
   const btnHover = isReversed ? 'hover:bg-brand-accent-light' : 'hover:bg-brand-dark'
-  const cardContainerClass = isReversed ? 'bg-white p-2 border border-neutral-100 rounded-2xl shadow-sm' : ''
+  const cardContainerClass = isReversed
+    ? 'bg-white p-2 border border-neutral-100 rounded-2xl shadow-sm'
+    : ''
 
   const sliderRef = useRef<HTMLDivElement>(null)
 
@@ -110,7 +112,9 @@ export function CollectionShowcase({
                 'inline-block font-heading font-bold uppercase tracking-wider text-[10px] border-b pb-1 transition-all',
                 textColor,
                 borderColor,
-                isReversed ? 'hover:text-brand-accent-light hover:border-brand-accent-light' : 'hover:text-brand-accent hover:border-brand-accent'
+                isReversed
+                  ? 'hover:text-brand-accent-light hover:border-brand-accent-light'
+                  : 'hover:text-brand-accent hover:border-brand-accent'
               )}
             >
               Explore the {collection.name} Edit

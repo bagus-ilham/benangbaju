@@ -8,7 +8,12 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_BASE_URL',
 ] as const
 
-const serverEnvVars = ['DOKU_CLIENT_ID', 'DOKU_SECRET_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'ERP_API_KEY'] as const
+const serverEnvVars = [
+  'DOKU_CLIENT_ID',
+  'DOKU_SECRET_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'ERP_API_KEY',
+] as const
 
 export function validateEnv(): void {
   const missing: string[] = requiredEnvVars.filter((key) => {

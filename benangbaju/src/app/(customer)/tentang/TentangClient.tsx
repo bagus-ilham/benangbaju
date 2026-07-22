@@ -33,8 +33,8 @@ export function TentangClient(): React.JSX.Element {
               <span className="font-semibold text-brand-black">
                 "Show How Really Well-Dressed You Are,"
               </span>{' '}
-              Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri
-              lewat sepotong pakaian yang sederhana namun unik.
+              Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
+              diri lewat sepotong pakaian yang sederhana namun unik.
             </p>
             <p>Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.</p>
           </motion.div>

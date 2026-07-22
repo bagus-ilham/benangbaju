@@ -82,7 +82,8 @@ export class NotificationService {
     }
 
     const title = statusTitles[status] || 'Pembaruan Pesanan'
-    const message = statusMessages[status] || `Status pesanan #${orderNumber} diperbarui menjadi ${status}.`
+    const message =
+      statusMessages[status] || `Status pesanan #${orderNumber} diperbarui menjadi ${status}.`
 
     await this.createNotification({
       userId,
@@ -95,4 +96,3 @@ export class NotificationService {
 }
 
 export const notificationService = new NotificationService()
-

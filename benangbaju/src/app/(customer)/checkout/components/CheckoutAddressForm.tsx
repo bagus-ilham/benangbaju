@@ -124,7 +124,9 @@ export function CheckoutAddressForm({
           </div>
         ) : (
           <div className="text-center py-8 border border-dashed border-neutral-200">
-            <p className="text-xs text-neutral-400 mb-3">Anda belum menambahkan alamat pengiriman.</p>
+            <p className="text-xs text-neutral-400 mb-3">
+              Anda belum menambahkan alamat pengiriman.
+            </p>
             <Button
               onClick={onAddNewAddress}
               variant="outline"

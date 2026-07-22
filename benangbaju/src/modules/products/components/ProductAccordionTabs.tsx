@@ -48,7 +48,9 @@ export function ProductAccordionTabs({
           onClick={() => setActiveTab('shipping')}
           className={cn(
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl',
-            activeTab === 'shipping' ? 'text-brand-black' : 'text-neutral-500 hover:text-brand-black'
+            activeTab === 'shipping'
+              ? 'text-brand-black'
+              : 'text-neutral-500 hover:text-brand-black'
           )}
         >
           Panduan

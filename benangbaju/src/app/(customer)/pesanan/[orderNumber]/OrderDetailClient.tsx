@@ -253,9 +253,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     if (!order) return
     try {
       toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
-      const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(
-        order.order_number
-      )
+      const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(order.order_number)
       toast.dismiss('payment-loading')
 
       if (redirect_url) {

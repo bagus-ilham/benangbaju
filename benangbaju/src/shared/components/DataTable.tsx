@@ -55,7 +55,12 @@ export function DataTable<T extends { id?: string | number }>({
   }
 
   return (
-    <div className={cn('w-full overflow-hidden bg-white border border-neutral-200/60 rounded-2xl shadow-sm', className)}>
+    <div
+      className={cn(
+        'w-full overflow-hidden bg-white border border-neutral-200/60 rounded-2xl shadow-sm',
+        className
+      )}
+    >
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>

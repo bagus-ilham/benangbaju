@@ -34,7 +34,8 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
 
   // Parse content JSONB if string or object
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const content = typeof page.content === 'string' ? JSON.parse(page.content) : (page.content as any)
+  const content =
+    typeof page.content === 'string' ? JSON.parse(page.content) : (page.content as any)
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -45,7 +46,9 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
           content.sections.map((sec: any, idx: number) => (
             <section key={idx} className="space-y-4">
               {sec.heading && (
-                <h2 className="text-xl font-heading font-semibold text-brand-black">{sec.heading}</h2>
+                <h2 className="text-xl font-heading font-semibold text-brand-black">
+                  {sec.heading}
+                </h2>
               )}
               {sec.body && (
                 <div

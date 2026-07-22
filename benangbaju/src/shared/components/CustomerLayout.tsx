@@ -199,4 +199,3 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
     </div>
   )
 }
-

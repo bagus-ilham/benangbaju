@@ -236,7 +236,9 @@ export class CmsRepository {
     const supabase = await createServerClient()
     const { data, error } = await supabase
       .from('landing_pages')
-      .select('id, slug, title, content, meta_title, meta_description, is_active, created_at, updated_at')
+      .select(
+        'id, slug, title, content, meta_title, meta_description, is_active, created_at, updated_at'
+      )
       .eq('slug', slug)
       .eq('is_active', true)
       .maybeSingle()

@@ -55,7 +55,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           onClose()
         } else {
           // Open handled by parent or trigger toggle
-          const searchBtn = document.querySelector('[aria-label="Cari produk"]') as HTMLButtonElement
+          const searchBtn = document.querySelector(
+            '[aria-label="Cari produk"]'
+          ) as HTMLButtonElement
           searchBtn?.click()
         }
       }
@@ -93,7 +95,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   const saveRecentSearch = (query: string) => {
     try {
-      const updated = [query, ...recentSearches.filter((q) => q.toLowerCase() !== query.toLowerCase())].slice(0, 5)
+      const updated = [
+        query,
+        ...recentSearches.filter((q) => q.toLowerCase() !== query.toLowerCase()),
+      ].slice(0, 5)
       setRecentSearches(updated)
       localStorage.setItem('benangbaju_recent_searches', JSON.stringify(updated))
     } catch {

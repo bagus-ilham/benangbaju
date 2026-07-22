@@ -5,7 +5,13 @@ import { motion } from 'framer-motion'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useProducts } from '@/modules/products/hooks/useProducts'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { Button, PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
+import {
+  Button,
+  PageContainer,
+  ProductGridSkeleton,
+  EmptyState,
+  PageHero,
+} from '@/shared/components'
 import { Heart, ShoppingBag, Trash2 } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import toast from 'react-hot-toast'
@@ -35,9 +41,13 @@ export default function WishlistPage(): React.JSX.Element {
       toast.loading('Memindahkan produk ke keranjang...', { id: 'move-all' })
       let addedCount = 0
       for (const product of products) {
-        const availableVariant = product.product_variants.find((v) => v.stock > 0) || product.product_variants[0]
+        const availableVariant =
+          product.product_variants.find((v) => v.stock > 0) || product.product_variants[0]
         if (availableVariant) {
-          const primaryImage = product.product_images?.find((img) => img.is_primary)?.url || product.product_images?.[0]?.url || null
+          const primaryImage =
+            product.product_images?.find((img) => img.is_primary)?.url ||
+            product.product_images?.[0]?.url ||
+            null
           await addItem(
             {
               variantId: availableVariant.id,
@@ -46,7 +56,9 @@ export default function WishlistPage(): React.JSX.Element {
               name: product.name,
               sku: availableVariant.sku,
               price: Number(availableVariant.price),
-              comparePrice: availableVariant.compare_price ? Number(availableVariant.compare_price) : null,
+              comparePrice: availableVariant.compare_price
+                ? Number(availableVariant.compare_price)
+                : null,
               imageUrl: primaryImage,
               slug: product.slug,
               stock: availableVariant.stock,

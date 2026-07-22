@@ -92,10 +92,7 @@ export function MobileMenuAccordionItem({
         )}
       >
         <span>{label}</span>
-        <motion.div
-          animate={{ rotate: isExpanded ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
+        <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <ChevronDown className="h-3 w-3 text-neutral-400" />
         </motion.div>
       </button>
@@ -124,8 +121,9 @@ export function MobileMenuAccordionItem({
                       href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
                       onClick={onClose}
                       className={cn(
-                        "text-xs font-sans text-neutral-500 hover:text-brand-black block py-1",
-                        pathname === `/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}` && "text-brand-black font-semibold"
+                        'text-xs font-sans text-neutral-500 hover:text-brand-black block py-1',
+                        pathname === `/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}` &&
+                          'text-brand-black font-semibold'
                       )}
                     >
                       {item.name}

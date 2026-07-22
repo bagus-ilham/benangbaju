@@ -9,13 +9,13 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       disallow: [
-        '/admin',      // Cegah akses ke panel admin
+        '/admin', // Cegah akses ke panel admin
         '/admin/',
-        '/akun',       // Cegah akses ke profil pengguna
+        '/akun', // Cegah akses ke profil pengguna
         '/akun/',
-        '/cart',       // Cegah keranjang belanja di-index
-        '/checkout',   // Cegah halaman pembayaran di-index
-        '/api',        // Cegah indexing endpoint API
+        '/cart', // Cegah keranjang belanja di-index
+        '/checkout', // Cegah halaman pembayaran di-index
+        '/api', // Cegah indexing endpoint API
         '/api/',
       ],
     },
