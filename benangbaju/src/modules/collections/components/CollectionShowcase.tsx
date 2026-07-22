@@ -117,7 +117,7 @@ export function CollectionShowcase({
                   : 'hover:text-brand-accent hover:border-brand-accent'
               )}
             >
-              Explore the {collection.name} Edit
+              Explore the {collection.name}
             </Link>
           </motion.div>
 
