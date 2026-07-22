@@ -141,7 +141,13 @@ export const useCartStore = create<CartState>()(
           return
         }
 
-        if (get().isSyncing) return
+        if (get().isSyncing) {
+          set({ needsResync: true })
+          while (get().isSyncing) {
+            await new Promise((resolve) => setTimeout(resolve, 50))
+          }
+          return
+        }
 
         set({ isSyncing: true, needsResync: false })
         let keepSyncing = true

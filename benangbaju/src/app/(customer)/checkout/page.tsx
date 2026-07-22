@@ -266,6 +266,9 @@ export default function CheckoutPage(): React.JSX.Element {
 
     checkoutInitiated.current = true
     try {
+      // 0. Ensure cart items are 100% flushed and synced to database
+      await useCartStore.getState().syncCart(user.id, false)
+
       // 1. Create order in database
       const orderRes = await createOrderMutation.mutateAsync({
         userId: user.id,
