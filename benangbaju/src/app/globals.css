@@ -321,9 +321,9 @@ select:focus {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Subtle diagonal texture for editorial sections */
+/* Subtle diagonal texture for editorial sections (Deep Plum pattern) */
 .section-texture {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23171717' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232D2640' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* Stitch Line — Benangbaju signature divider */
@@ -336,7 +336,7 @@ select:focus {
   display: block;
   width: 48px;
   height: 0;
-  border-top: 1px dashed var(--color-brand-accent);
+  border-top: 1px dashed var(--color-brand-blue);
   margin-top: 0.75rem;
 }
 
@@ -349,13 +349,13 @@ select:focus {
   width: 80px;
 }
 
-/* Editorial gradient overlay for hero & collection cards */
+/* Editorial gradient overlay for hero & collection cards (Deep Plum overlay) */
 .gradient-overlay-dark {
   background: linear-gradient(
     to top,
-    rgba(23, 23, 23, 0.65) 0%,
-    rgba(23, 23, 23, 0.25) 40%,
-    rgba(23, 23, 23, 0.05) 100%
+    rgba(45, 38, 64, 0.75) 0%,
+    rgba(45, 38, 64, 0.35) 40%,
+    rgba(45, 38, 64, 0.05) 100%
   );
 }
 
@@ -363,11 +363,11 @@ select:focus {
 .text-shimmer {
   background: linear-gradient(
     90deg,
-    #171717 0%,
-    #a3a3a3 25%,
-    #171717 50%,
-    #a3a3a3 75%,
-    #171717 100%
+    #2D2640 0%,
+    #94b2b9 25%,
+    #2D2640 50%,
+    #94b2b9 75%,
+    #2D2640 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -443,15 +443,15 @@ select:focus {
 
 .card-hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(23, 23, 23, 0.1);
+  box-shadow: 0 12px 40px rgba(45, 38, 64, 0.08);
 }
 
 /* Gradient mesh background for hero sections */
 .gradient-mesh {
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(163, 144, 128, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(163, 144, 128, 0.06) 0%, transparent 40%),
-    radial-gradient(ellipse at 60% 80%, rgba(23, 23, 23, 0.03) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 50%, rgba(148, 178, 185, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(243, 229, 171, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(45, 38, 64, 0.04) 0%, transparent 50%);
 }
 
 /* Accent shimmer border on hover */
@@ -471,12 +471,12 @@ select:focus {
 }
 
 .accent-border-hover:hover::before {
-  border-color: var(--color-brand-accent);
+  border-color: var(--color-brand-blue);
 }
 
 /* Section alternating backgrounds */
 .section-alt {
-  background: linear-gradient(180deg, #fafaf9 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #FAF8F5 0%, #F5F2EC 100%);
 }
 
 /* Image reveal on scroll */

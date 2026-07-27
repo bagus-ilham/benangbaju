@@ -12,19 +12,19 @@ export function OrderItemsList({
   onOpenReviewModal,
 }: OrderItemsListProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden rounded-2xl">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
-      <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent border-b border-neutral-100 pb-2">
+    <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
         Item Pesanan
       </h2>
-      <div className="divide-y divide-neutral-100">
+      <div className="divide-y divide-neutral-200/60">
         {order.order_items?.map((item: any) => (
           <div
             key={item.id}
             className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-4"
           >
             <div className="min-w-0">
-              <p className="font-semibold text-neutral-800 truncate">{item.product_name}</p>
+              <p className="font-bold text-brand-plum truncate">{item.product_name}</p>
               <p className="text-xs text-neutral-500 mt-1">
                 Varian: {item.variant_name} | SKU: {item.sku}
               </p>
@@ -34,14 +34,14 @@ export function OrderItemsList({
               {order.status === 'completed' && (
                 <div className="mt-2">
                   {item.product_reviews ? (
-                    <div className="text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 border border-green-200 inline-block">
+                    <div className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 border border-emerald-200 rounded-lg inline-block">
                       Ulasan Anda ({item.product_reviews.rating}⭐): "{item.product_reviews.body}"
                     </div>
                   ) : (
                     <Button
                       onClick={() => onOpenReviewModal(item)}
                       variant="outline"
-                      className="text-[10px] py-1 px-3 h-fit uppercase tracking-wider font-semibold border-neutral-300 hover:bg-neutral-50"
+                      className="text-[10px] py-1 px-3 h-fit uppercase tracking-wider font-bold border-neutral-300 hover:bg-brand-blue/10"
                     >
                       Tulis Ulasan
                     </Button>
@@ -50,7 +50,7 @@ export function OrderItemsList({
               )}
             </div>
             <div className="text-left sm:text-right whitespace-nowrap">
-              <p className="font-bold text-neutral-900">
+              <p className="font-bold text-brand-plum">
                 Rp {item.subtotal.toLocaleString('id-ID')}
               </p>
             </div>

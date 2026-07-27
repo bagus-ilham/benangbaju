@@ -23,12 +23,12 @@ export function ReturnItemSelection({
   onQtyChange,
 }: ReturnItemSelectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-5 sm:p-6 card-hover-lift gold-border-hover bg-white space-y-4 relative overflow-hidden rounded-2xl">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
-      <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent border-b border-neutral-100 pb-2">
+    <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
         Pilih Produk yang Ingin Dikembalikan*
       </h2>
-      <div className="divide-y divide-neutral-100">
+      <div className="divide-y divide-neutral-200/60">
         {orderItems.map((item) => (
           <div key={item.id} className="py-4 flex items-start space-x-4">
             <input
@@ -36,12 +36,12 @@ export function ReturnItemSelection({
               id={`checkbox-${item.id}`}
               checked={!!selectedItems[item.id]}
               onChange={() => onToggleItem(item.id)}
-              className="mt-1 w-4 h-4 border-neutral-300 accent-neutral-900 focus:ring-0 rounded"
+              className="mt-1 w-4 h-4 border-neutral-300 accent-brand-plum focus:ring-0 rounded cursor-pointer"
             />
             <div className="flex-1 min-w-0 text-sm">
               <label
                 htmlFor={`checkbox-${item.id}`}
-                className="font-semibold text-neutral-800 cursor-pointer block"
+                className="font-bold text-brand-plum cursor-pointer block"
               >
                 {item.product_name}
               </label>

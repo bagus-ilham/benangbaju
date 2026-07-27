@@ -26,7 +26,7 @@ export function TentangClient(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-12">
           <motion.div
             {...fadeUp}
-            className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-white border border-neutral-200/80 rounded-2xl shadow-sm"
+            className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs"
           >
             <div className="relative w-16 h-16 shrink-0 opacity-90">
               <Image
@@ -54,12 +54,12 @@ export function TentangClient(): React.JSX.Element {
             <motion.div
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: 0.1 }}
-              className="border border-neutral-200 p-6 md:p-8 space-y-3 bg-brand-cream/50 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
+              className="border border-neutral-200/80 p-6 md:p-8 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
             >
-              <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-blue">
                 Kualitas
               </span>
-              <h3 className="font-heading text-brand-black font-semibold uppercase tracking-wider text-sm">
+              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-sm">
                 Bahan Premium Pilihan
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">
@@ -72,12 +72,12 @@ export function TentangClient(): React.JSX.Element {
             <motion.div
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: 0.2 }}
-              className="border border-neutral-200 p-6 md:p-8 space-y-3 bg-brand-cream/50 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
+              className="border border-neutral-200/80 p-6 md:p-8 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
             >
-              <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-blue">
                 Craftsmanship
               </span>
-              <h3 className="font-heading text-brand-black font-semibold uppercase tracking-wider text-sm">
+              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-sm">
                 Jahitan Standar Butik
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">

@@ -26,20 +26,20 @@ export function OrderPaymentSection({
   onConfirmDelivery,
 }: OrderPaymentSectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-white h-fit space-y-5 relative overflow-hidden rounded-2xl">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
-      <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent border-b border-neutral-100 pb-2">
+    <div className="border border-neutral-200/80 p-5 bg-brand-cream h-fit space-y-5 relative overflow-hidden rounded-2xl shadow-xs font-sans">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
         Rincian Pembayaran
       </h2>
       <div className="space-y-3 text-sm text-neutral-600">
         <div className="flex justify-between">
           <span>Subtotal Produk</span>
-          <span className="font-semibold text-neutral-900">
+          <span className="font-bold text-brand-plum">
             Rp {order.subtotal?.toLocaleString('id-ID')}
           </span>
         </div>
         {Number(order.discount_amount) > 0 && (
-          <div className="flex justify-between text-neutral-800 font-semibold">
+          <div className="flex justify-between text-neutral-800 font-bold">
             <span>Diskon Voucher</span>
             <span className="text-red-600">
               - Rp {order.discount_amount.toLocaleString('id-ID')}
@@ -48,13 +48,13 @@ export function OrderPaymentSection({
         )}
         <div className="flex justify-between">
           <span>Ongkos Kirim</span>
-          <span className="font-semibold text-neutral-900">
+          <span className="font-bold text-brand-plum">
             Rp {order.shipping_cost?.toLocaleString('id-ID')}
           </span>
         </div>
-        <div className="flex justify-between items-center text-brand-black font-heading border-t border-neutral-100 pt-4 mt-2">
-          <span className="text-sm font-semibold">Total Pembayaran</span>
-          <span className="text-lg font-bold">
+        <div className="flex justify-between items-center text-brand-plum font-sans border-t border-neutral-200/60 pt-4 mt-2">
+          <span className="text-sm font-bold">Total Pembayaran</span>
+          <span className="text-lg font-bold text-brand-plum">
             Rp {order.total_amount?.toLocaleString('id-ID')}
           </span>
         </div>

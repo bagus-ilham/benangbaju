@@ -16,23 +16,23 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       role="list"
-      className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto px-4 py-3 bg-neutral-50/80 border border-neutral-100 rounded-full shadow-xs"
+      className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto px-4 py-3 bg-brand-cream border border-neutral-200/80 rounded-full shadow-xs"
     >
       <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
-        <div className="w-5 h-5 rounded-full bg-brand-black text-white flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110">
+        <div className="w-5 h-5 rounded-full bg-brand-plum text-brand-cream flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110">
           <Check size={10} strokeWidth={3} />
         </div>
-        <span className="text-[10px] uppercase tracking-wider text-brand-black font-heading font-medium transition-colors">
+        <span className="text-[10px] uppercase tracking-wider text-brand-plum font-sans font-bold transition-colors">
           Keranjang
         </span>
       </Link>
 
       <div
-        className="relative w-8 md:w-12 h-0.5 bg-neutral-200 overflow-hidden rounded-full"
+        className="relative w-8 md:w-12 h-0.5 bg-neutral-200/80 overflow-hidden rounded-full"
         aria-hidden="true"
       >
         <motion.div
-          className="h-full bg-brand-black"
+          className="h-full bg-brand-blue"
           initial={{ width: '100%' }}
           animate={{ width: '100%' }}
         />
