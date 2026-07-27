@@ -114,7 +114,7 @@ export default function SearchPage(): React.JSX.Element {
   return (
     <Suspense
       fallback={
-        <div className="bg-white min-h-screen py-12">
+        <div className="bg-brand-cream min-h-screen py-12">
           <PageContainer>
             <ProductGridSkeleton count={8} />
           </PageContainer>

@@ -118,7 +118,7 @@ export default function WishlistPage(): React.JSX.Element {
         ) : (
           <div className="space-y-6">
             {/* Toolbar Action Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs">
               <div className="flex items-center space-x-2">
                 <Heart className="w-4 h-4 fill-red-500 text-red-500" />
                 <span className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum">

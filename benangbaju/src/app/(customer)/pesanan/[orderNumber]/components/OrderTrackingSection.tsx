@@ -40,7 +40,7 @@ export function OrderTrackingSection({
   }
 
   return (
-    <div className="border border-neutral-200/80 p-6 bg-white rounded-2xl space-y-6 shadow-xs">
+    <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans">
       <div className="flex items-center justify-between">
         <p className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
           Pelacakan Pesanan Live

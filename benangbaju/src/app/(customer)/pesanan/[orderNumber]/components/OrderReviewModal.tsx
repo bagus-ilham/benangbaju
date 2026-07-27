@@ -136,21 +136,21 @@ export function OrderReviewModal({
       {selectedReviewItem && (
         <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-brand-accent font-semibold mb-1">
+            <p className="text-[10px] uppercase tracking-widest text-brand-blue font-sans font-bold mb-1">
               Nama Produk
             </p>
-            <h4 className="text-sm font-semibold text-neutral-800 font-heading">
+            <h4 className="text-sm font-bold text-brand-plum font-sans">
               {selectedReviewItem.product_name}
             </h4>
             {selectedReviewItem.variant_name && (
-              <p className="text-xs text-neutral-500 mt-0.5">
+              <p className="text-xs text-neutral-500 mt-0.5 font-sans">
                 Varian: {selectedReviewItem.variant_name}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-2">
+            <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-sans font-bold mb-2">
               Rating Produk
             </label>
             <div className="flex gap-2">
@@ -256,9 +256,10 @@ export function OrderReviewModal({
             </Button>
             <Button
               type="submit"
+              variant="accent"
               isLoading={submitReviewMutation.isPending || isUploading}
               disabled={submitReviewMutation.isPending || isUploading}
-              className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold"
+              className="flex-1 py-3 text-xs uppercase tracking-widest font-bold"
             >
               {isUploading ? 'Mengunggah...' : 'Kirim Ulasan'}
             </Button>

@@ -229,7 +229,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
   // Security checks
   if (!order || order.status !== 'completed') {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <EmptyState
@@ -245,7 +245,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
 
   if (existingReturn) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <EmptyState
@@ -260,7 +260,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Garansi Kepuasan"
         title="Pengajuan Retur"
@@ -268,7 +268,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
       >
         <Link
           href={`/pesanan/${order.order_number}`}
-          className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-accent transition mt-2"
+          className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue transition mt-2"
         >
           <ArrowLeft size={13} className="mr-1" /> Kembali ke Detail Pesanan
         </Link>
@@ -306,16 +306,16 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
           />
 
           {/* Buttons */}
-          <div className="flex justify-between items-center pt-4 border-t border-neutral-100">
+          <div className="flex justify-between items-center pt-4 border-t border-neutral-200/80">
             <Link
               href={`/pesanan/${order.order_number}`}
-              className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-accent transition"
+              className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue transition"
             >
               <ArrowLeft size={13} className="mr-1" /> Batal
             </Link>
             <Button
               type="submit"
-              variant="primary"
+              variant="accent"
               isLoading={isSubmitting}
               className="text-[10px] uppercase tracking-widest font-bold py-3 px-6"
             >

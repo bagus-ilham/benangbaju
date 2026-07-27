@@ -132,10 +132,10 @@ export function CatalogClient({
         )}
 
         {/* Toolbar (Mobile Filter Trigger & Desktop Sort) */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-100">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-200/60">
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="flex items-center space-x-2 text-xs font-heading font-semibold uppercase tracking-wider text-brand-black md:hidden py-2"
+            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum md:hidden py-2"
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filter</span>
@@ -145,12 +145,12 @@ export function CatalogClient({
 
           {/* Sort Selector */}
           <div className="flex items-center space-x-2">
-            <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400">
+            <span className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-500">
               Urutkan:
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-heading font-bold uppercase tracking-wider text-brand-black hover:text-brand-accent transition-colors p-1">
+                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors p-1">
                   <span>
                     {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || 'Urutkan'}
                   </span>
@@ -163,7 +163,7 @@ export function CatalogClient({
                     key={opt.value}
                     onClick={() => handleSortSelect(opt.value)}
                     className={cn(
-                      sortBy === opt.value && 'font-bold text-brand-black bg-neutral-50'
+                      sortBy === opt.value && 'font-bold text-brand-plum bg-brand-blue/15'
                     )}
                   >
                     {opt.label}
@@ -176,8 +176,8 @@ export function CatalogClient({
 
         {/* Active Filter Chips / Pills Bar */}
         {(categorySlug || searchQuery || (sortBy && sortBy !== 'newest')) && (
-          <div className="flex flex-wrap items-center gap-2 mb-8 p-3 bg-brand-cream/60 border border-neutral-100 rounded-xl">
-            <span className="text-[9px] font-heading font-semibold uppercase tracking-wider text-neutral-400">
+          <div className="flex flex-wrap items-center gap-2 mb-8 p-3 bg-brand-cream border border-neutral-200/80 rounded-xl">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-neutral-500">
               Filter Aktif:
             </span>
 
