@@ -64,9 +64,6 @@ export function CheckoutSummaryCard({
         <span className="flex items-center">
           <ShoppingBag size={14} className="mr-2 text-brand-blue" /> Ringkasan Pesanan
         </span>
-        <div className="relative w-4 h-4 opacity-75">
-          <Image src="/svg/kancing-icon.svg" alt="Kancing" fill className="object-contain" />
-        </div>
       </h2>
 
       {/* Items List */}
@@ -168,11 +165,10 @@ export function CheckoutSummaryCard({
                           type="button"
                           disabled={!isSpendMet}
                           onClick={() => onApplyVoucherDirectly(voucher.code)}
-                          className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-xl relative overflow-hidden select-none ${
-                            isSpendMet
+                          className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-xl relative overflow-hidden select-none ${isSpendMet
                               ? 'border-brand-accent/40 bg-brand-accent-muted/5 hover:bg-brand-accent-muted/10 cursor-pointer animate-pulse-gentle'
                               : 'border-neutral-200 bg-neutral-50/50 opacity-40 cursor-not-allowed'
-                          }`}
+                            }`}
                         >
                           <div className="flex justify-between items-center mb-0.5">
                             <span className="font-heading font-bold text-[10px] text-brand-accent uppercase tracking-wider">

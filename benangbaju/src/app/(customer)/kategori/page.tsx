@@ -39,16 +39,6 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
               href={`/kategori/${cat.slug}`}
               className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-100 border border-neutral-200/80 rounded-2xl block hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
             >
-              {/* Subtle stitch pattern texture (< 15% opacity per §5) */}
-              <div className="absolute inset-0 opacity-10 z-10 pointer-events-none">
-                <Image
-                  src="/svg/stitch-card-pattern.svg"
-                  alt=""
-                  fill
-                  className="object-cover"
-                  aria-hidden="true"
-                />
-              </div>
 
               {cat.image_url ? (
                 <Image

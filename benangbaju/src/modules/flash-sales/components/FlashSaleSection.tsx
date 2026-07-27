@@ -115,25 +115,6 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
 
   return (
     <section className="relative bg-brand-plum py-16 md:py-20 border-b border-brand-plum/80 overflow-hidden text-brand-cream">
-      {/* Paired Cross Accent */}
-      <div className="absolute top-4 left-4 w-6 h-6 sm:w-8 sm:h-8 opacity-70 pointer-events-none z-10">
-        <Image
-          src="/svg/cross-stitch-accent-alt.svg"
-          alt=""
-          fill
-          className="object-contain"
-          aria-hidden="true"
-        />
-      </div>
-      <div className="absolute top-4 right-4 w-6 h-6 sm:w-8 sm:h-8 opacity-70 pointer-events-none z-10">
-        <Image
-          src="/svg/cross-stitch-accent.svg"
-          alt=""
-          fill
-          className="object-contain"
-          aria-hidden="true"
-        />
-      </div>
 
       <PageContainer className="relative z-20">
         <SectionHeader

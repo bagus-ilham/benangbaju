@@ -122,17 +122,6 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
             />
           </picture>
 
-          {/* Transparent brand background accent (Gelombang Benang) */}
-          <div className="absolute inset-0 opacity-12 pointer-events-none z-10">
-            <Image
-              src="/svg/thread-wave-accent.svg"
-              alt=""
-              fill
-              className="object-cover object-center"
-              aria-hidden="true"
-            />
-          </div>
-
           {/* Elegant overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-brand-plum/80 via-brand-plum/40 to-transparent z-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/60 via-transparent to-brand-plum/20 z-10" />

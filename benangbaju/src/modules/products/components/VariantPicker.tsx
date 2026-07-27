@@ -136,9 +136,6 @@ export function VariantPicker({
       {attributeKeys.map((name) => (
         <div key={name} className="flex flex-col space-y-2.5">
           <div className="flex items-center space-x-2">
-            <div className="relative w-3.5 h-3.5 opacity-80 shrink-0">
-              <Image src="/svg/kancing-icon.svg" alt="Kancing" fill className="object-contain" />
-            </div>
             <span
               id={`label-variant-${name}`}
               className="text-[11px] uppercase tracking-wider font-sans font-bold text-brand-plum"

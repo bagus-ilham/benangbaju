@@ -13,16 +13,6 @@ export function Footer(): React.JSX.Element {
 
   return (
     <footer className="relative bg-brand-cream border-t border-neutral-200/80 pb-20 md:pb-0">
-      {/* Stitch Line Divider */}
-      <div className="w-full overflow-hidden h-3 relative opacity-60 pointer-events-none -mt-1.5 mb-2">
-        <Image
-          src="/svg/stitch-line-divider.svg"
-          alt=""
-          fill
-          className="object-cover object-center"
-          aria-hidden="true"
-        />
-      </div>
 
       <div className="py-10 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
