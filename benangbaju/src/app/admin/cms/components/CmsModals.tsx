@@ -26,7 +26,7 @@ export function RedirectFormModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs font-sans text-xs">
       <div className="bg-white border border-neutral-200 w-full max-w-md p-6 sm:p-8 space-y-6">
         <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
-          <h3 className="font-serif text-lg font-bold text-neutral-900">
+          <h3 className="font-sans text-lg font-bold text-brand-plum">
             {editingRedirect ? 'Ubah Aturan Pengalihan' : 'Tambah Aturan Pengalihan'}
           </h3>
           <button
@@ -126,7 +126,7 @@ export function LandingPageFormModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/40 backdrop-blur-xs font-sans text-xs">
       <div className="bg-white border border-neutral-200 w-full max-w-lg p-6 sm:p-8 space-y-6">
         <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
-          <h3 className="font-serif text-lg font-bold text-neutral-900">
+          <h3 className="font-sans text-lg font-bold text-brand-plum">
             {editingPage ? 'Ubah Landing Page' : 'Buat Landing Page Baru'}
           </h3>
           <button

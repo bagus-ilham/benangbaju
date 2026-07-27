@@ -46,7 +46,7 @@ export function AdminLandingPagesTable({
           <div className="space-y-2">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="font-serif font-bold text-neutral-900 text-base">{page.title}</h3>
+                <h3 className="font-sans font-bold text-brand-plum text-base">{page.title}</h3>
                 <p className="text-[10px] font-mono text-neutral-400 mt-0.5">Slug: /{page.slug}</p>
               </div>
               <span

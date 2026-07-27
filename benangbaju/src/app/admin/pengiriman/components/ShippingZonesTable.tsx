@@ -59,7 +59,7 @@ export function ShippingZonesTable({
         >
           <div className="space-y-2">
             <div className="flex justify-between items-start">
-              <h3 className="font-serif font-bold text-neutral-900 text-base">{zone.name}</h3>
+              <h3 className="font-sans font-bold text-brand-plum text-base">{zone.name}</h3>
               <span
                 className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
                   zone.is_active
