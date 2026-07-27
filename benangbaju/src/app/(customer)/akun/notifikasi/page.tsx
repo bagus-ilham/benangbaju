@@ -74,7 +74,7 @@ export default function NotifikasiPage(): React.JSX.Element {
   const hasUnread = notificationList.some((n) => !n.is_read)
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Profil Pengguna"
         title="Notifikasi"
@@ -84,45 +84,45 @@ export default function NotifikasiPage(): React.JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Quick Navigation Menu */}
           <div className="space-y-2 md:col-span-1">
-            <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400 mb-4">
+            <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-neutral-400 mb-4">
               Navigasi Akun
             </h2>
 
             <Link href="/pesanan">
               <motion.div
-                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileHover={{ x: 4, borderColor: '#94b2b9' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
               >
-                <ClipboardList size={14} className="text-neutral-400" />
+                <ClipboardList size={14} className="text-brand-blue" />
                 <span>Pesanan Saya</span>
               </motion.div>
             </Link>
 
             <Link href="/akun/alamat">
               <motion.div
-                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileHover={{ x: 4, borderColor: '#94b2b9' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
               >
-                <MapPin size={14} className="text-neutral-400" />
+                <MapPin size={14} className="text-brand-blue" />
                 <span>Daftar Alamat</span>
               </motion.div>
             </Link>
 
             <Link href="/wishlist">
               <motion.div
-                whileHover={{ x: 4, borderColor: '#9a7b4f' }}
+                whileHover={{ x: 4, borderColor: '#94b2b9' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-100 text-neutral-700 hover:text-brand-accent font-heading font-medium tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
               >
-                <Heart size={14} className="text-neutral-400" />
+                <Heart size={14} className="text-brand-blue" />
                 <span>Wishlist Saya</span>
               </motion.div>
             </Link>
 
-            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-black border border-brand-black border-l-4 border-l-brand-accent text-white font-heading font-semibold tracking-wide uppercase rounded-xl text-xs">
-              <Bell size={14} className="text-brand-accent-light" />
+            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-plum border border-brand-plum border-l-4 border-l-brand-gold text-brand-cream font-sans font-bold tracking-wide uppercase rounded-xl text-xs shadow-xs">
+              <Bell size={14} className="text-brand-gold" />
               <span>Notifikasi Saya</span>
             </div>
 
@@ -134,7 +134,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-100 text-red-500 hover:text-red-700 font-heading font-medium tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-white"
+              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-white cursor-pointer shadow-xs"
             >
               <LogOut size={14} />
               <span>Keluar dari Akun</span>
@@ -142,11 +142,11 @@ export default function NotifikasiPage(): React.JSX.Element {
           </div>
 
           {/* Notifications Content */}
-          <div className="md:col-span-2 border border-neutral-200 p-6 sm:p-8 rounded-2xl bg-white card-hover-lift gold-border-hover relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
+          <div className="md:col-span-2 border border-neutral-200/80 p-6 sm:p-8 rounded-2xl bg-white shadow-xs relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-neutral-100">
-              <h2 className="text-lg font-serif tracking-tight text-neutral-900 flex items-center">
-                <Bell size={18} className="mr-2" /> Pemberitahuan Anda
+              <h2 className="text-lg font-sans font-bold tracking-tight text-brand-plum flex items-center">
+                <Bell size={18} className="mr-2 text-brand-blue" /> Pemberitahuan Anda
               </h2>
               {hasUnread && (
                 <button

@@ -19,7 +19,7 @@ export default async function FlashSalePage(): Promise<React.JSX.Element> {
   const flashSale = flashSaleResponse.data
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Penawaran Spesial"
         title="Flash Sale"

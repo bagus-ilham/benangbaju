@@ -68,7 +68,7 @@ export default function AlamatPage(): React.JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Pengiriman"
         title="Daftar Alamat"
@@ -76,19 +76,20 @@ export default function AlamatPage(): React.JSX.Element {
       />
       <PageContainer size="lg" className="py-10 page-content">
         <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-            <Link href="/akun" className="hover:text-brand-accent transition">
+          <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-500">
+            <Link href="/akun" className="hover:text-brand-plum transition font-sans font-bold">
               Akun Saya
             </Link>
             <span>/</span>
-            <span className="text-brand-black font-semibold">Daftar Alamat</span>
+            <span className="text-brand-plum font-bold">Daftar Alamat</span>
           </div>
           <Button
             onClick={() => {
               setAddressToEdit(null)
               setModalOpen(true)
             }}
-            className="flex items-center justify-center text-xs uppercase tracking-widest font-semibold py-3 px-5"
+            variant="accent"
+            className="flex items-center justify-center text-xs uppercase tracking-widest font-bold py-3 px-5"
           >
             <Plus size={14} className="mr-2" /> Tambah Alamat
           </Button>

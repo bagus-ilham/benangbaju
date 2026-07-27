@@ -175,7 +175,7 @@ export default function PesananPage(): React.JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Akun Saya"
         title="Riwayat Pesanan"
@@ -183,12 +183,12 @@ export default function PesananPage(): React.JSX.Element {
       />
       <PageContainer size="lg" className="py-10 page-content">
         {/* Navigation Breadcrumb */}
-        <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-400">
-          <Link href="/akun" className="hover:text-neutral-900 transition">
+        <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-500">
+          <Link href="/akun" className="hover:text-brand-plum transition font-sans font-bold">
             Akun Saya
           </Link>
           <span>/</span>
-          <span className="text-neutral-900 font-semibold">Pesanan Saya</span>
+          <span className="text-brand-plum font-bold">Pesanan Saya</span>
         </div>
 
         {/* Tab Filter */}
@@ -196,10 +196,13 @@ export default function PesananPage(): React.JSX.Element {
           {STATUS_TABS.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
-              className={`py-3.5 px-4 text-xs font-semibold uppercase tracking-wider whitespace-nowrap border-b-2 transition duration-150 -mb-[2px] ${
+              onClick={() => {
+                setActiveTab(tab.id)
+                setPage(1)
+              }}
+              className={`py-3.5 px-4 text-xs font-sans uppercase tracking-wider whitespace-nowrap border-b-2 transition duration-150 -mb-[2px] cursor-pointer ${
                 activeTab === tab.id
-                  ? 'border-neutral-900 text-neutral-900'
+                  ? 'border-brand-plum text-brand-plum font-bold'
                   : 'border-transparent text-neutral-400 hover:text-neutral-600'
               }`}
             >

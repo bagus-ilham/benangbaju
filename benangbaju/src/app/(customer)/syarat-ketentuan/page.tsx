@@ -43,7 +43,7 @@ export default function SyaratKetentuanPage(): React.JSX.Element {
   ]
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Ketentuan Penggunaan"
         title="Syarat & Ketentuan"
