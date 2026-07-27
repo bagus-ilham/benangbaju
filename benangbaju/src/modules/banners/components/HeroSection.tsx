@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { getImageProps } from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -122,24 +122,37 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
             />
           </picture>
 
-          {/* Elegant overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/60 via-neutral-900/25 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/40 via-transparent to-neutral-900/10" />
+          {/* Transparent brand background accent (LOGO_BENANGBAJU_03.png - Gelombang Benang) */}
+          <div className="absolute inset-0 opacity-12 pointer-events-none z-10">
+            <Image
+              src="/LOGO_BENANGBAJU_03.png"
+              alt=""
+              fill
+              className="object-cover object-center"
+              aria-hidden="true"
+            />
+          </div>
 
-          <div className="absolute inset-0 flex items-center">
+          {/* Elegant overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-plum/80 via-brand-plum/40 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/60 via-transparent to-brand-plum/20 z-10" />
+
+          <div className="absolute inset-0 flex items-center z-20">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
               <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6">
-                <motion.span
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{
-                    y: 0,
-                    opacity: 1,
-                    transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                  }}
-                  className="inline-block text-[10px] font-heading font-medium uppercase tracking-[0.25em] text-brand-accent-light bg-brand-black/40 backdrop-blur-sm px-4 py-1.5 border border-brand-accent/30 rounded-full"
-                >
-                  {currentBanner.subtitle}
-                </motion.span>
+                {currentBanner.subtitle && (
+                  <motion.span
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{
+                      y: 0,
+                      opacity: 1,
+                      transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                    }}
+                    className="inline-block text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-brand-gold bg-brand-plum/60 backdrop-blur-sm px-4 py-1.5 border border-brand-gold/30 rounded-full"
+                  >
+                    {currentBanner.subtitle}
+                  </motion.span>
+                )}
 
                 <motion.h1
                   initial={{ y: 30, opacity: 0 }}
@@ -148,7 +161,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                     opacity: 1,
                     transition: { delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
                   }}
-                  className="text-3xl md:text-5xl lg:text-7xl font-heading font-light uppercase tracking-wider text-white leading-[1.1]"
+                  className="text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-wide text-brand-cream leading-[1.15]"
                 >
                   {currentBanner.title}
                 </motion.h1>
@@ -164,7 +177,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                     className="pt-4"
                   >
                     <Link href={currentBanner.link_url}>
-                      <Button variant="primary" size="md">
+                      <Button variant="accent" size="lg">
                         Jelajahi Koleksi
                       </Button>
                     </Link>

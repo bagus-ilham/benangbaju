@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { PageHero, PageContainer } from '@/shared/components'
 import { EASE_PREMIUM } from '@/lib/motion'
@@ -14,7 +15,7 @@ const fadeUp = {
 
 export function TentangClient(): React.JSX.Element {
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Kisah & Visi"
         title="Tentang Kami"
@@ -25,18 +26,28 @@ export function TentangClient(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-12">
           <motion.div
             {...fadeUp}
-            className="space-y-6 text-sm leading-relaxed text-neutral-600 font-medium"
+            className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-white border border-neutral-200/80 rounded-2xl shadow-sm"
           >
-            <p>
-              Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Sesuai dengan tagline
-              kami,{' '}
-              <span className="font-semibold text-brand-black">
-                "Show How Really Well-Dressed You Are,"
-              </span>{' '}
-              Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
-              diri lewat sepotong pakaian yang sederhana namun unik.
-            </p>
-            <p>Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.</p>
+            <div className="relative w-16 h-16 shrink-0 opacity-90">
+              <Image
+                src="/LOGO_BENANGBAJU_09.png"
+                alt="Gulungan Benang Logo"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <div className="space-y-4 text-sm leading-relaxed text-neutral-600 font-medium">
+              <p>
+                Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Sesuai dengan tagline
+                kami,{' '}
+                <span className="font-bold text-brand-plum">
+                  "Show How Really Well-Dressed You Are,"
+                </span>{' '}
+                Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
+                diri lewat sepotong pakaian yang sederhana namun unik.
+              </p>
+              <p className="font-accent text-xl text-brand-plum">Ungkapkan kepribadian dan gaya unikmu dengan menggunakan produk dari Benangbaju.</p>
+            </div>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">

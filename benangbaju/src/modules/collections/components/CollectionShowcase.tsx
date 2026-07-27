@@ -24,15 +24,15 @@ export function CollectionShowcase({
   index = 0,
 }: CollectionShowcaseProps): React.JSX.Element {
   const isReversed = index % 2 === 1
-  const bgColor = isReversed ? 'bg-brand-black' : 'bg-brand-cream section-texture'
-  const textColor = isReversed ? 'text-white' : 'text-brand-black'
-  const textMuted = isReversed ? 'text-white/80' : 'text-brand-black/80'
-  const borderColor = isReversed ? 'border-brand-accent-light' : 'border-brand-accent'
-  const btnBg = isReversed ? 'bg-brand-accent' : 'bg-brand-black'
-  const btnText = 'text-white'
-  const btnHover = isReversed ? 'hover:bg-brand-accent-light' : 'hover:bg-brand-dark'
+  const bgColor = isReversed ? 'bg-brand-plum' : 'bg-brand-cream'
+  const textColor = isReversed ? 'text-brand-cream' : 'text-brand-plum'
+  const textMuted = isReversed ? 'text-brand-cream/80' : 'text-brand-plum/80'
+  const borderColor = isReversed ? 'border-brand-gold' : 'border-brand-blue'
+  const btnBg = isReversed ? 'bg-brand-gold' : 'bg-brand-blue'
+  const btnText = 'text-brand-plum font-bold'
+  const btnHover = isReversed ? 'hover:bg-amber-200' : 'hover:bg-[#83a3aa]'
   const cardContainerClass = isReversed
-    ? 'bg-white p-2 border border-neutral-100 rounded-2xl shadow-sm'
+    ? 'bg-brand-cream p-2 border border-neutral-200/80 rounded-2xl shadow-sm'
     : ''
 
   const sliderRef = useRef<HTMLDivElement>(null)
@@ -89,7 +89,7 @@ export function CollectionShowcase({
           >
             <h2
               className={cn(
-                'text-3xl md:text-4xl lg:text-5xl font-heading font-medium mb-6 transition-colors duration-500',
+                'text-3xl md:text-4xl lg:text-5xl font-sans font-bold mb-6 transition-colors duration-500',
                 textColor
               )}
             >

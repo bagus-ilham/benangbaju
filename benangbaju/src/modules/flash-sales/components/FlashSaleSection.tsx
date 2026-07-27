@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
+import Image from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/modules/flash-sales/types'
@@ -113,30 +114,50 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 
   return (
-    <section className="relative bg-brand-black py-16 md:py-20 border-b border-neutral-800 overflow-hidden">
-      <div className="absolute inset-0 gradient-mesh opacity-30 pointer-events-none" aria-hidden />
-      <PageContainer className="relative">
+    <section className="relative bg-brand-plum py-16 md:py-20 border-b border-brand-plum/80 overflow-hidden text-brand-cream">
+      {/* Paired Cross Accent (LOGO_BENANGBAJU_11.png & LOGO_BENANGBAJU_05.png) */}
+      <div className="absolute top-4 left-4 w-6 h-6 sm:w-8 sm:h-8 opacity-70 pointer-events-none z-10">
+        <Image
+          src="/LOGO_BENANGBAJU_11.png"
+          alt=""
+          fill
+          className="object-contain"
+          aria-hidden="true"
+        />
+      </div>
+      <div className="absolute top-4 right-4 w-6 h-6 sm:w-8 sm:h-8 opacity-70 pointer-events-none z-10">
+        <Image
+          src="/LOGO_BENANGBAJU_05.png"
+          alt=""
+          fill
+          className="object-contain"
+          aria-hidden="true"
+        />
+      </div>
+
+      <PageContainer className="relative z-20">
         <SectionHeader
           align="left"
           showDivider={false}
           eyebrow="Penawaran Terbatas"
           title={flashSale.name || 'Flash Sale'}
-          className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-error [&_h2]:text-white"
+          className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-brand-gold [&_h2]:text-brand-cream"
         >
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
-            <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-500 mr-2">
+            <span className="text-[11px] uppercase tracking-wider font-sans font-semibold text-brand-cream/70 mr-2">
               Berakhir Dalam:
             </span>
-            <div className="flex items-center space-x-1.5 font-heading text-xs font-semibold">
-              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center">
+            <div className="flex items-center space-x-1.5 font-sans text-xs font-bold">
+              {/* Dusty Blue background MUST use Deep Plum text per §4 */}
+              <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.hours)}
               </span>
-              <span className="text-brand-accent-light">:</span>
-              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center">
+              <span className="text-brand-gold font-bold">:</span>
+              <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.minutes)}
               </span>
-              <span className="text-brand-accent-light">:</span>
-              <span className="bg-brand-accent text-brand-black px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center">
+              <span className="text-brand-gold font-bold">:</span>
+              <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.seconds)}
               </span>
             </div>
@@ -161,9 +182,8 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
         <div className="flex justify-center mt-12">
           <Link href="/flash-sale">
             <Button
-              variant="secondary"
+              variant="accent"
               size="md"
-              className="bg-transparent text-white border-white/30 hover:bg-white hover:text-brand-black"
             >
               Lihat Semua Flash Sale
             </Button>

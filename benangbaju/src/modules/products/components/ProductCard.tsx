@@ -264,10 +264,10 @@ export const ProductCard = React.memo(function ProductCard({
         )}
 
         {/* Quick add or view details overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-brand-black/85 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-active:translate-y-0 focus-within:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
+        <div className="absolute bottom-0 left-0 right-0 bg-brand-plum/90 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-active:translate-y-0 focus-within:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
           {!hasMultipleColors && sizeVariants.length > 0 ? (
             <div className="w-full space-y-1 text-center">
-              <span className="text-[8px] font-heading font-medium uppercase tracking-widest text-brand-accent-light">
+              <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-gold">
                 + Keranjang Instan
               </span>
               <div className="flex flex-wrap gap-1 justify-center">
@@ -298,11 +298,11 @@ export const ProductCard = React.memo(function ProductCard({
                       aria-busy={isCurrentAdding}
                       aria-label={`Tambah ukuran ${sizeLabel} ke keranjang`}
                       onClick={(e) => handleQuickAdd(e, v)}
-                      className="px-2 py-0.5 bg-white hover:bg-brand-accent hover:text-white text-[9px] font-heading font-bold uppercase tracking-wider text-brand-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] border border-neutral-100 rounded-md flex items-center justify-center cursor-pointer"
+                      className="px-2.5 py-1 bg-brand-blue hover:bg-[#83a3aa] text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] rounded-md flex items-center justify-center cursor-pointer shadow-xs"
                     >
                       {isCurrentAdding ? (
                         <div
-                          className="w-2.5 h-2.5 border border-brand-black border-t-transparent animate-spin rounded-full"
+                          className="w-2.5 h-2.5 border border-brand-plum border-t-transparent animate-spin rounded-full"
                           aria-hidden="true"
                         />
                       ) : (
@@ -314,7 +314,7 @@ export const ProductCard = React.memo(function ProductCard({
               </div>
             </div>
           ) : (
-            <span className="text-[9px] font-heading font-medium uppercase tracking-widest text-white py-1 text-center w-full block">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-cream py-1 text-center w-full block">
               Lihat Detail
             </span>
           )}
@@ -322,30 +322,30 @@ export const ProductCard = React.memo(function ProductCard({
       </div>
 
       {/* Product Information */}
-      <div className="flex flex-col pt-4 pb-4 px-3 space-y-1">
+      <div className="flex flex-col pt-3.5 pb-4 px-3 space-y-1">
         {/* Category Name */}
         {product.categories && (
-          <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+          <span className="text-[9px] uppercase tracking-widest font-sans font-semibold text-neutral-500">
             {product.categories.name}
           </span>
         )}
 
-        {/* Product Title */}
+        {/* Product Title (H3 scale: 16px/600 Mulish) */}
         <Link href={productUrl} prefetch={true} className="block">
-          <h3 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-black hover:text-brand-gray transition-colors truncate">
+          <h3 className="text-sm md:text-base font-sans font-semibold text-brand-plum hover:text-brand-blue transition-colors truncate">
             {product.name}
           </h3>
         </Link>
 
-        {/* Price Tag */}
+        {/* Price Tag (Caption/Price scale: 13px/700 Mulish) */}
         <div className="flex items-center space-x-2 pt-0.5">
-          <span className="text-xs font-sans font-semibold text-brand-black">
+          <span className="text-[13px] font-sans font-bold text-brand-plum">
             {minPrice !== maxPrice
               ? `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`
               : formatIDR(minPrice)}
           </span>
           {comparePrice && comparePrice > minPrice && (
-            <span className="text-[10px] font-sans text-neutral-400 line-through">
+            <span className="text-xs font-sans text-neutral-400 line-through">
               {formatIDR(comparePrice)}
             </span>
           )}

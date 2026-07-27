@@ -31,7 +31,7 @@ const TRUST_ITEMS = [
 
 export function TrustStrip(): React.JSX.Element {
   return (
-    <section className="bg-brand-black border-b border-neutral-800 py-3.5 md:py-8 overflow-hidden">
+    <section className="bg-brand-plum border-b border-brand-plum/80 py-3.5 md:py-6 overflow-hidden">
       <PageContainer>
         <motion.div
           variants={staggerContainer}
@@ -46,14 +46,14 @@ export function TrustStrip(): React.JSX.Element {
               variants={fadeUpItem}
               className="flex-none snap-start flex items-center text-left gap-2 md:gap-3 group"
             >
-              <div className="flex-shrink-0 p-1.5 md:p-2 border border-brand-accent/30 bg-brand-accent/10 transition-all duration-300 group-hover:border-brand-accent group-hover:bg-brand-accent/20 rounded-xl group-hover:-translate-y-0.5">
-                <item.icon className="h-3.5 w-3.5 text-brand-accent-light" strokeWidth={1.5} />
+              <div className="flex-shrink-0 p-1.5 md:p-2 border border-brand-gold/30 bg-brand-gold/10 transition-all duration-300 group-hover:border-brand-gold group-hover:bg-brand-gold/20 rounded-xl group-hover:-translate-y-0.5">
+                <item.icon className="h-4 w-4 text-brand-gold" strokeWidth={1.75} />
               </div>
               <div className="space-y-0.5 whitespace-nowrap">
-                <h3 className="text-[9px] md:text-[10px] font-heading font-semibold uppercase tracking-widest text-white">
+                <h3 className="text-[10px] md:text-[11px] font-sans font-bold uppercase tracking-widest text-brand-cream">
                   {item.title}
                 </h3>
-                <p className="text-[9px] text-neutral-400 font-sans leading-relaxed hidden md:block">
+                <p className="text-[9px] text-brand-cream/70 font-sans leading-relaxed hidden md:block">
                   {item.description}
                 </p>
               </div>

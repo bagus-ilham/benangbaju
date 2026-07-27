@@ -28,16 +28,26 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
   }
 
   return (
-    <section className="bg-white py-16 md:py-20 border-b border-neutral-100">
+    <section className="bg-brand-cream py-16 md:py-20 border-b border-neutral-200/60">
       <PageContainer>
         <div className="flex items-center justify-between mb-6">
-          <SectionHeader eyebrow="Kategori Pilihan" title="Kategori Belanja" />
+          <div className="flex items-center space-x-3">
+            <div className="relative w-6 h-6 shrink-0 opacity-80">
+              <Image
+                src="/LOGO_BENANGBAJU_10.png"
+                alt="Kancing"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <SectionHeader eyebrow="Kategori Pilihan" title="Kategori Belanja" />
+          </div>
           {mainCategories.length > 4 && (
             <div className="flex items-center space-x-2 pb-6">
               <button
                 type="button"
                 onClick={() => handleScroll('left')}
-                className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-600 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all"
+                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-plum hover:text-brand-cream transition-all"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -45,7 +55,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               <button
                 type="button"
                 onClick={() => handleScroll('right')}
-                className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-600 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all"
+                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-plum hover:text-brand-cream transition-all"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -72,8 +82,19 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               >
                 <Link
                   href={`/kategori/${cat.slug}`}
-                  className="group relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 border border-neutral-100 block rounded-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] transition-all duration-500"
+                  className="group relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 border border-neutral-200/80 block rounded-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
                 >
+                  {/* Subtle stitch pattern texture (< 15% opacity per §5) */}
+                  <div className="absolute inset-0 opacity-10 z-10 pointer-events-none">
+                    <Image
+                      src="/LOGO_BENANGBAJU_06.png"
+                      alt=""
+                      fill
+                      className="object-cover"
+                      aria-hidden="true"
+                    />
+                  </div>
+
                   {cat.image_url ? (
                     <Image
                       src={getProxiedImageUrl(cat.image_url)}
@@ -87,14 +108,14 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                       {cat.name}
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 via-neutral-900/10 to-transparent transition-opacity duration-500 group-hover:from-neutral-900/70" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent transition-opacity duration-500 group-hover:from-brand-plum/90 z-15" />
 
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 z-20">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs md:text-sm font-heading font-semibold uppercase tracking-widest text-white drop-shadow-sm">
+                      <span className="text-xs md:text-sm font-sans font-bold uppercase tracking-widest text-brand-cream drop-shadow-sm">
                         {cat.name}
                       </span>
-                      <span className="text-[10px] font-heading text-white/70 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="text-[10px] font-sans font-bold text-brand-gold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         {index < 9 ? `0${index + 1}` : index + 1}
                       </span>
                     </div>
