@@ -35,7 +35,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
 
           <div
             className={cn(
-              'relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border bg-white transition-all duration-300 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-accent/20 peer-checked:border-brand-black peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
+              'relative flex items-center justify-center w-5 h-5 mt-0.5 rounded-full border bg-brand-cream transition-all duration-300 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-accent/20 peer-checked:border-brand-black peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
               error ? 'border-red-500' : 'border-neutral-300'
             )}
           >

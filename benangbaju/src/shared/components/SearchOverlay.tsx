@@ -116,7 +116,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const trimmed = searchQuery.trim()
     if (!trimmed) return
     saveRecentSearch(trimmed)
-    logSearchAction(trimmed, instantResults.length).catch(() => {})
+    logSearchAction(trimmed, instantResults.length).catch(() => { })
     router.push(`/search?q=${encodeURIComponent(trimmed)}`)
     onClose()
   }
@@ -124,7 +124,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const handleSelectTag = (tag: string) => {
     setSearchQuery(tag)
     saveRecentSearch(tag)
-    logSearchAction(tag, 0).catch(() => {})
+    logSearchAction(tag, 0).catch(() => { })
     router.push(`/search?q=${encodeURIComponent(tag)}`)
     onClose()
   }
@@ -276,7 +276,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             key={product.id}
                             href={`/produk/${product.slug}`}
                             onClick={onClose}
-                            className="flex items-center space-x-3 p-2 bg-white border border-neutral-100 hover:border-brand-accent/50 transition-all duration-200 group"
+                            className="flex items-center space-x-3 p-2 bg-brand-cream border border-neutral-100 hover:border-brand-accent/50 transition-all duration-200 group"
                           >
                             <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0">
                               {primaryImg ? (

@@ -194,7 +194,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
         <>
           <button
             onClick={handlePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
             aria-label="Slide sebelumnya"
           >
             <ChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -202,7 +202,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
 
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
             aria-label="Slide berikutnya"
           >
             <ChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -223,7 +223,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                     'block h-1.5 transition-all duration-500 rounded-full',
                     idx === currentIndex
                       ? 'w-10 bg-brand-accent-light'
-                      : 'w-3 bg-white/40 hover:bg-white/70'
+                      : 'w-3 bg-brand-cream/40 hover:bg-brand-cream/70'
                   )}
                 />
               </button>

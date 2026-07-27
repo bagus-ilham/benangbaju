@@ -128,7 +128,7 @@ export function TabsTrigger({
       {isActive && (
         <motion.div
           layoutId={`activeTabIndicator-${ctx.baseId}`}
-          className="absolute inset-0 bg-white rounded-xl shadow-sm border border-neutral-200/50 -z-10"
+          className="absolute inset-0 bg-brand-cream rounded-xl shadow-sm border border-neutral-200/50 -z-10"
           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
         />
       )}

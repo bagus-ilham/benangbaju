@@ -18,7 +18,7 @@ export default function CustomerError({
   }, [error])
 
   return (
-    <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center p-6 text-center bg-white font-sans">
+    <div className="flex-1 min-h-[60vh] flex flex-col items-center justify-center p-6 text-center bg-brand-cream font-sans">
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}

@@ -20,7 +20,7 @@ export default function ApiDocsPage() {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <SwaggerUI spec={spec} />
     </div>
   )

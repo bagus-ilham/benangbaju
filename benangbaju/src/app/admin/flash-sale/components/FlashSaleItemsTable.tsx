@@ -31,7 +31,7 @@ export function FlashSaleItemsTable({
                 <th className="py-2 px-3">Hapus</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100 text-[11px] font-medium bg-white">
+            <tbody className="divide-y divide-neutral-100 text-[11px] font-medium bg-brand-cream">
               {items.map((it, idx) => (
                 <tr key={it.variant_id}>
                   <td className="py-2 px-3">

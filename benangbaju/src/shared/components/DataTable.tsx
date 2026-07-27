@@ -57,7 +57,7 @@ export function DataTable<T extends { id?: string | number }>({
   return (
     <div
       className={cn(
-        'w-full overflow-hidden bg-white border border-neutral-200/60 rounded-2xl shadow-sm',
+        'w-full overflow-hidden bg-brand-cream border border-neutral-200/60 rounded-2xl shadow-sm',
         className
       )}
     >
@@ -102,7 +102,7 @@ export function DataTable<T extends { id?: string | number }>({
           <tbody className="divide-y divide-neutral-100">
             {isLoading ? (
               Array.from({ length: loadingRows }).map((_, rIdx) => (
-                <tr key={rIdx} className="bg-white">
+                <tr key={rIdx} className="bg-brand-cream">
                   {columns.map((col, cIdx) => (
                     <td key={cIdx} className={cn('px-6 py-4', col.className)}>
                       <Skeleton className="h-4 w-3/4 rounded-sm" />
@@ -125,7 +125,7 @@ export function DataTable<T extends { id?: string | number }>({
                   transition={{ duration: 0.2, delay: rIdx * 0.03 }}
                   onClick={() => onRowClick?.(row)}
                   className={cn(
-                    'bg-white transition-colors duration-300 group hover:bg-neutral-50/80',
+                    'bg-brand-cream transition-colors duration-300 group hover:bg-neutral-50/80',
                     onRowClick && 'cursor-pointer'
                   )}
                 >

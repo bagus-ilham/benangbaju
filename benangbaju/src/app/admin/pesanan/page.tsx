@@ -135,11 +135,10 @@ export default function AdminOrdersPage(): React.JSX.Element {
               setActiveTab(tab.id)
               setPage(1)
             }}
-            className={`pb-3 font-semibold uppercase tracking-wider transition border-b-2 whitespace-nowrap ${
-              activeTab === tab.id
+            className={`pb-3 font-semibold uppercase tracking-wider transition border-b-2 whitespace-nowrap ${activeTab === tab.id
                 ? 'border-neutral-900 text-neutral-900'
                 : 'border-transparent text-neutral-400 hover:text-neutral-600'
-            }`}
+              }`}
           >
             {tab.label}
             {tab.id === 'returns' && returnsData.length > 0 && (
@@ -156,7 +155,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
 
       {/* Toolbar */}
       {activeTab !== 'returns' && (
-        <div className="flex bg-white border border-neutral-200 p-4 rounded-2xl items-center space-x-3">
+        <div className="flex bg-brand-cream border border-neutral-200 p-4 rounded-2xl items-center space-x-3">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
             <input
@@ -175,7 +174,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
       )}
 
       {/* Data Section */}
-      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
+      <div className="border border-neutral-200 bg-brand-cream rounded-2xl overflow-hidden">
         {activeTab === 'returns' ? (
           <AdminReturnsTable
             returnsData={returnsData}

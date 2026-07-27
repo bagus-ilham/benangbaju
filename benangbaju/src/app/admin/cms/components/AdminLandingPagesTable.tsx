@@ -21,12 +21,12 @@ export function AdminLandingPagesTable({
   onDelete,
 }: AdminLandingPagesTableProps) {
   if (isLoading) {
-    return <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
+    return <div className="h-40 bg-brand-cream border border-neutral-200 animate-pulse" />
   }
 
   if (landingPages.length === 0) {
     return (
-      <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-white">
+      <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-brand-cream">
         Belum ada halaman dinamis yang terdaftar.
       </div>
     )
@@ -41,7 +41,7 @@ export function AdminLandingPagesTable({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, delay: idx * 0.04 }}
           whileHover={{ y: -2, transition: { duration: 0.1 } }}
-          className="border border-neutral-200 bg-white p-5 space-y-4 flex flex-col justify-between hover:shadow-xs transition duration-150"
+          className="border border-neutral-200 bg-brand-cream p-5 space-y-4 flex flex-col justify-between hover:shadow-xs transition duration-150"
         >
           <div className="space-y-2">
             <div className="flex justify-between items-start">
@@ -50,11 +50,10 @@ export function AdminLandingPagesTable({
                 <p className="text-[10px] font-mono text-neutral-400 mt-0.5">Slug: /{page.slug}</p>
               </div>
               <span
-                className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
-                  page.is_active
+                className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${page.is_active
                     ? 'bg-green-50 text-green-700 border border-green-200'
                     : 'bg-red-50 text-red-700 border border-red-200'
-                }`}
+                  }`}
               >
                 {page.is_active ? 'Aktif' : 'Nonaktif'}
               </span>

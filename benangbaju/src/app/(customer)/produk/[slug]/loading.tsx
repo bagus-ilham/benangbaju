@@ -3,7 +3,7 @@ import { ProductGridSkeleton } from '@/shared/components/ProductGridSkeleton'
 
 export default function ProductDetailLoading(): React.JSX.Element {
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageContainer className="py-10 md:py-12 page-content">
         <div className="h-3 w-48 skeleton-shimmer rounded-md mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 mb-16">

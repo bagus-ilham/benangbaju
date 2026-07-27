@@ -92,7 +92,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               <motion.div
                 whileHover={{ x: 4, borderColor: '#94b2b9' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
               >
                 <ClipboardList size={14} className="text-brand-blue" />
                 <span>Pesanan Saya</span>
@@ -103,7 +103,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               <motion.div
                 whileHover={{ x: 4, borderColor: '#94b2b9' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
               >
                 <MapPin size={14} className="text-brand-blue" />
                 <span>Daftar Alamat</span>
@@ -114,7 +114,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               <motion.div
                 whileHover={{ x: 4, borderColor: '#94b2b9' }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+                className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
               >
                 <Heart size={14} className="text-brand-blue" />
                 <span>Wishlist Saya</span>
@@ -175,11 +175,10 @@ export default function NotifikasiPage(): React.JSX.Element {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: idx * 0.04 }}
                     whileHover={{ scale: 1.01, transition: { duration: 0.1 } }}
-                    className={`p-4 border rounded-xl text-xs font-sans transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm relative cursor-pointer ${
-                      n.is_read
+                    className={`p-4 border rounded-xl text-xs font-sans transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm relative cursor-pointer ${n.is_read
                         ? 'border-neutral-100 bg-neutral-50/20 hover:bg-neutral-50/50 text-neutral-500'
                         : 'border-brand-accent bg-brand-accent-muted/10 hover:border-brand-accent-light text-neutral-900'
-                    }`}
+                      }`}
                   >
                     <div className="flex justify-between items-start mb-1.5">
                       <span className="font-semibold uppercase tracking-wider text-[10px] text-neutral-400">

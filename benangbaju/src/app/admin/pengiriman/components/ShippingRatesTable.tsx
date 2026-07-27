@@ -23,11 +23,11 @@ export function ShippingRatesTable({
   onEdit,
   onDelete,
 }: ShippingRatesTableProps) {
-  if (isLoading) return <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
+  if (isLoading) return <div className="h-40 bg-brand-cream border border-neutral-200 animate-pulse" />
 
   if (isError) {
     return (
-      <div className="text-center py-12 border border-neutral-200 bg-white">
+      <div className="text-center py-12 border border-neutral-200 bg-brand-cream">
         <p className="text-red-500 text-xs font-semibold uppercase">
           Gagal memuat tarif pengiriman
         </p>
@@ -44,14 +44,14 @@ export function ShippingRatesTable({
 
   if (rates.length === 0) {
     return (
-      <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-white">
+      <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-brand-cream">
         Belum ada tarif pengiriman kurir yang terdaftar.
       </div>
     )
   }
 
   return (
-    <div className="border border-neutral-200 bg-white rounded-2xl overflow-x-auto">
+    <div className="border border-neutral-200 bg-brand-cream rounded-2xl overflow-x-auto">
       <table className="w-full text-left text-xs font-sans">
         <thead>
           <tr className="border-b border-neutral-200 bg-neutral-50/50 text-neutral-400 uppercase tracking-wider font-semibold">
@@ -82,11 +82,10 @@ export function ShippingRatesTable({
               </td>
               <td className="py-4 px-6 text-center">
                 <span
-                  className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
-                    rate.is_active
+                  className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${rate.is_active
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}
+                    }`}
                 >
                   {rate.is_active ? 'Aktif' : 'Nonaktif'}
                 </span>

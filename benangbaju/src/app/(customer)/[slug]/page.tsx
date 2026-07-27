@@ -38,7 +38,7 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
     typeof page.content === 'string' ? JSON.parse(page.content) : (page.content as any)
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero title={page.title} subtitle={content?.subtitle || ''} />
       <PageContainer size="md" className="py-12 page-content space-y-8">
         {content?.sections && Array.isArray(content.sections) ? (

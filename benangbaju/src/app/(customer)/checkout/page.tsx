@@ -331,7 +331,7 @@ export default function CheckoutPage(): React.JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Pembelian"
         title="Checkout"

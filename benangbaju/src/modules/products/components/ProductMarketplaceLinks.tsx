@@ -17,7 +17,7 @@ export function ProductMarketplaceLinks({
   onUpdateLinkField,
 }: ProductMarketplaceLinksProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-4 shadow-sm">
+    <div className="border border-neutral-200 bg-brand-cream p-6 rounded-2xl space-y-4 shadow-sm">
       <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
         <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
           Platform Marketplace (E-Commerce)

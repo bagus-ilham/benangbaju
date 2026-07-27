@@ -197,7 +197,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   return (
     <div className="flex h-screen bg-neutral-50 overflow-hidden font-sans">
       {/* Sidebar for Desktop */}
-      <aside className="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 border-r border-neutral-200 bg-white">
+      <aside className="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 border-r border-neutral-200 bg-brand-cream">
         <div className="flex h-16 items-center px-6 border-b border-neutral-200">
           <SidebarLogo logoUrl={logoUrl} />
         </div>
@@ -229,7 +229,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-              className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white shadow-xl outline-none"
+              className="fixed inset-y-0 left-0 flex w-full max-w-xs flex-col bg-brand-cream shadow-xl outline-none"
               role="dialog"
               aria-modal="true"
               aria-label="Menu Admin"
@@ -260,7 +260,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
 
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 w-0 overflow-hidden">
-        <header className="flex h-16 flex-shrink-0 border-b border-neutral-200 bg-white/95 backdrop-blur-md z-10">
+        <header className="flex h-16 flex-shrink-0 border-b border-neutral-200 bg-brand-cream/95 backdrop-blur-md z-10">
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-black lg:hidden"

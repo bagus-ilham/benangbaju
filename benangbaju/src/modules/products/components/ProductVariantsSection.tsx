@@ -39,7 +39,7 @@ export function ProductVariantsSection({
   onRemoveImage,
 }: ProductVariantsSectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-6 shadow-sm">
+    <div className="border border-neutral-200 bg-brand-cream p-6 rounded-2xl space-y-6 shadow-sm">
       <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
         <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
           Spesifikasi Varian Produk
@@ -176,7 +176,7 @@ export function ProductVariantsSection({
                     return (
                       <div
                         key={`variant-${v.id}-img-${imgIdx}`}
-                        className="flex flex-wrap sm:flex-nowrap gap-2 items-center border border-neutral-100 p-2 bg-white"
+                        className="flex flex-wrap sm:flex-nowrap gap-2 items-center border border-neutral-100 p-2 bg-brand-cream"
                       >
                         <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                           {img.url ? (
@@ -200,7 +200,7 @@ export function ProductVariantsSection({
 
                         <input
                           type="text"
-                          className="flex-1 px-2 py-1 border border-neutral-200 outline-none text-[10px] bg-white focus:border-neutral-800"
+                          className="flex-1 px-2 py-1 border border-neutral-200 outline-none text-[10px] bg-brand-cream focus:border-neutral-800"
                           value={img.url}
                           onChange={(e) => onUpdateImageField(imgIdx, 'url', e.target.value)}
                           placeholder="https://... atau unggah"
@@ -230,7 +230,7 @@ export function ProductVariantsSection({
                         />
                         <label
                           htmlFor={`variant-${vIdx}-file-upload-${imgIdx}`}
-                          className="cursor-pointer inline-flex items-center text-[8px] font-bold uppercase tracking-wider py-1 px-2 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-lg bg-white"
+                          className="cursor-pointer inline-flex items-center text-[8px] font-bold uppercase tracking-wider py-1 px-2 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-lg bg-brand-cream"
                         >
                           Unggah
                         </label>
@@ -270,7 +270,7 @@ export function ProductVariantsSection({
                     <div key={aIdx} className="flex items-center space-x-2">
                       <input
                         type="text"
-                        className="px-2 py-1.5 border border-neutral-200 outline-none text-xs w-28 bg-white focus:border-neutral-800 font-medium"
+                        className="px-2 py-1.5 border border-neutral-200 outline-none text-xs w-28 bg-brand-cream focus:border-neutral-800 font-medium"
                         value={attr.attr_name}
                         onChange={(e) =>
                           onUpdateVariantAttrField(vIdx, aIdx, 'attr_name', e.target.value)
@@ -279,7 +279,7 @@ export function ProductVariantsSection({
                       />
                       <input
                         type="text"
-                        className="flex-1 px-2 py-1.5 border border-neutral-200 outline-none text-xs bg-white focus:border-neutral-800 font-medium"
+                        className="flex-1 px-2 py-1.5 border border-neutral-200 outline-none text-xs bg-brand-cream focus:border-neutral-800 font-medium"
                         value={attr.attr_value}
                         onChange={(e) =>
                           onUpdateVariantAttrField(vIdx, aIdx, 'attr_value', e.target.value)

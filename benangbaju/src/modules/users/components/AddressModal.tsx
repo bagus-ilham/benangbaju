@@ -399,7 +399,7 @@ export function AddressModal({
               ref={listboxRef}
               id={listboxId}
               role="listbox"
-              className="absolute z-10 w-full bg-white border border-neutral-200 shadow-lg max-h-48 overflow-y-auto mt-1 font-sans text-xs outline-none"
+              className="absolute z-10 w-full bg-brand-cream border border-neutral-200 shadow-lg max-h-48 overflow-y-auto mt-1 font-sans text-xs outline-none"
             >
               {searchResults.map((district, index) => (
                 <div

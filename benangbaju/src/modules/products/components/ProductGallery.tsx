@@ -280,7 +280,7 @@ export function ProductGallery({
             {/* Close Button */}
             <button
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-4 right-4 md:top-6 md:right-6 p-3 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50 cursor-pointer"
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-3 text-white/70 hover:text-white bg-brand-cream/10 hover:bg-brand-cream/20 rounded-full transition-colors z-50 cursor-pointer"
               aria-label="Tutup foto"
             >
               <X className="w-6 h-6" />
@@ -308,14 +308,14 @@ export function ProductGallery({
               <>
                 <button
                   onClick={() => paginate(-1)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
                   aria-label="Foto sebelumnya"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => paginate(1)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
                   aria-label="Foto berikutnya"
                 >
                   <ChevronRight className="w-6 h-6" />
@@ -385,7 +385,7 @@ export function ProductThumbnails({
         <button
           type="button"
           onClick={() => scroll('left')}
-          className="hidden md:flex absolute left-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          className="hidden md:flex absolute left-0 z-10 p-1 bg-brand-cream/80 hover:bg-brand-cream shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -423,7 +423,7 @@ export function ProductThumbnails({
         <button
           type="button"
           onClick={() => scroll('right')}
-          className="hidden md:flex absolute right-0 z-10 p-1 bg-white/80 hover:bg-white shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
+          className="hidden md:flex absolute right-0 z-10 p-1 bg-brand-cream/80 hover:bg-brand-cream shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-5 h-5" />

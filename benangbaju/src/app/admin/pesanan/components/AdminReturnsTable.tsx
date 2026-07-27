@@ -21,7 +21,7 @@ export function AdminReturnsTable({
 }: AdminReturnsTableProps) {
   if (isLoading) {
     return (
-      <div className="py-8 bg-white border border-neutral-200">
+      <div className="py-8 bg-brand-cream border border-neutral-200">
         <TableSkeleton columns={6} rows={3} />
       </div>
     )
@@ -108,15 +108,14 @@ export function AdminReturnsTable({
               </td>
               <td className="py-4 px-4 text-center">
                 <span
-                  className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2.5 py-1 ${
-                    ret.status === 'completed'
+                  className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2.5 py-1 ${ret.status === 'completed'
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : ret.status === 'rejected'
                         ? 'bg-red-50 text-red-700 border border-red-200'
                         : ret.status === 'approved'
                           ? 'bg-blue-50 text-blue-700 border border-blue-200'
                           : 'bg-amber-50 text-amber-700 border border-amber-200'
-                  }`}
+                    }`}
                 >
                   {ret.status === 'pending'
                     ? 'Menunggu'

@@ -93,7 +93,7 @@ export default function AdminAnalyticsPage() {
           <select
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
-            className="text-xs font-semibold py-2 px-3 border border-neutral-200 bg-white text-neutral-900 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-900"
+            className="text-xs font-semibold py-2 px-3 border border-neutral-200 bg-brand-cream text-neutral-900 rounded-2xl focus:outline-none focus:ring-1 focus:ring-neutral-900"
           >
             <option value={7}>7 Hari Terakhir</option>
             <option value={30}>30 Hari Terakhir</option>
@@ -103,7 +103,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-neutral-200 p-4 rounded-2xl">
+        <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
             <TrendingUp size={16} className="mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pendapatan</h3>
@@ -112,7 +112,7 @@ export default function AdminAnalyticsPage() {
           <p className="text-[10px] text-neutral-400 mt-1">Dalam {days} hari terakhir</p>
         </div>
 
-        <div className="bg-white border border-neutral-200 p-4 rounded-2xl">
+        <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
             <ShoppingBag size={16} className="mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pesanan Sukses</h3>
@@ -121,7 +121,7 @@ export default function AdminAnalyticsPage() {
           <p className="text-[10px] text-neutral-400 mt-1">Dalam {days} hari terakhir</p>
         </div>
 
-        <div className="bg-white border border-neutral-200 p-4 rounded-2xl">
+        <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
             <ShoppingCart size={16} className="mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">
@@ -132,7 +132,7 @@ export default function AdminAnalyticsPage() {
           <p className="text-[10px] text-neutral-400 mt-1">Total Abandoned Carts (&gt;24j)</p>
         </div>
 
-        <div className="bg-white border border-neutral-200 p-4 rounded-2xl">
+        <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
             <Ticket size={16} className="mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Voucher Digunakan</h3>
@@ -146,7 +146,7 @@ export default function AdminAnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Grafik Penjualan */}
-        <div className="bg-white border border-neutral-200 p-6 rounded-2xl">
+        <div className="bg-brand-cream border border-neutral-200 p-6 rounded-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">
             Tren Pendapatan
           </h3>
@@ -190,7 +190,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Top Products */}
-        <div className="bg-white border border-neutral-200 p-6 rounded-2xl">
+        <div className="bg-brand-cream border border-neutral-200 p-6 rounded-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">
             Produk Terlaris
           </h3>
@@ -235,7 +235,7 @@ export default function AdminAnalyticsPage() {
 
       {/* Tabel Voucher */}
       {analytics.voucherUsage.length > 0 && (
-        <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
+        <div className="bg-brand-cream border border-neutral-200 rounded-2xl overflow-hidden">
           <div className="p-4 border-b border-neutral-200">
             <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900">
               Performa Voucher (Berdasarkan Pesanan Sukses)

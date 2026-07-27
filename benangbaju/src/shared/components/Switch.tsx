@@ -38,7 +38,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
                 stiffness: 700,
                 damping: 30,
               }}
-              className="w-4 h-4 bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2)] ml-0.5"
+              className="w-4 h-4 bg-brand-cream rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2)] ml-0.5"
               style={{
                 x: checked ? 14 : 0,
               }}

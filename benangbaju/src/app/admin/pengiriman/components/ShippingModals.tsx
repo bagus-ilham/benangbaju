@@ -96,11 +96,10 @@ export function ShippingZoneModal({
                 <div
                   key={p}
                   onClick={() => handleToggleProvince(p)}
-                  className={`p-2 border text-[10px] font-medium text-center cursor-pointer transition select-none ${
-                    isSelected
+                  className={`p-2 border text-[10px] font-medium text-center cursor-pointer transition select-none ${isSelected
                       ? 'bg-neutral-950 text-white border-neutral-950'
-                      : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'
-                  }`}
+                      : 'bg-brand-cream text-neutral-600 border-neutral-200 hover:border-neutral-400'
+                    }`}
                 >
                   {p}
                 </div>

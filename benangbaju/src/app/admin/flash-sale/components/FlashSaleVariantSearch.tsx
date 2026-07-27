@@ -33,7 +33,7 @@ export function FlashSaleVariantSearch({
           {filteredVariants.map((v) => (
             <div
               key={v.id}
-              className="flex justify-between items-center p-2 border border-neutral-100 bg-white hover:border-brand-accent transition cursor-pointer rounded-xl mb-1"
+              className="flex justify-between items-center p-2 border border-neutral-100 bg-brand-cream hover:border-brand-accent transition cursor-pointer rounded-xl mb-1"
               onClick={() => handleAddVariantItem(v)}
             >
               <div>

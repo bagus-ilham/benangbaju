@@ -86,7 +86,7 @@ export function BannerFormModal({
               <div className="flex-1 space-y-2">
                 <input
                   type="text"
-                  className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                  className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-brand-cream focus:border-neutral-800"
                   value={image_url}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://... atau unggah gambar"
@@ -153,7 +153,7 @@ export function BannerFormModal({
               <div className="flex-1 space-y-2">
                 <input
                   type="text"
-                  className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-white focus:border-neutral-800"
+                  className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-[11px] bg-brand-cream focus:border-neutral-800"
                   value={image_mobile_url}
                   onChange={(e) => setImageMobileUrl(e.target.value)}
                   placeholder="https://... atau unggah gambar"

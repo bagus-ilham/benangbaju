@@ -86,11 +86,11 @@ export default function AdminCustomersPage(): React.JSX.Element {
       </AdminPageHeader>
 
       {/* Search Bar */}
-      <div className="border border-neutral-200 bg-white p-4 rounded-2xl flex items-center">
+      <div className="border border-neutral-200 bg-brand-cream p-4 rounded-2xl flex items-center">
         <div className="relative flex-1 max-w-md">
           <input
             type="text"
-            className="w-full bg-neutral-50 text-xs px-4 py-3 pl-10 border border-neutral-200 rounded-2xl focus:border-brand-black focus:bg-white outline-none"
+            className="w-full bg-neutral-50 text-xs px-4 py-3 pl-10 border border-neutral-200 rounded-2xl focus:border-brand-black focus:bg-brand-cream outline-none"
             placeholder="Cari pelanggan berdasarkan nama, email, atau telepon..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -101,7 +101,7 @@ export default function AdminCustomersPage(): React.JSX.Element {
       </div>
 
       {/* Customers List Table */}
-      <div className="border border-neutral-200 bg-white rounded-2xl">
+      <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
         {filteredCustomers.length === 0 ? (
           <div className="text-center py-12 text-neutral-400 text-xs italic">
             {searchQuery
@@ -162,11 +162,10 @@ export default function AdminCustomersPage(): React.JSX.Element {
                     </td>
                     <td className="py-4 px-6 text-center">
                       <span
-                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-2xl ${
-                          customer.is_active
+                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-2xl ${customer.is_active
                             ? 'bg-green-50 text-green-700 border border-green-200'
                             : 'bg-red-50 text-red-700 border border-red-200'
-                        }`}
+                          }`}
                       >
                         {customer.is_active ? 'Aktif' : 'Diblokir'}
                       </span>

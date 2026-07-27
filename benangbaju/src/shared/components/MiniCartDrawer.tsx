@@ -216,7 +216,7 @@ export function MiniCartDrawer(): React.JSX.Element {
 
                       <div className="flex justify-between items-end pt-1">
                         {/* Qty adjustments */}
-                        <div className="flex items-center border border-neutral-200 bg-white scale-90 origin-left">
+                        <div className="flex items-center border border-neutral-200 bg-brand-cream scale-90 origin-left">
                           <button
                             onClick={() =>
                               handleQtyChange(item.variantId, item.quantity, -1, item.stock)

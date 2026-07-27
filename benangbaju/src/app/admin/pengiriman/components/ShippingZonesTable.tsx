@@ -23,11 +23,11 @@ export function ShippingZonesTable({
   onEdit,
   onDelete,
 }: ShippingZonesTableProps) {
-  if (isLoading) return <div className="h-40 bg-white border border-neutral-200 animate-pulse" />
+  if (isLoading) return <div className="h-40 bg-brand-cream border border-neutral-200 animate-pulse" />
 
   if (isError) {
     return (
-      <div className="text-center py-12 border border-neutral-200 bg-white">
+      <div className="text-center py-12 border border-neutral-200 bg-brand-cream">
         <p className="text-red-500 text-xs font-semibold uppercase">Gagal memuat zona pengiriman</p>
         <Button
           onClick={onRefetch}
@@ -42,7 +42,7 @@ export function ShippingZonesTable({
 
   if (zones.length === 0) {
     return (
-      <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-white">
+      <div className="text-center py-12 border border-dashed border-neutral-200 text-neutral-400 text-xs italic bg-brand-cream">
         Belum ada zona pengiriman custom yang terdaftar.
       </div>
     )
@@ -55,17 +55,16 @@ export function ShippingZonesTable({
           key={zone.id}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border border-neutral-200 bg-white p-5 space-y-4 flex flex-col justify-between hover:shadow-xs transition duration-150"
+          className="border border-neutral-200 bg-brand-cream p-5 space-y-4 flex flex-col justify-between hover:shadow-xs transition duration-150"
         >
           <div className="space-y-2">
             <div className="flex justify-between items-start">
               <h3 className="font-sans font-bold text-brand-plum text-base">{zone.name}</h3>
               <span
-                className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
-                  zone.is_active
+                className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${zone.is_active
                     ? 'bg-green-50 text-green-700 border border-green-200'
                     : 'bg-red-50 text-red-700 border border-red-200'
-                }`}
+                  }`}
               >
                 {zone.is_active ? 'Aktif' : 'Nonaktif'}
               </span>

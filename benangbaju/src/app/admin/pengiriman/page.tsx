@@ -248,21 +248,19 @@ export default function AdminShippingPage(): React.JSX.Element {
       <div className="flex border-b border-neutral-200">
         <button
           onClick={() => setActiveTab('zones')}
-          className={`flex items-center py-3 px-6 text-xs font-heading tracking-wider uppercase font-semibold border-b-2 transition-all ${
-            activeTab === 'zones'
-              ? 'border-neutral-900 text-neutral-950 bg-white'
+          className={`flex items-center py-3 px-6 text-xs font-heading tracking-wider uppercase font-semibold border-b-2 transition-all ${activeTab === 'zones'
+              ? 'border-neutral-900 text-neutral-950 bg-brand-cream'
               : 'border-transparent text-neutral-400 hover:text-neutral-700'
-          }`}
+            }`}
         >
           <MapPin size={13} className="mr-2" /> Zona Pengiriman ({zones?.length || 0})
         </button>
         <button
           onClick={() => setActiveTab('rates')}
-          className={`flex items-center py-3 px-6 text-xs font-heading tracking-wider uppercase font-semibold border-b-2 transition-all ${
-            activeTab === 'rates'
-              ? 'border-neutral-900 text-neutral-950 bg-white'
+          className={`flex items-center py-3 px-6 text-xs font-heading tracking-wider uppercase font-semibold border-b-2 transition-all ${activeTab === 'rates'
+              ? 'border-neutral-900 text-neutral-950 bg-brand-cream'
               : 'border-transparent text-neutral-400 hover:text-neutral-700'
-          }`}
+            }`}
         >
           <Truck size={13} className="mr-2" /> Tarif Kurir ({rates?.length || 0})
         </button>

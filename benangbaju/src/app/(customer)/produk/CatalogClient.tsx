@@ -182,7 +182,7 @@ export function CatalogClient({
             </span>
 
             {categorySlug && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
                 <span>
                   Kategori: {categories.find((c) => c.slug === categorySlug)?.name || categorySlug}
                 </span>
@@ -197,7 +197,7 @@ export function CatalogClient({
             )}
 
             {searchQuery && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
                 <span>Cari: &quot;{searchQuery}&quot;</span>
                 <button
                   onClick={() => updateFilters({ q: null })}
@@ -210,7 +210,7 @@ export function CatalogClient({
             )}
 
             {sortBy && sortBy !== 'newest' && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-white border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
                 <span>Urutan: {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}</span>
                 <button
                   onClick={() => handleSortSelect('newest')}
@@ -286,7 +286,7 @@ export function CatalogClient({
                 <button
                   disabled={page <= 1}
                   onClick={() => handlePageSelect(page - 1)}
-                  className="p-2 border border-neutral-200 hover:border-brand-black bg-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  className="p-2 border border-neutral-200 hover:border-brand-black bg-brand-cream disabled:opacity-30 disabled:pointer-events-none transition-colors"
                   aria-label="Halaman sebelumnya"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -299,7 +299,7 @@ export function CatalogClient({
                 <button
                   disabled={page >= totalPages}
                   onClick={() => handlePageSelect(page + 1)}
-                  className="p-2 border border-neutral-200 hover:border-brand-black bg-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  className="p-2 border border-neutral-200 hover:border-brand-black bg-brand-cream disabled:opacity-30 disabled:pointer-events-none transition-colors"
                   aria-label="Halaman berikutnya"
                 >
                   <ChevronRight className="h-4 w-4" />

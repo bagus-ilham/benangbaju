@@ -134,9 +134,8 @@ export default function AdminProductListPage(): React.JSX.Element {
         render: (p) => (
           <button
             onClick={() => handleToggleFeatured(p.id, p.is_featured)}
-            className={`inline-flex items-center justify-center p-1.5 transition ${
-              p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
-            }`}
+            className={`inline-flex items-center justify-center p-1.5 transition ${p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
+              }`}
           >
             <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
           </button>
@@ -149,11 +148,10 @@ export default function AdminProductListPage(): React.JSX.Element {
         render: (p) => (
           <button
             onClick={() => handleToggleActive(p.id, p.is_active)}
-            className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
-              p.is_active
+            className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${p.is_active
                 ? 'bg-neutral-900 text-white border border-neutral-900'
-                : 'bg-white text-neutral-400 border border-neutral-200'
-            }`}
+                : 'bg-brand-cream text-neutral-400 border border-neutral-200'
+              }`}
           >
             {p.is_active ? 'Aktif' : 'Nonaktif'}
           </button>
@@ -217,7 +215,7 @@ export default function AdminProductListPage(): React.JSX.Element {
       </AdminPageHeader>
 
       {/* Filters Toolbar */}
-      <div className="flex bg-white border border-neutral-200 p-4 rounded-2xl items-center space-x-3 shadow-sm">
+      <div className="flex bg-brand-cream border border-neutral-200 p-4 rounded-2xl items-center space-x-3 shadow-sm">
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
           <input
@@ -235,7 +233,7 @@ export default function AdminProductListPage(): React.JSX.Element {
       </div>
 
       {/* Main Table */}
-      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="border border-neutral-200 bg-brand-cream rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         {isError ? (
           <div className="py-24 text-center">
             <p className="text-red-500 text-xs font-semibold uppercase">

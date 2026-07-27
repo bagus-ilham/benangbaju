@@ -146,16 +146,16 @@ export function ProductInfoSection({
         {product.product_variants.some((v) =>
           v.product_variant_attrs?.some((a) => a.attr_name.toLowerCase().includes('ukuran'))
         ) && (
-          <div className="flex justify-end absolute top-1 right-0 z-10">
-            <button
-              type="button"
-              onClick={onSizeGuideOpen}
-              className="text-[9px] uppercase tracking-wider font-heading font-semibold text-brand-accent hover:text-brand-accent-light transition-colors underline underline-offset-2 cursor-pointer"
-            >
-              Panduan Ukuran
-            </button>
-          </div>
-        )}
+            <div className="flex justify-end absolute top-1 right-0 z-10">
+              <button
+                type="button"
+                onClick={onSizeGuideOpen}
+                className="text-[9px] uppercase tracking-wider font-heading font-semibold text-brand-accent hover:text-brand-accent-light transition-colors underline underline-offset-2 cursor-pointer"
+              >
+                Panduan Ukuran
+              </button>
+            </div>
+          )}
         <VariantPicker
           variants={product.product_variants}
           selectedVariantId={selectedVariant?.id || null}
@@ -181,7 +181,7 @@ export function ProductInfoSection({
       <motion.div variants={itemVariants} className="space-y-3 pt-2">
         <div className="flex items-center space-x-3">
           {/* Quantity adjustments */}
-          <div className="flex items-center border border-neutral-200 bg-white rounded-xl overflow-hidden shadow-sm hover:border-neutral-300 transition-colors">
+          <div className="flex items-center border border-neutral-200 bg-brand-cream rounded-xl overflow-hidden shadow-sm hover:border-neutral-300 transition-colors">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onDecrement}
@@ -208,7 +208,7 @@ export function ProductInfoSection({
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={onToggleWishlist}
-            className="p-4 border border-neutral-200 hover:border-brand-accent bg-white transition-all text-neutral-500 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
+            className="p-4 border border-neutral-200 hover:border-brand-accent bg-brand-cream transition-all text-neutral-500 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
             <Heart
@@ -236,7 +236,7 @@ export function ProductInfoSection({
                 : 'Tambah Ke Keranjang'}
           </Button>
 
-        {/* Buy Now Button */}
+          {/* Buy Now Button */}
           <Button
             onClick={onBuyNow}
             variant="accent"

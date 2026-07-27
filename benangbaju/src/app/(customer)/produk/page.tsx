@@ -48,9 +48,9 @@ async function CatalogContent({
   const sortParam = typeof params.urutkan === 'string' ? params.urutkan : undefined
   const sortBy =
     sortParam === 'price-low' ||
-    sortParam === 'price-high' ||
-    sortParam === 'popular' ||
-    sortParam === 'featured'
+      sortParam === 'price-high' ||
+      sortParam === 'popular' ||
+      sortParam === 'featured'
       ? sortParam
       : 'newest'
   const searchQuery = typeof params.q === 'string' ? params.q : undefined
@@ -69,7 +69,7 @@ async function CatalogContent({
 
   if (isError || !data) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero
           eyebrow="Katalog Pakaian"
           title="Koleksi Kami"
@@ -109,7 +109,7 @@ export default function CatalogPage({ searchParams }: CatalogPageProps): React.J
   return (
     <Suspense
       fallback={
-        <div className="bg-white min-h-screen">
+        <div className="bg-brand-cream min-h-screen">
           <PageHero
             eyebrow="Katalog Pakaian"
             title="Koleksi Kami"

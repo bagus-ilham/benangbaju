@@ -61,7 +61,7 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
           If we want to show title/subtitle, we can add it here. For now, we keep it simple. */}
       {(banner.title || banner.subtitle) && (
         <div className="absolute inset-0 bg-black/20 flex items-center justify-center text-center">
-          <div className="p-6 bg-white/90 backdrop-blur-sm shadow-xl max-w-lg">
+          <div className="p-6 bg-brand-cream/90 backdrop-blur-sm shadow-xl max-w-lg">
             {banner.subtitle && (
               <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-500 mb-2">
                 {banner.subtitle}

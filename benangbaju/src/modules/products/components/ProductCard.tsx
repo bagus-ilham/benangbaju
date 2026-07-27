@@ -72,7 +72,7 @@ export const ProductCard = React.memo(function ProductCard({
         <div
           className={cn(
             t.visible ? 'animate-enter' : 'animate-leave',
-            'max-w-sm w-full bg-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden border border-neutral-200/50 flex pointer-events-auto'
+            'max-w-sm w-full bg-brand-cream shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden border border-neutral-200/50 flex pointer-events-auto'
           )}
         >
           <div className="flex-1 w-0 p-4">
@@ -234,7 +234,7 @@ export const ProductCard = React.memo(function ProductCard({
               toast.success('Produk disimpan ke Wishlist', { icon: '❤️' })
             }
           }}
-          className="absolute top-3 right-3 p-1.5 bg-white/85 hover:bg-white border border-neutral-100 transition-all rounded-xl duration-300 hover:scale-110 active:scale-90 z-10 shadow-sm"
+          className="absolute top-3 right-3 p-1.5 bg-brand-cream/85 hover:bg-brand-cream border border-neutral-100 transition-all rounded-xl duration-300 hover:scale-110 active:scale-90 z-10 shadow-sm"
           aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           aria-pressed={liked}
         >
@@ -256,7 +256,7 @@ export const ProductCard = React.memo(function ProductCard({
 
         {/* Special Out of Stock overlay */}
         {product.product_variants.every((v) => v.stock === 0) && (
-          <div className="absolute inset-0 bg-white/60 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 bg-brand-cream/60 flex items-center justify-center pointer-events-none">
             <Badge variant="brand" size="md">
               Habis Terjual
             </Badge>

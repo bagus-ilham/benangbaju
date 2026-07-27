@@ -30,7 +30,7 @@ export function SettingsForm({
   return (
     <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl">
       {Object.entries(settingsByGroup).map(([group, list]) => (
-        <div key={group} className="border border-neutral-200 bg-white p-5 rounded-2xl space-y-4">
+        <div key={group} className="border border-neutral-200 bg-brand-cream p-5 rounded-2xl space-y-4">
           <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
             {groupLabels[group] || group}
           </h3>
@@ -39,7 +39,7 @@ export function SettingsForm({
             {list.map((setting) => (
               <div key={setting.key} className="space-y-1">
                 {setting.key === 'homepage_spotlight_collection_1' ||
-                setting.key === 'homepage_spotlight_collection_2' ? (
+                  setting.key === 'homepage_spotlight_collection_2' ? (
                   <Select
                     label={setting.label || setting.key}
                     value={fields[setting.key] || ''}

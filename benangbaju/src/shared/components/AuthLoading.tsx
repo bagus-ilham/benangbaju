@@ -16,7 +16,7 @@ export function AuthLoading({
     <div
       className={cn(
         'flex flex-col items-center justify-center font-heading',
-        fullScreen ? 'min-h-[60vh] bg-white' : 'py-16',
+        fullScreen ? 'min-h-[60vh] bg-brand-cream' : 'py-16',
         className
       )}
     >

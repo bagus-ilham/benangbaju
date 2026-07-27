@@ -81,7 +81,7 @@ export function ProductGridSection({
                 size="md"
                 className={
                   isDark
-                    ? 'bg-transparent text-white border-white/30 hover:bg-white hover:text-brand-black'
+                    ? 'bg-transparent text-white border-white/30 hover:bg-brand-cream hover:text-brand-black'
                     : undefined
                 }
               >

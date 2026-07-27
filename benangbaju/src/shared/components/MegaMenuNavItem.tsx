@@ -111,7 +111,7 @@ export function MegaMenuNavItem({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-0 top-full w-full bg-white shadow-xl border-t border-neutral-200 z-50 overflow-hidden"
+            className="absolute left-0 top-full w-full bg-brand-cream shadow-xl border-t border-neutral-200 z-50 overflow-hidden"
           >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
               <div className="grid grid-cols-12 gap-8 items-start">
@@ -159,7 +159,7 @@ export function MegaMenuNavItem({
                       <button
                         type="button"
                         onClick={() => handleScroll('left')}
-                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-white hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
+                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
                         aria-label="Scroll left"
                       >
                         <ChevronLeft className="h-4 w-4" />
@@ -167,7 +167,7 @@ export function MegaMenuNavItem({
                       <button
                         type="button"
                         onClick={() => handleScroll('right')}
-                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-white hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
                         aria-label="Scroll right"
                       >
                         <ChevronRight className="h-4 w-4" />
@@ -181,34 +181,34 @@ export function MegaMenuNavItem({
                   >
                     {isLoading
                       ? Array.from({ length: 4 }).map((_, i) => (
-                          <div
-                            key={i}
-                            className="flex-none w-[240px] aspect-[4/3] rounded-xl bg-neutral-100 animate-pulse"
-                          />
-                        ))
+                        <div
+                          key={i}
+                          className="flex-none w-[240px] aspect-[4/3] rounded-xl bg-neutral-100 animate-pulse"
+                        />
+                      ))
                       : items.map((item) => (
-                          <Link
-                            key={item.slug}
-                            href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
-                            className="flex-none w-[240px] aspect-[4/3] snap-start rounded-xl overflow-hidden relative group/card bg-neutral-100 flex items-center justify-center cursor-pointer shadow-sm hover:shadow-md transition-all"
-                          >
-                            {item.image_url ? (
-                              <Image
-                                src={getProxiedImageUrl(item.image_url)}
-                                alt={item.name}
-                                fill
-                                sizes="240px"
-                                className="object-cover transition-transform duration-700 group-hover/card:scale-105"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center" />
-                            )}
-                            <div className="absolute inset-0 bg-black/25 group-hover/card:bg-black/40 transition-colors duration-300" />
-                            <h4 className="absolute z-10 text-white font-heading text-sm md:text-base uppercase tracking-wider text-center px-3 font-semibold drop-shadow-md">
-                              {item.name}
-                            </h4>
-                          </Link>
-                        ))}
+                        <Link
+                          key={item.slug}
+                          href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
+                          className="flex-none w-[240px] aspect-[4/3] snap-start rounded-xl overflow-hidden relative group/card bg-neutral-100 flex items-center justify-center cursor-pointer shadow-sm hover:shadow-md transition-all"
+                        >
+                          {item.image_url ? (
+                            <Image
+                              src={getProxiedImageUrl(item.image_url)}
+                              alt={item.name}
+                              fill
+                              sizes="240px"
+                              className="object-cover transition-transform duration-700 group-hover/card:scale-105"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center" />
+                          )}
+                          <div className="absolute inset-0 bg-black/25 group-hover/card:bg-black/40 transition-colors duration-300" />
+                          <h4 className="absolute z-10 text-white font-heading text-sm md:text-base uppercase tracking-wider text-center px-3 font-semibold drop-shadow-md">
+                            {item.name}
+                          </h4>
+                        </Link>
+                      ))}
                   </div>
                 </div>
               </div>

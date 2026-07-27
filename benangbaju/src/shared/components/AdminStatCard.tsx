@@ -29,7 +29,7 @@ export function AdminStatCard({
   return (
     <div
       className={cn(
-        'border border-neutral-200 bg-white p-5 space-y-3 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 card-hover-lift gold-border-hover rounded-2xl',
+        'border border-neutral-200 bg-brand-cream p-5 space-y-3 transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 card-hover-lift gold-border-hover rounded-2xl',
         className
       )}
     >

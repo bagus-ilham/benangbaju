@@ -27,7 +27,7 @@ export function CustomToast({
     <div
       className={cn(
         t.visible ? 'animate-enter' : 'animate-leave',
-        'max-w-sm w-full bg-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] border border-neutral-200/50 rounded-2xl flex pointer-events-auto overflow-hidden'
+        'max-w-sm w-full bg-brand-cream shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] border border-neutral-200/50 rounded-2xl flex pointer-events-auto overflow-hidden'
       )}
     >
       <div className="flex-1 w-0 p-4">

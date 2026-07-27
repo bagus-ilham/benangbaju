@@ -78,7 +78,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: sanitizeJsonLd(websiteJsonLd) }}
       />
-      <div className="flex-1 flex flex-col min-h-screen bg-white">
+      <div className="flex-1 flex flex-col min-h-screen bg-brand-cream">
         {/* 1. Banner */}
         <HeroSection banners={heroBanners} />
 

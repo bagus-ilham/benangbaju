@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function RootLoading(): React.JSX.Element {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white font-heading">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-cream font-heading">
       <div className="flex flex-col items-center space-y-4">
         {/* Branded Text Shimmer */}
         <div className="text-xl md:text-2xl font-light tracking-[0.3em] uppercase text-brand-black select-none text-shimmer">

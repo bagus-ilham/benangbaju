@@ -96,11 +96,10 @@ export function CollectionListTable({
               <td className="py-4 px-4 text-center">
                 <button
                   onClick={() => onToggleActive(col)}
-                  className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition rounded-full ${
-                    col.is_active
+                  className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition rounded-full ${col.is_active
                       ? 'bg-neutral-900 text-white border border-neutral-900'
-                      : 'bg-white text-neutral-400 border border-neutral-200'
-                  }`}
+                      : 'bg-brand-cream text-neutral-400 border border-neutral-200'
+                    }`}
                 >
                   {col.is_active ? 'Aktif' : 'Nonaktif'}
                 </button>

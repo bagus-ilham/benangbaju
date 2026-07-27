@@ -149,7 +149,7 @@ export function ReturnReviewModal({
         {/* Return Items List */}
         <div className="space-y-2">
           <p className="text-[10px] uppercase font-bold text-neutral-400">Daftar Item Retur:</p>
-          <div className="border border-neutral-200 divide-y divide-neutral-100 p-3 bg-white max-h-36 overflow-y-auto rounded-2xl">
+          <div className="border border-neutral-200 divide-y divide-neutral-100 p-3 bg-brand-cream max-h-36 overflow-y-auto rounded-2xl">
             {selectedReturn.return_items?.map((item) => (
               <div key={item.id} className="py-2.5 flex justify-between items-center text-[11px]">
                 <div>

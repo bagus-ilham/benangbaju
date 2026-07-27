@@ -65,7 +65,7 @@ export function ProductGeneralInfoSection({
   onToggleCollection,
 }: ProductGeneralInfoSectionProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 bg-white p-6 rounded-2xl space-y-5 shadow-sm">
+    <div className="border border-neutral-200 bg-brand-cream p-6 rounded-2xl space-y-5 shadow-sm">
       <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2.5">
         Informasi Umum
       </h3>
@@ -156,7 +156,7 @@ export function ProductGeneralInfoSection({
           Panduan Ukuran (Size Guide)
         </label>
         <div className="flex gap-4 items-start border border-neutral-200 p-3 bg-neutral-50/20">
-          <div className="w-20 h-20 bg-white border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+          <div className="w-20 h-20 bg-brand-cream border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
             {sizeGuide ? (
               <Image
                 src={getProxiedImageUrl(sizeGuide)}
@@ -178,7 +178,7 @@ export function ProductGeneralInfoSection({
           <div className="flex-1 space-y-2">
             <input
               type="text"
-              className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-xs bg-white focus:border-neutral-800"
+              className="w-full px-2 py-1.5 border border-neutral-200 outline-none text-xs bg-brand-cream focus:border-neutral-800"
               value={sizeGuide}
               onChange={(e) => onSizeGuideChange(e.target.value)}
               placeholder="https://... atau unggah gambar size guide"
@@ -206,7 +206,7 @@ export function ProductGeneralInfoSection({
               />
               <label
                 htmlFor="size-guide-upload"
-                className="cursor-pointer inline-flex items-center text-[10px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-xl bg-white"
+                className="cursor-pointer inline-flex items-center text-[10px] font-bold uppercase tracking-wider py-1.5 px-3 border border-neutral-800 text-neutral-850 hover:bg-neutral-900 hover:text-white transition duration-150 rounded-xl bg-brand-cream"
               >
                 Unggah Gambar
               </label>

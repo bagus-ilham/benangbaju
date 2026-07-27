@@ -102,7 +102,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
       />
 
       {/* Main Table */}
-      <div className="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
+      <div className="border border-neutral-200 bg-brand-cream rounded-2xl overflow-hidden">
         {isLoading ? (
           <div className="py-24 text-center">
             <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">

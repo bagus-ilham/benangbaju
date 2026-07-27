@@ -61,7 +61,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Kolom Profil */}
         <div className="space-y-6">
-          <div className="border border-neutral-200 bg-white p-6 rounded-2xl">
+          <div className="border border-neutral-200 bg-brand-cream p-6 rounded-2xl">
             <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400 mb-4 border-b border-neutral-100 pb-2">
               Profil Pelanggan
             </h3>
@@ -86,11 +86,10 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                 <div className="flex justify-between items-center text-xs border-b border-neutral-100 pb-2">
                   <span className="text-neutral-500">Status</span>
                   <span
-                    className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-2xl text-[9px] ${
-                      customer.is_active
+                    className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-2xl text-[9px] ${customer.is_active
                         ? 'bg-green-50 text-green-700 border border-green-200'
                         : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}
+                      }`}
                   >
                     {customer.is_active ? 'Aktif' : 'Diblokir'}
                   </span>
@@ -113,7 +112,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
         {/* Kolom Detail (Alamat, Cart, Wishlist) */}
         <div className="md:col-span-2 space-y-6">
           {/* Daftar Alamat */}
-          <div className="border border-neutral-200 bg-white rounded-2xl">
+          <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
             <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center">
               <MapPin size={16} className="text-neutral-500 mr-2" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
@@ -156,7 +155,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
           </div>
 
           {/* Keranjang Belanja */}
-          <div className="border border-neutral-200 bg-white rounded-2xl">
+          <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
             <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center">
               <ShoppingBag size={16} className="text-neutral-500 mr-2" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
@@ -209,7 +208,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
           </div>
 
           {/* Wishlist */}
-          <div className="border border-neutral-200 bg-white rounded-2xl">
+          <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
             <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center">
               <Heart size={16} className="text-neutral-500 mr-2" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">

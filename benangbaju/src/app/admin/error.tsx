@@ -16,7 +16,7 @@ export default function AdminError({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-stone-50 font-sans">
-      <div className="max-w-md bg-white border border-neutral-200 p-8 shadow-sm space-y-6">
+      <div className="max-w-md bg-brand-cream border border-neutral-200 p-8 shadow-sm space-y-6">
         <h1 className="text-xl font-heading font-semibold text-red-600 uppercase tracking-wider">
           System Error (Admin)
         </h1>

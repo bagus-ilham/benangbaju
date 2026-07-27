@@ -23,7 +23,7 @@ export function FlashSaleListTable({
   onDelete,
 }: FlashSaleListTableProps) {
   return (
-    <div className="border border-neutral-200 bg-white rounded-xl overflow-hidden shadow-sm">
+    <div className="border border-neutral-200 bg-brand-cream rounded-xl overflow-hidden shadow-sm">
       {isLoading ? (
         <div className="py-24 text-center">
           <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
@@ -77,11 +77,10 @@ export function FlashSaleListTable({
                     <td className="py-4 px-4 text-center">
                       <button
                         onClick={() => onToggleActive(camp)}
-                        className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition rounded-full ${
-                          camp.is_active
+                        className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition rounded-full ${camp.is_active
                             ? 'bg-neutral-900 text-white border border-neutral-900'
-                            : 'bg-white text-neutral-400 border border-neutral-200'
-                        }`}
+                            : 'bg-brand-cream text-neutral-400 border border-neutral-200'
+                          }`}
                       >
                         {camp.is_active ? 'Aktif' : 'Nonaktif'}
                       </button>

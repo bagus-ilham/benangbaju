@@ -64,11 +64,10 @@ export function OrderTrackingSection({
               className="flex md:flex-col items-center flex-1 w-full relative z-10"
             >
               <div
-                className={`relative flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-300 ${
-                  isCompleted
+                className={`relative flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-300 ${isCompleted
                     ? 'bg-brand-blue border-brand-blue text-brand-plum font-bold shadow-xs'
-                    : 'bg-white border-neutral-200 text-neutral-400'
-                } ${isActive ? 'ring-4 ring-brand-blue/40 scale-110' : ''}`}
+                    : 'bg-brand-cream border-neutral-200 text-neutral-400'
+                  } ${isActive ? 'ring-4 ring-brand-blue/40 scale-110' : ''}`}
               >
                 {step.icon}
                 {isActive && (
@@ -81,13 +80,12 @@ export function OrderTrackingSection({
               </div>
 
               <span
-                className={`ml-4 md:ml-0 md:mt-3 text-xs font-sans uppercase tracking-wider whitespace-nowrap text-center ${
-                  isActive
+                className={`ml-4 md:ml-0 md:mt-3 text-xs font-sans uppercase tracking-wider whitespace-nowrap text-center ${isActive
                     ? 'text-brand-plum font-bold'
                     : isCompleted
                       ? 'text-brand-plum font-bold'
                       : 'text-neutral-400'
-                }`}
+                  }`}
               >
                 {step.label}
               </span>
