@@ -27,19 +27,19 @@ export function ProductAccordionTabs({
 
   return (
     <motion.div variants={itemVariants} className="space-y-2 pt-2">
-      <div className="flex bg-neutral-100/80 p-1.5 rounded-2xl w-full border border-neutral-200/60 font-heading text-[10px] font-medium uppercase tracking-widest relative mb-2 shadow-inner">
+      <div className="flex bg-neutral-100/80 p-1.5 rounded-2xl w-full border border-neutral-200/60 font-sans text-[10px] font-bold uppercase tracking-widest relative mb-2 shadow-inner">
         <button
           onClick={() => setActiveTab('details')}
           className={cn(
-            'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl',
-            activeTab === 'details' ? 'text-brand-black' : 'text-neutral-500 hover:text-brand-black'
+            'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
+            activeTab === 'details' ? 'text-brand-plum font-bold' : 'text-neutral-500 hover:text-brand-plum'
           )}
         >
           Detail
           {activeTab === 'details' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-white shadow-sm rounded-xl -z-10 border border-neutral-200/50"
+              className="absolute inset-0 bg-white shadow-xs rounded-xl -z-10 border border-neutral-200/50"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -47,17 +47,17 @@ export function ProductAccordionTabs({
         <button
           onClick={() => setActiveTab('shipping')}
           className={cn(
-            'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl',
+            'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
             activeTab === 'shipping'
-              ? 'text-brand-black'
-              : 'text-neutral-500 hover:text-brand-black'
+              ? 'text-brand-plum font-bold'
+              : 'text-neutral-500 hover:text-brand-plum'
           )}
         >
           Panduan
           {activeTab === 'shipping' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-white shadow-sm rounded-xl -z-10 border border-neutral-200/50"
+              className="absolute inset-0 bg-white shadow-xs rounded-xl -z-10 border border-neutral-200/50"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -65,15 +65,15 @@ export function ProductAccordionTabs({
         <button
           onClick={() => setActiveTab('care')}
           className={cn(
-            'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl',
-            activeTab === 'care' ? 'text-brand-black' : 'text-neutral-500 hover:text-brand-black'
+            'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
+            activeTab === 'care' ? 'text-brand-plum font-bold' : 'text-neutral-500 hover:text-brand-plum'
           )}
         >
           Perawatan
           {activeTab === 'care' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-white shadow-sm rounded-xl -z-10 border border-neutral-200/50"
+              className="absolute inset-0 bg-white shadow-xs rounded-xl -z-10 border border-neutral-200/50"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}

@@ -46,10 +46,10 @@ export function ProductSizeGuideModal({
 
             <div className="space-y-4">
               <div className="space-y-1">
-                <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-brand-accent">
+                <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-brand-blue">
                   Panduan
                 </span>
-                <h3 className="text-sm font-heading font-bold uppercase tracking-wider text-brand-black">
+                <h3 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
                   Panduan Ukuran Pakaian (Size Chart)
                 </h3>
                 <p className="text-[10px] text-neutral-400 font-sans">
