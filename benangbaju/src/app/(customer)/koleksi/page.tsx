@@ -21,7 +21,7 @@ export default async function CollectionsIndexPage(): Promise<React.JSX.Element>
   const collections = collectionsRes.data || []
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Daftar Koleksi"
         title="Koleksi Spesial"

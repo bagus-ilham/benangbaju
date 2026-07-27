@@ -236,11 +236,11 @@ export function ProductInfoSection({
                 : 'Tambah Ke Keranjang'}
           </Button>
 
-          {/* Buy Now Button */}
+        {/* Buy Now Button */}
           <Button
             onClick={onBuyNow}
-            variant="primary"
-            className="flex-1"
+            variant="accent"
+            className="flex-1 font-bold"
             isLoading={isBuying}
             disabled={!selectedVariant || selectedVariant.stock === 0}
           >

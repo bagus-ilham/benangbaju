@@ -58,10 +58,15 @@ export function CheckoutSummaryCard({
   canSubmit,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
-      <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center border-b border-neutral-100 pb-3">
-        <ShoppingBag size={14} className="mr-2 text-neutral-500" /> Ringkasan Pesanan
+    <div className="border border-neutral-200 p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+      <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center justify-between border-b border-neutral-100 pb-3">
+        <span className="flex items-center">
+          <ShoppingBag size={14} className="mr-2 text-brand-blue" /> Ringkasan Pesanan
+        </span>
+        <div className="relative w-4 h-4 opacity-75">
+          <Image src="/LOGO_BENANGBAJU_10.png" alt="Kancing" fill className="object-contain" />
+        </div>
       </h2>
 
       {/* Items List */}
@@ -225,11 +230,11 @@ export function CheckoutSummaryCard({
       {/* Payment trigger button */}
       <Button
         type="button"
-        variant="primary"
+        variant="accent"
         onClick={onPaymentSubmit}
         isLoading={isCheckoutProcessing}
         loadingText={isPaymentTokenLoading ? 'Menghubungi DOKU...' : 'Memproses Pesanan...'}
-        className="w-full py-4 text-xs uppercase tracking-widest font-semibold"
+        className="w-full py-4 text-xs uppercase tracking-widest font-bold"
         disabled={!canSubmit}
       >
         Bayar Sekarang

@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import React, { useMemo } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { ProductVariant } from '@/modules/products/types'
@@ -131,15 +132,20 @@ export function VariantPicker({
   }
 
   return (
-    <div className="space-y-6 py-4 border-t border-b border-neutral-100">
+    <div className="space-y-6 py-4 border-t border-b border-neutral-200/80">
       {attributeKeys.map((name) => (
-        <div key={name} className="flex flex-col space-y-2">
-          <span
-            id={`label-variant-${name}`}
-            className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70"
-          >
-            Pilih {name}
-          </span>
+        <div key={name} className="flex flex-col space-y-2.5">
+          <div className="flex items-center space-x-2">
+            <div className="relative w-3.5 h-3.5 opacity-80 shrink-0">
+              <Image src="/LOGO_BENANGBAJU_10.png" alt="Kancing" fill className="object-contain" />
+            </div>
+            <span
+              id={`label-variant-${name}`}
+              className="text-[11px] uppercase tracking-wider font-sans font-bold text-brand-plum"
+            >
+              Pilih {name}
+            </span>
+          </div>
           <div
             className="flex flex-wrap gap-2"
             role="radiogroup"
@@ -161,21 +167,13 @@ export function VariantPicker({
                   whileTap={!disabled ? { scale: 0.97 } : {}}
                   transition={{ duration: 0.2 }}
                   className={cn(
-                    'relative px-4 py-2 border text-xs font-heading font-medium tracking-wide uppercase transition-all duration-200 disabled:opacity-30 disabled:line-through focus:outline-none focus:ring-4 focus:ring-brand-accent/20 rounded-xl',
+                    'relative px-4 py-2 border text-xs font-sans font-bold tracking-wide uppercase transition-all duration-200 disabled:opacity-30 disabled:line-through rounded-xl cursor-pointer select-none',
                     isSelected
-                      ? 'border-brand-black bg-brand-black text-white shadow-md'
-                      : 'border-neutral-200 text-brand-black hover:border-brand-black hover:bg-neutral-50'
+                      ? 'border-brand-blue bg-brand-blue text-brand-plum shadow-xs'
+                      : 'border-neutral-300 text-brand-plum hover:border-brand-plum hover:bg-white/80'
                   )}
                 >
                   {val}
-                  {isSelected && (
-                    <motion.div
-                      layoutId={`active-indicator-${name}`}
-                      className="absolute inset-0 border border-brand-black pointer-events-none rounded-xl"
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                      aria-hidden="true"
-                    />
-                  )}
                 </motion.button>
               )
             })}

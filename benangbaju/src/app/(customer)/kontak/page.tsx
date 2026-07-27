@@ -13,7 +13,7 @@ export default function KontakPage(): React.JSX.Element {
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Layanan Pelanggan"
         title="Hubungi Kami"
@@ -28,17 +28,17 @@ export default function KontakPage(): React.JSX.Element {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200 p-8 space-y-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
+            className="border border-neutral-200/80 p-8 space-y-6 bg-white rounded-2xl shadow-xs"
           >
-            <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
+            <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Layanan Pelanggan
             </h3>
 
             <div className="space-y-4 text-xs font-medium text-neutral-600">
               <div className="flex items-start space-x-3">
-                <Clock className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
+                <Clock className="h-4 w-4 text-brand-plum/70 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Jam Operasional</p>
+                  <p className="font-bold text-brand-plum mb-0.5">Jam Operasional</p>
                   <p>Senin – Jumat: 08:00 – 15:00 WIB</p>
                   <p>Sabtu: 09:00 – 14:00 WIB</p>
                   <p className="text-neutral-400 mt-1">Minggu &amp; Hari Libur Nasional: Libur</p>
@@ -46,12 +46,12 @@ export default function KontakPage(): React.JSX.Element {
               </div>
 
               <div className="flex items-start space-x-3">
-                <Mail className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
+                <Mail className="h-4 w-4 text-brand-plum/70 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Surel (Email)</p>
+                  <p className="font-bold text-brand-plum mb-0.5">Surel (Email)</p>
                   <a
                     href="mailto:support@benangbaju.com"
-                    className="hover:text-neutral-900 underline transition-colors"
+                    className="hover:text-brand-plum underline transition-colors"
                   >
                     support@benangbaju.com
                   </a>
@@ -59,9 +59,9 @@ export default function KontakPage(): React.JSX.Element {
               </div>
 
               <div className="flex items-start space-x-3">
-                <MapPin className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
+                <MapPin className="h-4 w-4 text-brand-plum/70 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Warehouse</p>
+                  <p className="font-bold text-brand-plum mb-0.5">Warehouse</p>
                   <p>Benangbaju Warehouse</p>
                   <p>Jl. Sarimadu Barat No. 155B, Sukawarna, Kecamatan Sukajadi</p>
                   <p>Kota Bandung, Jawa Barat 40164</p>
@@ -76,10 +76,10 @@ export default function KontakPage(): React.JSX.Element {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200 p-8 flex flex-col justify-between space-y-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
+            className="border border-neutral-200/80 p-8 flex flex-col justify-between space-y-6 bg-white rounded-2xl shadow-xs"
           >
             <div className="space-y-4">
-              <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
+              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
                 Respon Cepat via WhatsApp
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">
@@ -94,7 +94,7 @@ export default function KontakPage(): React.JSX.Element {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center space-x-2 bg-[#171717] text-white hover:bg-neutral-800 px-6 py-3.5 text-xs font-heading font-bold uppercase tracking-widest transition-all duration-300 rounded-xl shadow-xs hover:shadow-md hover:-translate-y-[1px] active:translate-y-0 btn-shine"
+                className="w-full inline-flex items-center justify-center space-x-2 bg-brand-blue text-brand-plum hover:bg-[#83a3aa] px-6 py-3.5 text-xs font-sans font-bold uppercase tracking-widest transition-all duration-300 rounded-xl shadow-xs hover:shadow-md hover:-translate-y-[1px] active:translate-y-0"
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>Hubungi via WhatsApp</span>

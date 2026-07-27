@@ -30,7 +30,7 @@ export default function ReturPage(): React.JSX.Element {
   ]
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Garansi Kepuasan"
         title="Kebijakan Retur"
@@ -40,10 +40,10 @@ export default function ReturPage(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Highlight Values Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-neutral-800" />
-                <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
+                <Calendar className="h-4 w-4 text-brand-plum" />
+                <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                   Batas Waktu 7 Hari
                 </h3>
               </div>

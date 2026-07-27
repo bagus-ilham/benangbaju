@@ -44,12 +44,12 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         className="flex items-center space-x-2"
       >
         <div
-          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold transition-all duration-300 ${isShippingDone ? 'bg-brand-black text-white shadow-sm' : checkoutStep === 'shipping' ? 'bg-brand-accent text-white shadow-[0_0_12px_rgba(163,144,128,0.5)] scale-110' : 'border border-neutral-300 text-neutral-400'}`}
+          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-bold transition-all duration-300 ${isShippingDone ? 'bg-brand-plum text-brand-cream shadow-sm' : checkoutStep === 'shipping' ? 'bg-brand-blue text-brand-plum shadow-sm scale-110' : 'border border-neutral-300 text-neutral-400'}`}
         >
           {isShippingDone ? <Check size={10} strokeWidth={3} /> : '2'}
         </div>
         <span
-          className={`text-[10px] uppercase tracking-wider font-heading transition-colors duration-300 ${isShippingDone ? 'font-medium text-brand-black' : checkoutStep === 'shipping' ? 'font-semibold text-brand-accent' : 'text-neutral-400'}`}
+          className={`text-[10px] uppercase tracking-wider font-sans transition-colors duration-300 ${isShippingDone ? 'font-bold text-brand-plum' : checkoutStep === 'shipping' ? 'font-bold text-brand-plum' : 'text-neutral-400'}`}
         >
           Pengiriman
         </span>
@@ -60,7 +60,7 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         aria-hidden="true"
       >
         <motion.div
-          className="h-full bg-brand-accent"
+          className="h-full bg-brand-blue"
           initial={{ width: isShippingDone ? '100%' : '0%' }}
           animate={{ width: isShippingDone ? '100%' : '0%' }}
           transition={{ duration: 0.4 }}
@@ -73,12 +73,12 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         className="flex items-center space-x-2"
       >
         <div
-          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-semibold transition-all duration-300 ${checkoutStep === 'payment' ? 'bg-brand-accent text-white shadow-[0_0_12px_rgba(163,144,128,0.5)] scale-110' : 'border border-neutral-300 text-neutral-400'}`}
+          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-bold transition-all duration-300 ${checkoutStep === 'payment' ? 'bg-brand-blue text-brand-plum shadow-sm scale-110' : 'border border-neutral-300 text-neutral-400'}`}
         >
           3
         </div>
         <span
-          className={`text-[10px] uppercase tracking-wider font-heading transition-colors duration-300 ${checkoutStep === 'payment' ? 'font-semibold text-brand-accent' : 'text-neutral-400'}`}
+          className={`text-[10px] uppercase tracking-wider font-sans transition-colors duration-300 ${checkoutStep === 'payment' ? 'font-bold text-brand-plum' : 'text-neutral-400'}`}
         >
           Pembayaran
         </span>

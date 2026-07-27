@@ -111,7 +111,7 @@ export function CatalogClient({
   const totalPages = Math.ceil(totalCount / limit)
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Katalog Pakaian"
         title={categorySlug ? 'Kategori Produk' : 'Koleksi Kami'}

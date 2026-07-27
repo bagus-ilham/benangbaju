@@ -53,7 +53,7 @@ function SearchResultsContent() {
 
   if (isError) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero
           eyebrow="Hasil Pencarian"
           title={query ? `"${query}"` : 'Pencarian Produk'}
@@ -75,7 +75,7 @@ function SearchResultsContent() {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Hasil Pencarian"
         title={query ? `"${query}"` : 'Pencarian Produk'}

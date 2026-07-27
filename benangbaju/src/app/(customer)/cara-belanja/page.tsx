@@ -39,7 +39,7 @@ const steps = [
 
 export default function CaraBelanjaPage(): React.JSX.Element {
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Panduan Belanja"
         title="Cara Belanja"
@@ -51,13 +51,13 @@ export default function CaraBelanjaPage(): React.JSX.Element {
           {steps.map((step) => (
             <div
               key={step.title}
-              className="border border-neutral-200 p-6 md:p-8 flex items-start gap-5 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 card-hover-lift gold-border-hover"
+              className="border border-neutral-200/80 p-6 md:p-8 flex items-start gap-5 bg-white rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
             >
-              <div className="p-3 bg-brand-accent-muted border border-brand-accent/20 shrink-0 rounded-xl">
-                <step.icon className="h-5 w-5 text-brand-accent" strokeWidth={1.5} />
+              <div className="p-3 bg-brand-blue/20 border border-brand-blue/30 shrink-0 rounded-xl">
+                <step.icon className="h-5 w-5 text-brand-plum" strokeWidth={1.75} />
               </div>
               <div className="space-y-2">
-                <h3 className="font-heading text-sm font-semibold text-brand-black uppercase tracking-wide">
+                <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wide">
                   {step.title}
                 </h3>
                 <p className="text-xs text-neutral-500 leading-relaxed font-medium">{step.desc}</p>

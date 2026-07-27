@@ -24,7 +24,7 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
   const parentCategories = categories.filter((cat) => !cat.parent_id)
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Kategori"
         title="Jelajahi Kategori"
@@ -37,8 +37,19 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
             <Link
               key={cat.id}
               href={`/kategori/${cat.slug}`}
-              className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-200 border border-neutral-100 card-hover-lift gold-border-hover block rounded-2xl"
+              className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-100 border border-neutral-200/80 rounded-2xl block hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
             >
+              {/* Subtle stitch pattern texture (< 15% opacity per §5) */}
+              <div className="absolute inset-0 opacity-10 z-10 pointer-events-none">
+                <Image
+                  src="/LOGO_BENANGBAJU_06.png"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  aria-hidden="true"
+                />
+              </div>
+
               {cat.image_url ? (
                 <Image
                   src={getProxiedImageUrl(cat.image_url)}
@@ -54,10 +65,10 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
                   </span>
                 </div>
               )}
-              <div className="absolute inset-0 gradient-overlay-dark opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-15" />
 
-              <div className="absolute top-4 left-4 px-2.5 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
-                <span className="text-[9px] font-heading font-semibold uppercase tracking-widest text-white/90">
+              <div className="absolute top-4 left-4 px-2.5 py-1 bg-brand-plum/40 backdrop-blur-sm border border-brand-cream/20 rounded-full z-20">
+                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-gold">
                   0{index + 1}
                 </span>
               </div>

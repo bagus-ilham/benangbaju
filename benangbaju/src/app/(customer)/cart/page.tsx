@@ -34,7 +34,7 @@ export default function CartPage(): React.JSX.Element {
 
   if (!isMounted) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero
           eyebrow="Pembelian Anda"
           title="Keranjang Belanja"
@@ -76,7 +76,7 @@ export default function CartPage(): React.JSX.Element {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Pembelian Anda"
         title="Keranjang Belanja"
@@ -98,98 +98,81 @@ export default function CartPage(): React.JSX.Element {
             {/* Left: Cart Items List (8 cols) */}
             <div className="lg:col-span-8 space-y-6">
               <div className="space-y-0">
-                <AnimatePresence initial={false}>
+                <AnimatePresence mode="popLayout">
                   {items.map((item) => (
                     <motion.div
                       key={item.variantId}
                       layout
-                      initial={{ opacity: 0, height: 0, y: 15 }}
-                      animate={{ opacity: 1, height: 'auto', y: 0 }}
-                      exit={{ opacity: 0, height: 0, y: -15, transition: { duration: 0.2 } }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                      className="flex py-6 border-b border-neutral-100 last:border-0 space-x-4 md:space-x-6 items-start overflow-hidden"
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-white border border-neutral-200/80 rounded-2xl shadow-xs gap-4 mb-4"
                     >
-                      {/* Item Image */}
-                      <div className="relative aspect-[3/4] w-20 md:w-24 bg-neutral-100 flex-shrink-0 overflow-hidden border border-neutral-100">
-                        {item.imageUrl ? (
-                          <Image
-                            src={getProxiedImageUrl(item.imageUrl)}
-                            alt={item.name}
-                            fill
-                            sizes="100px"
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[8px] text-neutral-400 uppercase font-sans">
-                            No Img
+                      <div className="flex items-center space-x-4 flex-1 min-w-0">
+                        {item.imageUrl && (
+                          <div className="relative w-16 h-20 md:w-20 md:h-24 border border-neutral-100 rounded-xl overflow-hidden shrink-0 bg-neutral-50">
+                            <Image
+                              src={getProxiedImageUrl(item.imageUrl)}
+                              alt={item.productName || item.name}
+                              fill
+                              className="object-cover"
+                              sizes="80px"
+                            />
                           </div>
                         )}
-                      </div>
-
-                      {/* Item Details */}
-                      <div className="flex-1 flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-6">
-                        <div className="space-y-1">
-                          <Link href={`/produk/${item.slug}`}>
-                            <h3 className="text-xs md:text-sm font-heading font-medium uppercase tracking-wide text-brand-black hover:text-brand-gray transition-colors">
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <Link href={`/produk/${item.slug}`} className="block group">
+                            <h3 className="text-sm font-sans font-bold text-brand-plum group-hover:text-brand-blue truncate transition-colors">
                               {item.productName || item.name}
                             </h3>
                           </Link>
-                          <p className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400">
-                            Varian: {item.variantName || 'Default'}
-                          </p>
-                          <p className="text-[9px] text-neutral-400 font-sans">SKU: {item.sku}</p>
+                          {item.variantName && (
+                            <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-sans font-semibold">
+                              Varian: {item.variantName}
+                            </p>
+                          )}
+                          <div className="text-xs font-sans font-bold text-brand-plum pt-1">
+                            {formatIDR(item.price)}
+                          </div>
+                        </div>
+                      </div>
 
-                          {/* Remove Action */}
-                          <motion.button
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() =>
-                              handleRemove(item.variantId, item.productName || item.name)
-                            }
-                            className="flex items-center text-[10px] text-red-500 hover:text-red-700 space-x-1 pt-2 font-sans"
+                      {/* Quantity Controls & Actions */}
+                      <div className="flex items-center justify-between w-full sm:w-auto sm:space-x-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-neutral-100">
+                        <div className="flex items-center border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50">
+                          <button
+                            type="button"
+                            onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
+                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors"
+                            aria-label="Kurangi jumlah"
                           >
-                            <Trash2 className="h-3 w-3" />
-                            <span>Hapus</span>
-                          </motion.button>
+                            <Minus size={12} />
+                          </button>
+                          <span className="px-3 text-xs font-sans font-bold text-brand-plum min-w-[28px] text-center">
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
+                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors"
+                            aria-label="Tambah jumlah"
+                          >
+                            <Plus size={12} />
+                          </button>
                         </div>
 
-                        {/* Pricing and Quantities */}
-                        <div className="flex flex-row md:flex-col md:items-end justify-between items-center space-y-0 md:space-y-3">
-                          {/* Price tags */}
-                          <div className="flex flex-col md:items-end space-y-0.5">
-                            <span className="text-xs md:text-sm font-sans font-semibold text-brand-black">
-                              {formatIDR(item.price * item.quantity)}
-                            </span>
-                            {item.comparePrice && item.comparePrice > item.price && (
-                              <span className="text-[10px] font-sans text-neutral-400 line-through">
-                                {formatIDR(item.comparePrice * item.quantity)}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Qty adjustments */}
-                          <div className="flex items-center border border-neutral-200 bg-white gold-border-hover rounded-xl">
-                            <motion.button
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() =>
-                                handleQtyChange(item.variantId, item.quantity, -1, item.stock)
-                              }
-                              className="p-2 text-neutral-500 hover:text-brand-black transition-colors"
-                            >
-                              <Minus className="h-2.5 w-2.5" />
-                            </motion.button>
-                            <span className="px-3 text-[11px] font-sans font-semibold text-brand-black w-6 text-center select-none">
-                              {item.quantity}
-                            </span>
-                            <motion.button
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() =>
-                                handleQtyChange(item.variantId, item.quantity, 1, item.stock)
-                              }
-                              className="p-2 text-neutral-500 hover:text-brand-black transition-colors"
-                            >
-                              <Plus className="h-2.5 w-2.5" />
-                            </motion.button>
-                          </div>
+                        <div className="flex items-center space-x-4">
+                          <span className="text-xs font-sans font-bold text-brand-plum min-w-[80px] text-right">
+                            {formatIDR(item.price * item.quantity)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemove(item.variantId, item.productName || item.name)}
+                            className="p-2 text-neutral-400 hover:text-red-600 transition-colors"
+                            aria-label="Hapus produk"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
                       </div>
                     </motion.div>
@@ -207,24 +190,24 @@ export default function CartPage(): React.JSX.Element {
             >
               <Card
                 bordered={true}
-                className="bg-neutral-50 border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden rounded-2xl"
+                className="bg-white border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
-                <h3 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black border-b border-neutral-200 pb-4">
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+                <h3 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">
                   Ringkasan Belanja
                 </h3>
 
                 <div className="space-y-3 text-xs font-sans text-neutral-600">
                   <div className="flex justify-between">
                     <span>Jumlah Barang</span>
-                    <span className="text-brand-black font-semibold">{totalQuantity} pcs</span>
+                    <span className="text-brand-plum font-semibold">{totalQuantity} pcs</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Total Harga (Base)</span>
                     <span>{formatIDR(originalSubtotal)}</span>
                   </div>
                   {totalDiscount > 0 && (
-                    <div className="flex justify-between text-red-600">
+                    <div className="flex justify-between text-red-600 font-semibold">
                       <span>Total Diskon Produk</span>
                       <span>-{formatIDR(totalDiscount)}</span>
                     </div>
@@ -233,16 +216,17 @@ export default function CartPage(): React.JSX.Element {
                     <span>* Ongkos kirim dihitung saat checkout</span>
                   </div>
 
-                  <div className="flex justify-between border-t border-neutral-200 pt-4 text-sm font-sans font-bold text-brand-black">
+                  <div className="flex justify-between border-t border-neutral-200 pt-4 text-sm font-sans font-bold text-brand-plum">
                     <span>Subtotal</span>
-                    <span className="text-base font-semibold">{formatIDR(subtotal)}</span>
+                    <span className="text-base font-bold">{formatIDR(subtotal)}</span>
                   </div>
                 </div>
 
                 <Link href="/checkout" className="block w-full pt-2">
                   <Button
-                    variant="primary"
-                    className="w-full flex items-center justify-center space-x-2"
+                    variant="accent"
+                    size="lg"
+                    className="w-full flex items-center justify-center space-x-2 font-bold"
                   >
                     <span>Lanjut Ke Checkout</span>
                     <ArrowRight className="h-3.5 w-3.5" />

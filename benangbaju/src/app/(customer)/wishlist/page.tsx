@@ -77,7 +77,7 @@ export default function WishlistPage(): React.JSX.Element {
 
   if (isError) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero
           eyebrow="Koleksi Disukai"
           title="Daftar Keinginan"
@@ -99,7 +99,7 @@ export default function WishlistPage(): React.JSX.Element {
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       <PageHero
         eyebrow="Koleksi Disukai"
         title="Daftar Keinginan"
@@ -118,10 +118,10 @@ export default function WishlistPage(): React.JSX.Element {
         ) : (
           <div className="space-y-6">
             {/* Toolbar Action Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-cream/60 border border-neutral-100 rounded-2xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white border border-neutral-200/80 rounded-2xl shadow-xs">
               <div className="flex items-center space-x-2">
                 <Heart className="w-4 h-4 fill-red-500 text-red-500" />
-                <span className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black">
+                <span className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum">
                   {products.length} Produk Tersimpan
                 </span>
               </div>
@@ -130,15 +130,15 @@ export default function WishlistPage(): React.JSX.Element {
                   onClick={clearWishlist}
                   variant="ghost"
                   size="sm"
-                  className="text-[10px] uppercase font-bold text-neutral-400 hover:text-red-500"
+                  className="text-[10px] uppercase font-bold text-neutral-500 hover:text-red-600"
                 >
                   <Trash2 className="w-3.5 h-3.5 mr-1" /> Kosongkan
                 </Button>
                 <Button
                   onClick={handleMoveAllToCart}
-                  variant="primary"
+                  variant="accent"
                   size="sm"
-                  className="text-[10px] uppercase font-bold bg-brand-black text-white hover:bg-brand-accent transition-colors"
+                  className="text-[10px] uppercase font-bold"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 mr-1.5" /> Pindahkan Semua ke Keranjang
                 </Button>
