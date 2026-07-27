@@ -91,13 +91,15 @@ export function OrderTrackingSection({
               </span>
 
               {idx < steps.length - 1 && (
-                <div className="hidden md:block absolute top-4 left-[50%] right-[-50%] h-[3px] bg-neutral-200 -z-10 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-brand-blue"
-                    initial={{ width: idx < statusIndex ? '100%' : '0%' }}
-                    animate={{ width: idx < statusIndex ? '100%' : '0%' }}
-                    transition={{ duration: 0.5 }}
-                  />
+                <div className="hidden md:block absolute top-4 left-[50%] right-[-50%] -z-10">
+                  <div className="w-full border-t-2 border-dashed border-neutral-300 relative">
+                    <motion.div
+                      className="border-t-2 border-dashed border-brand-blue absolute top-[-2px] left-0 h-0"
+                      initial={{ width: idx < statusIndex ? '100%' : '0%' }}
+                      animate={{ width: idx < statusIndex ? '100%' : '0%' }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
                 </div>
               )}
             </div>

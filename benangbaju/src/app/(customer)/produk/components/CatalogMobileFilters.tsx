@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
@@ -59,29 +60,42 @@ export function CatalogMobileFilters({
                     setShowMobileFilters(false)
                   }}
                   className={cn(
-                    'text-sm font-sans tracking-wide text-left w-full transition-colors',
+                    'text-sm font-sans tracking-wide text-left w-full transition-colors flex items-center gap-2',
                     !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-500'
                   )}
                 >
-                  Semua Kategori
+                  {!categorySlug && (
+                    <div className="relative w-3.5 h-3.5 shrink-0">
+                      <Image src="/LOGO_BENANGBAJU_10.png" alt="Active" fill className="object-contain" />
+                    </div>
+                  )}
+                  <span>Semua Kategori</span>
                 </button>
               </li>
-              {categories.map((cat) => (
-                <li key={cat.id}>
-                  <button
-                    onClick={() => {
-                      handleCategorySelect(cat.slug)
-                      setShowMobileFilters(false)
-                    }}
-                    className={cn(
-                      'text-sm font-sans tracking-wide text-left w-full transition-colors',
-                      categorySlug === cat.slug ? 'text-brand-plum font-bold' : 'text-neutral-500'
-                    )}
-                  >
-                    {cat.name}
-                  </button>
-                </li>
-              ))}
+              {categories.map((cat) => {
+                const isActive = categorySlug === cat.slug
+                return (
+                  <li key={cat.id}>
+                    <button
+                      onClick={() => {
+                        handleCategorySelect(cat.slug)
+                        setShowMobileFilters(false)
+                      }}
+                      className={cn(
+                        'text-sm font-sans tracking-wide text-left w-full transition-colors flex items-center gap-2',
+                        isActive ? 'text-brand-plum font-bold' : 'text-neutral-500'
+                      )}
+                    >
+                      {isActive && (
+                        <div className="relative w-3.5 h-3.5 shrink-0">
+                          <Image src="/LOGO_BENANGBAJU_10.png" alt="Active" fill className="object-contain" />
+                        </div>
+                      )}
+                      <span>{cat.name}</span>
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         </div>

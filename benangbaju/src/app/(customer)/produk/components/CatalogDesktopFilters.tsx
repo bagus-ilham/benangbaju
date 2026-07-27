@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
 
@@ -38,26 +39,39 @@ export function CatalogDesktopFilters({
           <button
             onClick={() => handleCategorySelect(null)}
             className={cn(
-              'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors',
+              'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors flex items-center gap-2',
               !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-500'
             )}
           >
-            Semua Kategori
+            {!categorySlug && (
+              <div className="relative w-3.5 h-3.5 shrink-0">
+                <Image src="/LOGO_BENANGBAJU_10.png" alt="Active" fill className="object-contain" />
+              </div>
+            )}
+            <span>Semua Kategori</span>
           </button>
         </li>
-        {categories.map((cat) => (
-          <li key={cat.id}>
-            <button
-              onClick={() => handleCategorySelect(cat.slug)}
-              className={cn(
-                'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors',
-                categorySlug === cat.slug ? 'text-brand-plum font-bold' : 'text-neutral-500'
-              )}
-            >
-              {cat.name}
-            </button>
-          </li>
-        ))}
+        {categories.map((cat) => {
+          const isActive = categorySlug === cat.slug
+          return (
+            <li key={cat.id}>
+              <button
+                onClick={() => handleCategorySelect(cat.slug)}
+                className={cn(
+                  'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors flex items-center gap-2',
+                  isActive ? 'text-brand-plum font-bold' : 'text-neutral-500'
+                )}
+              >
+                {isActive && (
+                  <div className="relative w-3.5 h-3.5 shrink-0">
+                    <Image src="/LOGO_BENANGBAJU_10.png" alt="Active" fill className="object-contain" />
+                  </div>
+                )}
+                <span>{cat.name}</span>
+              </button>
+            </li>
+          )
+        })}
       </ul>
     </aside>
   )

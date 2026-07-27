@@ -3,6 +3,7 @@
 import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { LucideIcon, Percent, PackageSearch, Heart, ClipboardList, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
@@ -24,7 +25,8 @@ interface EmptyStateAction {
 }
 
 interface EmptyStateProps {
-  icon: keyof typeof iconMap | LucideIcon
+  icon?: keyof typeof iconMap | LucideIcon
+  useBrandIcon?: boolean
   title: string
   description?: string
   action?: EmptyStateAction
@@ -34,13 +36,14 @@ interface EmptyStateProps {
 
 export function EmptyState({
   icon,
+  useBrandIcon = true,
   title,
   description,
   action,
   secondaryAction,
   className,
 }: EmptyStateProps): React.JSX.Element {
-  const Icon = typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon
+  const Icon = icon ? (typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon) : PackageSearch
 
   const renderAction = (act: EmptyStateAction, key: string) => {
     const button = (
@@ -72,11 +75,22 @@ export function EmptyState({
     >
       <div className="relative">
         <div
-          className="absolute inset-0 bg-brand-accent/10 blur-xl rounded-full scale-150"
+          className="absolute inset-0 bg-brand-blue/15 blur-xl rounded-full scale-150"
           aria-hidden
         />
-        <div className="relative p-5 bg-brand-cream border border-brand-accent/20 animate-gentle-float rounded-2xl">
-          <Icon className="h-8 w-8 text-brand-accent" strokeWidth={1.5} />
+        <div className="relative p-4 bg-brand-cream border border-neutral-200/80 animate-gentle-float rounded-2xl shadow-xs">
+          {useBrandIcon ? (
+            <div className="relative w-10 h-10">
+              <Image
+                src="/LOGO_BENANGBAJU_09.png"
+                alt="Gulungan Benang"
+                fill
+                className="object-contain"
+              />
+            </div>
+          ) : (
+            <Icon className="h-8 w-8 text-brand-plum" strokeWidth={1.5} />
+          )}
         </div>
       </div>
       <div className="space-y-2">
