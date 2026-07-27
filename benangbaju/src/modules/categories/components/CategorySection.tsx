@@ -82,7 +82,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               >
                 <Link
                   href={`/kategori/${cat.slug}`}
-                  className="group relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 border border-neutral-200/80 block rounded-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
+                  className="group relative aspect-[3/4] w-full overflow-hidden bg-brand-cream border border-neutral-200/80 block rounded-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
                 >
                   {/* Subtle stitch pattern texture (< 15% opacity per §5) */}
                   <div className="absolute inset-0 opacity-10 z-10 pointer-events-none">
@@ -104,7 +104,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     />
                   ) : (
-                    <div className="flex items-center justify-center w-full h-full text-xs text-neutral-400 font-sans uppercase">
+                    <div className="flex items-center justify-center w-full h-full text-xs text-neutral-500 font-sans font-bold uppercase">
                       {cat.name}
                     </div>
                   )}
@@ -119,7 +119,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                         {index < 9 ? `0${index + 1}` : index + 1}
                       </span>
                     </div>
-                    <div className="w-0 group-hover:w-full h-px bg-brand-accent-light transition-all duration-500 mt-2" />
+                    <div className="w-0 group-hover:w-full h-px bg-brand-gold transition-all duration-500 mt-2" />
                   </div>
                 </Link>
               </motion.div>

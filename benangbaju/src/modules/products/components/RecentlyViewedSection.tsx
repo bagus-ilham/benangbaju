@@ -69,7 +69,7 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
   if (!isMounted || products.length === 0) return null
 
   return (
-    <section className="bg-white py-16">
+    <section className="bg-brand-cream py-16 font-sans border-t border-neutral-200/60">
       <PageContainer>
         <SectionHeader eyebrow="Riwayat Anda" title="Terakhir Dilihat" />
 

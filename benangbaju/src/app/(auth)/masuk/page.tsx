@@ -128,14 +128,14 @@ function LoginContent() {
               />
             </motion.div>
 
-            <motion.div variants={fadeUpItem} className="flex flex-col space-y-1">
+            <motion.div variants={fadeUpItem} className="flex flex-col space-y-1 font-sans">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+                <label className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum">
                   Kata Sandi
                 </label>
                 <Link
                   href="/lupa-password"
-                  className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400 hover:text-brand-black transition-colors"
+                  className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-500 hover:text-brand-plum transition-colors"
                 >
                   Lupa sandi?
                 </Link>
@@ -161,10 +161,10 @@ function LoginContent() {
           {/* Divider */}
           <motion.div variants={fadeUpItem} className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200"></div>
+              <div className="w-full border-t border-neutral-200/80"></div>
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-heading">
-              <span className="bg-white px-3 text-neutral-400">Atau masuk dengan</span>
+            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
+              <span className="bg-brand-cream px-3 text-neutral-500">Atau masuk dengan</span>
             </div>
           </motion.div>
 

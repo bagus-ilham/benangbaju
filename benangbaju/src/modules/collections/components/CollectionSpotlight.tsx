@@ -28,8 +28,8 @@ export function CollectionSpotlight({
   return (
     <section
       className={cn(
-        'relative overflow-hidden border-b border-neutral-100',
-        isDark ? 'bg-brand-black' : 'bg-brand-cream section-texture'
+        'relative overflow-hidden border-b border-neutral-200/80 font-sans',
+        isDark ? 'bg-brand-plum' : 'bg-brand-cream section-texture'
       )}
     >
       <PageContainer className="py-12 md:py-16">
@@ -60,15 +60,15 @@ export function CollectionSpotlight({
                   className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
                 />
               ) : (
-                <div className="flex items-center justify-center w-full h-full bg-neutral-200 text-xs text-neutral-400 font-sans uppercase">
+                <div className="flex items-center justify-center w-full h-full bg-neutral-200 text-xs text-neutral-500 font-sans font-bold uppercase">
                   {collection.name}
                 </div>
               )}
               <div className="absolute inset-0 gradient-overlay-dark opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
               {/* Floating badge */}
-              <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-sm border border-white/50 rounded-full">
-                <span className="text-[9px] font-heading font-semibold uppercase tracking-[0.2em] text-brand-black">
+              <div className="absolute top-4 left-4 px-3 py-1.5 bg-brand-cream/95 backdrop-blur-sm border border-neutral-200/80 rounded-full">
+                <span className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-brand-plum">
                   Koleksi Eksklusif
                 </span>
               </div>
@@ -78,7 +78,7 @@ export function CollectionSpotlight({
             <div
               className={cn(
                 'absolute -bottom-3 -right-3 w-full h-full border pointer-events-none hidden md:block rounded-2xl',
-                isDark ? 'border-brand-accent/30' : 'border-brand-accent/40'
+                isDark ? 'border-brand-gold/30' : 'border-brand-blue/40'
               )}
               aria-hidden
             />
@@ -95,16 +95,16 @@ export function CollectionSpotlight({
             <div className="space-y-3">
               <span
                 className={cn(
-                  'inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium',
-                  isDark ? 'text-brand-accent-light' : 'text-brand-accent'
+                  'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
+                  isDark ? 'text-brand-gold' : 'text-brand-blue'
                 )}
               >
                 Koleksi Kurasi
               </span>
               <h2
                 className={cn(
-                  'text-2xl md:text-4xl font-heading font-light uppercase tracking-wider leading-tight',
-                  isDark ? 'text-white' : 'text-brand-black'
+                  'text-2xl md:text-4xl font-sans font-bold uppercase tracking-wider leading-tight',
+                  isDark ? 'text-brand-cream' : 'text-brand-plum'
                 )}
               >
                 {collection.name}
@@ -116,7 +116,7 @@ export function CollectionSpotlight({
               <p
                 className={cn(
                   'text-xs md:text-sm font-sans leading-relaxed max-w-md',
-                  isDark ? 'text-neutral-400' : 'text-neutral-500'
+                  isDark ? 'text-neutral-300' : 'text-neutral-600'
                 )}
               >
                 {collection.description}
@@ -126,10 +126,10 @@ export function CollectionSpotlight({
             <Link
               href={`/koleksi/${collection.slug}`}
               className={cn(
-                'inline-flex items-center gap-2 text-[10px] font-heading font-semibold uppercase tracking-[0.2em] transition-all duration-300 group/link',
+                'inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.2em] transition-all duration-300 group/link',
                 isDark
-                  ? 'text-white hover:text-brand-accent-light'
-                  : 'text-brand-black hover:text-brand-accent'
+                  ? 'text-brand-cream hover:text-brand-gold'
+                  : 'text-brand-plum hover:text-brand-blue'
               )}
             >
               <span className="border-b border-current pb-0.5">Jelajahi Koleksi</span>

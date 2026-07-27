@@ -21,7 +21,7 @@ export function CollectionSection({
   const topCollections = collections.slice(0, 2)
 
   return (
-    <section className="bg-white py-16 border-b border-neutral-100">
+    <section className="bg-brand-cream py-16 border-b border-neutral-200/80 font-sans">
       <PageContainer>
         <SectionHeader eyebrow="Editorial Curated" title="Koleksi Pilihan" />
 
@@ -36,7 +36,7 @@ export function CollectionSection({
             <motion.div key={col.id} variants={fadeUpItem}>
               <Link
                 href={`/koleksi/${col.slug}`}
-                className="group relative aspect-[16/10] w-full overflow-hidden bg-neutral-100 border border-neutral-100 block rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                className="group relative aspect-[16/10] w-full overflow-hidden bg-brand-cream border border-neutral-200/80 block rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
               >
                 {col.image_url ? (
                   <Image
@@ -47,15 +47,15 @@ export function CollectionSection({
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                   />
                 ) : (
-                  <div className="flex items-center justify-center w-full h-full text-xs text-neutral-400 font-sans uppercase">
+                  <div className="flex items-center justify-center w-full h-full text-xs text-neutral-500 font-sans font-bold uppercase">
                     {col.name}
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/40 via-neutral-900/10 to-transparent transition-opacity group-hover:from-neutral-900/50" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/70 via-brand-plum/20 to-transparent transition-opacity group-hover:from-brand-plum/80" />
 
-                <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
+                <div className="absolute inset-0 flex flex-col justify-end p-8 text-brand-cream">
                   <div className="space-y-2 max-w-xs md:max-w-sm">
-                    <h3 className="text-lg md:text-xl font-heading font-semibold uppercase tracking-wider">
+                    <h3 className="text-lg md:text-xl font-sans font-bold uppercase tracking-wider text-brand-cream">
                       {col.name}
                     </h3>
                     {col.description && (

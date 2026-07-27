@@ -37,7 +37,7 @@ export function ProductStickyAction({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 25 }}
-          className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-neutral-200 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] py-3 px-4 md:py-4 md:px-8 rounded-t-2xl"
+          className="fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-md border-t border-neutral-200/80 shadow-xs py-3 px-4 md:py-4 md:px-8 rounded-t-2xl font-sans"
         >
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
             {/* Product Info (Desktop/Tablet) */}

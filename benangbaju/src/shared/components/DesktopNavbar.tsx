@@ -56,7 +56,7 @@ export function DesktopNavbar({
       className={cn(
         'sticky top-0 z-40 w-full transition-all duration-300 border-b',
         isScrolled
-          ? 'bg-white/80 backdrop-blur-md border-neutral-200 shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
+          ? 'bg-brand-cream/90 backdrop-blur-md border-neutral-200/80 shadow-xs'
           : 'bg-transparent border-transparent'
       )}
     >
@@ -241,13 +241,13 @@ export function DesktopNavbar({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute right-0 mt-3 w-56 bg-white border border-neutral-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] py-1 z-20 overflow-hidden"
+                        className="absolute right-0 mt-3 w-56 bg-brand-cream border border-neutral-200/80 rounded-xl shadow-[0_10px_40px_-10px_rgba(45,38,64,0.1)] py-1 z-20 overflow-hidden font-sans"
                       >
-                        <div className="px-4 py-3 border-b border-neutral-100 bg-neutral-50/50">
-                          <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider mb-0.5">
+                        <div className="px-4 py-3 border-b border-neutral-200/60 bg-brand-cream">
+                          <p className="text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-wider mb-0.5">
                             Halo,
                           </p>
-                          <p className="text-sm font-semibold text-brand-black truncate">
+                          <p className="text-sm font-bold text-brand-plum truncate">
                             {profile?.name || user?.email}
                           </p>
                         </div>
@@ -256,7 +256,7 @@ export function DesktopNavbar({
                           <Link
                             href="/akun"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-cream/50 hover:text-brand-black font-medium rounded-md transition-colors"
+                            className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors"
                           >
                             <UserIcon className="h-4 w-4" />
                             <span>Akun Saya</span>
@@ -266,9 +266,9 @@ export function DesktopNavbar({
                             <Link
                               href="/admin"
                               onClick={() => setIsUserMenuOpen(false)}
-                              className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-cream/50 hover:text-brand-black font-semibold rounded-md transition-colors mt-0.5"
+                              className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors mt-0.5"
                             >
-                              <div className="h-4 w-4 flex items-center justify-center bg-brand-accent text-white rounded-[4px] text-[8px]">
+                              <div className="h-4 w-4 flex items-center justify-center bg-brand-blue text-brand-plum rounded-[4px] text-[8px] font-bold">
                                 A
                               </div>
                               <span>Admin Panel</span>
@@ -276,7 +276,7 @@ export function DesktopNavbar({
                           )}
                         </div>
 
-                        <div className="p-1.5 border-t border-neutral-100">
+                        <div className="p-1.5 border-t border-neutral-200/60">
                           <button
                             onClick={() => {
                               setIsUserMenuOpen(false)

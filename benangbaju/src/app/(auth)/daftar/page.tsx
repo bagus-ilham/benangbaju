@@ -210,12 +210,12 @@ function RegisterContent(): React.JSX.Element {
             </motion.div>
           </form>
 
-          <motion.div variants={fadeUpItem} className="relative my-8">
+          <motion.div variants={fadeUpItem} className="relative my-8 font-sans">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200" />
+              <div className="w-full border-t border-neutral-200/80" />
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-heading">
-              <span className="bg-white px-3 text-neutral-400">Atau daftar dengan</span>
+            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
+              <span className="bg-brand-cream px-3 text-neutral-500">Atau daftar dengan</span>
             </div>
           </motion.div>
 

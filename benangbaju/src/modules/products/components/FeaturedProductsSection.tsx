@@ -18,7 +18,7 @@ export function FeaturedProductsSection({
   if (products.length === 0) return null
 
   return (
-    <section className="relative bg-white py-16 md:py-20 border-b border-neutral-100 overflow-hidden">
+    <section className="relative bg-brand-cream py-16 md:py-20 border-b border-neutral-200/80 overflow-hidden font-sans">
       {/* Decorative background */}
       <div className="absolute inset-0 gradient-mesh pointer-events-none" aria-hidden />
 
@@ -51,7 +51,7 @@ export function FeaturedProductsSection({
           className="flex justify-center mt-12"
         >
           <Link href="/produk?urutkan=featured">
-            <Button variant="primary" size="md">
+            <Button variant="accent" size="md" className="font-bold">
               Lihat Semua Produk Pilihan
             </Button>
           </Link>

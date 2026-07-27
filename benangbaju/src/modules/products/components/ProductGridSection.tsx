@@ -32,21 +32,21 @@ export function ProductGridSection({
 
   const bgClass =
     variant === 'dark'
-      ? 'bg-brand-black border-neutral-800'
+      ? 'bg-brand-plum border-brand-plum/80'
       : variant === 'alt'
-        ? 'bg-brand-cream section-texture border-neutral-200'
-        : 'bg-white border-neutral-100'
+        ? 'bg-brand-cream section-texture border-neutral-200/80'
+        : 'bg-brand-cream border-neutral-200/80'
 
   const isDark = variant === 'dark'
 
   return (
-    <section className={cn('py-14 md:py-16 border-b', bgClass)}>
+    <section className={cn('py-14 md:py-16 border-b font-sans', bgClass)}>
       <PageContainer>
         <SectionHeader
           eyebrow={eyebrow}
           title={title}
           align={align}
-          className={isDark ? '[&_h2]:text-white [&_span]:text-brand-accent-light' : undefined}
+          className={isDark ? '[&_h2]:text-brand-cream [&_span]:text-brand-gold' : undefined}
         />
 
         <motion.div

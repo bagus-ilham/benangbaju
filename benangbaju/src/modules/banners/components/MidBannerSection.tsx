@@ -45,7 +45,7 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
   })
 
   const bannerContentNode = (
-    <div className="relative w-full overflow-hidden bg-neutral-100 aspect-[4/3] md:aspect-[21/9]">
+    <div className="relative w-full overflow-hidden bg-brand-cream aspect-[4/3] md:aspect-[21/9]">
       <picture className="block w-full h-full">
         <source media="(min-width: 768px)" srcSet={desktopSrcSet} sizes="100vw" />
         <img

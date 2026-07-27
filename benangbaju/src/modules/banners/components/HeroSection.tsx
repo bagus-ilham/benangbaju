@@ -29,18 +29,18 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
   if (banners.length === 0) {
     // Elegant high fashion fallback placeholder banner
     return (
-      <div className="relative w-full bg-brand-cream flex items-center justify-center aspect-[21/9] md:aspect-[16/9]">
+      <div className="relative w-full bg-brand-cream flex items-center justify-center aspect-[21/9] md:aspect-[16/9] font-sans">
         <div className="text-center space-y-4 max-w-lg px-4">
-          <h2 className="text-3xl md:text-5xl font-heading font-light uppercase tracking-widest text-brand-black leading-tight">
+          <h2 className="text-3xl md:text-5xl font-sans font-bold uppercase tracking-widest text-brand-plum leading-tight">
             Elegan dalam Kesederhanaan
           </h2>
-          <p className="text-xs text-neutral-500 font-sans max-w-sm mx-auto">
+          <p className="text-xs text-neutral-600 font-sans max-w-sm mx-auto">
             Temukan paduan pakaian sederhana namun unik yang nyaman untuk aktivitas harian hingga
             acara spesial Anda.
           </p>
           <div className="pt-4">
             <Link href="/produk">
-              <Button variant="primary" size="md">
+              <Button variant="accent" size="md" className="font-bold">
                 Belanja Sekarang
               </Button>
             </Link>
@@ -93,7 +93,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
 
   return (
     <div
-      className="relative w-full overflow-hidden bg-brand-black"
+      className="relative w-full overflow-hidden bg-brand-plum"
       role="region"
       aria-roledescription="carousel"
       aria-label="Koleksi Banner Utama"

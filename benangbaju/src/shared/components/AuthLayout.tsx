@@ -50,7 +50,7 @@ export function AuthLayout({ children }: AuthLayoutProps): React.JSX.Element {
       <div className="flex-1 flex flex-col items-center justify-center bg-brand-cream py-12 px-4 sm:px-6 lg:px-8 section-texture">
         <Link
           href="/"
-          className="mb-8 lg:hidden font-heading text-sm font-bold tracking-[0.2em] text-brand-black uppercase hover:text-brand-accent transition-colors"
+          className="mb-8 lg:hidden font-sans text-sm font-bold tracking-[0.2em] text-brand-plum uppercase hover:text-brand-blue transition-colors"
         >
           BENANGBAJU
         </Link>
