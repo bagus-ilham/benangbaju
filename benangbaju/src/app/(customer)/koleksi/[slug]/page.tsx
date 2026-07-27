@@ -78,6 +78,10 @@ export default async function CollectionDetailPage({
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/90 via-brand-plum/40 to-transparent" />
+          <div
+            className="absolute inset-0 section-texture opacity-20 pointer-events-none"
+            aria-hidden
+          />
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-10 md:pb-14">
               <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-gold">

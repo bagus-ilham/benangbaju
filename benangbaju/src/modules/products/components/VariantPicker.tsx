@@ -174,6 +174,14 @@ export function VariantPicker({
                   )}
                 >
                   {val}
+                  {isSelected && (
+                    <motion.div
+                      layoutId={`active-indicator-${name}`}
+                      className="absolute inset-0 border border-brand-plum pointer-events-none rounded-xl"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      aria-hidden="true"
+                    />
+                  )}
                 </motion.button>
               )
             })}

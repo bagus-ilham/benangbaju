@@ -131,8 +131,18 @@ export default function CartPage(): React.JSX.Element {
                               Varian: {item.variantName}
                             </p>
                           )}
-                          <div className="text-xs font-sans font-bold text-brand-plum pt-1">
-                            {formatIDR(item.price)}
+                          {item.sku && (
+                            <p className="text-[9px] text-neutral-400 font-sans">SKU: {item.sku}</p>
+                          )}
+                          <div className="flex items-baseline space-x-2 pt-1">
+                            <span className="text-xs font-sans font-bold text-brand-plum">
+                              {formatIDR(item.price * item.quantity)}
+                            </span>
+                            {item.comparePrice && item.comparePrice > item.price && (
+                              <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                {formatIDR(item.comparePrice * item.quantity)}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -143,18 +153,18 @@ export default function CartPage(): React.JSX.Element {
                           <button
                             type="button"
                             onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
-                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors"
+                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label="Kurangi jumlah"
                           >
                             <Minus size={12} />
                           </button>
-                          <span className="px-3 text-xs font-sans font-bold text-brand-plum min-w-[28px] text-center">
+                          <span className="px-3 text-xs font-sans font-bold text-brand-plum min-w-[28px] text-center select-none">
                             {item.quantity}
                           </span>
                           <button
                             type="button"
                             onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
-                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors"
+                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label="Tambah jumlah"
                           >
                             <Plus size={12} />
@@ -162,16 +172,14 @@ export default function CartPage(): React.JSX.Element {
                         </div>
 
                         <div className="flex items-center space-x-4">
-                          <span className="text-xs font-sans font-bold text-brand-plum min-w-[80px] text-right">
-                            {formatIDR(item.price * item.quantity)}
-                          </span>
                           <button
                             type="button"
                             onClick={() => handleRemove(item.variantId, item.productName || item.name)}
-                            className="p-2 text-neutral-400 hover:text-red-600 transition-colors"
+                            className="p-2 text-neutral-400 hover:text-red-600 transition-colors flex items-center space-x-1 text-xs font-sans cursor-pointer"
                             aria-label="Hapus produk"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={15} />
+                            <span className="hidden sm:inline text-[10px]">Hapus</span>
                           </button>
                         </div>
                       </div>
@@ -233,7 +241,7 @@ export default function CartPage(): React.JSX.Element {
                   </Button>
                 </Link>
 
-                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-accent p-4 rounded-xl text-[10px] text-neutral-400 leading-relaxed font-sans">
+                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-blue p-4 rounded-xl text-[10px] text-neutral-500 leading-relaxed font-sans">
                   Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank
                   otomatis, QRIS, e-Wallet via DOKU.
                 </div>
