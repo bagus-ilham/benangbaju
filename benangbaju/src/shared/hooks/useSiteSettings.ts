@@ -14,7 +14,7 @@ export function useSiteSettings() {
   const getSetting = (keys: string[]) => settings.find((s) => keys.includes(s.key))
 
   const logoSetting = getSetting(['store_logo_url'])
-  const logoUrl = logoSetting?.value?.trim() ? logoSetting.value : '/logo.PNG'
+  const logoUrl = logoSetting?.value?.trim() ? logoSetting.value : '/LOGO_BENANGBAJU_07.png'
 
   const getSocialUrl = (
     settingValue: string | undefined,

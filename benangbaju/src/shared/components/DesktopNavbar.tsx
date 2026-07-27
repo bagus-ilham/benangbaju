@@ -116,33 +116,29 @@ export function DesktopNavbar({
           </div>
 
           {/* Center Column: Logo */}
-          <div className="flex items-center justify-center shrink-0 px-2">
+          <div className="flex items-center justify-center shrink-0 px-3 py-1">
             <Link
               href="/"
               className={cn(
-                'font-heading text-sm sm:text-base md:text-lg font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase select-none transition-colors duration-300 flex items-center justify-center whitespace-nowrap',
+                'select-none transition-colors duration-300 flex items-center justify-center whitespace-nowrap p-1',
                 isTransparentHome
                   ? 'text-white hover:text-neutral-200'
-                  : 'text-brand-black hover:text-brand-accent'
+                  : 'text-brand-plum hover:text-brand-blue'
               )}
             >
-              {logoUrl ? (
-                <div className="relative h-8 sm:h-9 md:h-11 lg:h-12 w-[100px] sm:w-[125px] md:w-[150px] lg:w-[175px] max-w-[40vw]">
-                  <Image
-                    src={getProxiedImageUrl(logoUrl)}
-                    alt="Benangbaju Logo"
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 125px, 175px"
-                    className={cn(
-                      'object-contain text-transparent transition-all duration-300',
-                      isTransparentHome && 'brightness-0 invert'
-                    )}
-                  />
-                </div>
-              ) : (
-                'BENANGBAJU'
-              )}
+              <div className="relative h-8 sm:h-9 md:h-11 lg:h-12 w-[104px] sm:w-[130px] md:w-[155px] lg:w-[180px] min-w-[96px] max-w-[40vw]">
+                <Image
+                  src={getProxiedImageUrl(logoUrl || '/LOGO_BENANGBAJU_07.png')}
+                  alt="Benangbaju Logotype"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 130px, 180px"
+                  className={cn(
+                    'object-contain text-transparent transition-all duration-300',
+                    isTransparentHome && 'brightness-0 invert'
+                  )}
+                />
+              </div>
             </Link>
           </div>
 

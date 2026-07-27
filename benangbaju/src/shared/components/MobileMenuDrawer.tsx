@@ -8,6 +8,8 @@ import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { MobileMenuAccordionItem } from './MobileMenuAccordionItem'
 import type { User } from '@supabase/supabase-js'
 
+import Image from 'next/image'
+
 interface MobileMenuDrawerProps {
   isOpen: boolean
   onClose: () => void
@@ -48,16 +50,21 @@ export function MobileMenuDrawer({
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-            className="relative flex w-full max-w-xs flex-col bg-white py-4 shadow-xl border-r border-neutral-100 outline-none"
+            className="relative flex w-full max-w-xs flex-col bg-brand-cream py-4 shadow-xl border-r border-neutral-200 outline-none"
             role="dialog"
             aria-modal="true"
             aria-label="Menu navigasi utama"
             tabIndex={-1}
           >
-            <div className="flex items-center justify-between px-6 pb-4 border-b border-neutral-100">
-              <span className="font-heading text-sm font-bold tracking-[0.2em] text-brand-black uppercase">
-                MENU
-              </span>
+            <div className="flex items-center justify-between px-6 pb-4 border-b border-neutral-200">
+              <div className="relative h-8 w-32 min-w-[96px]">
+                <Image
+                  src="/LOGO_BENANGBAJU_07.png"
+                  alt="Benangbaju Logo"
+                  fill
+                  className="object-contain object-left"
+                />
+              </div>
               <button
                 type="button"
                 onClick={onClose}

@@ -1,52 +1,57 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
-import { Button, Input, CurrentYear } from '@/shared/components'
-import { CheckCircle2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { CurrentYear } from '@/shared/components'
 
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export function Footer(): React.JSX.Element {
   const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl } = useSiteSettings()
-  const [isSubscribed, setIsSubscribed] = useState(false)
-  const [emailInput, setEmailInput] = useState('')
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!emailInput.trim()) return
-    setIsSubscribed(true)
-  }
 
   return (
-    <footer className="bg-brand-cream border-t border-neutral-200 pb-20 md:pb-0">
-      <div className="py-12 md:py-16">
+    <footer className="relative bg-brand-cream border-t border-neutral-200/80 pb-20 md:pb-0">
+      {/* Stitch Line Divider (LOGO_BENANGBAJU_04.png) */}
+      <div className="w-full overflow-hidden h-3 relative opacity-60 pointer-events-none -mt-1.5 mb-2">
+        <Image
+          src="/LOGO_BENANGBAJU_04.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="py-10 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {/* Col 1: Brand Info */}
             <div className="flex flex-col space-y-4">
-              {logoUrl ? (
-                <div className="relative h-9 sm:h-10 md:h-12 w-40 sm:w-44 md:w-48 max-w-full animate-fade-in">
+              <div className="relative h-9 sm:h-10 md:h-12 w-40 sm:w-44 md:w-48 max-w-full min-w-[96px] animate-fade-in">
+                <Image
+                  src={getProxiedImageUrl(logoUrl || '/LOGO_BENANGBAJU_07.png')}
+                  alt="Benangbaju Logotype"
+                  fill
+                  sizes="(max-width: 768px) 160px, 200px"
+                  className="object-contain object-left"
+                />
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="relative w-8 h-8 shrink-0 opacity-85 mt-0.5">
                   <Image
-                    src={getProxiedImageUrl(logoUrl)}
-                    alt="Benangbaju Logo"
+                    src="/LOGO_BENANGBAJU_09.png"
+                    alt="Gulungan Benang"
                     fill
-                    sizes="(max-width: 768px) 160px, 200px"
-                    className="object-contain object-left"
+                    className="object-contain"
                   />
                 </div>
-              ) : (
-                <span className="font-heading text-base font-bold tracking-[0.2em] text-brand-black uppercase">
-                  BENANGBAJU
-                </span>
-              )}
-              <p className="text-xs text-neutral-500 leading-relaxed max-w-xs font-sans">
-                Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
-                diri lewat sepotong pakaian yang sederhana namun unik.
-              </p>
+                <p className="text-xs text-neutral-600 leading-relaxed max-w-xs font-sans">
+                  Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
+                  diri lewat sepotong pakaian yang sederhana namun unik.
+                </p>
+              </div>
             </div>
 
             {/* Col 2: Pelayanan Pelanggan */}
