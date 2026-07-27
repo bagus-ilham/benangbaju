@@ -51,7 +51,7 @@ export default function CaraBelanjaPage(): React.JSX.Element {
           {steps.map((step) => (
             <div
               key={step.title}
-              className="border border-neutral-200/80 p-6 md:p-8 flex items-start gap-5 bg-white rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
+              className="border border-neutral-200/80 p-6 md:p-8 flex items-start gap-5 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
             >
               <div className="p-3 bg-brand-blue/20 border border-brand-blue/30 shrink-0 rounded-xl">
                 <step.icon className="h-5 w-5 text-brand-plum" strokeWidth={1.75} />

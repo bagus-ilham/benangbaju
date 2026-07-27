@@ -146,7 +146,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.95 }}
             transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
-            className="w-full max-w-2xl bg-white p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-accent border-neutral-100 rounded-2xl"
+            className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-blue border-neutral-200/80 rounded-2xl"
           >
             <button
               onClick={onClose}

@@ -60,32 +60,32 @@ export function CheckoutAddressForm({
             {selectedAddress ? (
               <motion.div
                 layoutId="selectedAddressBox"
-                className="border border-brand-accent bg-brand-accent-muted/10 p-4 relative rounded-2xl shadow-sm"
+                className="border border-brand-blue bg-brand-blue/10 p-4 relative rounded-2xl shadow-xs"
               >
-                <p className="font-heading font-semibold text-xs text-brand-accent uppercase tracking-wider">
+                <p className="font-sans font-bold text-xs text-brand-plum uppercase tracking-wider">
                   {selectedAddress.label} (Pilihan)
                 </p>
-                <p className="font-sans font-medium text-neutral-700 mt-1.5">
+                <p className="font-sans font-bold text-brand-plum mt-1.5 text-xs">
                   {selectedAddress.recipient_name} | {selectedAddress.phone}
                 </p>
-                <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
+                <p className="text-neutral-600 text-xs mt-1 leading-relaxed font-sans">
                   {selectedAddress.full_address}
                 </p>
-                <p className="text-[10px] text-neutral-400 mt-1 font-sans">
+                <p className="text-[10px] text-neutral-500 mt-1 font-sans">
                   {selectedAddress.district_name}, {selectedAddress.city_name},{' '}
                   {selectedAddress.province_name} {selectedAddress.postal_code}
                 </p>
               </motion.div>
             ) : (
-              <p className="text-sm text-red-500 font-medium">
+              <p className="text-sm text-red-500 font-medium font-sans">
                 Harap pilih atau tambahkan alamat baru
               </p>
             )}
 
             {/* Other Addresses */}
             {addresses.length > 1 && (
-              <div className="border border-neutral-200 p-4 space-y-3 bg-white rounded-2xl">
-                <p className="text-[10px] text-neutral-400 font-heading font-medium uppercase tracking-widest">
+              <div className="border border-neutral-200/80 p-4 space-y-3 bg-brand-cream rounded-2xl">
+                <p className="text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-widest">
                   Pilih Alamat Lain:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
@@ -93,7 +93,7 @@ export function CheckoutAddressForm({
                     .filter((a) => a.id !== selectedAddress?.id)
                     .map((address) => (
                       <motion.div
-                        whileHover={{ y: -1, borderColor: '#171717' }}
+                        whileHover={{ y: -1, borderColor: '#94b2b9' }}
                         whileTap={{ scale: 0.98 }}
                         key={address.id}
                         role="button"
@@ -105,15 +105,15 @@ export function CheckoutAddressForm({
                             onSelectAddress(address)
                           }
                         }}
-                        className="p-3 border border-neutral-200 text-xs cursor-pointer bg-white transition-all duration-200 rounded-xl hover:shadow-sm"
+                        className="p-3 border border-neutral-200/80 text-xs cursor-pointer bg-brand-cream transition-all duration-200 rounded-xl hover:shadow-xs"
                       >
-                        <p className="font-heading font-medium text-[10px] text-brand-black uppercase tracking-wider">
+                        <p className="font-sans font-bold text-[10px] text-brand-plum uppercase tracking-wider">
                           {address.label}
                         </p>
                         <p className="font-sans text-neutral-700 mt-1 font-medium">
                           {address.recipient_name}
                         </p>
-                        <p className="text-neutral-500 truncate mt-0.5 text-[11px]">
+                        <p className="text-neutral-500 truncate mt-0.5 text-[11px] font-sans">
                           {address.full_address}
                         </p>
                       </motion.div>
@@ -140,12 +140,12 @@ export function CheckoutAddressForm({
 
       {/* Shipping Method Section */}
       <div className="space-y-4 pt-4 border-t border-neutral-100">
-        <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black flex items-center">
-          <Truck size={14} className="mr-2 text-neutral-500" /> Opsi Pengiriman
+        <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum flex items-center">
+          <Truck size={14} className="mr-2 text-brand-blue" /> Opsi Pengiriman
         </h2>
 
         {!selectedAddress ? (
-          <p className="text-xs text-neutral-400 italic">
+          <p className="text-xs text-neutral-400 italic font-sans">
             Pilih alamat pengiriman untuk melihat opsi kurir.
           </p>
         ) : shippingLoading ? (
@@ -159,8 +159,7 @@ export function CheckoutAddressForm({
               <motion.div
                 whileHover={{
                   y: -2,
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                  borderColor: '#171717',
+                  borderColor: '#94b2b9',
                 }}
                 whileTap={{ scale: 0.99 }}
                 key={option.id}
@@ -175,23 +174,23 @@ export function CheckoutAddressForm({
                 }}
                 className={`p-4 border cursor-pointer transition-all duration-300 relative rounded-xl ${
                   selectedCourier?.id === option.id
-                    ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent'
-                    : 'border-neutral-200 bg-white hover:border-brand-black'
+                    ? 'border-brand-blue bg-brand-blue/10 ring-1 ring-brand-blue'
+                    : 'border-neutral-200/80 bg-brand-cream hover:border-brand-blue'
                 }`}
               >
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-heading font-medium text-xs text-brand-black uppercase tracking-wider">
+                  <span className="font-sans font-bold text-xs text-brand-plum uppercase tracking-wider">
                     {option.courier_name}
                   </span>
-                  <span className="font-sans font-bold text-xs text-brand-black">
+                  <span className="font-sans font-bold text-xs text-brand-plum">
                     {formatIDR(option.price)}
                   </span>
                 </div>
-                <p className="text-[11px] text-neutral-400">
+                <p className="text-[11px] text-neutral-500 font-sans">
                   Estimasi tiba: {option.etd_min} - {option.etd_max} Hari
                 </p>
                 {selectedCourier?.id === option.id && (
-                  <div className="absolute top-2 right-2 bg-brand-accent text-white rounded-full p-0.5">
+                  <div className="absolute top-2 right-2 bg-brand-blue text-brand-plum rounded-full p-0.5">
                     <Check size={8} />
                   </div>
                 )}

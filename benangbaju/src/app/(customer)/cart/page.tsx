@@ -106,7 +106,7 @@ export default function CartPage(): React.JSX.Element {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-white border border-neutral-200/80 rounded-2xl shadow-xs gap-4 mb-4"
+                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs gap-4 mb-4"
                     >
                       <div className="flex items-center space-x-4 flex-1 min-w-0">
                         {item.imageUrl && (
@@ -198,7 +198,7 @@ export default function CartPage(): React.JSX.Element {
             >
               <Card
                 bordered={true}
-                className="bg-white border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
+                className="bg-brand-cream border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
                 <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
                 <h3 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">

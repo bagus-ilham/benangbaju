@@ -109,7 +109,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
     <div className="py-10 border-t border-neutral-100 space-y-8">
       <div className="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0">
         {/* Left: Ratings Summary */}
-        <div className="flex flex-col space-y-4 md:w-1/3 bg-white border border-neutral-200/80 p-6 md:p-8 rounded-2xl shadow-xs relative overflow-hidden">
+        <div className="flex flex-col space-y-4 md:w-1/3 bg-brand-cream border border-neutral-200/80 p-6 md:p-8 rounded-2xl shadow-xs relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
           <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
             Ulasan Pembeli

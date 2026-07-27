@@ -40,7 +40,7 @@ export default function ReturPage(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Highlight Values Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4 text-brand-plum" />
                 <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
@@ -53,7 +53,7 @@ export default function ReturPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <AlertCircle className="h-4 w-4 text-brand-plum" />
                 <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
@@ -69,8 +69,8 @@ export default function ReturPage(): React.JSX.Element {
           </div>
 
           {/* Acceptable Reasons Section */}
-          <div className="border border-neutral-200/80 p-8 rounded-2xl space-y-6 bg-white shadow-xs hover:shadow-md transition-all duration-300">
-            <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
+          <div className="border border-neutral-200/80 p-8 rounded-2xl space-y-6 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
+            <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
               Kategori Retur Yang Diterima
             </h3>
 
@@ -118,7 +118,7 @@ export default function ReturPage(): React.JSX.Element {
               {steps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="border border-neutral-200/80 p-6 rounded-xl space-y-2 bg-white shadow-xs hover:shadow-md transition-all duration-300"
+                  className="border border-neutral-200/80 p-6 rounded-xl space-y-2 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300"
                 >
                   <h4 className="font-sans text-xs font-bold text-brand-plum uppercase tracking-wide">
                     {step.title}

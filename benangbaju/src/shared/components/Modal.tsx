@@ -73,7 +73,7 @@ export function Modal({
               transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
             }}
             className={cn(
-              'relative w-full bg-white border border-neutral-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] rounded-2xl flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
+              'relative w-full bg-brand-cream border border-neutral-200/80 shadow-[0_20px_60px_-15px_rgba(45,38,64,0.15)] rounded-2xl flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
               {
                 'max-w-sm': size === 'sm',
                 'max-w-md': size === 'md',
@@ -83,11 +83,11 @@ export function Modal({
               className
             )}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200/60 bg-brand-cream">
               {title ? (
                 <h3
                   id={titleId}
-                  className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black"
+                  className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum"
                 >
                   {title}
                 </h3>

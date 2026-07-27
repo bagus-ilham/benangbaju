@@ -138,7 +138,7 @@ export const ProductCard = React.memo(function ProductCard({
   return (
     <div
       className={cn(
-        'group relative flex flex-col w-full text-left bg-white transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] rounded-2xl overflow-hidden border border-transparent hover:border-neutral-100',
+        'group relative flex flex-col w-full text-left bg-brand-cream transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.08)] rounded-2xl overflow-hidden border border-neutral-200/60 hover:border-brand-blue/40',
         className
       )}
       onMouseEnter={() => setIsHovered(true)}

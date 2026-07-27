@@ -26,14 +26,14 @@ export function ChangePasswordForm({
   return (
     <motion.div
       variants={itemVariants}
-      className="border border-neutral-200 p-6 sm:p-8 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300 card-hover-lift gold-border-hover relative overflow-hidden group"
+      className="border border-neutral-200/80 p-6 sm:p-8 rounded-2xl bg-brand-cream shadow-xs relative overflow-hidden group"
     >
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-brand-accent to-brand-accent-light" />
-      <h2 className="text-sm uppercase tracking-widest font-heading font-bold text-brand-black mb-6 flex items-center">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+      <h2 className="text-sm uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center">
         <motion.div whileHover={{ y: [0, -2, 2, -2, 0] }} className="mr-2">
           <Key
             size={16}
-            className="text-neutral-500 group-hover:text-brand-black transition-colors"
+            className="text-brand-blue group-hover:text-brand-plum transition-colors"
           />
         </motion.div>
         Ganti Kata Sandi
@@ -58,12 +58,12 @@ export function ChangePasswordForm({
           required
         />
 
-        <div className="pt-4 border-t border-neutral-100 flex justify-end">
+        <div className="pt-4 border-t border-neutral-200/60 flex justify-end">
           <Button
             type="submit"
-            variant="primary"
+            variant="accent"
             isLoading={isSavingPassword}
-            className="text-xs uppercase tracking-widest font-semibold py-3 px-6"
+            className="text-xs uppercase tracking-widest font-bold py-3 px-6"
           >
             Perbarui Kata Sandi
           </Button>

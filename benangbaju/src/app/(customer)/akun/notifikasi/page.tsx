@@ -134,7 +134,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSignOut}
-              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-white cursor-pointer shadow-xs"
+              className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-brand-cream cursor-pointer shadow-xs"
             >
               <LogOut size={14} />
               <span>Keluar dari Akun</span>
@@ -142,7 +142,7 @@ export default function NotifikasiPage(): React.JSX.Element {
           </div>
 
           {/* Notifications Content */}
-          <div className="md:col-span-2 border border-neutral-200/80 p-6 sm:p-8 rounded-2xl bg-white shadow-xs relative overflow-hidden">
+          <div className="md:col-span-2 border border-neutral-200/80 p-6 sm:p-8 rounded-2xl bg-brand-cream shadow-xs relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-neutral-100">
               <h2 className="text-lg font-sans font-bold tracking-tight text-brand-plum flex items-center">

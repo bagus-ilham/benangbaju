@@ -58,7 +58,7 @@ export function CheckoutSummaryCard({
   canSubmit,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   return (
-    <div className="border border-neutral-200 p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden">
+    <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
       <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center justify-between border-b border-neutral-100 pb-3">
         <span className="flex items-center">
@@ -85,18 +85,18 @@ export function CheckoutSummaryCard({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-heading font-medium text-brand-black uppercase tracking-wide truncate text-[11px]">
+              <p className="font-sans font-bold text-brand-plum uppercase tracking-wide truncate text-[11px]">
                 {item.productName || item.name}
               </p>
               {item.variantName && (
-                <p className="text-[9px] text-neutral-400 uppercase tracking-wider">
+                <p className="text-[9px] text-neutral-500 uppercase tracking-wider font-sans font-semibold">
                   {item.variantName}
                 </p>
               )}
-              <p className="text-[10px] text-neutral-400 mt-0.5">Qty: {item.quantity}</p>
+              <p className="text-[10px] text-neutral-400 mt-0.5 font-sans">Qty: {item.quantity}</p>
             </div>
             <div className="text-right">
-              <p className="font-sans font-semibold text-brand-black">
+              <p className="font-sans font-bold text-brand-plum">
                 {formatIDR(item.price * item.quantity)}
               </p>
             </div>

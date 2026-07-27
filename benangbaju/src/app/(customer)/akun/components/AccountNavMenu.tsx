@@ -23,7 +23,7 @@ export function AccountNavMenu({
         <motion.div
           whileHover={{ x: 4, borderColor: '#94b2b9' }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <ClipboardList size={14} className="text-brand-blue" />
           <span>Pesanan Saya</span>
@@ -34,7 +34,7 @@ export function AccountNavMenu({
         <motion.div
           whileHover={{ x: 4, borderColor: '#94b2b9' }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <MapPin size={14} className="text-brand-blue" />
           <span>Daftar Alamat</span>
@@ -45,7 +45,7 @@ export function AccountNavMenu({
         <motion.div
           whileHover={{ x: 4, borderColor: '#94b2b9' }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <Heart size={14} className="text-brand-blue" />
           <span>Wishlist Saya</span>
@@ -56,7 +56,7 @@ export function AccountNavMenu({
         <motion.div
           whileHover={{ x: 4, borderColor: '#94b2b9' }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-white cursor-pointer shadow-xs"
+          className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <Bell size={14} className="text-brand-blue" />
           <span>Notifikasi Saya</span>
@@ -71,7 +71,7 @@ export function AccountNavMenu({
         }}
         whileTap={{ scale: 0.98 }}
         onClick={handleSignOut}
-        className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-white cursor-pointer shadow-xs"
+        className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-brand-cream cursor-pointer shadow-xs"
       >
         <LogOut size={14} />
         <span>Keluar dari Akun</span>

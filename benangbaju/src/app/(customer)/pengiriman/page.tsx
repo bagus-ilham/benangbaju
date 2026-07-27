@@ -40,7 +40,7 @@ export default function PengirimanPage(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Delivery Terms Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="border border-neutral-200/80 p-6 space-y-3 bg-white rounded-2xl shadow-xs">
+            <div className="border border-neutral-200/80 p-6 space-y-3 bg-brand-cream rounded-2xl shadow-xs">
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 w-max rounded-xl">
                 <Scale className="h-4 w-4 text-brand-plum" strokeWidth={1.75} />
               </div>
@@ -53,7 +53,7 @@ export default function PengirimanPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
                 <Truck className="h-4 w-4 text-brand-plum" />
               </div>
@@ -66,7 +66,7 @@ export default function PengirimanPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
                 <ShieldCheck className="h-4 w-4 text-brand-plum" />
               </div>
@@ -86,10 +86,10 @@ export default function PengirimanPage(): React.JSX.Element {
               Mitra Ekspedisi & Estimasi Waktu (ETD)
             </h3>
 
-            <div className="border border-neutral-200/80 overflow-hidden rounded-2xl bg-white shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-neutral-200/80 overflow-hidden rounded-2xl bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <table className="w-full text-left border-collapse text-xs font-sans">
                 <thead>
-                  <tr className="bg-neutral-50 border-b border-neutral-200 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
+                  <tr className="bg-neutral-200/40 border-b border-neutral-200 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
                     <th className="p-4">Ekspedisi</th>
                     <th className="p-4">Cakupan Wilayah</th>
                     <th className="p-4">Estimasi Pengiriman</th>

@@ -24,14 +24,14 @@ export function Card({
         'rounded-2xl transition-all duration-500 ease-[0.16,1,0.3,1]',
 
         // Varian Warna
-        variant === 'solid' && 'bg-white',
-        variant === 'glass' && 'bg-white/70 backdrop-blur-xl',
+        variant === 'solid' && 'bg-brand-cream',
+        variant === 'glass' && 'bg-brand-cream/80 backdrop-blur-xl',
 
         // Border state
         bordered
           ? variant === 'glass'
-            ? 'border border-white/50 shadow-sm'
-            : 'border border-neutral-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]'
+            ? 'border border-neutral-200/60 shadow-xs'
+            : 'border border-neutral-200/80 shadow-[0_4px_20px_-4px_rgba(45,38,64,0.03)]'
           : '',
 
         // Hover Effect Premium

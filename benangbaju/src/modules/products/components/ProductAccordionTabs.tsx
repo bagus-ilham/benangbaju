@@ -39,7 +39,7 @@ export function ProductAccordionTabs({
           {activeTab === 'details' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-white shadow-xs rounded-xl -z-10 border border-neutral-200/50"
+              className="absolute inset-0 bg-brand-cream shadow-xs rounded-xl -z-10 border border-neutral-200/60"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -57,7 +57,7 @@ export function ProductAccordionTabs({
           {activeTab === 'shipping' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-white shadow-xs rounded-xl -z-10 border border-neutral-200/50"
+              className="absolute inset-0 bg-brand-cream shadow-xs rounded-xl -z-10 border border-neutral-200/60"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -73,7 +73,7 @@ export function ProductAccordionTabs({
           {activeTab === 'care' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-white shadow-xs rounded-xl -z-10 border border-neutral-200/50"
+              className="absolute inset-0 bg-brand-cream shadow-xs rounded-xl -z-10 border border-neutral-200/60"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}

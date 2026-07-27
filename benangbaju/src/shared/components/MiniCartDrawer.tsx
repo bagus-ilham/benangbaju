@@ -73,7 +73,7 @@ export function MiniCartDrawer(): React.JSX.Element {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="relative w-full max-w-md bg-white/95 backdrop-blur-md shadow-2xl h-full flex flex-col z-10 border-l border-neutral-100 outline-none"
+            className="relative w-full max-w-md bg-brand-cream/98 backdrop-blur-md shadow-2xl h-full flex flex-col z-10 border-l border-neutral-200/80 outline-none"
             role="dialog"
             aria-modal="true"
             aria-label="Keranjang Belanja"

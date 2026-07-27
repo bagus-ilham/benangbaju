@@ -43,7 +43,7 @@ export function AddressCard({
         'p-5 border text-sm font-sans relative transition-all duration-300 rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-md',
         isSelected
           ? 'border-brand-blue bg-brand-blue/10 ring-1 ring-brand-blue shadow-xs'
-          : 'border-neutral-200 bg-white'
+          : 'border-neutral-200/80 bg-brand-cream'
       )}
     >
       <div className="flex justify-between items-start mb-2">

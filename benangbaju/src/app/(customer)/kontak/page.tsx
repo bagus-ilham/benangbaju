@@ -28,7 +28,7 @@ export default function KontakPage(): React.JSX.Element {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200/80 p-8 space-y-6 bg-white rounded-2xl shadow-xs"
+            className="border border-neutral-200/80 p-8 space-y-6 bg-brand-cream rounded-2xl shadow-xs"
           >
             <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Layanan Pelanggan
@@ -76,7 +76,7 @@ export default function KontakPage(): React.JSX.Element {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200/80 p-8 flex flex-col justify-between space-y-6 bg-white rounded-2xl shadow-xs"
+            className="border border-neutral-200/80 p-8 flex flex-col justify-between space-y-6 bg-brand-cream rounded-2xl shadow-xs"
           >
             <div className="space-y-4">
               <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
