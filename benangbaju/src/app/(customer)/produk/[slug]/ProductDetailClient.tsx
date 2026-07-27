@@ -215,20 +215,20 @@ export function ProductDetailClient({
   const maxPrice = Math.max(...product.product_variants.map((v: ProductVariant) => Number(v.price)))
 
   return (
-    <div className="bg-white min-h-screen pb-24 md:pb-10">
+    <div className="bg-brand-cream min-h-screen pb-24 md:pb-10 font-sans">
       <PageContainer className="py-10 md:py-12 page-content">
         {/* Breadcrumbs */}
         <motion.nav
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex items-center flex-wrap gap-x-2 gap-y-1 text-[10px] uppercase tracking-wider text-neutral-400 mb-8 font-heading"
+          className="flex items-center flex-wrap gap-x-2 gap-y-1 text-[10px] uppercase tracking-wider text-neutral-500 mb-8 font-sans font-bold"
         >
-          <Link href="/" className="hover:text-brand-black transition-colors">
+          <Link href="/" className="hover:text-brand-blue transition-colors">
             Home
           </Link>
           <span>/</span>
-          <Link href="/produk" className="hover:text-brand-black transition-colors">
+          <Link href="/produk" className="hover:text-brand-blue transition-colors">
             Produk
           </Link>
           <span>/</span>
@@ -236,14 +236,14 @@ export function ProductDetailClient({
             <>
               <Link
                 href={`/kategori/${product.categories.slug}`}
-                className="hover:text-brand-black transition-colors"
+                className="hover:text-brand-blue transition-colors"
               >
                 {product.categories.name}
               </Link>
               <span>/</span>
             </>
           )}
-          <span className="text-brand-accent font-semibold truncate max-w-xs">{product.name}</span>
+          <span className="text-brand-plum font-bold truncate max-w-xs">{product.name}</span>
         </motion.nav>
 
         {/* Main Grid: Left Gallery, Right Details */}

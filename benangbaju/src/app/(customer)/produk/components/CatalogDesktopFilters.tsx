@@ -20,26 +20,26 @@ export function CatalogDesktopFilters({
   return (
     <aside className="hidden md:block w-48 flex-shrink-0 space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-black">
+        <h3 className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum">
           Kategori
         </h3>
         {(categorySlug || searchQuery) && (
           <button
             onClick={handleClearAll}
-            className="text-[9px] font-heading font-semibold uppercase tracking-widest text-neutral-400 hover:text-brand-black"
+            className="text-[9px] font-sans font-bold uppercase tracking-widest text-neutral-500 hover:text-brand-plum"
           >
             Reset
           </button>
         )}
       </div>
 
-      <ul className="space-y-2 border-b border-neutral-100 pb-6">
+      <ul className="space-y-2 border-b border-neutral-200/60 pb-6">
         <li>
           <button
             onClick={() => handleCategorySelect(null)}
             className={cn(
-              'text-xs font-sans tracking-wide hover:text-brand-black text-left w-full py-1',
-              !categorySlug ? 'text-brand-black font-semibold' : 'text-neutral-500'
+              'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors',
+              !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-500'
             )}
           >
             Semua Kategori
@@ -50,8 +50,8 @@ export function CatalogDesktopFilters({
             <button
               onClick={() => handleCategorySelect(cat.slug)}
               className={cn(
-                'text-xs font-sans tracking-wide hover:text-brand-accent text-left w-full py-1 transition-colors',
-                categorySlug === cat.slug ? 'text-brand-accent font-bold' : 'text-neutral-500'
+                'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors',
+                categorySlug === cat.slug ? 'text-brand-plum font-bold' : 'text-neutral-500'
               )}
             >
               {cat.name}

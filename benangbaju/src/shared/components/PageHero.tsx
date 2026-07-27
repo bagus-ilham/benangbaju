@@ -23,7 +23,7 @@ export function PageHero({
   children,
 }: PageHeroProps): React.JSX.Element {
   const variantClasses = {
-    light: 'bg-white border-neutral-200',
+    light: 'bg-brand-cream border-neutral-200/80',
     cream: 'bg-brand-cream border-neutral-200/80',
     dark: 'bg-brand-plum border-brand-plum/80',
   }
@@ -49,11 +49,11 @@ export function PageHero({
       <div className="relative overflow-hidden">
         {/* Decorative orbs */}
         <div
-          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-accent/5 blur-3xl pointer-events-none"
+          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-blue/10 blur-3xl pointer-events-none"
           aria-hidden
         />
         <div
-          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-accent/8 blur-2xl pointer-events-none"
+          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-blue/10 blur-2xl pointer-events-none"
           aria-hidden
         />
 
@@ -67,7 +67,7 @@ export function PageHero({
             {eyebrow && (
               <span
                 className={cn(
-                  'inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium',
+                  'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
                   colors.eyebrow
                 )}
               >

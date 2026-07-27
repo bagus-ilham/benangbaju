@@ -160,7 +160,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70 transition-colors duration-200"
+            className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum/80 transition-colors duration-200"
           >
             {label}
           </label>
@@ -198,13 +198,13 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             onKeyDown={handleKeyDown}
             className={cn(
               // Input styles matching Input.tsx
-              'w-full flex items-center justify-between bg-neutral-50 text-xs px-4 py-3.5 border border-neutral-200 rounded-xl text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-accent/10 focus:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] disabled:opacity-50 disabled:cursor-not-allowed',
+              'w-full flex items-center justify-between bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/15 focus:shadow-xs disabled:opacity-50 disabled:cursor-not-allowed font-sans',
               {
-                'border-brand-accent/50 bg-white ring-4 ring-brand-accent/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]':
+                'border-brand-blue/60 bg-white ring-4 ring-brand-blue/15 shadow-xs':
                   isOpen,
                 'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
                 'text-neutral-400': !selectedOption,
-                'text-brand-black': selectedOption,
+                'text-brand-plum font-bold': selectedOption,
               },
               className
             )}
@@ -232,7 +232,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 animate={{ opacity: 1, y: 0, scaleY: 1 }}
                 exit={{ opacity: 0, y: -10, scaleY: 0.95 }}
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute z-50 w-full mt-2 bg-white border border-neutral-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] origin-top max-h-60 overflow-y-auto outline-none p-1.5"
+                className="absolute z-50 w-full mt-2 bg-brand-cream border border-neutral-200/80 rounded-xl shadow-[0_10px_40px_-10px_rgba(45,38,64,0.1)] origin-top max-h-60 overflow-y-auto outline-none p-1.5 font-sans"
                 role="listbox"
                 tabIndex={-1}
                 onKeyDown={handleKeyDown}
@@ -241,7 +241,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 }
               >
                 {options.length === 0 ? (
-                  <div className="px-4 py-3 text-xs text-neutral-400 text-center">
+                  <div className="px-4 py-3 text-xs text-neutral-400 text-center font-sans">
                     Tidak ada opsi
                   </div>
                 ) : (
@@ -258,16 +258,16 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         onClick={() => handleSelect(opt.value)}
                         onMouseMove={() => setFocusedIndex(index)}
                         className={cn(
-                          'flex items-center justify-between px-3 py-2 text-xs font-sans cursor-pointer transition-colors rounded-md',
+                          'flex items-center justify-between px-3 py-2 text-xs font-sans cursor-pointer transition-colors rounded-lg',
                           isSelected || isFocused
-                            ? 'bg-brand-cream/50 text-brand-black font-semibold'
-                            : 'text-neutral-600 hover:bg-neutral-50'
+                            ? 'bg-brand-blue/15 text-brand-plum font-bold'
+                            : 'text-neutral-600 hover:bg-brand-blue/10'
                         )}
                       >
                         <span className="truncate">{opt.label}</span>
                         {isSelected && (
                           <Check
-                            className="w-3.5 h-3.5 text-brand-black flex-shrink-0"
+                            className="w-3.5 h-3.5 text-brand-plum flex-shrink-0"
                             aria-hidden="true"
                           />
                         )}

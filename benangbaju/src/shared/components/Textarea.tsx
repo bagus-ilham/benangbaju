@@ -23,7 +23,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70 transition-colors duration-200"
+            className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum/80 transition-colors duration-200"
           >
             {label}
           </label>
@@ -35,8 +35,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             ref={ref}
             rows={rows}
             className={cn(
-              // Textarea styles — Modern premium soft design
-              'w-full bg-neutral-50 text-xs px-4 py-3.5 border border-neutral-200 rounded-xl text-brand-black transition-all duration-300 placeholder:text-neutral-400 focus:bg-white focus:border-brand-accent/50 focus:outline-none focus:ring-4 focus:ring-brand-accent/10 focus:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] resize-y min-h-[80px]',
+              // Textarea styles — Modern premium soft design with Brand Guidelines v9 tokens
+              'w-full bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-brand-plum transition-all duration-300 placeholder:text-neutral-400 focus:bg-white focus:border-brand-blue/60 focus:outline-none focus:ring-4 focus:ring-brand-blue/15 focus:shadow-xs resize-y min-h-[80px] font-sans',
               {
                 'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
               },

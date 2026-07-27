@@ -42,7 +42,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="text-neutral-400 hover:text-brand-black transition-colors focus:outline-none p-1"
+          className="text-neutral-400 hover:text-brand-plum transition-colors focus:outline-none p-1"
           tabIndex={-1}
           aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
         >
@@ -59,7 +59,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70 transition-colors duration-200"
+            className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum/80 transition-colors duration-200"
           >
             {label}
           </label>
@@ -68,7 +68,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative flex items-center group">
           {leftIcon && (
             <div
-              className="absolute left-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-black"
+              className="absolute left-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-plum"
               aria-hidden="true"
             >
               {leftIcon}
@@ -80,8 +80,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={currentType}
             ref={ref}
             className={cn(
-              // Input styles — Modern premium soft design
-              'w-full bg-neutral-50 text-xs px-4 py-3.5 border border-neutral-200 rounded-xl text-brand-black transition-all duration-300 placeholder:text-neutral-400 focus:bg-white focus:border-brand-accent/50 focus:outline-none focus:ring-4 focus:ring-brand-accent/10 focus:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]',
+              // Input styles — Modern premium soft design with Brand Guidelines v9 tokens
+              'w-full bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-brand-plum transition-all duration-300 placeholder:text-neutral-400 focus:bg-white focus:border-brand-blue/60 focus:outline-none focus:ring-4 focus:ring-brand-blue/15 focus:shadow-xs font-sans',
               {
                 'pl-11': leftIcon,
                 'pr-11': effectiveRightIcon,
@@ -95,7 +95,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
 
           {effectiveRightIcon && (
-            <div className="absolute right-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-black">
+            <div className="absolute right-3 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-focus-within:text-brand-plum">
               {effectiveRightIcon}
             </div>
           )}

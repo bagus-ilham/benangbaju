@@ -77,48 +77,48 @@ export function ProductSizeGuideModal({
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-[10px] font-sans">
                     <thead>
-                      <tr className="border-b border-neutral-200 bg-neutral-50">
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                      <tr className="border-b border-neutral-200/80 bg-brand-blue/15">
+                        <th className="py-2.5 px-3 font-sans font-bold uppercase tracking-wider text-brand-plum">
                           Ukuran
                         </th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                        <th className="py-2.5 px-3 font-sans font-bold uppercase tracking-wider text-brand-plum">
                           Lingkar Dada
                         </th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                        <th className="py-2.5 px-3 font-sans font-bold uppercase tracking-wider text-brand-plum">
                           Lebar Bahu
                         </th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                        <th className="py-2.5 px-3 font-sans font-bold uppercase tracking-wider text-brand-plum">
                           Panjang Lengan
                         </th>
-                        <th className="py-2.5 px-3 font-heading font-bold uppercase tracking-wider text-brand-black">
+                        <th className="py-2.5 px-3 font-sans font-bold uppercase tracking-wider text-brand-plum">
                           Panjang Baju
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 text-neutral-600">
-                      <tr className="hover:bg-neutral-50/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-brand-black">S</td>
+                    <tbody className="divide-y divide-neutral-200/60 text-neutral-600">
+                      <tr className="hover:bg-brand-blue/5 transition-colors">
+                        <td className="py-2.5 px-3 font-bold text-brand-plum">S</td>
                         <td className="py-2.5 px-3">92 cm</td>
                         <td className="py-2.5 px-3">37 cm</td>
                         <td className="py-2.5 px-3">55 cm</td>
                         <td className="py-2.5 px-3">135 cm</td>
                       </tr>
-                      <tr className="hover:bg-neutral-50/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-brand-black">M</td>
+                      <tr className="hover:bg-brand-blue/5 transition-colors">
+                        <td className="py-2.5 px-3 font-bold text-brand-plum">M</td>
                         <td className="py-2.5 px-3">96 cm</td>
                         <td className="py-2.5 px-3">38 cm</td>
                         <td className="py-2.5 px-3">56 cm</td>
                         <td className="py-2.5 px-3">137 cm</td>
                       </tr>
-                      <tr className="hover:bg-neutral-50/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-brand-black">L</td>
+                      <tr className="hover:bg-brand-blue/5 transition-colors">
+                        <td className="py-2.5 px-3 font-bold text-brand-plum">L</td>
                         <td className="py-2.5 px-3">102 cm</td>
                         <td className="py-2.5 px-3">40 cm</td>
                         <td className="py-2.5 px-3">57 cm</td>
                         <td className="py-2.5 px-3">140 cm</td>
                       </tr>
-                      <tr className="hover:bg-neutral-50/50 transition-colors">
-                        <td className="py-2.5 px-3 font-semibold text-brand-black">XL</td>
+                      <tr className="hover:bg-brand-blue/5 transition-colors">
+                        <td className="py-2.5 px-3 font-bold text-brand-plum">XL</td>
                         <td className="py-2.5 px-3">110 cm</td>
                         <td className="py-2.5 px-3">42 cm</td>
                         <td className="py-2.5 px-3">58 cm</td>
@@ -129,8 +129,8 @@ export function ProductSizeGuideModal({
                 </div>
               )}
 
-              <div className="pt-2 border-t border-neutral-100">
-                <h4 className="text-[9px] uppercase tracking-widest font-heading font-medium text-brand-black/70 mb-1">
+              <div className="pt-2 border-t border-neutral-200/60">
+                <h4 className="text-[9px] uppercase tracking-widest font-sans font-bold text-brand-plum mb-1">
                   Tips Menentukan Ukuran:
                 </h4>
                 <ul className="list-disc list-inside text-[9px] text-neutral-500 space-y-1 leading-relaxed">

@@ -89,19 +89,19 @@ export function ProductInfoSection({
   return (
     <>
       {/* Title, Category & Price */}
-      <motion.div variants={itemVariants} className="space-y-2">
+      <motion.div variants={itemVariants} className="space-y-2 font-sans">
         {product.categories && (
-          <span className="text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent">
+          <span className="text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-blue">
             {product.categories.name}
           </span>
         )}
-        <h1 className="text-xl lg:text-3xl font-heading font-light uppercase tracking-wider text-brand-black leading-tight">
+        <h1 className="text-xl lg:text-3xl font-sans font-bold uppercase tracking-wider text-brand-plum leading-tight">
           {product.name}
         </h1>
 
         {/* Price display */}
         <div className="flex items-baseline space-x-3 pt-2">
-          <span className="text-lg lg:text-xl font-sans font-semibold text-brand-black">
+          <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
             {selectedVariant
               ? formatIDR(selectedVariant.price)
               : minPrice === maxPrice
