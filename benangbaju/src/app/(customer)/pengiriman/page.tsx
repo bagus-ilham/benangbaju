@@ -66,11 +66,11 @@ export default function PengirimanPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
-              <div className="p-2 bg-neutral-100/80 rounded-xl w-max">
-                <ShieldCheck className="h-4 w-4 text-neutral-800" />
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
+              <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
+                <ShieldCheck className="h-4 w-4 text-brand-plum" />
               </div>
-              <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
+              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Garansi Asuransi
               </h3>
               <p className="text-xs text-neutral-500 leading-relaxed font-medium">
@@ -82,14 +82,14 @@ export default function PengirimanPage(): React.JSX.Element {
 
           {/* Courier Table Section */}
           <div className="space-y-4 pt-4">
-            <h3 className="font-serif text-sm font-bold text-neutral-950 uppercase tracking-wider">
+            <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
               Mitra Ekspedisi & Estimasi Waktu (ETD)
             </h3>
 
-            <div className="border border-neutral-200 overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-300 gold-border-hover">
+            <div className="border border-neutral-200/80 overflow-hidden rounded-2xl bg-white shadow-xs hover:shadow-md transition-all duration-300">
               <table className="w-full text-left border-collapse text-xs font-sans">
                 <thead>
-                  <tr className="bg-neutral-50 border-b border-neutral-200 text-neutral-900 font-bold uppercase tracking-wider text-[10px]">
+                  <tr className="bg-neutral-50 border-b border-neutral-200 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
                     <th className="p-4">Ekspedisi</th>
                     <th className="p-4">Cakupan Wilayah</th>
                     <th className="p-4">Estimasi Pengiriman</th>
@@ -98,7 +98,7 @@ export default function PengirimanPage(): React.JSX.Element {
                 <tbody className="divide-y divide-neutral-100 font-medium text-neutral-600">
                   {deliveryPartners.map((partner, idx) => (
                     <tr key={idx} className="hover:bg-neutral-50/50 transition-colors">
-                      <td className="p-4 font-bold text-neutral-900">{partner.name}</td>
+                      <td className="p-4 font-bold text-brand-plum">{partner.name}</td>
                       <td className="p-4">{partner.area}</td>
                       <td className="p-4">{partner.timeline}</td>
                     </tr>

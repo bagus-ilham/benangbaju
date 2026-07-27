@@ -53,10 +53,10 @@ export default function ReturPage(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-neutral-200 p-6 rounded-2xl space-y-3 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover">
+            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-white shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
-                <AlertCircle className="h-4 w-4 text-neutral-800" />
-                <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs">
+                <AlertCircle className="h-4 w-4 text-brand-plum" />
+                <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                   Syarat Fisik Barang
                 </h3>
               </div>
@@ -69,8 +69,8 @@ export default function ReturPage(): React.JSX.Element {
           </div>
 
           {/* Acceptable Reasons Section */}
-          <div className="border border-neutral-200 p-8 rounded-2xl space-y-6 bg-white shadow-sm hover:shadow-md transition-all duration-300 gold-border-hover">
-            <h3 className="font-serif text-neutral-950 font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
+          <div className="border border-neutral-200/80 p-8 rounded-2xl space-y-6 bg-white shadow-xs hover:shadow-md transition-all duration-300">
+            <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Kategori Retur Yang Diterima
             </h3>
 
@@ -78,7 +78,7 @@ export default function ReturPage(): React.JSX.Element {
               <li className="flex items-start space-x-2.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Cacat Produk (Defect)</p>
+                  <p className="font-bold text-brand-plum mb-0.5">Cacat Produk (Defect)</p>
                   <p>
                     Terdapat robekan kain, jahitan lepas ekstrem, noda kotoran permanen, kancing
                     rusak, atau ritsleting macet sebelum pemakaian pertama.
@@ -88,7 +88,7 @@ export default function ReturPage(): React.JSX.Element {
               <li className="flex items-start space-x-2.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Kesalahan Pengiriman</p>
+                  <p className="font-bold text-brand-plum mb-0.5">Kesalahan Pengiriman</p>
                   <p>
                     Produk yang dikirim tidak sesuai dengan invoice pesanan (salah warna, salah
                     model, atau salah ukuran).
@@ -98,7 +98,7 @@ export default function ReturPage(): React.JSX.Element {
               <li className="flex items-start space-x-2.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-neutral-900 mb-0.5">Tukar Ukuran (Tukar Size)</p>
+                  <p className="font-bold text-brand-plum mb-0.5">Tukar Ukuran (Tukar Size)</p>
                   <p>
                     Pembeli salah memilih ukuran (kekecilan/kebesaran), dengan catatan biaya
                     pengiriman retur dan pengiriman kembali sepenuhnya ditanggung oleh pembeli, dan
@@ -111,16 +111,16 @@ export default function ReturPage(): React.JSX.Element {
 
           {/* Step-by-step procedure */}
           <div className="space-y-4 pt-4">
-            <h3 className="font-serif text-sm font-bold text-neutral-950 uppercase tracking-wider">
+            <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
               Alur Pengajuan Retur
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {steps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="border border-neutral-200 p-6 rounded-xl space-y-2 bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 gold-border-hover"
+                  className="border border-neutral-200/80 p-6 rounded-xl space-y-2 bg-white shadow-xs hover:shadow-md transition-all duration-300"
                 >
-                  <h4 className="font-serif text-xs font-bold text-neutral-950 uppercase tracking-wide">
+                  <h4 className="font-sans text-xs font-bold text-brand-plum uppercase tracking-wide">
                     {step.title}
                   </h4>
                   <p className="text-[11px] text-neutral-500 leading-relaxed font-medium">

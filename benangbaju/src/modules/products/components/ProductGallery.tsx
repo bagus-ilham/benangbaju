@@ -261,8 +261,8 @@ export function ProductGallery({
 
         {/* Desktop Expand Hint Badge */}
         <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="inline-flex items-center space-x-1.5 text-[9px] font-heading font-medium uppercase tracking-wider text-white bg-brand-black/75 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/20 shadow-md">
-            <Maximize2 className="w-3 h-3 text-brand-accent-light" />
+          <span className="inline-flex items-center space-x-1.5 text-[9px] font-sans font-bold uppercase tracking-wider text-brand-cream bg-brand-plum/85 backdrop-blur-xs px-3 py-1.5 rounded-full border border-brand-gold/30 shadow-xs">
+            <Maximize2 className="w-3 h-3 text-brand-gold" />
             <span>Klik Layar Penuh</span>
           </span>
         </div>
@@ -287,7 +287,7 @@ export function ProductGallery({
             </button>
 
             {/* Counter */}
-            <div className="absolute top-6 left-6 text-white/70 text-xs font-heading font-medium uppercase tracking-widest z-50">
+            <div className="absolute top-6 left-6 text-white/70 text-xs font-sans font-bold uppercase tracking-widest z-50">
               {currentImageIndex >= 0 ? `${currentImageIndex + 1} / ${images.length}` : ''}
             </div>
 
@@ -404,7 +404,7 @@ export function ProductThumbnails({
             className={cn(
               'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300 rounded-xl overflow-hidden',
               activeImage === img.url
-                ? 'border-brand-black opacity-100 shadow-md ring-2 ring-brand-black/10'
+                ? 'border-brand-blue opacity-100 shadow-xs ring-2 ring-brand-blue/30'
                 : 'border-neutral-200 opacity-60 hover:opacity-100'
             )}
           >
