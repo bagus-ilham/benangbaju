@@ -152,7 +152,7 @@ function LoginContent() {
             </motion.div>
 
             <motion.div variants={fadeUpItem}>
-              <Button type="submit" variant="primary" className="w-full mt-2" isLoading={isLoading}>
+              <Button type="submit" variant="accent" className="w-full mt-2 font-bold" isLoading={isLoading}>
                 Masuk
               </Button>
             </motion.div>

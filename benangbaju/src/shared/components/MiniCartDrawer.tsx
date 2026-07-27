@@ -81,15 +81,15 @@ export function MiniCartDrawer(): React.JSX.Element {
           >
             {/* Top gold accent line */}
             <div
-              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-accent to-brand-accent-light"
+              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue"
               aria-hidden="true"
             />
 
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-neutral-100 mt-[3px]">
               <div className="flex items-center space-x-2">
-                <ShoppingBag className="h-4 w-4 text-brand-accent" aria-hidden="true" />
-                <span className="font-heading text-sm font-bold tracking-[0.15em] text-brand-black uppercase">
+                <ShoppingBag className="h-4 w-4 text-brand-blue" aria-hidden="true" />
+                <span className="font-sans text-sm font-bold tracking-[0.15em] text-brand-plum uppercase">
                   KERANJANG ({totalQuantity})
                 </span>
               </div>
@@ -354,7 +354,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                     className="w-full"
                   >
                     <Button
-                      variant="primary"
+                      variant="accent"
                       className="w-full text-[10px] uppercase font-bold py-3.5 flex items-center justify-center space-x-1.5"
                     >
                       <span>Checkout</span>

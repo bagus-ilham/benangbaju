@@ -204,7 +204,7 @@ function RegisterContent(): React.JSX.Element {
             </motion.div>
 
             <motion.div variants={fadeUpItem}>
-              <Button type="submit" variant="primary" className="w-full mt-4" isLoading={isLoading}>
+              <Button type="submit" variant="accent" className="w-full mt-4 font-bold" isLoading={isLoading}>
                 Daftar
               </Button>
             </motion.div>

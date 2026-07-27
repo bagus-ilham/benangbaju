@@ -63,15 +63,15 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
                 <Icon
                   className={cn(
                     'h-5 w-5 transition-transform duration-200',
-                    item.isActive ? 'text-brand-accent scale-110' : 'text-neutral-500'
+                    item.isActive ? 'text-brand-plum scale-110' : 'text-neutral-500'
                   )}
-                  strokeWidth={item.isActive ? 2.2 : 1.75}
+                  strokeWidth={item.isActive ? 2.5 : 1.75}
                 />
                 {item.badge && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-2 bg-brand-accent text-white text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-sm"
+                    className="absolute -top-1 -right-2 bg-brand-blue text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
                   >
                     {item.badge}
                   </motion.span>
@@ -79,8 +79,8 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
               </div>
               <span
                 className={cn(
-                  'text-[9px] font-heading font-medium uppercase tracking-wider mt-0.5 transition-colors',
-                  item.isActive ? 'text-brand-accent font-bold' : 'text-neutral-500'
+                  'text-[9px] font-sans font-bold uppercase tracking-wider mt-0.5 transition-colors',
+                  item.isActive ? 'text-brand-plum' : 'text-neutral-500'
                 )}
               >
                 {item.name}
@@ -88,7 +88,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
               {item.isActive && (
                 <motion.div
                   layoutId="bottom-nav-active"
-                  className="absolute -bottom-1 w-5 h-0.5 bg-brand-accent rounded-full"
+                  className="absolute -bottom-1 w-5 h-0.5 bg-brand-blue rounded-full"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}

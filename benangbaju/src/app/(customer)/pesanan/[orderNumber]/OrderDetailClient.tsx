@@ -314,7 +314,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
 
   if (!order) {
     return (
-      <div className="bg-white min-h-screen">
+      <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="Pesanan" title="Detail Pesanan" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <EmptyState
@@ -329,7 +329,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
         eyebrow="Pesanan Saya"
         title="Detail Pesanan"
@@ -338,7 +338,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         <div className="flex flex-wrap items-center gap-4 mt-2">
           <Link
             href="/pesanan"
-            className="inline-flex items-center text-[10px] uppercase tracking-wider font-semibold text-neutral-500 hover:text-brand-accent transition"
+            className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-600 hover:text-brand-plum transition"
           >
             <ArrowLeft size={13} className="mr-1" /> Kembali
           </Link>
@@ -354,8 +354,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
               </Button>
               <Button
                 onClick={handleReorder}
-                variant="primary"
-                className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4 bg-brand-black hover:bg-brand-accent text-white transition-colors"
+                variant="accent"
+                className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
               >
                 <RotateCcw size={13} className="mr-1.5" /> Beli Lagi
               </Button>

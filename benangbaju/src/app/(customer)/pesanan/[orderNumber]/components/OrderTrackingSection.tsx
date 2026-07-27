@@ -40,14 +40,14 @@ export function OrderTrackingSection({
   }
 
   return (
-    <div className="border border-neutral-200 p-6 bg-brand-cream/30 card-hover-lift rounded-2xl space-y-6">
+    <div className="border border-neutral-200/80 p-6 bg-white rounded-2xl space-y-6 shadow-xs">
       <div className="flex items-center justify-between">
-        <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent">
+        <p className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
           Pelacakan Pesanan Live
         </p>
         {statusIndex >= 0 && (
-          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-brand-accent/10 border border-brand-accent/20 rounded-full text-[10px] font-heading font-semibold text-brand-accent uppercase tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-accent animate-ping" />
+          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-brand-blue/20 border border-brand-blue/40 rounded-full text-[10px] font-sans font-bold text-brand-plum uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-plum animate-ping" />
             <span>{steps[statusIndex]?.label}</span>
           </span>
         )}
@@ -66,14 +66,14 @@ export function OrderTrackingSection({
               <div
                 className={`relative flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-300 ${
                   isCompleted
-                    ? 'bg-brand-accent border-brand-accent text-white shadow-md'
+                    ? 'bg-brand-blue border-brand-blue text-brand-plum font-bold shadow-xs'
                     : 'bg-white border-neutral-200 text-neutral-400'
-                } ${isActive ? 'ring-4 ring-brand-accent/30 scale-110' : ''}`}
+                } ${isActive ? 'ring-4 ring-brand-blue/40 scale-110' : ''}`}
               >
                 {step.icon}
                 {isActive && (
                   <motion.span
-                    className="absolute inset-0 rounded-full bg-brand-accent/30 -z-10"
+                    className="absolute inset-0 rounded-full bg-brand-blue/30 -z-10"
                     animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
                     transition={{ repeat: Infinity, duration: 2 }}
                   />
@@ -81,11 +81,11 @@ export function OrderTrackingSection({
               </div>
 
               <span
-                className={`ml-4 md:ml-0 md:mt-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap text-center ${
+                className={`ml-4 md:ml-0 md:mt-3 text-xs font-sans uppercase tracking-wider whitespace-nowrap text-center ${
                   isActive
-                    ? 'text-brand-accent font-bold'
+                    ? 'text-brand-plum font-bold'
                     : isCompleted
-                      ? 'text-brand-black font-medium'
+                      ? 'text-brand-plum font-bold'
                       : 'text-neutral-400'
                 }`}
               >
@@ -95,7 +95,7 @@ export function OrderTrackingSection({
               {idx < steps.length - 1 && (
                 <div className="hidden md:block absolute top-4 left-[50%] right-[-50%] h-[3px] bg-neutral-200 -z-10 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-brand-accent"
+                    className="h-full bg-brand-blue"
                     initial={{ width: idx < statusIndex ? '100%' : '0%' }}
                     animate={{ width: idx < statusIndex ? '100%' : '0%' }}
                     transition={{ duration: 0.5 }}

@@ -42,13 +42,13 @@ export function AddressCard({
       className={cn(
         'p-5 border text-sm font-sans relative transition-all duration-300 rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-md',
         isSelected
-          ? 'border-brand-accent bg-brand-accent-muted/10 ring-1 ring-brand-accent shadow-sm'
+          ? 'border-brand-blue bg-brand-blue/10 ring-1 ring-brand-blue shadow-xs'
           : 'border-neutral-200 bg-white'
       )}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center space-x-2">
-          <span className="font-semibold text-neutral-800">{address.label}</span>
+          <span className="font-bold text-brand-plum">{address.label}</span>
           {address.is_default && (
             <Badge variant="gold" className="text-[10px] py-0 px-2">
               Utama
@@ -56,7 +56,7 @@ export function AddressCard({
           )}
         </div>
         {isSelected && (
-          <span className="text-brand-accent">
+          <span className="text-brand-plum font-bold">
             <Check size={18} strokeWidth={2.5} />
           </span>
         )}

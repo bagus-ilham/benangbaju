@@ -234,7 +234,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <button
                           key={tag}
                           onClick={() => handleSelectTag(tag)}
-                          className="text-[11px] font-sans bg-brand-cream hover:bg-brand-accent hover:text-white border border-brand-accent/20 text-brand-black px-3 py-1 rounded-full transition-all duration-200"
+                          className="text-[11px] font-sans bg-brand-cream hover:bg-brand-blue hover:text-brand-plum border border-brand-blue/30 text-brand-plum font-semibold px-3.5 py-1 rounded-full transition-all duration-200 cursor-pointer"
                         >
                           {tag}
                         </button>

@@ -68,7 +68,7 @@ export default async function CategoryDetailPage({
   }
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-brand-cream min-h-screen">
       {category.image_url ? (
         <div className="relative h-[35vh] md:h-[45vh] w-full bg-neutral-100 overflow-hidden border-b border-neutral-200">
           <Image
@@ -78,20 +78,16 @@ export default async function CategoryDetailPage({
             priority
             className="object-cover"
           />
-          <div className="absolute inset-0 gradient-overlay-dark" />
-          <div
-            className="absolute inset-0 section-texture opacity-20 pointer-events-none"
-            aria-hidden
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/90 via-brand-plum/40 to-transparent" />
           <div className="absolute inset-0 flex items-end">
             <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-10 md:pb-14">
-              <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent-light">
+              <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-gold">
                 Kategori Pilihan
               </span>
-              <h1 className="text-2xl md:text-4xl font-heading font-light uppercase tracking-wider text-white mt-2 leading-tight">
+              <h1 className="text-2xl md:text-4xl font-sans font-bold uppercase tracking-wider text-brand-cream mt-2 leading-tight">
                 {category.name}
               </h1>
-              <div className="w-12 h-px bg-brand-accent-light mt-3" />
+              <div className="w-12 h-0.5 bg-brand-gold mt-3" />
               {category.description && (
                 <p className="text-xs text-neutral-300 font-sans max-w-lg leading-relaxed mt-3">
                   {category.description}

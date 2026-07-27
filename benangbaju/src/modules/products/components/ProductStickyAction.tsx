@@ -56,10 +56,10 @@ export function ProductStickyAction({
                 />
               </div>
               <div>
-                <h4 className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black line-clamp-1">
+                <h4 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum line-clamp-1">
                   {product.name}
                 </h4>
-                <p className="text-xs font-sans font-semibold text-brand-accent mt-0.5">
+                <p className="text-xs font-sans font-bold text-brand-plum mt-0.5">
                   {selectedVariant ? formatIDR(selectedVariant.price) : formatIDR(minPrice)}
                 </p>
               </div>
@@ -72,7 +72,7 @@ export function ProductStickyAction({
                 <div className="text-xs font-sans text-neutral-500">
                   {selectedVariant ? (
                     <span>
-                      Varian: <strong className="text-brand-black">{selectedVariant.name}</strong>
+                      Varian: <strong className="text-brand-plum">{selectedVariant.name}</strong>
                     </span>
                   ) : (
                     <span className="italic text-neutral-400">Pilih varian di atas</span>
@@ -93,9 +93,9 @@ export function ProductStickyAction({
                 </Button>
                 <Button
                   onClick={onBuyNow}
-                  variant="primary"
+                  variant="accent"
                   size="sm"
-                  className="py-2.5 px-4 text-[10px]"
+                  className="py-2.5 px-4 text-[10px] font-bold"
                   isLoading={isBuying}
                   disabled={!selectedVariant || selectedVariant.stock === 0}
                 >
