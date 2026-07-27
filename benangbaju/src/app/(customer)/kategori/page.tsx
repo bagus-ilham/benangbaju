@@ -42,7 +42,7 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
               {/* Subtle stitch pattern texture (< 15% opacity per §5) */}
               <div className="absolute inset-0 opacity-10 z-10 pointer-events-none">
                 <Image
-                  src="/LOGO_BENANGBAJU_06.png"
+                  src="/svg/stitch-card-pattern.svg"
                   alt=""
                   fill
                   className="object-cover"

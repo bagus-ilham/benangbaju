@@ -13,10 +13,10 @@ export function Footer(): React.JSX.Element {
 
   return (
     <footer className="relative bg-brand-cream border-t border-neutral-200/80 pb-20 md:pb-0">
-      {/* Stitch Line Divider (LOGO_BENANGBAJU_04.png) */}
+      {/* Stitch Line Divider */}
       <div className="w-full overflow-hidden h-3 relative opacity-60 pointer-events-none -mt-1.5 mb-2">
         <Image
-          src="/LOGO_BENANGBAJU_04.png"
+          src="/svg/stitch-line-divider.svg"
           alt=""
           fill
           className="object-cover object-center"
@@ -31,7 +31,7 @@ export function Footer(): React.JSX.Element {
             <div className="flex flex-col space-y-4">
               <div className="relative h-9 sm:h-10 md:h-12 w-40 sm:w-44 md:w-48 max-w-full min-w-[96px] animate-fade-in">
                 <Image
-                  src={getProxiedImageUrl(logoUrl || '/LOGO_BENANGBAJU_07.png')}
+                  src={getProxiedImageUrl(logoUrl || '/svg/logo-benangbaju.svg')}
                   alt="Benangbaju Logotype"
                   fill
                   sizes="(max-width: 768px) 160px, 200px"
@@ -41,7 +41,7 @@ export function Footer(): React.JSX.Element {
               <div className="flex items-start space-x-3">
                 <div className="relative w-8 h-8 shrink-0 opacity-85 mt-0.5">
                   <Image
-                    src="/LOGO_BENANGBAJU_09.png"
+                    src="/svg/logo-jarum-benang.svg"
                     alt="Gulungan Benang"
                     fill
                     className="object-contain"

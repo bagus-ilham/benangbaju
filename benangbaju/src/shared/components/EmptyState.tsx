@@ -82,7 +82,7 @@ export function EmptyState({
           {useBrandIcon ? (
             <div className="relative w-10 h-10">
               <Image
-                src="/LOGO_BENANGBAJU_09.png"
+                src="/svg/logo-jarum-benang.svg"
                 alt="Gulungan Benang"
                 fill
                 className="object-contain"

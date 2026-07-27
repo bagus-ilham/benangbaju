@@ -30,7 +30,7 @@ export function TentangClient(): React.JSX.Element {
           >
             <div className="relative w-16 h-16 shrink-0 opacity-90">
               <Image
-                src="/LOGO_BENANGBAJU_09.png"
+                src="/svg/logo-jarum-benang.svg"
                 alt="Gulungan Benang Logo"
                 fill
                 className="object-contain"

@@ -122,10 +122,10 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
             />
           </picture>
 
-          {/* Transparent brand background accent (LOGO_BENANGBAJU_03.png - Gelombang Benang) */}
+          {/* Transparent brand background accent (Gelombang Benang) */}
           <div className="absolute inset-0 opacity-12 pointer-events-none z-10">
             <Image
-              src="/LOGO_BENANGBAJU_03.png"
+              src="/svg/thread-wave-accent.svg"
               alt=""
               fill
               className="object-cover object-center"

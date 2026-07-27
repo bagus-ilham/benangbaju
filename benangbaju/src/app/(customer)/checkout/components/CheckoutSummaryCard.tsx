@@ -65,7 +65,7 @@ export function CheckoutSummaryCard({
           <ShoppingBag size={14} className="mr-2 text-brand-blue" /> Ringkasan Pesanan
         </span>
         <div className="relative w-4 h-4 opacity-75">
-          <Image src="/LOGO_BENANGBAJU_10.png" alt="Kancing" fill className="object-contain" />
+          <Image src="/svg/kancing-icon.svg" alt="Kancing" fill className="object-contain" />
         </div>
       </h2>
 

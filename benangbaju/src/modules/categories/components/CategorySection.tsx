@@ -34,7 +34,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
           <div className="flex items-center space-x-3">
             <div className="relative w-6 h-6 shrink-0 opacity-80">
               <Image
-                src="/LOGO_BENANGBAJU_10.png"
+                src="/svg/kancing-icon.svg"
                 alt="Kancing"
                 fill
                 className="object-contain"
@@ -87,7 +87,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                   {/* Subtle stitch pattern texture (< 15% opacity per §5) */}
                   <div className="absolute inset-0 opacity-10 z-10 pointer-events-none">
                     <Image
-                      src="/LOGO_BENANGBAJU_06.png"
+                      src="/svg/stitch-card-pattern.svg"
                       alt=""
                       fill
                       className="object-cover"

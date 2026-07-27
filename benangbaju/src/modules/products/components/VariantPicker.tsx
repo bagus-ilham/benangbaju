@@ -137,7 +137,7 @@ export function VariantPicker({
         <div key={name} className="flex flex-col space-y-2.5">
           <div className="flex items-center space-x-2">
             <div className="relative w-3.5 h-3.5 opacity-80 shrink-0">
-              <Image src="/LOGO_BENANGBAJU_10.png" alt="Kancing" fill className="object-contain" />
+              <Image src="/svg/kancing-icon.svg" alt="Kancing" fill className="object-contain" />
             </div>
             <span
               id={`label-variant-${name}`}

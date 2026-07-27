@@ -45,7 +45,7 @@ export function CatalogDesktopFilters({
           >
             {!categorySlug && (
               <div className="relative w-3.5 h-3.5 shrink-0">
-                <Image src="/LOGO_BENANGBAJU_10.png" alt="Active" fill className="object-contain" />
+                <Image src="/svg/kancing-icon.svg" alt="Active" fill className="object-contain" />
               </div>
             )}
             <span>Semua Kategori</span>
@@ -64,7 +64,7 @@ export function CatalogDesktopFilters({
               >
                 {isActive && (
                   <div className="relative w-3.5 h-3.5 shrink-0">
-                    <Image src="/LOGO_BENANGBAJU_10.png" alt="Active" fill className="object-contain" />
+                    <Image src="/svg/kancing-icon.svg" alt="Active" fill className="object-contain" />
                   </div>
                 )}
                 <span>{cat.name}</span>

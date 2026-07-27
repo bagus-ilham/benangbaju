@@ -115,10 +115,10 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
 
   return (
     <section className="relative bg-brand-plum py-16 md:py-20 border-b border-brand-plum/80 overflow-hidden text-brand-cream">
-      {/* Paired Cross Accent (LOGO_BENANGBAJU_11.png & LOGO_BENANGBAJU_05.png) */}
+      {/* Paired Cross Accent */}
       <div className="absolute top-4 left-4 w-6 h-6 sm:w-8 sm:h-8 opacity-70 pointer-events-none z-10">
         <Image
-          src="/LOGO_BENANGBAJU_11.png"
+          src="/svg/cross-stitch-accent-alt.svg"
           alt=""
           fill
           className="object-contain"
@@ -127,7 +127,7 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
       </div>
       <div className="absolute top-4 right-4 w-6 h-6 sm:w-8 sm:h-8 opacity-70 pointer-events-none z-10">
         <Image
-          src="/LOGO_BENANGBAJU_05.png"
+          src="/svg/cross-stitch-accent.svg"
           alt=""
           fill
           className="object-contain"
