@@ -23,23 +23,23 @@ export function PageHero({
   children,
 }: PageHeroProps): React.JSX.Element {
   const variantClasses = {
-    light: 'bg-white border-neutral-100',
-    cream: 'bg-brand-cream section-texture border-neutral-200',
-    dark: 'bg-brand-black border-neutral-800',
+    light: 'bg-white border-neutral-200',
+    cream: 'bg-brand-cream border-neutral-200/80',
+    dark: 'bg-brand-plum border-brand-plum/80',
   }
 
   const textClasses = {
     light: {
-      eyebrow: 'text-brand-accent',
-      title: 'text-brand-black',
-      subtitle: 'text-neutral-500',
+      eyebrow: 'text-brand-blue font-bold',
+      title: 'text-brand-plum font-bold',
+      subtitle: 'text-neutral-600',
     },
     cream: {
-      eyebrow: 'text-brand-accent',
-      title: 'text-brand-black',
-      subtitle: 'text-neutral-500',
+      eyebrow: 'text-brand-blue font-bold',
+      title: 'text-brand-plum font-bold',
+      subtitle: 'text-neutral-600',
     },
-    dark: { eyebrow: 'text-brand-accent-light', title: 'text-white', subtitle: 'text-neutral-400' },
+    dark: { eyebrow: 'text-brand-gold font-bold', title: 'text-brand-cream font-bold', subtitle: 'text-neutral-300' },
   }
 
   const colors = textClasses[variant]
@@ -76,7 +76,7 @@ export function PageHero({
             )}
             <h1
               className={cn(
-                'text-2xl md:text-4xl font-heading font-light uppercase tracking-wider leading-tight',
+                'text-2xl md:text-[36px] font-sans font-bold leading-tight',
                 colors.title
               )}
             >

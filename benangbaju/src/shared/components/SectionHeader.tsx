@@ -37,13 +37,13 @@ export function SectionHeader({
       )}
     >
       {eyebrow && (
-        <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] font-heading font-medium text-brand-accent">
-          <span className="hidden sm:block w-6 h-px bg-brand-accent/50" aria-hidden />
+        <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] font-sans font-bold text-brand-blue">
+          <span className="hidden sm:block w-6 h-px bg-brand-blue/50" aria-hidden />
           {eyebrow}
-          <span className="hidden sm:block w-6 h-px bg-brand-accent/50" aria-hidden />
+          <span className="hidden sm:block w-6 h-px bg-brand-blue/50" aria-hidden />
         </span>
       )}
-      <h2 className="text-xl md:text-3xl font-heading font-light uppercase tracking-wider text-brand-black">
+      <h2 className="text-xl md:text-[24px] font-sans font-semibold text-brand-plum">
         {title}
       </h2>
       {showDivider && (
