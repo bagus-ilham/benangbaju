@@ -4,35 +4,21 @@ import { Providers } from '@/shared/providers'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
-import localFont from 'next/font/local'
+import { Mulish, Caveat } from 'next/font/google'
 import './globals.css'
 
-const mulish = localFont({
+const mulish = Mulish({
   variable: '--font-mulish',
   display: 'swap',
-  adjustFontFallback: false,
-  src: [
-    {
-      path: '../../public/font/Mulish-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/font/Mulish-SemiBold.ttf',
-      weight: '600',
-      style: 'normal',
-    },
-    {
-      path: '../../public/font/Mulish-SemiBoldItalic.ttf',
-      weight: '600',
-      style: 'italic',
-    },
-    {
-      path: '../../public/font/Mulish-Bold.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+})
+
+const caveat = Caveat({
+  variable: '--font-caveat',
+  display: 'swap',
+  subsets: ['latin'],
+  weight: ['500', '700'],
 })
 
 export const metadata: Metadata = {
@@ -41,7 +27,7 @@ export const metadata: Metadata = {
   description:
     'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
   icons: {
-    icon: '/logo_favicon.PNG',
+    icon: '/LOGO_BENANGBAJU_01.png',
   },
   openGraph: {
     title: 'Benangbaju — Show How Really Well-Dressed You Are',
@@ -66,9 +52,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>): React.JSX.Element {
   return (
-    <html lang="id" className={`${mulish.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="id" className={`${mulish.variable} ${caveat.variable} h-full antialiased`} suppressHydrationWarning>
       <body
-        className="min-h-full flex flex-col font-sans bg-neutral-50 text-neutral-900 selection:bg-neutral-900 selection:text-white"
+        className="min-h-full flex flex-col font-sans bg-brand-cream text-brand-plum selection:bg-brand-plum selection:text-brand-cream"
         suppressHydrationWarning
       >
         <Providers>{children}</Providers>
