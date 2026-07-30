@@ -83,7 +83,7 @@ export function Modal({
               className
             )}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200/60 bg-brand-cream">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-amber-200/60 bg-brand-gold/20">
               {title ? (
                 <h3
                   id={titleId}

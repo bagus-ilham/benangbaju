@@ -29,7 +29,7 @@ export function CollectionSpotlight({
     <section
       className={cn(
         'relative overflow-hidden border-b border-neutral-200/80 font-sans',
-        isDark ? 'bg-brand-plum' : 'bg-brand-cream section-texture'
+        isDark ? 'bg-brand-gold/50' : 'bg-brand-cream section-texture'
       )}
     >
       <PageContainer className="py-12 md:py-16">
@@ -96,15 +96,14 @@ export function CollectionSpotlight({
               <span
                 className={cn(
                   'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
-                  isDark ? 'text-brand-gold' : 'text-brand-blue'
+                  isDark ? 'text-brand-plum' : 'text-brand-blue'
                 )}
               >
                 Koleksi Kurasi
               </span>
               <h2
                 className={cn(
-                  'text-2xl md:text-4xl font-sans font-bold uppercase tracking-wider leading-tight',
-                  isDark ? 'text-brand-cream' : 'text-brand-plum'
+                  'text-2xl md:text-4xl font-sans font-bold uppercase tracking-wider leading-tight text-brand-plum'
                 )}
               >
                 {collection.name}

@@ -4,7 +4,7 @@ import React, { useRef } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingBag, X, Trash2, Plus, Minus, ArrowRight } from 'lucide-react'
+import { ShoppingBag, X, Trash2, Plus, Minus, ArrowRight, Sparkles } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR } from '@/lib/utils'
@@ -81,14 +81,14 @@ export function MiniCartDrawer(): React.JSX.Element {
           >
             {/* Top gold accent line */}
             <div
-              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue"
+              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold"
               aria-hidden="true"
             />
 
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-neutral-100 mt-[3px]">
               <div className="flex items-center space-x-2">
-                <ShoppingBag className="h-4 w-4 text-brand-blue" aria-hidden="true" />
+                <ShoppingBag className="h-4 w-4 text-brand-gold" aria-hidden="true" />
                 <span className="font-sans text-sm font-bold tracking-[0.15em] text-brand-plum uppercase">
                   KERANJANG ({totalQuantity})
                 </span>
@@ -112,7 +112,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                 ) : (
                   <>
                     Belanja{' '}
-                    <span className="font-bold text-brand-accent">
+                    <span className="font-bold text-brand-plum">
                       {formatIDR(500000 - subtotal)}
                     </span>{' '}
                     lagi untuk <span className="font-bold">Gratis Ongkir</span>
@@ -121,7 +121,7 @@ export function MiniCartDrawer(): React.JSX.Element {
               </p>
               <div className="w-full h-1.5 bg-neutral-200 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-brand-accent to-brand-accent-light"
+                  className="h-full bg-gradient-to-r from-brand-gold to-amber-300"
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(100, (subtotal / 500000) * 100)}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -253,76 +253,80 @@ export function MiniCartDrawer(): React.JSX.Element {
                 ))
               )}
 
-              {/* Cross-Sell Recommendations from Database */}
+              {/* Smart Cross-sell Recommendations */}
               {items.length > 0 && recProducts.length > 0 && (
-                <div className="pt-4 border-t border-neutral-100 space-y-2">
-                  <span className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-400 block">
-                    Lengkapi Gaya Anda
-                  </span>
-                  {recProducts.map((p) => {
-                    const availableVariant =
-                      p.product_variants.find((v) => v.stock > 0) || p.product_variants[0]
-                    const primaryImage =
-                      p.product_images?.find((img) => img.is_primary)?.url ||
-                      p.product_images?.[0]?.url ||
-                      null
+                <div className="px-6 py-3 border-t border-neutral-100 bg-brand-cream/40 space-y-2">
+                  <div className="flex items-center space-x-1.5 text-brand-plum">
+                    <Sparkles className="h-3 w-3 text-brand-plum" />
+                    <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
+                      Lengkapi Penampilan Anda
+                    </span>
+                  </div>
+                  <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
+                    {recProducts.slice(0, 2).map((p) => {
+                      const availableVariant = p.product_variants.find((v) => v.stock > 0)
+                      const primaryImage =
+                        p.product_images?.find((img) => img.is_primary)?.url ||
+                        p.product_images?.[0]?.url ||
+                        null
 
-                    return (
-                      <div
-                        key={p.id}
-                        className="bg-brand-cream/80 p-2.5 rounded-xl border border-brand-accent/20 flex items-center justify-between gap-3"
-                      >
-                        <div className="flex items-center space-x-2.5 min-w-0">
-                          {primaryImage && (
-                            <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 border border-neutral-200">
-                              <Image
-                                src={getProxiedImageUrl(primaryImage)}
-                                alt={p.name}
-                                fill
-                                sizes="36px"
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <div className="space-y-0.5 min-w-0">
-                            <p className="text-[11px] font-heading font-medium uppercase text-brand-black truncate">
-                              {p.name}
-                            </p>
-                            <p className="text-[10px] font-sans font-semibold text-brand-accent">
-                              {formatIDR(p.minPrice)}
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={async () => {
-                            if (availableVariant) {
-                              await addItem(
-                                {
-                                  variantId: availableVariant.id,
-                                  productName: p.name,
-                                  variantName: availableVariant.name,
-                                  name: p.name,
-                                  sku: availableVariant.sku,
-                                  price: Number(availableVariant.price),
-                                  comparePrice: availableVariant.compare_price
-                                    ? Number(availableVariant.compare_price)
-                                    : null,
-                                  imageUrl: primaryImage,
-                                  slug: p.slug,
-                                  stock: availableVariant.stock,
-                                },
-                                1
-                              )
-                            }
-                          }}
-                          className="px-2.5 py-1 text-[9px] font-heading font-bold uppercase tracking-wider rounded-lg shrink-0"
+                      return (
+                        <div
+                          key={p.id}
+                          className="bg-brand-gold/30 p-2.5 rounded-xl border border-amber-200/60 flex items-center justify-between gap-3"
                         >
-                          + Tambah
-                        </Button>
-                      </div>
-                    )
-                  })}
+                          <div className="flex items-center space-x-2.5 min-w-0">
+                            {primaryImage && (
+                              <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 border border-neutral-200">
+                                <Image
+                                  src={getProxiedImageUrl(primaryImage)}
+                                  alt={p.name}
+                                  fill
+                                  sizes="36px"
+                                  className="object-cover"
+                                />
+                              </div>
+                            )}
+                            <div className="space-y-0.5 min-w-0">
+                              <p className="text-[11px] font-sans font-bold uppercase text-brand-plum truncate">
+                                {p.name}
+                              </p>
+                              <p className="text-[10px] font-sans font-bold text-brand-plum">
+                                {formatIDR(p.minPrice)}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            size="sm"
+                            onClick={async () => {
+                              if (availableVariant) {
+                                await addItem(
+                                  {
+                                    variantId: availableVariant.id,
+                                    productName: p.name,
+                                    variantName: availableVariant.name,
+                                    name: p.name,
+                                    sku: availableVariant.sku,
+                                    price: Number(availableVariant.price),
+                                    comparePrice: availableVariant.compare_price
+                                      ? Number(availableVariant.compare_price)
+                                      : null,
+                                    imageUrl: primaryImage,
+                                    slug: p.slug,
+                                    stock: availableVariant.stock,
+                                  },
+                                  1
+                                )
+                              }
+                            }}
+                            className="px-2.5 py-1 text-[9px] font-sans font-bold uppercase tracking-wider rounded-lg shrink-0"
+                          >
+                            + Tambah
+                          </Button>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
               )}
             </div>

@@ -71,7 +71,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-2 bg-brand-blue text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
+                    className="absolute -top-1 -right-2 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
                   >
                     {item.badge}
                   </motion.span>
@@ -88,7 +88,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
               {item.isActive && (
                 <motion.div
                   layoutId="bottom-nav-active"
-                  className="absolute -bottom-1 w-5 h-0.5 bg-brand-blue rounded-full"
+                  className="absolute -bottom-1 w-5 h-0.5 bg-brand-gold rounded-full"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}

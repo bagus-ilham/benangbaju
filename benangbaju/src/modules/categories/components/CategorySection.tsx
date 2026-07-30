@@ -39,7 +39,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               <button
                 type="button"
                 onClick={() => handleScroll('left')}
-                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-plum hover:text-brand-cream transition-all"
+                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:text-brand-plum transition-all"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -47,7 +47,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               <button
                 type="button"
                 onClick={() => handleScroll('right')}
-                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-plum hover:text-brand-cream transition-all"
+                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:text-brand-plum transition-all"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="h-4 w-4" />

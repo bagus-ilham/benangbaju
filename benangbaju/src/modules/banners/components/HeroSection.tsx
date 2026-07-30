@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image, { getImageProps } from 'next/image'
+import Image from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -9,27 +9,30 @@ import { Banner } from '@/modules/banners/types'
 import { Button } from '@/shared/components'
 import { cn } from '@/lib/utils'
 
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
+
 interface HeroSectionProps {
   banners: Banner[]
 }
 
 export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
-    if (banners.length <= 1) return
+    if (banners.length <= 1 || isHovered) return
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % banners.length)
     }, 6000) // 6 seconds auto-rotate
 
     return () => clearInterval(interval)
-  }, [banners])
+  }, [banners, isHovered])
 
   if (banners.length === 0) {
     // Elegant high fashion fallback placeholder banner
     return (
-      <div className="relative w-full bg-brand-cream flex items-center justify-center aspect-[21/9] md:aspect-[16/9] font-sans">
+      <div className="relative w-full bg-brand-cream flex items-center justify-center h-[50vh] min-h-[360px] md:h-[70vh] font-sans">
         <div className="text-center space-y-4 max-w-lg px-4">
           <h2 className="text-3xl md:text-5xl font-sans font-bold uppercase tracking-widest text-brand-plum leading-tight">
             Elegan dalam Kesederhanaan
@@ -60,40 +63,11 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     setCurrentIndex((prev) => (prev + 1) % banners.length)
   }
 
-  const commonProps = {
-    alt: currentBanner.title || '',
-    fill: true,
-    sizes: '100vw',
-    priority: true,
-    quality: 100,
-    fetchPriority: 'high' as const,
-    className: 'object-cover',
-    style: {
-      width: '100%',
-      height: '100%',
-      position: 'absolute' as const,
-      inset: 0,
-    },
-  }
-
-  const {
-    props: { srcSet: desktopSrcSet },
-  } = getImageProps({
-    ...commonProps,
-    src: currentBanner.image_url,
-  })
-
-  const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    props: { srcSet: mobileSrcSet, alt, ...restMobile },
-  } = getImageProps({
-    ...commonProps,
-    src: currentBanner.image_mobile_url || currentBanner.image_url,
-  })
-
   return (
-    <div
-      className="relative w-full overflow-hidden bg-brand-plum"
+    <section
+      className="relative w-full h-[65vh] min-h-[420px] md:h-[75vh] md:min-h-[520px] overflow-hidden bg-brand-cream"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       role="region"
       aria-roledescription="carousel"
       aria-label="Koleksi Banner Utama"
@@ -110,17 +84,31 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           aria-roledescription="slide"
           aria-label={`Slide ${currentIndex + 1} dari ${banners.length}`}
         >
-          <picture className="block w-full h-auto">
-            <source media="(min-width: 768px)" srcSet={desktopSrcSet} sizes="100vw" />
-            <img
-              src={restMobile.src}
-              srcSet={mobileSrcSet}
+          {/* Desktop Banner Image (Visible on Desktop / MD screens) */}
+          <div className="hidden md:block absolute inset-0 w-full h-full">
+            <Image
+              src={getProxiedImageUrl(currentBanner.image_url)}
+              alt={currentBanner.title || 'Banner Desktop'}
+              fill
+              priority
+              quality={90}
               sizes="100vw"
-              alt={alt || 'Banner'}
-              fetchPriority="high"
-              className="block w-full h-auto"
+              className="object-cover"
             />
-          </picture>
+          </div>
+
+          {/* Mobile Banner Image (Visible on Phone / Mobile screens) */}
+          <div className="block md:hidden absolute inset-0 w-full h-full">
+            <Image
+              src={getProxiedImageUrl(currentBanner.image_mobile_url || currentBanner.image_url)}
+              alt={currentBanner.title || 'Banner Mobile'}
+              fill
+              priority
+              quality={90}
+              sizes="100vw"
+              className="object-cover"
+            />
+          </div>
 
           {/* Elegant overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-brand-plum/80 via-brand-plum/40 to-transparent z-10" />
@@ -220,6 +208,6 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           </div>
         </>
       )}
-    </div>
+    </section>
   )
 }

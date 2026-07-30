@@ -200,7 +200,7 @@ export default function CartPage(): React.JSX.Element {
                 bordered={true}
                 className="bg-brand-cream border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
-                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
                 <h3 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">
                   Ringkasan Belanja
                 </h3>

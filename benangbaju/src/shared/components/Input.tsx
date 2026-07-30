@@ -81,7 +81,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={cn(
               // Input styles — Modern premium soft design with Brand Guidelines v9 tokens
-              'w-full bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-brand-plum transition-all duration-300 placeholder:text-neutral-400 focus:bg-brand-cream focus:border-brand-blue/60 focus:outline-none focus:ring-4 focus:ring-brand-blue/15 focus:shadow-xs font-sans',
+              'w-full bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-brand-plum transition-all duration-300 placeholder:text-neutral-400 focus:bg-brand-cream focus:border-amber-300 focus:outline-none focus:ring-4 focus:ring-brand-gold/40 focus:shadow-xs font-sans',
               {
                 'pl-11': leftIcon,
                 'pr-11': effectiveRightIcon,

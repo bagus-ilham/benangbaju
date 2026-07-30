@@ -13,7 +13,7 @@ interface AdminStatCardProps {
 
 const accentStyles = {
   default: 'text-brand-black bg-neutral-100',
-  gold: 'text-brand-accent bg-brand-accent-muted',
+  gold: 'text-brand-plum bg-brand-gold/40 rounded-xl',
   success: 'text-success bg-success-bg',
   warning: 'text-warning bg-warning-bg',
 }

@@ -22,7 +22,7 @@ export function OrderShippingSection({
   return (
     <div className="space-y-6">
       <div className="border border-neutral-200/80 p-5 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
         <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
           Informasi Pengiriman
         </h2>

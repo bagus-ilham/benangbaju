@@ -264,10 +264,10 @@ export const ProductCard = React.memo(function ProductCard({
         )}
 
         {/* Quick add or view details overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-brand-plum/90 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-active:translate-y-0 focus-within:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
+        <div className="absolute bottom-0 left-0 right-0 bg-brand-gold/95 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-active:translate-y-0 focus-within:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
           {!hasMultipleColors && sizeVariants.length > 0 ? (
             <div className="w-full space-y-1 text-center">
-              <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-gold">
+              <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum">
                 + Keranjang Instan
               </span>
               <div className="flex flex-wrap gap-1 justify-center">
@@ -298,7 +298,7 @@ export const ProductCard = React.memo(function ProductCard({
                       aria-busy={isCurrentAdding}
                       aria-label={`Tambah ukuran ${sizeLabel} ke keranjang`}
                       onClick={(e) => handleQuickAdd(e, v)}
-                      className="px-2.5 py-1 bg-brand-blue hover:bg-[#83a3aa] text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] rounded-md flex items-center justify-center cursor-pointer shadow-xs"
+                      className="px-2.5 py-1 bg-brand-cream hover:bg-white text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum border border-amber-200/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] rounded-md flex items-center justify-center cursor-pointer shadow-xs"
                     >
                       {isCurrentAdding ? (
                         <div
@@ -314,7 +314,7 @@ export const ProductCard = React.memo(function ProductCard({
               </div>
             </div>
           ) : (
-            <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-cream py-1 text-center w-full block">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum py-1 text-center w-full block">
               Lihat Detail
             </span>
           )}

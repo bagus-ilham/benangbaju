@@ -42,7 +42,7 @@ export function AddressCard({
       className={cn(
         'p-5 border text-sm font-sans relative transition-all duration-300 rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-md',
         isSelected
-          ? 'border-brand-blue bg-brand-blue/10 ring-1 ring-brand-blue shadow-xs'
+          ? 'border-brand-gold bg-brand-gold/20 ring-1 ring-amber-300 shadow-xs'
           : 'border-neutral-200/80 bg-brand-cream'
       )}
     >

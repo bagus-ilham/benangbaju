@@ -150,7 +150,7 @@ export function DropdownMenuItem({
           ? 'opacity-50 cursor-not-allowed text-neutral-400'
           : destructive
             ? 'text-red-600 hover:bg-red-50 font-medium'
-            : 'text-neutral-600 hover:bg-brand-cream/50 hover:text-brand-black font-medium',
+            : 'text-neutral-600 hover:bg-brand-gold/40 hover:text-brand-plum font-medium',
         className
       )}
     >

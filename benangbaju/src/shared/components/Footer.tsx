@@ -132,7 +132,7 @@ export function Footer(): React.JSX.Element {
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="Instagram"
                   >
                     <svg
@@ -155,7 +155,7 @@ export function Footer(): React.JSX.Element {
                     href={tiktokUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="TikTok"
                   >
                     <svg
@@ -176,7 +176,7 @@ export function Footer(): React.JSX.Element {
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="WhatsApp"
                   >
                     <svg
@@ -197,7 +197,7 @@ export function Footer(): React.JSX.Element {
                     href={shopeeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-brand-accent hover:text-brand-accent hover:bg-brand-accent-muted/35 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="Shopee"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -213,14 +213,14 @@ export function Footer(): React.JSX.Element {
             <p className="text-[11px] text-neutral-400 font-sans">
               &copy; <CurrentYear /> Benangbaju. All rights reserved.
             </p>
-            <div className="flex space-x-6 text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
-              <Link href="/syarat-ketentuan" className="hover:text-brand-accent transition-colors">
+            <div className="flex space-x-6 text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-wider">
+              <Link href="/syarat-ketentuan" className="hover:text-brand-plum transition-colors">
                 Syarat
               </Link>
-              <Link href="/kebijakan-privasi" className="hover:text-brand-accent transition-colors">
+              <Link href="/kebijakan-privasi" className="hover:text-brand-plum transition-colors">
                 Privasi
               </Link>
-              <Link href="/kontak" className="hover:text-brand-accent transition-colors">
+              <Link href="/kontak" className="hover:text-brand-plum transition-colors">
                 Kontak
               </Link>
             </div>

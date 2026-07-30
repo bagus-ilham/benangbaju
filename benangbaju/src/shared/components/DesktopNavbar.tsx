@@ -175,7 +175,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-accent text-brand-plum text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(163,144,128,0.3)]"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(243,229,171,0.5)]"
                 >
                   {wishlistCount}
                 </motion.span>
@@ -205,7 +205,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-accent text-brand-plum text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(163,144,128,0.3)]"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(243,229,171,0.5)]"
                 >
                   {totalQuantity}
                 </motion.span>

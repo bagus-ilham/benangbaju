@@ -175,14 +175,14 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
         className={cn(
           'group flex items-center px-3 py-2.5 text-xs font-heading font-medium rounded-2xl transition-all duration-200',
           isActive
-            ? 'bg-brand-black text-white font-semibold shadow-sm'
-            : 'text-neutral-600 hover:bg-brand-accent-muted hover:text-brand-black'
+            ? 'bg-brand-gold text-brand-plum font-semibold shadow-sm'
+            : 'text-neutral-600 hover:bg-neutral-100 hover:text-brand-plum'
         )}
       >
         <Icon
           className={cn(
             'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
-            isActive ? 'text-brand-accent-light' : 'text-neutral-400 group-hover:text-brand-accent'
+            isActive ? 'text-brand-plum' : 'text-neutral-400 group-hover:text-brand-plum'
           )}
           aria-hidden="true"
         />
@@ -280,7 +280,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
             <div className="ml-4 flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <div
-                  className="h-8 w-8 bg-brand-black text-brand-accent-light flex items-center justify-center text-xs font-heading font-bold uppercase"
+                  className="h-8 w-8 bg-brand-gold text-brand-plum rounded-full flex items-center justify-center text-xs font-sans font-bold uppercase shadow-xs"
                   aria-hidden="true"
                 >
                   {profile?.name?.substring(0, 2) || user?.email?.substring(0, 2) || 'AD'}

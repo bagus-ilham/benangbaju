@@ -54,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${mulish.variable} ${caveat.variable} h-full antialiased`} suppressHydrationWarning>
       <body
-        className="min-h-full flex flex-col font-sans bg-brand-cream text-brand-plum selection:bg-brand-plum selection:text-brand-cream"
+        className="min-h-full flex flex-col font-sans bg-brand-cream text-brand-plum selection:bg-brand-gold selection:text-brand-plum"
         suppressHydrationWarning
       >
         <Providers>{children}</Providers>

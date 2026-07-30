@@ -28,7 +28,7 @@ export function ChangePasswordForm({
       variants={itemVariants}
       className="border border-neutral-200/80 p-6 sm:p-8 rounded-2xl bg-brand-cream shadow-xs relative overflow-hidden group"
     >
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
       <h2 className="text-sm uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center">
         <motion.div whileHover={{ y: [0, -2, 2, -2, 0] }} className="mr-2">
           <Key

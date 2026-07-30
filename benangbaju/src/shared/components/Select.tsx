@@ -198,9 +198,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             onKeyDown={handleKeyDown}
             className={cn(
               // Input styles matching Input.tsx
-              'w-full flex items-center justify-between bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/15 focus:shadow-xs disabled:opacity-50 disabled:cursor-not-allowed font-sans',
+              'w-full flex items-center justify-between bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-gold/40 focus:shadow-xs disabled:opacity-50 disabled:cursor-not-allowed font-sans',
               {
-                'border-brand-blue/60 bg-brand-cream ring-4 ring-brand-blue/15 shadow-xs':
+                'border-amber-300 bg-brand-cream ring-4 ring-brand-gold/40 shadow-xs':
                   isOpen,
                 'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
                 'text-neutral-400': !selectedOption,
@@ -260,8 +260,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         className={cn(
                           'flex items-center justify-between px-3 py-2 text-xs font-sans cursor-pointer transition-colors rounded-lg',
                           isSelected || isFocused
-                            ? 'bg-brand-blue/15 text-brand-plum font-bold'
-                            : 'text-neutral-600 hover:bg-brand-blue/10'
+                            ? 'bg-brand-gold/40 text-brand-plum font-bold'
+                            : 'text-neutral-600 hover:bg-brand-gold/20'
                         )}
                       >
                         <span className="truncate">{opt.label}</span>

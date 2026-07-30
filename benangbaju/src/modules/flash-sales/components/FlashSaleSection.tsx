@@ -114,7 +114,7 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 
   return (
-    <section className="relative bg-brand-plum py-16 md:py-20 border-b border-brand-plum/80 overflow-hidden text-brand-cream">
+    <section className="relative bg-brand-gold py-16 md:py-20 border-b border-brand-gold/80 overflow-hidden text-brand-plum">
 
       <PageContainer className="relative z-20">
         <SectionHeader
@@ -122,7 +122,7 @@ export function FlashSaleSection({ flashSale }: FlashSaleSectionProps): React.JS
           showDivider={false}
           eyebrow="Penawaran Terbatas"
           title={flashSale.name || 'Flash Sale'}
-          className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-brand-gold [&_h2]:text-brand-cream"
+          className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-brand-plum [&_h2]:text-brand-plum"
         >
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
             <span className="text-[11px] uppercase tracking-wider font-sans font-semibold text-brand-cream/70 mr-2">

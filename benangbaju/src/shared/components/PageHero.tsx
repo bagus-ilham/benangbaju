@@ -25,21 +25,21 @@ export function PageHero({
   const variantClasses = {
     light: 'bg-brand-cream border-neutral-200/80',
     cream: 'bg-brand-cream border-neutral-200/80',
-    dark: 'bg-brand-plum border-brand-plum/80',
+    dark: 'bg-brand-gold/60 border-brand-gold/80',
   }
 
   const textClasses = {
     light: {
-      eyebrow: 'text-brand-blue font-bold',
+      eyebrow: 'text-brand-plum font-bold',
       title: 'text-brand-plum font-bold',
       subtitle: 'text-neutral-600',
     },
     cream: {
-      eyebrow: 'text-brand-blue font-bold',
+      eyebrow: 'text-brand-plum font-bold',
       title: 'text-brand-plum font-bold',
       subtitle: 'text-neutral-600',
     },
-    dark: { eyebrow: 'text-brand-gold font-bold', title: 'text-brand-cream font-bold', subtitle: 'text-neutral-300' },
+    dark: { eyebrow: 'text-brand-plum font-bold', title: 'text-brand-plum font-bold', subtitle: 'text-neutral-700' },
   }
 
   const colors = textClasses[variant]
@@ -49,11 +49,11 @@ export function PageHero({
       <div className="relative overflow-hidden">
         {/* Decorative orbs */}
         <div
-          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-blue/10 blur-3xl pointer-events-none"
+          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-gold/30 blur-3xl pointer-events-none"
           aria-hidden
         />
         <div
-          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-blue/10 blur-2xl pointer-events-none"
+          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-gold/20 blur-2xl pointer-events-none"
           aria-hidden
         />
 

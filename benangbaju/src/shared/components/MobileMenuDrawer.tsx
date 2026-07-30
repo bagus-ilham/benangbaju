@@ -90,11 +90,11 @@ export function MobileMenuDrawer({
                   <div className="border-t border-neutral-100 pt-6 mt-6 space-y-4">
                     {isAuthenticated ? (
                       <>
-                        <div className="px-2 mb-4 bg-neutral-50 p-3">
+                        <div className="px-2 mb-4 bg-brand-gold/20 border border-amber-200/60 rounded-xl p-3">
                           <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider mb-1">
                             Halo,
                           </p>
-                          <p className="text-sm font-bold text-brand-black truncate">
+                          <p className="text-sm font-sans font-bold text-brand-plum truncate">
                             {profile?.name || user?.email}
                           </p>
                         </div>

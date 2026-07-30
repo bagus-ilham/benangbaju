@@ -64,7 +64,7 @@ export function DataTable<T extends { id?: string | number }>({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-neutral-50/80 border-b border-neutral-200">
+            <tr className="bg-brand-gold/20 border-b border-amber-200/60">
               {columns.map((col, idx) => (
                 <th
                   key={String(col.key) || idx}

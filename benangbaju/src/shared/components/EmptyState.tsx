@@ -75,7 +75,7 @@ export function EmptyState({
     >
       <div className="relative">
         <div
-          className="absolute inset-0 bg-brand-blue/15 blur-xl rounded-full scale-150"
+          className="absolute inset-0 bg-brand-gold/30 blur-xl rounded-full scale-150"
           aria-hidden
         />
         <div className="relative p-4 bg-brand-cream border border-neutral-200/80 animate-gentle-float rounded-2xl shadow-xs">

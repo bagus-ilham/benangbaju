@@ -139,7 +139,7 @@ export function MegaMenuNavItem({
                         <li key={item.slug}>
                           <Link
                             href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
-                            className="text-xs font-sans text-neutral-600 hover:text-brand-accent transition-colors block py-0.5"
+                            className="text-xs font-sans text-neutral-600 hover:text-brand-plum font-medium transition-colors block py-0.5"
                           >
                             {item.name}
                           </Link>
@@ -151,7 +151,7 @@ export function MegaMenuNavItem({
                   <div className="pt-2">
                     <Link
                       href={href}
-                      className="text-[11px] font-heading font-semibold uppercase tracking-widest text-brand-accent hover:opacity-70 transition-opacity flex items-center gap-1.5"
+                      className="text-[11px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 transition-opacity flex items-center gap-1.5"
                     >
                       JELAJAHI SEMUA &rarr;
                     </Link>

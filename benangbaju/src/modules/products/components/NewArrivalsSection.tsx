@@ -18,12 +18,12 @@ export function NewArrivalsSection({
   if (products.length === 0) return null
 
   return (
-    <section className="bg-brand-plum section-texture py-16 md:py-20 border-b border-brand-plum/80 font-sans">
+    <section className="bg-brand-cream section-texture py-16 md:py-20 border-b border-neutral-200/80 font-sans">
       <PageContainer>
         <SectionHeader
           eyebrow="Koleksi Terbaru"
           title="Keluaran Terbaru"
-          className="[&_h2]:text-brand-cream"
+          className="[&_h2]:text-brand-plum"
         />
 
         <motion.div
@@ -37,7 +37,7 @@ export function NewArrivalsSection({
             <motion.div
               key={product.id}
               variants={fadeUpItem}
-              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start bg-brand-cream rounded-2xl p-2"
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start bg-brand-gold/40 border border-brand-gold/60 rounded-2xl p-2"
             >
               <ProductCard product={product} />
             </motion.div>

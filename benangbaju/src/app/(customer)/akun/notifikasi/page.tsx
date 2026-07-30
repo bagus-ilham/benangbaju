@@ -121,8 +121,8 @@ export default function NotifikasiPage(): React.JSX.Element {
               </motion.div>
             </Link>
 
-            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-plum border border-brand-plum border-l-4 border-l-brand-gold text-brand-cream font-sans font-bold tracking-wide uppercase rounded-xl text-xs shadow-xs">
-              <Bell size={14} className="text-brand-gold" />
+            <div className="flex items-center space-x-3 px-4 py-3 bg-brand-gold border border-brand-gold border-l-4 border-l-brand-blue text-brand-plum font-sans font-bold tracking-wide uppercase rounded-xl text-xs shadow-xs">
+              <Bell size={14} className="text-brand-plum" />
               <span>Notifikasi Saya</span>
             </div>
 

@@ -126,13 +126,13 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       >
         Lewati ke konten
       </a>
-      {/* Announcement bar */}
-      <div className="bg-brand-black text-white text-center py-2 px-4">
-        <p className="text-[10px] font-heading font-medium uppercase tracking-[0.15em]">
+      {/* Announcement bar — 2. Kuning (Secondary) */}
+      <div className="bg-brand-gold text-brand-plum text-center py-2 px-4 border-b border-amber-200/80">
+        <p className="text-[10px] font-sans font-bold uppercase tracking-[0.15em]">
           Gratis ongkir untuk pembelian di atas Rp 500.000 &mdash;{' '}
           <Link
             href="/produk"
-            className="underline underline-offset-2 hover:text-brand-accent-light transition-colors"
+            className="underline underline-offset-2 hover:opacity-80 transition-opacity"
           >
             Belanja Sekarang
           </Link>

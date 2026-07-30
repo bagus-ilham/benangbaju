@@ -281,8 +281,8 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <Truck className="h-4 w-4 text-brand-accent/70 group-hover:text-brand-accent transition-colors" />
-          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
+          <Truck className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
+          <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             Ongkir Flat
           </span>
           <span className="text-[8px] text-neutral-400 font-sans">Tarif murah per zona</span>
@@ -292,8 +292,8 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <RefreshCw className="h-4 w-4 text-brand-accent/70 group-hover:text-brand-accent transition-colors" />
-          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
+          <RefreshCw className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
+          <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             7 Hari Retur
           </span>
           <span className="text-[8px] text-neutral-400 font-sans">Bebas tukar ukuran</span>
@@ -303,8 +303,8 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <Shield className="h-4 w-4 text-brand-accent/70 group-hover:text-brand-accent transition-colors" />
-          <span className="text-[9px] uppercase tracking-wider font-heading font-medium text-brand-black">
+          <Shield className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
+          <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             Kualitas Premium
           </span>
           <span className="text-[8px] text-neutral-400 font-sans">Bahan terkurasi</span>

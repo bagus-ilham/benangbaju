@@ -132,7 +132,7 @@ export function MobileMenuAccordionItem({
                   <Link
                     href={href}
                     onClick={onClose}
-                    className="text-[10px] font-heading font-bold uppercase tracking-widest text-brand-accent hover:text-brand-black pt-2 block"
+                    className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 pt-2 block"
                   >
                     Lihat Semua {label} &rarr;
                   </Link>

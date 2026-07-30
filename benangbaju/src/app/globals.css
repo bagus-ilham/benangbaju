@@ -10,6 +10,11 @@
   --color-brand-blue: #94b2b9;
   --color-brand-gold: #F3E5AB;
 
+  --color-brand-primary: #FAF8F5;
+  --color-brand-secondary: #F3E5AB;
+  --color-brand-tertiary: #94b2b9;
+  --color-brand-quaternary: #2D2640;
+
   --color-brand-black: #2D2640;
   --color-brand-dark: #2D2640;
   --color-brand-gray: #6b637a;
@@ -117,10 +122,15 @@
 }
 
 :root {
-  --color-plum: #2D2640;  /* Deep Plum / Charcoal — teks utama, header, footer */
-  --color-cream: #FAF8F5; /* Soft Cream / Off-White — background utama */
-  --color-blue: #94b2b9;  /* Dusty Blue (Accent) — tombol CTA, badge */
-  --color-gold: #F3E5AB;  /* Warm Sand / Gold — sorotan eksklusif, label diskon */
+  --color-cream: #FAF8F5; /* 1. Cream — Primary background & primary theme color */
+  --color-gold: #F3E5AB;  /* 2. Warm Sand / Gold — Secondary highlight & accents */
+  --color-blue: #94b2b9;  /* 3. Dusty Blue — Tertiary accent & badge */
+  --color-plum: #2D2640;  /* 4. Deep Plum / Charcoal — Quaternary text/contrast */
+
+  --color-primary: var(--color-cream);
+  --color-secondary: var(--color-gold);
+  --color-tertiary: var(--color-blue);
+  --color-quaternary: var(--color-plum);
 
   --font-body: var(--font-mulish), sans-serif;
   --font-accent: var(--font-caveat), cursive;

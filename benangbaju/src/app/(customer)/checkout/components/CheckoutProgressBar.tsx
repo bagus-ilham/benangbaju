@@ -19,7 +19,7 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
       className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto px-4 py-3 bg-brand-cream border border-neutral-200/80 rounded-full shadow-xs"
     >
       <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
-        <div className="w-5 h-5 rounded-full bg-brand-plum text-brand-cream flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110">
+        <div className="w-5 h-5 rounded-full bg-brand-gold text-brand-plum flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110">
           <Check size={10} strokeWidth={3} />
         </div>
         <span className="text-[10px] uppercase tracking-wider text-brand-plum font-sans font-bold transition-colors">
@@ -44,7 +44,7 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         className="flex items-center space-x-2"
       >
         <div
-          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-bold transition-all duration-300 ${isShippingDone ? 'bg-brand-plum text-brand-cream shadow-sm' : checkoutStep === 'shipping' ? 'bg-brand-blue text-brand-plum shadow-sm scale-110' : 'border border-neutral-300 text-neutral-400'}`}
+          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-bold transition-all duration-300 ${isShippingDone ? 'bg-brand-gold text-brand-plum shadow-sm' : checkoutStep === 'shipping' ? 'bg-brand-blue text-brand-plum shadow-sm scale-110' : 'border border-neutral-300 text-neutral-400'}`}
         >
           {isShippingDone ? <Check size={10} strokeWidth={3} /> : '2'}
         </div>

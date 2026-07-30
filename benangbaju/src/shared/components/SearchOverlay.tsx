@@ -146,7 +146,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.95 }}
             transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
-            className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-blue border-neutral-200/80 rounded-2xl"
+            className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-gold border-neutral-200/80 rounded-2xl"
           >
             <button
               onClick={onClose}
@@ -177,10 +177,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
-                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"
-                  rightIcon={
+                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"                  rightIcon={
                     <button type="submit" aria-label="Cari produk">
-                      <Search className="h-4 w-4 text-brand-accent" />
+                      <Search className="h-4 w-4 text-brand-plum" />
                     </button>
                   }
                   autoFocus
@@ -196,7 +195,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-1.5 text-neutral-400">
                           <History className="h-3 w-3" />
-                          <span className="text-[10px] font-heading font-medium uppercase tracking-wider">
+                          <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
                             Pencarian Terakhir
                           </span>
                         </div>
@@ -212,7 +211,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                           <button
                             key={item}
                             onClick={() => handleSelectTag(item)}
-                            className="text-[11px] font-sans bg-neutral-100 hover:bg-brand-accent/10 hover:text-brand-accent text-neutral-700 px-3 py-1 rounded-full transition-colors"
+                            className="text-[11px] font-sans bg-neutral-100 hover:bg-brand-gold/40 hover:text-brand-plum text-neutral-700 px-3 py-1 rounded-full transition-colors"
                           >
                             {item}
                           </button>
@@ -224,8 +223,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   {/* Popular Tags */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-1.5 text-neutral-400">
-                      <Sparkles className="h-3 w-3 text-brand-accent" />
-                      <span className="text-[10px] font-heading font-medium uppercase tracking-wider">
+                      <Sparkles className="h-3 w-3 text-brand-plum" />
+                      <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
                         Pencarian Populer
                       </span>
                     </div>
@@ -234,7 +233,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <button
                           key={tag}
                           onClick={() => handleSelectTag(tag)}
-                          className="text-[11px] font-sans bg-brand-cream hover:bg-brand-blue hover:text-brand-plum border border-brand-blue/30 text-brand-plum font-semibold px-3.5 py-1 rounded-full transition-all duration-200 cursor-pointer"
+                          className="text-[11px] font-sans bg-brand-cream hover:bg-brand-gold hover:text-brand-plum border border-amber-200 text-brand-plum font-semibold px-3.5 py-1 rounded-full transition-all duration-200 cursor-pointer"
                         >
                           {tag}
                         </button>
@@ -247,13 +246,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               {searchQuery.trim().length >= 2 && (
                 <div className="border border-neutral-100 bg-neutral-50/50 p-4 -mt-2 space-y-3 rounded-xl">
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                    <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-neutral-400">
                       Hasil Pencarian Instan
                     </span>
                     {isSearchingInstant && (
-                      <div className="flex items-center space-x-1.5 text-brand-accent">
+                      <div className="flex items-center space-x-1.5 text-brand-plum">
                         <Loader2 className="h-3 w-3 animate-spin" />
-                        <span className="text-[8px] font-heading font-semibold uppercase tracking-wider">
+                        <span className="text-[8px] font-sans font-bold uppercase tracking-wider">
                           Mencari...
                         </span>
                       </div>
@@ -261,7 +260,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   </div>
 
                   {instantResults.length > 0 ? (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {instantResults.map((product) => {
                         const primaryImg =
                           product.product_images?.find((img) => img.is_primary)?.url ||
@@ -276,9 +275,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             key={product.id}
                             href={`/produk/${product.slug}`}
                             onClick={onClose}
-                            className="flex items-center space-x-3 p-2 bg-brand-cream border border-neutral-100 hover:border-brand-accent/50 transition-all duration-200 group"
+                            className="flex items-center space-x-3 p-2 bg-brand-cream border border-neutral-100 hover:border-amber-300 transition-all duration-200 group rounded-xl"
                           >
-                            <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0">
+                            <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0 rounded-lg">
                               {primaryImg ? (
                                 <Image
                                   src={getProxiedImageUrl(primaryImg)}
@@ -294,14 +293,14 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-[11px] font-heading font-semibold uppercase tracking-wider text-brand-black truncate group-hover:text-brand-accent transition-colors">
+                              <h4 className="text-[11px] font-sans font-bold uppercase tracking-wider text-brand-plum truncate group-hover:text-brand-plum transition-colors">
                                 {product.name}
                               </h4>
                               <p className="text-[10px] font-sans font-medium text-neutral-500 mt-0.5">
                                 {formatIDR(minPrice)}
                               </p>
                             </div>
-                            <div className="pr-2 text-neutral-300 group-hover:text-brand-accent transition-colors">
+                            <div className="pr-2 text-neutral-300 group-hover:text-brand-plum transition-colors">
                               <ChevronRight className="h-4 w-4" />
                             </div>
                           </Link>
@@ -310,7 +309,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
                       <button
                         onClick={handleSearchSubmit}
-                        className="w-full pt-2 pb-1 text-[10px] uppercase tracking-widest font-heading font-semibold text-brand-accent hover:text-brand-black transition-colors"
+                        className="w-full pt-2 pb-1 text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum hover:opacity-75 transition-colors"
                       >
                         Lihat semua hasil untuk "{searchQuery}"
                       </button>

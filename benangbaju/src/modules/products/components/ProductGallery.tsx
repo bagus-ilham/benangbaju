@@ -266,8 +266,8 @@ export function ProductGallery({
 
         {/* Desktop Expand Hint Badge */}
         <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="inline-flex items-center space-x-1.5 text-[9px] font-sans font-bold uppercase tracking-wider text-brand-cream bg-brand-plum/85 backdrop-blur-xs px-3 py-1.5 rounded-full border border-brand-gold/30 shadow-xs">
-            <Maximize2 className="w-3 h-3 text-brand-gold" />
+          <span className="inline-flex items-center space-x-1.5 text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum bg-brand-gold/90 backdrop-blur-xs px-3 py-1.5 rounded-full border border-brand-gold shadow-xs">
+            <Maximize2 className="w-3 h-3 text-brand-plum" />
             <span>Klik Layar Penuh</span>
           </span>
         </div>
@@ -409,7 +409,7 @@ export function ProductThumbnails({
             className={cn(
               'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300 rounded-xl overflow-hidden',
               activeImage === img.url
-                ? 'border-brand-blue opacity-100 shadow-xs ring-2 ring-brand-blue/30'
+                ? 'border-amber-300 opacity-100 shadow-xs ring-2 ring-brand-gold/50'
                 : 'border-neutral-200 opacity-60 hover:opacity-100'
             )}
           >

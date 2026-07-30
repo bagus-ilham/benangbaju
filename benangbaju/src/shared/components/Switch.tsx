@@ -29,7 +29,7 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
             {...props}
           />
 
-          <div className="relative flex items-center w-9 h-5 rounded-full border border-neutral-200 bg-neutral-200 transition-colors duration-300 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-accent/20 peer-checked:bg-brand-accent peer-checked:border-brand-accent peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+          <div className="relative flex items-center w-9 h-5 rounded-full border border-neutral-200 bg-neutral-200 transition-colors duration-300 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-gold/40 peer-checked:bg-brand-plum peer-checked:border-brand-plum peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
             {/* Switch Thumb */}
             <motion.div
               layout

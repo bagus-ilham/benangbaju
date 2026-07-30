@@ -36,7 +36,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             rows={rows}
             className={cn(
               // Textarea styles — Modern premium soft design with Brand Guidelines v9 tokens
-              'w-full bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-brand-plum transition-all duration-300 placeholder:text-neutral-400 focus:bg-brand-cream focus:border-brand-blue/60 focus:outline-none focus:ring-4 focus:ring-brand-blue/15 focus:shadow-xs resize-y min-h-[80px] font-sans',
+              'w-full bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-brand-plum transition-all duration-300 placeholder:text-neutral-400 focus:bg-brand-cream focus:border-amber-300 focus:outline-none focus:ring-4 focus:ring-brand-gold/40 focus:shadow-xs resize-y min-h-[80px] font-sans',
               {
                 'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
               },

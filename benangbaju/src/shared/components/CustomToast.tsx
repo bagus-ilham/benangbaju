@@ -50,10 +50,10 @@ export function CustomToast({
             )}
           </div>
           <div className="ml-3 flex-1">
-            <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-accent">
+            <p className="text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum">
               {title}
             </p>
-            <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
+            <p className="text-[11px] font-sans font-semibold uppercase text-brand-plum line-clamp-1 mt-0.5">
               {subtitle}
             </p>
             {description && (
@@ -71,7 +71,7 @@ export function CustomToast({
               toast.dismiss(t.id)
               onAction()
             }}
-            className="w-full border border-transparent rounded-2xl p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-accent hover:text-brand-accent-light focus:outline-none cursor-pointer"
+            className="w-full border border-transparent rounded-2xl p-4 flex items-center justify-center text-xs font-sans font-bold uppercase tracking-wider text-brand-plum hover:opacity-75 focus:outline-none cursor-pointer"
           >
             {actionLabel}
           </button>

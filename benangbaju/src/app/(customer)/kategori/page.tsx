@@ -57,8 +57,8 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-15" />
 
-              <div className="absolute top-4 left-4 px-2.5 py-1 bg-brand-plum/40 backdrop-blur-sm border border-brand-cream/20 rounded-full z-20">
-                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-gold">
+              <div className="absolute top-4 left-4 px-2.5 py-1 bg-brand-gold/90 backdrop-blur-sm border border-brand-gold rounded-full z-20">
+                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum">
                   0{index + 1}
                 </span>
               </div>

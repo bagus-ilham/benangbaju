@@ -166,8 +166,8 @@ export function VariantPicker({
                   className={cn(
                     'relative px-4 py-2 border text-xs font-sans font-bold tracking-wide uppercase transition-all duration-200 disabled:opacity-30 disabled:line-through rounded-xl cursor-pointer select-none',
                     isSelected
-                      ? 'border-brand-blue bg-brand-blue text-brand-plum shadow-xs'
-                      : 'border-neutral-300 text-brand-plum hover:border-brand-plum hover:bg-brand-cream'
+                      ? 'border-amber-300 bg-brand-gold text-brand-plum shadow-xs font-bold'
+                      : 'border-neutral-300 text-brand-plum hover:border-amber-300 hover:bg-brand-gold/30'
                   )}
                 >
                   {val}

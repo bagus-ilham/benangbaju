@@ -32,7 +32,7 @@ export function ProductGridSection({
 
   const bgClass =
     variant === 'dark'
-      ? 'bg-brand-plum border-brand-plum/80'
+      ? 'bg-brand-gold/50 border-brand-gold/60'
       : variant === 'alt'
         ? 'bg-brand-cream section-texture border-neutral-200/80'
         : 'bg-brand-cream border-neutral-200/80'
@@ -46,7 +46,7 @@ export function ProductGridSection({
           eyebrow={eyebrow}
           title={title}
           align={align}
-          className={isDark ? '[&_h2]:text-brand-cream [&_span]:text-brand-gold' : undefined}
+          className={isDark ? '[&_h2]:text-brand-plum [&_span]:text-brand-plum' : undefined}
         />
 
         <motion.div
