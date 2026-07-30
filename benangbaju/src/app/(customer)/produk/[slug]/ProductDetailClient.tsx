@@ -211,8 +211,9 @@ export function ProductDetailClient({
   }
 
   // Calculate pricing displays based on selections
-  const minPrice = Math.min(...product.product_variants.map((v: ProductVariant) => Number(v.price)))
-  const maxPrice = Math.max(...product.product_variants.map((v: ProductVariant) => Number(v.price)))
+  const variants = product.product_variants || []
+  const minPrice = variants.length > 0 ? Math.min(...variants.map((v: ProductVariant) => Number(v.price))) : 0
+  const maxPrice = variants.length > 0 ? Math.max(...variants.map((v: ProductVariant) => Number(v.price))) : 0
 
   return (
     <div className="bg-brand-cream min-h-screen pb-24 md:pb-10 font-sans">

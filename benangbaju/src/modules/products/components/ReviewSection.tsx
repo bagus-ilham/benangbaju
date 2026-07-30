@@ -70,9 +70,9 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
   const reviews = reviewsRes?.data || []
 
   // Calculate default values if ratingSummary is missing
-  const total = ratingSummary?.total_reviews || reviews.length
+  const total = ratingSummary?.total_reviews ?? reviews.length
   const avgRating =
-    ratingSummary?.avg_rating ||
+    ratingSummary?.avg_rating ??
     (reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0)
 
   // Star render helper

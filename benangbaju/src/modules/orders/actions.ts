@@ -106,12 +106,28 @@ export async function confirmDeliveryAction(orderId: string): Promise<ApiRespons
 }
 
 export async function generatePaymentTokenAction(orderNumber: string) {
-  await requireAuth()
+  const { user, supabase } = await requireAuth()
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('user_id')
+    .eq('order_number', orderNumber)
+    .single()
+  if (error || !order || order.user_id !== user.id) {
+    throw new Error('Unauthorized')
+  }
   return orderService.generatePaymentToken(orderNumber)
 }
 
 export async function checkPaymentStatusAction(orderNumber: string) {
-  await requireAuth()
+  const { user, supabase } = await requireAuth()
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('user_id')
+    .eq('order_number', orderNumber)
+    .single()
+  if (error || !order || order.user_id !== user.id) {
+    throw new Error('Unauthorized')
+  }
   return orderService.checkPaymentStatus(orderNumber)
 }
 

@@ -13,11 +13,15 @@ import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oau
 export default function RegisterPage(): React.JSX.Element {
   const clientId = (process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '').trim()
 
-  return (
-    <GoogleOAuthProvider clientId={clientId}>
-      <RegisterContent />
-    </GoogleOAuthProvider>
-  )
+  if (clientId) {
+    return (
+      <GoogleOAuthProvider clientId={clientId}>
+        <RegisterContent />
+      </GoogleOAuthProvider>
+    )
+  }
+
+  return <RegisterContent />
 }
 
 function RegisterContent(): React.JSX.Element {

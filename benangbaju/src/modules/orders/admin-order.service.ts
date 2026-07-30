@@ -32,7 +32,7 @@ export class AdminOrderService {
         limit,
       })
 
-      if (!data) return paginated([], 0, page, limit)
+      if (!data) return paginated([], page, limit, 0)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const orders: AdminOrderListItem[] = data.map((row: any) => {
@@ -101,7 +101,7 @@ export class AdminOrderService {
         }
       })
 
-      return paginated(orders, count || 0, page, limit)
+      return paginated(orders, page, limit, count || 0)
     } catch (error) {
       safeLogError('Error fetching admin orders:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar pesanan')

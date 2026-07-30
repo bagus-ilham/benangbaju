@@ -16,7 +16,7 @@ export class AdminProductService {
       const { page = 1, limit = 20 } = params
       const { data, count } = await productRepository.adminFindMany(params)
 
-      if (!data) return paginated([], 0, page, limit)
+      if (!data) return paginated([], page, limit, 0)
 
       const products: AdminProductListItem[] = data.map((p) => {
         const categories = mapCategory(p.categories)

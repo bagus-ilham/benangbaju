@@ -50,9 +50,11 @@ export async function deleteImageByUrl(
   try {
     if (!url) return
 
-    // Extract file name from URL: https://<project>.supabase.co/storage/v1/object/public/<bucket>/<filename>
-    const urlParts = url.split('/')
-    const fileName = urlParts[urlParts.length - 1]
+    // Remove query parameters if present (e.g. ?v=123)
+    const cleanUrl = url.split('?')[0]
+    const urlParts = cleanUrl.split('/')
+    const rawFileName = urlParts[urlParts.length - 1]
+    const fileName = decodeURIComponent(rawFileName)
 
     if (!fileName) return
 

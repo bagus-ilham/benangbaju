@@ -87,9 +87,9 @@ export class ProductService {
     try {
       const data = await productRepository.findRelated(productId, categoryId, limit)
 
-      if (!data) return paginated([], 0, 1, limit)
+      if (!data) return paginated([], 1, limit, 0)
 
-      return paginated(data.map(mapProductListItem), data.length, 1, limit)
+      return paginated(data.map(mapProductListItem), 1, limit, data.length)
     } catch (error) {
       safeLogError('Error fetching related products:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat produk terkait')

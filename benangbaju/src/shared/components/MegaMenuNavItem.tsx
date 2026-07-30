@@ -75,6 +75,12 @@ export function MegaMenuNavItem({
       className="group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          setIsHovered(false)
+        }
+      }}
     >
       <Link
         href={href}

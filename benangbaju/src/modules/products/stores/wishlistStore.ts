@@ -16,17 +16,18 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
   toggleWishlist: async (productId, variantId) => {
     const { productIds } = get()
-    const supabase = createBrowserClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
     const exists = productIds.includes(productId)
     const updatedIds = exists
       ? productIds.filter((id) => id !== productId)
       : [...productIds, productId]
 
+    // Optimistic UI update immediately
     set({ productIds: updatedIds })
+
+    const supabase = createBrowserClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     // DB sync if authenticated
     if (user) {

@@ -271,7 +271,7 @@ export class ReviewRepository {
         body: params.body,
         is_anonymous: params.isAnonymous || false,
         status: 'pending',
-        is_verified_purchase: true,
+        is_verified_purchase: Boolean(params.orderItemId),
       })
       .select(
         'id, order_item_id, product_id, variant_id, user_id, rating, title, body, is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at'
@@ -305,6 +305,17 @@ export class ReviewRepository {
 
   async voteHelpful(reviewId: string): Promise<ApiResponse<number>> {
     const supabase = await createServerClient()
+    const { data: rpcCount, error: rpcError } = await (supabase.rpc as any)(
+      'increment_review_helpful',
+      {
+        p_review_id: reviewId,
+      }
+    )
+
+    if (!rpcError && typeof rpcCount === 'number') {
+      return ok(rpcCount)
+    }
+
     const { data: review } = await supabase
       .from('product_reviews')
       .select('helpful_count')

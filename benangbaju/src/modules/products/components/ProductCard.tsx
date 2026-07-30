@@ -202,7 +202,7 @@ export const ProductCard = React.memo(function ProductCard({
         </Link>
 
         {/* Discount badge */}
-        {discountPercent && discountPercent > 0 && (
+        {typeof discountPercent === 'number' && discountPercent > 0 && (
           <div className="absolute top-3 left-3 z-10">
             <Badge variant="sale" size="sm">
               -{discountPercent}%

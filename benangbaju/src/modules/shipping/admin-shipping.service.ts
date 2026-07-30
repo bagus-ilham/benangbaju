@@ -11,7 +11,7 @@ export class AdminShippingService {
     try {
       const { data, count } = await shippingRepository.adminGetShippingZones(page, limit)
 
-      if (!data) return paginated([], count || 0, page, limit)
+      if (!data) return paginated([], page, limit, 0)
 
       const result = data.map((row) => {
         const rawCoverage = row.shipping_zone_coverage
@@ -29,7 +29,7 @@ export class AdminShippingService {
         }
       })
 
-      return paginated(result, count || 0, page, limit)
+      return paginated(result, page, limit, count || 0)
     } catch (error) {
       safeLogError('Error fetching admin shipping zones:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar zona pengiriman')
@@ -121,7 +121,7 @@ export class AdminShippingService {
     try {
       const { data, count } = await shippingRepository.adminGetShippingRates(page, limit)
 
-      if (!data) return paginated([], count || 0, page, limit)
+      if (!data) return paginated([], page, limit, 0)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = data.map((row: any) => {
@@ -143,7 +143,7 @@ export class AdminShippingService {
         }
       })
 
-      return paginated(result, count || 0, page, limit)
+      return paginated(result, page, limit, count || 0)
     } catch (error) {
       safeLogError('Error fetching admin shipping rates:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil daftar tarif pengiriman')

@@ -23,7 +23,6 @@ import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 
-const supabase = createBrowserClient()
 
 interface AppliedVoucher {
   code: string
@@ -34,6 +33,7 @@ interface AppliedVoucher {
 }
 
 export default function CheckoutPage(): React.JSX.Element {
+  const [supabase] = useState(() => createBrowserClient())
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const { items: cartItems, clearCart, isSyncing, hasSynced } = useCartStore()

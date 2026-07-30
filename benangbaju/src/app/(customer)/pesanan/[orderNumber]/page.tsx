@@ -2,9 +2,9 @@ import React, { Suspense } from 'react'
 import OrderDetailPageClient from './OrderDetailClient'
 
 interface OrderDetailPageProps {
-  params: {
+  params: Promise<{
     orderNumber: string
-  }
+  }>
 }
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {

@@ -203,9 +203,13 @@ export default function LoginPage(): React.JSX.Element {
 
   return (
     <Suspense fallback={<AuthLoading message="Memuat halaman masuk..." />}>
-      <GoogleOAuthProvider clientId={clientId}>
+      {clientId ? (
+        <GoogleOAuthProvider clientId={clientId}>
+          <LoginContent />
+        </GoogleOAuthProvider>
+      ) : (
         <LoginContent />
-      </GoogleOAuthProvider>
+      )}
     </Suspense>
   )
 }

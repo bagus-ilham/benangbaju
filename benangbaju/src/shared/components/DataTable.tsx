@@ -119,7 +119,7 @@ export function DataTable<T extends { id?: string | number }>({
             ) : (
               data.map((row, rIdx) => (
                 <motion.tr
-                  key={row.id || rIdx}
+                  key={row.id ?? rIdx}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2, delay: rIdx * 0.03 }}

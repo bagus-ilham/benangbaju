@@ -5,6 +5,8 @@
  * and enforce type safety without manual Array.isArray checks everywhere.
  */
 
+import { isObject } from '@/lib/utils/validation'
+
 /**
  * Safely parses a one-to-many relationship result into an array.
  * Supabase might return undefined, null, or a single object if improperly queried.
@@ -12,7 +14,8 @@
  */
 export function parseOneToMany<T>(data: unknown): T[] {
   if (!data) return []
-  return Array.isArray(data) ? data : [data as T]
+  if (Array.isArray(data)) return data
+  return isObject(data) ? [data as T] : []
 }
 
 /**

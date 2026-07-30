@@ -1,21 +1,16 @@
 export function getProxiedImageUrl(originalUrl: string | null | undefined): string {
-  if (!originalUrl) return '/images/placeholder.jpg' // Gambar default jika URL kosong
+  if (!originalUrl) return '/images/placeholder.jpg'
 
-  // URL asli Supabase Storage yang digunakan di aplikasi
-  const SUPABASE_STORAGE_URL =
-    'https://jwvbzuoatffoxaahdwdx.supabase.co/storage/v1/object/public/produk'
+  // URL prefix Supabase Storage public buckets
+  const SUPABASE_STORAGE_PREFIX =
+    'https://jwvbzuoatffoxaahdwdx.supabase.co/storage/v1/object/public'
 
-  // URL Cloudflare CDN Anda (pilih salah satu sebagai yang utama)
+  // URL Cloudflare CDN Worker
   const WORKER_URL = 'https://cdn.benangbaju.com'
 
-  // Jika URL-nya mengandung URL Supabase produk, ganti dengan URL Worker
-  if (originalUrl.startsWith(SUPABASE_STORAGE_URL)) {
-    return originalUrl.replace(SUPABASE_STORAGE_URL, WORKER_URL)
-  }
-
-  // Khusus environment development (localhost) Supabase storage fallback
-  if (originalUrl.startsWith('http://127.0.0.1:54321/storage/v1/object/public/produk')) {
-    return originalUrl
+  // Jika URL-nya berasal dari Supabase Storage public, ganti prefix dengan URL Worker CDN
+  if (originalUrl.startsWith(SUPABASE_STORAGE_PREFIX)) {
+    return originalUrl.replace(SUPABASE_STORAGE_PREFIX, WORKER_URL)
   }
 
   return originalUrl

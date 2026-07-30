@@ -143,8 +143,10 @@ export const useCartStore = create<CartState>()(
 
         if (get().isSyncing) {
           set({ needsResync: true })
-          while (get().isSyncing) {
+          let waitCount = 0
+          while (get().isSyncing && waitCount < 40) {
             await new Promise((resolve) => setTimeout(resolve, 50))
+            waitCount++
           }
           return
         }

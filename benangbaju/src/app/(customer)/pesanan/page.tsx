@@ -56,7 +56,7 @@ export default function PesananPage(): React.JSX.Element {
   // 2. Trigger Lazy Cancellation of Expired Orders on Load
   useEffect(() => {
     if (user?.id) {
-      lazyCancelExpiredOrdersAction()
+      lazyCancelExpiredOrdersAction().catch((err) => console.error('Lazy cancel error:', err))
     }
   }, [user])
 
@@ -125,40 +125,17 @@ export default function PesananPage(): React.JSX.Element {
     }
   }
 
-  // Handle Pay Action (Retry Payment)
+  // Handle Pay Action (Retry Payment via DOKU)
   const handlePayOrder = async (orderNumber: string) => {
     try {
-      toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
-      const { token, redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      toast.loading('Membuka gerbang pembayaran DOKU...', { id: 'payment-loading' })
+      const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
       toast.dismiss('payment-loading')
 
-      // Delayed refetch to give webhook time to process
-      const scheduleRefetches = () => {
-        setTimeout(() => refetch(), 2000)
-        setTimeout(() => refetch(), 5000)
-        setTimeout(() => refetch(), 10000)
-      }
-
-      if (token) {
-        if (window.snap) {
-          window.snap.pay(token, {
-            onSuccess: () => {
-              toast.success('Pembayaran berhasil! Memverifikasi...')
-              scheduleRefetches()
-            },
-            onPending: () => {
-              toast('Menunggu pembayaran diselesaikan.', { icon: 'ℹ️' })
-              scheduleRefetches()
-            },
-            onError: () => {
-              toast.error('Pembayaran gagal! Coba lagi.')
-            },
-            onClose: () => {
-              // User closed Snap popup — refetch in case payment was made
-              scheduleRefetches()
-            },
-          })
-        } else if (redirect_url) {
+      if (redirect_url) {
+        if (typeof window !== 'undefined' && window.loadJokulCheckout) {
+          window.loadJokulCheckout(redirect_url)
+        } else {
           window.location.href = redirect_url
         }
       } else {

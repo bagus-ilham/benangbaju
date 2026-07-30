@@ -54,6 +54,12 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
   const [animateCart, setAnimateCart] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
 
+  // Reset mobile menu and search overlay when navigating
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+    setIsSearchOpen(false)
+  }, [pathname])
+
   useEffect(() => {
     let ticking = false
     const handleScroll = () => {

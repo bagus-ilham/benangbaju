@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react'
@@ -55,6 +55,19 @@ export function ProductGallery({
     return () => mql.removeEventListener('change', handler)
   }, [])
 
+  const paginate = useCallback(
+    (newDirection: number) => {
+      const currentIndex = images.findIndex((img) => img.url === activeImage)
+      let nextIndex = currentIndex + newDirection
+      if (nextIndex < 0) nextIndex = images.length - 1
+      if (nextIndex >= images.length) nextIndex = 0
+      setDirection(newDirection)
+      setHasIntentToZoom(false) // Reset HD intent on image change
+      setActiveImage(images[nextIndex].url)
+    },
+    [images, activeImage]
+  )
+
   // Keyboard shortcut listener for Lightbox (ESC and arrow keys)
   useEffect(() => {
     if (!isLightboxOpen) return
@@ -65,7 +78,7 @@ export function ProductGallery({
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isLightboxOpen, activeImage])
+  }, [isLightboxOpen, activeImage, paginate])
 
   const prevVariantIdRef = useRef<string | null>(null)
 
@@ -99,15 +112,7 @@ export function ProductGallery({
     setZoomPos({ x, y })
   }
 
-  const paginate = (newDirection: number) => {
-    const currentIndex = images.findIndex((img) => img.url === activeImage)
-    let nextIndex = currentIndex + newDirection
-    if (nextIndex < 0) nextIndex = images.length - 1
-    if (nextIndex >= images.length) nextIndex = 0
-    setDirection(newDirection)
-    setHasIntentToZoom(false) // Reset HD intent on image change
-    setActiveImage(images[nextIndex].url)
-  }
+
 
   if (images.length === 0) {
     return (

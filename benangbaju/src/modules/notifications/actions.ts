@@ -1,23 +1,31 @@
 'use server'
 
 import { notificationService } from './notification.service'
-import { requireAdmin } from '@/lib/auth-guard'
+import { requireAdmin, requireAuth } from '@/lib/auth-guard'
 
 // =============================================================
-// USER ACTIONS (Called from hooks that have userId)
+// USER ACTIONS (Protected with requireAuth)
 // =============================================================
 
-export async function getUserNotificationsAction(userId: string, page = 1, limit = 20) {
-  // In a real app we might also verify the user session matches userId
-  return notificationService.getUserNotifications(userId, page, limit)
+export async function getUserNotificationsAction(userId?: string, page = 1, limit = 20) {
+  const { user } = await requireAuth()
+  const targetUserId = userId || user.id
+  if (user.id !== targetUserId) throw new Error('Unauthorized')
+  return notificationService.getUserNotifications(targetUserId, page, limit)
 }
 
-export async function markNotificationReadAction(notificationId: string, userId: string) {
-  return notificationService.markNotificationRead(notificationId, userId)
+export async function markNotificationReadAction(notificationId: string, userId?: string) {
+  const { user } = await requireAuth()
+  const targetUserId = userId || user.id
+  if (user.id !== targetUserId) throw new Error('Unauthorized')
+  return notificationService.markNotificationRead(notificationId, targetUserId)
 }
 
-export async function markAllNotificationsReadAction(userId: string) {
-  return notificationService.markAllNotificationsRead(userId)
+export async function markAllNotificationsReadAction(userId?: string) {
+  const { user } = await requireAuth()
+  const targetUserId = userId || user.id
+  if (user.id !== targetUserId) throw new Error('Unauthorized')
+  return notificationService.markAllNotificationsRead(targetUserId)
 }
 
 // =============================================================

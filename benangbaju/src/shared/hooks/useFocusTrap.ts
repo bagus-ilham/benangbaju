@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 
+let activeTrapCount = 0
+
 export interface FocusTrapOptions {
   onClose?: () => void
   condition?: () => boolean
@@ -19,9 +21,8 @@ export function useFocusTrap(
       return
     }
 
-    let originalOverflow = ''
     if (isActive) {
-      originalOverflow = document.body.style.overflow
+      activeTrapCount++
       document.body.style.overflow = 'hidden'
       if (document.activeElement instanceof HTMLElement) {
         previousFocusRef.current = document.activeElement
@@ -29,13 +30,15 @@ export function useFocusTrap(
         previousFocusRef.current = null
       }
       setTimeout(() => containerRef.current?.focus(), 10)
-    } else {
-      previousFocusRef.current?.focus()
     }
 
     return () => {
       if (isActive && (!condition || condition())) {
-        document.body.style.overflow = originalOverflow
+        activeTrapCount = Math.max(0, activeTrapCount - 1)
+        if (activeTrapCount === 0) {
+          document.body.style.overflow = ''
+        }
+        previousFocusRef.current?.focus()
       }
     }
   }, [isActive, containerRef, condition])

@@ -37,7 +37,7 @@ export class AdminCustomerRepository {
       updated_at: row.updated_at,
     }))
 
-    return paginated(profiles, count || 0, page, limit)
+    return paginated(profiles, page, limit, count || 0)
   }
 
   async adminToggleCustomerStatus(

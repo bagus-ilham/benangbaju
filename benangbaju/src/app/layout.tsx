@@ -63,9 +63,15 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
 
-        {/* Phase 2: Google Analytics & Tag Manager (Placeholders) */}
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXX'} />
-        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || 'GTM-XXXXXXX'} />
+        {/* Phase 2: Google Analytics & Tag Manager */}
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID &&
+          process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID !== 'G-XXXXXXX' && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+          )}
+        {process.env.NEXT_PUBLIC_GTM_CONTAINER_ID &&
+          process.env.NEXT_PUBLIC_GTM_CONTAINER_ID !== 'GTM-XXXXXXX' && (
+            <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_CONTAINER_ID} />
+          )}
       </body>
     </html>
   )

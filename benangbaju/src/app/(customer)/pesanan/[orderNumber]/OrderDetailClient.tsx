@@ -69,7 +69,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
               comparePrice: null,
               imageUrl: null,
               slug: '',
-              stock: 10,
+              stock: Math.max(item.quantity || 1, 99),
             },
             item.quantity || 1
           )

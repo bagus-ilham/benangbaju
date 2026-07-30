@@ -1,6 +1,6 @@
 'use server'
 
-import { createServerClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/auth-guard'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { parseOneToOne, parseOneToMany } from '@/shared/utils/supabase-parser'
 
@@ -97,7 +97,7 @@ const mapRecentLogs = (data: unknown[]): RecentActivityLog[] => {
 }
 
 export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData> {
-  const supabase = await createServerClient()
+  const { supabase } = await requireAdmin()
 
   const [revRes, activeRes, completedRes, custRes, stockRes, ordersRes, logsRes] =
     await Promise.all([

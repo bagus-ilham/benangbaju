@@ -83,7 +83,7 @@ export class ShippingRepository {
     const { data, error } = await supabase
       .from('districts')
       .select('id, province_name, city_name, district_name, postal_code, zone_id')
-      .or(`district_name.ilike.${formattedQuery},city_name.ilike.${formattedQuery}`)
+      .or(`district_name.ilike."${formattedQuery}",city_name.ilike."${formattedQuery}"`)
       .limit(15)
 
     if (error) throw error

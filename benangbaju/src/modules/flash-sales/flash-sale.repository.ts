@@ -35,17 +35,18 @@ export class FlashSaleRepository {
       .eq('is_active', true)
       .lte('starts_at', now)
       .gte('ends_at', now)
+      .order('starts_at', { ascending: false })
       .limit(1)
-      .maybeSingle()
 
     if (error) {
       safeLogError('Error fetching active flash sale:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil flash sale aktif')
     }
 
-    if (!data) return ok(null)
+    const activeSale = Array.isArray(data) && data.length > 0 ? data[0] : null
+    if (!activeSale) return ok(null)
 
-    const rawItems = data.flash_sale_items
+    const rawItems = activeSale.flash_sale_items
     const itemsList = Array.isArray(rawItems) ? rawItems : []
 
     const flash_sale_items: FlashSaleItemDetail[] = []
@@ -91,13 +92,13 @@ export class FlashSaleRepository {
     }
 
     return ok({
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      banner_url: data.banner_url,
-      starts_at: data.starts_at,
-      ends_at: data.ends_at,
-      is_active: data.is_active,
+      id: activeSale.id,
+      name: activeSale.name,
+      description: activeSale.description,
+      banner_url: activeSale.banner_url,
+      starts_at: activeSale.starts_at,
+      ends_at: activeSale.ends_at,
+      is_active: activeSale.is_active,
       flash_sale_items,
     })
   }
