@@ -291,6 +291,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             {helperText}
           </span>
         )}
+        {props.name && <input type="hidden" name={props.name} value={value ?? ''} />}
       </div>
     )
   }

@@ -16,6 +16,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
   toggleWishlist: async (productId, variantId) => {
     const { productIds } = get()
+    const previousProductIds = [...productIds]
     const exists = productIds.includes(productId)
     const updatedIds = exists
       ? productIds.filter((id) => id !== productId)
@@ -33,20 +34,24 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
     if (user) {
       try {
         if (exists) {
-          await supabase
+          const { error } = await supabase
             .from('wishlist_items')
             .delete()
             .eq('user_id', user.id)
             .eq('product_id', productId)
+          if (error) throw error
         } else {
-          await supabase.from('wishlist_items').insert({
+          const { error } = await supabase.from('wishlist_items').insert({
             user_id: user.id,
             product_id: productId,
             variant_id: variantId || null,
           })
+          if (error) throw error
         }
       } catch (error) {
         console.error('Error toggling DB wishlist item:', error)
+        // Rollback optimistic state
+        set({ productIds: previousProductIds })
       }
     }
   },

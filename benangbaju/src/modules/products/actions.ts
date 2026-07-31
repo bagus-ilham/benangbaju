@@ -93,7 +93,7 @@ export async function logSearchAction(query: string, resultsCount: number) {
     } = await supabase.auth.getUser()
 
     const trimmed = query.trim()
-    if (!trimmed) return
+    if (!trimmed || trimmed.length < 2) return
 
     await supabase.from('search_logs').insert({
       query: trimmed,
@@ -118,13 +118,15 @@ export async function toggleStockNotificationAction(variantId: string) {
     .maybeSingle()
 
   if (existing) {
-    await supabase.from('stock_notifications').delete().eq('id', existing.id)
+    const { error } = await supabase.from('stock_notifications').delete().eq('id', existing.id)
+    if (error) return { success: false, isSubscribed: true, error: error.message }
     return { success: true, isSubscribed: false }
   } else {
-    await supabase.from('stock_notifications').insert({
+    const { error } = await supabase.from('stock_notifications').insert({
       user_id: user.id,
       variant_id: variantId,
     })
+    if (error) return { success: false, isSubscribed: false, error: error.message }
     return { success: true, isSubscribed: true }
   }
 }

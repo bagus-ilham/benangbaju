@@ -73,6 +73,9 @@ export class CategoryRepository {
 
     if (error) {
       safeLogError('Error in adminCreateCategory:', error)
+      if (error.code === '23505') {
+        return fail(ApiErrorCode.VALIDATION_ERROR, 'Slug kategori sudah digunakan')
+      }
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat kategori')
     }
 
@@ -100,6 +103,13 @@ export class CategoryRepository {
     }
   ): Promise<ApiResponse<Category>> {
     const supabase = await createServerClient()
+
+    const { data: oldCat } = await supabase
+      .from('categories')
+      .select('image_url')
+      .eq('id', categoryId)
+      .maybeSingle()
+
     const { data, error } = await supabase
       .from('categories')
       .update(categoryData)
@@ -109,7 +119,19 @@ export class CategoryRepository {
 
     if (error) {
       safeLogError('Error in adminUpdateCategory:', error)
+      if (error.code === '23505') {
+        return fail(ApiErrorCode.VALIDATION_ERROR, 'Slug kategori sudah digunakan')
+      }
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui kategori')
+    }
+
+    if (oldCat?.image_url && categoryData.image_url !== oldCat.image_url) {
+      try {
+        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+        await deleteImageByUrl(supabase, oldCat.image_url, 'categories')
+      } catch (err) {
+        safeLogError('Failed to clean up old category image:', err)
+      }
     }
 
     await adminLogRepository.insertAdminActivityLog(
@@ -162,29 +184,29 @@ export class CategoryRepository {
       )
     }
 
-    // 1. Fetch images associated with this category to clean up storage
+    // 1. Fetch image URL before delete
     const { data: category } = await supabase
       .from('categories')
       .select('image_url')
       .eq('id', categoryId)
-      .single()
+      .maybeSingle()
 
-    // 2. Delete the physical image from Supabase Storage
+    // 2. Delete category DB record first
+    const { error } = await supabase.from('categories').delete().eq('id', categoryId)
+
+    if (error) {
+      safeLogError('Error deleting category:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus kategori')
+    }
+
+    // 3. Clean up physical image from Supabase Storage after DB delete succeeds
     if (category && category.image_url) {
       try {
         const { deleteImageByUrl } = await import('@/lib/supabase/storage')
         await deleteImageByUrl(supabase, category.image_url, 'categories')
       } catch (err) {
-        safeLogError('Failed to delete category image, proceeding with DB deletion:', err)
+        safeLogError('Failed to delete category image:', err)
       }
-    }
-
-    // 3. Delete category record
-    const { error } = await supabase.from('categories').delete().eq('id', categoryId)
-
-    if (error) {
-      safeLogError('Error in adminDeleteCategory:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus kategori')
     }
 
     await adminLogRepository.insertAdminActivityLog(

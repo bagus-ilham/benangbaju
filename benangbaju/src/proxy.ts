@@ -63,12 +63,18 @@ async function timingSafeEqual(a: string, b: string): Promise<boolean> {
 export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl
 
+  const getClientIp = (req: NextRequest) =>
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    'unknown'
+
   // Rate limiting for authentication routes
   const authPaths = ['/masuk', '/daftar', '/lupa-password', '/reset-password']
   if (authPaths.some((p) => pathname.startsWith(p) || pathname === `/api/auth/callback`)) {
     // Skip rate limiting in local development
     if (process.env.NODE_ENV !== 'development') {
-      const ip = request.headers.get('x-forwarded-for') || 'unknown'
+      const ip = getClientIp(request)
       const allowed = await checkRateLimit(request, ip, 'auth', 15, 60) // 15 requests per minute
 
       if (!allowed) {
@@ -89,17 +95,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
   // API v1 Rate Limiting & Auth
   if (pathname.startsWith('/api/v1/')) {
-    const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const allowed = await checkRateLimit(request, ip, 'api_v1', 60, 60) // 60 requests per minute
-
-    if (!allowed) {
-      return NextResponse.json(
-        { success: false, error: { code: 'RATE_LIMITED', message: 'Terlalu banyak permintaan' } },
-        { status: 429, headers: { 'x-api-version': '1.0' } }
-      )
-    }
-
-    // specific check for M2M endpoints
+    // specific check for M2M endpoints BEFORE rate limit
     if (pathname.startsWith('/api/v1/inventory/sync')) {
       const apiKey = request.headers.get('x-api-key') || ''
       const validKey = process.env.ERP_API_KEY || ''
@@ -118,6 +114,16 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
           { status: 401, headers: { 'x-api-version': '1.0' } }
         )
       }
+    }
+
+    const ip = getClientIp(request)
+    const allowed = await checkRateLimit(request, ip, 'api_v1', 60, 60) // 60 requests per minute
+
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: { code: 'RATE_LIMITED', message: 'Terlalu banyak permintaan' } },
+        { status: 429, headers: { 'x-api-version': '1.0' } }
+      )
     }
   }
 

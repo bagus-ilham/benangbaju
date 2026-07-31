@@ -43,7 +43,7 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
     supabase
       .from('orders')
       .select('voucher_id, discount_amount, vouchers(code)')
-      .eq('status', 'completed')
+      .in('status', ['processing', 'shipped', 'completed'])
       .gte('created_at', startDateStr)
       .not('voucher_id', 'is', null),
   ])

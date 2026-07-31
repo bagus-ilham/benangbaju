@@ -69,7 +69,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
               comparePrice: null,
               imageUrl: null,
               slug: '',
-              stock: Math.max(item.quantity || 1, 99),
+              stock: item.quantity || 1,
             },
             item.quantity || 1
           )
@@ -113,17 +113,20 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const checkPaymentMutation = useCheckPaymentStatus()
   const submitReviewMutation = useSubmitReview()
 
+  const checkPaymentMutationRef = useRef(checkPaymentMutation)
+  useEffect(() => {
+    checkPaymentMutationRef.current = checkPaymentMutation
+  }, [checkPaymentMutation])
+
   // Start payment verification — actively check with Midtrans API in 3 attempts (3s, 10s, 25s)
   const startPaymentVerification = useCallback(() => {
-    setIsVerifyingPayment(true)
+    if (verifyTimeoutsRef.current.length > 0) return
 
-    // Clear any existing timeouts first
-    verifyTimeoutsRef.current.forEach(clearTimeout)
-    verifyTimeoutsRef.current = []
+    setIsVerifyingPayment(true)
 
     const doCheck = async (attempt: number) => {
       try {
-        const result = await checkPaymentMutation.mutateAsync(orderNumber)
+        const result = await checkPaymentMutationRef.current.mutateAsync(orderNumber)
         if (result.order_status && result.order_status !== 'pending_payment') {
           setIsVerifyingPayment(false)
           refetch()
@@ -156,7 +159,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       }, delay)
       verifyTimeoutsRef.current.push(timeoutId)
     })
-  }, [orderNumber, checkPaymentMutation, refetch])
+  }, [orderNumber, refetch])
 
   // Handle Manual Status Check
   const handleManualCheckStatus = async () => {

@@ -37,7 +37,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
     col2,
     collection1Products,
     collection2Products,
-  } = await homeService.getCachedHomepageData()
+  } = await homeService.getHomepageData()
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
 

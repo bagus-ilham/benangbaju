@@ -33,7 +33,7 @@ export function useFocusTrap(
     }
 
     return () => {
-      if (isActive && (!condition || condition())) {
+      if (isActive) {
         activeTrapCount = Math.max(0, activeTrapCount - 1)
         if (activeTrapCount === 0) {
           document.body.style.overflow = ''

@@ -92,7 +92,7 @@ export class OrderService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Error creating order:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, error.message || 'Gagal membuat pesanan')
+      return fail(ApiErrorCode.VALIDATION_ERROR, error.message || 'Gagal membuat pesanan')
     }
   }
 

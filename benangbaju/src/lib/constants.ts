@@ -2,7 +2,6 @@ export const APP_NAME = 'Benangbaju'
 
 export const ORDER_STATUS = {
   PENDING_PAYMENT: 'pending_payment',
-  PAID: 'paid',
   PROCESSING: 'processing',
   SHIPPED: 'shipped',
   COMPLETED: 'completed',
@@ -14,7 +13,6 @@ export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS]
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending_payment: 'Menunggu Pembayaran',
-  paid: 'Sudah Dibayar',
   processing: 'Diproses',
   shipped: 'Dikirim',
   completed: 'Selesai',

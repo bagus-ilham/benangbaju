@@ -55,15 +55,17 @@ export class SettingsRepository {
     if (!res.success) return fail(ApiErrorCode.INTERNAL_ERROR, res.error.message)
     const currentSettings = res.data || []
 
-    const settingsToUpsert = currentSettings
-      .filter((s) => Object.prototype.hasOwnProperty.call(settings, s.key))
-      .map((s) => ({
-        key: s.key,
-        value: settings[s.key],
-        type: s.type,
-        group: s.group,
-        label: s.label,
-      }))
+    const currentMap = new Map(currentSettings.map((s) => [s.key, s]))
+    const settingsToUpsert = Object.entries(settings).map(([key, value]) => {
+      const existing = currentMap.get(key)
+      return {
+        key,
+        value,
+        type: existing?.type || 'string',
+        group: existing?.group || 'general',
+        label: existing?.label || key,
+      }
+    })
 
     if (settingsToUpsert.length === 0) return ok()
 

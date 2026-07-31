@@ -109,6 +109,9 @@ export class AdminProductService {
       const dbImageIds = (dbImages || []).map((i) => i.id).filter(Boolean) as string[]
       const incomingImageIds = imagesToUpsert.map((i) => i.id).filter((id) => id) as string[]
       const imageIdsToDelete = dbImageIds.filter((id) => !incomingImageIds.includes(id))
+      const deletedImageUrls = (dbImages || [])
+        .filter((i) => imageIdsToDelete.includes(i.id))
+        .map((i) => i.url)
 
       // Links
       const linksToUpsert = marketplaceLinks.map((link) => ({
@@ -133,6 +136,11 @@ export class AdminProductService {
       )
 
       const supabase = await createServerClient()
+      if (deletedImageUrls.length > 0) {
+        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+        await Promise.all(deletedImageUrls.map((url) => deleteImageByUrl(supabase, url, 'products')))
+      }
+
       await adminLogRepository.insertAdminActivityLog(
         supabase,
         'update',
@@ -145,7 +153,7 @@ export class AdminProductService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       safeLogError('Gagal memperbarui produk', error)
-      return fail('Gagal memperbarui produk', error.message || 'Transaction failed')
+      return fail(ApiErrorCode.INTERNAL_ERROR, error.message || 'Transaction failed')
     }
   }
 
@@ -153,13 +161,15 @@ export class AdminProductService {
     try {
       const images = await productRepository.getProductImages(productId)
 
+      // Delete database record first
+      await productRepository.adminDelete(productId)
+
+      // If DB delete succeeds, clean up images from storage
       if (images && images.length > 0) {
         const supabase = await createServerClient()
         const { deleteImageByUrl } = await import('@/lib/supabase/storage')
         await Promise.all(images.map((img) => deleteImageByUrl(supabase, img.url, 'products')))
       }
-
-      await productRepository.adminDelete(productId)
 
       const supabase = await createServerClient()
       await adminLogRepository.insertAdminActivityLog(

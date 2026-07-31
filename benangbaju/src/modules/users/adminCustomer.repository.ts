@@ -58,6 +58,14 @@ export class AdminCustomerRepository {
       })
     }
 
+    try {
+      await supabase.auth.admin.updateUserById(customerId, {
+        ban_duration: isActive ? 'none' : '876000h',
+      })
+    } catch (authErr) {
+      safeLogError('Error updating auth ban duration:', authErr)
+    }
+
     await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',

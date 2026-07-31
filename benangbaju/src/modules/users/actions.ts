@@ -68,6 +68,12 @@ export async function updateAdminStaffAction(
 }
 
 export async function deleteAdminStaffAction(staffId: string) {
-  await requireAdmin()
+  const { user } = await requireAdmin()
+  if (staffId === user.id) {
+    return {
+      success: false,
+      error: 'Tidak dapat menghapus akun Anda sendiri',
+    }
+  }
   return adminStaffService.adminDeleteStaff(staffId)
 }

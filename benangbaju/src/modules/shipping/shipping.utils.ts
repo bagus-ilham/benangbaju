@@ -32,8 +32,10 @@ export function calculateCartWeight(cartItems: CartItemWithWeight[]): number {
     const variant = item.product_variants
     const product = Array.isArray(variant?.products) ? variant.products[0] : variant?.products
 
-    const weight = variant?.weight_gram ?? product?.weight_gram ?? DEFAULT_WEIGHT_GRAM
-    const parsedWeight = Number(weight) || DEFAULT_WEIGHT_GRAM
+    const weight = variant?.weight_gram ?? product?.weight_gram
+    const num = Number(weight)
+    const parsedWeight =
+      isNaN(num) || weight === undefined || weight === null ? DEFAULT_WEIGHT_GRAM : num
 
     return acc + parsedWeight * (item.quantity || 1)
   }, 0)

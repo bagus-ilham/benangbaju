@@ -41,6 +41,8 @@ export class ReviewService {
   }
 
   async voteHelpful(reviewId: string): Promise<ApiResponse<number>> {
+    const { requireAuth } = await import('@/lib/auth-guard')
+    await requireAuth()
     return reviewRepository.voteHelpful(reviewId)
   }
 

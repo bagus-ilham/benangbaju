@@ -20,8 +20,8 @@ export class CollectionRepository {
         count: 'exact',
       })
       .eq('is_active', true)
-      .or(`starts_at.is.null,starts_at.lte."${now}"`)
-      .or(`ends_at.is.null,ends_at.gte."${now}"`)
+      .or(`starts_at.is.null,starts_at.lte.${now}`)
+      .or(`ends_at.is.null,ends_at.gte.${now}`)
       .order('sort_order', { ascending: true })
       .range(from, to)
 
@@ -123,7 +123,8 @@ export class CollectionRepository {
       const { error: juncErr } = await supabase.from('collection_products').insert(junctionData)
 
       if (juncErr) {
-        safeLogError('Error linking products to collection:', juncErr)
+        safeLogError('Error linking products to collection, rolling back:', juncErr)
+        await supabase.from('collections').delete().eq('id', collectionId)
         return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghubungkan produk ke koleksi')
       }
     }
@@ -154,6 +155,12 @@ export class CollectionRepository {
     productIds: string[]
   ): Promise<ApiResponse<{ id: string }>> {
     const supabase = await createServerClient()
+    const { data: oldCol } = await supabase
+      .from('collections')
+      .select('image_url')
+      .eq('id', collectionId)
+      .maybeSingle()
+
     const { error: colErr } = await supabase
       .from('collections')
       .update(collectionData)
@@ -162,6 +169,15 @@ export class CollectionRepository {
     if (colErr) {
       safeLogError('Error updating collection:', colErr)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui koleksi')
+    }
+
+    if (oldCol?.image_url && collectionData.image_url !== oldCol.image_url) {
+      try {
+        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+        await deleteImageByUrl(supabase, oldCol.image_url, 'collections')
+      } catch (err) {
+        safeLogError('Failed to delete old collection image:', err)
+      }
     }
 
     // delete current links
@@ -202,25 +218,29 @@ export class CollectionRepository {
 
   async adminDeleteCollection(collectionId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
-    // 1. Fetch images associated with this collection to clean up storage
+    // 1. Fetch image URL before delete
     const { data: collection } = await supabase
       .from('collections')
       .select('image_url')
       .eq('id', collectionId)
-      .single()
+      .maybeSingle()
 
-    // 2. Delete the physical image from Supabase Storage
-    if (collection && collection.image_url) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-      await deleteImageByUrl(supabase, collection.image_url, 'collections')
-    }
-
-    // 3. Delete collection record
+    // 2. Delete collection DB record first
     const { error } = await supabase.from('collections').delete().eq('id', collectionId)
 
     if (error) {
       safeLogError('Error deleting collection:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus koleksi')
+    }
+
+    // 3. If DB delete succeeds, clean up physical image from Supabase Storage
+    if (collection && collection.image_url) {
+      try {
+        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+        await deleteImageByUrl(supabase, collection.image_url, 'collections')
+      } catch (err) {
+        safeLogError('Failed to clean up collection image from storage:', err)
+      }
     }
 
     await adminLogRepository.insertAdminActivityLog(

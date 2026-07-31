@@ -43,8 +43,11 @@ function SearchResultsContent() {
   const products = dataRes?.data || []
   const totalCount = dataRes?.pagination?.total_count || 0
 
+  const loggedQueryRef = React.useRef<string | null>(null)
+
   React.useEffect(() => {
-    if (query && !isLoading && dataRes) {
+    if (query && !isLoading && dataRes && loggedQueryRef.current !== query) {
+      loggedQueryRef.current = query
       import('@/modules/products/actions').then(({ logSearchAction }) => {
         logSearchAction(query, totalCount).catch(() => {})
       })

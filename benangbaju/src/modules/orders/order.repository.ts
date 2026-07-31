@@ -54,10 +54,10 @@ export class OrderRepository {
     const { data, error } = await supabase.rpc('create_order', {
       p_user_id: params.userId,
       p_address_id: params.addressId,
-      p_voucher_code: params.voucherCode || undefined,
-      p_courier_name: params.courierName || undefined,
+      p_voucher_code: params.voucherCode ?? undefined,
+      p_courier_name: params.courierName ?? undefined,
       p_shipping_cost: params.shippingCost || 0,
-      p_notes: params.notes || undefined,
+      p_notes: params.notes ?? undefined,
     })
 
     if (error) throw error
@@ -171,8 +171,9 @@ export class OrderRepository {
     }
 
     if (escapedSearch) {
+      const cleanSearch = escapedSearch.replace(/\./g, '\\.')
       query = query.or(
-        `order_number.ilike.%${escapedSearch}%,order_shipping.recipient_name.ilike.%${escapedSearch}%`
+        `order_number.ilike.%${cleanSearch}%,order_shipping.recipient_name.ilike.%${cleanSearch}%`
       )
     }
 
@@ -208,7 +209,16 @@ export class OrderRepository {
     }
 
     if (status === 'cancelled') {
-      return this.cancel(orderId, 'Dibatalkan oleh Admin')
+      try {
+        await this.cancel(orderId, 'Dibatalkan oleh Admin')
+      } catch {
+        // Fallback for orders in processing/shipped state where cancel_order RPC fails
+        await supabase
+          .from('orders')
+          .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+          .eq('id', orderId)
+      }
+      return
     }
     if (status === 'completed') {
       return this.confirmDelivery(orderId)
@@ -291,6 +301,39 @@ export class OrderRepository {
 
     const { error } = await supabase.from('return_requests').update(updateData).eq('id', requestId)
     if (error) throw error
+
+    // Restore variant stock when return is approved or completed
+    if (status === 'approved' || status === 'completed') {
+      try {
+        const { data: returnReq } = await supabase
+          .from('return_requests')
+          .select('return_items(order_items(variant_id, quantity))')
+          .eq('id', requestId)
+          .maybeSingle()
+
+        if (returnReq?.return_items) {
+          for (const item of returnReq.return_items as any[]) {
+            const vId = item.order_items?.variant_id
+            const qty = item.order_items?.quantity
+            if (vId && qty > 0) {
+              const { data: v } = await supabase
+                .from('product_variants')
+                .select('stock')
+                .eq('id', vId)
+                .single()
+              if (v) {
+                await supabase
+                  .from('product_variants')
+                  .update({ stock: v.stock + qty })
+                  .eq('id', vId)
+              }
+            }
+          }
+        }
+      } catch (stockErr) {
+        console.error('Error restoring stock on return approval:', stockErr)
+      }
+    }
   }
 
   async adminUpdateTrackingNumber(orderId: string, trackingNumber: string) {

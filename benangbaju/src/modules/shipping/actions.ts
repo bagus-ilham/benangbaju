@@ -40,6 +40,7 @@ export async function setDefaultAddressAction(addressId: string, userId: string)
 }
 
 export async function searchDistrictsAction(searchQuery: string) {
+  if (!searchQuery || searchQuery.trim().length < 2) return []
   return shippingService.searchDistricts(searchQuery)
 }
 

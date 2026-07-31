@@ -55,10 +55,10 @@ serve(async (req: Request) => {
     // DOKU Check Status API
     const clientId = Deno.env.get('DOKU_CLIENT_ID') ?? '';
     const secretKey = Deno.env.get('DOKU_SECRET_KEY') ?? '';
-    const dokuEndpoint = 'https://api-sandbox.doku.com';
+    const dokuEndpoint = Deno.env.get('DOKU_API_URL') ?? 'https://api-sandbox.doku.com';
     const requestTarget = `/orders/v1/status/${order_number}`; 
     const requestId = crypto.randomUUID();
-    const requestTimestamp = new Date().toISOString().substring(0, 19) + "Z";
+    const requestTimestamp = new Date().toISOString();
 
     const signature = await generateDokuSignature(
       clientId,
@@ -92,8 +92,9 @@ serve(async (req: Request) => {
       paymentStatus = 'failed';
     }
 
-    // Update status pesanan jika sukses
-    if (newStatus !== order.status) {
+    // Update status pesanan jika sukses, tapi jangan ubah order yang sudah di terminal state (cancelled/completed)
+    const isTerminalState = ['cancelled', 'completed'].includes(order.status);
+    if (newStatus !== order.status && !isTerminalState) {
       await supabaseClient
         .from('orders')
         .update({ status: newStatus })

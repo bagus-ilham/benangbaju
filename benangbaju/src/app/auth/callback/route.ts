@@ -11,19 +11,21 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
     redirect = '/'
   }
 
-  if (code) {
-    try {
-      const supabase = await createServerClient()
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
+  if (!code) {
+    return NextResponse.redirect(`${requestUrl.origin}/masuk?error=missing_code`)
+  }
 
-      if (error) {
-        console.error('Error exchanging OAuth code for session:', error)
-        return NextResponse.redirect(`${requestUrl.origin}/masuk?error=oauth_failed`)
-      }
-    } catch (err) {
-      console.error('Catch block OAuth code exchange error:', err)
+  try {
+    const supabase = await createServerClient()
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (error) {
+      console.error('Error exchanging OAuth code for session:', error)
       return NextResponse.redirect(`${requestUrl.origin}/masuk?error=oauth_failed`)
     }
+  } catch (err) {
+    console.error('Catch block OAuth code exchange error:', err)
+    return NextResponse.redirect(`${requestUrl.origin}/masuk?error=oauth_failed`)
   }
 
   // Redirect to requested page on success

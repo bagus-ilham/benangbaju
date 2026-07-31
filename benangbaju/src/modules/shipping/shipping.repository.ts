@@ -22,6 +22,14 @@ export class ShippingRepository {
 
   async addUserAddress(address: Omit<UserAddress, 'id' | 'created_at'>) {
     const supabase = await createServerClient()
+
+    if (address.is_default) {
+      await supabase
+        .from('user_addresses')
+        .update({ is_default: false })
+        .eq('user_id', address.user_id)
+    }
+
     const { data, error } = await supabase
       .from('user_addresses')
       .insert([address])
@@ -37,6 +45,14 @@ export class ShippingRepository {
     address: Partial<Omit<UserAddress, 'id' | 'user_id' | 'created_at'>>
   ) {
     const supabase = await createServerClient()
+
+    if (address.is_default) {
+      await supabase
+        .from('user_addresses')
+        .update({ is_default: false })
+        .eq('user_id', userId)
+    }
+
     const { data, error } = await supabase
       .from('user_addresses')
       .update(address)
@@ -50,21 +66,53 @@ export class ShippingRepository {
 
   async deleteUserAddress(addressId: string, userId: string) {
     const supabase = await createServerClient()
+    const { data: targetAddr } = await supabase
+      .from('user_addresses')
+      .select('is_default')
+      .eq('id', addressId)
+      .eq('user_id', userId)
+      .maybeSingle()
+
     const { error } = await supabase
       .from('user_addresses')
       .delete()
       .eq('id', addressId)
       .eq('user_id', userId)
+
     if (error) throw error
+
+    // Promote remaining address if deleted address was default
+    if (targetAddr?.is_default) {
+      const { data: remaining } = await supabase
+        .from('user_addresses')
+        .select('id')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      if (remaining && remaining.length > 0) {
+        await supabase
+          .from('user_addresses')
+          .update({ is_default: true })
+          .eq('id', remaining[0].id)
+      }
+    }
   }
 
   async setDefaultAddress(addressId: string, userId: string) {
     const supabase = await createServerClient()
+
+    await supabase
+      .from('user_addresses')
+      .update({ is_default: false })
+      .eq('user_id', userId)
+
     const { error } = await supabase
       .from('user_addresses')
       .update({ is_default: true })
       .eq('id', addressId)
       .eq('user_id', userId)
+
     if (error) throw error
   }
 
@@ -76,14 +124,12 @@ export class ShippingRepository {
       .replace(/%/g, '\\%')
       .replace(/_/g, '\\_')
       .replace(/,/g, '\\,')
-      .replace(/\(/g, '\\(')
-      .replace(/\)/g, '\\)')
     const formattedQuery = `%${escapedQuery}%`
 
     const { data, error } = await supabase
       .from('districts')
       .select('id, province_name, city_name, district_name, postal_code, zone_id')
-      .or(`district_name.ilike."${formattedQuery}",city_name.ilike."${formattedQuery}"`)
+      .or(`district_name.ilike.${formattedQuery},city_name.ilike.${formattedQuery}`)
       .limit(15)
 
     if (error) throw error

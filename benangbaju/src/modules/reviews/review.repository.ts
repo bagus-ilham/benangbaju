@@ -295,7 +295,8 @@ export class ReviewRepository {
       const { error: mediaErr } = await supabase.from('review_media').insert(mediaData)
 
       if (mediaErr) {
-        safeLogError('Error submitting review media:', mediaErr)
+        safeLogError('Error submitting review media, rolling back:', mediaErr)
+        await supabase.from('product_reviews').delete().eq('id', review.id)
         return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengirim gambar/video ulasan')
       }
     }

@@ -74,6 +74,7 @@ export class ProductRepository {
         .replace(/\\/g, '\\\\')
         .replace(/%/g, '\\%')
         .replace(/_/g, '\\_')
+        .replace(/,/g, '\\,')
       query = query.or(`name.ilike.%${escapedSearch}%,description.ilike.%${escapedSearch}%`)
     }
 
@@ -125,7 +126,7 @@ export class ProductRepository {
       .eq('slug', slug)
       .eq('is_active', true)
       .eq('product_variants.is_active', true)
-      .single()
+      .maybeSingle()
 
     if (error) throw error
     return data
@@ -174,8 +175,12 @@ export class ProductRepository {
     )
 
     if (search) {
-      const escapedSearch = search.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
-      query = query.ilike('name', `%${escapedSearch}%`)
+      const escapedSearch = search
+        .replace(/\\/g, '\\\\')
+        .replace(/%/g, '\\%')
+        .replace(/_/g, '\\_')
+        .replace(/,/g, '\\,')
+      query = query.or(`name.ilike.%${escapedSearch}%,description.ilike.%${escapedSearch}%`)
     }
 
     const { data, count, error } = await query

@@ -21,8 +21,8 @@ export class BannerRepository {
         { count: 'exact' }
       )
       .eq('is_active', true)
-      .or(`starts_at.is.null,starts_at.lte."${now}"`)
-      .or(`ends_at.is.null,ends_at.gte."${now}"`)
+      .or(`starts_at.is.null,starts_at.lte.${now}`)
+      .or(`ends_at.is.null,ends_at.gte.${now}`)
       .order('sort_order', { ascending: true })
       .range(from, to)
 
@@ -108,6 +108,12 @@ export class BannerRepository {
     }
   ): Promise<ApiResponse<Banner>> {
     const supabase = await createServerClient()
+    const { data: oldBanner } = await supabase
+      .from('banners')
+      .select('image_url, image_mobile_url')
+      .eq('id', bannerId)
+      .maybeSingle()
+
     const { data, error } = await supabase
       .from('banners')
       .update(bannerData)
@@ -120,6 +126,19 @@ export class BannerRepository {
     if (error) {
       safeLogError('Error updating banner:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui banner')
+    }
+
+    if (oldBanner) {
+      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+      if (oldBanner.image_url && bannerData.image_url !== oldBanner.image_url) {
+        await deleteImageByUrl(supabase, oldBanner.image_url, 'banners').catch(() => {})
+      }
+      if (
+        oldBanner.image_mobile_url &&
+        bannerData.image_mobile_url !== oldBanner.image_mobile_url
+      ) {
+        await deleteImageByUrl(supabase, oldBanner.image_mobile_url, 'banners').catch(() => {})
+      }
     }
 
     await adminLogRepository.insertAdminActivityLog(
@@ -135,32 +154,32 @@ export class BannerRepository {
 
   async adminDeleteBanner(bannerId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
-    // 1. Fetch images associated with this banner to clean up storage
+    // 1. Fetch images associated with this banner before delete
     const { data: banner } = await supabase
       .from('banners')
       .select('image_url, image_mobile_url')
       .eq('id', bannerId)
-      .single()
+      .maybeSingle()
 
-    // 2. Delete the physical images from Supabase Storage
-    if (banner) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-      const cleanupPromises = []
-      if (banner.image_url)
-        cleanupPromises.push(deleteImageByUrl(supabase, banner.image_url, 'banners'))
-      if (banner.image_mobile_url)
-        cleanupPromises.push(deleteImageByUrl(supabase, banner.image_mobile_url, 'banners'))
-      if (cleanupPromises.length > 0) {
-        await Promise.all(cleanupPromises)
-      }
-    }
-
-    // 3. Delete banner record
+    // 2. Delete banner DB record first
     const { error } = await supabase.from('banners').delete().eq('id', bannerId)
 
     if (error) {
       safeLogError('Error deleting banner:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus banner')
+    }
+
+    // 3. If DB delete succeeds, clean up physical images from Supabase Storage
+    if (banner) {
+      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+      const cleanupPromises = []
+      if (banner.image_url)
+        cleanupPromises.push(deleteImageByUrl(supabase, banner.image_url, 'banners').catch(() => {}))
+      if (banner.image_mobile_url)
+        cleanupPromises.push(deleteImageByUrl(supabase, banner.image_mobile_url, 'banners').catch(() => {}))
+      if (cleanupPromises.length > 0) {
+        await Promise.all(cleanupPromises)
+      }
     }
 
     await adminLogRepository.insertAdminActivityLog(

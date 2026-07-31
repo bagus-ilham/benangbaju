@@ -15,6 +15,17 @@ export interface Column<T> {
   className?: string
 }
 
+function getValueByPath(obj: unknown, path: string): unknown {
+  if (!obj || typeof obj !== 'object' || !path) return undefined
+  if (path in (obj as Record<string, unknown>)) return (obj as Record<string, unknown>)[path]
+  return path.split('.').reduce<unknown>((acc, key) => {
+    if (acc && typeof acc === 'object' && key in (acc as Record<string, unknown>)) {
+      return (acc as Record<string, unknown>)[key]
+    }
+    return undefined
+  }, obj)
+}
+
 export interface DataTableProps<T> {
   columns: Column<T>[]
   data: T[]
@@ -119,7 +130,7 @@ export function DataTable<T extends { id?: string | number }>({
             ) : (
               data.map((row, rIdx) => (
                 <motion.tr
-                  key={row.id ?? rIdx}
+                  key={row.id !== undefined && row.id !== null ? String(row.id) : rIdx}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2, delay: rIdx * 0.03 }}
@@ -136,7 +147,7 @@ export function DataTable<T extends { id?: string | number }>({
                     >
                       {col.render
                         ? col.render(row)
-                        : (row as unknown as Record<string, React.ReactNode>)[String(col.key)]}
+                        : (getValueByPath(row, String(col.key)) as React.ReactNode)}
                     </td>
                   ))}
                 </motion.tr>

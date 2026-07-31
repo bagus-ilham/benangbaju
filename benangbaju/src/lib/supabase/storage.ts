@@ -52,15 +52,22 @@ export async function deleteImageByUrl(
 
     // Remove query parameters if present (e.g. ?v=123)
     const cleanUrl = url.split('?')[0]
-    const urlParts = cleanUrl.split('/')
-    const rawFileName = urlParts[urlParts.length - 1]
-    const fileName = decodeURIComponent(rawFileName)
+    const bucketMarker = `/${bucket}/`
+    const markerIndex = cleanUrl.indexOf(bucketMarker)
+    let filePath = ''
+    if (markerIndex !== -1) {
+      filePath = cleanUrl.substring(markerIndex + bucketMarker.length)
+    } else {
+      const urlParts = cleanUrl.split('/')
+      filePath = urlParts[urlParts.length - 1]
+    }
+    const decodedFilePath = decodeURIComponent(filePath)
 
-    if (!fileName) return
+    if (!decodedFilePath) return
 
-    const { error } = await supabase.storage.from(bucket).remove([fileName])
+    const { error } = await supabase.storage.from(bucket).remove([decodedFilePath])
     if (error) {
-      safeLogError(`Failed to delete image ${fileName} from ${bucket}:`, error.message)
+      safeLogError(`Failed to delete image ${decodedFilePath} from ${bucket}:`, error.message)
     }
   } catch (err) {
     safeLogError('Error in deleteImageByUrl:', err)

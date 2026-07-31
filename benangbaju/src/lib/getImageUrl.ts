@@ -1,5 +1,6 @@
-const SUPABASE_STORAGE_PREFIX =
-  'https://jwvbzuoatffoxaahdwdx.supabase.co/storage/v1/object/public'
+const supabaseBaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://jwvbzuoatffoxaahdwdx.supabase.co'
+const SUPABASE_STORAGE_PREFIX = `${supabaseBaseUrl.replace(/\/$/, '')}/storage/v1/object/public`
 const WORKER_URL = 'https://cdn.benangbaju.com'
 const DEFAULT_PLACEHOLDER = '/images/placeholder.jpg'
 

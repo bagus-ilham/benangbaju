@@ -84,6 +84,21 @@ export function mapProductListItem(p: any): ProductListItem {
     }
   }
 
+  // Fallback: If no active variants, pick minimum price from all available variants to prevent Rp 0
+  if (activeVariantsCount === 0 && product_variants.length > 0) {
+    minPrice = Number(product_variants[0].price) || 0
+    maxPrice = minPrice
+    minPriceVariant = product_variants[0]
+    for (let i = 1; i < product_variants.length; i++) {
+      const p = Number(product_variants[i].price) || 0
+      if (p < minPrice) {
+        minPrice = p
+        minPriceVariant = product_variants[i]
+      }
+      if (p > maxPrice) maxPrice = p
+    }
+  }
+
   const comparePrice = minPriceVariant?.compare_price ? Number(minPriceVariant.compare_price) : null
   const discountPercent =
     comparePrice && comparePrice > minPrice

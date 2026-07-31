@@ -18,19 +18,15 @@ export class HomeService {
       'banners',
       'categories',
       'collections',
-      'flash-sales',
       'products',
       'settings',
       'homepage-data'
     )
 
-    const supabase = createStaticClient()
-
     const [
       bannersRes,
       categoriesRes,
       collectionsRes,
-      flashSaleRes,
       featuredResponse,
       newestResponse,
       settingsRes,
@@ -38,7 +34,6 @@ export class HomeService {
       getActiveBannersAction(),
       getActiveCategoriesAction(),
       getActiveCollectionsAction(),
-      flashSaleService.getActiveFlashSale(supabase),
       getProductsAction({ sortBy: 'featured', limit: 4 }),
       getProductsAction({ sortBy: 'newest', limit: 4 }),
       settingsService.getSiteSettings(),
@@ -46,7 +41,6 @@ export class HomeService {
 
     const settings = settingsRes.data || []
     const collections = collectionsRes.data || []
-    const flashSale = flashSaleRes.data || null
     const spotlight1Slug =
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       settings.find((s: any) => s.key === 'homepage_spotlight_collection_1')?.value || ''
@@ -75,13 +69,23 @@ export class HomeService {
       banners: bannersRes.data || [],
       categories: categoriesRes.data || [],
       collections,
-      flashSale,
       featuredProducts: featuredResponse.data || [],
       newestProducts: newestResponse.data || [],
       col1,
       col2,
       collection1Products: collection1Products.data || [],
       collection2Products: collection2Products.data || [],
+    }
+  }
+
+  async getHomepageData() {
+    const cachedData = await this.getCachedHomepageData()
+    const supabase = createStaticClient()
+    const flashSaleRes = await flashSaleService.getActiveFlashSale(supabase)
+
+    return {
+      ...cachedData,
+      flashSale: flashSaleRes.data || null,
     }
   }
 }

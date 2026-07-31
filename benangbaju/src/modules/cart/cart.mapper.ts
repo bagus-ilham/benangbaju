@@ -16,11 +16,11 @@ export function mapDbCartItemToLocal(item: any): LocalCartItem {
   const primaryImg =
     imagesList.find((img) => img.is_primary) || (imagesList.length > 0 ? imagesList[0] : null)
 
-  const pvStock = pv && !Array.isArray(pv) && typeof pv.stock === 'number' ? pv.stock : 0
+  const pvStock = pv && !Array.isArray(pv) && pv.stock != null ? Number(pv.stock) : 0
   const pvSku = pv && !Array.isArray(pv) && typeof pv.sku === 'string' ? pv.sku : ''
-  const pvPrice = pv && !Array.isArray(pv) && typeof pv.price === 'number' ? pv.price : 0
+  const pvPrice = pv && !Array.isArray(pv) && pv.price != null ? Number(pv.price) : 0
   const pvComparePrice =
-    pv && !Array.isArray(pv) && typeof pv.compare_price === 'number' ? pv.compare_price : null
+    pv && !Array.isArray(pv) && pv.compare_price != null ? Number(pv.compare_price) : null
   const pvName = pv && !Array.isArray(pv) && typeof pv.name === 'string' ? pv.name : ''
 
   const prodName = prod && typeof prod.name === 'string' ? prod.name : ''

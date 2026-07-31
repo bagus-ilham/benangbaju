@@ -64,9 +64,6 @@ export class AdminStaffRepository {
 
       const newUserId = authData.user.id
 
-      // Wait a moment for trigger to create profile (if a trigger exists)
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
       // 2. Update/upsert profile
       const { data: profileData, error: profileError } = await supabaseAdmin
         .from('profiles')
@@ -127,6 +124,16 @@ export class AdminStaffRepository {
       return { success: false, error: new Error('Gagal memperbarui profil staf.') }
     }
 
+    if (staffData.is_active !== undefined) {
+      try {
+        await supabase.auth.admin.updateUserById(staffId, {
+          ban_duration: staffData.is_active ? 'none' : '876000h',
+        })
+      } catch (authErr) {
+        safeLogError('Error updating staff auth ban duration:', authErr)
+      }
+    }
+
     await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
@@ -150,6 +157,14 @@ export class AdminStaffRepository {
     if (error) {
       safeLogError('Error soft-deleting staff profile:', error)
       return { success: false, error: new Error('Gagal menonaktifkan akun staf.') }
+    }
+
+    try {
+      await supabase.auth.admin.updateUserById(staffId, {
+        ban_duration: '876000h',
+      })
+    } catch (authErr) {
+      safeLogError('Error banning soft-deleted staff in auth:', authErr)
     }
 
     await adminLogRepository.insertAdminActivityLog(

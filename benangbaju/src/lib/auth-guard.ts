@@ -10,9 +10,11 @@ export async function requireAdmin() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, is_active')
     .eq('id', user.id)
     .single()
+
+  if (profile?.is_active === false) throw new ForbiddenError('Akun telah dinonaktifkan')
   if (profile?.role !== 'admin') throw new ForbiddenError('Admin access required')
 
   return { user, supabase, profile }
@@ -24,5 +26,14 @@ export async function requireAuth() {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new UnauthorizedError()
-  return { user, supabase }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, is_active')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.is_active === false) throw new ForbiddenError('Akun telah dinonaktifkan')
+
+  return { user, supabase, profile }
 }

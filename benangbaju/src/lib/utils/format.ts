@@ -19,11 +19,18 @@ export function formatIDR(amount: number | string): string {
  */
 export function formatDate(date: string | Date | null | undefined): string {
   if (!date) return '-'
-  const d = typeof date === 'string' ? new Date(date) : date
+  let d: Date
+  if (typeof date === 'string') {
+    const normalized = date.includes('T') ? date : date.replace(' ', 'T')
+    d = new Date(normalized)
+  } else {
+    d = date
+  }
   if (isNaN(d.getTime())) return '-'
   return new Intl.DateTimeFormat('id-ID', {
     dateStyle: 'long',
     timeStyle: 'short',
+    timeZone: 'Asia/Jakarta',
   }).format(d)
 }
 

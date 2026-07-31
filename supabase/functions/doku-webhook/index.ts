@@ -32,11 +32,15 @@ interface DokuNotificationPayload {
 /**
  * Constant-time string comparison to prevent timing side-channel attacks
  */
-function constantTimeCompare(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+async function constantTimeCompare(a: string, b: string): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const aBuf = await crypto.subtle.digest("SHA-256", encoder.encode(a));
+  const bBuf = await crypto.subtle.digest("SHA-256", encoder.encode(b));
+  const aArr = new Uint8Array(aBuf);
+  const bArr = new Uint8Array(bBuf);
+  let result = a.length ^ b.length;
+  for (let i = 0; i < aArr.length; i++) {
+    result |= aArr[i] ^ bArr[i];
   }
   return result === 0;
 }
@@ -87,7 +91,7 @@ async function verifyDokuNotificationSignature(
 
     const calculatedSignature = `HMACSHA256=${base64Encode(new Uint8Array(signatureBuffer))}`;
 
-    return constantTimeCompare(calculatedSignature, incomingSignature);
+    return await constantTimeCompare(calculatedSignature, incomingSignature);
   } catch (err) {
     console.error('Error verifying DOKU signature:', err);
     return false;
@@ -272,14 +276,12 @@ serve(async (req: Request) => {
     }
 
     // Log event to payment_logs for idempotency tracking
-    if (payment?.id) {
-      await supabase.from('payment_logs').insert({
-        midtrans_order_id: invoiceNumber,
-        event_type: transactionStatus,
-        raw_payload: payload,
-        payment_id: payment.id,
-      });
-    }
+    await supabase.from('payment_logs').insert({
+      midtrans_order_id: invoiceNumber,
+      event_type: transactionStatus,
+      raw_payload: payload,
+      payment_id: payment?.id ?? null,
+    });
 
     return new Response(
       JSON.stringify({ success: true }),

@@ -20,9 +20,6 @@ export class AdminOrderService {
           .replace(/\\/g, '\\\\')
           .replace(/%/g, '\\%')
           .replace(/_/g, '\\_')
-          .replace(/,/g, '\\,')
-          .replace(/\(/g, '\\(')
-          .replace(/\)/g, '\\)')
       }
 
       const { data, count } = await orderRepository.adminFindMany({
@@ -125,21 +122,25 @@ export class AdminOrderService {
         `Updated order status to ${status}`
       )
 
-      // Send notification to customer
-      const { data: order } = await supabase
-        .from('orders')
-        .select('user_id, order_number')
-        .eq('id', orderId)
-        .single()
+      // Send notification to customer (isolated try-catch so notification failure doesn't fail status update)
+      try {
+        const { data: order } = await supabase
+          .from('orders')
+          .select('user_id, order_number')
+          .eq('id', orderId)
+          .single()
 
-      if (order?.user_id) {
-        const { notificationService } = await import('@/modules/notifications/notification.service')
-        await notificationService.sendOrderStatusNotification(
-          order.user_id,
-          order.order_number,
-          status,
-          trackingNumber
-        )
+        if (order?.user_id) {
+          const { notificationService } = await import('@/modules/notifications/notification.service')
+          await notificationService.sendOrderStatusNotification(
+            order.user_id,
+            order.order_number,
+            status,
+            trackingNumber
+          )
+        }
+      } catch (notifErr) {
+        safeLogError('Error sending order status notification:', notifErr)
       }
 
       return ok(null)

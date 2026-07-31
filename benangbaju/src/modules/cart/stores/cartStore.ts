@@ -148,6 +148,9 @@ export const useCartStore = create<CartState>()(
             await new Promise((resolve) => setTimeout(resolve, 50))
             waitCount++
           }
+          if (get().needsResync) {
+            return get().syncCart(userId, false)
+          }
           return
         }
 
@@ -162,7 +165,9 @@ export const useCartStore = create<CartState>()(
             const res = await syncCartAction(localItems, merge)
 
             if (res.success && res.data) {
-              set({ items: res.data })
+              if (!get().needsResync) {
+                set({ items: res.data })
+              }
             }
 
             if (get().needsResync) {

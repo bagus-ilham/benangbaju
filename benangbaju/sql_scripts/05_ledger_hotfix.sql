@@ -32,4 +32,4 @@ BEGIN
     DELETE FROM public.checkout_locks 
     WHERE created_at < NOW() - INTERVAL '5 minutes';
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

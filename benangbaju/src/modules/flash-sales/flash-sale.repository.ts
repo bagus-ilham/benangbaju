@@ -275,6 +275,18 @@ export class FlashSaleRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, res.error?.message || 'Transaction failed')
     }
 
+    // Clean up old banner image if banner_url has changed
+    const { data: oldSale } = await supabase
+      .from('flash_sales')
+      .select('banner_url')
+      .eq('id', saleId)
+      .maybeSingle()
+
+    if (oldSale?.banner_url && saleData.banner_url !== oldSale.banner_url) {
+      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+      await deleteImageByUrl(supabase, oldSale.banner_url, 'flash-sales').catch(() => {})
+    }
+
     await adminLogRepository.insertAdminActivityLog(
       supabase,
       'update',
@@ -288,25 +300,25 @@ export class FlashSaleRepository {
 
   async adminDeleteFlashSale(saleId: string): Promise<ApiResponse<void>> {
     const supabase = await createServerClient()
-    // 1. Fetch banner image associated with this flash sale to clean up storage
+    // 1. Fetch banner image URL before delete
     const { data: sale } = await supabase
       .from('flash_sales')
       .select('banner_url')
       .eq('id', saleId)
-      .single()
+      .maybeSingle()
 
-    // 2. Delete the physical image from Supabase Storage
-    if (sale && sale.banner_url) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-      await deleteImageByUrl(supabase, sale.banner_url, 'flash-sales')
-    }
-
-    // 3. Delete flash sale record
+    // 2. Delete flash sale DB record first
     const { error } = await supabase.from('flash_sales').delete().eq('id', saleId)
 
     if (error) {
       safeLogError('Error deleting flash sale:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus flash sale')
+    }
+
+    // 3. If DB delete succeeds, clean up physical image from Supabase Storage
+    if (sale && sale.banner_url) {
+      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+      await deleteImageByUrl(supabase, sale.banner_url, 'flash-sales').catch(() => {})
     }
 
     await adminLogRepository.insertAdminActivityLog(

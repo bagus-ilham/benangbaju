@@ -105,13 +105,13 @@ export default function CheckoutPage(): React.JSX.Element {
 
   // 4. Fetch Addresses
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const addresses = addressesRes?.data || []
+  const addresses = useMemo(() => addressesRes?.data || [], [addressesRes?.data])
 
   // Fetch available active vouchers
   const { data: availableVouchers } = useQuery({
     queryKey: ['checkout-available-vouchers'],
     queryFn: async () => {
+      const now = new Date().toISOString()
       const { data, error } = await supabase
         .from('vouchers')
         .select(
@@ -119,10 +119,13 @@ export default function CheckoutPage(): React.JSX.Element {
         )
         .eq('is_active', true)
         .eq('is_hidden', false)
-        .gte('expires_at', new Date().toISOString())
+        .lte('starts_at', now)
+        .gte('expires_at', now)
         .order('created_at', { ascending: false })
       if (error) throw error
-      return data || []
+      return (data || []).filter(
+        (v) => v.usage_limit === null || v.usage_limit === undefined || v.used_count < v.usage_limit
+      )
     },
   })
 
@@ -177,7 +180,7 @@ export default function CheckoutPage(): React.JSX.Element {
 
   // 6. Fetch Shipping Rates for selected zone
   const { data: shippingDataRes, isLoading: shippingLoading } = useShippingRates(
-    selectedAddress?.zone_id || null,
+    totalWeight > 0 ? selectedAddress?.zone_id || null : null,
     totalWeight
   )
 

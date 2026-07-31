@@ -71,11 +71,14 @@ export class AdminLogRepository {
 
     const list = data.map((row) => {
       const rawProfiles = row.profiles
-      let profiles: { name: string; email: string | null } | null = null
+      let profiles: { name: string; email: string | null } = {
+        name: 'Staf Terhapus',
+        email: null,
+      }
       if (rawProfiles && !Array.isArray(rawProfiles)) {
         profiles = {
-          name: rawProfiles.name,
-          email: rawProfiles.email,
+          name: rawProfiles.name || 'Staf Terhapus',
+          email: rawProfiles.email || null,
         }
       }
       return {

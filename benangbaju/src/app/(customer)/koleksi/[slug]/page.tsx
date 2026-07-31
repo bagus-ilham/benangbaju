@@ -23,7 +23,7 @@ async function getCachedCollection(slug: string) {
   const res = await getCollectionBySlugAction(slug)
   const collection = res.data
   if (!res.success || !collection) {
-    throw new Error(`Collection ${slug} not found`)
+    return null
   }
   return collection
 }
@@ -59,6 +59,9 @@ export default async function CollectionDetailPage({
       getCachedCollection(slug),
       getCachedCollectionProducts(slug),
     ])
+    if (!colRes) {
+      notFound()
+    }
     collection = colRes
     products = prodRes.data || []
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

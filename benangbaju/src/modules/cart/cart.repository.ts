@@ -98,7 +98,12 @@ export class CartRepository {
     })
 
     if (rpcError) {
-      // Fallback: Delete existing items for this cart and insert new items
+      // Fallback: Backup existing items before delete
+      const { data: oldItems } = await supabase
+        .from('cart_items')
+        .select('variant_id, quantity')
+        .eq('cart_id', cartId)
+
       const { error: delError } = await supabase.from('cart_items').delete().eq('cart_id', cartId)
       if (delError) throw delError
 
@@ -108,7 +113,18 @@ export class CartRepository {
         quantity: i.quantity,
       }))
       const { error: insError } = await supabase.from('cart_items').insert(insertData)
-      if (insError) throw insError
+      if (insError) {
+        // Rollback restore old items if possible
+        if (oldItems && oldItems.length > 0) {
+          const restoreData = oldItems.map((i) => ({
+            cart_id: cartId,
+            variant_id: i.variant_id,
+            quantity: i.quantity,
+          }))
+          await supabase.from('cart_items').insert(restoreData)
+        }
+        throw insError
+      }
     }
   }
 

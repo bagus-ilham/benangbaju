@@ -87,9 +87,14 @@ export class VoucherRepository {
     expires_at: string
   }): Promise<Voucher> {
     const supabase = await createServerClient()
+    const sanitizedData = {
+      ...voucherData,
+      code: voucherData.code.trim().toUpperCase(),
+    }
+
     const { data, error } = await supabase
       .from('vouchers')
-      .insert(voucherData)
+      .insert(sanitizedData)
       .select(
         'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at'
       )
@@ -97,6 +102,9 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error creating voucher:', error)
+      if (error.code === '23505') {
+        throw new Error('Kode voucher sudah digunakan.')
+      }
       throw error
     }
 
@@ -105,7 +113,7 @@ export class VoucherRepository {
       'create',
       'voucher',
       data.id,
-      `Created voucher ${voucherData.code}`
+      `Created voucher ${sanitizedData.code}`
     )
 
     return data as Voucher
@@ -129,9 +137,14 @@ export class VoucherRepository {
     }
   ): Promise<Voucher> {
     const supabase = await createServerClient()
+    const sanitizedData = {
+      ...voucherData,
+      code: voucherData.code.trim().toUpperCase(),
+    }
+
     const { data, error } = await supabase
       .from('vouchers')
-      .update(voucherData)
+      .update(sanitizedData)
       .eq('id', voucherId)
       .select(
         'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at'
@@ -140,6 +153,9 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error updating voucher:', error)
+      if (error.code === '23505') {
+        throw new Error('Kode voucher sudah digunakan.')
+      }
       throw error
     }
 
@@ -148,7 +164,7 @@ export class VoucherRepository {
       'update',
       'voucher',
       voucherId,
-      `Updated voucher ${voucherData.code}`
+      `Updated voucher ${sanitizedData.code}`
     )
 
     return data as Voucher
@@ -160,6 +176,9 @@ export class VoucherRepository {
 
     if (error) {
       safeLogError('Error deleting voucher:', error)
+      if (error.code === '23503') {
+        throw new Error('Voucher telah digunakan pada riwayat pesanan dan tidak dapat dihapus.')
+      }
       throw error
     }
 

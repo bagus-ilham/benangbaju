@@ -26,15 +26,21 @@ export async function POST(req: Request) {
       )
     }
 
-    // Validate update structure: { sku: string, stock: number }
+    // Validate update structure: { sku: string, stock: number (non-negative integer) }
     for (const update of updates) {
-      if (!update.sku || typeof update.stock !== 'number') {
+      if (
+        !update.sku ||
+        typeof update.stock !== 'number' ||
+        !Number.isInteger(update.stock) ||
+        update.stock < 0
+      ) {
         return NextResponse.json(
           {
             success: false,
             error: {
               code: ApiErrorCode.VALIDATION_ERROR,
-              message: 'Invalid payload: each update must have sku (string) and stock (number)',
+              message:
+                'Invalid payload: each update must have sku (string) and stock (non-negative integer)',
             },
           },
           { status: 400 }

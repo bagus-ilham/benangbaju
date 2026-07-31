@@ -16,6 +16,7 @@ describe('createSecureOrderAction', () => {
     vi.resetAllMocks()
     vi.spyOn(authGuard, 'requireAuth').mockResolvedValue({
       user: { id: 'user-1' } as any,
+      profile: {} as any,
       supabase: {} as any,
     })
   })

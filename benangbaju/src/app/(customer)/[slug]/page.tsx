@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { cmsService } from '@/modules/cms/cms.service'
 import { PageHero, PageContainer } from '@/shared/components'
+import { sanitizeHtml } from '@/lib/utils/sanitize'
 
 interface DynamicPageProps {
   params: Promise<{ slug: string }>
@@ -53,7 +54,7 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
               {sec.body && (
                 <div
                   className="prose max-w-none text-neutral-600 leading-relaxed text-sm"
-                  dangerouslySetInnerHTML={{ __html: sec.body }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(sec.body) }}
                 />
               )}
             </section>
@@ -61,7 +62,7 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
         ) : content?.body ? (
           <div
             className="prose max-w-none text-neutral-600 leading-relaxed text-sm"
-            dangerouslySetInnerHTML={{ __html: content.body }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.body) }}
           />
         ) : (
           <div className="text-neutral-500 text-sm">

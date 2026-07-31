@@ -43,12 +43,16 @@ export class VoucherService {
     starts_at: string
     expires_at: string
   }): Promise<ApiResponse<Voucher>> {
+    if (new Date(voucherData.starts_at) >= new Date(voucherData.expires_at)) {
+      return fail(ApiErrorCode.VALIDATION_ERROR, 'Tanggal mulai harus sebelum tanggal berakhir')
+    }
+
     try {
       const voucher = await voucherRepository.adminCreateVoucher(voucherData)
       return ok(voucher)
-    } catch (error) {
+    } catch (error: any) {
       safeLogError('Error in VoucherService.adminCreateVoucher:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal membuat voucher')
+      return fail(ApiErrorCode.VALIDATION_ERROR, error.message || 'Gagal membuat voucher')
     }
   }
 
@@ -69,12 +73,16 @@ export class VoucherService {
       expires_at: string
     }
   ): Promise<ApiResponse<Voucher>> {
+    if (new Date(voucherData.starts_at) >= new Date(voucherData.expires_at)) {
+      return fail(ApiErrorCode.VALIDATION_ERROR, 'Tanggal mulai harus sebelum tanggal berakhir')
+    }
+
     try {
       const voucher = await voucherRepository.adminUpdateVoucher(voucherId, voucherData)
       return ok(voucher)
-    } catch (error) {
+    } catch (error: any) {
       safeLogError('Error in VoucherService.adminUpdateVoucher:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui voucher')
+      return fail(ApiErrorCode.VALIDATION_ERROR, error.message || 'Gagal memperbarui voucher')
     }
   }
 
@@ -82,9 +90,9 @@ export class VoucherService {
     try {
       await voucherRepository.adminDeleteVoucher(voucherId)
       return ok()
-    } catch (error) {
+    } catch (error: any) {
       safeLogError('Error in VoucherService.adminDeleteVoucher:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menghapus voucher')
+      return fail(ApiErrorCode.VALIDATION_ERROR, error.message || 'Gagal menghapus voucher')
     }
   }
 }

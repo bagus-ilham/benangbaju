@@ -6,7 +6,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { generateDokuSignature } from "../_shared/doku-signature.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': Deno.env.get('NEXT_PUBLIC_APP_URL') ?? '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Idempotency-Key',
 };
 
@@ -55,13 +55,12 @@ serve(async (req: Request) => {
     // Persiapan parameter DOKU
     const clientId = Deno.env.get('DOKU_CLIENT_ID') ?? '';
     const secretKey = Deno.env.get('DOKU_SECRET_KEY') ?? '';
-    // Assuming Sandbox for now based on context
-    const dokuEndpoint = 'https://api-sandbox.doku.com'; 
+    const dokuEndpoint = Deno.env.get('DOKU_API_URL') ?? 'https://api-sandbox.doku.com'; 
     const requestTarget = '/checkout/v1/payment';
     
     // Idempotency: use the header or generate a new random uuid
     const requestId = req.headers.get('Idempotency-Key') || crypto.randomUUID();
-    const requestTimestamp = new Date().toISOString().substring(0, 19) + "Z"; // YYYY-MM-DDThh:mm:ssZ
+    const requestTimestamp = new Date().toISOString();
 
     // Hitung dueDate dalam menit (misal 60 menit)
     const paymentDueDate = 60;
@@ -112,16 +111,20 @@ serve(async (req: Request) => {
 
     const paymentUrl = dokuData.response.payment.url;
 
-    // Simpan gateway reference di tabel payments
+    // Upsert gateway reference di tabel payments (mencegah duplicate row pada retry)
     const { error: insertError } = await supabaseClient
       .from('payments')
-      .insert({
-        order_id: order.id,
-        gateway_order_id: order.order_number, // usually we use order_number as gateway order ID
-        amount: order.total_amount,
-        status: 'pending',
-        gateway_response: dokuData
-      });
+      .upsert(
+        {
+          order_id: order.id,
+          gateway_order_id: order.order_number,
+          amount: order.total_amount,
+          status: 'pending',
+          gateway_response: dokuData,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'order_id' }
+      );
 
     if (insertError) {
       console.error('Insert payment error:', insertError);

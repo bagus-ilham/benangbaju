@@ -23,7 +23,8 @@ export async function checkAndDispatchStockNotifications(
 
     if (!pending || pending.length === 0) return
 
-    for (const item of pending) {
+    const nowIso = new Date().toISOString()
+    const notificationInserts = pending.map((item) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const variantName = (item.product_variants as any)?.name || 'Varian'
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,20 +32,26 @@ export async function checkAndDispatchStockNotifications(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const productSlug = (item.product_variants as any)?.products?.slug || ''
 
-      await supabase.from('notifications').insert({
+      return {
         user_id: item.user_id,
         type: 'stock_restock',
         title: 'Produk Tersedia Kembali!',
         message: `${productName} (${variantName}) kini sudah restock dan tersedia kembali.`,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: { variant_id: variantId, product_slug: productSlug } as any,
-      })
+      }
+    })
 
-      await supabase
+    const pendingIds = pending.map((item) => item.id)
+
+    // Batch insert notifications and batch update stock_notifications
+    await Promise.all([
+      supabase.from('notifications').insert(notificationInserts),
+      supabase
         .from('stock_notifications')
-        .update({ is_notified: true, notified_at: new Date().toISOString() })
-        .eq('id', item.id)
-    }
+        .update({ is_notified: true, notified_at: nowIso })
+        .in('id', pendingIds),
+    ])
   } catch (err) {
     console.error('Error dispatching stock notifications:', err)
   }
@@ -65,18 +72,23 @@ export async function bulkUpdateStock(supabase: SupabaseClient<Database>, update
     }
   }
 
-  // Trigger restock notification checks for updated variants
-  for (const update of updates) {
-    if (update.stock > 0) {
-      const { data: variant } = await supabase
-        .from('product_variants')
-        .select('id')
-        .eq('sku', update.sku)
-        .maybeSingle()
+  // Batch trigger restock notification checks for updated variants with stock > 0
+  const restockedUpdates = updates.filter((u) => u.stock > 0)
+  if (restockedUpdates.length > 0) {
+    const skus = restockedUpdates.map((u) => u.sku)
+    const { data: variants } = await supabase
+      .from('product_variants')
+      .select('id, sku')
+      .in('sku', skus)
 
-      if (variant) {
-        await checkAndDispatchStockNotifications(supabase, variant.id, update.stock)
-      }
+    if (variants && variants.length > 0) {
+      const variantMap = new Map(variants.map((v) => [v.sku, v.id]))
+      await Promise.all(
+        restockedUpdates.map((u) => {
+          const vId = variantMap.get(u.sku)
+          return vId ? checkAndDispatchStockNotifications(supabase, vId, u.stock) : Promise.resolve()
+        })
+      )
     }
   }
 
