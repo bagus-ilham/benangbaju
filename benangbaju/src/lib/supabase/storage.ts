@@ -11,12 +11,15 @@ export async function uploadImage(file: File, bucket: string = 'products'): Prom
   const supabase = createBrowserClient()
   const targetBucket = bucket.toLowerCase()
 
-  // Clean file name to prevent issues with special characters
-  const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-  const fileName = `${crypto.randomUUID()}_${cleanName}`
+  // Generate unique filename with timestamp & random suffix to bypass CDN/edge cache on re-uploads
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const baseName = file.name.substring(0, file.name.lastIndexOf('.')).replace(/[^a-zA-Z0-9_-]/g, '_')
+  const timestamp = Date.now()
+  const randomSuffix = Math.random().toString(36).substring(2, 8)
+  const fileName = `${timestamp}_${randomSuffix}_${baseName}.${ext}`
 
   const { error } = await supabase.storage.from(targetBucket).upload(fileName, file, {
-    cacheControl: '3600',
+    cacheControl: '31536000',
     upsert: true,
   })
 
