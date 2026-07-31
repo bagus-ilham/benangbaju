@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { collectionService } from './collection.service'
 import { requireAdmin } from '@/lib/auth-guard'
 
@@ -32,7 +33,9 @@ export async function createAdminCollectionAction(
   productIds: string[]
 ) {
   await requireAdmin()
-  return collectionService.adminCreateCollection(collectionData, productIds)
+  const res = await collectionService.adminCreateCollection(collectionData, productIds)
+  revalidatePath('/koleksi')
+  return res
 }
 
 export async function updateAdminCollectionAction(
@@ -50,10 +53,14 @@ export async function updateAdminCollectionAction(
   productIds: string[]
 ) {
   await requireAdmin()
-  return collectionService.adminUpdateCollection(collectionId, collectionData, productIds)
+  const res = await collectionService.adminUpdateCollection(collectionId, collectionData, productIds)
+  revalidatePath('/koleksi')
+  return res
 }
 
 export async function deleteAdminCollectionAction(collectionId: string) {
   await requireAdmin()
-  return collectionService.adminDeleteCollection(collectionId)
+  const res = await collectionService.adminDeleteCollection(collectionId)
+  revalidatePath('/koleksi')
+  return res
 }

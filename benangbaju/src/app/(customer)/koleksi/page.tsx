@@ -11,7 +11,7 @@ import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 async function getCachedCollections() {
   'use cache'
-  cacheLife('weeks')
+  cacheLife('hours')
   cacheTag('collections')
   return getActiveCollectionsAction()
 }

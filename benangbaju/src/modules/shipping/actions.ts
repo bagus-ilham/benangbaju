@@ -39,8 +39,10 @@ export async function setDefaultAddressAction(addressId: string, userId: string)
   return shippingService.setDefaultAddress(addressId, userId)
 }
 
+import { ok } from '@/lib/api-response'
+
 export async function searchDistrictsAction(searchQuery: string) {
-  if (!searchQuery || searchQuery.trim().length < 2) return []
+  if (!searchQuery || searchQuery.trim().length < 2) return ok([])
   return shippingService.searchDistricts(searchQuery)
 }
 
