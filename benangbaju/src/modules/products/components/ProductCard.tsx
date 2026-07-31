@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import { SmartImage as Image } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'

@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SmartLink as Link } from '@/shared/components'
-import Image from 'next/image'
+import { SmartLink as Link, SmartImage as Image } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { Menu, Search, Heart, ShoppingBag, User as UserIcon, LogOut } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'

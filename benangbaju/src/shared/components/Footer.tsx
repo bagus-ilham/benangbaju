@@ -1,9 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
-import Image from 'next/image'
-import { CurrentYear } from '@/shared/components'
+import { SmartLink as Link, CurrentYear, SmartImage as Image } from '@/shared/components'
 
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
