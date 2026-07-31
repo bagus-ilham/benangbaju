@@ -91,6 +91,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
               alt={currentBanner.title || 'Banner Desktop'}
               fill
               priority
+              unoptimized
               quality={90}
               sizes="100vw"
               className="object-cover"
@@ -104,6 +105,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
               alt={currentBanner.title || 'Banner Mobile'}
               fill
               priority
+              unoptimized
               quality={90}
               sizes="100vw"
               className="object-cover"

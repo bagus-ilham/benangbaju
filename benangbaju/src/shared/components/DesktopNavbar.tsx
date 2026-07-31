@@ -132,6 +132,7 @@ export function DesktopNavbar({
                   alt="Benangbaju Logotype"
                   fill
                   priority
+                  unoptimized
                   sizes="(max-width: 768px) 130px, 180px"
                   className={cn(
                     'object-contain text-transparent transition-all duration-300',

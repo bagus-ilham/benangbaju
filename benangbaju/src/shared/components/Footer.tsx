@@ -24,6 +24,7 @@ export function Footer(): React.JSX.Element {
                   src={getProxiedImageUrl(logoUrl || '/svg/logo-benangbaju.svg')}
                   alt="Benangbaju Logotype"
                   fill
+                  unoptimized
                   sizes="(max-width: 768px) 160px, 200px"
                   className="object-contain object-left"
                 />
@@ -34,6 +35,7 @@ export function Footer(): React.JSX.Element {
                     src="/svg/logo-jarum-benang.svg"
                     alt="Gulungan Benang"
                     fill
+                    unoptimized
                     className="object-contain"
                   />
                 </div>
