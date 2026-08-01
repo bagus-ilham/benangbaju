@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { homeService } from '@/modules/home/home.service'
 import { HeroSection } from '@/modules/banners/components/HeroSection'
 import { MidBannerSection } from '@/modules/banners/components/MidBannerSection'
@@ -9,6 +9,7 @@ import { TrustStrip } from '@/modules/banners/components/TrustStrip'
 import { FeaturedProductsSection } from '@/modules/products/components/FeaturedProductsSection'
 import { NewArrivalsSection } from '@/modules/products/components/NewArrivalsSection'
 import { RecentlyViewedSection } from '@/modules/products/components/RecentlyViewedSection'
+import { ProductGridSkeleton } from '@/shared/components'
 
 export async function generateMetadata() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
@@ -97,11 +98,20 @@ export default async function Homepage(): Promise<React.JSX.Element> {
         {/* 5. Collection 2 */}
         {col2 && <CollectionShowcase collection={col2} products={collection2Products} index={1} />}
 
-        {/* Additional sections */}
-        <FlashSaleSection flashSale={flashSale} />
+        {/* Additional sections wrapped in Suspense */}
+        <Suspense fallback={<div className="py-8"><ProductGridSkeleton count={4} /></div>}>
+          <FlashSaleSection flashSale={flashSale} />
+        </Suspense>
+
         <CategorySection categories={categories} />
-        <NewArrivalsSection products={newestProducts} />
-        <RecentlyViewedSection />
+
+        <Suspense fallback={<div className="py-8"><ProductGridSkeleton count={4} /></div>}>
+          <NewArrivalsSection products={newestProducts} />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <RecentlyViewedSection />
+        </Suspense>
       </div>
     </>
   )

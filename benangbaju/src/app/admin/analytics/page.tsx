@@ -3,21 +3,27 @@
 import React, { useState } from 'react'
 import { useAdminAnalytics } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from 'recharts'
+import dynamic from 'next/dynamic'
 import { formatIDR } from '@/lib/utils/format'
 import { TrendingUp, ShoppingBag, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/shared/components'
+
+const RevenueTrendChart = dynamic(
+  () => import('./components/AnalyticsCharts').then((m) => m.RevenueTrendChart),
+  {
+    ssr: false,
+    loading: () => <div className="h-full flex items-center justify-center text-xs text-neutral-400">Memuat grafik...</div>,
+  }
+)
+
+const TopProductsChart = dynamic(
+  () => import('./components/AnalyticsCharts').then((m) => m.TopProductsChart),
+  {
+    ssr: false,
+    loading: () => <div className="h-full flex items-center justify-center text-xs text-neutral-400">Memuat grafik...</div>,
+  }
+)
 
 export default function AdminAnalyticsPage() {
   const [days, setDays] = useState(30)
@@ -151,41 +157,7 @@ export default function AdminAnalyticsPage() {
             Tren Pendapatan
           </h3>
           <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={analytics.revenueTrends}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
-                <XAxis
-                  dataKey="date"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: '#737373' }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: '#737373' }}
-                  tickFormatter={(val) => `Rp${(val / 1000000).toFixed(0)}M`}
-                />
-                <Tooltip
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  formatter={(value: any) => [formatIDR(Number(value) || 0), 'Pendapatan']}
-                  contentStyle={{
-                    fontSize: '12px',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '0',
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#171717"
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <RevenueTrendChart revenueTrends={analytics.revenueTrends} />
           </div>
         </div>
 
@@ -200,34 +172,7 @@ export default function AdminAnalyticsPage() {
                 <p className="text-neutral-400 text-xs">Belum ada data penjualan.</p>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analytics.topProducts} layout="vertical" margin={{ left: 50 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e5e5" />
-                  <XAxis
-                    type="number"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: '#737373' }}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: '#171717' }}
-                    width={100}
-                  />
-                  <Tooltip
-                    cursor={{ fill: '#f5f5f5' }}
-                    contentStyle={{
-                      fontSize: '12px',
-                      border: '1px solid #e5e5e5',
-                      borderRadius: '0',
-                    }}
-                  />
-                  <Bar dataKey="quantity" fill="#171717" radius={[0, 4, 4, 0]} barSize={20} />
-                </BarChart>
-              </ResponsiveContainer>
+              <TopProductsChart topProducts={analytics.topProducts} />
             )}
           </div>
         </div>

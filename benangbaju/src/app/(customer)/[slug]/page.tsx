@@ -5,13 +5,23 @@ import { cmsService } from '@/modules/cms/cms.service'
 import { PageHero, PageContainer } from '@/shared/components'
 import { sanitizeHtml } from '@/lib/utils/sanitize'
 
+import { cacheLife, cacheTag } from 'next/cache'
+
 interface DynamicPageProps {
   params: Promise<{ slug: string }>
 }
 
+async function getCachedLandingPage(slug: string) {
+  'use cache'
+  cacheLife('hours')
+  cacheTag('cms-pages', `cms-page-${slug}`)
+
+  return cmsService.getLandingPageBySlug(slug)
+}
+
 export async function generateMetadata({ params }: DynamicPageProps): Promise<Metadata> {
   const { slug } = await params
-  const res = await cmsService.getLandingPageBySlug(slug)
+  const res = await getCachedLandingPage(slug)
   const page = res.data
 
   if (!page) {
@@ -26,7 +36,7 @@ export async function generateMetadata({ params }: DynamicPageProps): Promise<Me
 
 export default async function DynamicLandingPage({ params }: DynamicPageProps) {
   const { slug } = await params
-  const res = await cmsService.getLandingPageBySlug(slug)
+  const res = await getCachedLandingPage(slug)
   const page = res.data
 
   if (!page) {

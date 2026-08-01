@@ -14,7 +14,12 @@ export const metadata: Metadata = {
   description: 'Jelajahi berbagai kategori produk terbaik dari Benangbaju',
 }
 
+import { cacheLife, cacheTag } from 'next/cache'
+
 async function getCategories() {
+  'use cache'
+  cacheLife('weeks')
+  cacheTag('categories')
   return await getActiveCategoriesAction()
 }
 

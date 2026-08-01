@@ -1,18 +1,31 @@
 import { useEffect, useState } from 'react'
 
 export function useDokuCheckoutScript() {
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(() => {
+    return typeof window !== 'undefined' && Boolean(window.loadJokulCheckout)
+  })
   const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.loadJokulCheckout) {
+      return
+    }
+
     const scriptUrl =
       process.env.NEXT_PUBLIC_DOKU_CHECKOUT_JS_URL ||
       'https://sandbox.doku.com/jokul-checkout-js/v1/jokul-checkout-1.0.0.js'
+    
     const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${scriptUrl}"]`)
 
     if (existingScript) {
-      setIsLoaded(true)
-      return
+      const handleLoad = () => setIsLoaded(true)
+      const handleError = () => setHasError(true)
+      existingScript.addEventListener('load', handleLoad)
+      existingScript.addEventListener('error', handleError)
+      return () => {
+        existingScript.removeEventListener('load', handleLoad)
+        existingScript.removeEventListener('error', handleError)
+      }
     }
 
     const script = document.createElement('script')
@@ -20,13 +33,7 @@ export function useDokuCheckoutScript() {
     script.async = true
     script.onload = () => setIsLoaded(true)
     script.onerror = () => setHasError(true)
-    document.body.appendChild(script)
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script)
-      }
-    }
+    document.head.appendChild(script)
   }, [])
 
   return { isLoaded, hasError }

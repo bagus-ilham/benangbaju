@@ -1,9 +1,12 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
+import { Metadata } from 'next'
 import { MapPin, Clock, Mail, MessageSquare } from 'lucide-react'
 import { PageContainer, PageHero } from '@/shared/components'
+
+export const metadata: Metadata = {
+  title: 'Hubungi Kami — Benangbaju',
+  description: 'Tim customer service Benangbaju siap membantu informasi produk, ukuran, pengiriman, dan retur.',
+}
 
 export default function KontakPage(): React.JSX.Element {
   const whatsappNumber = '6285179747449'
@@ -23,13 +26,7 @@ export default function KontakPage(): React.JSX.Element {
         {/* Contact Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
           {/* Contact Details Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200/80 p-8 space-y-6 bg-brand-cream rounded-2xl shadow-xs"
-          >
+          <div className="border border-neutral-200/80 p-8 space-y-6 bg-brand-cream rounded-2xl shadow-xs animate-slide-up">
             <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Layanan Pelanggan
             </h3>
@@ -68,16 +65,10 @@ export default function KontakPage(): React.JSX.Element {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* WhatsApp CTA Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-neutral-200/80 p-8 flex flex-col justify-between space-y-6 bg-brand-cream rounded-2xl shadow-xs"
-          >
+          <div className="border border-neutral-200/80 p-8 flex flex-col justify-between space-y-6 bg-brand-cream rounded-2xl shadow-xs animate-slide-up">
             <div className="space-y-4">
               <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
                 Respon Cepat via WhatsApp
@@ -100,19 +91,13 @@ export default function KontakPage(): React.JSX.Element {
                 <span>Hubungi via WhatsApp</span>
               </a>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Philosophy Footer quote */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-400 uppercase tracking-widest font-bold font-sans"
-        >
+        <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-400 uppercase tracking-widest font-bold font-sans animate-fade-in">
           &ldquo;We value your experience. Let us know how we can assist you.&rdquo;
-        </motion.div>
+        </div>
       </PageContainer>
     </div>
   )
