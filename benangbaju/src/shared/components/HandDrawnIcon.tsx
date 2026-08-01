@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils'
 
 export type HandDrawnIconName =
   | 'heart'
+  | 'heart-filled'
+  | 'heartFilled'
   | 'search'
   | 'shopping-bag'
   | 'shoppingBag'
@@ -26,6 +28,8 @@ export type HandDrawnIconName =
 
 const ICON_FILE_MAP: Record<string, string> = {
   heart: 'icon-heart.svg',
+  'heart-filled': 'icon-heart-filled.svg',
+  heartFilled: 'icon-heart-filled.svg',
   search: 'icon-search.svg',
   'shopping-bag': 'icon-shopping-bag.svg',
   shoppingBag: 'icon-shopping-bag.svg',

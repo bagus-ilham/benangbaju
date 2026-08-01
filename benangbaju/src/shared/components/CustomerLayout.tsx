@@ -129,7 +129,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       {/* Announcement bar — 2. Kuning (Secondary) */}
       <div className="bg-brand-gold text-brand-plum text-center py-2 px-4 border-b border-amber-200/80">
         <p className="text-[10px] font-sans font-bold uppercase tracking-[0.15em]">
-          Gratis ongkir untuk pembelian di atas Rp 500.000 &mdash;{' '}
+          Gratis ongkir tanpa minimum belanja &mdash;{' '}
           <Link
             href="/produk"
             className="underline underline-offset-2 hover:opacity-80 transition-opacity"

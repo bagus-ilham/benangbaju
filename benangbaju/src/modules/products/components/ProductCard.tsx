@@ -245,10 +245,10 @@ export const ProductCard = React.memo(function ProductCard({
             transition={{ duration: 0.35, ease: 'easeOut' }}
           >
             <HandDrawnIcon
-              name="heart"
+              name={liked ? 'heart-filled' : 'heart'}
               className={cn(
                 'h-3.5 w-3.5 transition-all duration-300',
-                liked ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-100'
+                liked ? 'scale-110' : 'opacity-70 hover:opacity-100'
               )}
               aria-hidden="true"
             />

@@ -168,7 +168,7 @@ export function DesktopNavbar({
               )}
               aria-label="Wishlist"
             >
-              <HandDrawnIcon name="heart" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+              <HandDrawnIcon name={wishlistCount > 0 ? 'heart-filled' : 'heart'} className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
               {isMounted && wishlistCount > 0 && (
                 <motion.span
                   key={`wishlist-badge-${wishlistCount}`}

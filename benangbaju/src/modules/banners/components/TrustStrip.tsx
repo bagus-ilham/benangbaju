@@ -10,7 +10,7 @@ const TRUST_ITEMS = [
   {
     icon: Truck,
     title: 'Gratis Ongkir',
-    description: 'Min. pembelian Rp 500.000',
+    description: 'Tanpa minimum belanja',
   },
   {
     icon: Sparkles,

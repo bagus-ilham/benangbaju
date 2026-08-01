@@ -48,7 +48,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
     {
       name: 'Wishlist',
       href: '/wishlist',
-      handDrawnName: 'heart',
+      handDrawnName: wishlistCount > 0 || pathname === '/wishlist' ? 'heart-filled' : 'heart',
       badge: wishlistCount > 0 ? wishlistCount : null,
       isActive: pathname === '/wishlist',
     },

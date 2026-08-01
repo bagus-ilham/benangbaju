@@ -213,10 +213,10 @@ export function ProductInfoSection({
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
             <HandDrawnIcon
-              name="heart"
+              name={liked ? 'heart-filled' : 'heart'}
               className={cn(
                 'h-4 w-4 transition-all duration-300',
-                liked ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-100'
+                liked ? 'scale-110' : 'opacity-70 hover:opacity-100'
               )}
             />
           </motion.button>
@@ -285,9 +285,9 @@ export function ProductInfoSection({
         >
           <Truck className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
-            Ongkir Flat
+            Gratis ongkir
           </span>
-          <span className="text-[8px] text-neutral-400 font-sans">Tarif murah per zona</span>
+          <span className="text-[8px] text-neutral-400 font-sans">Tanpa minimum pembelanjaan</span>
         </motion.div>
         <motion.div
           whileHover={{ y: -3 }}
