@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronRight, LogOut } from 'lucide-react'
+import { X, LogOut } from 'lucide-react'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { MobileMenuAccordionItem } from './MobileMenuAccordionItem'
 import type { User } from '@supabase/supabase-js'
@@ -104,7 +104,7 @@ export function MobileMenuDrawer({
                           className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-black"
                         >
                           <span>Akun Saya</span>
-                          <ChevronRight className="h-3 w-3 text-neutral-400" />
+                          <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                         </Link>
                         {profile?.role === 'admin' && (
                           <Link
@@ -113,7 +113,7 @@ export function MobileMenuDrawer({
                             className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-black"
                           >
                             <span>Admin Panel</span>
-                            <ChevronRight className="h-3 w-3 text-neutral-400" />
+                            <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                           </Link>
                         )}
                         <button
@@ -134,7 +134,7 @@ export function MobileMenuDrawer({
                         className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-brand-black"
                       >
                         <span>Masuk</span>
-                        <ChevronRight className="h-3 w-3 text-brand-black" />
+                        <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-brand-black" />
                       </Link>
                     )}
                   </div>

@@ -6,7 +6,7 @@ interface AdminStatCardProps {
   label: string
   value: string | number
   hint?: string
-  icon: LucideIcon
+  icon: LucideIcon | React.ComponentType<{ className?: string; size?: number }>
   className?: string
   accent?: 'default' | 'gold' | 'success' | 'warning'
 }
@@ -37,8 +37,8 @@ export function AdminStatCard({
         <span className="text-[10px] uppercase font-heading font-semibold tracking-widest text-neutral-400">
           {label}
         </span>
-        <div className={cn('p-2', accentStyles[accent])}>
-          <Icon size={15} strokeWidth={1.5} />
+        <div className={cn('p-2 flex items-center justify-center', accentStyles[accent])}>
+          <Icon className="w-4 h-4" size={15} />
         </div>
       </div>
       <p className="text-2xl font-heading font-semibold text-brand-black tracking-tight">{value}</p>

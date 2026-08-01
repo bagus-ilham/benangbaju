@@ -3,10 +3,10 @@
 import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Search } from 'lucide-react'
 import { useProducts } from '@/modules/products/hooks/useProducts'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { PageContainer, ProductGridSkeleton, EmptyState, PageHero } from '@/shared/components'
+import { PageContainer, ProductGridSkeleton, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
+import { Search } from 'lucide-react'
 
 const gridVariants = {
   hidden: { opacity: 0 },

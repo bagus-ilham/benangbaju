@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useRef } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingBag, X, Trash2, Plus, Minus, ArrowRight, Sparkles } from 'lucide-react'
+import { X, Trash2, Plus, Minus, Sparkles, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR } from '@/lib/utils'
@@ -134,10 +134,10 @@ export function MiniCartDrawer(): React.JSX.Element {
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div
-                    className="relative p-4 bg-brand-cream border border-brand-accent/10 rounded-2xl animate-gentle-float"
+                    className="relative p-4 bg-brand-cream border border-brand-accent/10 rounded-2xl animate-gentle-float flex items-center justify-center"
                     aria-hidden="true"
                   >
-                    <ShoppingBag className="h-8 w-8 text-brand-accent" strokeWidth={1.5} />
+                    <HandDrawnIcon name="shopping-bag" className="h-8 w-8" />
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black">
@@ -362,7 +362,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                       className="w-full text-[10px] uppercase font-bold py-3.5 flex items-center justify-center space-x-1.5"
                     >
                       <span>Checkout</span>
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                      <HandDrawnIcon name="arrow-right" className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
                   </Link>
                 </div>

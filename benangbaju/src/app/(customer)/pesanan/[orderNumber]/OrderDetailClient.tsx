@@ -13,8 +13,8 @@ import {
 import { useSubmitReview } from '@/modules/reviews/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/shared/components/AuthLoading'
-import { Button, PageHero, PageContainer, EmptyState, Modal } from '@/shared/components'
-import { ArrowLeft, Download, AlertCircle, RotateCcw } from 'lucide-react'
+import { Button, PageHero, PageContainer, EmptyState, Modal, HandDrawnIcon } from '@/shared/components'
+import { Download, AlertCircle, RotateCcw } from 'lucide-react'
 import { OrderTrackingSection } from './components/OrderTrackingSection'
 import { OrderPaymentSection } from './components/OrderPaymentSection'
 import { OrderItemsList } from './components/OrderItemsList'
@@ -343,7 +343,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             href="/pesanan"
             className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-600 hover:text-brand-plum transition"
           >
-            <ArrowLeft size={13} className="mr-1" /> Kembali
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-1" /> Kembali
           </Link>
           {order.status !== 'pending_payment' && order.status !== 'cancelled' && (
             <div className="flex items-center space-x-2">

@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, Loader2, ChevronRight, History, Sparkles } from 'lucide-react'
+import { X, Loader2, History, Sparkles } from 'lucide-react'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
@@ -179,7 +179,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
                   className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"                  rightIcon={
                     <button type="submit" aria-label="Cari produk">
-                      <Search className="h-4 w-4 text-brand-plum" />
+                      <HandDrawnIcon name="search" className="h-4 w-4 text-brand-plum" />
                     </button>
                   }
                   autoFocus
@@ -301,7 +301,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                               </p>
                             </div>
                             <div className="pr-2 text-neutral-300 group-hover:text-brand-plum transition-colors">
-                              <ChevronRight className="h-4 w-4" />
+                              <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
                             </div>
                           </Link>
                         )

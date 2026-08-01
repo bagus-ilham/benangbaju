@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
 import { Collection } from '@/modules/collections/types'
 import { PageContainer } from '@/shared/components'
 import { EASE_PREMIUM } from '@/lib/motion'
@@ -132,7 +131,7 @@ export function CollectionSpotlight({
               )}
             >
               <span className="border-b border-current pb-0.5">Jelajahi Koleksi</span>
-              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-1" />
+              <HandDrawnIcon name="arrow-right" className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-1" />
             </Link>
           </motion.div>
         </div>

@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Plus, Trash2, Search } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { Button, Input, Modal } from '@/shared/components'
 import { uploadImage } from '@/lib/supabase/storage'
 import toast from 'react-hot-toast'

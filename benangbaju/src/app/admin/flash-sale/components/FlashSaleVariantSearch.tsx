@@ -1,5 +1,5 @@
 import React from 'react'
-import { Search } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import type { VariantSimple } from './FlashSaleFormModal'
 
 interface FlashSaleVariantSearchProps {
@@ -18,7 +18,7 @@ export function FlashSaleVariantSearch({
   return (
     <div className="mb-4 border border-brand-accent/30 p-3 bg-brand-accent-muted/5 relative rounded-xl">
       <div className="relative">
-        <Search size={14} className="absolute left-2.5 top-2.5 text-neutral-400" />
+        <HandDrawnIcon name="search" className="absolute left-2.5 top-2.5 text-neutral-400 w-3.5 h-3.5" />
         <input
           type="text"
           placeholder="Cari SKU atau nama produk..."

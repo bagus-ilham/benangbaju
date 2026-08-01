@@ -1,7 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { User } from 'lucide-react'
-import { Input, Button } from '@/shared/components'
+import { Input, Button, HandDrawnIcon } from '@/shared/components'
 
 interface EditProfileFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,9 +32,9 @@ export function EditProfileForm({
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
       <h2 className="text-sm uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center">
         <motion.div whileHover={{ rotate: 15 }} className="mr-2">
-          <User
-            size={16}
-            className="text-brand-blue group-hover:text-brand-plum transition-colors"
+          <HandDrawnIcon
+            name="user"
+            className="w-4 h-4"
           />
         </motion.div>
         Informasi Profil

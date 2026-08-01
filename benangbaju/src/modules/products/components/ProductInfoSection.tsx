@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Heart, Plus, Minus, Shield, RefreshCw, Truck, Bell, MessageCircle } from 'lucide-react'
+import { Plus, Minus, Shield, RefreshCw, Truck, Bell, MessageCircle } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
 import { VariantPicker } from '@/modules/products/components'
@@ -211,10 +212,11 @@ export function ProductInfoSection({
             className="p-4 border border-neutral-200 hover:border-brand-accent bg-brand-cream transition-all text-neutral-500 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
-            <Heart
+            <HandDrawnIcon
+              name="heart"
               className={cn(
-                'h-4 w-4 transition-colors duration-300',
-                liked && 'fill-red-500 text-red-500'
+                'h-4 w-4 transition-all duration-300',
+                liked ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-100'
               )}
             />
           </motion.button>

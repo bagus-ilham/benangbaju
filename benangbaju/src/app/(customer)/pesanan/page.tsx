@@ -17,8 +17,9 @@ import {
   PageContainer,
   PageHero,
   Modal,
+  HandDrawnIcon,
 } from '@/shared/components'
-import { ArrowLeft, ClipboardList } from 'lucide-react'
+import { ClipboardList } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { OrderCard } from './components/OrderCard'
@@ -246,7 +247,7 @@ export default function PesananPage(): React.JSX.Element {
             href="/akun"
             className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-neutral-950 transition duration-100"
           >
-            <ArrowLeft size={14} className="mr-2" /> Kembali ke Akun
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> Kembali ke Akun
           </Link>
         </div>
       </PageContainer>

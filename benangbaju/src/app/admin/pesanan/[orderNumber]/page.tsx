@@ -8,9 +8,9 @@ import {
   useAdminUpdateTrackingNumber,
 } from '@/modules/orders/hooks/useAdminOrders'
 
-import { Button, AdminPageHeader, AdminPanel } from '@/shared/components'
+import { Button, AdminPageHeader, AdminPanel, HandDrawnIcon } from '@/shared/components'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { ArrowLeft, Download } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
@@ -138,8 +138,8 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
       <div className="text-center py-12 space-y-4">
         <p className="text-red-500 text-sm">Gagal memuat detail pesanan.</p>
         <Link href="/admin/pesanan">
-          <Button variant="outline" className="text-xs uppercase border-neutral-200">
-            <ArrowLeft size={13} className="mr-1 inline" /> Kembali ke Daftar
+          <Button variant="outline" className="text-xs uppercase border-neutral-200 flex items-center justify-center">
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-1" /> Kembali ke Daftar
           </Button>
         </Link>
       </div>
@@ -156,9 +156,9 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
           <Link href="/admin/pesanan">
             <Button
               variant="outline"
-              className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900"
+              className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900 flex items-center justify-center"
             >
-              <ArrowLeft size={14} />
+              <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5" />
             </Button>
           </Link>
           <Button

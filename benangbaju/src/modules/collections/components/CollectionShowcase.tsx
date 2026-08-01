@@ -3,10 +3,9 @@
 import React, { useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
 import { Collection } from '@/modules/collections/types'
 import { ProductListItem } from '@/modules/products/types'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -154,7 +153,7 @@ export function CollectionShowcase({
                         btnText
                       )}
                     >
-                      <ArrowRight className="w-5 h-5" />
+                      <HandDrawnIcon name="arrow-right" className="w-5 h-5" />
                     </div>
                     <span className="font-medium text-sm">Lihat Semua</span>
                   </Link>
@@ -179,7 +178,7 @@ export function CollectionShowcase({
                   )}
                   aria-label="Scroll Right"
                 >
-                  <ArrowRight className="w-6 h-6" />
+                  <HandDrawnIcon name="arrow-right" className="w-6 h-6" />
                 </button>
               </div>
             )}

@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SmartLink as Link, SmartImage as Image } from '@/shared/components'
+import { SmartLink as Link, SmartImage as Image, HandDrawnIcon } from '@/shared/components'
 import { motion } from 'framer-motion'
-import { Menu, Search, Heart, ShoppingBag, User as UserIcon, LogOut } from 'lucide-react'
+import { Menu, LogOut, User as UserIcon } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
 import { MegaMenuNavItem } from './MegaMenuNavItem'
@@ -155,7 +155,7 @@ export function DesktopNavbar({
               aria-label="Cari produk"
               aria-expanded={isSearchOpen}
             >
-              <Search className="h-4 w-4 md:h-5 md:w-5" />
+              <HandDrawnIcon name="search" className="h-4 w-4 md:h-5 md:w-5" />
             </button>
 
             <Link
@@ -168,7 +168,7 @@ export function DesktopNavbar({
               )}
               aria-label="Wishlist"
             >
-              <Heart className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+              <HandDrawnIcon name="heart" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
               {isMounted && wishlistCount > 0 && (
                 <motion.span
                   key={`wishlist-badge-${wishlistCount}`}
@@ -197,7 +197,7 @@ export function DesktopNavbar({
                 transition={{ duration: 0.45 }}
                 className="relative"
               >
-                <ShoppingBag className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+                <HandDrawnIcon name="shopping-bag" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
               </motion.div>
               {isMounted && totalQuantity > 0 && (
                 <motion.span
@@ -227,7 +227,7 @@ export function DesktopNavbar({
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
                   >
-                    <UserIcon className="h-4 w-4 md:h-5 md:w-5" />
+                    <HandDrawnIcon name="user" className="h-4 w-4 md:h-5 md:w-5" />
                   </button>
 
                   {isUserMenuOpen && (

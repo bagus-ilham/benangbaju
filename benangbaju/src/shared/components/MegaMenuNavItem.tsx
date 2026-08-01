@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { getActiveCollectionsAction } from '@/modules/collections/actions'
@@ -168,7 +167,7 @@ export function MegaMenuNavItem({
                         className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
                         aria-label="Scroll left"
                       >
-                        <ChevronLeft className="h-4 w-4" />
+                        <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
@@ -176,7 +175,7 @@ export function MegaMenuNavItem({
                         className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
                         aria-label="Scroll right"
                       >
-                        <ChevronRight className="h-4 w-4" />
+                        <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
                       </button>
                     </>
                   )}

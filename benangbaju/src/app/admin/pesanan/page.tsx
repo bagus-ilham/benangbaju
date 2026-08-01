@@ -8,8 +8,7 @@ import {
   useAdminUpdateOrderStatus,
 } from '@/app/admin/hooks/useAdmin'
 import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/modules/orders/types'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Search } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import {
   AdminOrdersTable,
@@ -157,7 +156,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
       {activeTab !== 'returns' && (
         <div className="flex bg-brand-cream border border-neutral-200 p-4 rounded-2xl items-center space-x-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
+            <HandDrawnIcon name="search" className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
             <input
               type="text"
               placeholder="Cari No. Pesanan atau nama penerima..."

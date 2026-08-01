@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, Search, Grid, Heart, User as UserIcon } from 'lucide-react'
+import { Home, Grid } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useAuthStore } from '@/modules/users/stores/authStore'
@@ -18,36 +18,44 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
   const wishlistCount = useWishlistStore((state) => state.productIds.length)
   const { isAuthenticated } = useAuthStore()
 
-  const navItems = [
+  const navItems: Array<{
+    name: string
+    href?: string
+    onClick?: () => void
+    lucideIcon?: React.ElementType
+    handDrawnName?: HandDrawnIconName
+    badge?: number | null
+    isActive: boolean
+  }> = [
     {
       name: 'Beranda',
       href: '/',
-      icon: Home,
+      lucideIcon: Home,
       isActive: pathname === '/',
     },
     {
       name: 'Cari',
       onClick: onOpenSearch,
-      icon: Search,
+      handDrawnName: 'search',
       isActive: false,
     },
     {
       name: 'Katalog',
       href: '/produk',
-      icon: Grid,
+      lucideIcon: Grid,
       isActive: pathname.startsWith('/produk'),
     },
     {
       name: 'Wishlist',
       href: '/wishlist',
-      icon: Heart,
+      handDrawnName: 'heart',
       badge: wishlistCount > 0 ? wishlistCount : null,
       isActive: pathname === '/wishlist',
     },
     {
       name: isAuthenticated ? 'Akun' : 'Masuk',
       href: isAuthenticated ? '/akun' : '/masuk',
-      icon: UserIcon,
+      handDrawnName: 'user',
       isActive: pathname === '/akun' || pathname === '/masuk',
     },
   ]
@@ -56,17 +64,27 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-lg border-t border-neutral-200/80 shadow-xs pb-safe font-sans">
       <nav className="flex items-center justify-around h-14 px-2">
         {navItems.map((item) => {
-          const Icon = item.icon
+          const LucideIconComp = item.lucideIcon
           const content = (
             <div className="relative flex flex-col items-center justify-center w-full py-1">
               <div className="relative">
-                <Icon
-                  className={cn(
-                    'h-5 w-5 transition-transform duration-200',
-                    item.isActive ? 'text-brand-plum scale-110' : 'text-neutral-500'
-                  )}
-                  strokeWidth={item.isActive ? 2.5 : 1.75}
-                />
+                {item.handDrawnName ? (
+                  <HandDrawnIcon
+                    name={item.handDrawnName}
+                    className={cn(
+                      'h-5 w-5 transition-transform duration-200',
+                      item.isActive ? 'scale-110' : ''
+                    )}
+                  />
+                ) : LucideIconComp ? (
+                  <LucideIconComp
+                    className={cn(
+                      'h-5 w-5 transition-transform duration-200',
+                      item.isActive ? 'text-brand-plum scale-110' : 'text-neutral-500'
+                    )}
+                    strokeWidth={item.isActive ? 2.5 : 1.75}
+                  />
+                ) : null}
                 {item.badge && (
                   <motion.span
                     initial={{ scale: 0 }}

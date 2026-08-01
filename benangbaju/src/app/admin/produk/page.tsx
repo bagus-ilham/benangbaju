@@ -19,17 +19,14 @@ import {
 } from '@/shared/components'
 import {
   Plus,
-  Search,
   Edit2,
   Trash2,
-  ArrowLeft,
-  ArrowRight,
   Eye,
   Star,
   Copy,
   MoreHorizontal,
 } from 'lucide-react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import type { Column } from '@/shared/components/DataTable'
 
@@ -217,7 +214,7 @@ export default function AdminProductListPage(): React.JSX.Element {
       {/* Filters Toolbar */}
       <div className="flex bg-brand-cream border border-neutral-200 p-4 rounded-2xl items-center space-x-3 shadow-sm">
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
+          <HandDrawnIcon name="search" className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
           <input
             type="text"
             placeholder="Cari nama produk..."
@@ -273,17 +270,17 @@ export default function AdminProductListPage(): React.JSX.Element {
                 variant="outline"
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={page === 1}
-                className="p-2 border-neutral-200"
+                className="p-2 border-neutral-200 flex items-center justify-center"
               >
-                <ArrowLeft size={14} />
+                <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5" />
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={page === totalPages}
-                className="p-2 border-neutral-200"
+                className="p-2 border-neutral-200 flex items-center justify-center"
               >
-                <ArrowRight size={14} />
+                <HandDrawnIcon name="arrow-right" className="w-3.5 h-3.5" />
               </Button>
             </div>
           </div>

@@ -11,8 +11,9 @@ import {
   ProductGridSkeleton,
   EmptyState,
   PageHero,
+  HandDrawnIcon,
 } from '@/shared/components'
-import { Heart, ShoppingBag, Trash2 } from 'lucide-react'
+import { Trash2, Heart } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import toast from 'react-hot-toast'
 
@@ -120,7 +121,7 @@ export default function WishlistPage(): React.JSX.Element {
             {/* Toolbar Action Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs">
               <div className="flex items-center space-x-2">
-                <Heart className="w-4 h-4 fill-red-500 text-red-500" />
+                <HandDrawnIcon name="heart" className="w-4 h-4" />
                 <span className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum">
                   {products.length} Produk Tersimpan
                 </span>
@@ -138,9 +139,9 @@ export default function WishlistPage(): React.JSX.Element {
                   onClick={handleMoveAllToCart}
                   variant="accent"
                   size="sm"
-                  className="text-[10px] uppercase font-bold"
+                  className="text-[10px] uppercase font-bold flex items-center"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5 mr-1.5" /> Pindahkan Semua ke Keranjang
+                  <HandDrawnIcon name="shopping-bag" className="w-3.5 h-3.5 mr-1.5" /> Pindahkan Semua ke Keranjang
                 </Button>
               </div>
             </div>

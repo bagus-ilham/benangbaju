@@ -8,8 +8,8 @@ import {
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from '@/modules/notifications/hooks/useNotifications'
-import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
-import { Bell, ClipboardList, Heart, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
+import { AuthLoading, PageContainer, PageHero, HandDrawnIcon } from '@/shared/components'
+import { Bell, ClipboardList, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
@@ -116,7 +116,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
               >
-                <Heart size={14} className="text-brand-blue" />
+                <HandDrawnIcon name="heart" className="w-3.5 h-3.5" />
                 <span>Wishlist Saya</span>
               </motion.div>
             </Link>

@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react'
 import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/app/admin/hooks/useAdmin'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Search, UserCheck, UserX, RefreshCw, Mail, Phone, Calendar, Eye } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
+import { UserCheck, UserX, RefreshCw, Mail, Phone, Calendar, Eye } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
@@ -96,7 +96,7 @@ export default function AdminCustomersPage(): React.JSX.Element {
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Cari pelanggan berdasarkan nama, email, atau telepon"
           />
-          <Search size={14} className="absolute left-3.5 top-3.5 text-neutral-400" />
+          <HandDrawnIcon name="search" className="absolute left-3.5 top-3.5 text-neutral-400 w-3.5 h-3.5" />
         </div>
       </div>
 

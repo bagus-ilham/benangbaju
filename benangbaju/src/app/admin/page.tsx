@@ -10,8 +10,9 @@ import {
   AdminStatCard,
   AdminPanel,
   ClientDateTime,
+  HandDrawnIcon,
 } from '@/shared/components'
-import { TrendingUp, ShoppingBag, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
+import { TrendingUp, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 
@@ -108,7 +109,9 @@ export default function AdminDashboardPage(): React.JSX.Element {
           label="Pesanan Aktif"
           value={stats.activeOrdersCount}
           hint="Diproses & Sedang dikirim"
-          icon={ShoppingBag}
+          icon={(props: { className?: string; size?: number }) => (
+            <HandDrawnIcon name="shopping-bag" {...props} />
+          )}
         />
         <AdminStatCard
           label="Pesanan Selesai"

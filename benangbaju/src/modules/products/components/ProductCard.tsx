@@ -5,7 +5,7 @@ import { SmartLink as Link } from '@/shared/components'
 import { useRouter } from 'next/navigation'
 import { SmartImage as Image } from '@/shared/components'
 import { motion } from 'framer-motion'
-import { Heart } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { ProductListItem, ProductVariant } from '@/modules/products/types'
@@ -244,10 +244,11 @@ export const ProductCard = React.memo(function ProductCard({
             animate={{ scale: [0.6, 1.4, 1] }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
           >
-            <Heart
+            <HandDrawnIcon
+              name="heart"
               className={cn(
-                'h-3.5 w-3.5 transition-colors duration-300',
-                liked ? 'fill-red-500 text-red-500' : 'text-neutral-500 hover:text-brand-black'
+                'h-3.5 w-3.5 transition-all duration-300',
+                liked ? 'opacity-100 scale-110' : 'opacity-70 hover:opacity-100'
               )}
               aria-hidden="true"
             />

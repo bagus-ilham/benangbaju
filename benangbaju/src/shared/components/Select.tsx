@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect, useId, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components/HandDrawnIcon'
 import { cn } from '@/lib/utils'
 
 export interface SelectOption {
@@ -214,7 +215,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             aria-describedby={describedBy}
           >
             <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
-            <ChevronDown
+            <HandDrawnIcon
+              name="chevron-down"
               className={cn('w-4 h-4 text-neutral-400 transition-transform duration-300', {
                 'rotate-180': isOpen,
               })}

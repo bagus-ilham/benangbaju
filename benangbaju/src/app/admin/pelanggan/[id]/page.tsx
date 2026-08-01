@@ -2,8 +2,8 @@
 
 import React, { use } from 'react'
 import { useAdminCustomerDetail } from '@/app/admin/hooks/useAdmin'
-import { AdminPageHeader, Button } from '@/shared/components'
-import { ArrowLeft, MapPin, ShoppingBag, Heart, AlertCircle, Package } from 'lucide-react'
+import { AdminPageHeader, Button, HandDrawnIcon } from '@/shared/components'
+import { MapPin, AlertCircle, Package } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import { formatDate } from '@/lib/utils/format'
 import { formatIDR } from '@/lib/utils/format'
@@ -52,8 +52,8 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
         subtitle={`Melihat informasi detail untuk ${customer.name}`}
       >
         <Link href="/admin/pelanggan">
-          <Button variant="outline" className="text-xs font-semibold py-2 px-3 border-neutral-200">
-            <ArrowLeft size={12} className="mr-1.5" /> Kembali
+          <Button variant="outline" className="text-xs font-semibold py-2 px-3 border-neutral-200 flex items-center">
+            <HandDrawnIcon name="arrow-left" className="w-3 h-3 mr-1.5" /> Kembali
           </Button>
         </Link>
       </AdminPageHeader>
@@ -157,7 +157,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
           {/* Keranjang Belanja */}
           <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
             <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center">
-              <ShoppingBag size={16} className="text-neutral-500 mr-2" />
+              <HandDrawnIcon name="shopping-bag" className="w-4 h-4 mr-2" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
                 Keranjang Belanja Aktif ({customer.cart_items.length})
               </h3>
@@ -210,7 +210,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
           {/* Wishlist */}
           <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
             <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center">
-              <Heart size={16} className="text-neutral-500 mr-2" />
+              <HandDrawnIcon name="heart" className="w-4 h-4 mr-2" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
                 Wishlist ({customer.wishlist_items.length})
               </h3>

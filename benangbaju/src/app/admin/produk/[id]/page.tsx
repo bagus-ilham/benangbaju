@@ -6,9 +6,8 @@ import { useAdminUpdateProduct } from '@/app/admin/hooks/useAdmin'
 import { useQuery } from '@tanstack/react-query'
 import { createBrowserClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { Button } from '@/shared/components/Button'
-import { ArrowLeft } from 'lucide-react'
 import type { ProductPayload } from '@/modules/products/types'
 
 const supabase = createBrowserClient()
@@ -88,8 +87,8 @@ function AdminProductEditContent({ params }: EditProductPageProps): React.JSX.El
       <div className="text-center py-12 space-y-4">
         <p className="text-red-500 text-sm">Gagal memuat detail produk untuk diedit.</p>
         <Link href="/admin/produk">
-          <Button variant="outline" className="text-xs uppercase border-neutral-200">
-            <ArrowLeft size={13} className="mr-1 inline" /> Kembali ke Daftar
+          <Button variant="outline" className="text-xs uppercase border-neutral-200 flex items-center justify-center">
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-1" /> Kembali ke Daftar
           </Button>
         </Link>
       </div>

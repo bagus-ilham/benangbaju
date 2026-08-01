@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useRef } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Category } from '@/modules/categories/types'
 import { PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
@@ -42,7 +41,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                 className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:text-brand-plum transition-all"
                 aria-label="Scroll left"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
               </button>
               <button
                 type="button"
@@ -50,7 +49,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                 className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:text-brand-plum transition-all"
                 aria-label="Scroll right"
               >
-                <ChevronRight className="h-4 w-4" />
+                <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
               </button>
             </div>
           )}

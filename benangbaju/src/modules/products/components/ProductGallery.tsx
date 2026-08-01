@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { SmartImage as Image } from '@/shared/components'
+import { SmartImage as Image, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react'
+import { Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -316,14 +316,14 @@ export function ProductGallery({
                   className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
                   aria-label="Foto sebelumnya"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <HandDrawnIcon name="chevron-left" className="w-6 h-6" />
                 </button>
                 <button
                   onClick={() => paginate(1)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/30 text-white rounded-full backdrop-blur-sm transition-colors cursor-pointer"
                   aria-label="Foto berikutnya"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <HandDrawnIcon name="chevron-right" className="w-6 h-6" />
                 </button>
               </>
             )}

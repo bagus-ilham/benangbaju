@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 
 export function ScrollToTopButton() {
@@ -44,7 +44,7 @@ export function ScrollToTopButton() {
           )}
           aria-label="Kembali ke atas"
         >
-          <ChevronRight className="h-5 w-5 -rotate-90 group-hover:-translate-y-0.5 transition-transform duration-300" />
+          <HandDrawnIcon name="chevron-up" className="h-5 w-5 group-hover:-translate-y-0.5 transition-transform duration-300" />
         </motion.button>
       )}
     </AnimatePresence>

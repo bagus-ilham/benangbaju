@@ -5,7 +5,8 @@ import { useAdminAnalytics } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
 import dynamic from 'next/dynamic'
 import { formatIDR } from '@/lib/utils/format'
-import { TrendingUp, ShoppingBag, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
+import { TrendingUp, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/shared/components'
 
@@ -120,7 +121,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
-            <ShoppingBag size={16} className="mr-2" />
+            <HandDrawnIcon name="shopping-bag" className="w-4 h-4 mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pesanan Sukses</h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">{analytics.totalOrders}</p>

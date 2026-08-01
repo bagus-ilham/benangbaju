@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
   Package,
-  ShoppingBag,
   FolderTree,
   Image,
   Ticket,
@@ -32,15 +31,21 @@ import toast from 'react-hot-toast'
 import { ErrorBoundary } from '@/shared/components/ErrorBoundary'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
+import { HandDrawnIcon, type HandDrawnIconName } from '@/shared/components/HandDrawnIcon'
 
 interface AdminLayoutProps {
   children: React.ReactNode
 }
 
-const menuItems = [
+const menuItems: Array<{
+  name: string
+  href: string
+  icon?: React.ElementType
+  handDrawnName?: HandDrawnIconName
+}> = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Analitik Penjualan', href: '/admin/analytics', icon: TrendingUp },
-  { name: 'Pesanan', href: '/admin/pesanan', icon: ShoppingBag },
+  { name: 'Pesanan', href: '/admin/pesanan', handDrawnName: 'shopping-bag' },
   { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
   { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
   { name: 'Produk', href: '/admin/produk', icon: Package },
@@ -165,7 +170,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   })
 
   const renderNavLink = (item: (typeof menuItems)[0], onNavigate?: () => void) => {
-    const Icon = item.icon
+    const IconComponent = item.icon
     const isActive = pathname === item.href
     return (
       <Link
@@ -179,13 +184,20 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
             : 'text-neutral-600 hover:bg-neutral-100 hover:text-brand-plum'
         )}
       >
-        <Icon
-          className={cn(
-            'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
-            isActive ? 'text-brand-plum' : 'text-neutral-400 group-hover:text-brand-plum'
-          )}
-          aria-hidden="true"
-        />
+        {item.handDrawnName ? (
+          <HandDrawnIcon
+            name={item.handDrawnName}
+            className="mr-3 h-4 w-4 flex-shrink-0"
+          />
+        ) : IconComponent ? (
+          <IconComponent
+            className={cn(
+              'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
+              isActive ? 'text-brand-plum' : 'text-neutral-400 group-hover:text-brand-plum'
+            )}
+            aria-hidden="true"
+          />
+        ) : null}
         {item.name}
         {isActive && (
           <span className="ml-auto w-1 h-1 bg-brand-accent-light rounded-full" aria-hidden="true" />

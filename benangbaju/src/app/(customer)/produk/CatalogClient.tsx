@@ -14,15 +14,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   EmptyState,
+  HandDrawnIcon,
 } from '@/shared/components'
 import { CatalogDesktopFilters, CatalogMobileFilters } from './components'
-import {
-  SlidersHorizontal,
-  ChevronLeft,
-  ChevronRight,
-  PackageSearch,
-  ChevronDown,
-} from 'lucide-react'
+import { SlidersHorizontal, PackageSearch } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTransition } from 'react'
 
@@ -154,7 +149,7 @@ export function CatalogClient({
                   <span>
                     {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || 'Urutkan'}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <HandDrawnIcon name="chevron-down" className="w-3.5 h-3.5" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="right" className="w-48">
@@ -289,7 +284,7 @@ export function CatalogClient({
                   className="p-2 border border-neutral-200 hover:border-brand-black bg-brand-cream disabled:opacity-30 disabled:pointer-events-none transition-colors"
                   aria-label="Halaman sebelumnya"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
                 </button>
 
                 <span className="text-xs font-heading font-medium tracking-wide">
@@ -302,7 +297,7 @@ export function CatalogClient({
                   className="p-2 border border-neutral-200 hover:border-brand-black bg-brand-cream disabled:opacity-30 disabled:pointer-events-none transition-colors"
                   aria-label="Halaman berikutnya"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
                 </button>
               </div>
             )}

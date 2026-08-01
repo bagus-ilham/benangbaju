@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { SmartLink as Link } from '@/shared/components'
-import { ClipboardList, MapPin, Heart, Bell, LogOut } from 'lucide-react'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { ClipboardList, MapPin, Bell, LogOut } from 'lucide-react'
 
 interface AccountNavMenuProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,7 +47,7 @@ export function AccountNavMenu({
           whileTap={{ scale: 0.98 }}
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
-          <Heart size={14} className="text-brand-blue" />
+          <HandDrawnIcon name="heart" className="w-3.5 h-3.5" />
           <span>Wishlist Saya</span>
         </motion.div>
       </Link>

@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ChevronRight } from 'lucide-react'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { getActiveCollectionsAction } from '@/modules/collections/actions'
 
@@ -93,7 +93,7 @@ export function MobileMenuAccordionItem({
       >
         <span>{label}</span>
         <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="h-3 w-3 text-neutral-400" />
+          <HandDrawnIcon name="chevron-down" className="h-3 w-3 text-neutral-400" />
         </motion.div>
       </button>
 

@@ -5,9 +5,9 @@ import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
-import { Button, Card, PageContainer, EmptyState, PageHero } from '@/shared/components'
+import { Button, Card, PageContainer, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
-import { Trash2, Plus, Minus, ArrowRight, ShoppingBag } from 'lucide-react'
+import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -237,7 +237,7 @@ export default function CartPage(): React.JSX.Element {
                     className="w-full flex items-center justify-center space-x-2 font-bold"
                   >
                     <span>Lanjut Ke Checkout</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <HandDrawnIcon name="arrow-right" className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
 

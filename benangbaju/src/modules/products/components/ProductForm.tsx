@@ -4,8 +4,7 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAdminCategories } from '@/modules/categories/hooks/useAdminCategories'
 import { useAdminCollections } from '@/modules/collections/hooks/useAdminCollections'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { ArrowLeft } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
@@ -431,9 +430,9 @@ export function ProductForm({
           <Link href="/admin/produk">
             <Button
               variant="outline"
-              className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900"
+              className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900 flex items-center justify-center"
             >
-              <ArrowLeft size={14} />
+              <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5" />
             </Button>
           </Link>
           <Button

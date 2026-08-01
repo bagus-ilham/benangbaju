@@ -2,7 +2,8 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ChevronUp, ChevronDown, PackageSearch } from 'lucide-react'
+import { PackageSearch } from 'lucide-react'
+import { HandDrawnIcon } from './HandDrawnIcon'
 import { cn } from '@/lib/utils'
 import { EmptyState } from './EmptyState'
 import { Skeleton } from './Skeleton'
@@ -90,17 +91,17 @@ export function DataTable<T extends { id?: string | number }>({
                     <span>{col.header}</span>
                     {col.sortable && (
                       <div className="flex flex-col space-y-[1px]">
-                        <ChevronUp
+                        <HandDrawnIcon
+                          name="chevron-up"
                           className={cn('w-2 h-2 text-neutral-300', {
                             'text-brand-black': sortBy === col.key && sortDirection === 'asc',
                           })}
-                          strokeWidth={4}
                         />
-                        <ChevronDown
+                        <HandDrawnIcon
+                          name="chevron-down"
                           className={cn('w-2 h-2 text-neutral-300', {
                             'text-brand-black': sortBy === col.key && sortDirection === 'desc',
                           })}
-                          strokeWidth={4}
                         />
                       </div>
                     )}
