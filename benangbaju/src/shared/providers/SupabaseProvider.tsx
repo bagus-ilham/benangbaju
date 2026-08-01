@@ -77,20 +77,19 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
 
     setLoading(true)
 
-    let sessionSeq = 0
-
     // Single source of truth: onAuthStateChange handles initial session + changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-      const currentSeq = ++sessionSeq
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       if (event === 'PASSWORD_RECOVERY') {
         setLoading(false)
         router.push('/reset-password')
         return
       }
-      await handleUserSession(session?.user ?? null)
-      if (currentSeq !== sessionSeq) return
+      // Execute asynchronously so Supabase subscriber queue is never blocked
+      setTimeout(() => {
+        handleUserSession(session?.user ?? null)
+      }, 0)
     })
 
     return () => {

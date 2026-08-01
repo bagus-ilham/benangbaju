@@ -8,28 +8,14 @@ export function createBrowserClient(): SupabaseClient<Database> {
   if (typeof window === 'undefined') {
     return createBrowserSupabaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          fetch: (url, options) => {
-            return fetch(url, { ...options, signal: AbortSignal.timeout(10000) })
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
   }
 
   if (!client) {
     client = createBrowserSupabaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          fetch: (url, options) => {
-            return fetch(url, { ...options, signal: AbortSignal.timeout(10000) })
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
   }
   return client
