@@ -73,8 +73,7 @@ function RegisterContent(): React.JSX.Element {
 
       if (data.session) {
         toast.success('Registrasi berhasil! Selamat datang di Benangbaju.')
-        router.push('/')
-        router.refresh()
+        window.location.href = '/'
       } else if (data.user) {
         // Try auto-login in case email confirmation is disabled or auto-confirmed
         const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
@@ -84,11 +83,10 @@ function RegisterContent(): React.JSX.Element {
 
         if (!loginError && loginData.session) {
           toast.success('Registrasi berhasil! Selamat datang di Benangbaju.')
-          router.push('/')
-          router.refresh()
+          window.location.href = '/'
         } else {
           toast.success('Registrasi berhasil!')
-          router.push('/masuk')
+          window.location.href = '/masuk'
         }
       } else {
         setIsLoading(false)
@@ -115,8 +113,7 @@ function RegisterContent(): React.JSX.Element {
 
       if (data.user) {
         toast.success('Berhasil daftar dengan Google!')
-        router.push('/')
-        router.refresh()
+        window.location.href = '/'
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Gagal memulai daftar dengan Google.'

@@ -55,7 +55,7 @@ function LoginContent() {
 
       if (data.user) {
         toast.success('Berhasil masuk!')
-        router.push(redirectPath)
+        window.location.href = redirectPath
       } else {
         setIsLoading(false)
       }
@@ -81,8 +81,7 @@ function LoginContent() {
 
       if (data.user) {
         toast.success('Berhasil masuk dengan Google!')
-        router.push(redirectPath)
-        router.refresh()
+        window.location.href = redirectPath
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Gagal memulai masuk dengan Google.'

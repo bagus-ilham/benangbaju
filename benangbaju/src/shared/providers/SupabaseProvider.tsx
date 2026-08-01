@@ -27,22 +27,34 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
         if (lastUserId !== currentUserId) {
           lastUserId = currentUserId
 
+          // Set loading to false immediately so auth state is available without waiting on profile query
+          setLoading(false)
+
           try {
             const { data: profile } = await supabase
               .from('profiles')
               .select('id, name, phone, avatar_url, role, is_active, created_at, updated_at')
               .eq('id', user.id)
-              .single()
+              .maybeSingle()
 
             if (profile) {
               const role = profile.role === 'admin' ? 'admin' : 'customer'
               setProfile({ ...profile, role })
+            } else {
+              setProfile({
+                id: user.id,
+                name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+                phone: user.phone || null,
+                avatar_url: user.user_metadata?.avatar_url || null,
+                role: 'customer',
+                is_active: true,
+                created_at: user.created_at,
+                updated_at: user.created_at,
+              })
             }
           } catch (err) {
             safeLogError('Error fetching user profile:', err)
           }
-
-          setLoading(false)
 
           // Background non-blocking sync for cart & wishlist
           Promise.all([
