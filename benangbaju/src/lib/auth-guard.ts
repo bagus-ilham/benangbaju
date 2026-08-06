@@ -15,7 +15,7 @@ export async function requireAdmin() {
     .single()
 
   if (profile?.is_active === false) throw new ForbiddenError('Akun telah dinonaktifkan')
-  if (profile?.role !== 'admin') throw new ForbiddenError('Admin access required')
+  if (profile?.role?.toLowerCase() !== 'admin') throw new ForbiddenError('Admin access required')
 
   return { user, supabase, profile }
 }
