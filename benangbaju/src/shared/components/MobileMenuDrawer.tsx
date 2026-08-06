@@ -106,7 +106,7 @@ export function MobileMenuDrawer({
                           <span>Akun Saya</span>
                           <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                         </Link>
-                        {['admin', 'staff'].includes(String(profile?.role || '').trim().toLowerCase()) && (
+                        {(profile?.role?.toLowerCase() === 'admin' || profile?.role?.toLowerCase() === 'staff') && (
                           <Link
                             href="/admin"
                             onClick={onClose}

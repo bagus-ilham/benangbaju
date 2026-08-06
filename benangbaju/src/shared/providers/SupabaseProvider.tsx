@@ -18,13 +18,13 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
   useEffect(() => {
     let lastUserId: string | null | undefined = undefined
 
-    const handleUserSession = async (user: User | null, forceFetch = false) => {
+    const handleUserSession = async (user: User | null) => {
       const currentUserId = user?.id ?? null
 
       if (user) {
         setUser(user)
 
-        if (lastUserId !== currentUserId || forceFetch) {
+        if (lastUserId !== currentUserId) {
           lastUserId = currentUserId
 
           // Set loading to false immediately so auth state is available without waiting on profile query
@@ -37,14 +37,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
               .eq('id', user.id)
               .maybeSingle()
 
-            const isMetadataAdmin =
-              String(user.user_metadata?.role || '').trim().toLowerCase() === 'admin' ||
-              String(user.app_metadata?.role || '').trim().toLowerCase() === 'admin' ||
-              user.email?.toLowerCase() === 'benangbaju@gmail.com'
-
             if (profile) {
-              const r = String(profile.role || '').trim().toLowerCase()
-              const role = ['admin', 'staff'].includes(r) ? r : (isMetadataAdmin ? 'admin' : 'customer')
+              const r = profile.role?.toLowerCase()
+              const role = r === 'admin' || r === 'staff' ? r : 'customer'
               setProfile({ ...profile, role })
             } else {
               setProfile({
@@ -52,7 +47,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
                 name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
                 phone: user.phone || null,
                 avatar_url: user.user_metadata?.avatar_url || null,
-                role: isMetadataAdmin ? 'admin' : 'customer',
+                role: 'customer',
                 is_active: true,
                 created_at: user.created_at,
                 updated_at: user.created_at,
@@ -94,7 +89,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
       }
       // Execute asynchronously so Supabase subscriber queue is never blocked
       setTimeout(() => {
-        handleUserSession(session?.user ?? null, true)
+        handleUserSession(session?.user ?? null)
       }, 0)
     })
 

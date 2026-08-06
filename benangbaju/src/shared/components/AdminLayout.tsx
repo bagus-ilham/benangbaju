@@ -302,12 +302,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
                     {profile?.name || 'Administrator'}
                   </p>
                   <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">
-                    {profile?.role && profile.role !== 'customer'
-                      ? profile.role
-                      : user?.email?.toLowerCase() === 'benangbaju@gmail.com' ||
-                          String(user?.user_metadata?.role || '').trim().toLowerCase() === 'admin'
-                        ? 'admin'
-                        : profile?.role || 'admin'}
+                    {profile?.role || 'admin'}
                   </p>
                 </div>
               </div>
