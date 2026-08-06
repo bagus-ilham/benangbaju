@@ -69,10 +69,16 @@ export function EmptyState({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE_PREMIUM }}
       className={cn(
-        'flex flex-col items-center justify-center py-20 text-center space-y-6',
+        'relative flex flex-col items-center justify-center py-20 text-center space-y-6 overflow-hidden rounded-3xl border border-dashed border-amber-200/60 bg-brand-cream/40 p-8',
         className
       )}
     >
+      {/* Decorative Background Pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none select-none bg-center bg-repeat"
+        style={{ backgroundImage: 'url(/svg/pattern-stitch-card.svg)', backgroundSize: '300px' }}
+        aria-hidden="true"
+      />
       <div className="relative">
         <div
           className="absolute inset-0 bg-brand-gold/30 blur-xl rounded-full scale-150"

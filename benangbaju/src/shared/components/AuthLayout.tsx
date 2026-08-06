@@ -1,4 +1,4 @@
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, SmartImage as Image } from '@/shared/components'
 import React from 'react'
 import { CurrentYear } from '@/shared/components/CurrentYear'
 
@@ -12,6 +12,17 @@ export function AuthLayout({ children }: AuthLayoutProps): React.JSX.Element {
       {/* Brand panel — visible on desktop */}
       <div className="hidden lg:flex lg:w-[45%] xl:w-1/2 relative bg-brand-gold overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-brand-gold via-[#fdf4cf] to-brand-gold" />
+
+        {/* Decorative thread wave accent */}
+        <div className="absolute -bottom-10 -left-20 w-[140%] h-64 opacity-15 pointer-events-none select-none" aria-hidden="true">
+          <Image
+            src="/svg/accent-thread-wave.svg"
+            alt=""
+            fill
+            unoptimized
+            className="object-contain object-bottom"
+          />
+        </div>
 
         {/* Decorative accent lines */}
         <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-brand-plum/40 to-transparent" />

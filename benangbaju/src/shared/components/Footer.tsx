@@ -209,7 +209,19 @@ export function Footer(): React.JSX.Element {
             </div>
           </div>
 
-          <div className="border-t border-neutral-200 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+          {/* Decorative Stitch Line Divider */}
+          <div className="mt-10 pt-4 flex justify-center opacity-40 select-none pointer-events-none" aria-hidden="true">
+            <Image
+              src="/svg/divider-stitch-line.svg"
+              alt=""
+              width={1000}
+              height={30}
+              className="w-full max-w-4xl h-auto object-contain"
+              unoptimized
+            />
+          </div>
+
+          <div className="border-t border-neutral-200/60 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
             <p className="text-[11px] text-neutral-400 font-sans">
               &copy; <CurrentYear /> Benangbaju. All rights reserved.
             </p>

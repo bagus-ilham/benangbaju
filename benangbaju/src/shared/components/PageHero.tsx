@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { SmartImage as Image } from '@/shared/components/SmartImage'
 import { cn } from '@/lib/utils'
 import { EASE_PREMIUM } from '@/lib/motion'
 
@@ -65,14 +66,25 @@ export function PageHero({
         >
           <div className="max-w-2xl space-y-3">
             {eyebrow && (
-              <span
-                className={cn(
-                  'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
-                  colors.eyebrow
-                )}
-              >
-                {eyebrow}
-              </span>
+              <div className="flex items-center gap-2">
+                <div className="relative w-5 h-3 opacity-40 shrink-0 pointer-events-none select-none" aria-hidden="true">
+                  <Image
+                    src="/svg/accent-cross-stitch-alt.svg"
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-contain"
+                  />
+                </div>
+                <span
+                  className={cn(
+                    'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
+                    colors.eyebrow
+                  )}
+                >
+                  {eyebrow}
+                </span>
+              </div>
             )}
             <h1
               className={cn(
