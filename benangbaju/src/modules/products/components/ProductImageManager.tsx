@@ -1,7 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import { Button, Select, Input, Checkbox } from '@/shared/components'
-import { Trash2 } from 'lucide-react'
+import { Button, Select, Input, Checkbox, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import type { ProductImagePayload, ProductVariantPayload } from '@/modules/products/types'
@@ -56,7 +55,7 @@ export function ProductImageManager({
                   onClick={() => onRemoveImage(idx)}
                   className="absolute right-2 top-2 text-neutral-400 hover:text-red-600 p-1"
                 >
-                  <Trash2 size={12} />
+                  <HandDrawnIcon name="trash" className="h-3 w-3" />
                 </button>
 
                 <div className="flex gap-3 items-start w-full">

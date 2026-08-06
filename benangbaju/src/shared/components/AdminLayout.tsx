@@ -14,12 +14,8 @@ import {
   Percent,
   MessageSquare,
   Settings,
-  LogOut,
   Users,
-  Truck,
   ExternalLink,
-  Menu,
-  X,
   Globe,
   Layers,
   TrendingUp,
@@ -48,13 +44,13 @@ const menuItems: Array<{
   { name: 'Pesanan', href: '/admin/pesanan', handDrawnName: 'shopping-bag' },
   { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
   { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
-  { name: 'Produk', href: '/admin/produk', icon: Package },
+  { name: 'Produk', href: '/admin/produk', handDrawnName: 'kancing' },
   { name: 'Voucher', href: '/admin/voucher', icon: Ticket },
   { name: 'Flash Sale', href: '/admin/flash-sale', icon: Percent },
   { name: 'Banner Promo', href: '/admin/banner', icon: Image },
   { name: 'Ulasan Produk', href: '/admin/review', icon: MessageSquare },
   { name: 'Pelanggan', href: '/admin/pelanggan', icon: Users },
-  { name: 'Pengiriman', href: '/admin/pengiriman', icon: Truck },
+  { name: 'Pengiriman', href: '/admin/pengiriman', handDrawnName: 'truck' },
   { name: 'Konten & SEO', href: '/admin/cms', icon: Globe },
   { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
 ]
@@ -132,7 +128,7 @@ const SidebarFooter = ({
         }}
         className="flex items-center w-full px-3 py-2 mt-1 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
       >
-        <LogOut className="mr-3 h-4 w-4" aria-hidden="true" />
+        <HandDrawnIcon name="logout" className="mr-3 h-4 w-4 flex-shrink-0" aria-hidden="true" />
         Keluar
       </button>
     </div>
@@ -254,7 +250,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
                   className="text-neutral-400 hover:text-brand-black p-1"
                   aria-label="Tutup sidebar"
                 >
-                  <X className="h-5 w-5" aria-hidden="true" />
+                  <HandDrawnIcon name="close" className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -279,7 +275,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
             aria-label="Buka menu admin"
             aria-expanded={isSidebarOpen}
           >
-            <Menu className="h-5 w-5" aria-hidden="true" />
+            <HandDrawnIcon name="menu" className="h-5 w-5" aria-hidden="true" />
           </button>
 
           <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">

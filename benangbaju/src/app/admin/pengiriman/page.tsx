@@ -12,8 +12,8 @@ import {
   useAdminDeleteShippingRate,
 } from '@/app/admin/hooks/useAdmin'
 import type { ShippingZone, ShippingRate } from '@/modules/shipping/types'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Plus, MapPin, Truck, RefreshCw } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
+import { RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -253,7 +253,7 @@ export default function AdminShippingPage(): React.JSX.Element {
               : 'border-transparent text-neutral-400 hover:text-neutral-700'
             }`}
         >
-          <MapPin size={13} className="mr-2" /> Zona Pengiriman ({zones?.length || 0})
+          <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 mr-2" /> Zona Pengiriman ({zones?.length || 0})
         </button>
         <button
           onClick={() => setActiveTab('rates')}
@@ -262,7 +262,7 @@ export default function AdminShippingPage(): React.JSX.Element {
               : 'border-transparent text-neutral-400 hover:text-neutral-700'
             }`}
         >
-          <Truck size={13} className="mr-2" /> Tarif Kurir ({rates?.length || 0})
+          <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> Tarif Kurir ({rates?.length || 0})
         </button>
       </div>
 
@@ -281,7 +281,7 @@ export default function AdminShippingPage(): React.JSX.Element {
                 onClick={() => handleOpenZoneModal()}
                 className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
               >
-                <Plus size={14} className="mr-1.5" /> Tambah Zona Baru
+                <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Zona Baru
               </Button>
             </div>
 

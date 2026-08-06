@@ -2,8 +2,8 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Edit, Trash2 } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { Edit } from 'lucide-react'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import type { ShippingZone } from '@/modules/shipping/types'
 
 interface ShippingZonesTableProps {
@@ -110,7 +110,7 @@ export function ShippingZonesTable({
               variant="outline"
               className="text-[10px] py-1.5 px-3 font-bold uppercase border-red-200 text-red-500 hover:bg-red-50"
             >
-              <Trash2 size={11} className="mr-1" /> Hapus
+              <HandDrawnIcon name="trash" className="h-3 w-3 mr-1" /> Hapus
             </Button>
           </div>
         </motion.div>

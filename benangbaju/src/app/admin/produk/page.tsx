@@ -18,11 +18,7 @@ import {
   DropdownMenuItem,
 } from '@/shared/components'
 import {
-  Plus,
   Edit2,
-  Trash2,
-  Eye,
-  Star,
   Copy,
   MoreHorizontal,
 } from 'lucide-react'
@@ -134,7 +130,7 @@ export default function AdminProductListPage(): React.JSX.Element {
             className={`inline-flex items-center justify-center p-1.5 transition ${p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
               }`}
           >
-            <Star size={16} fill={p.is_featured ? 'currentColor' : 'none'} />
+            <HandDrawnIcon name="star" className={cn('h-4 w-4', p.is_featured ? 'opacity-100' : 'opacity-30 grayscale')} />
           </button>
         ),
       },
@@ -173,7 +169,7 @@ export default function AdminProductListPage(): React.JSX.Element {
               <DropdownMenuContent align="right">
                 <Link href={`/produk/${p.slug}`} target="_blank">
                   <DropdownMenuItem>
-                    <Eye size={14} className="text-neutral-500" /> Lihat di Web
+                    <HandDrawnIcon name="eye" className="h-3.5 w-3.5 mr-1" /> Lihat di Web
                   </DropdownMenuItem>
                 </Link>
                 <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
@@ -187,7 +183,7 @@ export default function AdminProductListPage(): React.JSX.Element {
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem destructive onClick={() => handleDeleteProduct(p.id)}>
-                  <Trash2 size={14} /> Nonaktifkan
+                  <HandDrawnIcon name="trash" className="h-3.5 w-3.5 mr-1" /> Nonaktifkan
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -206,7 +202,7 @@ export default function AdminProductListPage(): React.JSX.Element {
       >
         <Link href="/admin/produk/tambah">
           <Button className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
-            <Plus size={14} className="mr-1.5" /> Tambah Produk
+            <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Produk
           </Button>
         </Link>
       </AdminPageHeader>

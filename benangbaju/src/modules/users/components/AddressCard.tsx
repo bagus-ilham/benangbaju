@@ -4,7 +4,8 @@ import React from 'react'
 import type { UserAddress } from '@/modules/shipping/types'
 import { Badge } from '@/shared/components/Badge'
 import { Button } from '@/shared/components/Button'
-import { Edit2, Trash2, Check } from 'lucide-react'
+import { Edit2 } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 
 interface AddressCardProps {
@@ -57,7 +58,7 @@ export function AddressCard({
         </div>
         {isSelected && (
           <span className="text-brand-plum font-bold">
-            <Check size={18} strokeWidth={2.5} />
+            <HandDrawnIcon name="check-circle" className="h-4.5 w-4.5" />
           </span>
         )}
       </div>
@@ -98,7 +99,7 @@ export function AddressCard({
                 }}
                 className="flex items-center text-xs text-red-500 hover:text-red-700 transition duration-100"
               >
-                <Trash2 size={13} className="mr-1" /> Hapus
+                <HandDrawnIcon name="trash" className="h-3.5 w-3.5 mr-1" /> Hapus
               </button>
             )}
           </div>

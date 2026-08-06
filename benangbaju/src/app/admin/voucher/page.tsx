@@ -7,8 +7,8 @@ import {
   useAdminUpdateVoucher,
   useAdminDeleteVoucher,
 } from '@/app/admin/hooks/useAdmin'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
+import { Edit2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
@@ -186,7 +186,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
           onClick={handleOpenAdd}
           className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
         >
-          <Plus size={14} className="mr-1.5" /> Tambah Voucher
+          <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Voucher
         </Button>
       </AdminPageHeader>
 
@@ -301,7 +301,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
                         variant="outline"
                         className="p-2 border-red-100 text-red-400 hover:text-red-600 hover:bg-red-50"
                       >
-                        <Trash2 size={13} />
+                        <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                       </Button>
                     </td>
                   </tr>

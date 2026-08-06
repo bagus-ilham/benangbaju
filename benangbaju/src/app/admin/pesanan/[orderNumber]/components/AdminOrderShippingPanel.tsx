@@ -1,6 +1,6 @@
 import React from 'react'
-import { AdminPanel, Input } from '@/shared/components'
-import { Check, X, Edit2 } from 'lucide-react'
+import { AdminPanel, Input, HandDrawnIcon } from '@/shared/components'
+import { Check, Edit2 } from 'lucide-react'
 
 interface AdminOrderShippingPanelProps {
   orderShipping?: {
@@ -74,7 +74,7 @@ export function AdminOrderShippingPanel({
                       className="text-red-500 hover:text-red-600 p-0.5"
                       title="Batal"
                     >
-                      <X size={14} />
+                      <HandDrawnIcon name="close" className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 ) : (

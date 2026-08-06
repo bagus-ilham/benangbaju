@@ -1,6 +1,6 @@
 import React from 'react'
-import { Button, Input, Switch } from '@/shared/components'
-import { Plus, Trash2, Copy } from 'lucide-react'
+import { Button, Input, Switch, HandDrawnIcon } from '@/shared/components'
+import { Copy } from 'lucide-react'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -50,7 +50,7 @@ export function ProductVariantsSection({
           variant="outline"
           className="text-[10px] font-bold uppercase py-1 px-3 border-neutral-800 text-neutral-800 hover:bg-neutral-50"
         >
-          <Plus size={12} className="mr-1 inline" /> Tambah Varian
+          <HandDrawnIcon name="plus" className="h-3 w-3 mr-1 inline" /> Tambah Varian
         </Button>
       </div>
 
@@ -76,7 +76,7 @@ export function ProductVariantsSection({
                   className="text-neutral-400 hover:text-red-600 p-1"
                   title="Hapus Varian"
                 >
-                  <Trash2 size={14} />
+                  <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>

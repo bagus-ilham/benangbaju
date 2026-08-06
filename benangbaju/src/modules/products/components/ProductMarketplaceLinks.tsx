@@ -1,6 +1,5 @@
 import React from 'react'
-import { Button, Select, Input } from '@/shared/components'
-import { Trash2 } from 'lucide-react'
+import { Button, Select, Input, HandDrawnIcon } from '@/shared/components'
 import type { ProductLinkPayload } from '@/modules/products/types'
 
 interface ProductMarketplaceLinksProps {
@@ -46,7 +45,7 @@ export function ProductMarketplaceLinks({
                 onClick={() => onRemoveLink(idx)}
                 className="absolute right-2 top-2 text-neutral-400 hover:text-red-600 p-1"
               >
-                <Trash2 size={12} />
+                <HandDrawnIcon name="trash" className="h-3 w-3" />
               </button>
 
               <div className="grid grid-cols-2 gap-2">
