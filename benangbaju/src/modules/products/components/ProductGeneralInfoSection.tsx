@@ -158,17 +158,15 @@ export function ProductGeneralInfoSection({
         <div className="flex gap-4 items-start border border-neutral-200 p-3 bg-neutral-50/20">
           <div className="w-20 h-20 bg-brand-cream border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
             {sizeGuide ? (
-              <Image
-                src={getProxiedImageUrl(sizeGuide)}
-                alt="Size Guide"
-                fill
-                sizes="80px"
-                unoptimized
-                className="object-contain"
-                onError={(e) => {
-                  e.currentTarget.src = 'https://placehold.co/150?text=Error'
-                }}
-              />
+                <Image
+                  key={sizeGuide}
+                  src={getProxiedImageUrl(sizeGuide)}
+                  alt="Size guide preview"
+                  fill
+                  sizes="96px"
+                  unoptimized
+                  className="object-cover"
+                />
             ) : (
               <span className="text-[8px] text-neutral-400 uppercase font-semibold text-center">
                 No Image

@@ -64,15 +64,13 @@ export function ProductImageManager({
                   <div className="w-16 h-16 bg-neutral-100 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                     {img.url ? (
                       <Image
+                        key={img.url}
                         src={getProxiedImageUrl(img.url)}
                         alt={img.alt_text || 'Preview'}
                         fill
                         sizes="64px"
                         unoptimized
                         className="object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://placehold.co/150?text=Error'
-                        }}
                       />
                     ) : (
                       <span className="text-[9px] text-neutral-400 uppercase font-semibold">

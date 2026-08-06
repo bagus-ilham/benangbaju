@@ -181,15 +181,13 @@ export function ProductVariantsSection({
                         <div className="w-10 h-10 bg-neutral-50 border border-neutral-200 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                           {img.url ? (
                             <Image
+                              key={img.url}
                               src={getProxiedImageUrl(img.url)}
                               alt={img.alt_text || 'Preview'}
                               fill
                               sizes="40px"
                               unoptimized
                               className="object-cover"
-                              onError={(e) => {
-                                e.currentTarget.src = 'https://placehold.co/150?text=Error'
-                              }}
                             />
                           ) : (
                             <span className="text-[7px] text-neutral-400 uppercase font-semibold">
