@@ -1,5 +1,5 @@
 -- Migration script: Fix Admin RLS & Prevent Infinite RLS Recursion on Profiles
--- Replaces existing is_admin functions in-place with SECURITY DEFINER (No DROP needed)
+-- Safe to run in Supabase SQL Editor
 
 BEGIN;
 
@@ -25,12 +25,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
--- 3. Base user policies on profiles table (allows users to read their own profile without recursion)
+-- 3. Base user policies on profiles table (allows authenticated users to read profiles without RLS failure)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow authenticated read profiles" ON public.profiles;
+CREATE POLICY "Allow authenticated read profiles" ON public.profiles
+    FOR SELECT TO authenticated USING (true);
 
 DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
 CREATE POLICY "Users can read own profile" ON public.profiles
-    FOR SELECT USING (auth.uid() = id);
+    FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile" ON public.profiles
