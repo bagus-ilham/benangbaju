@@ -16,7 +16,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 2. Update parameter-accepting is_admin(UUID) in-place with SECURITY DEFINER
 CREATE OR REPLACE FUNCTION public.is_admin(p_user_id UUID)
-RETURNS BOOLEAN AS $$
+RETURNS BOOLEAN AS $$ 
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.profiles
