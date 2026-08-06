@@ -86,7 +86,6 @@ export default function CartPage(): React.JSX.Element {
       <PageContainer className="py-10 page-content">
         {items.length === 0 ? (
           <EmptyState
-            icon={ShoppingBag}
             title="Keranjang Anda Kosong"
             description="Anda belum menambahkan produk apapun ke dalam keranjang belanja."
             action={{ label: 'Jelajahi Produk', href: '/produk' }}
