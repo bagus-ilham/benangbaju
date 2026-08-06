@@ -81,7 +81,7 @@ serve(async (req: Request) => {
         id: user.id,
         name: order.order_shipping?.recipient_name || order.profiles?.name || 'Customer',
         email: order.profiles?.email || 'customer@example.com',
-        phone: order.order_shipping?.phone || '',
+        phone: order.order_shipping?.phone || '08123456789',
       }
     };
 
