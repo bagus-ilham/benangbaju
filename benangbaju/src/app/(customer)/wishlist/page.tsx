@@ -12,6 +12,7 @@ import {
   EmptyState,
   PageHero,
   HandDrawnIcon,
+} from '@/shared/components'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import toast from 'react-hot-toast'
 
