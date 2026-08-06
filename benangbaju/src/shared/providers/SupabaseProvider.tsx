@@ -18,13 +18,13 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
   useEffect(() => {
     let lastUserId: string | null | undefined = undefined
 
-    const handleUserSession = async (user: User | null) => {
+    const handleUserSession = async (user: User | null, forceFetch = false) => {
       const currentUserId = user?.id ?? null
 
       if (user) {
         setUser(user)
 
-        if (lastUserId !== currentUserId) {
+        if (lastUserId !== currentUserId || forceFetch) {
           lastUserId = currentUserId
 
           // Set loading to false immediately so auth state is available without waiting on profile query
@@ -88,7 +88,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
       }
       // Execute asynchronously so Supabase subscriber queue is never blocked
       setTimeout(() => {
-        handleUserSession(session?.user ?? null)
+        handleUserSession(session?.user ?? null, true)
       }, 0)
     })
 
