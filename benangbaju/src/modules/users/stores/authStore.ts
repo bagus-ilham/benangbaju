@@ -38,9 +38,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'benangbaju-auth',
-      // Only persist isAuthenticated. Reset isLoading on reload.
+      // Persist isAuthenticated, user, and profile for instant UI state on reload. Reset isLoading on reload.
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
+        user: state.user,
+        profile: state.profile,
       }),
     }
   )
