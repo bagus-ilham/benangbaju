@@ -262,7 +262,7 @@ export function DesktopNavbar({
                             <span>Akun Saya</span>
                           </Link>
 
-                          {profile?.role?.toLowerCase() === 'admin' && (
+                          {String(profile?.role || '').trim().toLowerCase() === 'admin' && (
                             <Link
                               href="/admin"
                               onClick={() => setIsUserMenuOpen(false)}
