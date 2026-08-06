@@ -309,7 +309,7 @@ export default function AdminShippingPage(): React.JSX.Element {
                 disabled={!zones || zones.length === 0}
                 className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
               >
-                <Plus size={14} className="mr-1.5" /> Tambah Tarif Baru
+                <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Tarif Baru
               </Button>
             </div>
 
