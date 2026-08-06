@@ -3,7 +3,6 @@
 import React from 'react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, LogOut } from 'lucide-react'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { MobileMenuAccordionItem } from './MobileMenuAccordionItem'
 import type { User } from '@supabase/supabase-js'
@@ -71,7 +70,7 @@ export function MobileMenuDrawer({
                 className="text-neutral-400 hover:text-brand-black p-1"
                 aria-label="Tutup menu"
               >
-                <X className="h-5 w-5" />
+                <HandDrawnIcon name="close" className="h-5 w-5" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
@@ -124,7 +123,7 @@ export function MobileMenuDrawer({
                           className="flex items-center justify-between py-2 w-full text-left text-xs font-heading font-medium uppercase tracking-widest text-red-600 hover:text-red-700"
                         >
                           <span>Keluar</span>
-                          <LogOut className="h-3 w-3" />
+                          <HandDrawnIcon name="logout" className="h-3 w-3" />
                         </button>
                       </>
                     ) : (

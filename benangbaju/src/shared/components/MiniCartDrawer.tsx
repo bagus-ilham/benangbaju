@@ -4,7 +4,7 @@ import React, { useRef } from 'react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Trash2, Plus, Minus, Sparkles, ShoppingBag } from 'lucide-react'
+import { Sparkles, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR } from '@/lib/utils'
@@ -98,7 +98,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                 className="text-neutral-400 hover:text-brand-black p-1 transition-colors cursor-pointer"
                 aria-label="Tutup keranjang"
               >
-                <X className="h-5 w-5" aria-hidden="true" />
+                <HandDrawnIcon name="close" className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -206,7 +206,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                           className="text-neutral-400 hover:text-red-500 p-0.5 transition-colors cursor-pointer"
                           aria-label="Hapus item"
                         >
-                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          <HandDrawnIcon name="trash" className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
 
@@ -224,7 +224,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                             className="p-1.5 text-neutral-500 hover:text-brand-black transition-colors cursor-pointer"
                             aria-label="Kurangi jumlah"
                           >
-                            <Minus className="h-2.5 w-2.5" aria-hidden="true" />
+                            <HandDrawnIcon name="minus" className="h-2.5 w-2.5" aria-hidden="true" />
                           </button>
                           <span
                             className="px-2 text-[10px] font-sans font-semibold text-brand-black w-6 text-center select-none"
@@ -239,7 +239,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                             className="p-1.5 text-neutral-500 hover:text-brand-black transition-colors cursor-pointer"
                             aria-label="Tambah jumlah"
                           >
-                            <Plus className="h-2.5 w-2.5" aria-hidden="true" />
+                            <HandDrawnIcon name="plus" className="h-2.5 w-2.5" aria-hidden="true" />
                           </button>
                         </div>
 

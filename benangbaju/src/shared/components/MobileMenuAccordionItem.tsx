@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { ChevronRight } from 'lucide-react'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { getActiveCollectionsAction } from '@/modules/collections/actions'
 

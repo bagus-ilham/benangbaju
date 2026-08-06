@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useId, useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components/HandDrawnIcon'
 import { cn } from '@/lib/utils'
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -46,7 +46,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           tabIndex={-1}
           aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
         >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          {showPassword ? <HandDrawnIcon name="eye-slash" className="h-4 w-4" /> : <HandDrawnIcon name="eye" className="h-4 w-4" />}
         </button>
       ) : null)
 

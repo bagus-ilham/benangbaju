@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useId } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
@@ -99,7 +99,7 @@ export function Modal({
                 className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1"
                 aria-label="Tutup"
               >
-                <X className="h-4 w-4" />
+                <HandDrawnIcon name="close" className="h-4 w-4" />
               </button>
             </div>
 

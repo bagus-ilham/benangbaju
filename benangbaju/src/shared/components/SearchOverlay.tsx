@@ -5,7 +5,7 @@ import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Loader2, History, Sparkles } from 'lucide-react'
+import { Loader2, History, Sparkles } from 'lucide-react'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
@@ -153,7 +153,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors"
               aria-label="Tutup pencarian"
             >
-              <X className="h-5 w-5" />
+              <HandDrawnIcon name="close" className="h-5 w-5" />
             </button>
 
             <div className="space-y-6">

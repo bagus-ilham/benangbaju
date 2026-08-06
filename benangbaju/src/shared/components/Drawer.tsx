@@ -3,7 +3,7 @@
 import React, { useEffect, useId, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 
@@ -116,7 +116,7 @@ export function Drawer({
                 className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-brand-black"
                 aria-label="Tutup"
               >
-                <X className="h-5 w-5" />
+                <HandDrawnIcon name="close" className="h-5 w-5" />
               </button>
             </div>
 

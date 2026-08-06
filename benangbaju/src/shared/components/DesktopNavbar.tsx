@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { SmartLink as Link, SmartImage as Image, HandDrawnIcon } from '@/shared/components'
 import { motion } from 'framer-motion'
-import { Menu, LogOut, User as UserIcon } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
 import { MegaMenuNavItem } from './MegaMenuNavItem'
@@ -74,7 +73,7 @@ export function DesktopNavbar({
               )}
               aria-label="Buka menu"
             >
-              <Menu className="h-5 w-5" />
+              <HandDrawnIcon name="menu" className="h-5 w-5" />
             </button>
 
             <nav className="hidden lg:flex items-center space-x-4 xl:space-x-7">
@@ -258,7 +257,7 @@ export function DesktopNavbar({
                             onClick={() => setIsUserMenuOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors"
                           >
-                            <UserIcon className="h-4 w-4" />
+                            <HandDrawnIcon name="user" className="h-4 w-4" />
                             <span>Akun Saya</span>
                           </Link>
 
@@ -284,7 +283,7 @@ export function DesktopNavbar({
                             }}
                             className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-medium rounded-md transition-colors"
                           >
-                            <LogOut className="h-4 w-4" />
+                            <HandDrawnIcon name="logout" className="h-4 w-4" />
                             <span>Keluar</span>
                           </button>
                         </div>

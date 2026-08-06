@@ -4,7 +4,6 @@ import React from 'react'
 import { SmartLink as Link, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, Grid } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useAuthStore } from '@/modules/users/stores/authStore'
@@ -30,7 +29,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
     {
       name: 'Beranda',
       href: '/',
-      lucideIcon: Home,
+      handDrawnName: 'home',
       isActive: pathname === '/',
     },
     {
@@ -42,7 +41,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
     {
       name: 'Katalog',
       href: '/produk',
-      lucideIcon: Grid,
+      handDrawnName: 'grid',
       isActive: pathname.startsWith('/produk'),
     },
     {
