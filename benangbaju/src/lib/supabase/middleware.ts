@@ -127,18 +127,24 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
     let userRole: string | undefined = undefined
 
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      const adminClient = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY,
-        { auth: { autoRefreshToken: false, persistSession: false } }
-      )
-      const { data: profile } = await adminClient
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle()
-      userRole = profile?.role
-    } else {
+      try {
+        const adminClient = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY,
+          { auth: { autoRefreshToken: false, persistSession: false } }
+        )
+        const { data: profile } = await adminClient
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle()
+        userRole = profile?.role
+      } catch {
+        // ignore
+      }
+    }
+
+    if (!userRole) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -147,7 +153,15 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
       userRole = profile?.role
     }
 
-    if (!['admin', 'staff'].includes(String(userRole || '').trim().toLowerCase())) {
+    const isMetadataAdmin =
+      String(user.user_metadata?.role || '').trim().toLowerCase() === 'admin' ||
+      String(user.app_metadata?.role || '').trim().toLowerCase() === 'admin' ||
+      user.email?.toLowerCase() === 'benangbaju@gmail.com'
+
+    const isAdmin =
+      ['admin', 'staff'].includes(String(userRole || '').trim().toLowerCase()) || isMetadataAdmin
+
+    if (!isAdmin) {
       const url = request.nextUrl.clone()
       url.pathname = '/'
       return NextResponse.redirect(url)

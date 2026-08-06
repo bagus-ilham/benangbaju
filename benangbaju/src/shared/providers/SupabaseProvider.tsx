@@ -37,9 +37,14 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
               .eq('id', user.id)
               .maybeSingle()
 
+            const isMetadataAdmin =
+              String(user.user_metadata?.role || '').trim().toLowerCase() === 'admin' ||
+              String(user.app_metadata?.role || '').trim().toLowerCase() === 'admin' ||
+              user.email?.toLowerCase() === 'benangbaju@gmail.com'
+
             if (profile) {
               const r = String(profile.role || '').trim().toLowerCase()
-              const role = ['admin', 'staff'].includes(r) ? r : 'customer'
+              const role = ['admin', 'staff'].includes(r) ? r : (isMetadataAdmin ? 'admin' : 'customer')
               setProfile({ ...profile, role })
             } else {
               setProfile({
@@ -47,7 +52,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
                 name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
                 phone: user.phone || null,
                 avatar_url: user.user_metadata?.avatar_url || null,
-                role: 'customer',
+                role: isMetadataAdmin ? 'admin' : 'customer',
                 is_active: true,
                 created_at: user.created_at,
                 updated_at: user.created_at,
