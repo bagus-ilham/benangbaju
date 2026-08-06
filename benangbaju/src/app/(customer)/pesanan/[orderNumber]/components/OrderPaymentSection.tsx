@@ -1,7 +1,5 @@
 import React from 'react'
-import { Button } from '@/shared/components'
-import { Loader2 } from 'lucide-react'
-import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { Button, SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 
 interface OrderPaymentSectionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
