@@ -106,7 +106,7 @@ export function MobileMenuDrawer({
                           <span>Akun Saya</span>
                           <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                         </Link>
-                        {profile?.role === 'admin' && (
+                        {profile?.role?.toLowerCase() === 'admin' && (
                           <Link
                             href="/admin"
                             onClick={onClose}
