@@ -9,15 +9,51 @@ export class CartRepository {
   async getOrCreateCartId(userId: string): Promise<string> {
     const supabase = await createServerClient()
 
-    // Atomic UPSERT prevents race conditions
+    // 1. Try to find existing cart first
+    const { data: existingCart } = await supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (existingCart?.id) {
+      return existingCart.id
+    }
+
+    // 2. Try atomic UPSERT
     const { data: cart, error } = await supabase
       .from('carts')
       .upsert({ user_id: userId }, { onConflict: 'user_id', ignoreDuplicates: false })
       .select('id')
       .single()
 
-    if (error) throw error
-    return cart.id
+    if (!error && cart?.id) {
+      return cart.id
+    }
+
+    // 3. Fallback to INSERT if ON CONFLICT failed (e.g. Postgres 42P10 missing unique constraint on user_id)
+    const { data: insertedCart, error: insertError } = await supabase
+      .from('carts')
+      .insert({ user_id: userId })
+      .select('id')
+      .single()
+
+    if (!insertError && insertedCart?.id) {
+      return insertedCart.id
+    }
+
+    // 4. Final check if inserted by race condition
+    const { data: reFetched } = await supabase
+      .from('carts')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (reFetched?.id) {
+      return reFetched.id
+    }
+
+    throw error || insertError
   }
 
   async getCartItems(cartId: string) {

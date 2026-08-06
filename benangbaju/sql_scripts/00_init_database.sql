@@ -113,6 +113,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_collections_slug ON collections(slug);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_vouchers_code ON vouchers(code);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_midtrans_order ON payments(midtrans_order_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_carts_user ON carts(user_id);
 CREATE INDEX IF NOT EXISTS idx_carts_session ON carts(session_id);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
 
