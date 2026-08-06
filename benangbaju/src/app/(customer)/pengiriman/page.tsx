@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { Truck, ShieldCheck, Scale, MapPin } from 'lucide-react'
-import { PageHero, PageContainer } from '@/shared/components'
+import { ShieldCheck, Scale } from 'lucide-react'
+import { PageHero, PageContainer, HandDrawnIcon } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Informasi Pengiriman — Benangbaju',
@@ -55,7 +55,7 @@ export default function PengirimanPage(): React.JSX.Element {
 
             <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
-                <Truck className="h-4 w-4 text-brand-plum" />
+                <HandDrawnIcon name="truck" className="h-4 w-4" />
               </div>
               <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Jadwal Kirim
@@ -111,7 +111,7 @@ export default function PengirimanPage(): React.JSX.Element {
           {/* Shipping details text */}
           <div className="space-y-4 text-xs text-neutral-600 leading-relaxed font-medium">
             <div className="flex items-start space-x-2">
-              <MapPin className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
+              <HandDrawnIcon name="map-pin" className="h-4 w-4 shrink-0 mt-0.5" />
               <p>
                 <span className="font-semibold text-neutral-900">Catatan Pelacakan:</span> Nomor
                 Resi (AWB) akan diperbarui secara otomatis di halaman riwayat pesanan Anda

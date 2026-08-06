@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { SmartLink as Link, PageHero, PageContainer, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
-import { Tag, Truck, CreditCard, ClipboardList } from 'lucide-react'
+import { Tag, CreditCard, ClipboardList } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Cara Belanja — Benangbaju',
@@ -25,7 +25,7 @@ const steps: Array<{
     desc: 'Klik ikon keranjang di kanan atas untuk melihat ringkasan pesanan Anda. Masukkan kode voucher belanja di kolom yang tersedia untuk mendapatkan potongan harga eksklusif.',
   },
   {
-    icon: Truck,
+    handDrawnName: 'truck',
     title: '3. Isi Alamat & Pilih Kurir Pengiriman',
     desc: 'Klik "Checkout" untuk masuk ke halaman pengiriman. Tentukan alamat pengiriman lengkap Anda dan pilih jasa ekspedisi/kurir yang diinginkan beserta pilihan tarifnya.',
   },

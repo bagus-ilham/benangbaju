@@ -1,7 +1,7 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { MapPin, Clock, Mail, MessageSquare } from 'lucide-react'
-import { PageContainer, PageHero } from '@/shared/components'
+import { Clock, Mail, MessageSquare } from 'lucide-react'
+import { PageContainer, PageHero, HandDrawnIcon } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Hubungi Kami — Benangbaju',
@@ -56,7 +56,7 @@ export default function KontakPage(): React.JSX.Element {
               </div>
 
               <div className="flex items-start space-x-3">
-                <MapPin className="h-4 w-4 text-brand-plum/70 shrink-0 mt-0.5" />
+                <HandDrawnIcon name="map-pin" className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Warehouse</p>
                   <p>Benangbaju Warehouse</p>
