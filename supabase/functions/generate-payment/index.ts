@@ -101,7 +101,7 @@ serve(async (req: Request) => {
       },
       customer: {
         id: String(user.id),
-        name: String(order.order_shipping?.recipient_name || order.profiles?.name || 'Customer'),
+        name: String(order.profiles?.name || order.order_shipping?.recipient_name || 'Customer'),
         email: String(order.profiles?.email || 'customer@example.com'),
         phone: String(order.order_shipping?.phone || '08123456789'),
       }

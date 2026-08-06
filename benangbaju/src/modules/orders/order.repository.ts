@@ -1,4 +1,4 @@
-import { isObject } from '@/lib/utils/validation'
+  import { isObject } from '@/lib/utils/validation'
 import { invokeWithRetry } from '@/lib/utils/retry'
 import { createServerClient } from '@/lib/supabase/server'
 import { CreateOrderParams } from './types'
@@ -33,19 +33,37 @@ export class OrderRepository {
 
   async findOneByOrderNumber(orderNumber: string, userId?: string) {
     const supabase = await createServerClient()
+    const cleanOrderNumber = decodeURIComponent(orderNumber).trim()
+
     let query = supabase
       .from('orders')
       .select(
         '*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*)'
       )
-      .eq('order_number', orderNumber)
+      .eq('order_number', cleanOrderNumber)
 
     if (userId) {
       query = query.eq('user_id', userId)
     }
 
     const { data, error } = await query.maybeSingle()
-    if (error) throw error
+
+    if (error) {
+      // Fallback query if embedded product_reviews relationship fails in PostgREST
+      let fallbackQuery = supabase
+        .from('orders')
+        .select('*, order_items(*), order_shipping(*), payments(*)')
+        .eq('order_number', cleanOrderNumber)
+
+      if (userId) {
+        fallbackQuery = fallbackQuery.eq('user_id', userId)
+      }
+
+      const { data: fallbackData, error: fallbackErr } = await fallbackQuery.maybeSingle()
+      if (fallbackErr) throw fallbackErr
+      return fallbackData
+    }
+
     return data
   }
 
