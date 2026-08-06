@@ -75,12 +75,14 @@ export function VariantPicker({
     }
   }, [selectedVariantId, variants])
 
-  // 3. Compute options that are valid for the currently selected other attributes
+  // 3. Compute options that are valid for the preceding selected attributes
   const visibleOptionsMap = useMemo(() => {
     const visibleMap: Record<string, string[]> = {}
 
-    attributeKeys.forEach((attrName) => {
+    attributeKeys.forEach((attrName, keyIdx) => {
       const allValues = attributeGroups[attrName] || []
+      const precedingKeys = attributeKeys.slice(0, keyIdx)
+
       const filtered = allValues.filter((value) => {
         return variants.some((v) => {
           if (!v.is_active) return false
@@ -89,16 +91,17 @@ export function VariantPicker({
           )
           if (!hasThisAttr) return false
 
-          return Object.entries(selectedValues).every(([otherName, otherVal]) => {
-            if (otherName === attrName || !otherVal) return true
+          // Match preceding selected attribute keys
+          return precedingKeys.every((pKey) => {
+            const pVal = selectedValues[pKey]
+            if (!pVal) return true
             return v.product_variant_attrs?.some(
-              (a) => a.attr_name === otherName && a.attr_value === otherVal
+              (a) => a.attr_name === pKey && a.attr_value === pVal
             )
           })
         })
       })
 
-      // If filtering produces options, use them. Otherwise fallback to all values for that key
       visibleMap[attrName] = filtered.length > 0 ? filtered : allValues
     })
 
@@ -109,9 +112,10 @@ export function VariantPicker({
   const disabledOptionsMap = useMemo(() => {
     const disabledMap: Record<string, Record<string, boolean>> = {}
 
-    attributeKeys.forEach((attrName) => {
+    attributeKeys.forEach((attrName, keyIdx) => {
       disabledMap[attrName] = {}
       const visibleVals = visibleOptionsMap[attrName] || attributeGroups[attrName] || []
+      const precedingKeys = attributeKeys.slice(0, keyIdx)
 
       visibleVals.forEach((value) => {
         const matchingVariants = variants.filter((v) => {
@@ -121,10 +125,11 @@ export function VariantPicker({
           )
           if (!hasThisAttr) return false
 
-          return Object.entries(selectedValues).every(([otherName, otherVal]) => {
-            if (otherName === attrName || !otherVal) return true
+          return precedingKeys.every((pKey) => {
+            const pVal = selectedValues[pKey]
+            if (!pVal) return true
             return v.product_variant_attrs?.some(
-              (a) => a.attr_name === otherName && a.attr_value === otherVal
+              (a) => a.attr_name === pKey && a.attr_value === pVal
             )
           })
         })
