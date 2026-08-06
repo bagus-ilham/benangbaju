@@ -133,7 +133,19 @@ export class OrderRepository {
           'Idempotency-Key': `payment_${orderNumber}`,
         },
       })
-      if (error) throw error
+      if (error) {
+        if ('context' in error && error.context) {
+          try {
+            const errBody = await (error.context as Response).json()
+            if (errBody && errBody.message) {
+              throw new Error(errBody.message)
+            }
+          } catch (e: any) {
+            if (e.message && e.message !== error.message) throw e
+          }
+        }
+        throw error
+      }
       return data
     })
   }
@@ -145,7 +157,19 @@ export class OrderRepository {
         body: { order_number: orderNumber },
         timeout: 10000,
       })
-      if (error) throw error
+      if (error) {
+        if ('context' in error && error.context) {
+          try {
+            const errBody = await (error.context as Response).json()
+            if (errBody && errBody.message) {
+              throw new Error(errBody.message)
+            }
+          } catch (e: any) {
+            if (e.message && e.message !== error.message) throw e
+          }
+        }
+        throw error
+      }
       return data
     })
   }

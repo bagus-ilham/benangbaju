@@ -57,6 +57,10 @@ serve(async (req: Request) => {
     const secretKey = Deno.env.get('DOKU_SECRET_KEY') ?? '';
     const dokuEndpoint = Deno.env.get('DOKU_API_URL') ?? 'https://api-sandbox.doku.com'; 
     const requestTarget = '/checkout/v1/payment';
+
+    if (!clientId || !secretKey) {
+      throw new Error('DOKU_CLIENT_ID / DOKU_SECRET_KEY belum dikonfigurasi di Supabase Edge Function Secrets');
+    }
     
     // Idempotency: use the header or generate a new random uuid
     const requestId = req.headers.get('Idempotency-Key') || crypto.randomUUID();
@@ -106,7 +110,8 @@ serve(async (req: Request) => {
 
     if (!dokuResponse.ok || !dokuData.response || !dokuData.response.payment || !dokuData.response.payment.url) {
       console.error('DOKU Error:', dokuData);
-      throw new Error('Failed to generate payment URL from DOKU');
+      const errDetail = dokuData?.error?.message || dokuData?.message || (dokuData?.error ? JSON.stringify(dokuData.error) : 'Response pembayaran tidak valid');
+      throw new Error(`DOKU Error: ${errDetail}`);
     }
 
     const paymentUrl = dokuData.response.payment.url;

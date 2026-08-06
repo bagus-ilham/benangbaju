@@ -112,7 +112,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_collections_slug ON collections(slug);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_vouchers_code ON vouchers(code);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_midtrans_order ON payments(midtrans_order_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_gateway_order ON payments(gateway_order_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_carts_user ON carts(user_id);
 CREATE INDEX IF NOT EXISTS idx_carts_session ON carts(session_id);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
@@ -167,9 +167,6 @@ ALTER TABLE product_variants ADD CONSTRAINT chk_price_non_negative CHECK (price 
 ALTER TABLE order_items DROP CONSTRAINT IF EXISTS chk_order_qty_positive;
 ALTER TABLE order_items ADD CONSTRAINT chk_order_qty_positive CHECK (quantity > 0);
 
-ALTER TABLE cart_items DROP CONSTRAINT IF EXISTS chk_cart_qty_positive;
-ALTER TABLE cart_items ADD CONSTRAINT chk_cart_qty_positive CHECK (quantity > 0);
-
 -- 4. Cegah Flash Sale berakhir sebelum dimulai
 ALTER TABLE flash_sales DROP CONSTRAINT IF EXISTS chk_flash_sale_dates;
 ALTER TABLE flash_sales ADD CONSTRAINT chk_flash_sale_dates CHECK (ends_at > starts_at);
@@ -190,25 +187,13 @@ COMMIT;
 ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_total_amount_check;
 ALTER TABLE public.orders ADD CONSTRAINT orders_total_amount_check CHECK (total_amount >= 0);
 
-ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_shipping_cost_check;
-ALTER TABLE public.orders ADD CONSTRAINT orders_shipping_cost_check CHECK (shipping_cost >= 0);
-
 -- 2. Vouchers table: minimum purchase and discount amount cannot be negative
 ALTER TABLE public.vouchers DROP CONSTRAINT IF EXISTS vouchers_min_purchase_check;
 ALTER TABLE public.vouchers ADD CONSTRAINT vouchers_min_purchase_check CHECK (min_purchase >= 0);
 
+-- 3. Vouchers table: value cannot be negative
 ALTER TABLE public.vouchers DROP CONSTRAINT IF EXISTS vouchers_value_check;
 ALTER TABLE public.vouchers ADD CONSTRAINT vouchers_value_check CHECK (value >= 0);
-
-ALTER TABLE public.vouchers DROP CONSTRAINT IF EXISTS vouchers_max_discount_check;
-ALTER TABLE public.vouchers ADD CONSTRAINT vouchers_max_discount_check CHECK (max_discount IS NULL OR max_discount >= 0);
-
--- 3. Shipping Rates table: prices cannot be negative
-ALTER TABLE public.shipping_rates DROP CONSTRAINT IF EXISTS shipping_rates_price_per_kg_check;
-ALTER TABLE public.shipping_rates ADD CONSTRAINT shipping_rates_price_per_kg_check CHECK (price_per_kg >= 0);
-
-ALTER TABLE public.shipping_rates DROP CONSTRAINT IF EXISTS shipping_rates_base_price_check;
-ALTER TABLE public.shipping_rates ADD CONSTRAINT shipping_rates_base_price_check CHECK (base_price >= 0);
 
 -- 4. Banners table: start date must be before end date
 ALTER TABLE public.banners DROP CONSTRAINT IF EXISTS banners_dates_check;
@@ -217,7 +202,7 @@ ALTER TABLE public.banners ADD CONSTRAINT banners_dates_check CHECK (starts_at I
 -- 5. Flash Sales table: start date must be before end date
 ALTER TABLE public.flash_sales DROP CONSTRAINT IF EXISTS flash_sales_dates_check;
 ALTER TABLE public.flash_sales ADD CONSTRAINT flash_sales_dates_check CHECK (starts_at < ends_at);
--- Script to ensure webhook idempotency for Midtrans payments
+-- Script to ensure webhook idempotency for payment logs
 -- Run this in your Supabase SQL Editor
 
 -- 1. Ensure the payment_logs table has a unique constraint on transaction ID + event type
@@ -226,8 +211,11 @@ ALTER TABLE public.payment_logs
 DROP CONSTRAINT IF EXISTS payment_logs_midtrans_order_id_event_type_key;
 
 ALTER TABLE public.payment_logs 
-ADD CONSTRAINT payment_logs_midtrans_order_id_event_type_key 
-UNIQUE (midtrans_order_id, event_type);
+DROP CONSTRAINT IF EXISTS payment_logs_gateway_order_id_event_type_key;
+
+ALTER TABLE public.payment_logs 
+ADD CONSTRAINT payment_logs_gateway_order_id_event_type_key 
+UNIQUE (gateway_order_id, event_type);
 -- Script to add missing composite and heavily queried indexes
 -- Run this in your Supabase SQL Editor
 

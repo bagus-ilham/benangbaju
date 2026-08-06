@@ -157,7 +157,7 @@ export class OrderService {
       safeLogError('Error generating payment token:', error)
       return fail(
         ApiErrorCode.INTERNAL_ERROR,
-        'Gagal menghubungi server pembayaran. Silakan coba lagi.'
+        error?.message || 'Gagal menghubungi server pembayaran. Silakan coba lagi.'
       )
     }
   }
