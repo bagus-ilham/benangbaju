@@ -311,7 +311,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
               href={`/pesanan/${order.order_number}`}
               className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue transition"
             >
-              <ArrowLeft size={13} className="mr-1" /> Batal
+              <HandDrawnIcon name="arrow-left" className="h-3 w-3 mr-1" /> Batal
             </Link>
             <Button
               type="submit"
