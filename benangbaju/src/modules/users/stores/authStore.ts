@@ -7,7 +7,7 @@ export interface Profile {
   name: string
   phone: string | null
   avatar_url: string | null
-  role: 'customer' | 'admin'
+  role: 'customer' | 'admin' | 'staff' | string
   is_active: boolean
   created_at: string
   updated_at?: string
