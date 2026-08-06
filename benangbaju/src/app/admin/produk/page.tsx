@@ -23,6 +23,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { Column } from '@/shared/components/DataTable'
 
