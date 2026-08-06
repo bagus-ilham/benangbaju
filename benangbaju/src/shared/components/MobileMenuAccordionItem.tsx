@@ -75,7 +75,7 @@ export function MobileMenuAccordionItem({
         )}
       >
         <span>{label}</span>
-        <ChevronRight className="h-3 w-3 text-neutral-400" />
+        <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400 opacity-60" />
       </Link>
     )
   }
