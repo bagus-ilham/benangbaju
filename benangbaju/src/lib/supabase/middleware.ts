@@ -123,14 +123,19 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
     }
 
     // Check admin role (fetched from profiles)
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    const role = profile?.role?.toLowerCase()
+    if (profileError) {
+      console.error('[Middleware] Admin role check failed:', profileError.message, 'User:', user.id)
+    }
+
+    const role = profile?.role?.trim()?.toLowerCase()
     if (role !== 'admin' && role !== 'staff') {
+      console.warn('[Middleware] Admin access denied. User:', user.id, 'Role:', profile?.role ?? 'NULL (no profile found)')
       const url = request.nextUrl.clone()
       url.pathname = '/'
       return NextResponse.redirect(url)

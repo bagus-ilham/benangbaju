@@ -27,9 +27,6 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
         if (lastUserId !== currentUserId) {
           lastUserId = currentUserId
 
-          // Set loading to false immediately so auth state is available without waiting on profile query
-          setLoading(false)
-
           try {
             const { data: profile } = await supabase
               .from('profiles')
@@ -55,6 +52,9 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
             }
           } catch (err) {
             safeLogError('Error fetching user profile:', err)
+          } finally {
+            // Set loading to false AFTER profile is fetched so role data is available when components render
+            setLoading(false)
           }
 
           // Background non-blocking sync for cart & wishlist
