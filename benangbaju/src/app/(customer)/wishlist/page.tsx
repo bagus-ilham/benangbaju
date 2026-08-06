@@ -85,7 +85,6 @@ export default function WishlistPage(): React.JSX.Element {
         />
         <PageContainer className="py-10 page-content">
           <EmptyState
-            icon={Heart}
             title="Gagal Memuat Wishlist"
             description="Terjadi kesalahan saat memuat daftar keinginan Anda. Silakan coba kembali."
             action={{
