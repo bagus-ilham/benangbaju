@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react'
-import { Select, Textarea } from '@/shared/components'
-import { Image as ImageIcon, X } from 'lucide-react'
+import { Select, Textarea, HandDrawnIcon } from '@/shared/components'
+import { Image as ImageIcon } from 'lucide-react'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 const RETURN_REASONS = [
@@ -68,7 +68,7 @@ export function ReturnReasonForm({
                 onClick={() => onRemoveFile(idx)}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <X size={12} />
+                <HandDrawnIcon name="close" className="h-3 w-3" />
               </button>
             </div>
           ))}

@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button, Card, PageContainer, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
-import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -156,7 +155,7 @@ export default function CartPage(): React.JSX.Element {
                             className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label="Kurangi jumlah"
                           >
-                            <Minus size={12} />
+                            <HandDrawnIcon name="minus" className="h-3 w-3" />
                           </button>
                           <span className="px-3 text-xs font-sans font-bold text-brand-plum min-w-[28px] text-center select-none">
                             {item.quantity}
@@ -167,7 +166,7 @@ export default function CartPage(): React.JSX.Element {
                             className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label="Tambah jumlah"
                           >
-                            <Plus size={12} />
+                            <HandDrawnIcon name="plus" className="h-3 w-3" />
                           </button>
                         </div>
 
@@ -178,7 +177,7 @@ export default function CartPage(): React.JSX.Element {
                             className="p-2 text-neutral-400 hover:text-red-600 transition-colors flex items-center space-x-1 text-xs font-sans cursor-pointer"
                             aria-label="Hapus produk"
                           >
-                            <Trash2 size={15} />
+                            <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline text-[10px]">Hapus</span>
                           </button>
                         </div>

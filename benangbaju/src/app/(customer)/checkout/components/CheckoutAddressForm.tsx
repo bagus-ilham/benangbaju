@@ -2,8 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Truck, Plus, Check } from 'lucide-react'
-import { Button, Textarea } from '@/shared/components'
+import { Button, Textarea, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 
@@ -40,7 +39,7 @@ export function CheckoutAddressForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black flex items-center">
-            <MapPin size={14} className="mr-2 text-neutral-500" /> Alamat Pengiriman
+            <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 mr-2" /> Alamat Pengiriman
           </h2>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -48,7 +47,7 @@ export function CheckoutAddressForm({
             onClick={onAddNewAddress}
             className="inline-flex items-center text-[11px] text-neutral-600 hover:text-brand-black font-heading font-medium uppercase tracking-wider transition-colors duration-200"
           >
-            <Plus size={12} className="mr-1" /> Tambah Alamat
+            <HandDrawnIcon name="plus" className="h-3 w-3 mr-1" /> Tambah Alamat
           </motion.button>
         </div>
 
@@ -141,7 +140,7 @@ export function CheckoutAddressForm({
       {/* Shipping Method Section */}
       <div className="space-y-4 pt-4 border-t border-neutral-100">
         <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum flex items-center">
-          <Truck size={14} className="mr-2 text-brand-blue" /> Opsi Pengiriman
+          <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> Opsi Pengiriman
         </h2>
 
         {!selectedAddress ? (
@@ -191,7 +190,7 @@ export function CheckoutAddressForm({
                 </p>
                 {selectedCourier?.id === option.id && (
                   <div className="absolute top-2 right-2 bg-brand-blue text-brand-plum rounded-full p-0.5">
-                    <Check size={8} />
+                    <HandDrawnIcon name="check-circle" className="h-2.5 w-2.5" />
                   </div>
                 )}
               </motion.div>

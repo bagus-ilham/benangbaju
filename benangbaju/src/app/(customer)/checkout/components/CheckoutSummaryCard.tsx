@@ -3,8 +3,8 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Tag, ShoppingBag, ShieldCheck, Lock } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { Tag, ShieldCheck, Lock } from 'lucide-react'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -62,7 +62,7 @@ export function CheckoutSummaryCard({
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
       <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center justify-between border-b border-neutral-100 pb-3">
         <span className="flex items-center">
-          <ShoppingBag size={14} className="mr-2 text-brand-blue" /> Ringkasan Pesanan
+          <HandDrawnIcon name="shopping-bag" className="h-3.5 w-3.5 mr-2" /> Ringkasan Pesanan
         </span>
       </h2>
 

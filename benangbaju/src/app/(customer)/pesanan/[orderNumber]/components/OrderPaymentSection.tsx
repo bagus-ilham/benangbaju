@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '@/shared/components'
-import { Loader2, CheckCircle2 } from 'lucide-react'
-import { SmartLink as Link } from '@/shared/components'
+import { Loader2 } from 'lucide-react'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 
 interface OrderPaymentSectionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -117,7 +117,7 @@ export function OrderPaymentSection({
         {order.status === 'completed' && (
           <div className="flex flex-col gap-3">
             <div className="flex items-center text-xs text-green-700 bg-green-50 p-3 border border-green-200">
-              <CheckCircle2 size={16} className="mr-2 flex-shrink-0" />
+              <HandDrawnIcon name="check-circle" className="h-4 w-4 mr-2 shrink-0" />
               <span>Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!</span>
             </div>
             <Link href={`/pesanan/${order.order_number}/retur`} className="w-full">

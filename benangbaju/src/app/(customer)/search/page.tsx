@@ -6,7 +6,6 @@ import { motion } from 'framer-motion'
 import { useProducts } from '@/modules/products/hooks/useProducts'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageContainer, ProductGridSkeleton, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
-import { Search } from 'lucide-react'
 
 const gridVariants = {
   hidden: { opacity: 0 },
@@ -64,7 +63,6 @@ function SearchResultsContent() {
         />
         <PageContainer className="py-10 page-content">
           <EmptyState
-            icon={Search}
             title="Gagal Memuat Hasil Pencarian"
             description="Terjadi kesalahan koneksi saat mencari produk. Silakan coba kembali."
             action={{
@@ -89,7 +87,6 @@ function SearchResultsContent() {
           <ProductGridSkeleton count={8} />
         ) : products.length === 0 ? (
           <EmptyState
-            icon={Search}
             title="Produk Tidak Ditemukan"
             description={`Tidak ditemukan produk yang cocok dengan kata kunci "${query}".`}
             action={{ label: 'Jelajahi Katalog', href: '/produk' }}

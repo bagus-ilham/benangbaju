@@ -12,8 +12,6 @@ import {
   EmptyState,
   PageHero,
   HandDrawnIcon,
-} from '@/shared/components'
-import { Trash2, Heart } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import toast from 'react-hot-toast'
 
@@ -111,7 +109,6 @@ export default function WishlistPage(): React.JSX.Element {
           <ProductGridSkeleton count={4} />
         ) : !hasItems ? (
           <EmptyState
-            icon={Heart}
             title="Daftar Keinginan Kosong"
             description="Anda belum menambahkan produk apapun ke dalam daftar keinginan Anda."
             action={{ label: 'Cari Produk Pilihan', href: '/produk' }}
@@ -133,7 +130,7 @@ export default function WishlistPage(): React.JSX.Element {
                   size="sm"
                   className="text-[10px] uppercase font-bold text-neutral-500 hover:text-red-600"
                 >
-                  <Trash2 className="w-3.5 h-3.5 mr-1" /> Kosongkan
+                  <HandDrawnIcon name="trash" className="w-3.5 h-3.5 mr-1" /> Kosongkan
                 </Button>
                 <Button
                   onClick={handleMoveAllToCart}

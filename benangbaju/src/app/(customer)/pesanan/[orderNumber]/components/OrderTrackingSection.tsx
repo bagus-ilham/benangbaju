@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Clock, Package, Truck, CheckCircle2, XCircle } from 'lucide-react'
+import { Clock, Package, XCircle } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 
 interface OrderTrackingSectionProps {
   status: string
@@ -14,8 +15,8 @@ export function OrderTrackingSection({
   const steps = [
     { id: 'pending_payment', label: 'Menunggu Pembayaran', icon: <Clock size={16} /> },
     { id: 'processing', label: 'Diproses Seller', icon: <Package size={16} /> },
-    { id: 'shipped', label: 'Dalam Pengiriman', icon: <Truck size={16} /> },
-    { id: 'completed', label: 'Pesanan Selesai', icon: <CheckCircle2 size={16} /> },
+    { id: 'shipped', label: 'Dalam Pengiriman', icon: <HandDrawnIcon name="truck" className="h-4 w-4" /> },
+    { id: 'completed', label: 'Pesanan Selesai', icon: <HandDrawnIcon name="check-circle" className="h-4 w-4" /> },
   ]
 
   const statusIndex = steps.findIndex((step) => step.id === status)

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import React, { useState } from 'react'
-import { Modal, Button, Input, Textarea, Checkbox } from '@/shared/components'
-import { Image as ImageIcon, X } from 'lucide-react'
+import { Modal, Button, Input, Textarea, Checkbox, HandDrawnIcon } from '@/shared/components'
+import { Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -224,7 +224,7 @@ export function OrderReviewModal({
                     onClick={() => removeFile(idx)}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 shadow-sm"
                   >
-                    <X size={12} />
+                    <HandDrawnIcon name="close" className="h-3 w-3" />
                   </button>
                 </div>
               ))}

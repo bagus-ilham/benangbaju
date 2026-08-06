@@ -16,8 +16,8 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
 } from '@/shared/components'
-import { ArrowLeft, AlertTriangle, ShieldCheck } from 'lucide-react'
-import { SmartLink as Link } from '@/shared/components'
+import { AlertTriangle, ShieldCheck } from 'lucide-react'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -270,7 +270,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
           href={`/pesanan/${order.order_number}`}
           className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue transition mt-2"
         >
-          <ArrowLeft size={13} className="mr-1" /> Kembali ke Detail Pesanan
+          <HandDrawnIcon name="arrow-left" className="h-3 w-3 mr-1" /> Kembali ke Detail Pesanan
         </Link>
       </PageHero>
 
