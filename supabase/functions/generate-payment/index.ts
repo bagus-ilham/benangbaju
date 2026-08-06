@@ -52,6 +52,28 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
+    // 1. Check if a valid payment URL already exists for this order
+    const { data: existingPayment } = await supabaseClient
+      .from('payments')
+      .select('gateway_response')
+      .eq('order_id', order.id)
+      .maybeSingle();
+
+    if (existingPayment?.gateway_response?.response?.payment?.url) {
+      const existingUrl = existingPayment.gateway_response.response.payment.url;
+      const existingToken = existingPayment.gateway_response.response.payment.token_id || '';
+      return new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            token: existingToken,
+            redirect_url: existingUrl
+          }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
+    }
+
     // Persiapan parameter DOKU
     const clientId = Deno.env.get('DOKU_CLIENT_ID') ?? '';
     const secretKey = Deno.env.get('DOKU_SECRET_KEY') ?? '';
@@ -62,8 +84,8 @@ serve(async (req: Request) => {
       throw new Error('DOKU_CLIENT_ID / DOKU_SECRET_KEY belum dikonfigurasi di Supabase Edge Function Secrets');
     }
     
-    // Idempotency: use the header or generate a new random uuid
-    const requestId = req.headers.get('Idempotency-Key') || crypto.randomUUID();
+    // Always use a unique UUID for DOKU Request-Id to prevent "REQUEST ID ALREADY USED" errors
+    const requestId = crypto.randomUUID();
     const requestTimestamp = new Date().toISOString().slice(0, 19) + 'Z';
 
     // Hitung dueDate dalam menit (misal 60 menit)
