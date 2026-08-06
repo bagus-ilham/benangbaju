@@ -203,18 +203,18 @@ export function CheckoutSummaryCard({
           <span>Subtotal Produk</span>
           <span className="font-semibold text-brand-black">{formatIDR(subtotal)}</span>
         </div>
-        {appliedVoucher && (
-          <div className="flex justify-between font-semibold">
-            <span>Diskon Voucher</span>
-            <span className="text-red-600">- {formatIDR(discountAmount)}</span>
-          </div>
-        )}
         <div className="flex justify-between">
           <span>Ongkos Kirim</span>
           <span className="font-semibold text-brand-black">
             {shippingCost > 0 ? formatIDR(shippingCost) : 'Pilih kurir...'}
           </span>
         </div>
+        {appliedVoucher && (
+          <div className="flex justify-between font-semibold">
+            <span>Diskon Voucher</span>
+            <span className="text-red-600">- {formatIDR(discountAmount)}</span>
+          </div>
+        )}
       </div>
 
       {/* Grand Total */}

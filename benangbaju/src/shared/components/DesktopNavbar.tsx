@@ -161,7 +161,7 @@ export function DesktopNavbar({
             <Link
               href="/wishlist"
               className={cn(
-                'p-2 relative group',
+                'p-2 relative group hidden sm:inline-flex',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-500 hover:text-brand-black'

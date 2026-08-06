@@ -230,6 +230,12 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
                   Rp {order.subtotal.toLocaleString('id-ID')}
                 </span>
               </div>
+              <div className="flex justify-between">
+                <span>Ongkos Kirim</span>
+                <span className="font-semibold text-neutral-900">
+                  Rp {order.shipping_cost.toLocaleString('id-ID')}
+                </span>
+              </div>
               {Number(order.discount_amount) > 0 && (
                 <div className="flex justify-between font-semibold">
                   <span>Voucher Diskon</span>
@@ -238,12 +244,6 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
                   </span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span>Ongkos Kirim</span>
-                <span className="font-semibold text-neutral-900">
-                  Rp {order.shipping_cost.toLocaleString('id-ID')}
-                </span>
-              </div>
               <div className="flex justify-between items-center text-neutral-900 border-t border-neutral-100 pt-3 mt-1.5 font-heading font-bold text-sm">
                 <span>Total Bayar</span>
                 <span className="text-base">Rp {order.total_amount.toLocaleString('id-ID')}</span>

@@ -38,6 +38,12 @@ export function OrderPaymentSection({
             Rp {order.subtotal?.toLocaleString('id-ID')}
           </span>
         </div>
+        <div className="flex justify-between">
+          <span>Ongkos Kirim</span>
+          <span className="font-bold text-brand-plum">
+            Rp {order.shipping_cost?.toLocaleString('id-ID')}
+          </span>
+        </div>
         {Number(order.discount_amount) > 0 && (
           <div className="flex justify-between text-neutral-800 font-bold">
             <span>Diskon Voucher</span>
@@ -46,12 +52,6 @@ export function OrderPaymentSection({
             </span>
           </div>
         )}
-        <div className="flex justify-between">
-          <span>Ongkos Kirim</span>
-          <span className="font-bold text-brand-plum">
-            Rp {order.shipping_cost?.toLocaleString('id-ID')}
-          </span>
-        </div>
         <div className="flex justify-between items-center text-brand-plum font-sans border-t border-neutral-200/60 pt-4 mt-2">
           <span className="text-sm font-bold">Total Pembayaran</span>
           <span className="text-lg font-bold text-brand-plum">
