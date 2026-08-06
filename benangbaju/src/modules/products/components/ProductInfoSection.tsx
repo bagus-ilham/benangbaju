@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Minus, Shield, RefreshCw, Truck, Bell, MessageCircle } from 'lucide-react'
+import { Shield, RefreshCw, MessageCircle } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
@@ -189,7 +189,7 @@ export function ProductInfoSection({
               className="p-3 text-neutral-500 hover:text-brand-black transition-colors"
               disabled={!selectedVariant || selectedVariant.stock === 0}
             >
-              <Minus className="h-3 w-3" />
+              <HandDrawnIcon name="minus" className="h-3 w-3" />
             </motion.button>
             <span className="px-4 text-xs font-sans font-semibold text-brand-black w-8 text-center select-none">
               {quantity}
@@ -200,7 +200,7 @@ export function ProductInfoSection({
               className="p-3 text-neutral-500 hover:text-brand-black transition-colors"
               disabled={!selectedVariant || selectedVariant.stock === 0}
             >
-              <Plus className="h-3 w-3" />
+              <HandDrawnIcon name="plus" className="h-3 w-3" />
             </motion.button>
           </div>
 
@@ -260,7 +260,7 @@ export function ProductInfoSection({
             variant="outline"
             className="w-full text-xs font-semibold uppercase tracking-wider text-brand-accent border-brand-accent/30 hover:bg-brand-cream/60 py-2.5 transition-all"
           >
-            <Bell className="h-3.5 w-3.5 mr-1.5" /> Kabari Saya Saat Restock
+            <HandDrawnIcon name="bell" className="h-3.5 w-3.5 mr-1.5" /> Kabari Saya Saat Restock
           </Button>
         )}
 
@@ -283,7 +283,7 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <Truck className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
+          <HandDrawnIcon name="truck" className="h-4 w-4" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             Gratis ongkir
           </span>

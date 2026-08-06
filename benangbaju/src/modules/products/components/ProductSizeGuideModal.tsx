@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { formatProductDescription } from '@/lib/utils'
 
 interface ProductSizeGuideModalProps {
@@ -41,7 +41,7 @@ export function ProductSizeGuideModal({
               className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors cursor-pointer"
               aria-label="Tutup panduan ukuran"
             >
-              <X className="h-5 w-5" />
+              <HandDrawnIcon name="close" className="h-5 w-5" />
             </button>
 
             <div className="space-y-4">

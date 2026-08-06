@@ -3,7 +3,8 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { Star, CheckCircle, ThumbsUp } from 'lucide-react'
+import { ThumbsUp } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { useReviews } from '@/modules/reviews/hooks/useReviews'
 import { ProductRatingSummary } from '@/modules/products/types'
 import { cn, formatDate } from '@/lib/utils'
@@ -78,11 +79,12 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
   // Star render helper
   const renderStars = (rating: number, className = 'h-3.5 w-3.5') => {
     return Array.from({ length: 5 }).map((_, i) => (
-      <Star
+      <HandDrawnIcon
         key={i}
+        name="star"
         className={cn(
           className,
-          i < Math.round(rating) ? 'fill-brand-gold text-brand-gold' : 'text-neutral-200'
+          i < Math.round(rating) ? 'opacity-100' : 'opacity-30 grayscale'
         )}
       />
     ))
@@ -145,7 +147,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                         <div className="flex">{renderStars(review.rating)}</div>
                         {review.is_verified_purchase && (
                           <span className="flex items-center text-[9px] uppercase tracking-wider text-brand-blue font-sans font-bold">
-                            <CheckCircle className="h-2.5 w-2.5 text-brand-blue mr-1" />
+                            <HandDrawnIcon name="check-circle" className="h-2.5 w-2.5 mr-1" />
                             Terverifikasi
                           </span>
                         )}

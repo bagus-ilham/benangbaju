@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { SmartImage as Image, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Maximize2 } from 'lucide-react'
 import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -288,7 +288,7 @@ export function ProductGallery({
               className="absolute top-4 right-4 md:top-6 md:right-6 p-3 text-white/70 hover:text-white bg-brand-cream/10 hover:bg-brand-cream/20 rounded-full transition-colors z-50 cursor-pointer"
               aria-label="Tutup foto"
             >
-              <X className="w-6 h-6" />
+              <HandDrawnIcon name="close" className="w-6 h-6" />
             </button>
 
             {/* Counter */}
@@ -393,7 +393,7 @@ export function ProductThumbnails({
           className="hidden md:flex absolute left-0 z-10 p-1 bg-brand-cream/80 hover:bg-brand-cream shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <HandDrawnIcon name="chevron-left" className="w-5 h-5" />
         </button>
       )}
 
@@ -431,7 +431,7 @@ export function ProductThumbnails({
           className="hidden md:flex absolute right-0 z-10 p-1 bg-brand-cream/80 hover:bg-brand-cream shadow-md border border-neutral-100 text-neutral-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center"
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-5 h-5" />
+          <HandDrawnIcon name="chevron-right" className="w-5 h-5" />
         </button>
       )}
     </div>

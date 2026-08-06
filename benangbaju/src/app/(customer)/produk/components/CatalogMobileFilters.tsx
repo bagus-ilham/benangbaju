@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import { X } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
 
@@ -44,7 +44,7 @@ export function CatalogMobileFilters({
             onClick={() => setShowMobileFilters(false)}
             className="p-2 -mr-2 text-neutral-400 hover:text-brand-plum transition-colors"
           >
-            <X className="h-5 w-5" />
+            <HandDrawnIcon name="close" className="h-5 w-5" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-8">
