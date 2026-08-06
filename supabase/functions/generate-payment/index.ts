@@ -64,24 +64,24 @@ serve(async (req: Request) => {
     
     // Idempotency: use the header or generate a new random uuid
     const requestId = req.headers.get('Idempotency-Key') || crypto.randomUUID();
-    const requestTimestamp = new Date().toISOString();
+    const requestTimestamp = new Date().toISOString().slice(0, 19) + 'Z';
 
     // Hitung dueDate dalam menit (misal 60 menit)
     const paymentDueDate = 60;
 
     const dokuPayload = {
       order: {
-        amount: order.total_amount,
-        invoice_number: order.order_number,
+        amount: Math.round(Number(order.total_amount)),
+        invoice_number: String(order.order_number),
       },
       payment: {
         payment_due_date: paymentDueDate,
       },
       customer: {
-        id: user.id,
-        name: order.order_shipping?.recipient_name || order.profiles?.name || 'Customer',
-        email: order.profiles?.email || 'customer@example.com',
-        phone: order.order_shipping?.phone || '08123456789',
+        id: String(user.id),
+        name: String(order.order_shipping?.recipient_name || order.profiles?.name || 'Customer'),
+        email: String(order.profiles?.email || 'customer@example.com'),
+        phone: String(order.order_shipping?.phone || '08123456789'),
       }
     };
 
@@ -106,12 +106,18 @@ serve(async (req: Request) => {
       body: JSON.stringify(dokuPayload)
     });
 
-    const dokuData = await dokuResponse.json();
+    const dokuResText = await dokuResponse.text();
+    let dokuData: any = {};
+    try {
+      dokuData = JSON.parse(dokuResText);
+    } catch {
+      dokuData = { raw: dokuResText };
+    }
 
     if (!dokuResponse.ok || !dokuData.response || !dokuData.response.payment || !dokuData.response.payment.url) {
-      console.error('DOKU Error:', dokuData);
-      const errDetail = dokuData?.error?.message || dokuData?.message || (dokuData?.error ? JSON.stringify(dokuData.error) : 'Response pembayaran tidak valid');
-      throw new Error(`DOKU Error: ${errDetail}`);
+      console.error('DOKU Error Status:', dokuResponse.status, dokuData);
+      const errDetail = dokuData?.error?.message || dokuData?.message || (typeof dokuData === 'object' ? JSON.stringify(dokuData) : dokuResText);
+      throw new Error(`DOKU Error (${dokuResponse.status}): ${errDetail}`);
     }
 
     const paymentUrl = dokuData.response.payment.url;
