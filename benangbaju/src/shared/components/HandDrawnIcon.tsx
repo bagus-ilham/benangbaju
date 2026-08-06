@@ -25,6 +25,29 @@ export type HandDrawnIconName =
   | 'arrowDown'
   | 'arrow-up'
   | 'arrowUp'
+  | 'close'
+  | 'cross'
+  | 'plus'
+  | 'minus'
+  | 'trash'
+  | 'truck'
+  | 'check-circle'
+  | 'checkCircle'
+  | 'home'
+  | 'grid'
+  | 'menu'
+  | 'logout'
+  | 'eye'
+  | 'eye-slash'
+  | 'eyeSlash'
+  | 'star'
+  | 'bell'
+  | 'map-pin'
+  | 'mapPin'
+  | 'measuring-tape'
+  | 'measuringTape'
+  | 'kancing'
+  | 'button'
 
 const ICON_FILE_MAP: Record<string, string> = {
   heart: 'icon-heart.svg',
@@ -50,6 +73,29 @@ const ICON_FILE_MAP: Record<string, string> = {
   arrowDown: 'icon-arrow-down.svg',
   'arrow-up': 'icon-arrow-up.svg',
   arrowUp: 'icon-arrow-up.svg',
+  close: 'icon-close.svg',
+  cross: 'icon-close.svg',
+  plus: 'icon-plus.svg',
+  minus: 'icon-minus.svg',
+  trash: 'icon-trash.svg',
+  truck: 'icon-truck.svg',
+  'check-circle': 'icon-check-circle.svg',
+  checkCircle: 'icon-check-circle.svg',
+  home: 'icon-home.svg',
+  grid: 'icon-grid.svg',
+  menu: 'icon-menu.svg',
+  logout: 'icon-logout.svg',
+  eye: 'icon-eye.svg',
+  'eye-slash': 'icon-eye-slash.svg',
+  eyeSlash: 'icon-eye-slash.svg',
+  star: 'icon-star.svg',
+  bell: 'icon-bell.svg',
+  'map-pin': 'icon-map-pin.svg',
+  mapPin: 'icon-map-pin.svg',
+  'measuring-tape': 'icon-measuring-tape.svg',
+  measuringTape: 'icon-measuring-tape.svg',
+  kancing: 'icon-kancing.svg',
+  button: 'icon-kancing.svg',
 }
 
 export interface HandDrawnIconProps extends React.ImgHTMLAttributes<HTMLImageElement> {

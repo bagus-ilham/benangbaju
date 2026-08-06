@@ -162,7 +162,7 @@ serve(async (req: Request) => {
     const { data: existingLog, error: logFetchError } = await supabase
       .from('payment_logs')
       .select('id')
-      .eq('midtrans_order_id', invoiceNumber)
+      .eq('gateway_order_id', invoiceNumber)
       .eq('event_type', transactionStatus)
       .maybeSingle();
 
@@ -277,7 +277,7 @@ serve(async (req: Request) => {
 
     // Log event to payment_logs for idempotency tracking
     await supabase.from('payment_logs').insert({
-      midtrans_order_id: invoiceNumber,
+      gateway_order_id: invoiceNumber,
       event_type: transactionStatus,
       raw_payload: payload,
       payment_id: payment?.id ?? null,
