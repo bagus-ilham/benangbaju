@@ -238,7 +238,7 @@ export function ProductVariantsSection({
                           onClick={() => onRemoveImage(imgIdx)}
                           className="text-neutral-400 hover:text-red-500 p-1"
                         >
-                          <Trash2 size={12} />
+                          <HandDrawnIcon name="trash" className="h-3 w-3" />
                         </button>
                       </div>
                     )
@@ -289,7 +289,7 @@ export function ProductVariantsSection({
                         onClick={() => onRemoveVariantAttr(vIdx, aIdx)}
                         className="text-neutral-400 hover:text-red-500 p-1"
                       >
-                        <Trash2 size={13} />
+                        <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   ))}
