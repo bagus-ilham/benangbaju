@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { UnauthorizedError, ForbiddenError } from './api-errors'
 
 export async function requireAdmin() {
@@ -8,14 +9,29 @@ export async function requireAdmin() {
   } = await supabase.auth.getUser()
   if (!user) throw new UnauthorizedError()
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role, is_active')
-    .eq('id', user.id)
-    .single()
+  let profile: { role?: string; is_active?: boolean } | null = null
+
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const adminClient = createAdminClient()
+    const { data } = await adminClient
+      .from('profiles')
+      .select('role, is_active')
+      .eq('id', user.id)
+      .maybeSingle()
+    profile = data
+  } else {
+    const { data } = await supabase
+      .from('profiles')
+      .select('role, is_active')
+      .eq('id', user.id)
+      .maybeSingle()
+    profile = data
+  }
 
   if (profile?.is_active === false) throw new ForbiddenError('Akun telah dinonaktifkan')
-  if (!['admin', 'staff'].includes(String(profile?.role || '').trim().toLowerCase())) {
+  
+  const userRole = String(profile?.role || '').trim().toLowerCase()
+  if (!['admin', 'staff'].includes(userRole)) {
     throw new ForbiddenError('Admin access required')
   }
 
@@ -29,11 +45,24 @@ export async function requireAuth() {
   } = await supabase.auth.getUser()
   if (!user) throw new UnauthorizedError()
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role, is_active')
-    .eq('id', user.id)
-    .single()
+  let profile: { role?: string; is_active?: boolean } | null = null
+
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const adminClient = createAdminClient()
+    const { data } = await adminClient
+      .from('profiles')
+      .select('role, is_active')
+      .eq('id', user.id)
+      .maybeSingle()
+    profile = data
+  } else {
+    const { data } = await supabase
+      .from('profiles')
+      .select('role, is_active')
+      .eq('id', user.id)
+      .maybeSingle()
+    profile = data
+  }
 
   if (profile?.is_active === false) throw new ForbiddenError('Akun telah dinonaktifkan')
 
