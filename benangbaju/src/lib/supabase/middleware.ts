@@ -147,7 +147,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
       userRole = profile?.role
     }
 
-    if (userRole?.toLowerCase() !== 'admin') {
+    if (!['admin', 'staff'].includes(String(userRole || '').trim().toLowerCase())) {
       const url = request.nextUrl.clone()
       url.pathname = '/'
       return NextResponse.redirect(url)

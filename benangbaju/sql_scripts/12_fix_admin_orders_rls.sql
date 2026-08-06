@@ -1,5 +1,5 @@
 -- Migration script: Fix Admin RLS & Prevent Infinite RLS Recursion on Profiles
--- Safe to run in Supabase SQL Editor
+-- Supports both 'admin' and 'staff' roles for admin panel access
 
 BEGIN;
 
@@ -9,7 +9,7 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.profiles
-        WHERE id = auth.uid() AND LOWER(role) = 'admin'
+        WHERE id = auth.uid() AND LOWER(role) IN ('admin', 'staff')
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
@@ -20,7 +20,7 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.profiles
-        WHERE id = COALESCE(p_user_id, auth.uid()) AND LOWER(role) = 'admin'
+        WHERE id = COALESCE(p_user_id, auth.uid()) AND LOWER(role) IN ('admin', 'staff')
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;

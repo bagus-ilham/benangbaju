@@ -38,7 +38,8 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }): R
               .maybeSingle()
 
             if (profile) {
-              const role = String(profile.role || '').trim().toLowerCase() === 'admin' ? 'admin' : 'customer'
+              const r = String(profile.role || '').trim().toLowerCase()
+              const role = ['admin', 'staff'].includes(r) ? r : 'customer'
               setProfile({ ...profile, role })
             } else {
               setProfile({
