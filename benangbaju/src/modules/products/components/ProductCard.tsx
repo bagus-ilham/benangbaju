@@ -302,8 +302,10 @@ export const ProductCard = React.memo(function ProductCard({
                       className="px-2.5 py-1 bg-brand-cream hover:bg-white text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum border border-amber-200/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] rounded-md flex items-center justify-center cursor-pointer shadow-xs"
                     >
                       {isCurrentAdding ? (
-                        <div
-                          className="w-2.5 h-2.5 border border-brand-plum border-t-transparent animate-spin rounded-full"
+                        <img
+                          src="/svg/logo-jarum-benang.svg"
+                          alt=""
+                          className="w-3 h-3 animate-[spin_3s_linear_infinite] object-contain shrink-0"
                           aria-hidden="true"
                         />
                       ) : (
