@@ -78,7 +78,7 @@ export function EmptyState({
       {/* Decorative Background Pattern */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none select-none bg-center bg-repeat"
-        style={{ backgroundImage: 'url(/svg/pattern-stitch-card.svg)', backgroundSize: '300px' }}
+        style={{ backgroundImage: 'url(/image/svg/decorative/pattern-stitch-card.svg)', backgroundSize: '300px' }}
         aria-hidden="true"
       />
       <div className="relative">
@@ -92,7 +92,7 @@ export function EmptyState({
           ) : useBrandIcon ? (
             <div className="relative w-10 h-10">
               <Image
-                src="/svg/logo-jarum-benang.svg"
+                src="/image/svg/logo/logo-jarum-benang.svg"
                 alt="Gulungan Benang"
                 fill
                 className="object-contain"

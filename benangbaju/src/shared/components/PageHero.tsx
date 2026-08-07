@@ -69,7 +69,7 @@ export function PageHero({
               <div className="flex items-center gap-2">
                 <div className="relative w-5 h-3 opacity-40 shrink-0 pointer-events-none select-none" aria-hidden="true">
                   <Image
-                    src="/svg/accent-cross-stitch-alt.svg"
+                    src="/image/svg/decorative/accent-cross-stitch-alt.svg"
                     alt=""
                     fill
                     unoptimized

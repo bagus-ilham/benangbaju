@@ -88,6 +88,7 @@ export type HandDrawnIconName =
   | 'clipboardList'
   | 'history'
   | 'lock'
+  | 'shopee'
   | 'download'
   | 'shield'
   | 'shield-check'
@@ -180,6 +181,7 @@ const ICON_FILE_MAP: Record<string, string> = {
   clipboardList: 'icon-clipboard-list.svg',
   history: 'icon-history.svg',
   lock: 'icon-lock.svg',
+  shopee: 'icon-shopee.svg',
   download: 'icon-arrow-down.svg',
   shield: 'icon-tshirt.svg',
   'shield-check': 'icon-tshirt.svg',
@@ -207,7 +209,7 @@ export const HandDrawnIcon: React.FC<HandDrawnIconProps> = ({
     return null
   }
 
-  const src = `/svg/${fileName}`
+  const src = `/image/svg/icons/${fileName}`
   const iconAlt = alt || `${name} icon`
 
   const dimensionStyle: React.CSSProperties = {}

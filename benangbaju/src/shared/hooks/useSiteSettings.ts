@@ -17,7 +17,7 @@ export function useSiteSettings() {
   const logoUrl =
     logoSetting?.value?.trim() && logoSetting.value !== '/logo.PNG'
       ? logoSetting.value
-      : '/svg/logo-benangbaju.svg'
+      : '/image/svg/logo/logo-benangbaju.svg'
 
 
   const getSocialUrl = (

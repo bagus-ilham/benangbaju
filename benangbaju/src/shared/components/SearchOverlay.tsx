@@ -251,7 +251,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                     {isSearchingInstant && (
                       <div className="flex items-center space-x-1.5 text-brand-plum">
                         <img
-                          src="/svg/logo-jarum-benang.svg"
+                          src="/image/svg/logo/logo-jarum-benang.svg"
                           alt=""
                           className="h-3.5 w-3.5 animate-[spin_3s_linear_infinite] object-contain shrink-0"
                           aria-hidden="true"

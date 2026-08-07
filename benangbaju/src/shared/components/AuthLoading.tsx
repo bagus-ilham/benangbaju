@@ -25,7 +25,7 @@ export function AuthLoading({
         {/* Rotating Needle & Thread Icon */}
         <div className="relative w-10 h-10 md:w-12 md:h-12">
           <Image
-            src="/svg/logo-jarum-benang.svg"
+            src="/image/svg/logo/logo-jarum-benang.svg"
             alt="Loading..."
             fill
             className="object-contain animate-[spin_4s_linear_infinite]"
@@ -34,7 +34,7 @@ export function AuthLoading({
         {/* Brand Logotype SVG */}
         <div className="relative h-6 md:h-8 w-40 md:w-48 select-none">
           <Image
-            src="/svg/logo-benangbaju.svg"
+            src="/image/svg/logo/logo-benangbaju.svg"
             alt="Benangbaju"
             fill
             className="object-contain"

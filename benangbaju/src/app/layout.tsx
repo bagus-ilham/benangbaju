@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description:
     'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
   icons: {
-    icon: '/svg/logo-favicon.svg',
+    icon: '/image/svg/logo/logo-favicon.svg',
   },
   openGraph: {
     title: 'Benangbaju — Show How Really Well-Dressed You Are',

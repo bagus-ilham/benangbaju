@@ -8,7 +8,7 @@ export default function RootLoading(): React.JSX.Element {
         {/* Rotating Needle & Thread Icon */}
         <div className="relative w-12 h-12 md:w-14 md:h-14">
           <Image
-            src="/svg/logo-jarum-benang.svg"
+            src="/image/svg/logo/logo-jarum-benang.svg"
             alt="Loading..."
             fill
             className="object-contain animate-[spin_4s_linear_infinite]"
@@ -17,7 +17,7 @@ export default function RootLoading(): React.JSX.Element {
         {/* Brand Logotype SVG */}
         <div className="relative h-7 md:h-9 w-44 md:w-56 select-none">
           <Image
-            src="/svg/logo-benangbaju.svg"
+            src="/image/svg/logo/logo-benangbaju.svg"
             alt="Benangbaju"
             fill
             className="object-contain text-brand-black"

@@ -19,7 +19,7 @@ export function Footer(): React.JSX.Element {
             <div className="flex flex-col space-y-4">
               <div className="relative h-9 sm:h-10 md:h-12 w-40 sm:w-44 md:w-48 max-w-full min-w-[96px] animate-fade-in">
                 <Image
-                  src={getProxiedImageUrl(logoUrl || '/svg/logo-benangbaju.svg')}
+                  src={getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')}
                   alt="Benangbaju Logotype"
                   fill
                   unoptimized
@@ -30,7 +30,7 @@ export function Footer(): React.JSX.Element {
               <div className="flex items-start space-x-3">
                 <div className="relative w-8 h-8 shrink-0 opacity-85 mt-0.5">
                   <Image
-                    src="/svg/logo-jarum-benang.svg"
+                    src="/image/svg/logo/logo-jarum-benang.svg"
                     alt="Gulungan Benang"
                     fill
                     unoptimized
@@ -180,7 +180,7 @@ export function Footer(): React.JSX.Element {
           {/* Decorative Stitch Line Divider */}
           <div className="mt-10 pt-4 flex justify-center opacity-40 select-none pointer-events-none" aria-hidden="true">
             <Image
-              src="/svg/divider-stitch-line.svg"
+              src="/image/svg/decorative/divider-stitch-line.svg"
               alt=""
               width={1000}
               height={30}

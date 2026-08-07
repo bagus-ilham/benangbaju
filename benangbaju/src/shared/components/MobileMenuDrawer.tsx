@@ -58,7 +58,7 @@ export function MobileMenuDrawer({
             <div className="flex items-center justify-between px-6 pb-4 border-b border-neutral-200">
               <div className="relative h-8 w-32 min-w-[96px]">
                 <Image
-                  src="/svg/logo-benangbaju.svg"
+                  src="/image/svg/logo/logo-benangbaju.svg"
                   alt="Benangbaju Logo"
                   fill
                   className="object-contain object-left"

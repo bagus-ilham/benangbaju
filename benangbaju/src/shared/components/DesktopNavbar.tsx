@@ -126,7 +126,7 @@ export function DesktopNavbar({
             >
               <div className="relative h-8 sm:h-9 md:h-11 lg:h-12 w-[104px] sm:w-[130px] md:w-[155px] lg:w-[180px] min-w-[96px] max-w-[40vw]">
                 <Image
-                  src={getProxiedImageUrl(logoUrl || '/svg/logo-benangbaju.svg')}
+                  src={getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')}
                   alt="Benangbaju Logotype"
                   fill
                   priority

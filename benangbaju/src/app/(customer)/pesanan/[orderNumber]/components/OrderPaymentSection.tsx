@@ -64,7 +64,7 @@ export function OrderPaymentSection({
             {isVerifyingPayment ? (
               <div className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold uppercase tracking-wider">
                 <img
-                  src="/svg/logo-jarum-benang.svg"
+                  src="/image/svg/logo/logo-jarum-benang.svg"
                   alt=""
                   className="h-4 w-4 animate-[spin_3s_linear_infinite] object-contain shrink-0"
                   aria-hidden="true"

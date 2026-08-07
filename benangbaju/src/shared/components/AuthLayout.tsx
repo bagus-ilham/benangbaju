@@ -16,7 +16,7 @@ export function AuthLayout({ children }: AuthLayoutProps): React.JSX.Element {
         {/* Decorative thread wave accent */}
         <div className="absolute -bottom-10 -left-20 w-[140%] h-64 opacity-15 pointer-events-none select-none" aria-hidden="true">
           <Image
-            src="/svg/accent-thread-wave.svg"
+            src="/image/svg/decorative/accent-thread-wave.svg"
             alt=""
             fill
             unoptimized

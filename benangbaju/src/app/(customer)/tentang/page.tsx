@@ -23,7 +23,7 @@ export default function TentangPage(): React.JSX.Element {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs animate-slide-up">
             <div className="relative w-16 h-16 shrink-0 opacity-90">
               <Image
-                src="/svg/logo-jarum-benang.svg"
+                src="/image/svg/logo/logo-jarum-benang.svg"
                 alt="Gulungan Benang Logo"
                 fill
                 className="object-contain"

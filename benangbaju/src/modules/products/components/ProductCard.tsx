@@ -303,7 +303,7 @@ export const ProductCard = React.memo(function ProductCard({
                     >
                       {isCurrentAdding ? (
                         <img
-                          src="/svg/logo-jarum-benang.svg"
+                          src="/image/svg/logo/logo-jarum-benang.svg"
                           alt=""
                           className="w-3 h-3 animate-[spin_3s_linear_infinite] object-contain shrink-0"
                           aria-hidden="true"

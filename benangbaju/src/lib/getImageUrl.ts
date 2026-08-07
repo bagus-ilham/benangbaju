@@ -29,7 +29,7 @@ export function getImageFallbackChain(originalUrl: string | null | undefined): s
 
   const trimmed = originalUrl.trim()
 
-  // Local static asset (e.g. /svg/logo-benangbaju.svg)
+  // Local static asset (e.g. /image/svg/logo/logo-benangbaju.svg)
   if (trimmed.startsWith('/')) {
     return [trimmed, DEFAULT_PLACEHOLDER]
   }

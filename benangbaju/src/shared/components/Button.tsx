@@ -59,7 +59,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <div className="flex items-center justify-center space-x-2">
             <img
-              src="/svg/logo-jarum-benang.svg"
+              src="/image/svg/logo/logo-jarum-benang.svg"
               alt=""
               className="animate-[spin_3s_linear_infinite] -ml-1 mr-2 h-4 w-4 object-contain shrink-0"
               aria-hidden="true"
