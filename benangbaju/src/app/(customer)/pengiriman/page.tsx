@@ -54,7 +54,7 @@ export default function PengirimanPage(): React.JSX.Element {
 
             <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
-                <HandDrawnIcon name="truck" className="h-4 w-4" />
+                <HandDrawnIcon name="hanger" className="h-4 w-4" />
               </div>
               <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Jadwal Kirim
