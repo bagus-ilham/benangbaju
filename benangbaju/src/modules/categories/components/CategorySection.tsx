@@ -107,6 +107,18 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
             ))}
           </div>
         </motion.div>
+
+        {/* Decorative Stitch Line Divider */}
+        <div className="mt-12 pt-2 flex justify-center opacity-30 select-none pointer-events-none" aria-hidden="true">
+          <Image
+            src="/image/svg/decorative/divider-stitch-line.svg"
+            alt=""
+            width={800}
+            height={24}
+            className="w-full max-w-3xl h-auto object-contain"
+            unoptimized
+          />
+        </div>
       </PageContainer>
     </section>
   )

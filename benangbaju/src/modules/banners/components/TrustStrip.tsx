@@ -34,8 +34,14 @@ const TRUST_ITEMS: Array<{
 
 export function TrustStrip(): React.JSX.Element {
   return (
-    <section className="bg-brand-gold border-b border-brand-gold/80 py-3.5 md:py-6 overflow-hidden text-brand-plum">
-      <PageContainer>
+    <section className="relative bg-brand-gold border-b border-brand-gold/80 py-3.5 md:py-6 overflow-hidden text-brand-plum">
+      {/* Decorative Background Pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none select-none bg-center bg-repeat"
+        style={{ backgroundImage: 'url(/image/svg/decorative/pattern-stitch-card.svg)', backgroundSize: '240px' }}
+        aria-hidden="true"
+      />
+      <PageContainer className="relative z-10">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
