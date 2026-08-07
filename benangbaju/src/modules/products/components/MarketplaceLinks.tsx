@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { HandDrawnIcon } from '@/shared/components'
+import { HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
 import { ProductMarketplaceLink } from '@/modules/products/types'
 
 interface MarketplaceLinksProps {
@@ -27,6 +27,13 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
     }
   }
 
+  const getPlatformIconName = (platform: string): HandDrawnIconName => {
+    const p = platform.toLowerCase()
+    if (p.includes('shopee')) return 'shopee'
+    if (p.includes('tiktok')) return 'tiktok'
+    return 'shopping-bag'
+  }
+
   return (
     <div className="space-y-3 py-4">
       <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400 block">
@@ -41,7 +48,7 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
             rel="noopener noreferrer"
             className="flex items-center justify-center space-x-2 px-4 py-3 border border-neutral-200 hover:border-brand-black bg-brand-cream text-xs font-heading font-medium tracking-wide uppercase transition-all duration-200 text-brand-black rounded-xl hover:-translate-y-0.5 hover:shadow-sm"
           >
-            <HandDrawnIcon name="shopping-bag" className="h-3.5 w-3.5" />
+            <HandDrawnIcon name={getPlatformIconName(link.platform)} className="h-4 w-4" />
             <span>{link.label || getPlatformLabel(link.platform)}</span>
           </a>
         ))}
