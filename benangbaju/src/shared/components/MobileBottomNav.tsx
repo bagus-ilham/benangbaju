@@ -9,7 +9,7 @@ import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 
 interface MobileBottomNavProps {
-  onOpenSearch: () => void
+  onOpenSearch?: () => void
 }
 
 export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.JSX.Element {
@@ -33,10 +33,10 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
       isActive: pathname === '/',
     },
     {
-      name: 'Cari',
-      onClick: onOpenSearch,
-      handDrawnName: 'search',
-      isActive: false,
+      name: 'Custom Size',
+      href: '/produk/customize-size',
+      handDrawnName: 'measuring-tape',
+      isActive: pathname === '/produk/customize-size',
     },
     {
       name: 'Katalog',
