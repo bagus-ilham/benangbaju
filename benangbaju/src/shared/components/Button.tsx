@@ -40,7 +40,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               variant === 'secondary',
             'bg-brand-blue text-brand-plum hover:bg-[#82a4ab] border border-transparent shadow-[0_4px_14px_rgba(148,178,185,0.3)] hover:shadow-[0_6px_20px_rgba(148,178,185,0.4)]':
               variant === 'accent',
-            'bg-brand-plum text-brand-cream hover:bg-[#201b2e] border border-transparent shadow-[0_4px_14px_rgba(45,38,64,0.15)] hover:shadow-[0_6px_20px_rgba(45,38,64,0.25)]':
+            'bg-brand-cream text-brand-plum hover:bg-[#eae6df] border border-brand-plum/40 hover:border-brand-plum shadow-sm hover:shadow-md':
               variant === 'outline',
             'bg-transparent text-brand-plum hover:bg-brand-cream/80 border border-transparent':
               variant === 'ghost',
