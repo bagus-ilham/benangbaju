@@ -32,7 +32,7 @@ export default async function FlashSalePage(): Promise<React.JSX.Element> {
       ) : (
         <PageContainer>
           <EmptyState
-            icon="Percent"
+            handDrawnIcon="sparkles"
             title="Tidak Ada Flash Sale Aktif"
             description="Saat ini sedang tidak ada promo flash sale yang berlangsung. Nantikan promo menarik berikutnya dari kami!"
             action={{ label: 'Belanja Produk', href: '/produk' }}

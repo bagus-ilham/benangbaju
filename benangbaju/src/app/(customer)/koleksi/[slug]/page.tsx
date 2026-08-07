@@ -113,7 +113,7 @@ export default async function CollectionDetailPage({
       <PageContainer className="py-12 md:py-16 page-content">
         {products.length === 0 ? (
           <EmptyState
-            icon="PackageSearch"
+            handDrawnIcon="package"
             title="Belum Ada Produk"
             description="Belum ada produk dalam koleksi ini. Coba jelajahi koleksi lain."
             action={{ label: 'Lihat Semua Koleksi', href: '/koleksi' }}
