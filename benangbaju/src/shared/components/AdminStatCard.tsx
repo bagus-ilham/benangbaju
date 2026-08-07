@@ -1,5 +1,4 @@
 import React from 'react'
-import { LucideIcon } from 'lucide-react'
 import { HandDrawnIcon, type HandDrawnIconName } from '@/shared/components/HandDrawnIcon'
 import { cn } from '@/lib/utils'
 
@@ -7,7 +6,7 @@ interface AdminStatCardProps {
   label: string
   value: string | number
   hint?: string
-  icon?: LucideIcon | React.ComponentType<{ className?: string; size?: number }>
+  icon?: React.ComponentType<{ className?: string; size?: number }>
   handDrawnIcon?: HandDrawnIconName
   className?: string
   accent?: 'default' | 'gold' | 'success' | 'warning'

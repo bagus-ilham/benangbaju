@@ -4,18 +4,9 @@ import React from 'react'
 import { SmartLink as Link, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { LucideIcon, Percent, PackageSearch, Heart, ClipboardList, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { EASE_PREMIUM } from '@/lib/motion'
-
-const iconMap = {
-  Percent,
-  PackageSearch,
-  Heart,
-  ClipboardList,
-  ShoppingBag,
-} as const
 
 interface EmptyStateAction {
   label: string
@@ -25,7 +16,7 @@ interface EmptyStateAction {
 }
 
 interface EmptyStateProps {
-  icon?: keyof typeof iconMap | LucideIcon
+  icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>
   handDrawnIcon?: HandDrawnIconName
   useBrandIcon?: boolean
   title: string
@@ -36,7 +27,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon,
+  icon: CustomIcon,
   handDrawnIcon,
   useBrandIcon = true,
   title,
@@ -45,8 +36,6 @@ export function EmptyState({
   secondaryAction,
   className,
 }: EmptyStateProps): React.JSX.Element {
-  const Icon = icon ? (typeof icon === 'string' ? iconMap[icon] || PackageSearch : icon) : PackageSearch
-
   const renderAction = (act: EmptyStateAction, key: string) => {
     const button = (
       <Button variant={act.variant ?? 'primary'} size="md" onClick={act.onClick}>
@@ -89,6 +78,8 @@ export function EmptyState({
         <div className="relative p-4 bg-brand-cream border border-neutral-200/80 animate-gentle-float rounded-2xl shadow-xs">
           {handDrawnIcon ? (
             <HandDrawnIcon name={handDrawnIcon} className="h-8 w-8" />
+          ) : CustomIcon ? (
+            <CustomIcon className="h-8 w-8 text-brand-plum" strokeWidth={1.5} />
           ) : useBrandIcon ? (
             <div className="relative w-10 h-10">
               <Image
@@ -99,7 +90,7 @@ export function EmptyState({
               />
             </div>
           ) : (
-            <Icon className="h-8 w-8 text-brand-plum" strokeWidth={1.5} />
+            <HandDrawnIcon name="package" className="h-8 w-8 text-brand-plum" />
           )}
         </div>
       </div>

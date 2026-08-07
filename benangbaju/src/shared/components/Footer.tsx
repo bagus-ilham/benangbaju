@@ -168,9 +168,7 @@ export function Footer(): React.JSX.Element {
                     className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
                     aria-label="Shopee"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.2 7h-2.12c-.52-2.76-2.58-4.8-5.08-4.8s-4.56 2.04-5.08 4.8H4.8c-.99 0-1.8.81-1.8 1.8v10.4c0 .99.81 1.8 1.8 1.8h14.4c.99 0 1.8-.81 1.8-1.8V8.8c0-.99-.81-1.8-1.8-1.8zm-7.2-3c1.47 0 2.7 1.25 3.08 3H8.92c.38-1.75 1.61-3 3.08-3zm7.2 15.2H4.8V8.8h14.4v10.4zm-10.2-7.2c0-.99.81-1.8 1.8-1.8s1.8.81 1.8 1.8v1.2c0 .99-.81 1.8-1.8 1.8s-1.8-.81-1.8-1.8v-1.2z" />
-                    </svg>
+                    <HandDrawnIcon name="shopee" className="w-4 h-4" />
                   </a>
                 )}
               </div>
