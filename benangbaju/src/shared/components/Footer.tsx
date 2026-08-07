@@ -20,6 +20,7 @@ export function Footer(): React.JSX.Element {
               <div className="relative h-9 sm:h-10 md:h-12 w-40 sm:w-44 md:w-48 max-w-full min-w-[96px] animate-fade-in">
                 <Image
                   src={getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')}
+                  fallbackSrc="/image/svg/logo/logo-benangbaju.svg"
                   alt="Benangbaju Logotype"
                   fill
                   unoptimized

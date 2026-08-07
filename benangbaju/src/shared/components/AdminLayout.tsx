@@ -2,7 +2,7 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, SmartImage as Image } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -14,6 +14,7 @@ import { ErrorBoundary } from '@/shared/components/ErrorBoundary'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { HandDrawnIcon, type HandDrawnIconName } from '@/shared/components/HandDrawnIcon'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -41,12 +42,15 @@ const menuItems: Array<{
 ]
 
 const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?: boolean }) => {
+  const activeLogoUrl = getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')
+
   if (isMobile) {
-    return logoUrl ? (
+    return (
       <div className="flex items-center space-x-2">
         <div className="relative h-6 w-20">
-          <NextImage
-            src={logoUrl}
+          <Image
+            src={activeLogoUrl}
+            fallbackSrc="/image/svg/logo/logo-benangbaju.svg"
             alt="Logo"
             fill
             sizes="80px"
@@ -57,18 +61,15 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
           CMS
         </span>
       </div>
-    ) : (
-      <span className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase">
-        BENANGBAJU <span className="text-brand-accent">CMS</span>
-      </span>
     )
   }
 
-  return logoUrl ? (
+  return (
     <Link href="/admin" className="flex items-center space-x-2">
       <div className="relative h-8 w-24">
-        <NextImage
-          src={logoUrl}
+        <Image
+          src={activeLogoUrl}
+          fallbackSrc="/image/svg/logo/logo-benangbaju.svg"
           alt="Logo"
           fill
           sizes="96px"
@@ -78,13 +79,6 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
       <span className="text-brand-accent font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-accent-muted/10 px-1.5 py-0.5 rounded-xs">
         CMS
       </span>
-    </Link>
-  ) : (
-    <Link
-      href="/admin"
-      className="font-heading text-xs font-bold tracking-[0.15em] text-brand-black uppercase"
-    >
-      BENANGBAJU <span className="text-brand-accent font-normal">CMS</span>
     </Link>
   )
 }

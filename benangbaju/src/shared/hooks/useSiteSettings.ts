@@ -14,9 +14,10 @@ export function useSiteSettings() {
   const getSetting = (keys: string[]) => settings.find((s) => keys.includes(s.key))
 
   const logoSetting = getSetting(['store_logo_url'])
+  const rawLogo = logoSetting?.value?.trim()
   const logoUrl =
-    logoSetting?.value?.trim() && logoSetting.value !== '/logo.PNG'
-      ? logoSetting.value
+    rawLogo && rawLogo !== '/logo.PNG' && rawLogo !== '/images/placeholder.jpg'
+      ? rawLogo
       : '/image/svg/logo/logo-benangbaju.svg'
 
 
