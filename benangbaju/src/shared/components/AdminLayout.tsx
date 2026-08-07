@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState, useRef } from 'react'
@@ -5,21 +6,6 @@ import { SmartLink as Link } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import NextImage from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  LayoutDashboard,
-  Package,
-  FolderTree,
-  Image,
-  Ticket,
-  Percent,
-  MessageSquare,
-  Settings,
-  Users,
-  ExternalLink,
-  Globe,
-  Layers,
-  TrendingUp,
-} from 'lucide-react'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
@@ -36,23 +22,22 @@ interface AdminLayoutProps {
 const menuItems: Array<{
   name: string
   href: string
-  icon?: React.ElementType
-  handDrawnName?: HandDrawnIconName
+  handDrawnName: HandDrawnIconName
 }> = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Analitik Penjualan', href: '/admin/analytics', icon: TrendingUp },
+  { name: 'Dashboard', href: '/admin', handDrawnName: 'home' },
+  { name: 'Analitik Penjualan', href: '/admin/analytics', handDrawnName: 'clipboard-list' },
   { name: 'Pesanan', href: '/admin/pesanan', handDrawnName: 'shopping-bag' },
-  { name: 'Kategori', href: '/admin/kategori', icon: FolderTree },
-  { name: 'Koleksi', href: '/admin/koleksi', icon: Layers },
+  { name: 'Kategori', href: '/admin/kategori', handDrawnName: 'grid' },
+  { name: 'Koleksi', href: '/admin/koleksi', handDrawnName: 'grid' },
   { name: 'Produk', href: '/admin/produk', handDrawnName: 'kancing' },
-  { name: 'Voucher', href: '/admin/voucher', icon: Ticket },
-  { name: 'Flash Sale', href: '/admin/flash-sale', icon: Percent },
-  { name: 'Banner Promo', href: '/admin/banner', icon: Image },
-  { name: 'Ulasan Produk', href: '/admin/review', icon: MessageSquare },
-  { name: 'Pelanggan', href: '/admin/pelanggan', icon: Users },
+  { name: 'Voucher', href: '/admin/voucher', handDrawnName: 'tag' },
+  { name: 'Flash Sale', href: '/admin/flash-sale', handDrawnName: 'tag' },
+  { name: 'Banner Promo', href: '/admin/banner', handDrawnName: 'image' },
+  { name: 'Ulasan Produk', href: '/admin/review', handDrawnName: 'message' },
+  { name: 'Pelanggan', href: '/admin/pelanggan', handDrawnName: 'user' },
   { name: 'Pengiriman', href: '/admin/pengiriman', handDrawnName: 'truck' },
-  { name: 'Konten & SEO', href: '/admin/cms', icon: Globe },
-  { name: 'Pengaturan Toko', href: '/admin/pengaturan', icon: Settings },
+  { name: 'Konten & SEO', href: '/admin/cms', handDrawnName: 'globe' },
+  { name: 'Pengaturan Toko', href: '/admin/pengaturan', handDrawnName: 'kancing' },
 ]
 
 const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?: boolean }) => {
@@ -118,7 +103,7 @@ const SidebarFooter = ({
         onClick={onNavigate}
         className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-black transition-colors"
       >
-        <ExternalLink className="mr-3 h-4 w-4 text-neutral-400" aria-hidden="true" />
+        <HandDrawnIcon name="external-link" className="mr-3 h-4 w-4" aria-hidden="true" />
         Ke Halaman Toko
       </Link>
       <button
@@ -166,7 +151,6 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
   })
 
   const renderNavLink = (item: (typeof menuItems)[0], onNavigate?: () => void) => {
-    const IconComponent = item.icon
     const isActive = pathname === item.href
     return (
       <Link
@@ -180,20 +164,10 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
             : 'text-neutral-600 hover:bg-neutral-100 hover:text-brand-plum'
         )}
       >
-        {item.handDrawnName ? (
-          <HandDrawnIcon
-            name={item.handDrawnName}
-            className="mr-3 h-4 w-4 flex-shrink-0"
-          />
-        ) : IconComponent ? (
-          <IconComponent
-            className={cn(
-              'mr-3 h-4 w-4 flex-shrink-0 transition-colors',
-              isActive ? 'text-brand-plum' : 'text-neutral-400 group-hover:text-brand-plum'
-            )}
-            aria-hidden="true"
-          />
-        ) : null}
+        <HandDrawnIcon
+          name={item.handDrawnName}
+          className="mr-3 h-4 w-4 flex-shrink-0"
+        />
         {item.name}
         {isActive && (
           <span className="ml-auto w-1 h-1 bg-brand-accent-light rounded-full" aria-hidden="true" />

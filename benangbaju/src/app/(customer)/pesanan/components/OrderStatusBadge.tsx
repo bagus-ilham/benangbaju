@@ -1,5 +1,4 @@
 import React from 'react'
-import { Clock, Package, XCircle } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components'
 
 interface OrderStatusBadgeProps {
@@ -11,13 +10,13 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps): React.JSX.E
     case 'pending_payment':
       return (
         <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-amber-800 bg-amber-50 border border-amber-200 animate-pulse-glow">
-          <Clock size={12} className="mr-1" /> Menunggu Pembayaran
+          <HandDrawnIcon name="clock" className="h-3 w-3 mr-1" /> Menunggu Pembayaran
         </span>
       )
     case 'processing':
       return (
         <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-blue-800 bg-blue-50 border border-blue-200">
-          <Package size={12} className="mr-1" /> Diproses
+          <HandDrawnIcon name="package" className="h-3 w-3 mr-1" /> Diproses
         </span>
       )
     case 'shipped':
@@ -35,7 +34,7 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps): React.JSX.E
     case 'cancelled':
       return (
         <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-neutral-500 bg-neutral-50 border border-neutral-200">
-          <XCircle size={12} className="mr-1" /> Dibatalkan
+          <HandDrawnIcon name="close" className="h-3 w-3 mr-1" /> Dibatalkan
         </span>
       )
     default:

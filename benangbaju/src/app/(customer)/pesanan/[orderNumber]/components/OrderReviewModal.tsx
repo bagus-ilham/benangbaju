@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import React, { useState } from 'react'
 import { Modal, Button, Input, Textarea, Checkbox, HandDrawnIcon } from '@/shared/components'
-import { Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -231,7 +230,7 @@ export function OrderReviewModal({
 
               {reviewFiles.length < 2 && (
                 <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-accent hover:border-brand-accent cursor-pointer transition-colors">
-                  <ImageIcon size={20} className="mb-1" />
+                  <HandDrawnIcon name="image" className="h-5 w-5 mb-1" />
                   <span className="text-[9px] uppercase tracking-wider font-semibold">Tambah</span>
                   <input
                     type="file"

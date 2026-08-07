@@ -17,11 +17,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/shared/components'
-import {
-  Edit2,
-  Copy,
-  MoreHorizontal,
-} from 'lucide-react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -164,7 +159,7 @@ export default function AdminProductListPage(): React.JSX.Element {
                   className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                   title="Opsi"
                 >
-                  <MoreHorizontal size={14} />
+                  <HandDrawnIcon name="more-horizontal" className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="right">
@@ -175,12 +170,12 @@ export default function AdminProductListPage(): React.JSX.Element {
                 </Link>
                 <Link href={`/admin/produk/tambah?duplicate=${p.id}`}>
                   <DropdownMenuItem>
-                    <Copy size={14} className="text-neutral-500" /> Duplikat
+                    <HandDrawnIcon name="copy" className="h-3.5 w-3.5 mr-1" /> Duplikat
                   </DropdownMenuItem>
                 </Link>
                 <Link href={`/admin/produk/${p.id}`}>
                   <DropdownMenuItem>
-                    <Edit2 size={14} className="text-neutral-500" /> Edit
+                    <HandDrawnIcon name="edit" className="h-3.5 w-3.5 mr-1" /> Edit
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem destructive onClick={() => handleDeleteProduct(p.id)}>

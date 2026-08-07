@@ -2,7 +2,7 @@
 
 import React, { useId } from 'react'
 
-import { Check } from 'lucide-react'
+import { HandDrawnIcon } from './HandDrawnIcon'
 import { cn } from '@/lib/utils'
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -42,9 +42,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             )}
           >
             {/* Custom Check Icon */}
-            <Check
+            <HandDrawnIcon
+              name="check"
               className="w-3.5 h-3.5 text-white scale-0 opacity-0 transition-all duration-300 peer-checked:scale-100 peer-checked:opacity-100 ease-[0.175,0.885,0.32,1.275]"
-              strokeWidth={3.5}
             />
           </div>
 

@@ -2,8 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Edit, Trash2, FileCode } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatDate } from '@/lib/utils/format'
 import type { LandingPage } from '@/modules/cms/types'
 
@@ -72,7 +71,7 @@ export function AdminLandingPagesTable({
 
             <div className="pt-2">
               <span className="text-[9px] uppercase font-bold text-neutral-400 tracking-wider flex items-center">
-                <FileCode size={11} className="mr-1" /> JSON Content Keys:
+                <HandDrawnIcon name="globe" className="h-3 w-3 mr-1 inline" /> JSON Content Keys:
               </span>
               <div className="flex flex-wrap gap-1 mt-1">
                 {typeof page.content === 'object' &&
@@ -100,14 +99,14 @@ export function AdminLandingPagesTable({
                 variant="outline"
                 className="text-[10px] py-1.5 px-3 font-bold uppercase border-neutral-200"
               >
-                <Edit size={11} className="mr-1" /> Edit
+                <HandDrawnIcon name="edit" className="h-3 w-3 mr-1" /> Edit
               </Button>
               <Button
                 onClick={() => onDelete(page.id, page.title)}
                 variant="outline"
                 className="text-[10px] py-1.5 px-3 font-bold uppercase border-red-200 text-red-500 hover:bg-red-50"
               >
-                <Trash2 size={11} className="mr-1" /> Hapus
+                <HandDrawnIcon name="trash" className="h-3 w-3 mr-1" /> Hapus
               </Button>
             </div>
           </div>
@@ -116,3 +115,4 @@ export function AdminLandingPagesTable({
     </div>
   )
 }
+

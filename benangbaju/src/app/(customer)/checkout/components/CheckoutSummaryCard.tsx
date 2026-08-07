@@ -3,7 +3,6 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Tag, ShieldCheck, Lock } from 'lucide-react'
 import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
@@ -117,7 +116,7 @@ export function CheckoutSummaryCard({
               className="flex items-center justify-between bg-brand-accent-muted/10 border border-brand-accent px-4 py-2.5 rounded-xl text-xs"
             >
               <div className="flex items-center space-x-2 text-brand-accent font-heading font-medium uppercase tracking-wider text-[10px]">
-                <Tag size={12} className="text-neutral-500" />
+                <HandDrawnIcon name="tag" className="h-3 w-3" />
                 <span>{appliedVoucher.code} diterapkan</span>
               </div>
               <motion.button
@@ -239,11 +238,11 @@ export function CheckoutSummaryCard({
       {/* Mini Trust Badges */}
       <div className="flex items-center justify-center space-x-6 mt-6">
         <div className="flex items-center space-x-1.5 text-neutral-400">
-          <Lock size={12} />
+          <HandDrawnIcon name="lock" className="h-3 w-3" />
           <span className="text-[9px] font-sans">Pembayaran Aman</span>
         </div>
         <div className="flex items-center space-x-1.5 text-neutral-400">
-          <ShieldCheck size={12} />
+          <HandDrawnIcon name="clothes" className="h-3 w-3" />
           <span className="text-[9px] font-sans">100% Original</span>
         </div>
       </div>

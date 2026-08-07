@@ -8,9 +8,7 @@ import {
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from '@/modules/notifications/hooks/useNotifications'
-import { AuthLoading, PageContainer, PageHero, HandDrawnIcon } from '@/shared/components'
-import { Bell, ClipboardList, MapPin, LogOut, MailOpen, BellOff } from 'lucide-react'
-import { SmartLink as Link } from '@/shared/components'
+import { AuthLoading, PageContainer, PageHero, HandDrawnIcon, SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -94,7 +92,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
               >
-                <ClipboardList size={14} className="text-brand-blue" />
+                <HandDrawnIcon name="clipboard-list" className="w-3.5 h-3.5" />
                 <span>Pesanan Saya</span>
               </motion.div>
             </Link>
@@ -105,7 +103,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
               >
-                <MapPin size={14} className="text-brand-blue" />
+                <HandDrawnIcon name="map-pin" className="w-3.5 h-3.5" />
                 <span>Daftar Alamat</span>
               </motion.div>
             </Link>
@@ -122,7 +120,7 @@ export default function NotifikasiPage(): React.JSX.Element {
             </Link>
 
             <div className="flex items-center space-x-3 px-4 py-3 bg-brand-gold border border-brand-gold border-l-4 border-l-brand-blue text-brand-plum font-sans font-bold tracking-wide uppercase rounded-xl text-xs shadow-xs">
-              <Bell size={14} className="text-brand-plum" />
+              <HandDrawnIcon name="bell" className="w-3.5 h-3.5" />
               <span>Notifikasi Saya</span>
             </div>
 
@@ -136,7 +134,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               onClick={handleSignOut}
               className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-brand-cream cursor-pointer shadow-xs"
             >
-              <LogOut size={14} />
+              <HandDrawnIcon name="logout" className="w-3.5 h-3.5" />
               <span>Keluar dari Akun</span>
             </motion.button>
           </div>
@@ -146,7 +144,7 @@ export default function NotifikasiPage(): React.JSX.Element {
             <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-gold to-brand-blue" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-neutral-100">
               <h2 className="text-lg font-sans font-bold tracking-tight text-brand-plum flex items-center">
-                <Bell size={18} className="mr-2 text-brand-blue" /> Pemberitahuan Anda
+                <HandDrawnIcon name="bell" className="h-4 w-4 mr-2" /> Pemberitahuan Anda
               </h2>
               {hasUnread && (
                 <button
@@ -154,7 +152,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                   disabled={markAllReadMutation.isPending}
                   className="inline-flex items-center text-xs text-neutral-600 hover:text-neutral-950 hover:underline font-semibold"
                 >
-                  <MailOpen size={13} className="mr-1.5" /> Tandai Semua Dibaca
+                  <HandDrawnIcon name="mail" className="h-3.5 w-3.5 mr-1.5" /> Tandai Semua Dibaca
                 </button>
               )}
             </div>
@@ -200,7 +198,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               </div>
             ) : (
               <div className="text-center py-12 border border-dashed border-neutral-200">
-                <BellOff size={28} className="mx-auto text-neutral-300 mb-3" />
+                <HandDrawnIcon name="bell" className="h-7 w-7 mx-auto opacity-40 mb-3" />
                 <p className="text-sm text-neutral-500 font-medium">
                   Belum ada pemberitahuan baru.
                 </p>

@@ -5,10 +5,7 @@ import { useAdminAnalytics } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
 import dynamic from 'next/dynamic'
 import { formatIDR } from '@/lib/utils/format'
-import { HandDrawnIcon } from '@/shared/components'
-import { TrendingUp, Ticket, AlertCircle, ShoppingCart } from 'lucide-react'
-
-import { Button } from '@/shared/components'
+import { HandDrawnIcon, Button } from '@/shared/components'
 
 const RevenueTrendChart = dynamic(
   () => import('./components/AnalyticsCharts').then((m) => m.RevenueTrendChart),
@@ -76,7 +73,7 @@ export default function AdminAnalyticsPage() {
   if (isError || !analytics) {
     return (
       <div className="text-center py-12">
-        <AlertCircle size={24} className="mx-auto text-red-500 mb-2" />
+        <HandDrawnIcon name="alert-triangle" className="h-6 w-6 mx-auto text-red-500 mb-2" />
         <p className="text-red-500 text-sm">Gagal memuat data analitik.</p>
       </div>
     )
@@ -112,7 +109,7 @@ export default function AdminAnalyticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
-            <TrendingUp size={16} className="mr-2" />
+            <HandDrawnIcon name="clipboard-list" className="w-4 h-4 mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pendapatan</h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">{formatIDR(analytics.totalRevenue)}</p>
@@ -130,7 +127,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
-            <ShoppingCart size={16} className="mr-2" />
+            <HandDrawnIcon name="shopping-bag" className="w-4 h-4 mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">
               Keranjang Ditinggalkan
             </h3>
@@ -141,7 +138,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
           <div className="flex items-center text-neutral-500 mb-2">
-            <Ticket size={16} className="mr-2" />
+            <HandDrawnIcon name="tag" className="w-4 h-4 mr-2" />
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Voucher Digunakan</h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">

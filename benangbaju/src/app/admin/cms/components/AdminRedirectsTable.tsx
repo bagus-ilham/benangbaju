@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Edit, Trash2 } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import type { RedirectRule } from '@/modules/cms/types'
 
 interface AdminRedirectsTableProps {
@@ -73,13 +73,13 @@ export function AdminRedirectsTable({
                   onClick={() => onEdit(rule)}
                   className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200"
                 >
-                  <Edit size={12} />
+                  <HandDrawnIcon name="edit" className="h-3 w-3" />
                 </button>
                 <button
                   onClick={() => onDelete(rule.id, rule.from_path)}
                   className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50"
                 >
-                  <Trash2 size={12} />
+                  <HandDrawnIcon name="trash" className="h-3 w-3" />
                 </button>
               </td>
             </motion.tr>

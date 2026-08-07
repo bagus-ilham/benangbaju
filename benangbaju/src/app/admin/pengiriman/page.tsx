@@ -13,7 +13,6 @@ import {
 } from '@/app/admin/hooks/useAdmin'
 import type { ShippingZone, ShippingRate } from '@/modules/shipping/types'
 import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
-import { RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -236,11 +235,14 @@ export default function AdminShippingPage(): React.JSX.Element {
         subtitle="Kelola zona pengiriman custom beserta tarif per kg untuk setiap ekspedisi."
       >
         <Button
-          onClick={handleRefresh}
+          onClick={() => {
+            refetchZones()
+            refetchRates()
+          }}
           variant="outline"
           className="text-xs font-semibold py-2 px-3 border-neutral-200"
         >
-          <RefreshCw size={12} className="mr-1.5" /> Segarkan
+          <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Segarkan
         </Button>
       </AdminPageHeader>
 

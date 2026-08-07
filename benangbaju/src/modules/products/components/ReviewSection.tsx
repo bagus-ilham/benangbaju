@@ -3,7 +3,6 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { ThumbsUp } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components'
 import { useReviews } from '@/modules/reviews/hooks/useReviews'
 import { ProductRatingSummary } from '@/modules/products/types'
@@ -53,7 +52,7 @@ function ReviewHelpfulButton({ reviewId, initialCount }: ReviewHelpfulButtonProp
           : 'text-neutral-400 hover:text-brand-plum cursor-pointer'
       )}
     >
-      <ThumbsUp className={cn('h-3 w-3', hasVoted && 'fill-brand-plum text-brand-plum')} />
+      <HandDrawnIcon name="thumbs-up" className="h-3 w-3" />
       <span>
         {hasVoted ? 'Terbantu' : 'Membantu'} ({count})
       </span>

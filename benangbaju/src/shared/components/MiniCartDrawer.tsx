@@ -4,7 +4,6 @@ import React, { useRef } from 'react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR } from '@/lib/utils'
@@ -88,7 +87,7 @@ export function MiniCartDrawer(): React.JSX.Element {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-neutral-100 mt-[3px]">
               <div className="flex items-center space-x-2">
-                <ShoppingBag className="h-4 w-4 text-brand-gold" aria-hidden="true" />
+                <HandDrawnIcon name="shopping-bag" className="h-4 w-4" aria-hidden="true" />
                 <span className="font-sans text-sm font-bold tracking-[0.15em] text-brand-plum uppercase">
                   KERANJANG ({totalQuantity})
                 </span>
@@ -257,7 +256,7 @@ export function MiniCartDrawer(): React.JSX.Element {
               {items.length > 0 && recProducts.length > 0 && (
                 <div className="px-6 py-3 border-t border-neutral-100 bg-brand-cream/40 space-y-2">
                   <div className="flex items-center space-x-1.5 text-brand-plum">
-                    <Sparkles className="h-3 w-3 text-brand-plum" />
+                    <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
                     <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
                       Lengkapi Penampilan Anda
                     </span>

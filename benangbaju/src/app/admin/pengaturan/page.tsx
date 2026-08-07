@@ -28,7 +28,7 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
 } from '@/shared/components'
-import { Settings, ClipboardList } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { ActivityLogsTable } from './components/ActivityLogsTable'
 import { SettingsForm } from './components/SettingsForm'
@@ -221,7 +221,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
               : 'border-transparent text-neutral-400 hover:text-neutral-600'
           }`}
         >
-          <Settings size={14} className="mr-1.5" /> Konfigurasi Toko
+          <HandDrawnIcon name="kancing" className="h-3.5 w-3.5 mr-1.5" /> Konfigurasi Toko
         </button>
         <button
           onClick={() => setActiveSubTab('logs')}
@@ -231,7 +231,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
               : 'border-transparent text-neutral-400 hover:text-neutral-600'
           }`}
         >
-          <ClipboardList size={14} className="mr-1.5" /> Log Aktivitas Audit
+          <HandDrawnIcon name="clipboard-list" className="h-3.5 w-3.5 mr-1.5" /> Log Aktivitas Audit
         </button>
       </div>
 

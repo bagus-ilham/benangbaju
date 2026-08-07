@@ -8,8 +8,7 @@ import {
   useAdminDeleteCollection,
 } from '@/app/admin/hooks/useAdmin'
 import type { AdminCollectionItem } from '@/modules/collections/types'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Plus } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
@@ -218,7 +217,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
           onClick={handleOpenAdd}
           className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
         >
-          <Plus size={14} className="mr-1.5" /> Tambah Koleksi
+          <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Koleksi
         </Button>
       </AdminPageHeader>
 

@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect, useId, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components/HandDrawnIcon'
 import { cn } from '@/lib/utils'
 
@@ -268,8 +267,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                       >
                         <span className="truncate">{opt.label}</span>
                         {isSelected && (
-                          <Check
-                            className="w-3.5 h-3.5 text-brand-plum flex-shrink-0"
+                          <HandDrawnIcon
+                            name="check"
+                            className="w-3.5 h-3.5 flex-shrink-0"
                             aria-hidden="true"
                           />
                         )}

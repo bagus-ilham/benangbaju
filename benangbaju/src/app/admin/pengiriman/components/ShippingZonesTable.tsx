@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Edit } from 'lucide-react'
 import { Button, HandDrawnIcon } from '@/shared/components'
 import type { ShippingZone } from '@/modules/shipping/types'
 
@@ -103,7 +102,7 @@ export function ShippingZonesTable({
               variant="outline"
               className="text-[10px] py-1.5 px-3 font-bold uppercase border-neutral-200"
             >
-              <Edit size={11} className="mr-1" /> Edit
+              <HandDrawnIcon name="edit" className="h-3 w-3 mr-1" /> Edit
             </Button>
             <Button
               onClick={() => onDelete(zone.id, zone.name)}

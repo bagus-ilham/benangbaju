@@ -11,9 +11,7 @@ import {
 import type { UserAddress } from '@/modules/shipping/types'
 import { AddressCard } from '@/modules/users/components/AddressCard'
 import { AddressModal } from '@/modules/users/components/AddressModal'
-import { AuthLoading, Button, PageContainer, PageHero } from '@/shared/components'
-import { ArrowLeft, Plus } from 'lucide-react'
-import { SmartLink as Link } from '@/shared/components'
+import { AuthLoading, Button, PageContainer, PageHero, HandDrawnIcon, SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 export default function AlamatPage(): React.JSX.Element {
@@ -91,7 +89,7 @@ export default function AlamatPage(): React.JSX.Element {
             variant="accent"
             className="flex items-center justify-center text-xs uppercase tracking-widest font-bold py-3 px-5"
           >
-            <Plus size={14} className="mr-2" /> Tambah Alamat
+            <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-2" /> Tambah Alamat
           </Button>
         </div>
 
@@ -133,7 +131,7 @@ export default function AlamatPage(): React.JSX.Element {
             href="/akun"
             className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-accent transition duration-100"
           >
-            <ArrowLeft size={14} className="mr-2" /> Kembali ke Akun
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> Kembali ke Akun
           </Link>
         </div>
       </PageContainer>

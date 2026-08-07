@@ -19,7 +19,6 @@ import {
   Modal,
   HandDrawnIcon,
 } from '@/shared/components'
-import { ClipboardList } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { OrderCard } from './components/OrderCard'
@@ -235,7 +234,7 @@ export default function PesananPage(): React.JSX.Element {
           </div>
         ) : (
           <EmptyState
-            icon={ClipboardList}
+            handDrawnIcon="clipboard-list"
             title="Belum Ada Pesanan"
             description="Belum ada pesanan dengan status ini."
             action={{ label: 'Belanja Sekarang', href: '/produk' }}

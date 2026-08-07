@@ -1,7 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
 import { SmartLink as Link, PageHero, PageContainer, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
-import { Tag, CreditCard, ClipboardList } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Cara Belanja — Benangbaju',
@@ -9,8 +8,7 @@ export const metadata: Metadata = {
 }
 
 const steps: Array<{
-  handDrawnName?: HandDrawnIconName
-  icon?: React.ElementType
+  handDrawnName: HandDrawnIconName
   title: string
   desc: string
 }> = [
@@ -20,7 +18,7 @@ const steps: Array<{
     desc: 'Telusuri katalog produk kami, pilih varian warna, ukuran, dan kuantitas yang diinginkan. Tekan tombol "Tambah ke Keranjang" untuk menyimpannya.',
   },
   {
-    icon: Tag,
+    handDrawnName: 'tag',
     title: '2. Periksa Keranjang & Gunakan Voucher',
     desc: 'Klik ikon keranjang di kanan atas untuk melihat ringkasan pesanan Anda. Masukkan kode voucher belanja di kolom yang tersedia untuk mendapatkan potongan harga eksklusif.',
   },
@@ -30,12 +28,12 @@ const steps: Array<{
     desc: 'Klik "Checkout" untuk masuk ke halaman pengiriman. Tentukan alamat pengiriman lengkap Anda dan pilih jasa ekspedisi/kurir yang diinginkan beserta pilihan tarifnya.',
   },
   {
-    icon: CreditCard,
+    handDrawnName: 'kancing',
     title: '4. Lakukan Pembayaran Instan (DOKU Checkout)',
     desc: 'Tinjau total biaya, lalu klik tombol pembayaran. Layanan DOKU Checkout pop-up akan muncul secara otomatis. Anda bisa membayar dengan Bank Transfer, e-Wallet, atau Kartu Kredit.',
   },
   {
-    icon: ClipboardList,
+    handDrawnName: 'clipboard-list',
     title: '5. Pantau Status & Lacak Nomor Resi',
     desc: 'Setelah pembayaran diverifikasi secara otomatis, pesanan Anda akan segera diproses. Pantau status pesanan dan nomor resi kurir di halaman "Akun Saya" → "Pesanan Saya".',
   },
@@ -52,20 +50,14 @@ export default function CaraBelanjaPage(): React.JSX.Element {
 
       <PageContainer size="md" className="py-12 page-content">
         <div className="max-w-3xl mx-auto space-y-6">
-          {steps.map((step) => {
-            const LucideIconComp = step.icon
-            return (
-              <div
-                key={step.title}
-                className="border border-neutral-200/80 p-6 md:p-8 flex items-start gap-5 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
-              >
-                <div className="p-3 bg-brand-blue/20 border border-brand-blue/30 shrink-0 rounded-xl flex items-center justify-center">
-                  {step.handDrawnName ? (
-                    <HandDrawnIcon name={step.handDrawnName} className="h-5 w-5" />
-                  ) : LucideIconComp ? (
-                    <LucideIconComp className="h-5 w-5 text-brand-plum" strokeWidth={1.75} />
-                  ) : null}
-                </div>
+          {steps.map((step) => (
+            <div
+              key={step.title}
+              className="border border-neutral-200/80 p-6 md:p-8 flex items-start gap-5 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
+            >
+              <div className="p-3 bg-brand-blue/20 border border-brand-blue/30 rounded-2xl shrink-0 mt-0.5">
+                <HandDrawnIcon name={step.handDrawnName} className="h-6 w-6" />
+              </div>
               <div className="space-y-2">
                 <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wide">
                   {step.title}
@@ -73,8 +65,7 @@ export default function CaraBelanjaPage(): React.JSX.Element {
                 <p className="text-xs text-neutral-500 leading-relaxed font-medium">{step.desc}</p>
               </div>
             </div>
-          )
-        })}
+          ))}
 
           <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-500 leading-relaxed font-medium rounded-2xl shadow-sm">
             <p className="font-heading font-semibold text-brand-black mb-2 uppercase tracking-wider text-[10px]">

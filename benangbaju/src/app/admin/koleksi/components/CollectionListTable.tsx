@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Edit2, Trash2, Copy } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import type { AdminCollectionItem } from '@/modules/collections/types'
 
 interface CollectionListTableProps {
@@ -111,7 +110,7 @@ export function CollectionListTable({
                   className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                   title="Duplikat Koleksi"
                 >
-                  <Copy size={13} />
+                  <HandDrawnIcon name="copy" className="h-3.5 w-3.5" />
                 </Button>
                 <Button
                   onClick={() => onEdit(col)}
@@ -119,14 +118,14 @@ export function CollectionListTable({
                   className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                   title="Edit Koleksi"
                 >
-                  <Edit2 size={13} />
+                  <HandDrawnIcon name="edit" className="h-3.5 w-3.5" />
                 </Button>
                 <Button
                   onClick={() => onDelete(col.id)}
                   variant="outline"
                   className="p-2 border-red-100 text-red-400 hover:text-red-600 hover:bg-red-50"
                 >
-                  <Trash2 size={13} />
+                  <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                 </Button>
               </td>
             </tr>

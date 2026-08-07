@@ -19,7 +19,7 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
     >
       <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
         <div className="w-5 h-5 rounded-full bg-brand-gold text-brand-plum flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110">
-          <HandDrawnIcon name="check-circle" className="h-3 w-3" />
+          <HandDrawnIcon name="check" className="h-3 w-3" />
         </div>
         <span className="text-[10px] uppercase tracking-wider text-brand-plum font-sans font-bold transition-colors">
           Keranjang
@@ -45,7 +45,7 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
         <div
           className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-sans font-bold transition-all duration-300 ${isShippingDone ? 'bg-brand-gold text-brand-plum shadow-sm' : checkoutStep === 'shipping' ? 'bg-brand-blue text-brand-plum shadow-sm scale-110' : 'border border-neutral-300 text-neutral-400'}`}
         >
-          {isShippingDone ? <HandDrawnIcon name="check-circle" className="h-3 w-3" /> : '2'}
+          {isShippingDone ? <HandDrawnIcon name="check" className="h-3 w-3" /> : '2'}
         </div>
         <span
           className={`text-[10px] uppercase tracking-wider font-sans transition-colors duration-300 ${isShippingDone ? 'font-bold text-brand-plum' : checkoutStep === 'shipping' ? 'font-bold text-brand-plum' : 'text-neutral-400'}`}

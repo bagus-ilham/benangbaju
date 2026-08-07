@@ -7,9 +7,8 @@ import { createStaticClient } from '@/lib/supabase/static'
 import { getCategoryBySlugAction } from '@/modules/categories/actions'
 import { getProductsAction } from '@/modules/products/actions'
 import { Category } from '@/modules/categories/types'
-import { PageContainer, PageHero, EmptyState } from '@/shared/components'
+import { PageContainer, PageHero, EmptyState, HandDrawnIcon } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { PackageX } from 'lucide-react'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface CategoryPageProps {
@@ -111,7 +110,7 @@ export default async function CategoryDetailPage({
       <PageContainer className="py-12 md:py-16 page-content">
         {products.length === 0 ? (
           <EmptyState
-            icon="PackageSearch"
+            handDrawnIcon="package"
             title="Belum Ada Produk"
             description="Belum ada produk dalam kategori ini. Coba jelajahi kategori lain."
             action={{ label: 'Lihat Semua Produk', href: '/produk' }}

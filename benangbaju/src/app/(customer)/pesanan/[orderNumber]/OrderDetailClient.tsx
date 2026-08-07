@@ -14,7 +14,6 @@ import { useSubmitReview } from '@/modules/reviews/hooks/useReviews'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/shared/components/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState, Modal, HandDrawnIcon } from '@/shared/components'
-import { Download, AlertCircle, RotateCcw } from 'lucide-react'
 import { OrderTrackingSection } from './components/OrderTrackingSection'
 import { OrderPaymentSection } from './components/OrderPaymentSection'
 import { OrderItemsList } from './components/OrderItemsList'
@@ -321,7 +320,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         <PageHero eyebrow="Pesanan" title="Detail Pesanan" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <EmptyState
-            icon={AlertCircle}
+            handDrawnIcon="alert-triangle"
             title="Pesanan Tidak Ditemukan"
             description="Tautan tidak valid atau data telah dihapus."
             action={{ label: 'Kembali ke Daftar Pesanan', href: '/pesanan' }}
@@ -353,14 +352,14 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
                 isLoading={isInvoiceLoading}
                 className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
               >
-                <Download size={14} className="mr-2" /> Unduh Invoice
+                <HandDrawnIcon name="download" className="h-3.5 w-3.5 mr-2" /> Unduh Invoice
               </Button>
               <Button
                 onClick={handleReorder}
                 variant="accent"
                 className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
               >
-                <RotateCcw size={13} className="mr-1.5" /> Beli Lagi
+                <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Beli Lagi
               </Button>
             </div>
           )}

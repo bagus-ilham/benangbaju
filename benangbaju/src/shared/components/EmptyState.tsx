@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { LucideIcon, Percent, PackageSearch, Heart, ClipboardList, ShoppingBag } from 'lucide-react'
@@ -26,6 +26,7 @@ interface EmptyStateAction {
 
 interface EmptyStateProps {
   icon?: keyof typeof iconMap | LucideIcon
+  handDrawnIcon?: HandDrawnIconName
   useBrandIcon?: boolean
   title: string
   description?: string
@@ -36,6 +37,7 @@ interface EmptyStateProps {
 
 export function EmptyState({
   icon,
+  handDrawnIcon,
   useBrandIcon = true,
   title,
   description,
@@ -85,7 +87,9 @@ export function EmptyState({
           aria-hidden
         />
         <div className="relative p-4 bg-brand-cream border border-neutral-200/80 animate-gentle-float rounded-2xl shadow-xs">
-          {useBrandIcon ? (
+          {handDrawnIcon ? (
+            <HandDrawnIcon name={handDrawnIcon} className="h-8 w-8" />
+          ) : useBrandIcon ? (
             <div className="relative w-10 h-10">
               <Image
                 src="/svg/logo-jarum-benang.svg"

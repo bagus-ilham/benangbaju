@@ -2,9 +2,8 @@
 
 import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/shared/components/Button'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 
 export default function CustomerError({
   error,
@@ -31,7 +30,7 @@ export default function CustomerError({
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
           className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 mb-2"
         >
-          <AlertTriangle className="h-8 w-8" />
+          <HandDrawnIcon name="alert-triangle" className="h-8 w-8" />
         </motion.div>
 
         <div className="space-y-2">

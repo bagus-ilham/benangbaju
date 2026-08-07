@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { PackageSearch } from 'lucide-react'
 import { HandDrawnIcon } from './HandDrawnIcon'
 import { cn } from '@/lib/utils'
 import { EmptyState } from './EmptyState'
@@ -53,7 +52,7 @@ export function DataTable<T extends { id?: string | number }>({
   sortDirection,
   emptyTitle = 'Tidak ada data',
   emptyDescription,
-  emptyIcon = PackageSearch,
+  emptyIcon,
   onRowClick,
   className,
 }: DataTableProps<T>) {
@@ -69,7 +68,7 @@ export function DataTable<T extends { id?: string | number }>({
   return (
     <div
       className={cn(
-        'w-full overflow-hidden bg-brand-cream border border-neutral-200/60 rounded-2xl shadow-sm',
+        'w-full bg-brand-cream border border-neutral-200 shadow-sm overflow-hidden rounded-2xl',
         className
       )}
     >
@@ -111,7 +110,7 @@ export function DataTable<T extends { id?: string | number }>({
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-neutral-100">
+          <tbody className="divide-y divide-neutral-200/60">
             {isLoading ? (
               Array.from({ length: loadingRows }).map((_, rIdx) => (
                 <tr key={rIdx} className="bg-brand-cream">
@@ -125,7 +124,7 @@ export function DataTable<T extends { id?: string | number }>({
             ) : data.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-6 py-12">
-                  <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} />
+                  <EmptyState icon={emptyIcon} handDrawnIcon={!emptyIcon ? 'package' : undefined} title={emptyTitle} description={emptyDescription} />
                 </td>
               </tr>
             ) : (

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Input, Switch, HandDrawnIcon } from '@/shared/components'
-import { Copy } from 'lucide-react'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -67,7 +66,7 @@ export function ProductVariantsSection({
                 className="text-neutral-400 hover:text-neutral-900 p-1"
                 title="Duplikat Varian"
               >
-                <Copy size={14} />
+                <HandDrawnIcon name="copy" className="h-3.5 w-3.5" />
               </button>
               {variants.length > 1 && (
                 <button

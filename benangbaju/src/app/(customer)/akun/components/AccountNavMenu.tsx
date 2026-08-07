@@ -1,7 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
-import { ClipboardList, MapPin, Bell, LogOut } from 'lucide-react'
 
 interface AccountNavMenuProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +24,7 @@ export function AccountNavMenu({
           whileTap={{ scale: 0.98 }}
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
-          <ClipboardList size={14} className="text-brand-blue" />
+          <HandDrawnIcon name="clipboard-list" className="w-3.5 h-3.5" />
           <span>Pesanan Saya</span>
         </motion.div>
       </Link>
@@ -36,7 +35,7 @@ export function AccountNavMenu({
           whileTap={{ scale: 0.98 }}
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
-          <MapPin size={14} className="text-brand-blue" />
+          <HandDrawnIcon name="map-pin" className="w-3.5 h-3.5" />
           <span>Daftar Alamat</span>
         </motion.div>
       </Link>
@@ -58,7 +57,7 @@ export function AccountNavMenu({
           whileTap={{ scale: 0.98 }}
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
-          <Bell size={14} className="text-brand-blue" />
+          <HandDrawnIcon name="bell" className="w-3.5 h-3.5" />
           <span>Notifikasi Saya</span>
         </motion.div>
       </Link>
@@ -73,7 +72,7 @@ export function AccountNavMenu({
         onClick={handleSignOut}
         className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-brand-cream cursor-pointer shadow-xs"
       >
-        <LogOut size={14} />
+        <HandDrawnIcon name="logout" className="w-3.5 h-3.5" />
         <span>Keluar dari Akun</span>
       </motion.button>
     </motion.div>

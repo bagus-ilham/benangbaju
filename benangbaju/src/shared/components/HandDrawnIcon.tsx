@@ -48,6 +48,50 @@ export type HandDrawnIconName =
   | 'measuringTape'
   | 'kancing'
   | 'button'
+  | 'check'
+  | 'edit'
+  | 'copy'
+  | 'more-vertical'
+  | 'moreVertical'
+  | 'more-horizontal'
+  | 'moreHorizontal'
+  | 'sliders'
+  | 'filter'
+  | 'external-link'
+  | 'externalLink'
+  | 'sparkles'
+  | 'alert-triangle'
+  | 'alertTriangle'
+  | 'tshirt'
+  | 'clothes'
+  | 'clock'
+  | 'refresh'
+  | 'rotate'
+  | 'hanger'
+  | 'tiktok'
+  | 'instagram'
+  | 'whatsapp'
+  | 'message'
+  | 'chat'
+  | 'image'
+  | 'picture'
+  | 'globe'
+  | 'website'
+  | 'mail'
+  | 'envelope'
+  | 'package'
+  | 'box'
+  | 'tag'
+  | 'thumbs-up'
+  | 'thumbsUp'
+  | 'clipboard-list'
+  | 'clipboardList'
+  | 'history'
+  | 'lock'
+  | 'download'
+  | 'shield'
+  | 'shield-check'
+  | 'shieldCheck'
 
 const ICON_FILE_MAP: Record<string, string> = {
   heart: 'icon-heart.svg',
@@ -96,6 +140,50 @@ const ICON_FILE_MAP: Record<string, string> = {
   measuringTape: 'icon-measuring-tape.svg',
   kancing: 'icon-kancing.svg',
   button: 'icon-kancing.svg',
+  check: 'icon-check.svg',
+  edit: 'icon-edit.svg',
+  copy: 'icon-copy.svg',
+  'more-vertical': 'icon-more-vertical.svg',
+  moreVertical: 'icon-more-vertical.svg',
+  'more-horizontal': 'icon-more-horizontal.svg',
+  moreHorizontal: 'icon-more-horizontal.svg',
+  sliders: 'icon-sliders.svg',
+  filter: 'icon-sliders.svg',
+  'external-link': 'icon-external-link.svg',
+  externalLink: 'icon-external-link.svg',
+  sparkles: 'icon-sparkles.svg',
+  'alert-triangle': 'icon-alert-triangle.svg',
+  alertTriangle: 'icon-alert-triangle.svg',
+  tshirt: 'icon-tshirt.svg',
+  clothes: 'icon-tshirt.svg',
+  clock: 'icon-clock.svg',
+  refresh: 'icon-refresh.svg',
+  rotate: 'icon-refresh.svg',
+  hanger: 'icon-hanger.svg',
+  tiktok: 'icon-tiktok.svg',
+  instagram: 'icon-instagram.svg',
+  whatsapp: 'icon-whatsapp.svg',
+  message: 'icon-message.svg',
+  chat: 'icon-message.svg',
+  image: 'icon-image.svg',
+  picture: 'icon-image.svg',
+  globe: 'icon-globe.svg',
+  website: 'icon-globe.svg',
+  mail: 'icon-mail.svg',
+  envelope: 'icon-mail.svg',
+  package: 'icon-package.svg',
+  box: 'icon-package.svg',
+  tag: 'icon-tag.svg',
+  'thumbs-up': 'icon-thumbs-up.svg',
+  thumbsUp: 'icon-thumbs-up.svg',
+  'clipboard-list': 'icon-clipboard-list.svg',
+  clipboardList: 'icon-clipboard-list.svg',
+  history: 'icon-history.svg',
+  lock: 'icon-lock.svg',
+  download: 'icon-arrow-down.svg',
+  shield: 'icon-tshirt.svg',
+  'shield-check': 'icon-tshirt.svg',
+  shieldCheck: 'icon-tshirt.svg',
 }
 
 export interface HandDrawnIconProps extends React.ImgHTMLAttributes<HTMLImageElement> {

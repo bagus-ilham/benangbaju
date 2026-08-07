@@ -1,6 +1,5 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { Clock, Mail, MessageSquare } from 'lucide-react'
 import { PageContainer, PageHero, HandDrawnIcon } from '@/shared/components'
 
 export const metadata: Metadata = {
@@ -33,7 +32,7 @@ export default function KontakPage(): React.JSX.Element {
 
             <div className="space-y-4 text-xs font-medium text-neutral-600">
               <div className="flex items-start space-x-3">
-                <Clock className="h-4 w-4 text-brand-plum/70 shrink-0 mt-0.5" />
+                <HandDrawnIcon name="clock" className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Jam Operasional</p>
                   <p>Senin – Jumat: 08:00 – 15:00 WIB</p>
@@ -43,7 +42,7 @@ export default function KontakPage(): React.JSX.Element {
               </div>
 
               <div className="flex items-start space-x-3">
-                <Mail className="h-4 w-4 text-brand-plum/70 shrink-0 mt-0.5" />
+                <HandDrawnIcon name="mail" className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Surel (Email)</p>
                   <a
@@ -87,7 +86,7 @@ export default function KontakPage(): React.JSX.Element {
                 rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-center space-x-2 bg-brand-blue text-brand-plum hover:bg-[#83a3aa] px-6 py-3.5 text-xs font-sans font-bold uppercase tracking-widest transition-all duration-300 rounded-xl shadow-xs hover:shadow-md hover:-translate-y-[1px] active:translate-y-0"
               >
-                <MessageSquare className="h-4 w-4" />
+                <HandDrawnIcon name="whatsapp" className="h-4 w-4" />
                 <span>Hubungi via WhatsApp</span>
               </a>
             </div>

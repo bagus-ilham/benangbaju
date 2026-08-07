@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { X } from 'lucide-react'
-import { Button, Input, Select, Switch, Textarea } from '@/shared/components'
+import { Button, Input, Select, Switch, Textarea, HandDrawnIcon } from '@/shared/components'
 
 export function RedirectFormModal({
   isOpen,
@@ -34,7 +33,7 @@ export function RedirectFormModal({
             className="text-neutral-400 hover:text-neutral-800"
             aria-label="Tutup modal"
           >
-            <X size={18} />
+            <HandDrawnIcon name="close" className="h-4 w-4" />
           </button>
         </div>
 
@@ -134,7 +133,7 @@ export function LandingPageFormModal({
             className="text-neutral-400 hover:text-neutral-800"
             aria-label="Tutup modal"
           >
-            <X size={18} />
+            <HandDrawnIcon name="close" className="h-4 w-4" />
           </button>
         </div>
 

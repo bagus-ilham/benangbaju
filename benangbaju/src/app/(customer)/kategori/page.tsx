@@ -3,10 +3,7 @@ import { Metadata } from 'next'
 import { SmartLink as Link } from '@/shared/components'
 import Image from 'next/image'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { PageHero, PageContainer, EmptyState } from '@/shared/components'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Layers } from 'lucide-react'
+import { PageHero, PageContainer, EmptyState, HandDrawnIcon } from '@/shared/components'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 export const metadata: Metadata = {

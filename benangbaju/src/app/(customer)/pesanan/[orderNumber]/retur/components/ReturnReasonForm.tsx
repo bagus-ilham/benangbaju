@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react'
 import { Select, Textarea, HandDrawnIcon } from '@/shared/components'
-import { Image as ImageIcon } from 'lucide-react'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 const RETURN_REASONS = [
@@ -75,7 +74,7 @@ export function ReturnReasonForm({
 
           {returnFiles.length < 2 && (
             <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-accent hover:text-brand-accent transition group">
-              <ImageIcon size={20} className="mb-1 group-hover:scale-110 transition-transform" />
+              <HandDrawnIcon name="image" className="h-5 w-5 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] uppercase font-bold tracking-wider">Tambah</span>
               <input
                 type="file"

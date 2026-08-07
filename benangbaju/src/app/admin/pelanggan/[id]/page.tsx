@@ -3,7 +3,6 @@
 import React, { use } from 'react'
 import { useAdminCustomerDetail } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader, Button, HandDrawnIcon } from '@/shared/components'
-import { MapPin, AlertCircle, Package } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import { formatDate } from '@/lib/utils/format'
 import { formatIDR } from '@/lib/utils/format'
@@ -32,7 +31,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
   if (isError || !customer) {
     return (
       <div className="text-center py-12">
-        <AlertCircle size={24} className="mx-auto text-red-500 mb-2" />
+        <HandDrawnIcon name="alert-triangle" className="h-6 w-6 mx-auto mb-2" />
         <p className="text-red-500 text-sm">
           Gagal memuat detail pelanggan atau pelanggan tidak ditemukan.
         </p>
@@ -87,8 +86,8 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                   <span className="text-neutral-500">Status</span>
                   <span
                     className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-2xl text-[9px] ${customer.is_active
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
                       }`}
                   >
                     {customer.is_active ? 'Aktif' : 'Diblokir'}
@@ -114,7 +113,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
           {/* Daftar Alamat */}
           <div className="border border-neutral-200 bg-brand-cream rounded-2xl">
             <div className="p-4 border-b border-neutral-100 bg-neutral-50/50 flex items-center">
-              <MapPin size={16} className="text-neutral-500 mr-2" />
+              <HandDrawnIcon name="map-pin" className="w-4 h-4 mr-2" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-700">
                 Alamat Tersimpan ({customer.addresses.length})
               </h3>
@@ -180,9 +179,9 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                             className="object-cover"
                           />
                         ) : (
-                          <Package
-                            size={20}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-300"
+                          <HandDrawnIcon
+                            name="package"
+                            className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-300"
                           />
                         )}
                       </div>
@@ -233,9 +232,9 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
-                          <Package
-                            size={24}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-300"
+                          <HandDrawnIcon
+                            name="package"
+                            className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-300"
                           />
                         )}
                       </div>

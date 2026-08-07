@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Edit, Trash2 } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils/format'
 import type { ShippingRate } from '@/modules/shipping/types'
 
@@ -95,13 +94,13 @@ export function ShippingRatesTable({
                   onClick={() => onEdit(rate)}
                   className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200"
                 >
-                  <Edit size={12} />
+                  <HandDrawnIcon name="edit" className="h-3 w-3" />
                 </button>
                 <button
                   onClick={() => onDelete(rate.id, rate.courier_name)}
                   className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50"
                 >
-                  <Trash2 size={12} />
+                  <HandDrawnIcon name="trash" className="h-3 w-3" />
                 </button>
               </td>
             </tr>

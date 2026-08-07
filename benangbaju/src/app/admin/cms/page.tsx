@@ -13,8 +13,7 @@ import {
 } from '@/app/admin/hooks/useAdmin'
 import type { RedirectRule, LandingPage } from '@/modules/cms/types'
 import type { Json } from '@/shared/types/database'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Link2, FileCode, RefreshCw } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import {
@@ -232,7 +231,7 @@ export default function AdminCmsPage(): React.JSX.Element {
           variant="outline"
           className="text-xs font-semibold py-2 px-3 border-neutral-200"
         >
-          <RefreshCw size={12} className="mr-1.5" /> Segarkan
+          <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Segarkan
         </Button>
       </AdminPageHeader>
 
@@ -246,7 +245,7 @@ export default function AdminCmsPage(): React.JSX.Element {
               : 'text-neutral-400 hover:text-neutral-700'
           }`}
         >
-          <Link2 size={13} className="mr-2" /> Pengalihan URL ({redirects?.length || 0})
+          <HandDrawnIcon name="external-link" className="h-3.5 w-3.5 mr-2" /> Pengalihan URL ({redirects?.length || 0})
           {activeTab === 'redirects' && (
             <motion.div
               layoutId="activeCmsTab"
@@ -263,7 +262,7 @@ export default function AdminCmsPage(): React.JSX.Element {
               : 'text-neutral-400 hover:text-neutral-700'
           }`}
         >
-          <FileCode size={13} className="mr-2" /> Landing Pages ({landingPages?.length || 0})
+          <HandDrawnIcon name="globe" className="h-3.5 w-3.5 mr-2" /> Landing Pages ({landingPages?.length || 0})
           {activeTab === 'landing_pages' && (
             <motion.div
               layoutId="activeCmsTab"

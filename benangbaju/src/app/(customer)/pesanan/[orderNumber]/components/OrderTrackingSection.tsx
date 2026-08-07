@@ -1,6 +1,5 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Clock, Package, XCircle } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components'
 
 interface OrderTrackingSectionProps {
@@ -13,8 +12,8 @@ export function OrderTrackingSection({
   cancelReason,
 }: OrderTrackingSectionProps): React.JSX.Element {
   const steps = [
-    { id: 'pending_payment', label: 'Menunggu Pembayaran', icon: <Clock size={16} /> },
-    { id: 'processing', label: 'Diproses Seller', icon: <Package size={16} /> },
+    { id: 'pending_payment', label: 'Menunggu Pembayaran', icon: <HandDrawnIcon name="clock" className="h-4 w-4" /> },
+    { id: 'processing', label: 'Diproses Seller', icon: <HandDrawnIcon name="package" className="h-4 w-4" /> },
     { id: 'shipped', label: 'Dalam Pengiriman', icon: <HandDrawnIcon name="truck" className="h-4 w-4" /> },
     { id: 'completed', label: 'Pesanan Selesai', icon: <HandDrawnIcon name="check-circle" className="h-4 w-4" /> },
   ]
@@ -28,7 +27,7 @@ export function OrderTrackingSection({
           Status Pesanan
         </p>
         <div className="flex items-center space-x-3 text-error text-xs font-semibold">
-          <XCircle size={18} />
+          <HandDrawnIcon name="close" className="h-5 w-5" />
           <div>
             <p className="font-bold uppercase tracking-wider text-xs">Pesanan Dibatalkan</p>
             {cancelReason && (

@@ -1,6 +1,5 @@
 import React from 'react'
-import { AdminPanel, Button, Input } from '@/shared/components'
-import { Clock, Package, Truck, CheckCircle, XCircle } from 'lucide-react'
+import { AdminPanel, Button, Input, HandDrawnIcon } from '@/shared/components'
 
 interface AdminOrderStatusPanelProps {
   status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled'
@@ -20,11 +19,11 @@ export function AdminOrderStatusPanel({
   return (
     <AdminPanel title="Status Alur Kerja">
       <div className="flex items-center space-x-2 text-sm text-neutral-800 font-bold uppercase tracking-wider">
-        {status === 'pending_payment' && <Clock size={16} className="text-amber-500" />}
-        {status === 'processing' && <Package size={16} className="text-neutral-800" />}
-        {status === 'shipped' && <Truck size={16} className="text-neutral-800" />}
-        {status === 'completed' && <CheckCircle size={16} className="text-green-500" />}
-        {status === 'cancelled' && <XCircle size={16} className="text-red-500" />}
+        {status === 'pending_payment' && <HandDrawnIcon name="clock" className="h-4 w-4" />}
+        {status === 'processing' && <HandDrawnIcon name="package" className="h-4 w-4" />}
+        {status === 'shipped' && <HandDrawnIcon name="truck" className="h-4 w-4" />}
+        {status === 'completed' && <HandDrawnIcon name="check-circle" className="h-4 w-4" />}
+        {status === 'cancelled' && <HandDrawnIcon name="close" className="h-4 w-4" />}
         <span>
           {status === 'pending_payment'
             ? 'Belum Bayar'

@@ -8,8 +8,7 @@ import {
   useAdminUpdateBanner,
   useAdminDeleteBanner,
 } from '@/app/admin/hooks/useAdmin'
-import { Button, AdminPageHeader } from '@/shared/components'
-import { Plus } from 'lucide-react'
+import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
@@ -169,7 +168,7 @@ export default function AdminBannersPage(): React.JSX.Element {
           onClick={handleOpenAdd}
           className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
         >
-          <Plus size={14} className="mr-1.5" /> Tambah Banner
+          <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Banner
         </Button>
       </AdminPageHeader>
 

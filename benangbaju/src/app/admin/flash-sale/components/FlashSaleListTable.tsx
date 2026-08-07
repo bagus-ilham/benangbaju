@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Copy, Edit2, Trash2 } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import type { AdminFlashSaleListItem } from '@/modules/flash-sales/types'
 
 interface FlashSaleListTableProps {
@@ -92,7 +91,7 @@ export function FlashSaleListTable({
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                         title="Duplikat Flash Sale"
                       >
-                        <Copy size={13} />
+                        <HandDrawnIcon name="copy" className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         onClick={() => onEdit(camp)}
@@ -100,14 +99,14 @@ export function FlashSaleListTable({
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                         title="Edit Flash Sale"
                       >
-                        <Edit2 size={13} />
+                        <HandDrawnIcon name="edit" className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         onClick={() => onDelete(camp.id)}
                         variant="outline"
                         className="p-2 border-red-100 text-red-400 hover:text-red-600 hover:bg-red-50"
                       >
-                        <Trash2 size={13} />
+                        <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                       </Button>
                     </td>
                   </tr>

@@ -16,7 +16,6 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Select,
 } from '@/shared/components'
-import { AlertTriangle, ShieldCheck } from 'lucide-react'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -233,7 +232,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <EmptyState
-            icon={AlertTriangle}
+            handDrawnIcon="alert-triangle"
             title="Akses Ditolak"
             description="Retur hanya bisa diajukan untuk pesanan dengan status Selesai."
             action={{ label: 'Kembali ke Pesanan', href: '/pesanan' }}
@@ -249,7 +248,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <EmptyState
-            icon={ShieldCheck}
+            handDrawnIcon="check-circle"
             title="Pengajuan Retur Sudah Ada"
             description={`Anda sudah mengajukan retur untuk pesanan ini. Status saat ini: ${existingReturn.status}`}
             action={{ label: 'Lihat Detail Pesanan', href: `/pesanan/${order.order_number}` }}

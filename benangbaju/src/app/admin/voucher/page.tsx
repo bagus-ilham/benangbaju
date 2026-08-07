@@ -8,7 +8,6 @@ import {
   useAdminDeleteVoucher,
 } from '@/app/admin/hooks/useAdmin'
 import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
-import { Edit2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
@@ -286,7 +285,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                         title="Duplikat Voucher"
                       >
-                        <Copy size={13} />
+                        <HandDrawnIcon name="copy" className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         onClick={() => handleOpenEdit(v)}
@@ -294,7 +293,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
                         className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                         title="Edit Voucher"
                       >
-                        <Edit2 size={13} />
+                        <HandDrawnIcon name="edit" className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         onClick={() => handleDelete(v.id)}

@@ -4,7 +4,6 @@ import React from 'react'
 import type { UserAddress } from '@/modules/shipping/types'
 import { Badge } from '@/shared/components/Badge'
 import { Button } from '@/shared/components/Button'
-import { Edit2 } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 
@@ -85,7 +84,7 @@ export function AddressCard({
                 }}
                 className="flex items-center text-xs text-neutral-600 hover:text-brand-accent transition duration-100"
               >
-                <Edit2 size={13} className="mr-1" /> Ubah
+                <HandDrawnIcon name="edit" className="h-3.5 w-3.5 mr-1" /> Ubah
               </button>
             )}
             {onDelete && !address.is_default && (

@@ -6,8 +6,7 @@ import {
   useAdminUpdateReviewStatus,
   useAdminReplyToReview,
 } from '@/app/admin/hooks/useAdmin'
-import { Button, Modal, AdminPageHeader, Textarea } from '@/shared/components'
-import { Star, MessageSquare, Pin } from 'lucide-react'
+import { Button, Modal, AdminPageHeader, Textarea, HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import toast from 'react-hot-toast'
@@ -155,10 +154,10 @@ export default function AdminReviewsPage(): React.JSX.Element {
                     <td className="py-4 px-4 space-y-1 max-w-sm">
                       <div className="flex items-center text-amber-500">
                         {Array.from({ length: 5 }).map((_, idx) => (
-                          <Star
+                          <HandDrawnIcon
                             key={idx}
-                            size={12}
-                            fill={idx < rev.rating ? 'currentColor' : 'none'}
+                            name="star"
+                            className={cn("h-3 w-3", idx >= rev.rating && "opacity-30 grayscale")}
                           />
                         ))}
                       </div>
@@ -256,14 +255,14 @@ export default function AdminReviewsPage(): React.JSX.Element {
                             : 'text-neutral-500 hover:text-neutral-900'
                         )}
                       >
-                        <Pin size={10} className="mr-1 inline" /> {rev.is_pinned ? 'Unpin' : 'Pin'}
+                        <HandDrawnIcon name="tag" className="h-3 w-3 mr-1 inline" /> {rev.is_pinned ? 'Unpin' : 'Pin'}
                       </Button>
                       <Button
                         onClick={() => handleOpenReplyModal(rev)}
                         variant="outline"
-                        className="text-[10px] py-1.5 px-2.5 font-bold uppercase border-neutral-800 text-neutral-800 hover:bg-neutral-50"
+                        className="text-[10px] py-1.5 px-2.5 font-bold uppercase border-neutral-800 text-neutral-800 hover:bg-neutral-50 flex items-center"
                       >
-                        <MessageSquare size={10} className="mr-1 inline" /> Balas
+                        <HandDrawnIcon name="message" className="h-3 w-3 mr-1" /> Balas
                       </Button>
                     </td>
                   </tr>

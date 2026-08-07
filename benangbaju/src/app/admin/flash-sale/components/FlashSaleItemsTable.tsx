@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trash2 } from 'lucide-react'
+import { HandDrawnIcon } from '@/shared/components'
 import type { FlashSaleFormItem } from './FlashSaleFormModal'
 
 interface FlashSaleItemsTableProps {
@@ -67,7 +67,7 @@ export function FlashSaleItemsTable({
                       onClick={() => handleRemoveItem(idx)}
                       className="text-red-400 hover:text-red-600 p-1 transition"
                     >
-                      <Trash2 size={12} />
+                      <HandDrawnIcon name="trash" className="h-3 w-3" />
                     </button>
                   </td>
                 </tr>

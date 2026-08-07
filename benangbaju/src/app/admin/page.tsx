@@ -11,9 +11,8 @@ import {
   AdminPanel,
   ClientDateTime,
   HandDrawnIcon,
+  SmartLink as Link,
 } from '@/shared/components'
-import { TrendingUp, CheckCircle, Users, AlertTriangle, RefreshCw } from 'lucide-react'
-import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 const supabase = createBrowserClient()
@@ -93,7 +92,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
           variant="outline"
           className="text-xs font-semibold py-2 px-3 border-neutral-200"
         >
-          <RefreshCw size={12} className="mr-1.5" /> Segarkan
+          <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Segarkan
         </Button>
       </AdminPageHeader>
 
@@ -102,29 +101,27 @@ export default function AdminDashboardPage(): React.JSX.Element {
           label="Total Pendapatan"
           value={`Rp ${stats.totalRevenue.toLocaleString('id-ID')}`}
           hint="Dari pesanan dibayar & selesai"
-          icon={TrendingUp}
+          handDrawnIcon="clipboard-list"
           accent="gold"
         />
         <AdminStatCard
           label="Pesanan Aktif"
           value={stats.activeOrdersCount}
           hint="Diproses & Sedang dikirim"
-          icon={(props: { className?: string; size?: number }) => (
-            <HandDrawnIcon name="shopping-bag" {...props} />
-          )}
+          handDrawnIcon="shopping-bag"
         />
         <AdminStatCard
           label="Pesanan Selesai"
           value={stats.completedOrdersCount}
           hint="Transaksi sukses diselesaikan"
-          icon={CheckCircle}
+          handDrawnIcon="check-circle"
           accent="success"
         />
         <AdminStatCard
           label="Total Pelanggan"
           value={stats.customersCount}
           hint="Pengguna terdaftar"
-          icon={Users}
+          handDrawnIcon="user"
         />
       </div>
 
@@ -132,7 +129,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
         <div className="lg:col-span-2 space-y-8">
           <AdminPanel
             title="Peringatan Stok Rendah (< 5)"
-            icon={<AlertTriangle size={14} className="text-amber-500" />}
+            icon={<HandDrawnIcon name="alert-triangle" className="h-4 w-4" />}
           >
             {stats.lowStockVariants.length === 0 ? (
               <p className="text-xs text-neutral-400 italic">

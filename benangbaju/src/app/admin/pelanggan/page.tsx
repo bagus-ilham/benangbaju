@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/app/admin/hooks/useAdmin'
 import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
-import { UserCheck, UserX, RefreshCw, Mail, Phone, Calendar, Eye } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
@@ -81,7 +80,7 @@ export default function AdminCustomersPage(): React.JSX.Element {
           variant="outline"
           className="text-xs font-semibold py-2 px-3 border-neutral-200"
         >
-          <RefreshCw size={12} className="mr-1.5" /> Segarkan
+          <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Segarkan
         </Button>
       </AdminPageHeader>
 
@@ -146,17 +145,17 @@ export default function AdminCustomersPage(): React.JSX.Element {
                     </td>
                     <td className="py-4 px-6 space-y-1">
                       <p className="flex items-center text-neutral-600">
-                        <Mail size={12} className="mr-1.5 text-neutral-400" />
+                        <HandDrawnIcon name="mail" className="h-3 w-3 mr-1.5" />
                         <span>{customer.email || '-'}</span>
                       </p>
                       <p className="flex items-center text-neutral-600">
-                        <Phone size={12} className="mr-1.5 text-neutral-400" />
+                        <HandDrawnIcon name="whatsapp" className="h-3 w-3 mr-1.5" />
                         <span>{customer.phone || '-'}</span>
                       </p>
                     </td>
                     <td className="py-4 px-6">
                       <p className="flex items-center text-neutral-600">
-                        <Calendar size={12} className="mr-1.5 text-neutral-400" />
+                        <HandDrawnIcon name="clock" className="h-3 w-3 mr-1.5" />
                         <span>{formatDate(customer.created_at)}</span>
                       </p>
                     </td>
@@ -176,7 +175,7 @@ export default function AdminCustomersPage(): React.JSX.Element {
                           variant="outline"
                           className="text-[10px] py-1.5 px-3 font-bold uppercase border-neutral-200 text-neutral-600 hover:bg-neutral-50"
                         >
-                          <Eye size={12} className="mr-1" /> Detail
+                          <HandDrawnIcon name="eye" className="h-3 w-3 mr-1" /> Detail
                         </Button>
                       </Link>
                       {customer.is_active ? (
@@ -188,7 +187,7 @@ export default function AdminCustomersPage(): React.JSX.Element {
                           disabled={toggleStatusMutation.isPending}
                           className="text-[10px] py-1.5 px-3 font-bold uppercase border-red-200 text-red-500 hover:bg-red-50"
                         >
-                          <UserX size={12} className="mr-1" /> Blokir
+                          <HandDrawnIcon name="close" className="h-3 w-3 mr-1" /> Blokir
                         </Button>
                       ) : (
                         <Button
@@ -198,7 +197,7 @@ export default function AdminCustomersPage(): React.JSX.Element {
                           disabled={toggleStatusMutation.isPending}
                           className="text-[10px] py-1.5 px-3 font-bold uppercase bg-green-600 border border-green-600 hover:bg-green-700 text-white"
                         >
-                          <UserCheck size={12} className="mr-1" /> Aktifkan
+                          <HandDrawnIcon name="check-circle" className="h-3 w-3 mr-1" /> Aktifkan
                         </Button>
                       )}
                     </td>

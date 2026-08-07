@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { Plus, Trash2 } from 'lucide-react'
-import { Button, Input, Modal } from '@/shared/components'
+import { Button, Input, Modal, HandDrawnIcon } from '@/shared/components'
 import { uploadImage } from '@/lib/supabase/storage'
 import toast from 'react-hot-toast'
 import { FlashSaleVariantSearch } from './FlashSaleVariantSearch'
@@ -274,7 +273,7 @@ export function FlashSaleFormModal({
               }}
               className="py-1 px-3 text-[10px] uppercase font-bold tracking-wider"
             >
-              <Plus size={12} className="mr-1" />
+              <HandDrawnIcon name="plus" className="h-3 w-3 mr-1" />
               Pilih Produk
             </Button>
           </div>

@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Shield, RefreshCw, MessageCircle } from 'lucide-react'
 import { HandDrawnIcon } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
@@ -269,7 +268,7 @@ export function ProductInfoSection({
           variant="ghost"
           className="w-full text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50/80 border border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 py-2.5 transition-all group/wa"
         >
-          <MessageCircle className="h-3.5 w-3.5 mr-1.5 text-emerald-600 group-hover/wa:text-white transition-colors" /> Tanya CS via WhatsApp
+          <HandDrawnIcon name="whatsapp" className="h-3.5 w-3.5 mr-1.5" /> Tanya CS via WhatsApp
         </Button>
       </motion.div>
 
@@ -294,7 +293,7 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <RefreshCw className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
+          <HandDrawnIcon name="refresh" className="h-4 w-4" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             7 Hari Retur
           </span>
@@ -305,7 +304,7 @@ export function ProductInfoSection({
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <Shield className="h-4 w-4 text-brand-plum/70 group-hover:text-brand-plum transition-colors" />
+          <HandDrawnIcon name="clothes" className="h-4 w-4" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             Kualitas Premium
           </span>

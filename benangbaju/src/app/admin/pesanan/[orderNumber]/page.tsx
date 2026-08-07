@@ -10,7 +10,6 @@ import {
 
 import { Button, AdminPageHeader, AdminPanel, HandDrawnIcon } from '@/shared/components'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Download } from 'lucide-react'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
@@ -167,7 +166,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
             isLoading={isInvoiceLoading}
             className="text-[10px] font-bold uppercase py-2.5 px-4 border-neutral-800 text-neutral-800 hover:bg-neutral-50"
           >
-            <Download size={13} className="mr-1.5" /> Unduh Invoice
+            <HandDrawnIcon name="download" className="h-3.5 w-3.5 mr-1.5" /> Unduh Invoice
           </Button>
         </div>
       </AdminPageHeader>

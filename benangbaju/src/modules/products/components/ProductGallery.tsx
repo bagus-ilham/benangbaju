@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { SmartImage as Image, HandDrawnIcon } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Maximize2 } from 'lucide-react'
 import { ProductImage } from '@/modules/products/types'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -182,7 +181,7 @@ export function ProductGallery({
           className="absolute top-3 right-3 p-2 bg-brand-black/60 backdrop-blur-xs text-white rounded-full z-10"
           aria-label="Perbesar gambar"
         >
-          <Maximize2 className="w-3.5 h-3.5" />
+          <HandDrawnIcon name="eye" className="w-3.5 h-3.5 text-white" />
         </button>
 
         {/* Mobile Swipe Indicators (Dots) */}
@@ -267,7 +266,7 @@ export function ProductGallery({
         {/* Desktop Expand Hint Badge */}
         <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <span className="inline-flex items-center space-x-1.5 text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum bg-brand-gold/90 backdrop-blur-xs px-3 py-1.5 rounded-full border border-brand-gold shadow-xs">
-            <Maximize2 className="w-3 h-3 text-brand-plum" />
+            <HandDrawnIcon name="eye" className="w-3 h-3 text-brand-plum" />
             <span>Klik Layar Penuh</span>
           </span>
         </div>

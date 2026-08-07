@@ -32,8 +32,8 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DropdownMenuItem,
   TableSkeleton,
+  HandDrawnIcon,
 } from '@/shared/components'
-import { Plus, Edit2, Trash2, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -199,7 +199,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
           onClick={handleOpenAdd}
           className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
         >
-          <Plus size={14} className="mr-1.5" /> Tambah Kategori
+          <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Kategori
         </Button>
       </AdminPageHeader>
 
@@ -276,7 +276,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
                           className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                           title="Duplikat Kategori"
                         >
-                          <Copy size={13} />
+                          <HandDrawnIcon name="copy" className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           onClick={() => handleOpenEdit(cat)}
@@ -284,14 +284,14 @@ export default function AdminCategoryPage(): React.JSX.Element {
                           className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                           title="Edit Kategori"
                         >
-                          <Edit2 size={13} />
+                          <HandDrawnIcon name="edit" className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           onClick={() => handleDelete(cat.id)}
                           variant="outline"
                           className="p-2 border-red-100 text-red-400 hover:text-red-600 hover:bg-red-50"
                         >
-                          <Trash2 size={13} />
+                          <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
                         </Button>
                       </td>
                     </tr>

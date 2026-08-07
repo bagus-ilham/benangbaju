@@ -1,7 +1,6 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { AlertCircle, Calendar, CheckCircle2 } from 'lucide-react'
-import { PageHero, PageContainer } from '@/shared/components'
+import { PageHero, PageContainer, HandDrawnIcon } from '@/shared/components'
 
 export const metadata: Metadata = {
   title: 'Kebijakan Pengembalian (Retur) — Benangbaju',
@@ -42,7 +41,7 @@ export default function ReturPage(): React.JSX.Element {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
             <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-brand-plum" />
+                <HandDrawnIcon name="clock" className="h-4 w-4" />
                 <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                   Batas Waktu 7 Hari
                 </h3>
@@ -55,7 +54,7 @@ export default function ReturPage(): React.JSX.Element {
 
             <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
-                <AlertCircle className="h-4 w-4 text-brand-plum" />
+                <HandDrawnIcon name="alert-triangle" className="h-4 w-4" />
                 <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                   Syarat Fisik Barang
                 </h3>
@@ -76,7 +75,7 @@ export default function ReturPage(): React.JSX.Element {
 
             <ul className="space-y-4 text-xs font-medium text-neutral-600">
               <li className="flex items-start space-x-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <HandDrawnIcon name="check-circle" className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Cacat Produk (Defect)</p>
                   <p>
@@ -86,7 +85,7 @@ export default function ReturPage(): React.JSX.Element {
                 </div>
               </li>
               <li className="flex items-start space-x-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <HandDrawnIcon name="check-circle" className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Kesalahan Pengiriman</p>
                   <p>
@@ -96,7 +95,7 @@ export default function ReturPage(): React.JSX.Element {
                 </div>
               </li>
               <li className="flex items-start space-x-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <HandDrawnIcon name="check-circle" className="h-4 w-4 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Tukar Ukuran (Tukar Size)</p>
                   <p>

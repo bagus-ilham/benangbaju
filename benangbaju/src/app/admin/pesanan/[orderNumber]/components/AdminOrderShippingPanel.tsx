@@ -1,6 +1,5 @@
 import React from 'react'
 import { AdminPanel, Input, HandDrawnIcon } from '@/shared/components'
-import { Check, Edit2 } from 'lucide-react'
 
 interface AdminOrderShippingPanelProps {
   orderShipping?: {
@@ -67,7 +66,7 @@ export function AdminOrderShippingPanel({
                       className="text-green-600 hover:text-green-700 p-0.5"
                       title="Simpan"
                     >
-                      <Check size={14} />
+                      <HandDrawnIcon name="check" className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => setIsEditingResi(false)}
@@ -90,7 +89,7 @@ export function AdminOrderShippingPanel({
                       className="text-neutral-400 hover:text-brand-accent transition"
                       title="Edit Resi"
                     >
-                      <Edit2 size={12} />
+                      <HandDrawnIcon name="edit" className="h-3 w-3" />
                     </button>
                   </div>
                 )}

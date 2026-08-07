@@ -5,7 +5,6 @@ import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { History, Sparkles } from 'lucide-react'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
@@ -194,7 +193,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-1.5 text-neutral-400">
-                          <History className="h-3 w-3" />
+                          <HandDrawnIcon name="history" className="h-3.5 w-3.5" />
                           <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
                             Pencarian Terakhir
                           </span>
@@ -223,7 +222,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   {/* Popular Tags */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-1.5 text-neutral-400">
-                      <Sparkles className="h-3 w-3 text-brand-plum" />
+                      <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
                       <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
                         Pencarian Populer
                       </span>

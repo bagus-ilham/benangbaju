@@ -17,7 +17,6 @@ import {
   HandDrawnIcon,
 } from '@/shared/components'
 import { CatalogDesktopFilters, CatalogMobileFilters } from './components'
-import { SlidersHorizontal, PackageSearch } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTransition } from 'react'
 
@@ -132,7 +131,7 @@ export function CatalogClient({
             onClick={() => setShowMobileFilters(true)}
             className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum md:hidden py-2"
           >
-            <SlidersHorizontal className="h-4 w-4" />
+            <HandDrawnIcon name="sliders" className="h-4 w-4" />
             <span>Filter</span>
           </button>
 
@@ -250,7 +249,7 @@ export function CatalogClient({
           <div className="flex-1">
             {initialProducts.length === 0 ? (
               <EmptyState
-                icon={PackageSearch}
+                handDrawnIcon="package"
                 title="Produk Tidak Ditemukan"
                 description="Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya."
                 action={

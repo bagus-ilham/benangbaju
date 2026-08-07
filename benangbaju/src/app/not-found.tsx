@@ -1,14 +1,12 @@
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
-import { HelpCircle } from 'lucide-react'
-import { Button } from '@/shared/components'
+import { SmartLink as Link, Button, HandDrawnIcon } from '@/shared/components'
 
 export default function RootNotFound(): React.JSX.Element {
   return (
     <div className="flex-1 min-h-screen flex flex-col items-center justify-center text-center p-6 bg-brand-cream font-sans">
       <div className="max-w-md space-y-6 flex flex-col items-center py-12">
         <div className="p-4 bg-neutral-50 border border-neutral-100 text-neutral-800 rounded-none mb-2">
-          <HelpCircle className="h-10 w-10 text-neutral-450" />
+          <HandDrawnIcon name="alert-triangle" className="h-10 w-10 text-neutral-450" />
         </div>
 
         <div className="space-y-2">

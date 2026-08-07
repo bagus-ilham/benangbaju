@@ -1,9 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
-import { Eye, Truck } from 'lucide-react'
-import { Button, TableSkeleton } from '@/shared/components'
+import { SmartLink as Link, Button, TableSkeleton, HandDrawnIcon } from '@/shared/components'
 import type { AdminOrderListItem } from '@/modules/orders/types'
 
 interface AdminOrdersTableProps {
@@ -115,7 +113,7 @@ export function AdminOrdersTable({
                     variant="outline"
                     title="Input Resi & Kirim"
                   >
-                    <Truck size={13} className="mr-1 inline" /> Kirim
+                    <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-1 inline" /> Kirim
                   </Button>
                 )}
                 <Link href={`/admin/pesanan/${o.order_number}`}>
@@ -123,7 +121,7 @@ export function AdminOrdersTable({
                     variant="outline"
                     className="p-2 border-neutral-200 text-neutral-600 hover:text-neutral-900"
                   >
-                    <Eye size={13} className="mr-1 inline" /> Detail
+                    <HandDrawnIcon name="eye" className="h-3.5 w-3.5 mr-1 inline" /> Detail
                   </Button>
                 </Link>
               </td>
