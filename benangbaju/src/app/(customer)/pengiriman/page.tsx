@@ -41,7 +41,7 @@ export default function PengirimanPage(): React.JSX.Element {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div className="border border-neutral-200/80 p-6 space-y-3 bg-brand-cream rounded-2xl shadow-xs">
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 w-max rounded-xl">
-                <HandDrawnIcon name="measuring-tape" className="h-4 w-4" />
+                <HandDrawnIcon name="package" className="h-4 w-4" />
               </div>
               <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Perhitungan Berat
