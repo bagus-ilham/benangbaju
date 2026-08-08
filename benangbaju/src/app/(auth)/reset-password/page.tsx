@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { Button, Input, Card } from '@/shared/components'
+import { Button, Input, Card, SmartImage as Image } from '@/shared/components'
 import toast from 'react-hot-toast'
 
 export default function ResetPasswordPage(): React.JSX.Element {
@@ -82,50 +82,55 @@ export default function ResetPasswordPage(): React.JSX.Element {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-brand-cream py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 25 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <Card bordered={true} className="w-full max-w-md shadow-lg p-8 md:p-10 border-neutral-200">
-          <div className="flex flex-col space-y-2 text-center mb-8">
-            <span className="text-[10px] font-heading font-medium uppercase tracking-[0.3em] text-neutral-400 mb-2">
-              BENANGBAJU
-            </span>
-            <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-black">
-              Reset Kata Sandi
-            </h2>
-            <p className="text-[11px] md:text-xs text-neutral-400 font-sans">
-              Masukkan kata sandi baru Anda di bawah ini.
-            </p>
+    <motion.div
+      className="w-full"
+      initial={{ opacity: 0, y: 25 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <Card bordered={true} className="w-full max-w-md shadow-lg p-8 md:p-10 border-neutral-200">
+        <div className="flex flex-col space-y-2 text-center mb-8 items-center">
+          <div className="relative h-6 w-28 mb-1">
+            <Image
+              src="/image/svg/logo/logo-benangbaju.svg"
+              alt="Benangbaju"
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
+          <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-black">
+            Reset Kata Sandi
+          </h2>
+          <p className="text-[11px] md:text-xs text-neutral-400 font-sans">
+            Masukkan kata sandi baru Anda di bawah ini.
+          </p>
+        </div>
 
-          <form onSubmit={handleReset} className="space-y-4">
-            <Input
-              label="Kata Sandi Baru"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Minimal 6 karakter"
-              required
-            />
+        <form onSubmit={handleReset} className="space-y-4">
+          <Input
+            label="Kata Sandi Baru"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Minimal 6 karakter"
+            required
+          />
 
-            <Input
-              label="Konfirmasi Kata Sandi Baru"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Ulangi kata sandi baru"
-              required
-            />
+          <Input
+            label="Konfirmasi Kata Sandi Baru"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Ulangi kata sandi baru"
+            required
+          />
 
-            <Button type="submit" variant="primary" className="w-full mt-4" isLoading={isLoading}>
-              Perbarui Kata Sandi
-            </Button>
-          </form>
-        </Card>
-      </motion.div>
-    </div>
+          <Button type="submit" variant="primary" className="w-full mt-4" isLoading={isLoading}>
+            Perbarui Kata Sandi
+          </Button>
+        </form>
+      </Card>
+    </motion.div>
   )
 }

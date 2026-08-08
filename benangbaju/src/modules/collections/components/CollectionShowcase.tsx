@@ -23,16 +23,15 @@ export function CollectionShowcase({
   index = 0,
 }: CollectionShowcaseProps): React.JSX.Element {
   const isReversed = index % 2 === 1
-  const bgColor = isReversed ? 'bg-brand-gold/60' : 'bg-brand-cream'
+  const bgColor = isReversed ? 'bg-brand-gold/60' : 'bg-brand-blue/50'
   const textColor = 'text-brand-plum'
   const textMuted = 'text-brand-plum/80'
   const borderColor = isReversed ? 'border-brand-blue' : 'border-brand-gold'
-  const btnBg = isReversed ? 'bg-brand-blue' : 'bg-brand-gold'
-  const btnText = 'text-brand-plum font-bold'
-  const btnHover = isReversed ? 'hover:bg-[#83a3aa]' : 'hover:bg-amber-200'
-  const cardContainerClass = isReversed
-    ? 'bg-brand-cream p-2 border border-neutral-200/80 rounded-2xl shadow-sm'
-    : ''
+  const btnBg = isReversed ? 'bg-brand-plum' : 'bg-brand-gold'
+  const btnText = isReversed ? 'text-brand-blue font-bold' : 'text-brand-plum font-bold'
+  const btnHover = isReversed ? 'hover:bg-brand-plum/90' : 'hover:bg-amber-200'
+  const cardContainerClass =
+    'bg-brand-cream p-2 border border-neutral-200/80 rounded-2xl shadow-sm'
 
   const sliderRef = useRef<HTMLDivElement>(null)
 
