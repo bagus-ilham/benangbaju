@@ -103,6 +103,22 @@ export default function AdminBannersPage(): React.JSX.Element {
     }
   }
 
+  const handleUpdateSortOrder = async (b: BannerRow, newOrder: number) => {
+    try {
+      const { error } = await supabase
+        .from('banners')
+        .update({ sort_order: newOrder })
+        .eq('id', b.id)
+
+      if (error) throw error
+      toast.success('No. urut banner berhasil diperbarui')
+      refetch()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      toast.error('Gagal memperbarui no. urut')
+    }
+  }
+
   const handleDelete = async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menonaktifkan banner ini?')) {
       try {
@@ -179,6 +195,7 @@ export default function AdminBannersPage(): React.JSX.Element {
           isError={isError}
           onRefetch={refetch}
           onToggleActive={handleToggleActive}
+          onUpdateSortOrder={handleUpdateSortOrder}
           onEdit={handleOpenEdit}
           onDuplicate={handleDuplicate}
           onDelete={handleDelete}

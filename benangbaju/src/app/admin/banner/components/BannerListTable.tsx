@@ -17,6 +17,7 @@ interface BannerListTableProps {
   onEdit: (b: BannerRow) => void
   onDuplicate: (b: BannerRow) => void
   onDelete: (id: string) => void
+  onUpdateSortOrder?: (b: BannerRow, newOrder: number) => void
 }
 
 export function BannerListTable({
@@ -28,6 +29,7 @@ export function BannerListTable({
   onEdit,
   onDuplicate,
   onDelete,
+  onUpdateSortOrder,
 }: BannerListTableProps) {
   if (isLoading) {
     return (
@@ -109,7 +111,24 @@ export function BannerListTable({
                 {b.position === 'homepage_hero' ? 'Hero Slider' : 'Mid Banner'}
               </td>
               <td className="py-4 px-4 text-center font-semibold text-neutral-900">
-                {b.sort_order}
+                <input
+                  type="number"
+                  defaultValue={b.sort_order ?? 0}
+                  key={`${b.id}-${b.sort_order}`}
+                  onBlur={(e) => {
+                    const val = parseInt(e.target.value, 10)
+                    if (!isNaN(val) && val !== b.sort_order) {
+                      onUpdateSortOrder?.(b, val)
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur()
+                    }
+                  }}
+                  className="w-16 text-center font-semibold text-neutral-900 bg-white border border-neutral-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-plum/40 focus:border-brand-plum transition shadow-sm"
+                  title="Ubah no. urut (Tekan Enter atau klik di luar untuk menyimpan)"
+                />
               </td>
               <td className="py-4 px-4 text-center text-neutral-500">
                 {b.starts_at ? (

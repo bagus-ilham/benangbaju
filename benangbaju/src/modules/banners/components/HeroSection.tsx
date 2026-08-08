@@ -110,59 +110,60 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
             />
           </div>
 
-          {/* Elegant overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-plum/80 via-brand-plum/40 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/60 via-transparent to-brand-plum/20 z-10" />
+          {/* Glassmorphism content card overlay */}
+          {(currentBanner.title || currentBanner.subtitle || currentBanner.link_url) && (
+            <div className="absolute inset-0 flex items-center z-20">
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+                <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6 bg-brand-plum/75 backdrop-blur-md border border-white/15 p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl">
+                  {currentBanner.subtitle && (
+                    <motion.span
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{
+                        y: 0,
+                        opacity: 1,
+                        transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                      }}
+                      className="inline-block text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-brand-gold bg-brand-plum/60 backdrop-blur-sm px-4 py-1.5 border border-brand-gold/30 rounded-full"
+                    >
+                      {currentBanner.subtitle}
+                    </motion.span>
+                  )}
 
-          <div className="absolute inset-0 flex items-center z-20">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-              <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6">
-                {currentBanner.subtitle && (
-                  <motion.span
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{
-                      y: 0,
-                      opacity: 1,
-                      transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                    }}
-                    className="inline-block text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-brand-gold bg-brand-plum/60 backdrop-blur-sm px-4 py-1.5 border border-brand-gold/30 rounded-full"
-                  >
-                    {currentBanner.subtitle}
-                  </motion.span>
-                )}
+                  {currentBanner.title && (
+                    <motion.h1
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{
+                        y: 0,
+                        opacity: 1,
+                        transition: { delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+                      }}
+                      className="text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-wide text-brand-cream leading-[1.15]"
+                    >
+                      {currentBanner.title}
+                    </motion.h1>
+                  )}
 
-                <motion.h1
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{
-                    y: 0,
-                    opacity: 1,
-                    transition: { delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-                  }}
-                  className="text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-wide text-brand-cream leading-[1.15]"
-                >
-                  {currentBanner.title}
-                </motion.h1>
-
-                {currentBanner.link_url && (
-                  <motion.div
-                    initial={{ y: 25, opacity: 0 }}
-                    animate={{
-                      y: 0,
-                      opacity: 1,
-                      transition: { delay: 0.7, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-                    }}
-                    className="pt-4"
-                  >
-                    <Link href={currentBanner.link_url}>
-                      <Button variant="accent" size="lg">
-                        Jelajahi Koleksi
-                      </Button>
-                    </Link>
-                  </motion.div>
-                )}
+                  {currentBanner.link_url && (
+                    <motion.div
+                      initial={{ y: 25, opacity: 0 }}
+                      animate={{
+                        y: 0,
+                        opacity: 1,
+                        transition: { delay: 0.7, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+                      }}
+                      className="pt-2 md:pt-4"
+                    >
+                      <Link href={currentBanner.link_url}>
+                        <Button variant="accent" size="lg">
+                          Jelajahi Koleksi
+                        </Button>
+                      </Link>
+                    </motion.div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -171,7 +172,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
         <>
           <button
             onClick={handlePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-brand-plum/50 hover:bg-brand-plum/90 text-white backdrop-blur-md border border-white/20 transition-all duration-300 rounded-full hidden md:block"
             aria-label="Slide sebelumnya"
           >
             <HandDrawnIcon name="chevron-left" className="h-5 w-5" aria-hidden="true" />
@@ -179,19 +180,19 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
 
           <button
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-brand-cream/10 hover:bg-brand-cream/90 text-white hover:text-brand-black backdrop-blur-sm border border-white/20 transition-all duration-300 rounded-full hidden md:block"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-brand-plum/50 hover:bg-brand-plum/90 text-white backdrop-blur-md border border-white/20 transition-all duration-300 rounded-full hidden md:block"
             aria-label="Slide berikutnya"
           >
             <HandDrawnIcon name="chevron-right" className="h-5 w-5" aria-hidden="true" />
           </button>
 
           {/* Dots */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex space-x-2 bg-brand-plum/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15">
             {banners.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
-                className="p-2 flex items-center justify-center focus:outline-none rounded-full"
+                className="p-1 flex items-center justify-center focus:outline-none rounded-full"
                 aria-label={`Buka slide ${idx + 1}`}
                 aria-current={idx === currentIndex ? 'true' : undefined}
               >
@@ -199,8 +200,8 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                   className={cn(
                     'block h-1.5 transition-all duration-500 rounded-full',
                     idx === currentIndex
-                      ? 'w-10 bg-brand-accent-light'
-                      : 'w-3 bg-brand-cream/40 hover:bg-brand-cream/70'
+                      ? 'w-8 bg-brand-gold'
+                      : 'w-2.5 bg-brand-cream/40 hover:bg-brand-cream/80'
                   )}
                 />
               </button>

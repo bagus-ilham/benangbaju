@@ -144,6 +144,22 @@ export default function AdminCollectionPage(): React.JSX.Element {
     }
   }
 
+  const handleUpdateSortOrder = async (col: AdminCollectionItem, newOrder: number) => {
+    try {
+      const { error } = await supabase
+        .from('collections')
+        .update({ sort_order: newOrder })
+        .eq('id', col.id)
+
+      if (error) throw error
+      toast.success('No. urut koleksi berhasil diperbarui')
+      refetch()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      toast.error('Gagal memperbarui no. urut')
+    }
+  }
+
   const handleDelete = async (id: string) => {
     if (confirm('Apakah Anda yakin ingin menonaktifkan koleksi ini?')) {
       try {
@@ -228,6 +244,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
           isError={isError}
           onRefetch={refetch}
           onToggleActive={handleToggleActive}
+          onUpdateSortOrder={handleUpdateSortOrder}
           onEdit={handleOpenEdit}
           onDuplicate={handleDuplicate}
           onDelete={handleDelete}

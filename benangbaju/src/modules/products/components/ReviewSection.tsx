@@ -75,15 +75,14 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
     ratingSummary?.avg_rating ??
     (reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0)
 
-  // Star render helper
   const renderStars = (rating: number, className = 'h-3.5 w-3.5') => {
     return Array.from({ length: 5 }).map((_, i) => (
       <HandDrawnIcon
         key={i}
-        name="star"
+        name={i < Math.round(rating) ? 'star-filled' : 'star'}
         className={cn(
           className,
-          i < Math.round(rating) ? 'opacity-100' : 'opacity-30 grayscale'
+          i < Math.round(rating) ? 'opacity-100' : 'opacity-40'
         )}
       />
     ))

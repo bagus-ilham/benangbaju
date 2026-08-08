@@ -41,6 +41,8 @@ export type HandDrawnIconName =
   | 'eye-slash'
   | 'eyeSlash'
   | 'star'
+  | 'star-filled'
+  | 'starFilled'
   | 'bell'
   | 'map-pin'
   | 'mapPin'
@@ -134,6 +136,8 @@ const ICON_FILE_MAP: Record<string, string> = {
   'eye-slash': 'icon-eye-slash.svg',
   eyeSlash: 'icon-eye-slash.svg',
   star: 'icon-star.svg',
+  'star-filled': 'icon-star-filled.svg',
+  starFilled: 'icon-star-filled.svg',
   bell: 'icon-bell.svg',
   'map-pin': 'icon-map-pin.svg',
   mapPin: 'icon-map-pin.svg',

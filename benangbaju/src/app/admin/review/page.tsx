@@ -152,12 +152,12 @@ export default function AdminReviewsPage(): React.JSX.Element {
                       </p>
                     </td>
                     <td className="py-4 px-4 space-y-1 max-w-sm">
-                      <div className="flex items-center text-amber-500">
+                      <div className="flex items-center space-x-0.5">
                         {Array.from({ length: 5 }).map((_, idx) => (
                           <HandDrawnIcon
                             key={idx}
-                            name="star"
-                            className={cn("h-3 w-3", idx >= rev.rating && "opacity-30 grayscale")}
+                            name={idx < rev.rating ? 'star-filled' : 'star'}
+                            className={cn('h-3.5 w-3.5', idx < rev.rating ? 'opacity-100' : 'opacity-40')}
                           />
                         ))}
                       </div>

@@ -123,10 +123,13 @@ export default function AdminProductListPage(): React.JSX.Element {
         render: (p) => (
           <button
             onClick={() => handleToggleFeatured(p.id, p.is_featured)}
-            className={`inline-flex items-center justify-center p-1.5 transition ${p.is_featured ? 'text-amber-500' : 'text-neutral-300 hover:text-neutral-500'
-              }`}
+            className="inline-flex items-center justify-center p-1.5 transition hover:scale-110"
+            title={p.is_featured ? 'Hapus dari Produk Unggulan' : 'Jadikan Produk Unggulan'}
           >
-            <HandDrawnIcon name="star" className={cn('h-4 w-4', p.is_featured ? 'opacity-100' : 'opacity-30 grayscale')} />
+            <HandDrawnIcon
+              name={p.is_featured ? 'star-filled' : 'star'}
+              className={cn('h-4.5 w-4.5', p.is_featured ? 'opacity-100' : 'opacity-40 hover:opacity-70')}
+            />
           </button>
         ),
       },

@@ -13,6 +13,7 @@ interface CollectionListTableProps {
   onEdit: (col: AdminCollectionItem) => void
   onDuplicate: (col: AdminCollectionItem) => void
   onDelete: (id: string) => void
+  onUpdateSortOrder?: (col: AdminCollectionItem, newOrder: number) => void
 }
 
 export function CollectionListTable({
@@ -24,6 +25,7 @@ export function CollectionListTable({
   onEdit,
   onDuplicate,
   onDelete,
+  onUpdateSortOrder,
 }: CollectionListTableProps) {
   if (isLoading) {
     return (
@@ -90,7 +92,24 @@ export function CollectionListTable({
                 {col.product_ids?.length || 0} Produk
               </td>
               <td className="py-4 px-4 text-center font-semibold text-neutral-900">
-                {col.sort_order}
+                <input
+                  type="number"
+                  defaultValue={col.sort_order ?? 0}
+                  key={`${col.id}-${col.sort_order}`}
+                  onBlur={(e) => {
+                    const val = parseInt(e.target.value, 10)
+                    if (!isNaN(val) && val !== col.sort_order) {
+                      onUpdateSortOrder?.(col, val)
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur()
+                    }
+                  }}
+                  className="w-16 text-center font-semibold text-neutral-900 bg-white border border-neutral-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-plum/40 focus:border-brand-plum transition shadow-sm"
+                  title="Ubah no. urut (Tekan Enter atau klik di luar untuk menyimpan)"
+                />
               </td>
               <td className="py-4 px-4 text-center">
                 <button

@@ -131,6 +131,22 @@ export default function AdminCategoryPage(): React.JSX.Element {
     }
   }
 
+  const handleUpdateSortOrder = async (cat: CategoryRow, newOrder: number) => {
+    try {
+      const { error } = await supabase
+        .from('categories')
+        .update({ sort_order: newOrder })
+        .eq('id', cat.id)
+
+      if (error) throw error
+      toast.success('No. urut kategori berhasil diperbarui')
+      refetch()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      toast.error('Gagal memperbarui no. urut')
+    }
+  }
+
   const handleDelete = async (id: string) => {
     if (
       confirm(
@@ -256,7 +272,24 @@ export default function AdminCategoryPage(): React.JSX.Element {
                       </td>
                       <td className="py-4 px-4 font-mono text-neutral-500">{cat.slug}</td>
                       <td className="py-4 px-4 text-center font-semibold text-neutral-900">
-                        {cat.sort_order}
+                        <input
+                          type="number"
+                          defaultValue={cat.sort_order ?? 0}
+                          key={`${cat.id}-${cat.sort_order}`}
+                          onBlur={(e) => {
+                            const val = parseInt(e.target.value, 10)
+                            if (!isNaN(val) && val !== cat.sort_order) {
+                              handleUpdateSortOrder(cat, val)
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.currentTarget.blur()
+                            }
+                          }}
+                          className="w-16 text-center font-semibold text-neutral-900 bg-white border border-neutral-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-plum/40 focus:border-brand-plum transition shadow-sm"
+                          title="Ubah no. urut (Tekan Enter atau klik di luar untuk menyimpan)"
+                        />
                       </td>
                       <td className="py-4 px-4 text-center">
                         <button
