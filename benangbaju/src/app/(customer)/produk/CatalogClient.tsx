@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   EmptyState,
   HandDrawnIcon,
+  Pagination,
 } from '@/shared/components'
 import { CatalogDesktopFilters, CatalogMobileFilters } from './components'
 import { cn } from '@/lib/utils'
@@ -276,28 +277,12 @@ export function CatalogClient({
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-4 mt-16 pt-8 border-t border-neutral-100">
-                <button
-                  disabled={page <= 1}
-                  onClick={() => handlePageSelect(page - 1)}
-                  className="p-2 border border-neutral-200 hover:border-brand-black bg-brand-cream disabled:opacity-30 disabled:pointer-events-none transition-colors"
-                  aria-label="Halaman sebelumnya"
-                >
-                  <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
-                </button>
-
-                <span className="text-xs font-heading font-medium tracking-wide">
-                  Halaman {page} dari {totalPages}
-                </span>
-
-                <button
-                  disabled={page >= totalPages}
-                  onClick={() => handlePageSelect(page + 1)}
-                  className="p-2 border border-neutral-200 hover:border-brand-black bg-brand-cream disabled:opacity-30 disabled:pointer-events-none transition-colors"
-                  aria-label="Halaman berikutnya"
-                >
-                  <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
-                </button>
+              <div className="mt-16 pt-8 border-t border-neutral-100 flex justify-center">
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={(p) => handlePageSelect(p)}
+                />
               </div>
             )}
           </div>

@@ -18,6 +18,7 @@ import {
   PageHero,
   Modal,
   HandDrawnIcon,
+  Pagination,
 } from '@/shared/components'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
@@ -209,26 +210,12 @@ export default function PesananPage(): React.JSX.Element {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex justify-center space-x-2 pt-4">
-                <Button
-                  variant="outline"
-                  disabled={page === 1}
-                  onClick={() => setPage(page - 1)}
-                  className="text-xs uppercase font-semibold py-2 px-4"
-                >
-                  Sebelumnya
-                </Button>
-                <span className="px-4 py-2 text-xs text-neutral-500 font-semibold flex items-center">
-                  Halaman {page} dari {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  disabled={page === totalPages}
-                  onClick={() => setPage(page + 1)}
-                  className="text-xs uppercase font-semibold py-2 px-4"
-                >
-                  Berikutnya
-                </Button>
+              <div className="pt-4 flex justify-center">
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={(p) => setPage(p)}
+                />
               </div>
             )}
           </div>

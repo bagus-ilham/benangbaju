@@ -8,7 +8,7 @@ import {
   useAdminUpdateOrderStatus,
 } from '@/app/admin/hooks/useAdmin'
 import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/modules/orders/types'
-import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
+import { Button, AdminPageHeader, HandDrawnIcon, Pagination } from '@/shared/components'
 import toast from 'react-hot-toast'
 import {
   AdminOrdersTable,
@@ -194,28 +194,14 @@ export default function AdminOrdersPage(): React.JSX.Element {
 
         {/* Pagination (Skip for returns) */}
         {activeTab !== 'returns' && totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-neutral-150 px-5 py-4 text-xs font-semibold text-neutral-500">
-            <span>
-              Menampilkan halaman {page} dari {totalPages}
-            </span>
-            <div className="flex space-x-1">
-              <Button
-                variant="outline"
-                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                disabled={page === 1}
-                className="p-2 border-neutral-200"
-              >
-                &larr;
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                disabled={page === totalPages}
-                className="p-2 border-neutral-200"
-              >
-                &rarr;
-              </Button>
-            </div>
+          <div className="border-t border-neutral-150 px-5 py-3">
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(p) => setPage(p)}
+              showInfo
+              totalItems={totalCount}
+            />
           </div>
         )}
       </div>

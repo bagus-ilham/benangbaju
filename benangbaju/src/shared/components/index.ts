@@ -41,5 +41,6 @@ export { CustomToast } from './CustomToast'
 export { MobileBottomNav } from './MobileBottomNav'
 export { SmartImage } from './SmartImage'
 export { HandDrawnIcon, type HandDrawnIconName, type HandDrawnIconProps } from './HandDrawnIcon'
+export { Pagination } from './Pagination'
 
 
