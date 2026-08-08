@@ -7,8 +7,7 @@ import { SmartImage as Image } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
-import { useCartStore } from '@/modules/cart/stores/cartStore'
-import { ProductListItem, ProductVariant } from '@/modules/products/types'
+import { ProductListItem } from '@/modules/products/types'
 import { cn, formatIDR } from '@/lib/utils'
 import { Badge } from '@/shared/components/Badge'
 import toast from 'react-hot-toast'
@@ -27,11 +26,8 @@ export const ProductCard = React.memo(function ProductCard({
   const router = useRouter()
   const isLiked = useWishlistStore((state) => state.productIds.includes(product.id))
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist)
-  const addItem = useCartStore((state) => state.addItem)
-  const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
   const [isHovered, setIsHovered] = useState(false)
   const [showAltImage, setShowAltImage] = useState(false)
-  const [isAdding, setIsAdding] = useState<string | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
 
   const liked = isLiked
@@ -43,95 +39,9 @@ export const ProductCard = React.memo(function ProductCard({
     discountPercent,
     primaryImage,
     hoverImage,
-    hasMultipleColors,
-    sizeVariants,
   } = product
 
   const displayAltImage = isHovered || showAltImage
-
-  const handleQuickAdd = async (e: React.MouseEvent, variant: ProductVariant) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (isAdding) return
-    setIsAdding(variant.id)
-    try {
-      const cartItem = {
-        variantId: variant.id,
-        productName: product.name,
-        variantName: variant.name,
-        name: product.name,
-        sku: variant.sku,
-        price: Number(variant.price),
-        comparePrice: variant.compare_price ? Number(variant.compare_price) : null,
-        imageUrl: primaryImage,
-        slug: product.slug,
-        stock: variant.stock,
-      }
-      await addItem(cartItem, 1)
-      toast.custom((t) => (
-        <div
-          className={cn(
-            t.visible ? 'animate-enter' : 'animate-leave',
-            'max-w-sm w-full bg-brand-cream shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden border border-neutral-200/50 flex pointer-events-auto'
-          )}
-        >
-          <div className="flex-1 w-0 p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 pt-0.5">
-                {primaryImage ? (
-                  <div
-                    className="relative aspect-[3/4] w-10 border border-neutral-100 rounded-lg overflow-hidden"
-                    aria-hidden="true"
-                  >
-                    <Image
-                      className="object-cover"
-                      src={getProxiedImageUrl(primaryImage)}
-                      alt={product.name}
-                      fill
-                      sizes="40px"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="h-10 w-10 bg-neutral-100 rounded-lg flex items-center justify-center text-[8px] text-neutral-400 font-sans"
-                    aria-hidden="true"
-                  >
-                    No Img
-                  </div>
-                )}
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-brand-accent">
-                  Produk Masuk Keranjang
-                </p>
-                <p className="text-[11px] font-heading font-medium uppercase text-brand-black line-clamp-1 mt-0.5">
-                  {product.name}
-                </p>
-                <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
-                  Varian: {variant.name} &bull; Qty: 1
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex border-l border-neutral-100">
-            <button
-              onClick={() => {
-                toast.dismiss(t.id)
-                setCartDrawerOpen(true)
-              }}
-              className="w-full border border-transparent rounded-xl p-4 flex items-center justify-center text-xs font-heading font-bold uppercase tracking-wider text-brand-accent hover:text-brand-accent-light focus:outline-none cursor-pointer"
-            >
-              Lihat
-            </button>
-          </div>
-        </div>
-      ))
-    } catch {
-      toast.error('Gagal menambahkan ke keranjang.')
-    } finally {
-      setIsAdding(null)
-    }
-  }
 
   const productUrl = `/produk/${product.slug}`
 
@@ -219,10 +129,7 @@ export const ProductCard = React.memo(function ProductCard({
           </div>
         )}
 
-        {/* 🎨 PALETTE ENHANCEMENT
-        Problem: Tombol Wishlist pada product card membutuhkan aria-pressed state dan visual feedback.
-        Fix: Menambahkan aria-pressed={liked} dan toast notification.
-        Impact: Aksesibilitas interaksi toggle lebih baik untuk screen reader dan feedback visual yang jelas */}
+        {/* Wishlist Button */}
         <button
           onClick={(e) => {
             e.preventDefault()
@@ -263,65 +170,6 @@ export const ProductCard = React.memo(function ProductCard({
             </Badge>
           </div>
         )}
-
-        {/* Quick add or view details overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-brand-gold/95 backdrop-blur-xs py-2 px-3 transform translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-active:translate-y-0 focus-within:translate-y-0 z-20 flex flex-col items-center justify-center min-h-[44px]">
-          {!hasMultipleColors && sizeVariants.length > 0 ? (
-            <div className="w-full space-y-1 text-center">
-              <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum">
-                + Keranjang Instan
-              </span>
-              <div className="flex flex-wrap gap-1 justify-center">
-                {sizeVariants.map((v) => {
-                  const sizeAttr = v.product_variant_attrs?.find(
-                    (a) =>
-                      a.attr_name.toLowerCase().includes('ukuran') ||
-                      a.attr_name.toLowerCase().includes('size')
-                  )
-                  let sizeLabel = ''
-                  if (sizeAttr && sizeAttr.attr_value) {
-                    sizeLabel = sizeAttr.attr_value
-                  } else if (v.product_variant_attrs && v.product_variant_attrs.length > 0) {
-                    sizeLabel = v.product_variant_attrs[0].attr_value
-                  } else if (v.name && v.name.toLowerCase() !== 'default title') {
-                    const parts = v.name.split('-')
-                    sizeLabel = parts.length > 1 ? parts[parts.length - 1].trim() : v.name
-                  }
-                  if (!sizeLabel || sizeLabel.trim() === '') {
-                    sizeLabel = 'OS'
-                  }
-                  const isCurrentAdding = isAdding === v.id
-                  return (
-                    <button
-                      key={v.id}
-                      type="button"
-                      disabled={isAdding !== null}
-                      aria-busy={isCurrentAdding}
-                      aria-label={`Tambah ukuran ${sizeLabel} ke keranjang`}
-                      onClick={(e) => handleQuickAdd(e, v)}
-                      className="px-2.5 py-1 bg-brand-cream hover:bg-white text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum border border-amber-200/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed select-none min-w-[28px] rounded-md flex items-center justify-center cursor-pointer shadow-xs"
-                    >
-                      {isCurrentAdding ? (
-                        <img
-                          src="/image/svg/logo/logo-jarum-benang.svg"
-                          alt=""
-                          className="w-3 h-3 animate-[spin_3s_linear_infinite] object-contain shrink-0"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        sizeLabel
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          ) : (
-            <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum py-1 text-center w-full block">
-              Lihat Detail
-            </span>
-          )}
-        </div>
       </div>
 
       {/* Product Information */}

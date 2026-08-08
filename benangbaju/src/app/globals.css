@@ -43,6 +43,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -53,6 +54,7 @@
     transform: translateY(10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -64,6 +66,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -71,10 +74,12 @@
 
 /* Gentle floating for empty state icons */
 @keyframes gentle-float {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-6px);
   }
@@ -82,10 +87,12 @@
 
 /* Pulse glow for countdown timers & attention elements */
 @keyframes pulse-glow {
+
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(45, 38, 64, 0.08);
   }
+
   50% {
     box-shadow: 0 0 0 6px rgba(45, 38, 64, 0);
   }
@@ -96,6 +103,7 @@
   0% {
     transform: scale(1);
   }
+
   100% {
     transform: scale(1.05);
   }
@@ -106,6 +114,7 @@
   from {
     transform: scaleX(0);
   }
+
   to {
     transform: scaleX(1);
   }
@@ -116,16 +125,21 @@
   0% {
     background-position: -200% center;
   }
+
   100% {
     background-position: 200% center;
   }
 }
 
 :root {
-  --color-cream: #FAF8F5; /* 1. Cream — Primary background & primary theme color */
-  --color-gold: #F3E5AB;  /* 2. Warm Sand / Gold — Secondary highlight & accents */
-  --color-blue: #94b2b9;  /* 3. Dusty Blue — Tertiary accent & badge */
-  --color-plum: #2D2640;  /* 4. Deep Plum / Charcoal — Quaternary text/contrast */
+  --color-cream: #FAF8F5;
+  /* 1. Cream — Primary background & primary theme color */
+  --color-gold: #F3E5AB;
+  /* 2. Warm Sand / Gold — Secondary highlight & accents */
+  --color-blue: #94b2b9;
+  /* 3. Dusty Blue — Tertiary accent & badge */
+  --color-plum: #2D2640;
+  /* 4. Deep Plum / Charcoal — Quaternary text/contrast */
 
   --color-primary: var(--color-cream);
   --color-secondary: var(--color-gold);
@@ -256,12 +270,10 @@ select:focus {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.5) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 100%);
   animation: shimmer-sweep 1.8s ease-in-out infinite;
 }
 
@@ -278,12 +290,10 @@ select:focus {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.12) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.12) 50%,
+      transparent 100%);
   transition: none;
 }
 
@@ -361,24 +371,20 @@ select:focus {
 
 /* Editorial gradient overlay for hero & collection cards (Deep Plum overlay) */
 .gradient-overlay-dark {
-  background: linear-gradient(
-    to top,
-    rgba(45, 38, 64, 0.75) 0%,
-    rgba(45, 38, 64, 0.35) 40%,
-    rgba(45, 38, 64, 0.05) 100%
-  );
+  background: linear-gradient(to top,
+      rgba(45, 38, 64, 0.75) 0%,
+      rgba(45, 38, 64, 0.35) 40%,
+      rgba(45, 38, 64, 0.05) 100%);
 }
 
 /* Branded text shimmer for loading states */
 .text-shimmer {
-  background: linear-gradient(
-    90deg,
-    #2D2640 0%,
-    #94b2b9 25%,
-    #2D2640 50%,
-    #94b2b9 75%,
-    #2D2640 100%
-  );
+  background: linear-gradient(90deg,
+      #2D2640 0%,
+      #94b2b9 25%,
+      #2D2640 50%,
+      #94b2b9 75%,
+      #2D2640 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -523,6 +529,7 @@ select:focus {
   from {
     clip-path: inset(0 100% 0 0);
   }
+
   to {
     clip-path: inset(0 0 0 0);
   }
@@ -553,12 +560,16 @@ select:focus {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-none {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -575,6 +586,7 @@ select:focus {
     animation: none !important;
   }
 }
+
 /* Firefox Scrollbar Support */
 * {
   scrollbar-width: thin;
@@ -586,6 +598,7 @@ select:focus {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -596,6 +609,7 @@ select:focus {
     opacity: 0;
     transform: translateY(4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
