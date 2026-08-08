@@ -32,18 +32,48 @@ export interface OrderShipping {
   delivered_at: string | null
 }
 
+export interface PaymentFeeConfig {
+  id: string
+  channel_code: string
+  category: 'virtual_account' | 'qris' | 'ewallet' | 'minimarket'
+  channel_name: string
+  logo_url: string | null
+  fee_type: 'flat' | 'percentage' | 'flat_and_percentage'
+  fee_flat: number
+  fee_percentage: number
+  is_active: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface PaymentInstructions {
+  va_number?: string
+  bank_name?: string
+  qr_url?: string
+  qr_string?: string
+  payment_code?: string
+  checkout_url?: string
+  deep_link_url?: string
+  expired_at?: string
+  instructions?: string[]
+}
+
 export interface PaymentInfo {
   id: string
   order_id: string
   gateway_order_id: string
   status: 'pending' | 'success' | 'failed' | 'expired' | 'refunded'
   amount: number
+  payment_fee: number
+  payment_channel: string | null
   payment_type: string | null
   va_number: string | null
   biller_code: string | null
   payment_code: string | null
   qr_url: string | null
   snap_token: string | null
+  payment_instructions?: PaymentInstructions | null
   created_at: string
   updated_at: string
 }
@@ -57,6 +87,8 @@ export interface Order {
   subtotal: number
   shipping_cost: number
   discount_amount: number
+  payment_fee: number
+  payment_channel: string | null
   total_amount: number
   notes: string | null
   cancel_reason: string | null
@@ -75,6 +107,8 @@ export interface CreateOrderParams {
   shippingRateId?: string
   shippingCost?: number
   notes?: string
+  paymentFee?: number
+  paymentChannel?: string
 }
 
 export interface OrderRpcResponse {
@@ -87,6 +121,8 @@ export interface OrderRpcResponse {
     subtotal: number
     shipping_cost: number
     discount_amount: number
+    payment_fee: number
+    payment_channel: string | null
     total_amount: number
     status: string
   }
@@ -101,6 +137,8 @@ export interface AdminOrderListItem {
   subtotal: number
   shipping_cost: number
   discount_amount: number
+  payment_fee: number
+  payment_channel: string | null
   total_amount: number
   notes: string | null
   cancel_reason: string | null
@@ -159,3 +197,4 @@ export interface AdminReturnRequestListItem {
     sort_order: number
   }>
 }
+

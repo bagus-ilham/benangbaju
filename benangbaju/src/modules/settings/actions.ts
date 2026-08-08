@@ -22,3 +22,15 @@ export async function adminUpsertSettingsAction(settings: SiteSetting[]) {
 export async function getSiteSettingsAction() {
   return settingsService.getSiteSettings()
 }
+
+export async function getPaymentFeeConfigsAction() {
+  return settingsService.getPaymentFeeConfigs()
+}
+
+export async function adminUpdatePaymentFeeConfigAction(
+  id: string,
+  updates: Partial<import('@/modules/orders/types').PaymentFeeConfig>
+) {
+  await requireAdmin()
+  return settingsService.adminUpdatePaymentFeeConfig(id, updates)
+}

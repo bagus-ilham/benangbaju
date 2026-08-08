@@ -222,10 +222,12 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       )
     }
 
-    // 5. Override the client-provided cost with the server-calculated cost
+    // 5. Override the client-provided cost with the server-calculated cost and include payment parameters
     const secureParams = {
       ...params,
       shippingCost: selectedRate.price,
+      paymentFee: params.paymentFee || 0,
+      paymentChannel: params.paymentChannel,
     }
 
     // Proceed with creating the order

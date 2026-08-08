@@ -4,8 +4,11 @@ import {
   adminGetSettingsAction,
   adminUpdateSettingsAction,
   adminUpsertSettingsAction,
+  getPaymentFeeConfigsAction,
+  adminUpdatePaymentFeeConfigAction,
 } from '@/modules/settings/actions'
 import type { SiteSetting } from '@/modules/settings/types'
+import type { PaymentFeeConfig } from '@/modules/orders/types'
 
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
 
@@ -16,6 +19,35 @@ export function useAdminSettings(): import('@tanstack/react-query').UseQueryResu
   return useQuery({
     queryKey: ['admin', 'settings'],
     queryFn: () => adminGetSettingsAction(),
+  })
+}
+
+export function usePaymentFeeConfigs(): import('@tanstack/react-query').UseQueryResult<
+  NoInfer<ApiListResponse<PaymentFeeConfig>>,
+  Error
+> {
+  return useQuery({
+    queryKey: ['payment-fee-configs'],
+    queryFn: () => getPaymentFeeConfigsAction(),
+  })
+}
+
+export function useAdminUpdatePaymentFeeConfig(): import('@tanstack/react-query').UseMutationResult<
+  ApiResponse<void>,
+  Error,
+  { id: string; updates: Partial<PaymentFeeConfig> },
+  unknown
+> {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<PaymentFeeConfig> }) => {
+      const res = await adminUpdatePaymentFeeConfigAction(id, updates)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal memperbarui biaya pembayaran')
+      return res
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payment-fee-configs'] })
+    },
   })
 }
 

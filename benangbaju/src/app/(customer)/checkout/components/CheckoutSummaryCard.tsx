@@ -20,6 +20,7 @@ interface CheckoutSummaryCardProps {
   displayItems: CartItem[]
   subtotal: number
   shippingCost: number
+  paymentFee?: number
   discountAmount: number
   totalAmount: number
   voucherCodeInput: string
@@ -41,6 +42,7 @@ export function CheckoutSummaryCard({
   displayItems,
   subtotal,
   shippingCost,
+  paymentFee = 0,
   discountAmount,
   totalAmount,
   voucherCodeInput,
@@ -208,6 +210,12 @@ export function CheckoutSummaryCard({
             {shippingCost > 0 ? formatIDR(shippingCost) : 'Pilih kurir...'}
           </span>
         </div>
+        {paymentFee > 0 && (
+          <div className="flex justify-between">
+            <span>Biaya Layanan Pembayaran</span>
+            <span className="font-semibold text-brand-black">{formatIDR(paymentFee)}</span>
+          </div>
+        )}
         {appliedVoucher && (
           <div className="flex justify-between font-semibold">
             <span>Diskon Voucher</span>

@@ -87,6 +87,8 @@ export class AdminOrderService {
           subtotal: row.subtotal,
           shipping_cost: row.shipping_cost,
           discount_amount: row.discount_amount,
+          payment_fee: Number(row.payment_fee || 0),
+          payment_channel: row.payment_channel || null,
           total_amount: row.total_amount,
           notes: row.notes,
           cancel_reason: row.cancel_reason,

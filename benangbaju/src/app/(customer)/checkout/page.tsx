@@ -11,14 +11,15 @@ import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/modules/shipping/hooks/useShipping'
 import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 import { useCreateOrder, useGeneratePaymentToken } from '@/modules/orders/hooks/useOrders'
+import { usePaymentFeeConfigs } from '@/modules/settings/hooks/useAdminSettings'
+import type { PaymentFeeConfig } from '@/modules/orders/types'
 import { validateVoucherAction } from '@/modules/vouchers/actions'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AddressModal } from '@/modules/users/components/AddressModal'
 import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
-import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar } from './components'
+import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar, PaymentMethodSelector } from './components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SmartLink as Link } from '@/shared/components'
-import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -44,6 +45,8 @@ export default function CheckoutPage(): React.JSX.Element {
   // Checkout Form States
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null)
   const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(null)
+  const [selectedChannel, setSelectedChannel] = useState<PaymentFeeConfig | null>(null)
+  const [paymentFee, setPaymentFee] = useState(0)
   const [notes, setNotes] = useState('')
   const [voucherCodeInput, setVoucherCodeInput] = useState('')
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null)
@@ -54,6 +57,10 @@ export default function CheckoutPage(): React.JSX.Element {
   const [isMounted, setIsMounted] = useState(false)
   const checkoutInitiated = useRef(false)
   const hasCheckedEmptyCart = useRef(false)
+
+  // Fetch payment fee configs
+  const { data: feeConfigsRes, isLoading: feeConfigsLoading } = usePaymentFeeConfigs()
+  const feeConfigs = useMemo(() => feeConfigsRes?.data || [], [feeConfigsRes?.data])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -99,9 +106,6 @@ export default function CheckoutPage(): React.JSX.Element {
     isSyncing,
     hasSynced,
   ])
-
-  // 3. Load DOKU Checkout Script
-  useDokuCheckoutScript()
 
   // 4. Fetch Addresses
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
@@ -209,7 +213,12 @@ export default function CheckoutPage(): React.JSX.Element {
     }
   }
 
-  const totalAmount = Math.max(0, subtotal - discountAmount + shippingCost)
+  const totalAmount = Math.max(0, subtotal - discountAmount + shippingCost + paymentFee)
+
+  const handleSelectPaymentChannel = (channel: PaymentFeeConfig, fee: number) => {
+    setSelectedChannel(channel)
+    setPaymentFee(fee)
+  }
 
   const handleApplyVoucherDirectly = async (code: string) => {
     if (!user) return
@@ -266,6 +275,10 @@ export default function CheckoutPage(): React.JSX.Element {
       toast.error('Harap pilih metode pengiriman')
       return
     }
+    if (!selectedChannel) {
+      toast.error('Harap pilih metode pembayaran')
+      return
+    }
 
     checkoutInitiated.current = true
     try {
@@ -281,36 +294,23 @@ export default function CheckoutPage(): React.JSX.Element {
         shippingRateId: selectedCourier.id,
         shippingCost: selectedCourier.price,
         notes: notes.trim() || undefined,
+        paymentFee,
+        paymentChannel: selectedChannel.channel_code,
       })
 
       const orderNumber = orderRes.order_number
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const orderId = orderRes.order_id
 
-      toast.success('Pesanan berhasil dibuat, memproses pembayaran...')
+      toast.success('Pesanan berhasil dibuat, menyiapkan instruksi pembayaran...')
       setOrderSnapshot(cartItems)
       setOrderPlaced(true)
       clearCart()
       setCheckoutStep('payment')
 
-      // 2. Generate DOKU payment URL
-      const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      // 2. Generate DOKU payment token/instructions
+      await generatePaymentTokenMutation.mutateAsync(orderNumber)
 
-      if (!redirect_url) {
-        toast.error('Gagal mendapatkan tautan pembayaran. Silakan coba di halaman riwayat pesanan.')
-        clearCart()
-        router.push(`/pesanan/${orderNumber}`)
-        return
-      }
-
-      // 3. Open DOKU Checkout pop-up or redirect
-      if (window.loadJokulCheckout) {
-        // We push to the order page with verifying flag so it checks status in background or when popup closes
-        router.push(`/pesanan/${orderNumber}?verifying=1`)
-        window.loadJokulCheckout(redirect_url)
-      } else {
-        window.location.href = redirect_url
-      }
+      // Redirect directly to the order detail page with payment instructions
+      router.push(`/pesanan/${orderNumber}?verifying=1`)
     } catch (err: any) {
       console.error(err)
       toast.error(err.message || 'Terjadi kesalahan saat memproses pesanan')
@@ -338,13 +338,13 @@ export default function CheckoutPage(): React.JSX.Element {
       <PageHero
         eyebrow="Pembelian"
         title="Checkout"
-        subtitle="Lengkapi alamat pengiriman dan selesaikan pembayaran."
+        subtitle="Lengkapi alamat pengiriman dan pilih metode pembayaran."
       />
       <PageContainer size="lg" className="py-10 page-content">
         <CheckoutProgressBar checkoutStep={checkoutStep} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* LEFT: SHIPPING DETAILS */}
+          {/* LEFT: SHIPPING & PAYMENT DETAILS */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -364,6 +364,19 @@ export default function CheckoutPage(): React.JSX.Element {
               notes={notes}
               onNotesChange={setNotes}
             />
+
+            {/* PAYMENT METHOD SELECTOR */}
+            <div className="bg-brand-cream border border-neutral-200/80 p-6 rounded-2xl shadow-xs">
+              <PaymentMethodSelector
+                feeConfigs={feeConfigs}
+                selectedChannelCode={selectedChannel?.channel_code || null}
+                onSelectChannel={handleSelectPaymentChannel}
+                subtotal={subtotal}
+                shippingCost={shippingCost}
+                discountAmount={discountAmount}
+                loading={feeConfigsLoading}
+              />
+            </div>
           </motion.div>
 
           {/* RIGHT: ORDER SUMMARY */}
@@ -377,6 +390,7 @@ export default function CheckoutPage(): React.JSX.Element {
               displayItems={displayItems}
               subtotal={subtotal}
               shippingCost={shippingCost}
+              paymentFee={paymentFee}
               discountAmount={discountAmount}
               totalAmount={totalAmount}
               voucherCodeInput={voucherCodeInput}
@@ -390,7 +404,7 @@ export default function CheckoutPage(): React.JSX.Element {
               onPaymentSubmit={handlePlaceOrder}
               isCheckoutProcessing={isCheckoutProcessing}
               isPaymentTokenLoading={generatePaymentTokenMutation.isPending}
-              canSubmit={!!(selectedAddress && selectedCourier)}
+              canSubmit={!!(selectedAddress && selectedCourier && selectedChannel)}
             />
           </motion.div>
         </div>

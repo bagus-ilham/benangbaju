@@ -9,7 +9,7 @@ export class OrderRepository {
     let query = supabase
       .from('orders')
       .select(
-        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)',
+        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)',
         { count: 'exact' }
       )
       .eq('user_id', userId)
@@ -76,6 +76,8 @@ export class OrderRepository {
       p_courier_name: params.courierName ?? undefined,
       p_shipping_cost: params.shippingCost || 0,
       p_notes: params.notes ?? undefined,
+      p_payment_fee: params.paymentFee || 0,
+      p_payment_channel: params.paymentChannel ?? undefined,
     })
 
     if (error) throw error
@@ -200,7 +202,7 @@ export class OrderRepository {
 
     let query = supabase.from('orders').select(
       `
-        id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, total_amount, notes, cancel_reason, created_at, updated_at,
+        id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at,
         order_items (id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal),
         order_shipping!left (id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at),
         profiles!left (name, email)

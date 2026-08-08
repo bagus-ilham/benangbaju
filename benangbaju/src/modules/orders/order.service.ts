@@ -84,6 +84,8 @@ export class OrderService {
         subtotal: Number(inner.subtotal || 0),
         shipping_cost: Number(inner.shipping_cost || 0),
         discount_amount: Number(inner.discount_amount || 0),
+        payment_fee: Number(inner.payment_fee || 0),
+        payment_channel: inner.payment_channel ? String(inner.payment_channel) : null,
         total_amount: Number(inner.total_amount || 0),
         status: String(inner.status || ''),
       }

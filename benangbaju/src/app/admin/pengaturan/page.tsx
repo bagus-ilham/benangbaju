@@ -32,6 +32,7 @@ import { HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { ActivityLogsTable } from './components/ActivityLogsTable'
 import { SettingsForm } from './components/SettingsForm'
+import { AdminPaymentSettingsForm } from './components/AdminPaymentSettingsForm'
 import type {} from '@/shared/components/DataTable'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
@@ -116,7 +117,7 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
 ]
 
 export default function AdminSettingsPage(): React.JSX.Element {
-  const [activeSubTab, setActiveSubTab] = useState<'settings' | 'logs'>('settings')
+  const [activeSubTab, setActiveSubTab] = useState<'settings' | 'payment_fees' | 'logs'>('settings')
 
   // Queries
   const {
@@ -208,7 +209,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
     <div className="space-y-6">
       <AdminPageHeader
         title="Pengaturan & Log"
-        subtitle="Kelola preferensi situs dan pantau riwayat audit log admin."
+        subtitle="Kelola preferensi situs, tarif biaya pembayaran, dan pantau riwayat audit log admin."
       />
 
       {/* Tabs */}
@@ -222,6 +223,16 @@ export default function AdminSettingsPage(): React.JSX.Element {
           }`}
         >
           <HandDrawnIcon name="kancing" className="h-3.5 w-3.5 mr-1.5" /> Konfigurasi Toko
+        </button>
+        <button
+          onClick={() => setActiveSubTab('payment_fees')}
+          className={`pb-3 font-semibold uppercase tracking-wider transition border-b-2 whitespace-nowrap flex items-center ${
+            activeSubTab === 'payment_fees'
+              ? 'border-neutral-900 text-neutral-900'
+              : 'border-transparent text-neutral-400 hover:text-neutral-600'
+          }`}
+        >
+          <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-1.5" /> Tarif Admin DOKU
         </button>
         <button
           onClick={() => setActiveSubTab('logs')}
@@ -253,6 +264,8 @@ export default function AdminSettingsPage(): React.JSX.Element {
             handleSaveSettings={handleSaveSettings}
           />
         )
+      ) : activeSubTab === 'payment_fees' ? (
+        <AdminPaymentSettingsForm />
       ) : // Logs viewport
       logsLoading ? (
         <div className="py-24 text-center">

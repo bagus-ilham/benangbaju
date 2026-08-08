@@ -121,6 +121,59 @@ export class SettingsRepository {
     const list = data ? data.map(mapSiteSetting) : []
     return paginated(list)
   }
+
+  async getPaymentFeeConfigs(): Promise<ApiListResponse<import('@/modules/orders/types').PaymentFeeConfig>> {
+    const supabase = await createServerClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
+      .from('payment_fee_config')
+      .select('*')
+      .order('sort_order', { ascending: true })
+
+    if (error) {
+      safeLogError('Error fetching payment fee configs:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil konfigurasi biaya pembayaran')
+    }
+
+    return paginated((data || []) as import('@/modules/orders/types').PaymentFeeConfig[])
+  }
+
+  async adminUpdatePaymentFeeConfig(
+    id: string,
+    updates: Partial<import('@/modules/orders/types').PaymentFeeConfig>
+  ): Promise<ApiResponse<void>> {
+    const supabase = await createServerClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatePayload: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    }
+
+    if (updates.fee_type !== undefined) updatePayload.fee_type = updates.fee_type
+    if (updates.fee_flat !== undefined) updatePayload.fee_flat = updates.fee_flat
+    if (updates.fee_percentage !== undefined) updatePayload.fee_percentage = updates.fee_percentage
+    if (updates.is_active !== undefined) updatePayload.is_active = updates.is_active
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any)
+      .from('payment_fee_config')
+      .update(updatePayload)
+      .eq('id', id)
+
+    if (error) {
+      safeLogError('Error updating payment fee config:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memperbarui konfigurasi biaya pembayaran')
+    }
+
+    await adminLogRepository.insertAdminActivityLog(
+      supabase,
+      'update',
+      'payment_fee_config',
+      id,
+      `Updated fee config for ${updates.channel_code || id}`
+    )
+
+    return ok()
+  }
 }
 
 export const settingsRepository = new SettingsRepository()

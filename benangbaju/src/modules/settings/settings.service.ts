@@ -20,6 +20,17 @@ export class SettingsService {
   async getSiteSettings(client?: SupabaseClient<Database>): Promise<ApiListResponse<SiteSetting>> {
     return settingsRepository.getSiteSettings(client)
   }
+
+  async getPaymentFeeConfigs(): Promise<ApiListResponse<import('@/modules/orders/types').PaymentFeeConfig>> {
+    return settingsRepository.getPaymentFeeConfigs()
+  }
+
+  async adminUpdatePaymentFeeConfig(
+    id: string,
+    updates: Partial<import('@/modules/orders/types').PaymentFeeConfig>
+  ): Promise<ApiResponse<void>> {
+    return settingsRepository.adminUpdatePaymentFeeConfig(id, updates)
+  }
 }
 
 export const settingsService = new SettingsService()
