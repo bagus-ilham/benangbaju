@@ -110,11 +110,11 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
             />
           </div>
 
-          {/* Glassmorphism content card overlay */}
+          {/* Clean content without overlay */}
           {(currentBanner.title || currentBanner.subtitle || currentBanner.link_url) && (
             <div className="absolute inset-0 flex items-center z-20">
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-                <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6 bg-brand-plum/75 backdrop-blur-md border border-white/15 p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl">
+                <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6">
                   {currentBanner.subtitle && (
                     <motion.span
                       initial={{ y: 20, opacity: 0 }}
@@ -123,7 +123,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                         opacity: 1,
                         transition: { delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
                       }}
-                      className="inline-block text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-brand-gold bg-brand-plum/60 backdrop-blur-sm px-4 py-1.5 border border-brand-gold/30 rounded-full"
+                      className="inline-block text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-brand-gold bg-brand-plum/70 px-4 py-1.5 rounded-full"
                     >
                       {currentBanner.subtitle}
                     </motion.span>
@@ -137,7 +137,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                         opacity: 1,
                         transition: { delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
                       }}
-                      className="text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-wide text-brand-cream leading-[1.15]"
+                      className="text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-wide text-white leading-[1.15] drop-shadow-md"
                     >
                       {currentBanner.title}
                     </motion.h1>
