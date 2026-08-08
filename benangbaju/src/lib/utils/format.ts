@@ -17,7 +17,10 @@ export function formatIDR(amount: number | string): string {
 /**
  * Formats a date into a readable Indonesian date string.
  */
-export function formatDate(date: string | Date | null | undefined): string {
+export function formatDate(
+  date: string | Date | null | undefined,
+  options?: Intl.DateTimeFormatOptions
+): string {
   if (!date) return '-'
   let d: Date
   if (typeof date === 'string') {
@@ -27,11 +30,12 @@ export function formatDate(date: string | Date | null | undefined): string {
     d = date
   }
   if (isNaN(d.getTime())) return '-'
-  return new Intl.DateTimeFormat('id-ID', {
-    dateStyle: 'long',
-    timeStyle: 'short',
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    dateStyle: 'medium',
     timeZone: 'Asia/Jakarta',
-  }).format(d)
+    ...options,
+  }
+  return new Intl.DateTimeFormat('id-ID', defaultOptions).format(d)
 }
 
 /**
@@ -78,4 +82,17 @@ export function formatProductDescription(text: string | null | undefined): strin
   formatted = formatted.replace(/(\n•[^\n]+)\n(—)/g, '$1\n\n$2')
 
   return formatted
+}
+
+/**
+ * Converts a text string into a URL-friendly slug.
+ */
+export function generateSlug(text: string): string {
+  if (!text) return ''
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
 }

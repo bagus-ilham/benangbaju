@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, SmartLink as Link } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatDate } from '@/lib/utils'
 import { OrderStatusBadge } from './OrderStatusBadge'
 
 interface OrderItem {
@@ -57,14 +57,7 @@ export function OrderCard({
             </Link>
           </p>
           <p className="text-xs text-neutral-500 font-sans">
-            Tanggal:{' '}
-            {new Date(order.created_at).toLocaleDateString('id-ID', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            Tanggal: {formatDate(order.created_at)}
           </p>
         </div>
         <div>

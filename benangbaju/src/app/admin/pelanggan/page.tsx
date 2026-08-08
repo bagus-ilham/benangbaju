@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useAdminCustomers, useAdminToggleCustomerStatus } from '@/app/admin/hooks/useAdmin'
-import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
+import { Button, AdminPageHeader, HandDrawnIcon, AdminSearchInput } from '@/shared/components'
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils/format'
@@ -86,17 +86,12 @@ export default function AdminCustomersPage(): React.JSX.Element {
 
       {/* Search Bar */}
       <div className="border border-neutral-200 bg-brand-cream p-4 rounded-2xl flex items-center">
-        <div className="relative flex-1 max-w-md">
-          <input
-            type="text"
-            className="w-full bg-neutral-50 text-xs px-4 py-3 pl-10 border border-neutral-200 rounded-2xl focus:border-brand-black focus:bg-brand-cream outline-none"
-            placeholder="Cari pelanggan berdasarkan nama, email, atau telepon..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label="Cari pelanggan berdasarkan nama, email, atau telepon"
-          />
-          <HandDrawnIcon name="search" className="absolute left-3.5 top-3.5 text-neutral-400 w-3.5 h-3.5" />
-        </div>
+        <AdminSearchInput
+          placeholder="Cari pelanggan berdasarkan nama, email, atau telepon..."
+          value={searchQuery}
+          onChange={(val) => setSearchQuery(val)}
+          containerClassName="max-w-md"
+        />
       </div>
 
       {/* Customers List Table */}

@@ -41,6 +41,8 @@ import { uploadImage } from '@/lib/supabase/storage'
 import { CategoryFormModal } from './components/CategoryFormModal'
 import type { } from '@/shared/components/DataTable'
 
+import { generateSlug } from '@/lib/utils'
+
 const supabase = createBrowserClient()
 
 type CategoryRow = Database['public']['Tables']['categories']['Row']
@@ -105,13 +107,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
   const handleNameChange = (val: string) => {
     setName(val)
     if (!editingCategory) {
-      setSlug(
-        val
-          .toLowerCase()
-          .replace(/[^a-z0-9 -]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-      )
+      setSlug(generateSlug(val))
     }
   }
 

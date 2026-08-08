@@ -23,6 +23,8 @@ import {
   LandingPageFormModal,
 } from './components'
 
+import { generateSlug } from '@/lib/utils'
+
 export default function AdminCmsPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'redirects' | 'landing_pages'>('redirects')
 
@@ -152,6 +154,13 @@ export default function AdminCmsPage(): React.JSX.Element {
       setPageActive(true)
     }
     setPageModalOpen(true)
+  }
+
+  const handleTitleChange = (val: string) => {
+    setPageTitle(val)
+    if (!editingPage) {
+      setPageSlug(generateSlug(val))
+    }
   }
 
   const handleSavePage = async (e: React.FormEvent) => {
@@ -350,7 +359,7 @@ export default function AdminCmsPage(): React.JSX.Element {
         pageSlug={pageSlug}
         setPageSlug={setPageSlug}
         pageTitle={pageTitle}
-        setPageTitle={setPageTitle}
+        setPageTitle={handleTitleChange}
         metaTitle={metaTitle}
         setMetaTitle={setMetaTitle}
         metaDesc={metaDesc}

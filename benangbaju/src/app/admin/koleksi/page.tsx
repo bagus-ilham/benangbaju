@@ -15,6 +15,8 @@ import { useQuery } from '@tanstack/react-query'
 import { formatLocalISO } from '@/lib/utils/format'
 import { CollectionListTable, CollectionFormModal } from './components'
 
+import { generateSlug } from '@/lib/utils'
+
 const supabase = createBrowserClient()
 
 export default function AdminCollectionPage(): React.JSX.Element {
@@ -111,13 +113,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
   const handleNameChange = (val: string) => {
     setName(val)
     if (!editingCollection) {
-      setSlug(
-        val
-          .toLowerCase()
-          .replace(/[^a-z0-9 -]/g, '')
-          .replace(/\\s+/g, '-')
-          .replace(/-+/g, '-')
-      )
+      setSlug(generateSlug(val))
     }
   }
 

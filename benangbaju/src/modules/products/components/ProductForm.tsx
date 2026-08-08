@@ -19,6 +19,8 @@ import { ProductSeoFields } from './ProductSeoFields'
 import type { ProductPayload } from '@/modules/products/types'
 import { productSchema, ProductFormValues, mapInitialDataToForm } from './ProductForm.schema'
 
+import { generateSlug } from '@/lib/utils'
+
 export interface InitialProductVariantAttr {
   attr_name: string
   attr_value: string
@@ -120,15 +122,7 @@ export function ProductForm({
   const handleNameChange = (val: string) => {
     setValue('productData.name', val, { shouldValidate: true })
     if (!initialData) {
-      setValue(
-        'productData.slug',
-        val
-          .toLowerCase()
-          .replace(/[^a-z0-9 -]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-'),
-        { shouldValidate: true }
-      )
+      setValue('productData.slug', generateSlug(val), { shouldValidate: true })
     }
   }
 

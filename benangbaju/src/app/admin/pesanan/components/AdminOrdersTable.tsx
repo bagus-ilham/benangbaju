@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
-import { SmartLink as Link, Button, TableSkeleton, HandDrawnIcon } from '@/shared/components'
+import { SmartLink as Link, Button, TableSkeleton, HandDrawnIcon, OrderStatusBadge } from '@/shared/components'
 import type { AdminOrderListItem } from '@/modules/orders/types'
+import { formatDate, formatIDR } from '@/lib/utils'
 
 interface AdminOrdersTableProps {
   orders: AdminOrderListItem[]
@@ -68,12 +68,7 @@ export function AdminOrdersTable({
               <td className="py-4 px-5">
                 <span className="font-semibold text-neutral-900 block">{o.order_number}</span>
                 <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
-                  Tgl Beli:{' '}
-                  {new Date(o.created_at).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  Tgl Beli: {formatDate(o.created_at)}
                 </span>
               </td>
               <td className="py-4 px-4">
@@ -83,27 +78,10 @@ export function AdminOrdersTable({
                 </p>
               </td>
               <td className="py-4 px-4 text-center font-bold text-neutral-900">
-                Rp {o.total_amount.toLocaleString('id-ID')}
+                {formatIDR(o.total_amount)}
               </td>
               <td className="py-4 px-4 text-center">
-                <span
-                  className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${o.status === 'completed'
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : o.status === 'cancelled'
-                        ? 'bg-red-50 text-red-700 border border-red-200'
-                        : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                    }`}
-                >
-                  {o.status === 'pending_payment'
-                    ? 'Belum Bayar'
-                    : o.status === 'processing'
-                      ? 'Diproses'
-                      : o.status === 'shipped'
-                        ? 'Dikirim'
-                        : o.status === 'completed'
-                          ? 'Selesai'
-                          : 'Batal'}
-                </span>
+                <OrderStatusBadge status={o.status} />
               </td>
               <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
                 {o.status === 'processing' && (

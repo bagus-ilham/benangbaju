@@ -6,38 +6,13 @@ import {
   useAdminUpdateReviewStatus,
   useAdminReplyToReview,
 } from '@/app/admin/hooks/useAdmin'
-import { Button, Modal, AdminPageHeader, Textarea, HandDrawnIcon } from '@/shared/components'
-import { cn } from '@/lib/utils'
+import { Button, Modal, AdminPageHeader, Textarea, HandDrawnIcon, ReviewStatusBadge } from '@/shared/components'
+import { cn, formatDate } from '@/lib/utils'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import toast from 'react-hot-toast'
 import type { AdminReviewListItem } from '@/modules/reviews/types'
 import Image from 'next/image'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
-
-const getStatusBadgeClass = (status: string) => {
-  switch (status) {
-    case 'approved':
-      return 'bg-green-50 text-green-700 border border-green-200'
-    case 'rejected':
-    case 'hidden':
-      return 'bg-red-50 text-red-700 border border-red-200'
-    default:
-      return 'bg-amber-50 text-amber-700 border border-amber-200'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'approved':
-      return 'Disetujui'
-    case 'hidden':
-      return 'Disembunyikan'
-    case 'rejected':
-      return 'Ditolak'
-    default:
-      return 'Menunggu'
-  }
-}
 
 export default function AdminReviewsPage(): React.JSX.Element {
   const { data: reviewsRes, isLoading, isError, refetch } = useAdminReviews()
@@ -148,7 +123,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
                     <td className="py-4 px-4 text-neutral-600">
                       <p>{rev.is_anonymous ? 'Anonim' : rev.profiles?.name || 'Pelanggan'}</p>
                       <p className="text-[10px] text-neutral-400 font-normal">
-                        {new Date(rev.created_at).toLocaleDateString()}
+                        {formatDate(rev.created_at)}
                       </p>
                     </td>
                     <td className="py-4 px-4 space-y-1 max-w-sm">
@@ -199,11 +174,7 @@ export default function AdminReviewsPage(): React.JSX.Element {
                       )}
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <span
-                        className={`inline-block text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 ${getStatusBadgeClass(rev.status)}`}
-                      >
-                        {getStatusLabel(rev.status)}
-                      </span>
+                      <ReviewStatusBadge status={rev.status} />
                     </td>
                     <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
                       {rev.status !== 'approved' && (

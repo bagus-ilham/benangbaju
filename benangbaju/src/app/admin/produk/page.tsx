@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   Pagination,
+  AdminSearchInput,
 } from '@/shared/components'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
@@ -216,20 +217,14 @@ export default function AdminProductListPage(): React.JSX.Element {
 
       {/* Filters Toolbar */}
       <div className="flex bg-brand-cream border border-neutral-200 p-4 rounded-2xl items-center space-x-3 shadow-sm">
-        <div className="relative flex-1">
-          <HandDrawnIcon name="search" className="absolute left-3.5 top-3.5 text-neutral-400 h-4 w-4" />
-          <input
-            type="text"
-            placeholder="Cari nama produk..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
-            className="w-full pl-10 pr-4 py-3 border border-neutral-200 focus:border-brand-accent focus:ring-1 focus:ring-brand-accent outline-none text-xs rounded-xl transition"
-            aria-label="Cari nama produk"
-          />
-        </div>
+        <AdminSearchInput
+          placeholder="Cari nama produk..."
+          value={search}
+          onChange={(val) => {
+            setSearch(val)
+            setPage(1)
+          }}
+        />
       </div>
 
       {/* Main Table */}

@@ -3,6 +3,7 @@
 import React from 'react'
 import { Button, TableSkeleton } from '@/shared/components'
 import type { AdminReturnRequestListItem } from '@/modules/orders/types'
+import { formatDate } from '@/lib/utils'
 
 interface AdminReturnsTableProps {
   returnsData: AdminReturnRequestListItem[]
@@ -71,7 +72,7 @@ export function AdminReturnsTable({
                   {ret.orders?.order_number}
                 </span>
                 <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
-                  Tgl Ajuan: {new Date(ret.created_at).toLocaleDateString()}
+                  Tgl Ajuan: {formatDate(ret.created_at)}
                 </span>
               </td>
               <td className="py-4 px-4">

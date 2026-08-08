@@ -10,7 +10,7 @@ import {
 import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
-import { formatLocalISO } from '@/lib/utils/format'
+import { formatLocalISO, formatDate, formatIDR } from '@/lib/utils/format'
 import { Voucher } from '@/modules/vouchers/types'
 import { VoucherFormModal } from './components/VoucherFormModal'
 
@@ -244,13 +244,13 @@ export default function AdminVouchersPage(): React.JSX.Element {
                       )}
                     </td>
                     <td className="py-4 px-4 text-neutral-600">
-                      <p className="font-bold text-neutral-850">
+                      <p className="font-bold text-neutral-900 text-sm">
                         {v.discount_type === 'percentage'
                           ? `${v.value}%`
-                          : `Rp ${Number(v.value).toLocaleString()}`}
+                          : formatIDR(v.value)}
                       </p>
                       <p className="text-[10px] text-neutral-450 font-normal">
-                        Min Belanja: Rp {Number(v.min_purchase).toLocaleString()}
+                        Min Belanja: {formatIDR(v.min_purchase)}
                       </p>
                     </td>
                     <td className="py-4 px-4 text-center">
@@ -262,9 +262,9 @@ export default function AdminVouchersPage(): React.JSX.Element {
                       </p>
                     </td>
                     <td className="py-4 px-4 text-center text-neutral-550 leading-relaxed">
-                      <p>{v.starts_at ? new Date(v.starts_at).toLocaleDateString() : '-'}</p>
+                      <p>{formatDate(v.starts_at)}</p>
                       <p className="text-[10px] text-neutral-400 font-normal">
-                        s.d {v.expires_at ? new Date(v.expires_at).toLocaleDateString() : '-'}
+                        s.d {formatDate(v.expires_at)}
                       </p>
                     </td>
                     <td className="py-4 px-4 text-center">
