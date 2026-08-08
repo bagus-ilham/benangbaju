@@ -41,7 +41,7 @@ import { uploadImage } from '@/lib/supabase/storage'
 import { CategoryFormModal } from './components/CategoryFormModal'
 import type { } from '@/shared/components/DataTable'
 
-import { generateSlug } from '@/lib/utils'
+import { generateSlug, getErrorMessage } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
@@ -121,9 +121,8 @@ export default function AdminCategoryPage(): React.JSX.Element {
       if (error) throw error
       toast.success('Status aktif berhasil diubah')
       refetch()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memperbarui status')
+      toast.error(getErrorMessage(err, 'Gagal memperbarui status'))
     }
   }
 
@@ -137,9 +136,8 @@ export default function AdminCategoryPage(): React.JSX.Element {
       if (error) throw error
       toast.success('No. urut kategori berhasil diperbarui')
       refetch()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memperbarui no. urut')
+      toast.error(getErrorMessage(err, 'Gagal memperbarui no. urut'))
     }
   }
 
@@ -153,9 +151,8 @@ export default function AdminCategoryPage(): React.JSX.Element {
         await deleteMutation.mutateAsync(id)
         toast.success('Kategori berhasil dihapus')
         refetch()
-      } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : 'Gagal menghapus kategori'
-        toast.error(errMsg)
+      } catch (err) {
+        toast.error(getErrorMessage(err, 'Gagal menghapus kategori'))
       }
     }
   }

@@ -96,3 +96,24 @@ export function generateSlug(text: string): string {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
 }
+
+/**
+ * Safely extracts an error message string from any thrown error or unknown value.
+ */
+export function getErrorMessage(error: unknown, fallbackMessage = 'Terjadi kesalahan'): string {
+  if (error instanceof Error && error.message) {
+    return error.message
+  }
+  if (typeof error === 'string' && error.trim()) {
+    return error
+  }
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof (error as { message: unknown }).message === 'string'
+  ) {
+    return (error as { message: string }).message
+  }
+  return fallbackMessage
+}

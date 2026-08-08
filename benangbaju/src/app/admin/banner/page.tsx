@@ -14,6 +14,8 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO } from '@/lib/utils/format'
 import { BannerListTable, BannerFormModal } from './components'
 
+import { getErrorMessage } from '@/lib/utils/format'
+
 const supabase = createBrowserClient()
 
 type BannerRow = Database['public']['Tables']['banners']['Row']
@@ -97,9 +99,8 @@ export default function AdminBannersPage(): React.JSX.Element {
       if (error) throw error
       toast.success('Status aktif berhasil diubah')
       refetch()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memperbarui status')
+      toast.error(getErrorMessage(err, 'Gagal memperbarui status'))
     }
   }
 
@@ -113,9 +114,8 @@ export default function AdminBannersPage(): React.JSX.Element {
       if (error) throw error
       toast.success('No. urut banner berhasil diperbarui')
       refetch()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memperbarui no. urut')
+      toast.error(getErrorMessage(err, 'Gagal memperbarui no. urut'))
     }
   }
 
@@ -125,9 +125,8 @@ export default function AdminBannersPage(): React.JSX.Element {
         await deleteMutation.mutateAsync(id)
         toast.success('Banner dinonaktifkan')
         refetch()
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
-        toast.error('Gagal menonaktifkan banner')
+        toast.error(getErrorMessage(err, 'Gagal menonaktifkan banner'))
       }
     }
   }

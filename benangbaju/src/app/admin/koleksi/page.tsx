@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query'
 import { formatLocalISO } from '@/lib/utils/format'
 import { CollectionListTable, CollectionFormModal } from './components'
 
-import { generateSlug } from '@/lib/utils'
+import { generateSlug, getErrorMessage } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
@@ -134,9 +134,8 @@ export default function AdminCollectionPage(): React.JSX.Element {
       if (error) throw error
       toast.success('Status aktif berhasil diubah')
       refetch()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memperbarui status')
+      toast.error(getErrorMessage(err, 'Gagal memperbarui status'))
     }
   }
 
@@ -150,9 +149,8 @@ export default function AdminCollectionPage(): React.JSX.Element {
       if (error) throw error
       toast.success('No. urut koleksi berhasil diperbarui')
       refetch()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memperbarui no. urut')
+      toast.error(getErrorMessage(err, 'Gagal memperbarui no. urut'))
     }
   }
 
@@ -162,9 +160,8 @@ export default function AdminCollectionPage(): React.JSX.Element {
         await deleteMutation.mutateAsync(id)
         toast.success('Koleksi dinonaktifkan')
         refetch()
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
-        toast.error('Gagal menonaktifkan koleksi')
+        toast.error(getErrorMessage(err, 'Gagal menonaktifkan koleksi'))
       }
     }
   }
