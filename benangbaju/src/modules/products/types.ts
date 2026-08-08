@@ -118,6 +118,34 @@ export interface AdminProductListItem {
     is_active: boolean
   }>
 }
+
+export interface AdminVariantListItem {
+  id: string
+  product_id: string
+  sku: string
+  name: string
+  price: number
+  compare_price: number | null
+  stock: number
+  is_active: boolean
+  product_name: string
+  product_slug: string
+  category_name: string | null
+  created_at?: string
+}
+
+export interface UpdateVariantInput {
+  variantId: string
+  price: number
+  compare_price: number | null
+  stock: number
+  is_active: boolean
+}
+
+export interface BatchUpdateVariantInput {
+  updates: UpdateVariantInput[]
+}
+
 export interface ProductVariantPayload {
   id?: string
   sku: string

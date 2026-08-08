@@ -1,4 +1,5 @@
 export * from '@/modules/products/hooks/useAdminProducts'
+export * from '@/modules/products/hooks/useAdminVariants'
 export * from '@/modules/orders/hooks/useAdminOrders'
 export * from '@/modules/users/hooks/useAdminCustomers'
 export * from '@/modules/banners/hooks/useAdminBanners'

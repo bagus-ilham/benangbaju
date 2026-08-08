@@ -6,7 +6,7 @@ import { ApiErrorCode } from '@/lib/api-errors'
 
 import { productRepository } from './product.repository'
 import { mapCategory, mapVariants } from './product.mapper'
-import { AdminProductListItem, ProductPayload } from './types'
+import { AdminProductListItem, AdminVariantListItem, ProductPayload, UpdateVariantInput } from './types'
 
 export class AdminProductService {
   async getProducts(
@@ -207,6 +207,97 @@ export class AdminProductService {
     } catch (error: any) {
       safeLogError('Update featured error:', error)
       return fail('Gagal memperbarui status featured', error.message)
+    }
+  }
+
+  async getVariants(params: {
+    page?: number
+    limit?: number
+    search?: string
+    stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
+    statusFilter?: 'all' | 'active' | 'inactive'
+    sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+  } = {}): Promise<ApiListResponse<AdminVariantListItem>> {
+    try {
+      const { page = 1, limit = 20 } = params
+      const { data, count } = await productRepository.adminFindManyVariants(params)
+
+      if (!data) return paginated([], page, limit, 0)
+
+      const variants: AdminVariantListItem[] = data.map((v) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const prod = (v as any).products
+        return {
+          id: v.id,
+          product_id: v.product_id,
+          sku: v.sku,
+          name: v.name,
+          price: Number(v.price),
+          compare_price: v.compare_price ? Number(v.compare_price) : null,
+          stock: v.stock,
+          is_active: v.is_active,
+          product_name: prod?.name || 'Produk Tidak Ditemukan',
+          product_slug: prod?.slug || '',
+          category_name: prod?.categories?.name || null,
+        }
+      })
+
+      return paginated(variants, page, limit, count || 0)
+    } catch (error) {
+      safeLogError('Error in adminGetVariants:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat daftar varian produk')
+    }
+  }
+
+  async updateVariant(
+    variantId: string,
+    data: UpdateVariantInput
+  ): Promise<ApiResponse<null>> {
+    try {
+      await productRepository.adminUpdateVariant(variantId, {
+        price: data.price,
+        compare_price: data.compare_price,
+        stock: data.stock,
+        is_active: data.is_active,
+      })
+
+      const supabase = await createServerClient()
+      await adminLogRepository.insertAdminActivityLog(
+        supabase,
+        'update',
+        'product_variant',
+        variantId,
+        `Updated variant ${variantId} price=${data.price} stock=${data.stock}`
+      )
+
+      return ok(null)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      safeLogError('Update variant error:', error)
+      return fail('Gagal memperbarui varian produk', error.message)
+    }
+  }
+
+  async batchUpdateVariants(
+    updates: UpdateVariantInput[]
+  ): Promise<ApiResponse<null>> {
+    try {
+      await productRepository.adminBatchUpdateVariants(updates)
+
+      const supabase = await createServerClient()
+      await adminLogRepository.insertAdminActivityLog(
+        supabase,
+        'batch_update',
+        'product_variant',
+        null,
+        `Batch updated ${updates.length} product variants`
+      )
+
+      return ok(null)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      safeLogError('Batch update variants error:', error)
+      return fail('Gagal memperbarui daftar varian produk', error.message)
     }
   }
 }

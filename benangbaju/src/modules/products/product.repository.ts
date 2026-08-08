@@ -333,6 +333,169 @@ export class ProductRepository {
     if (error) throw error
     return true
   }
+
+  /**
+   * ADMIN: Mendapatkan daftar varian terpaginasi dengan filter pencarian dan status stok
+   */
+  async adminFindManyVariants(params: {
+    page?: number
+    limit?: number
+    search?: string
+    stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
+    statusFilter?: 'all' | 'active' | 'inactive'
+    sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+  } = {}) {
+    const supabase = await createServerClient()
+    const {
+      page = 1,
+      limit = 20,
+      search = '',
+      stockFilter = 'all',
+      statusFilter = 'all',
+      sortBy = 'newest',
+    } = params
+    const offset = (page - 1) * limit
+
+    let query = supabase.from('product_variants').select(
+      `
+        id, product_id, sku, name, price, compare_price, stock, is_active,
+        products!inner (
+          id, name, slug, is_active,
+          categories (name)
+        )
+      `,
+      { count: 'exact' }
+    )
+
+    if (search) {
+      const escapedSearch = search
+        .replace(/\\/g, '\\\\')
+        .replace(/%/g, '\\%')
+        .replace(/_/g, '\\_')
+        .replace(/,/g, '\\,')
+      query = query.or(`name.ilike.%${escapedSearch}%,sku.ilike.%${escapedSearch}%,products.name.ilike.%${escapedSearch}%`)
+    }
+
+    if (stockFilter === 'out_of_stock') {
+      query = query.lte('stock', 0)
+    } else if (stockFilter === 'low_stock') {
+      query = query.gt('stock', 0).lte('stock', 5)
+    } else if (stockFilter === 'in_stock') {
+      query = query.gt('stock', 0)
+    }
+
+    if (statusFilter === 'active') {
+      query = query.eq('is_active', true)
+    } else if (statusFilter === 'inactive') {
+      query = query.eq('is_active', false)
+    }
+
+    if (sortBy === 'name_asc') {
+      query = query.order('name', { ascending: true })
+    } else if (sortBy === 'price_asc') {
+      query = query.order('price', { ascending: true })
+    } else if (sortBy === 'price_desc') {
+      query = query.order('price', { ascending: false })
+    } else if (sortBy === 'stock_asc') {
+      query = query.order('stock', { ascending: true })
+    } else if (sortBy === 'stock_desc') {
+      query = query.order('stock', { ascending: false })
+    } else {
+      query = query.order('id', { ascending: false })
+    }
+
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
+
+    if (error) throw error
+    return { data, count }
+  }
+
+  /**
+   * ADMIN: Update single variant price & stock
+   */
+  async adminUpdateVariant(
+    variantId: string,
+    data: {
+      price: number
+      compare_price: number | null
+      stock: number
+      is_active: boolean
+    }
+  ) {
+    const supabase = await createServerClient()
+
+    const { data: currentVar } = await supabase
+      .from('product_variants')
+      .select('stock')
+      .eq('id', variantId)
+      .single()
+
+    const oldStock = currentVar?.stock ?? 0
+
+    const { error } = await supabase
+      .from('product_variants')
+      .update({
+        price: data.price,
+        compare_price: data.compare_price,
+        stock: data.stock,
+        is_active: data.is_active,
+      })
+      .eq('id', variantId)
+
+    if (error) throw error
+
+    if (oldStock <= 0 && data.stock > 0) {
+      const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
+      await checkAndDispatchStockNotifications(supabase, variantId, data.stock)
+    }
+
+    return true
+  }
+
+  /**
+   * ADMIN: Batch update variant price & stock
+   */
+  async adminBatchUpdateVariants(
+    updates: Array<{
+      variantId: string
+      price: number
+      compare_price: number | null
+      stock: number
+      is_active: boolean
+    }>
+  ) {
+    const supabase = await createServerClient()
+    const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
+
+    for (const item of updates) {
+      const { data: currentVar } = await supabase
+        .from('product_variants')
+        .select('stock')
+        .eq('id', item.variantId)
+        .single()
+
+      const oldStock = currentVar?.stock ?? 0
+
+      const { error } = await supabase
+        .from('product_variants')
+        .update({
+          price: item.price,
+          compare_price: item.compare_price,
+          stock: item.stock,
+          is_active: item.is_active,
+        })
+        .eq('id', item.variantId)
+
+      if (error) throw error
+
+      if (oldStock <= 0 && item.stock > 0) {
+        await checkAndDispatchStockNotifications(supabase, item.variantId, item.stock)
+      }
+    }
+
+    return true
+  }
 }
+
 
 export const productRepository = new ProductRepository()

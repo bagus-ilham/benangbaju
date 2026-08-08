@@ -31,6 +31,7 @@ const menuItems: Array<{
   { name: 'Kategori', href: '/admin/kategori', handDrawnName: 'grid' },
   { name: 'Koleksi', href: '/admin/koleksi', handDrawnName: 'grid' },
   { name: 'Produk', href: '/admin/produk', handDrawnName: 'kancing' },
+  { name: 'Stok & Harga Varian', href: '/admin/stok-harga', handDrawnName: 'tag' },
   { name: 'Voucher', href: '/admin/voucher', handDrawnName: 'tag' },
   { name: 'Flash Sale', href: '/admin/flash-sale', handDrawnName: 'tag' },
   { name: 'Banner Promo', href: '/admin/banner', handDrawnName: 'image' },

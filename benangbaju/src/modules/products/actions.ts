@@ -36,6 +36,33 @@ export async function adminGetProductsAction(
   return adminProductService.getProducts(params)
 }
 
+export async function adminGetVariantsAction(
+  params: {
+    page?: number
+    limit?: number
+    search?: string
+    stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
+    statusFilter?: 'all' | 'active' | 'inactive'
+    sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+  } = {}
+) {
+  await requireAdmin()
+  return adminProductService.getVariants(params)
+}
+
+export async function adminUpdateVariantAction(variantId: string, data: import('./types').UpdateVariantInput) {
+  await requireAdmin()
+  const res = await adminProductService.updateVariant(variantId, data)
+  if (!res.success) throw new Error(res.error?.message)
+}
+
+export async function adminBatchUpdateVariantsAction(updates: import('./types').UpdateVariantInput[]) {
+  await requireAdmin()
+  const res = await adminProductService.batchUpdateVariants(updates)
+  if (!res.success) throw new Error(res.error?.message)
+}
+
+
 export async function adminCreateProductAction(
   productData: ProductPayload['productData'],
   variants: ProductPayload['variants'],

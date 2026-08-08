@@ -208,11 +208,18 @@ export default function AdminProductListPage(): React.JSX.Element {
         title="Daftar Produk"
         subtitle="Kelola katalog produk, harga, varian, dan stok."
       >
-        <Link href="/admin/produk/tambah">
-          <Button className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
-            <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Produk
-          </Button>
-        </Link>
+        <div className="flex items-center space-x-3">
+          <Link href="/admin/stok-harga">
+            <Button variant="outline" className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-4 border-neutral-300">
+              <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-1.5 text-brand-black" /> Quick Stok & Harga
+            </Button>
+          </Link>
+          <Link href="/admin/produk/tambah">
+            <Button className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5">
+              <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Produk
+            </Button>
+          </Link>
+        </div>
       </AdminPageHeader>
 
       {/* Filters Toolbar */}
