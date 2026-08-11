@@ -195,21 +195,65 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   // Load DOKU Checkout Script dynamically
   useDokuCheckoutScript()
 
-  // Trigger verification if page is loaded with verifying query param
+  // Trigger verification and auto payment launch if page is loaded after checkout
   useEffect(() => {
-    if (searchParams.get('verifying') === '1' && !hasTriggeredVerification.current) {
+    const isAutoPay = searchParams.get('autoPay') === '1'
+    const isVerifying = searchParams.get('verifying') === '1'
+
+    if ((isAutoPay || isVerifying) && !hasTriggeredVerification.current && order) {
       hasTriggeredVerification.current = true
 
-      // Clean up URL parameter to prevent looping or accidental re-trigger on reload
+      // Clean up URL parameters to prevent looping or accidental re-trigger on reload
       const url = new URL(window.location.href)
+      let needsReplace = false
       if (url.searchParams.has('verifying')) {
         url.searchParams.delete('verifying')
+        needsReplace = true
+      }
+      if (url.searchParams.has('autoPay')) {
+        url.searchParams.delete('autoPay')
+        needsReplace = true
+      }
+      if (needsReplace) {
         window.history.replaceState({}, '', url.pathname + url.search)
       }
 
       startPaymentVerification()
+
+      if (isAutoPay && order.status === 'pending_payment') {
+        generatePaymentTokenMutation
+          .mutateAsync(order.order_number)
+          .then((res) => {
+            const redirectUrl = res?.redirect_url
+            if (redirectUrl) {
+              const popup = window.open(redirectUrl, '_blank')
+              if (!popup) {
+                toast(
+                  (t) => (
+                    <div className="flex flex-col gap-2">
+                      <span className="font-semibold text-xs text-brand-plum">Instruksi Pembayaran Siap</span>
+                      <a
+                        href={redirectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => toast.dismiss(t.id)}
+                        className="px-3 py-1.5 bg-brand-gold text-brand-plum text-xs font-bold rounded-lg text-center shadow-xs hover:bg-amber-400"
+                      >
+                        Buka Halaman Pembayaran
+                      </a>
+                    </div>
+                  ),
+                  { duration: 10000, icon: '💳' }
+                )
+              }
+            }
+          })
+          .catch((err) => {
+            console.error('Error auto-generating payment token:', err)
+          })
+      }
     }
-  }, [searchParams, startPaymentVerification])
+  }, [searchParams, order, startPaymentVerification, generatePaymentTokenMutation])
 
   // Cleanup timeouts on unmount
   useEffect(() => {
