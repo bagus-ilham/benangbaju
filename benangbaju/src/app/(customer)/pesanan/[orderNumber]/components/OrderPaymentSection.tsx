@@ -31,10 +31,25 @@ export function OrderPaymentSection({
   // Get active payment info
   const payment = Array.isArray(order.payments) ? order.payments[0] : order.payments
   const instructions = payment?.payment_instructions || null
-  const vaNumber = payment?.va_number || instructions?.va_number
-  const paymentCode = payment?.payment_code || instructions?.payment_code
-  const qrUrl = payment?.qr_url || instructions?.qr_url
-  const checkoutUrl = instructions?.checkout_url || instructions?.deep_link_url
+  const vaNumber =
+    payment?.va_number ||
+    instructions?.va_number ||
+    payment?.gateway_response?.virtual_account_info?.virtual_account_number ||
+    payment?.gateway_response?.va_number
+  const paymentCode =
+    payment?.payment_code ||
+    instructions?.payment_code ||
+    payment?.gateway_response?.online_to_offline_info?.payment_code
+  const qrUrl =
+    payment?.qr_url ||
+    instructions?.qr_url ||
+    payment?.gateway_response?.qris_info?.qr_url ||
+    payment?.gateway_response?.qris_info?.qr_string
+  const checkoutUrl =
+    instructions?.checkout_url ||
+    instructions?.deep_link_url ||
+    payment?.gateway_response?.response?.payment?.url ||
+    payment?.gateway_response?.url
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)

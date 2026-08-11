@@ -143,6 +143,13 @@ serve(async (req: Request) => {
     }
 
     const paymentUrl = dokuData.response.payment.url;
+    const paymentInstructions = {
+      checkout_url: paymentUrl,
+      ...(dokuData.response?.payment || {}),
+      ...(dokuData.virtual_account_info || {}),
+      ...(dokuData.online_to_offline_info || {}),
+      ...(dokuData.qris_info || {}),
+    };
 
     // Upsert gateway reference di tabel payments (mencegah duplicate row pada retry)
     const { error: insertError } = await supabaseClient
@@ -152,6 +159,9 @@ serve(async (req: Request) => {
           order_id: order.id,
           gateway_order_id: order.order_number,
           amount: order.total_amount,
+          payment_fee: order.payment_fee || 0,
+          payment_channel: order.payment_channel || null,
+          payment_instructions: paymentInstructions,
           status: 'pending',
           gateway_response: dokuData,
           updated_at: new Date().toISOString(),
