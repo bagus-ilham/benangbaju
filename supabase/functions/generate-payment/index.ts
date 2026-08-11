@@ -91,13 +91,32 @@ serve(async (req: Request) => {
     // Hitung dueDate dalam menit (misal 60 menit)
     const paymentDueDate = 60;
 
-    const dokuPayload = {
+    // Mapping payment_channel ke DOKU payment_method_types agar DOKU HANYA menampilkan metode yang dipilih customer
+    const channelMapping: Record<string, string[]> = {
+      bca_va: ['VIRTUAL_ACCOUNT_BCA'],
+      mandiri_va: ['VIRTUAL_ACCOUNT_BANK_MANDIRI', 'VIRTUAL_ACCOUNT_MANDIRI'],
+      bni_va: ['VIRTUAL_ACCOUNT_BNI'],
+      bri_va: ['VIRTUAL_ACCOUNT_BRI'],
+      permata_va: ['VIRTUAL_ACCOUNT_BANK_PERMATA', 'VIRTUAL_ACCOUNT_PERMATA'],
+      cimb_va: ['VIRTUAL_ACCOUNT_CIMB', 'VIRTUAL_ACCOUNT_CIMB_NIAGA'],
+      qris: ['QRIS'],
+      dana: ['EMONEY_DANA', 'DANA'],
+      ovo: ['EMONEY_OVO', 'OVO'],
+      shopeepay: ['EMONEY_SHOPEEPAY', 'SHOPEEPAY'],
+      alfamart: ['ONLINE_TO_OFFLINE_ALFAMART', 'ALFAMART'],
+      indomaret: ['ONLINE_TO_OFFLINE_INDOMARET', 'INDOMARET'],
+    };
+
+    const paymentMethods = order.payment_channel ? channelMapping[order.payment_channel] : undefined;
+
+    const dokuPayload: any = {
       order: {
         amount: Math.round(Number(order.total_amount)),
         invoice_number: String(order.order_number),
       },
       payment: {
         payment_due_date: paymentDueDate,
+        ...(paymentMethods ? { payment_method_types: paymentMethods } : {}),
       },
       customer: {
         id: String(user.id),
