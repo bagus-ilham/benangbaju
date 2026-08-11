@@ -209,15 +209,23 @@ export function OrderPaymentSection({
               </div>
             ) : (
               <>
-                {!vaNumber && !qrUrl && !paymentCode && !checkoutUrl && (
-                  <Button
-                    onClick={onPayOrder}
-                    isLoading={isGeneratingToken}
-                    disabled={isGeneratingToken}
-                    className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
-                  >
-                    Minta Kode Pembayaran
-                  </Button>
+                {checkoutUrl ? (
+                  <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+                    <Button variant="accent" className="w-full py-3 text-xs uppercase tracking-widest font-bold">
+                      Buka Halaman Pembayaran (Tab Baru)
+                    </Button>
+                  </a>
+                ) : (
+                  !vaNumber && !qrUrl && !paymentCode && (
+                    <Button
+                      onClick={onPayOrder}
+                      isLoading={isGeneratingToken}
+                      disabled={isGeneratingToken}
+                      className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
+                    >
+                      Minta Kode Pembayaran
+                    </Button>
+                  )
                 )}
                 <Button
                   onClick={onCheckStatus}

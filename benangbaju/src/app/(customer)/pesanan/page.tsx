@@ -128,21 +128,24 @@ export default function PesananPage(): React.JSX.Element {
 
   // Handle Pay Action (Retry Payment via DOKU)
   const handlePayOrder = async (orderNumber: string) => {
+    const payWindow = typeof window !== 'undefined' ? window.open('about:blank', '_blank') : null
     try {
-      toast.loading('Membuka gerbang pembayaran DOKU...', { id: 'payment-loading' })
+      toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
       const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(orderNumber)
       toast.dismiss('payment-loading')
 
       if (redirect_url) {
-        if (typeof window !== 'undefined' && window.loadJokulCheckout) {
-          window.loadJokulCheckout(redirect_url)
+        if (payWindow) {
+          payWindow.location.href = redirect_url
         } else {
-          window.location.href = redirect_url
+          window.open(redirect_url, '_blank')
         }
       } else {
+        if (payWindow) payWindow.close()
         toast.error('Gagal memuat pembayaran. Coba lagi.')
       }
     } catch {
+      if (payWindow) payWindow.close()
       toast.dismiss('payment-loading')
       toast.error('Gagal memproses pembayaran')
     }

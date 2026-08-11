@@ -253,22 +253,25 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   // Handle Pay Action (Retry Payment)
   const handlePayOrder = async () => {
     if (!order) return
+    const payWindow = typeof window !== 'undefined' ? window.open('about:blank', '_blank') : null
     try {
       toast.loading('Membuka gerbang pembayaran...', { id: 'payment-loading' })
       const { redirect_url } = await generatePaymentTokenMutation.mutateAsync(order.order_number)
       toast.dismiss('payment-loading')
 
       if (redirect_url) {
-        if (window.loadJokulCheckout) {
-          window.loadJokulCheckout(redirect_url)
+        if (payWindow) {
+          payWindow.location.href = redirect_url
         } else {
-          window.location.href = redirect_url
+          window.open(redirect_url, '_blank')
         }
       } else {
+        if (payWindow) payWindow.close()
         toast.error('Gagal memuat pembayaran. Coba lagi.')
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      if (payWindow) payWindow.close()
       toast.dismiss('payment-loading')
       toast.error(err.message || 'Gagal memproses pembayaran')
     }

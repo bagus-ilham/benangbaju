@@ -280,6 +280,9 @@ export default function CheckoutPage(): React.JSX.Element {
       return
     }
 
+    // Pre-open payment tab synchronously to avoid browser popup blocking
+    const paymentWindow = typeof window !== 'undefined' ? window.open('about:blank', '_blank') : null
+
     checkoutInitiated.current = true
     try {
       // 0. Ensure cart items are 100% flushed and synced to database
@@ -300,18 +303,30 @@ export default function CheckoutPage(): React.JSX.Element {
 
       const orderNumber = orderRes.order_number
 
-      toast.success('Pesanan berhasil dibuat, menyiapkan instruksi pembayaran...')
+      toast.success('Pesanan berhasil dibuat, membuka halaman pembayaran...')
       setOrderSnapshot(cartItems)
       setOrderPlaced(true)
       clearCart()
       setCheckoutStep('payment')
 
-      // 2. Generate DOKU payment token/instructions
-      await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      // 2. Generate payment token/instructions
+      const paymentRes = await generatePaymentTokenMutation.mutateAsync(orderNumber)
+      const paymentUrl = paymentRes?.redirect_url
 
-      // Redirect directly to the order detail page with payment instructions
+      if (paymentUrl) {
+        if (paymentWindow) {
+          paymentWindow.location.href = paymentUrl
+        } else {
+          window.open(paymentUrl, '_blank')
+        }
+      } else {
+        if (paymentWindow) paymentWindow.close()
+      }
+
+      // Redirect main tab directly to the order detail page
       router.push(`/pesanan/${orderNumber}?verifying=1`)
     } catch (err: any) {
+      if (paymentWindow) paymentWindow.close()
       console.error(err)
       toast.error(err.message || 'Terjadi kesalahan saat memproses pesanan')
       checkoutInitiated.current = false
