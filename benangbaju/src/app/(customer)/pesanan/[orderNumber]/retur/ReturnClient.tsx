@@ -210,7 +210,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
       }
 
       toast.success('Pengajuan retur berhasil dikirim!')
-      router.push(`/pesanan/${order.order_number}`)
+      router.push(`/pesanan/${order.order_number}?return_submitted=1`)
     } catch (err: unknown) {
       console.error('Error submitting return:', err)
       toast.error('Gagal mengirim pengajuan retur. Silakan coba lagi.')

@@ -7,6 +7,8 @@ import toast from 'react-hot-toast'
 interface OrderPaymentSectionProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   order: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  returnRequest?: any
   isVerifyingPayment: boolean
   isGeneratingToken: boolean
   isCheckingPayment: boolean
@@ -18,6 +20,7 @@ interface OrderPaymentSectionProps {
 
 export function OrderPaymentSection({
   order,
+  returnRequest,
   isVerifyingPayment,
   isGeneratingToken,
   isCheckingPayment,
@@ -264,14 +267,35 @@ export function OrderPaymentSection({
               <HandDrawnIcon name="check-circle" className="h-4 w-4 mr-2 shrink-0" />
               <span>Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!</span>
             </div>
-            <Link href={`/pesanan/${order.order_number}/retur`} className="w-full">
-              <Button
-                variant="outline"
-                className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-800 text-neutral-800 hover:bg-neutral-50"
-              >
-                Ajukan Retur Barang
-              </Button>
-            </Link>
+            {returnRequest ? (
+              <div className="p-3.5 bg-brand-cream/90 border border-brand-gold/80 rounded-xl flex items-center justify-between shadow-2xs">
+                <span className="text-[11px] font-bold text-brand-plum uppercase tracking-wider flex items-center gap-1.5">
+                  <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 text-brand-plum" />
+                  {returnRequest.status === 'pending'
+                    ? 'Retur Sedang Diproses'
+                    : returnRequest.status === 'approved'
+                      ? 'Retur Disetujui'
+                      : returnRequest.status === 'completed'
+                        ? 'Retur Selesai'
+                        : 'Retur Ditolak'}
+                </span>
+                <Link
+                  href={`/pesanan/${order.order_number}/retur`}
+                  className="text-[10px] font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue underline underline-offset-2 transition"
+                >
+                  Detail Retur
+                </Link>
+              </div>
+            ) : (
+              <Link href={`/pesanan/${order.order_number}/retur`} className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-800 text-neutral-800 hover:bg-neutral-50"
+                >
+                  Ajukan Retur Barang
+                </Button>
+              </Link>
+            )}
           </div>
         )}
       </div>

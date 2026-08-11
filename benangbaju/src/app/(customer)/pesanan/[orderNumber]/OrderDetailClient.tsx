@@ -15,6 +15,7 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { AuthLoading } from '@/shared/components/AuthLoading'
 import { Button, PageHero, PageContainer, EmptyState, Modal, HandDrawnIcon } from '@/shared/components'
 import { OrderTrackingSection } from './components/OrderTrackingSection'
+import { OrderReturnTrackingSection } from './components/OrderReturnTrackingSection'
 import { OrderPaymentSection } from './components/OrderPaymentSection'
 import { OrderItemsList } from './components/OrderItemsList'
 import { OrderReviewModal } from './components/OrderReviewModal'
@@ -23,6 +24,7 @@ import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
+import { useQuery } from '@tanstack/react-query'
 
 const supabase = createBrowserClient()
 
@@ -88,6 +90,20 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     refetch,
   } = useOrderDetail(orderNumber, user?.id)
   const order = orderResponse?.data
+
+  // Fetch return request if order exists
+  const { data: returnRequest } = useQuery({
+    queryKey: ['order-return-request', order?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('return_requests')
+        .select('*')
+        .eq('order_id', order!.id)
+        .maybeSingle()
+      return data
+    },
+    enabled: !!order?.id,
+  })
 
   const [formattedDate, setFormattedDate] = useState('')
 
@@ -425,13 +441,25 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       </PageHero>
 
       <PageContainer size="lg" className="py-10 page-content space-y-8">
+        {searchParams.get('return_submitted') === '1' && (
+          <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-2xl flex items-center justify-between text-xs font-semibold shadow-xs">
+            <div className="flex items-center space-x-2">
+              <HandDrawnIcon name="check-circle" className="h-5 w-5 text-emerald-600 shrink-0" />
+              <span>Pengajuan retur berhasil dikirim! Tim kami sedang meninjau pengajuan Anda.</span>
+            </div>
+          </div>
+        )}
+
         <OrderTrackingSection status={order.status} cancelReason={order.cancel_reason} />
+
+        <OrderReturnTrackingSection returnRequest={returnRequest} orderNumber={order.order_number} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <OrderShippingSection orderShipping={order.order_shipping} notes={order.notes} />
 
           <OrderPaymentSection
             order={order}
+            returnRequest={returnRequest}
             isVerifyingPayment={isVerifyingPayment}
             isGeneratingToken={generatePaymentTokenMutation.isPending}
             isCheckingPayment={checkPaymentMutation.isPending}
