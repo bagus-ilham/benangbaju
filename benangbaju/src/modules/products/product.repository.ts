@@ -373,7 +373,21 @@ export class ProductRepository {
         .replace(/%/g, '\\%')
         .replace(/_/g, '\\_')
         .replace(/,/g, '\\,')
-      query = query.or(`name.ilike.%${escapedSearch}%,sku.ilike.%${escapedSearch}%,products.name.ilike.%${escapedSearch}%`)
+
+      const { data: matchedProducts } = await supabase
+        .from('products')
+        .select('id')
+        .ilike('name', `%${escapedSearch}%`)
+
+      const matchedProductIds = (matchedProducts || []).map((p) => p.id)
+
+      if (matchedProductIds.length > 0) {
+        query = query.or(
+          `name.ilike.%${escapedSearch}%,sku.ilike.%${escapedSearch}%,product_id.in.(${matchedProductIds.join(',')})`
+        )
+      } else {
+        query = query.or(`name.ilike.%${escapedSearch}%,sku.ilike.%${escapedSearch}%`)
+      }
     }
 
     if (stockFilter === 'out_of_stock') {

@@ -27,7 +27,7 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [sortBy, setSortBy] = useState<'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'>('newest')
   const [page, setPage] = useState(1)
-  const limit = 20
+  const [limit, setLimit] = useState(50)
 
   // Draft edits map: variantId -> { price, compare_price, stock, is_active }
   const [drafts, setDrafts] = useState<Record<string, { price: number; compare_price: number | null; stock: number; is_active: boolean }>>({})
@@ -497,6 +497,21 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
             <option value="price_desc">Harga (Tinggi - Rendah)</option>
             <option value="stock_asc">Stok (Sedikit - Banyak)</option>
             <option value="stock_desc">Stok (Banyak - Sedikit)</option>
+          </select>
+
+          {/* Items Per Page */}
+          <select
+            value={limit}
+            onChange={(e) => {
+              setLimit(Number(e.target.value))
+              setPage(1)
+            }}
+            className="text-xs border border-neutral-200 rounded-xl px-3 py-2 bg-white font-medium text-neutral-700 focus:outline-none focus:border-brand-plum"
+          >
+            <option value={20}>20 / Halaman</option>
+            <option value={50}>50 / Halaman</option>
+            <option value={100}>100 / Halaman</option>
+            <option value={200}>200 / Halaman</option>
           </select>
         </div>
       </div>
