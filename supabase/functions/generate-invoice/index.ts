@@ -226,6 +226,14 @@ Deno.serve(async (req: Request) => {
       <p>Kebijakan retur berlaku 7 hari setelah pesanan diterima.</p>
     </div>
   </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        try { window.print(); } catch (e) {}
+      }, 400);
+    };
+  </script>
 </body>
 </html>`;
 
@@ -267,7 +275,10 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        data: { invoice_path: invoicePath },
+        data: {
+          invoice_path: invoicePath,
+          html: invoiceHtml,
+        },
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

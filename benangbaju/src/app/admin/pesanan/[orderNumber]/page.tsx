@@ -105,14 +105,26 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
         return
       }
 
-      const { data: urlData } = supabase.storage
-        .from('invoices')
-        .getPublicUrl(`${order.order_number}.html`)
-
-      if (urlData?.publicUrl) {
-        window.open(urlData.publicUrl, '_blank')
+      const htmlContent = invoiceRes.data?.html
+      if (htmlContent) {
+        const printWindow = window.open('', '_blank')
+        if (printWindow) {
+          printWindow.document.open()
+          printWindow.document.write(htmlContent)
+          printWindow.document.close()
+        } else {
+          toast.error('Pop-up terblokir browser. Harap izinkan pop-up.')
+        }
       } else {
-        toast.error('Gagal menemukan tautan unduh invoice')
+        const { data: urlData } = supabase.storage
+          .from('invoices')
+          .getPublicUrl(`${order.order_number}.html`)
+
+        if (urlData?.publicUrl) {
+          window.open(urlData.publicUrl, '_blank')
+        } else {
+          toast.error('Gagal menemukan tautan unduh invoice')
+        }
       }
     } catch (err) {
       console.error(err)
