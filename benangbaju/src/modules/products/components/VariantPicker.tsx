@@ -222,7 +222,7 @@ export function VariantPicker({
                 id={`label-variant-${name}`}
                 className="text-[11px] uppercase tracking-wider font-sans font-bold text-brand-plum"
               >
-                Pilih {name}
+                Pilih {name}{selectedValues[name] ? <span className="normal-case font-bold text-brand-accent-dark text-neutral-800 ml-1.5">: {selectedValues[name]}</span> : ''}
               </span>
             </div>
             <div

@@ -153,6 +153,10 @@ export function FlashSaleFormModal({
 
   const filteredVariants = allVariants
     .filter((v) => {
+      // Exclude variants that have already been added to the flash sale items
+      if (items.some((item) => item.variant_id === v.id)) {
+        return false
+      }
       const term = variantSearch.toLowerCase()
       return (
         v.sku?.toLowerCase().includes(term) ||
