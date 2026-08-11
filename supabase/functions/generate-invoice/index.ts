@@ -116,99 +116,126 @@ Deno.serve(async (req: Request) => {
     const shipping = orderShipping;
     const invoiceHtml = `
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice #${order.order_number} - ${settingsMap.store_name || "Benangbaju"}</title>
   <style>
-    body { font-family: Arial, sans-serif; font-size: 12px; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #8B5CF6; padding-bottom: 16px; margin-bottom: 24px; }
-    .header h1 { color: #8B5CF6; margin: 0; font-size: 24px; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .info-box { background: #f9f9f9; padding: 12px; border-radius: 8px; }
-    .info-box h3 { margin: 0 0 8px; font-size: 13px; color: #666; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #1e293b; max-width: 800px; margin: 0 auto; padding: 24px 16px; background-color: #f8fafc; line-height: 1.5; }
+    .no-print { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .print-btn { background: #4338ca; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+    .print-btn:hover { background: #3730a3; }
+    .invoice-card { background: #ffffff; border-radius: 16px; padding: 36px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #6366f1; padding-bottom: 24px; margin-bottom: 24px; }
+    .header h1 { color: #4338ca; margin: 0 0 6px 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .header p { margin: 2px 0; color: #64748b; font-size: 12px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+    .info-box { background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #f1f5f9; }
+    .info-box h3 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748b; font-weight: 700; }
+    .info-box p { margin: 3px 0; color: #334155; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-    th { background: #8B5CF6; color: white; padding: 10px; text-align: left; font-size: 12px; }
-    td { padding: 10px; border-bottom: 1px solid #eee; font-size: 12px; }
-    .summary { text-align: right; }
-    .summary td { padding: 6px 10px; }
-    .summary .total { font-size: 16px; font-weight: bold; color: #8B5CF6; border-top: 2px solid #8B5CF6; }
-    .footer { text-align: center; color: #999; font-size: 10px; border-top: 1px solid #eee; padding-top: 16px; margin-top: 24px; }
+    th { background: #4338ca; color: white; padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+    th:first-child { border-top-left-radius: 8px; }
+    th:last-child { border-top-right-radius: 8px; }
+    td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-size: 12px; color: #334155; }
+    .summary-box { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+    .summary { width: 100%; max-width: 320px; border-collapse: collapse; }
+    .summary td { padding: 6px 12px; }
+    .summary .total { font-size: 15px; font-weight: 800; color: #4338ca; border-top: 2px solid #6366f1; padding-top: 10px; }
+    .footer { text-align: center; color: #94a3b8; font-size: 11px; border-top: 1px solid #f1f5f9; padding-top: 20px; margin-top: 28px; }
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+      .invoice-card { border: none; box-shadow: none; padding: 0; }
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div>
-      <h1>${settingsMap.store_name || "Benangbaju"}</h1>
-      <p>${settingsMap.store_address || ""}</p>
-      <p>${settingsMap.store_phone || ""} | ${settingsMap.store_email || ""}</p>
-    </div>
-    <div style="text-align:right;">
-      <h2 style="margin:0;">INVOICE</h2>
-      <p><strong>${order.order_number}</strong></p>
-      <p>Tanggal: ${new Date(order.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>
-      <p>Status: <strong style="color: green;">LUNAS</strong></p>
-    </div>
+  <div class="no-print">
+    <span style="font-weight: 600; color: #334155;">Invoice Tanggal ${new Date(order.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+    <button onclick="window.print()" class="print-btn">🖨️ Cetak / Simpan PDF</button>
   </div>
 
-  <div class="info-grid">
-    <div class="info-box">
-      <h3>Informasi Pelanggan</h3>
-      <p><strong>${profile?.name || "Pelanggan"}</strong></p>
-      <p>${profile?.phone || "-"}</p>
+  <div class="invoice-card">
+    <div class="header">
+      <div>
+        <h1>${settingsMap.store_name || "Benangbaju"}</h1>
+        <p>${settingsMap.store_address || "Jakarta, Indonesia"}</p>
+        <p>${settingsMap.store_phone || ""} | ${settingsMap.store_email || ""}</p>
+      </div>
+      <div style="text-align:right;">
+        <h2 style="margin:0; font-size: 20px; color: #1e293b;">INVOICE</h2>
+        <p style="font-weight: 700; color: #4338ca; font-size: 14px; margin-top: 4px;">#${order.order_number}</p>
+        <p>Tanggal: ${new Date(order.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>
+        <p>Status: <strong style="color: #16a34a; background: #dcfce7; padding: 2px 8px; border-radius: 4px;">LUNAS</strong></p>
+      </div>
     </div>
-    <div class="info-box">
-      <h3>Alamat Pengiriman</h3>
-      <p><strong>${shipping?.recipient_name || "-"}</strong></p>
-      <p>${shipping?.full_address || "-"}</p>
-      <p>${shipping?.district_name || ""}, ${shipping?.city_name || ""}</p>
-      <p>${shipping?.province_name || ""} ${shipping?.postal_code || ""}</p>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <h3>Informasi Pelanggan</h3>
+        <p><strong>${profile?.name || "Pelanggan"}</strong></p>
+        <p>${profile?.phone || "-"}</p>
+      </div>
+      <div class="info-box">
+        <h3>Alamat Pengiriman</h3>
+        <p><strong>${shipping?.recipient_name || "-"}</strong></p>
+        <p>${shipping?.full_address || "-"}</p>
+        <p>${shipping?.district_name || ""}, ${shipping?.city_name || ""}</p>
+        <p>${shipping?.province_name || ""} ${shipping?.postal_code || ""}</p>
+      </div>
     </div>
-  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Produk</th>
-        <th>SKU</th>
-        <th style="text-align:center;">Qty</th>
-        <th style="text-align:right;">Harga</th>
-        <th style="text-align:right;">Subtotal</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${(orderItems || []).map((item: Record<string, unknown>) => `
-      <tr>
-        <td>${item.product_name} - ${item.variant_name}</td>
-        <td>${item.sku}</td>
-        <td style="text-align:center;">${item.quantity}</td>
-        <td style="text-align:right;">Rp ${Number(item.price).toLocaleString("id-ID")}</td>
-        <td style="text-align:right;">Rp ${Number(item.subtotal).toLocaleString("id-ID")}</td>
-      </tr>
-      `).join("")}
-    </tbody>
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Produk</th>
+          <th>SKU</th>
+          <th style="text-align:center;">Qty</th>
+          <th style="text-align:right;">Harga</th>
+          <th style="text-align:right;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${(orderItems || []).map((item: Record<string, unknown>) => `
+        <tr>
+          <td><strong>${item.product_name}</strong> - ${item.variant_name}</td>
+          <td style="color: #64748b;">${item.sku}</td>
+          <td style="text-align:center;">${item.quantity}</td>
+          <td style="text-align:right;">Rp ${Number(item.price).toLocaleString("id-ID")}</td>
+          <td style="text-align:right;">Rp ${Number(item.subtotal).toLocaleString("id-ID")}</td>
+        </tr>
+        `).join("")}
+      </tbody>
+    </table>
 
-  <table class="summary">
-    <tr><td>Subtotal</td><td>Rp ${Number(order.subtotal).toLocaleString("id-ID")}</td></tr>
-    <tr><td>Ongkos Kirim</td><td>Rp ${Number(order.shipping_cost).toLocaleString("id-ID")}</td></tr>
-    ${Number(order.discount_amount) > 0 ? `<tr><td>Diskon Voucher</td><td>-Rp ${Number(order.discount_amount).toLocaleString("id-ID")}</td></tr>` : ""}
-    <tr class="total"><td>Total</td><td>Rp ${Number(order.total_amount).toLocaleString("id-ID")}</td></tr>
-  </table>
+    <div class="summary-box">
+      <table class="summary">
+        <tr><td>Subtotal Produk</td><td style="text-align:right;">Rp ${Number(order.subtotal).toLocaleString("id-ID")}</td></tr>
+        <tr><td>Ongkos Kirim</td><td style="text-align:right;">Rp ${Number(order.shipping_cost).toLocaleString("id-ID")}</td></tr>
+        ${Number(order.payment_fee) > 0 ? `<tr><td>Biaya Layanan</td><td style="text-align:right;">Rp ${Number(order.payment_fee).toLocaleString("id-ID")}</td></tr>` : ""}
+        ${Number(order.discount_amount) > 0 ? `<tr><td>Diskon Voucher</td><td style="text-align:right; color: #dc2626;">-Rp ${Number(order.discount_amount).toLocaleString("id-ID")}</td></tr>` : ""}
+        <tr class="total"><td>Total Tagihan</td><td style="text-align:right;">Rp ${Number(order.total_amount).toLocaleString("id-ID")}</td></tr>
+      </table>
+    </div>
 
-  <div class="footer">
-    <p>Terima kasih telah berbelanja di ${settingsMap.store_name || "Benangbaju"}!</p>
-    <p>Kebijakan retur berlaku 7 hari setelah pesanan diterima.</p>
+    <div class="footer">
+      <p>Terima kasih telah berbelanja di ${settingsMap.store_name || "Benangbaju"}!</p>
+      <p>Kebijakan retur berlaku 7 hari setelah pesanan diterima.</p>
+    </div>
   </div>
 </body>
 </html>`;
 
     // Upload as HTML file to Supabase Storage
-    const invoicePath = `invoices/${order_number}.html`;
+    const invoicePath = `${order_number}.html`;
 
     const { error: uploadError } = await supabase.storage
       .from("invoices")
       .upload(invoicePath, invoiceHtml, {
-        contentType: "text/html",
+        contentType: "text/html; charset=utf-8",
         upsert: true,
       });
 
