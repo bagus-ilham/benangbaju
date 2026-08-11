@@ -31,8 +31,37 @@ export class ProductService {
       if (!data) return ok(null)
 
       const categories = mapCategory(data.categories)
-      const product_variants = mapVariants(data.product_variants)
+      let product_variants = mapVariants(data.product_variants)
       const sortedImages = mapImages(data.product_images)
+
+      // Overlay active Flash Sale prices if available
+      try {
+        const { flashSaleRepository } = await import('@/modules/flash-sales/flash-sale.repository')
+        const flashSaleRes = await flashSaleRepository.getActiveFlashSale()
+        const activeSale = flashSaleRes.success ? flashSaleRes.data : null
+
+        if (activeSale && activeSale.flash_sale_items && activeSale.flash_sale_items.length > 0) {
+          const fsMap = new Map(
+            activeSale.flash_sale_items
+              .filter((item) => item.quota > item.sold_count)
+              .map((item) => [item.variant_id, item])
+          )
+
+          product_variants = product_variants.map((v) => {
+            const fsItem = fsMap.get(v.id)
+            if (fsItem) {
+              return {
+                ...v,
+                price: Number(fsItem.sale_price),
+                compare_price: Number(fsItem.original_price) || Number(v.price),
+              }
+            }
+            return v
+          })
+        }
+      } catch (err) {
+        safeLogError('Failed to overlay flash sale prices:', err)
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const linksList = parseOneToMany<any>(data.product_marketplace_links)

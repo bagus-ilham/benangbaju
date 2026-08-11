@@ -28,7 +28,7 @@ export default async function FlashSalePage(): Promise<React.JSX.Element> {
       />
 
       {flashSale ? (
-        <FlashSaleSection flashSale={flashSale} />
+        <FlashSaleSection flashSale={flashSale} isFullPage={true} />
       ) : (
         <PageContainer>
           <EmptyState

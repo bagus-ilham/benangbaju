@@ -109,17 +109,31 @@ export function ProductInfoSection({
                 : `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`}
           </span>
 
-          {/* Compare Price */}
-          {selectedVariant?.compare_price && (
-            <span className="text-xs text-neutral-400 line-through font-sans">
-              {formatIDR(selectedVariant.compare_price)}
-            </span>
-          )}
-
-          {!selectedVariant && product.product_variants[0]?.compare_price && (
-            <span className="text-xs text-neutral-400 line-through font-sans">
-              {formatIDR(product.product_variants[0].compare_price)}
-            </span>
+          {/* Compare Price & Sale Badge */}
+          {selectedVariant ? (
+            selectedVariant.compare_price &&
+            Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
+              <>
+                <span className="text-xs text-neutral-400 line-through font-sans">
+                  {formatIDR(selectedVariant.compare_price)}
+                </span>
+                <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
+                  -{Math.round(((Number(selectedVariant.compare_price) - Number(selectedVariant.price)) / Number(selectedVariant.compare_price)) * 100)}%
+                </span>
+              </>
+            )
+          ) : (
+            product.product_variants[0]?.compare_price &&
+            Number(product.product_variants[0].compare_price) > minPrice && (
+              <>
+                <span className="text-xs text-neutral-400 line-through font-sans">
+                  {formatIDR(product.product_variants[0].compare_price)}
+                </span>
+                <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
+                  -{Math.round(((Number(product.product_variants[0].compare_price) - minPrice) / Number(product.product_variants[0].compare_price)) * 100)}%
+                </span>
+              </>
+            )
           )}
         </div>
       </motion.div>
