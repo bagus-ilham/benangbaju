@@ -6,12 +6,13 @@ import { FlashSaleItemDetail, FlashSaleDetail, AdminFlashSaleListItem } from './
 import { ApiListResponse, ApiResponse, ok, paginated, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
 import { createServerClient } from '@/lib/supabase/server'
+import { createStaticClient } from '@/lib/supabase/static'
 
 export class FlashSaleRepository {
   async getActiveFlashSale(
     client?: SupabaseClient<Database>
   ): Promise<ApiResponse<FlashSaleDetail | null>> {
-    const supabase = client || (await createServerClient())
+    const supabase = client || createStaticClient()
     const now = new Date().toISOString()
 
     // Fetch active flash sale that is currently running

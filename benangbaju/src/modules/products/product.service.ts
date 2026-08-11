@@ -37,7 +37,8 @@ export class ProductService {
       // Overlay active Flash Sale prices if available
       try {
         const { flashSaleRepository } = await import('@/modules/flash-sales/flash-sale.repository')
-        const flashSaleRes = await flashSaleRepository.getActiveFlashSale()
+        const { createStaticClient } = await import('@/lib/supabase/static')
+        const flashSaleRes = await flashSaleRepository.getActiveFlashSale(createStaticClient())
         const activeSale = flashSaleRes.success ? flashSaleRes.data : null
 
         if (activeSale && activeSale.flash_sale_items && activeSale.flash_sale_items.length > 0) {
