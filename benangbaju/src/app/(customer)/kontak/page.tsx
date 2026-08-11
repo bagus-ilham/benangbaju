@@ -46,10 +46,10 @@ export default function KontakPage(): React.JSX.Element {
                 <div>
                   <p className="font-bold text-brand-plum mb-0.5">Surel (Email)</p>
                   <a
-                    href="mailto:support@benangbaju.com"
+                    href="mailto:cs@benangbaju.com"
                     className="hover:text-brand-plum underline transition-colors"
                   >
-                    support@benangbaju.com
+                    cs@benangbaju.com
                   </a>
                 </div>
               </div>
