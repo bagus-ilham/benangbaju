@@ -275,7 +275,7 @@ INSERT INTO site_settings (key, value, type, "group", label) VALUES
   -- General
   ('store_name', 'Benangbaju', 'text', 'general', 'Nama Toko'),
   ('store_tagline', 'Fashion Muslim Premium Indonesia', 'text', 'general', 'Tagline'),
-  ('store_address', 'Jakarta, Indonesia', 'text', 'general', 'Alamat Toko'),
+  ('store_address', 'Bandung, Indonesia', 'text', 'general', 'Alamat Toko'),
   ('store_phone', '08123456789', 'text', 'general', 'Nomor Telepon'),
   ('store_email', 'cs@benangbaju.com', 'text', 'general', 'Email'),
   ('store_whatsapp', '628123456789', 'text', 'general', 'WhatsApp'),
