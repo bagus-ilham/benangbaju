@@ -107,25 +107,51 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Send email via SMTP
-    const client = new SmtpClient();
+    // Send email via Resend API or SMTP Fallback
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const fromEmail = Deno.env.get("RESEND_FROM_EMAIL") || Deno.env.get("SMTP_FROM") || "Benangbaju <noreply@benangbaju.com>";
 
-    await client.connectTLS({
-      hostname: Deno.env.get("SMTP_HOST")!,
-      port: Number(Deno.env.get("SMTP_PORT") || 587),
-      username: Deno.env.get("SMTP_USER")!,
-      password: Deno.env.get("SMTP_PASS")!,
-    });
+    if (resendApiKey) {
+      const resendRes = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: Array.isArray(to) ? to : [to],
+          subject: emailSubject,
+          html: emailHtml,
+        }),
+      });
 
-    await client.send({
-      from: Deno.env.get("SMTP_FROM")!,
-      to,
-      subject: emailSubject,
-      content: emailHtml,
-      html: emailHtml,
-    });
+      const resendData = await resendRes.json();
+      if (!resendRes.ok) {
+        console.error("Resend API error:", resendData);
+        throw new Error(resendData.message || resendData.name || "Gagal mengirim email via Resend API");
+      }
+    } else {
+      // Fallback ke SMTP
+      const client = new SmtpClient();
 
-    await client.close();
+      await client.connectTLS({
+        hostname: Deno.env.get("SMTP_HOST") || "smtp.resend.com",
+        port: Number(Deno.env.get("SMTP_PORT") || 465),
+        username: Deno.env.get("SMTP_USER") || "resend",
+        password: Deno.env.get("SMTP_PASS")!,
+      });
+
+      await client.send({
+        from: fromEmail,
+        to,
+        subject: emailSubject,
+        content: emailHtml,
+        html: emailHtml,
+      });
+
+      await client.close();
+    }
 
     console.log(
       JSON.stringify({
