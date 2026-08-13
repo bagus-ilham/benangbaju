@@ -12,6 +12,7 @@
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > src/shared/types/database.ts",
     "audit:licenses": "npx license-checker --summary",
+    "audit:a11y": "pa11y-ci",
     "setup": "npm ci && npm run db:reset && npm run db:types"
   },
   "dependencies": {
@@ -50,6 +51,7 @@
     "prettier": "^3.9.4",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "pa11y-ci": "^3.1.0"
   }
 }
