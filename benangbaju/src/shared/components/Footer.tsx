@@ -54,7 +54,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/cara-belanja"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Cara Belanja
                   </Link>
@@ -62,7 +62,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/pengiriman"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Informasi Pengiriman
                   </Link>
@@ -70,7 +70,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/retur"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Kebijakan Pengembalian (Retur)
                   </Link>
@@ -78,7 +78,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kontak"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Hubungi Kami
                   </Link>
@@ -95,7 +95,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/syarat-ketentuan"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Syarat & Ketentuan
                   </Link>
@@ -103,7 +103,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kebijakan-privasi"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Kebijakan Privasi
                   </Link>
@@ -111,7 +111,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/tentang"
-                    className="text-xs text-neutral-600 hover:text-brand-accent transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
                   >
                     Tentang Kami
                   </Link>

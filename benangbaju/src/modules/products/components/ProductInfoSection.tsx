@@ -164,7 +164,7 @@ export function ProductInfoSection({
               <button
                 type="button"
                 onClick={onSizeGuideOpen}
-                className="text-[9px] uppercase tracking-wider font-heading font-semibold text-brand-accent hover:text-brand-accent-light transition-colors underline underline-offset-2 cursor-pointer"
+                className="text-[9px] uppercase tracking-wider font-heading font-semibold text-neutral-600 hover:text-brand-plum transition-colors underline underline-offset-2 cursor-pointer"
               >
                 Panduan Ukuran
               </button>
@@ -271,7 +271,7 @@ export function ProductInfoSection({
           <Button
             onClick={handleStockNotification}
             variant="outline"
-            className="w-full text-xs font-semibold uppercase tracking-wider text-brand-accent border-brand-accent/30 hover:bg-brand-cream/60 py-2.5 transition-all"
+            className="w-full text-xs font-semibold uppercase tracking-wider text-neutral-600 border-neutral-300 hover:text-brand-plum hover:border-brand-plum hover:bg-brand-cream/60 py-2.5 transition-all"
           >
             <HandDrawnIcon name="bell" className="h-3.5 w-3.5 mr-1.5" /> Kabari Saya Saat Restock
           </Button>

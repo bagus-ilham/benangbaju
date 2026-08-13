@@ -86,10 +86,10 @@ export function MegaMenuNavItem({
         className={cn(
           'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center gap-1 nav-link-underline h-16',
           isActive
-            ? 'text-brand-accent font-semibold font-bold'
+            ? 'text-brand-plum font-semibold font-bold'
             : isTransparentHome
               ? 'text-white/90 hover:text-white'
-              : 'text-neutral-500 hover:text-brand-accent'
+              : 'text-neutral-600 hover:text-brand-plum'
         )}
       >
         {label}

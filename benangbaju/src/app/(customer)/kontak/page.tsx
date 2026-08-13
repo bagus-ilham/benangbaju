@@ -26,10 +26,9 @@ export default function KontakPage(): React.JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
           {/* Contact Details Card */}
           <div className="border border-neutral-200/80 p-8 space-y-6 bg-brand-cream rounded-2xl shadow-xs animate-slide-up">
-            <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
+            <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
               Layanan Pelanggan
-            </h3>
-
+            </h2>
             <div className="space-y-4 text-xs font-medium text-neutral-600">
               <div className="flex items-start space-x-3">
                 <HandDrawnIcon name="clock" className="h-4 w-4 shrink-0 mt-0.5" />
@@ -37,7 +36,7 @@ export default function KontakPage(): React.JSX.Element {
                   <p className="font-bold text-brand-plum mb-0.5">Jam Operasional</p>
                   <p>Senin – Jumat: 08:00 – 15:00 WIB</p>
                   <p>Sabtu: 09:00 – 14:00 WIB</p>
-                  <p className="text-neutral-400 mt-1">Minggu &amp; Hari Libur Nasional: Libur</p>
+                  <p className="text-neutral-600 mt-1">Minggu &amp; Hari Libur Nasional: Libur</p>
                 </div>
               </div>
 
@@ -69,10 +68,10 @@ export default function KontakPage(): React.JSX.Element {
           {/* WhatsApp CTA Card */}
           <div className="border border-neutral-200/80 p-8 flex flex-col justify-between space-y-6 bg-brand-cream rounded-2xl shadow-xs animate-slide-up">
             <div className="space-y-4">
-              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
+              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
                 Respon Cepat via WhatsApp
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Dapatkan bantuan langsung dari tim customer support kami terkait kendala transaksi,
                 konfirmasi pembayaran, atau bantuan retur melalui WhatsApp chat. Kami akan membalas
                 pesan Anda sesegera mungkin selama jam kerja.
@@ -94,7 +93,7 @@ export default function KontakPage(): React.JSX.Element {
         </div>
 
         {/* Philosophy Footer quote */}
-        <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-400 uppercase tracking-widest font-bold font-sans animate-fade-in">
+        <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-600 uppercase tracking-widest font-bold font-sans animate-fade-in">
           &ldquo;We value your experience. Let us know how we can assist you.&rdquo;
         </div>
       </PageContainer>

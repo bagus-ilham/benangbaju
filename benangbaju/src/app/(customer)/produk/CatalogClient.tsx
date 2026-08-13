@@ -219,7 +219,7 @@ export function CatalogClient({
 
             <button
               onClick={handleClearAll}
-              className="text-[10px] font-heading font-semibold uppercase tracking-wider text-brand-accent hover:text-brand-black underline underline-offset-2 transition-colors ml-auto"
+              className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-600 hover:text-brand-plum underline underline-offset-2 transition-colors ml-auto"
             >
               Hapus Semua
             </button>

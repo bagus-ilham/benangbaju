@@ -47,13 +47,13 @@ export default function TentangPage(): React.JSX.Element {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
             <div className="border border-neutral-200/80 p-6 md:p-8 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-blue">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-plum">
                 Kualitas
               </span>
-              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-sm">
+              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-sm">
                 Bahan Premium Pilihan
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Kami menyeleksi bahan katun, linen, dan serat alam terbaik secara ketat. Pakaian
                 kami didesain agar tetap adem, menyerap keringat, dan nyaman dipakai seharian di
                 iklim tropis Indonesia.
@@ -61,13 +61,13 @@ export default function TentangPage(): React.JSX.Element {
             </div>
 
             <div className="border border-neutral-200/80 p-6 md:p-8 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-blue">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-plum">
                 Craftsmanship
               </span>
-              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-sm">
+              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-sm">
                 Jahitan Standar Butik
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Setiap pakaian dijahit secara presisi oleh pengrajin lokal berpengalaman. Kami
                 memastikan keliman rapi, pola presisi, serta ketahanan jahitan yang kuat untuk
                 investasi jangka panjang lemari pakaian Anda.
@@ -80,7 +80,7 @@ export default function TentangPage(): React.JSX.Element {
               &ldquo;Show How Really Well-Dressed You Are&rdquo;
             </p>
             <div className="stitch-divider stitch-divider-center mt-4" />
-            <p className="text-[10px] text-neutral-400 uppercase tracking-widest font-heading mt-4">
+            <p className="text-[10px] text-neutral-600 uppercase tracking-widest font-heading mt-4">
               — Filosofi Benangbaju
             </p>
           </div>

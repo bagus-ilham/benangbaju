@@ -117,7 +117,7 @@ export function CheckoutSummaryCard({
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
               className="flex items-center justify-between bg-brand-accent-muted/10 border border-brand-accent px-4 py-2.5 rounded-xl text-xs"
             >
-              <div className="flex items-center space-x-2 text-brand-accent font-heading font-medium uppercase tracking-wider text-[10px]">
+              <div className="flex items-center space-x-2 text-brand-plum font-heading font-medium uppercase tracking-wider text-[10px]">
                 <HandDrawnIcon name="tag" className="h-3 w-3" />
                 <span>{appliedVoucher.code} diterapkan</span>
               </div>
@@ -172,7 +172,7 @@ export function CheckoutSummaryCard({
                             }`}
                         >
                           <div className="flex justify-between items-center mb-0.5">
-                            <span className="font-heading font-bold text-[10px] text-brand-accent uppercase tracking-wider">
+                            <span className="font-heading font-bold text-[10px] text-brand-plum uppercase tracking-wider">
                               {voucher.code}
                             </span>
                           </div>

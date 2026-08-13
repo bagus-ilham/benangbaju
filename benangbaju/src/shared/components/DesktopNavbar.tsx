@@ -100,10 +100,10 @@ export function DesktopNavbar({
                     className={cn(
                       'text-[10px] xl:text-[11px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16 whitespace-nowrap',
                       pathname === link.href
-                        ? 'text-brand-accent font-bold'
+                        ? 'text-brand-plum font-bold'
                         : isTransparentHome
                           ? 'text-white/90 hover:text-white'
-                          : 'text-neutral-500 hover:text-brand-accent'
+                          : 'text-neutral-600 hover:text-brand-plum'
                     )}
                   >
                     {link.name}
