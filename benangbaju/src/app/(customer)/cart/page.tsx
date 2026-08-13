@@ -130,14 +130,14 @@ export default function CartPage(): React.JSX.Element {
                             </p>
                           )}
                           {item.sku && (
-                            <p className="text-[9px] text-neutral-400 font-sans">SKU: {item.sku}</p>
+                            <p className="text-[9px] text-neutral-600 font-sans">SKU: {item.sku}</p>
                           )}
                           <div className="flex items-baseline space-x-2 pt-1">
                             <span className="text-xs font-sans font-bold text-brand-plum">
                               {formatIDR(item.price * item.quantity)}
                             </span>
                             {item.comparePrice && item.comparePrice > item.price && (
-                              <span className="text-[10px] font-sans text-neutral-400 line-through">
+                              <span className="text-[10px] font-sans text-neutral-600 line-through">
                                 {formatIDR(item.comparePrice * item.quantity)}
                               </span>
                             )}

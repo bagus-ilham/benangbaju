@@ -114,7 +114,7 @@ export function ProductInfoSection({
             selectedVariant.compare_price &&
             Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
               <>
-                <span className="text-xs text-neutral-400 line-through font-sans">
+                <span className="text-xs text-neutral-600 line-through font-sans">
                   {formatIDR(selectedVariant.compare_price)}
                 </span>
                 <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
@@ -126,7 +126,7 @@ export function ProductInfoSection({
             product.product_variants[0]?.compare_price &&
             Number(product.product_variants[0].compare_price) > minPrice && (
               <>
-                <span className="text-xs text-neutral-400 line-through font-sans">
+                <span className="text-xs text-neutral-600 line-through font-sans">
                   {formatIDR(product.product_variants[0].compare_price)}
                 </span>
                 <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">

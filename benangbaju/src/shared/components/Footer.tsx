@@ -124,7 +124,7 @@ export function Footer(): React.JSX.Element {
               <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Ikuti Kami
               </h4>
-              <p className="text-xs text-neutral-500 font-sans mt-1">
+              <p className="text-xs text-neutral-600 font-sans mt-1">
                 Temukan inspirasi gaya unik di media sosial kami.
               </p>
               <div className="flex space-x-3 pt-1">
@@ -189,10 +189,10 @@ export function Footer(): React.JSX.Element {
           </div>
 
           <div className="border-t border-neutral-200/60 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-            <p className="text-[11px] text-neutral-400 font-sans">
+            <p className="text-[11px] text-neutral-600 font-sans">
               &copy; <CurrentYear /> Benangbaju. All rights reserved.
             </p>
-            <div className="flex space-x-6 text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-wider">
+            <div className="flex space-x-6 text-[10px] text-neutral-600 font-sans font-bold uppercase tracking-wider">
               <Link href="/syarat-ketentuan" className="hover:text-brand-plum transition-colors">
                 Syarat
               </Link>

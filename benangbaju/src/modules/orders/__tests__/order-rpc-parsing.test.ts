@@ -50,6 +50,8 @@ describe('Order Service - createOrder parsing', () => {
         subtotal: 100000,
         shipping_cost: 10000,
         discount_amount: 0,
+        payment_fee: 0,
+        payment_channel: null,
         total_amount: 110000,
         status: 'pending_payment',
       })
@@ -73,6 +75,8 @@ describe('Order Service - createOrder parsing', () => {
         subtotal: 100000,
         shipping_cost: 0,
         discount_amount: 0,
+        payment_fee: 0,
+        payment_channel: null,
         total_amount: 0,
         status: '',
       })

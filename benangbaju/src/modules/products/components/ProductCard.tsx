@@ -176,7 +176,7 @@ export const ProductCard = React.memo(function ProductCard({
       <div className="flex flex-col pt-3.5 pb-4 px-3 space-y-1">
         {/* Category Name */}
         {product.categories && (
-          <span className="text-[9px] uppercase tracking-widest font-sans font-semibold text-neutral-500">
+          <span className="text-[9px] uppercase tracking-widest font-sans font-semibold text-neutral-600">
             {product.categories.name}
           </span>
         )}
@@ -196,7 +196,7 @@ export const ProductCard = React.memo(function ProductCard({
               : formatIDR(minPrice)}
           </span>
           {comparePrice && comparePrice > minPrice && (
-            <span className="text-xs font-sans text-neutral-400 line-through">
+            <span className="text-xs font-sans text-neutral-600 line-through">
               {formatIDR(comparePrice)}
             </span>
           )}
