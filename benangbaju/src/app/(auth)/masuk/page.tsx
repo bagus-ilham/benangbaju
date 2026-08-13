@@ -136,7 +136,7 @@ function LoginContent() {
 
             <motion.div variants={fadeUpItem} className="flex flex-col space-y-1 font-sans">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum">
+                <label htmlFor="password" className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum">
                   Kata Sandi
                 </label>
                 <Link
@@ -147,6 +147,7 @@ function LoginContent() {
                 </Link>
               </div>
               <Input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
