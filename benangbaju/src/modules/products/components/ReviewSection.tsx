@@ -91,9 +91,9 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
   if (isLoading) {
     return (
       <div className="py-10 space-y-4">
-        <h3 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
+        <h2 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
           Ulasan Pembeli ({total})
-        </h3>
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="h-44 bg-neutral-50 border border-neutral-200/60 skeleton-shimmer" />
           <div className="md:col-span-2 space-y-4">
@@ -111,17 +111,17 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
         {/* Left: Ratings Summary */}
         <div className="flex flex-col space-y-4 md:w-1/3 bg-brand-cream border border-neutral-200/80 p-6 md:p-8 rounded-2xl shadow-xs relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-          <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
+          <h2 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
             Ulasan Pembeli
-          </h3>
+          </h2>
           <div className="flex items-baseline space-x-2">
             <span className="text-4xl font-sans font-bold text-brand-plum tracking-tight">
               {avgRating.toFixed(1)}
             </span>
-            <span className="text-xs text-neutral-400 font-sans">/ 5.0</span>
+            <span className="text-xs text-neutral-600 font-sans">/ 5.0</span>
           </div>
           <div className="flex space-x-1">{renderStars(avgRating, 'h-4 w-4')}</div>
-          <p className="text-[11px] text-neutral-500 font-sans leading-relaxed">
+          <p className="text-[11px] text-neutral-600 font-sans leading-relaxed">
             Berdasarkan {total} ulasan terverifikasi dari pembeli.
           </p>
         </div>
@@ -129,7 +129,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
         {/* Right: Reviews List */}
         <div className="flex-1 space-y-6">
           {reviews.length === 0 ? (
-            <div className="text-xs text-neutral-400 font-sans italic py-4">
+            <div className="text-xs text-neutral-600 font-sans italic py-4">
               Belum ada ulasan untuk produk ini.
             </div>
           ) : (
@@ -198,7 +198,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                       <p className="text-xs text-neutral-600 font-sans leading-relaxed italic">
                         "{review.review_replies[0].body}"
                       </p>
-                      <p className="text-[9px] text-neutral-400 font-sans">
+                      <p className="text-[9px] text-neutral-600 font-sans">
                         {formatDate(review.review_replies[0].created_at)}
                       </p>
                     </div>

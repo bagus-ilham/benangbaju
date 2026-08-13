@@ -32,7 +32,7 @@ export function ProductAccordionTabs({
           onClick={() => setActiveTab('details')}
           className={cn(
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
-            activeTab === 'details' ? 'text-brand-plum font-bold' : 'text-neutral-500 hover:text-brand-plum'
+            activeTab === 'details' ? 'text-brand-plum font-bold' : 'text-neutral-600 hover:text-brand-plum'
           )}
         >
           Detail
@@ -50,7 +50,7 @@ export function ProductAccordionTabs({
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
             activeTab === 'shipping'
               ? 'text-brand-plum font-bold'
-              : 'text-neutral-500 hover:text-brand-plum'
+              : 'text-neutral-600 hover:text-brand-plum'
           )}
         >
           Panduan
@@ -66,7 +66,7 @@ export function ProductAccordionTabs({
           onClick={() => setActiveTab('care')}
           className={cn(
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
-            activeTab === 'care' ? 'text-brand-plum font-bold' : 'text-neutral-500 hover:text-brand-plum'
+            activeTab === 'care' ? 'text-brand-plum font-bold' : 'text-neutral-600 hover:text-brand-plum'
           )}
         >
           Perawatan
@@ -80,7 +80,7 @@ export function ProductAccordionTabs({
         </button>
       </div>
 
-      <div className="pt-2 text-xs text-neutral-500 font-sans leading-relaxed min-h-[80px]">
+      <div className="pt-2 text-xs text-neutral-600 font-sans leading-relaxed min-h-[80px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -95,7 +95,7 @@ export function ProductAccordionTabs({
                   {formatProductDescription(product.description)}
                 </p>
                 {selectedVariant && (
-                  <p className="text-[10px] text-neutral-400 font-sans">
+                  <p className="text-[10px] text-neutral-600 font-sans">
                     SKU: {selectedVariant.sku}
                   </p>
                 )}

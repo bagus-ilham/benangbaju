@@ -36,7 +36,7 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
 
   return (
     <div className="space-y-3 py-4">
-      <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-400 block">
+      <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-600 block">
         Tersedia juga di Marketplace
       </span>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

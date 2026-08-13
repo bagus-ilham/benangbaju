@@ -183,9 +183,9 @@ export const ProductCard = React.memo(function ProductCard({
 
         {/* Product Title (H3 scale: 16px/600 Mulish) */}
         <Link href={productUrl} prefetch={true} className="block">
-          <h3 className="text-sm md:text-base font-sans font-semibold text-brand-plum hover:text-brand-blue transition-colors truncate">
+          <span className="block text-sm md:text-base font-sans font-semibold text-brand-plum hover:text-brand-blue transition-colors truncate">
             {product.name}
-          </h3>
+          </span>
         </Link>
 
         {/* Price Tag (Caption/Price scale: 13px/700 Mulish) */}

@@ -225,11 +225,11 @@ export function ProductDetailClient({
           transition={{ duration: 0.4 }}
           className="flex items-center flex-wrap gap-x-2 gap-y-1 text-[10px] uppercase tracking-wider text-neutral-500 mb-8 font-sans font-bold"
         >
-          <Link href="/" className="hover:text-brand-blue transition-colors">
+          <Link href="/" className="hover:text-brand-plum transition-colors">
             Home
           </Link>
           <span>/</span>
-          <Link href="/produk" className="hover:text-brand-blue transition-colors">
+          <Link href="/produk" className="hover:text-brand-plum transition-colors">
             Produk
           </Link>
           <span>/</span>
@@ -237,7 +237,7 @@ export function ProductDetailClient({
             <>
               <Link
                 href={`/kategori/${product.categories.slug}`}
-                className="hover:text-brand-blue transition-colors"
+                className="hover:text-brand-plum transition-colors"
               >
                 {product.categories.name}
               </Link>

@@ -47,9 +47,9 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 2: Pelayanan Pelanggan */}
             <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
+              <h3 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Pelayanan
-              </h4>
+              </h3>
               <ul className="space-y-2">
                 <li>
                   <Link
@@ -88,9 +88,9 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 3: Kebijakan & Hukum */}
             <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
+              <h3 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Informasi
-              </h4>
+              </h3>
               <ul className="space-y-2">
                 <li>
                   <Link
@@ -121,9 +121,9 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 4: Social */}
             <div className="flex flex-col space-y-3">
-              <h4 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
+              <h3 className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
                 Ikuti Kami
-              </h4>
+              </h3>
               <p className="text-xs text-neutral-600 font-sans mt-1">
                 Temukan inspirasi gaya unik di media sosial kami.
               </p>

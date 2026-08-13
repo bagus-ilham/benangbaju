@@ -91,7 +91,7 @@ export function ProductInfoSection({
       {/* Title, Category & Price */}
       <motion.div variants={itemVariants} className="space-y-2 font-sans">
         {product.categories && (
-          <span className="text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-blue">
+          <span className="text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-plum">
             {product.categories.name}
           </span>
         )}
@@ -300,7 +300,7 @@ export function ProductInfoSection({
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             Gratis ongkir
           </span>
-          <span className="text-[8px] text-neutral-400 font-sans">Tanpa minimum pembelanjaan</span>
+          <span className="text-[8px] text-neutral-600 font-sans">Tanpa minimum pembelanjaan</span>
         </motion.div>
         <motion.div
           whileHover={{ y: -3 }}
@@ -311,7 +311,7 @@ export function ProductInfoSection({
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             7 Hari Retur
           </span>
-          <span className="text-[8px] text-neutral-400 font-sans">Bebas tukar ukuran</span>
+          <span className="text-[8px] text-neutral-600 font-sans">Bebas tukar ukuran</span>
         </motion.div>
         <motion.div
           whileHover={{ y: -3 }}
@@ -322,7 +322,7 @@ export function ProductInfoSection({
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
             Kualitas Premium
           </span>
-          <span className="text-[8px] text-neutral-400 font-sans">Bahan terkurasi</span>
+          <span className="text-[8px] text-neutral-600 font-sans">Bahan terkurasi</span>
         </motion.div>
       </motion.div>
     </>
