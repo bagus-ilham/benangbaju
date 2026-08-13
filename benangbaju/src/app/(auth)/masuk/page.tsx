@@ -141,7 +141,7 @@ function LoginContent() {
                 </label>
                 <Link
                   href="/lupa-password"
-                  className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-500 hover:text-brand-plum transition-colors"
+                  className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-600 hover:text-brand-plum transition-colors inline-block p-2 -m-2"
                 >
                   Lupa sandi?
                 </Link>
@@ -170,7 +170,7 @@ function LoginContent() {
               <div className="w-full border-t border-neutral-200/80"></div>
             </div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
-              <span className="bg-brand-cream px-3 text-neutral-500">Atau masuk dengan</span>
+              <span className="bg-brand-cream px-3 text-neutral-600">Atau masuk dengan</span>
             </div>
           </motion.div>
 
@@ -191,7 +191,7 @@ function LoginContent() {
             variants={fadeUpItem}
             className="text-center mt-8 pt-4 border-t border-neutral-100"
           >
-            <p className="text-xs text-neutral-500 font-sans">
+            <p className="text-xs text-neutral-600 font-sans">
               Belum punya akun?{' '}
               <Link href="/daftar" className="text-brand-black font-semibold hover:underline">
                 Daftar sekarang

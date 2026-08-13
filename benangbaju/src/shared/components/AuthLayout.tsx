@@ -112,7 +112,7 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
       </div>
 
       {/* Form panel */}
-      <div className="flex-1 flex flex-col items-center lg:overflow-y-auto lg:h-full bg-brand-cream py-12 px-4 sm:px-6 lg:px-8 section-texture">
+      <main className="flex-1 flex flex-col items-center lg:overflow-y-auto lg:h-full bg-brand-cream py-12 px-4 sm:px-6 lg:px-8 section-texture">
         <div className="w-full max-w-md my-auto flex flex-col items-center">
           <Link href="/" className="mb-8 lg:hidden inline-block hover:opacity-80 transition-opacity">
             <div className="relative h-9 w-40">
@@ -127,7 +127,7 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
           </Link>
           {children}
         </div>
-      </div>
+      </main>
     </div>
   )
 }

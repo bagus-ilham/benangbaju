@@ -98,7 +98,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
         {/* Footer Link */}
         {!isSent && (
           <div className="text-center mt-8 pt-4 border-t border-neutral-100">
-            <p className="text-xs text-neutral-500 font-sans">
+            <p className="text-xs text-neutral-600 font-sans">
               Kembali ke{' '}
               <Link href="/masuk" className="text-brand-black font-semibold hover:underline">
                 Halaman Masuk
