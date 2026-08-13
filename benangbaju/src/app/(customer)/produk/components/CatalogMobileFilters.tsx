@@ -37,9 +37,9 @@ export function CatalogMobileFilters({
         )}
       >
         <div className="flex items-center justify-between p-5 border-b border-neutral-200/80">
-          <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
+          <h2 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
             Filter
-          </h3>
+          </h2>
           <button
             onClick={() => setShowMobileFilters(false)}
             className="p-2 -mr-2 text-neutral-400 hover:text-brand-plum transition-colors"
@@ -49,9 +49,9 @@ export function CatalogMobileFilters({
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-8">
           <div>
-            <h4 className="text-[10px] font-sans font-bold uppercase tracking-widest text-neutral-500 mb-4">
+            <h3 className="text-[10px] font-sans font-bold uppercase tracking-widest text-neutral-600 mb-4">
               Kategori
-            </h4>
+            </h3>
             <ul className="space-y-3">
               <li>
                 <button
@@ -61,7 +61,7 @@ export function CatalogMobileFilters({
                   }}
                   className={cn(
                     'text-sm font-sans tracking-wide text-left w-full transition-colors flex items-center gap-2',
-                    !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-500'
+                    !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-600'
                   )}
                 >
                   {!categorySlug && (
@@ -81,7 +81,7 @@ export function CatalogMobileFilters({
                       }}
                       className={cn(
                         'text-sm font-sans tracking-wide text-left w-full transition-colors flex items-center gap-2',
-                        isActive ? 'text-brand-plum font-bold' : 'text-neutral-500'
+                        isActive ? 'text-brand-plum font-bold' : 'text-neutral-600'
                       )}
                     >
                       {isActive && (

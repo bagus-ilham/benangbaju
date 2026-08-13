@@ -21,13 +21,13 @@ export function CatalogDesktopFilters({
   return (
     <aside className="hidden md:block w-48 flex-shrink-0 space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum">
+        <h2 className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum">
           Kategori
-        </h3>
+        </h2>
         {(categorySlug || searchQuery) && (
           <button
             onClick={handleClearAll}
-            className="text-[9px] font-sans font-bold uppercase tracking-widest text-neutral-500 hover:text-brand-plum"
+            className="text-[9px] font-sans font-bold uppercase tracking-widest text-neutral-600 hover:text-brand-plum"
           >
             Reset
           </button>
@@ -40,7 +40,7 @@ export function CatalogDesktopFilters({
             onClick={() => handleCategorySelect(null)}
             className={cn(
               'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors flex items-center gap-2',
-              !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-500'
+              !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-600'
             )}
           >
             {!categorySlug && (
@@ -57,7 +57,7 @@ export function CatalogDesktopFilters({
                 onClick={() => handleCategorySelect(cat.slug)}
                 className={cn(
                   'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors flex items-center gap-2',
-                  isActive ? 'text-brand-plum font-bold' : 'text-neutral-500'
+                  isActive ? 'text-brand-plum font-bold' : 'text-neutral-600'
                 )}
               >
                 {isActive && (

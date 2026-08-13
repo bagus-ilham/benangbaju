@@ -140,7 +140,7 @@ export function CatalogClient({
 
           {/* Sort Selector */}
           <div className="flex items-center space-x-2">
-            <span className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-500">
+            <span className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-600">
               Urutkan:
             </span>
             <DropdownMenu>
@@ -172,7 +172,7 @@ export function CatalogClient({
         {/* Active Filter Chips / Pills Bar */}
         {(categorySlug || searchQuery || (sortBy && sortBy !== 'newest')) && (
           <div className="flex flex-wrap items-center gap-2 mb-8 p-3 bg-brand-cream border border-neutral-200/80 rounded-xl">
-            <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-neutral-500">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-neutral-600">
               Filter Aktif:
             </span>
 
