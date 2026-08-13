@@ -69,7 +69,7 @@ export function DesktopNavbar({
                 'lg:hidden p-2 -ml-2 shrink-0',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-500 hover:text-brand-black'
+                  : 'text-neutral-600 hover:text-brand-plum'
               )}
               aria-label="Buka menu"
             >
@@ -150,7 +150,7 @@ export function DesktopNavbar({
                 'p-2',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-500 hover:text-brand-black'
+                  : 'text-neutral-600 hover:text-brand-plum'
               )}
               aria-label="Cari produk"
               aria-expanded={isSearchOpen}
@@ -164,7 +164,7 @@ export function DesktopNavbar({
                 'p-2 relative group hidden sm:inline-flex',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-500 hover:text-brand-black'
+                  : 'text-neutral-600 hover:text-brand-plum'
               )}
               aria-label="Wishlist"
             >
@@ -188,7 +188,7 @@ export function DesktopNavbar({
                 'p-2 relative group cursor-pointer',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-500 hover:text-brand-black'
+                  : 'text-neutral-600 hover:text-brand-plum'
               )}
               aria-label="Keranjang"
             >
@@ -221,7 +221,7 @@ export function DesktopNavbar({
                       'p-2 flex items-center',
                       isTransparentHome
                         ? 'text-white/90 hover:text-white'
-                        : 'text-neutral-500 hover:text-brand-black'
+                        : 'text-neutral-600 hover:text-brand-plum'
                     )}
                     aria-label="Menu pengguna"
                     aria-expanded={isUserMenuOpen}
@@ -299,7 +299,7 @@ export function DesktopNavbar({
                     'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block',
                     isTransparentHome
                       ? 'text-white/90 hover:text-white'
-                      : 'text-neutral-500 hover:text-brand-black'
+                      : 'text-neutral-600 hover:text-brand-plum'
                   )}
                 >
                   Masuk

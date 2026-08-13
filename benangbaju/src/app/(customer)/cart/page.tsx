@@ -120,9 +120,9 @@ export default function CartPage(): React.JSX.Element {
                         )}
                         <div className="min-w-0 flex-1 space-y-1">
                           <Link href={`/produk/${item.slug}`} className="block group">
-                            <h3 className="text-sm font-sans font-bold text-brand-plum group-hover:text-brand-blue truncate transition-colors">
+                            <div className="text-sm font-sans font-bold text-brand-plum group-hover:text-brand-blue truncate transition-colors">
                               {item.productName || item.name}
-                            </h3>
+                            </div>
                           </Link>
                           {item.variantName && (
                             <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-sans font-semibold">
@@ -199,9 +199,9 @@ export default function CartPage(): React.JSX.Element {
                 className="bg-brand-cream border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
                 <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-                <h3 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">
+                <h2 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">
                   Ringkasan Belanja
-                </h3>
+                </h2>
 
                 <div className="space-y-3 text-xs font-sans text-neutral-600">
                   <div className="flex justify-between">

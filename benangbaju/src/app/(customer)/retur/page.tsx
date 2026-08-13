@@ -42,11 +42,11 @@ export default function ReturPage(): React.JSX.Element {
             <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="clock" className="h-4 w-4" />
-                <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+                <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                   Batas Waktu 7 Hari
-                </h3>
+                </h2>
               </div>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Pengajuan pengembalian barang wajib dilakukan selambat-lambatnya 7 hari kalender
                 sejak status pesanan dinyatakan diterima oleh sistem kurir ekspedisi.
               </p>
@@ -55,11 +55,11 @@ export default function ReturPage(): React.JSX.Element {
             <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="alert-triangle" className="h-4 w-4" />
-                <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+                <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                   Syarat Fisik Barang
-                </h3>
+                </h2>
               </div>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Produk harus dalam kondisi asli seperti saat diterima: belum pernah dicuci, tidak
                 berbau parfum/keringat, tidak dimodifikasi/dijahit ulang, serta hangtag label produk
                 masih utuh terpasang.
@@ -69,9 +69,9 @@ export default function ReturPage(): React.JSX.Element {
 
           {/* Acceptable Reasons Section */}
           <div className="border border-neutral-200/80 p-8 rounded-2xl space-y-6 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
-            <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
+            <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
               Kategori Retur Yang Diterima
-            </h3>
+            </h2>
 
             <ul className="space-y-4 text-xs font-medium text-neutral-600">
               <li className="flex items-start space-x-2.5">
@@ -110,19 +110,19 @@ export default function ReturPage(): React.JSX.Element {
 
           {/* Step-by-step procedure */}
           <div className="space-y-4 pt-4">
-            <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
+            <h2 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
               Alur Pengajuan Retur
-            </h3>
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {steps.map((step, idx) => (
                 <div
                   key={idx}
                   className="border border-neutral-200/80 p-6 rounded-xl space-y-2 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300"
                 >
-                  <h4 className="font-sans text-xs font-bold text-brand-plum uppercase tracking-wide">
+                  <h3 className="font-sans text-xs font-bold text-brand-plum uppercase tracking-wide">
                     {step.title}
-                  </h4>
-                  <p className="text-[11px] text-neutral-500 leading-relaxed font-medium">
+                  </h3>
+                  <p className="text-[11px] text-neutral-600 leading-relaxed font-medium">
                     {step.desc}
                   </p>
                 </div>

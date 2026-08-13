@@ -59,15 +59,15 @@ export default function CaraBelanjaPage(): React.JSX.Element {
                 <HandDrawnIcon name={step.handDrawnName} className="h-6 w-6" />
               </div>
               <div className="space-y-2">
-                <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wide">
+                <h2 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wide">
                   {step.title}
-                </h3>
-                <p className="text-xs text-neutral-500 leading-relaxed font-medium">{step.desc}</p>
+                </h2>
+                <p className="text-xs text-neutral-600 leading-relaxed font-medium">{step.desc}</p>
               </div>
             </div>
           ))}
 
-          <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-500 leading-relaxed font-medium rounded-2xl shadow-sm">
+          <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-600 leading-relaxed font-medium rounded-2xl shadow-sm">
             <p className="font-heading font-semibold text-brand-black mb-2 uppercase tracking-wider text-[10px]">
               Butuh Bantuan Lebih Lanjut?
             </p>

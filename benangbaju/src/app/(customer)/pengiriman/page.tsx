@@ -43,10 +43,10 @@ export default function PengirimanPage(): React.JSX.Element {
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 w-max rounded-xl">
                 <HandDrawnIcon name="package" className="h-4 w-4" />
               </div>
-              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Perhitungan Berat
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Berat produk dihitung dalam satuan gram. Setiap total berat pesanan akan dibulatkan
                 ke atas per 1.000 gram (1 kg) sesuai regulasi ekspedisi rekanan.
               </p>
@@ -56,10 +56,10 @@ export default function PengirimanPage(): React.JSX.Element {
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
                 <HandDrawnIcon name="hanger" className="h-4 w-4" />
               </div>
-              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Jadwal Kirim
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Pesanan dengan pembayaran terverifikasi sebelum pukul 15:00 WIB akan dikirim pada
                 hari yang sama. Setelah jam tersebut, paket dikirim hari kerja berikutnya.
               </p>
@@ -69,10 +69,10 @@ export default function PengirimanPage(): React.JSX.Element {
               <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
                 <HandDrawnIcon name="clothes" className="h-4 w-4" />
               </div>
-              <h3 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
                 Garansi Asuransi
-              </h3>
-              <p className="text-xs text-neutral-500 leading-relaxed font-medium">
+              </h2>
+              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
                 Setiap pengiriman dilengkapi dengan asuransi kehilangan. Jika paket terbukti hilang
                 selama pengiriman, kami akan mengirimkan produk pengganti secara gratis.
               </p>
@@ -81,9 +81,9 @@ export default function PengirimanPage(): React.JSX.Element {
 
           {/* Courier Table Section */}
           <div className="space-y-4 pt-4">
-            <h3 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
+            <h2 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
               Mitra Ekspedisi & Estimasi Waktu (ETD)
-            </h3>
+            </h2>
 
             <div className="border border-neutral-200/80 overflow-hidden rounded-2xl bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <table className="w-full text-left border-collapse text-xs font-sans">
