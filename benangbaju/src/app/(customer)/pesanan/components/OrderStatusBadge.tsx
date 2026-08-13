@@ -33,7 +33,7 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps): React.JSX.E
       )
     case 'cancelled':
       return (
-        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-neutral-500 bg-neutral-50 border border-neutral-200">
+        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-neutral-600 bg-neutral-50 border border-neutral-200">
           <HandDrawnIcon name="close" className="h-3 w-3 mr-1" /> Dibatalkan
         </span>
       )

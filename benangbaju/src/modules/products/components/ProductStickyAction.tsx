@@ -56,9 +56,9 @@ export function ProductStickyAction({
                 />
               </div>
               <div>
-                <h4 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum line-clamp-1">
+                <div className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum line-clamp-1">
                   {product.name}
-                </h4>
+                </div>
                 <p className="text-xs font-sans font-bold text-brand-plum mt-0.5">
                   {selectedVariant ? formatIDR(selectedVariant.price) : formatIDR(minPrice)}
                 </p>
@@ -69,7 +69,7 @@ export function ProductStickyAction({
             <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
               {/* Small variant display or picker dropdown */}
               {product.product_variants.length > 0 && (
-                <div className="text-xs font-sans text-neutral-500">
+                <div className="text-xs font-sans text-neutral-600">
                   {selectedVariant ? (
                     <span>
                       Varian: <strong className="text-brand-plum">{selectedVariant.name}</strong>

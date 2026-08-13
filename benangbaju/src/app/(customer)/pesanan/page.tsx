@@ -164,7 +164,7 @@ export default function PesananPage(): React.JSX.Element {
       />
       <PageContainer size="lg" className="py-10 page-content">
         {/* Navigation Breadcrumb */}
-        <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-500">
+        <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-600">
           <Link href="/akun" className="hover:text-brand-plum transition font-sans font-bold">
             Akun Saya
           </Link>

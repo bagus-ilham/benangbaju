@@ -49,9 +49,9 @@ export function ProductSizeGuideModal({
                 <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-brand-blue">
                   Panduan
                 </span>
-                <h3 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
+                <h2 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
                   Panduan Ukuran Pakaian (Size Chart)
-                </h3>
+                </h2>
                 <p className="text-[10px] text-neutral-400 font-sans">
                   Semua ukuran dalam centimeter (cm). Toleransi perbedaan ukuran 1-2 cm wajar
                   terjadi.
@@ -130,10 +130,10 @@ export function ProductSizeGuideModal({
               )}
 
               <div className="pt-2 border-t border-neutral-200/60">
-                <h4 className="text-[9px] uppercase tracking-widest font-sans font-bold text-brand-plum mb-1">
+                <h3 className="text-[9px] uppercase tracking-widest font-sans font-bold text-brand-plum mb-1">
                   Tips Menentukan Ukuran:
-                </h4>
-                <ul className="list-disc list-inside text-[9px] text-neutral-500 space-y-1 leading-relaxed">
+                </h3>
+                <ul className="list-disc list-inside text-[9px] text-neutral-600 space-y-1 leading-relaxed">
                   <li>
                     <strong>Lingkar Dada</strong>: Ukur di sekeliling bagian dada terlebar Anda
                     dengan pas.

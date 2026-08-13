@@ -157,7 +157,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                   </div>
 
                   {review.title && (
-                    <h4 className="text-xs font-sans font-bold text-brand-plum">{review.title}</h4>
+                    <h3 className="text-xs font-sans font-bold text-brand-plum">{review.title}</h3>
                   )}
 
                   <p className="text-xs text-neutral-600 font-sans leading-relaxed">

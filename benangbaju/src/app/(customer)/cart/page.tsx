@@ -125,7 +125,7 @@ export default function CartPage(): React.JSX.Element {
                             </div>
                           </Link>
                           {item.variantName && (
-                            <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-sans font-semibold">
+                            <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-sans font-semibold">
                               Varian: {item.variantName}
                             </p>
                           )}
@@ -151,7 +151,7 @@ export default function CartPage(): React.JSX.Element {
                           <button
                             type="button"
                             onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
-                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
+                            className="p-2 text-neutral-600 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label="Kurangi jumlah"
                           >
                             <HandDrawnIcon name="minus" className="h-3 w-3" />
@@ -162,7 +162,7 @@ export default function CartPage(): React.JSX.Element {
                           <button
                             type="button"
                             onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
-                            className="p-2 text-neutral-500 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
+                            className="p-2 text-neutral-600 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label="Tambah jumlah"
                           >
                             <HandDrawnIcon name="plus" className="h-3 w-3" />
@@ -239,7 +239,7 @@ export default function CartPage(): React.JSX.Element {
                   </Button>
                 </Link>
 
-                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-blue p-4 rounded-xl text-[10px] text-neutral-500 leading-relaxed font-sans">
+                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-blue p-4 rounded-xl text-[10px] text-neutral-600 leading-relaxed font-sans">
                   Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank
                   otomatis, QRIS, e-Wallet via DOKU.
                 </div>

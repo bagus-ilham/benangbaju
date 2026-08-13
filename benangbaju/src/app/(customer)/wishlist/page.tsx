@@ -128,7 +128,7 @@ export default function WishlistPage(): React.JSX.Element {
                   onClick={clearWishlist}
                   variant="ghost"
                   size="sm"
-                  className="text-[10px] uppercase font-bold text-neutral-500 hover:text-red-600"
+                  className="text-[10px] uppercase font-bold text-neutral-600 hover:text-red-600"
                 >
                   <HandDrawnIcon name="trash" className="w-3.5 h-3.5 mr-1" /> Kosongkan
                 </Button>

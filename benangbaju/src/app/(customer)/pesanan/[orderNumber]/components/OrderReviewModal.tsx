@@ -138,18 +138,18 @@ export function OrderReviewModal({
             <p className="text-[10px] uppercase tracking-widest text-brand-blue font-sans font-bold mb-1">
               Nama Produk
             </p>
-            <h4 className="text-sm font-bold text-brand-plum font-sans">
+            <h3 className="text-sm font-bold text-brand-plum font-sans">
               {selectedReviewItem.product_name}
-            </h4>
+            </h3>
             {selectedReviewItem.variant_name && (
-              <p className="text-xs text-neutral-500 mt-0.5 font-sans">
+              <p className="text-xs text-neutral-600 mt-0.5 font-sans">
                 Varian: {selectedReviewItem.variant_name}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-sans font-bold mb-2">
+            <label className="block text-[10px] uppercase tracking-widest text-neutral-600 font-sans font-bold mb-2">
               Rating Produk
             </label>
             <div className="flex gap-2">
@@ -206,7 +206,7 @@ export function OrderReviewModal({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-[10px] uppercase tracking-widest text-neutral-500 font-semibold">
+            <label className="block text-[10px] uppercase tracking-widest text-neutral-600 font-semibold">
               Lampirkan Foto (Maks 2 Foto, 2MB/Foto)
             </label>
 

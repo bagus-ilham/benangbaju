@@ -85,12 +85,12 @@ export function Modal({
           >
             <div className="flex items-center justify-between px-6 py-4 border-b border-amber-200/60 bg-brand-gold/20">
               {title ? (
-                <h3
+                <h2
                   id={titleId}
                   className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum"
                 >
                   {title}
-                </h3>
+                </h2>
               ) : (
                 <div />
               )}

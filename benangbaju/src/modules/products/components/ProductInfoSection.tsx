@@ -142,7 +142,7 @@ export function ProductInfoSection({
       {product.short_description && (
         <motion.p
           variants={itemVariants}
-          className="text-xs text-neutral-500 font-sans leading-relaxed whitespace-pre-line"
+          className="text-xs text-neutral-600 font-sans leading-relaxed whitespace-pre-line"
         >
           {product.short_description}
         </motion.p>
@@ -179,7 +179,7 @@ export function ProductInfoSection({
 
       {/* Varian Stock indicator */}
       {selectedVariant && (
-        <motion.div variants={itemVariants} className="text-[11px] text-neutral-500 font-sans">
+        <motion.div variants={itemVariants} className="text-[11px] text-neutral-600 font-sans">
           {selectedVariant.stock > 0 ? (
             <span>
               Stok Tersedia:{' '}
@@ -199,7 +199,7 @@ export function ProductInfoSection({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onDecrement}
-              className="p-3 text-neutral-500 hover:text-brand-black transition-colors"
+              className="p-3 text-neutral-600 hover:text-brand-black transition-colors"
               disabled={!selectedVariant || selectedVariant.stock === 0}
             >
               <HandDrawnIcon name="minus" className="h-3 w-3" />
@@ -210,7 +210,7 @@ export function ProductInfoSection({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onIncrement}
-              className="p-3 text-neutral-500 hover:text-brand-black transition-colors"
+              className="p-3 text-neutral-600 hover:text-brand-black transition-colors"
               disabled={!selectedVariant || selectedVariant.stock === 0}
             >
               <HandDrawnIcon name="plus" className="h-3 w-3" />
@@ -222,7 +222,7 @@ export function ProductInfoSection({
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={onToggleWishlist}
-            className="p-4 border border-neutral-200 hover:border-brand-accent bg-brand-cream transition-all text-neutral-500 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
+            className="p-4 border border-neutral-200 hover:border-brand-accent bg-brand-cream transition-all text-neutral-600 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
             aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
           >
             <HandDrawnIcon

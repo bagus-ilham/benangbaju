@@ -56,7 +56,7 @@ export function OrderCard({
               {order.order_number}
             </Link>
           </p>
-          <p className="text-xs text-neutral-500 font-sans">
+          <p className="text-xs text-neutral-600 font-sans">
             Tanggal: {formatDate(order.created_at)}
           </p>
         </div>
@@ -87,7 +87,7 @@ export function OrderCard({
       {/* Total amount & Action buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-neutral-200/60 gap-4 font-sans">
         <div className="text-sm">
-          <span className="text-neutral-500">Total Pembayaran:</span>{' '}
+          <span className="text-neutral-600">Total Pembayaran:</span>{' '}
           <span className="font-bold text-brand-plum text-base">
             {formatIDR(order.total_amount)}
           </span>

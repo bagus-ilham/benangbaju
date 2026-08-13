@@ -32,11 +32,11 @@ export function OrderShippingSection({
               {orderShipping.recipient_name} ({orderShipping.phone})
             </p>
             <p>{orderShipping.full_address}</p>
-            <p className="text-xs text-neutral-500 font-medium font-sans">
+            <p className="text-xs text-neutral-600 font-medium font-sans">
               {orderShipping.district_name}, {orderShipping.city_name},{' '}
               {orderShipping.province_name} {orderShipping.postal_code}
             </p>
-            <div className="pt-2 text-xs border-t border-neutral-100 mt-2 space-y-1 text-neutral-500">
+            <div className="pt-2 text-xs border-t border-neutral-100 mt-2 space-y-1 text-neutral-600">
               <p>
                 Kurir:{' '}
                 <span className="font-semibold text-neutral-700 uppercase">
@@ -54,15 +54,15 @@ export function OrderShippingSection({
             </div>
           </div>
         ) : (
-          <p className="text-sm text-neutral-500 italic">Data pengiriman tidak ditemukan.</p>
+          <p className="text-sm text-neutral-600 italic">Data pengiriman tidak ditemukan.</p>
         )}
       </div>
 
       {notes && (
         <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-brand-cream/30 space-y-2 rounded-2xl">
-          <h3 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent">
+          <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent">
             Catatan dari Anda
-          </h3>
+          </h2>
           <p className="text-sm text-neutral-700 whitespace-pre-wrap">{notes}</p>
         </div>
       )}
