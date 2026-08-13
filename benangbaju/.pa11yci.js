@@ -9,11 +9,36 @@ module.exports = {
     },
   },
   urls: [
+    // Core Customer Pages
     `${baseUrl}/`,
-    `${baseUrl}/produk`,
-    `${baseUrl}/masuk`,
+    `${baseUrl}/cara-belanja`,
+    `${baseUrl}/cart`,
+    `${baseUrl}/checkout`,
     `${baseUrl}/daftar`,
-    `${baseUrl}/tentang`,
+    `${baseUrl}/flash-sale`,
+    `${baseUrl}/kategori`,
+    `${baseUrl}/kebijakan-privasi`,
+    `${baseUrl}/koleksi`,
     `${baseUrl}/kontak`,
+    `${baseUrl}/lupa-password`,
+    `${baseUrl}/masuk`,
+    `${baseUrl}/pengiriman`,
+    `${baseUrl}/produk`,
+    `${baseUrl}/reset-password`,
+    `${baseUrl}/retur`,
+    `${baseUrl}/search`,
+    `${baseUrl}/syarat-ketentuan`,
+    `${baseUrl}/tentang`,
+    `${baseUrl}/wishlist`,
+
+    // Sample Dynamic Category & Collection Pages
+    `${baseUrl}/kategori/bye-bye-stock`,
+    `${baseUrl}/kategori/curated-by-benangbaju`,
+    `${baseUrl}/koleksi/two-way-top`,
+    `${baseUrl}/koleksi/denim-days`,
+
+    // Sample Dynamic Product Pages
+    `${baseUrl}/produk/muse-shirt`,
+    `${baseUrl}/produk/time-to-time-shirt`,
   ],
 }
