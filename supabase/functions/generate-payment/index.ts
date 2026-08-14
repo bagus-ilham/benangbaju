@@ -52,7 +52,66 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
-    // 1. Check if a valid payment URL already exists for this order
+    // Normalisasi dan mapping payment_channel ke DOKU payment_method_types
+    const normalizeChannelToDoku = (channel: string | null | undefined): string[] | undefined => {
+      if (!channel) return undefined;
+      const normalized = channel.trim().toUpperCase();
+      
+      const mapping: Record<string, string[]> = {
+        // Direct DOKU channel codes (from payment_fee_config table)
+        QRIS: ['QRIS'],
+        VIRTUAL_ACCOUNT_BNI: ['VIRTUAL_ACCOUNT_BNI'],
+        VIRTUAL_ACCOUNT_DOKU: ['VIRTUAL_ACCOUNT_DOKU'],
+        VIRTUAL_ACCOUNT_BCA: ['VIRTUAL_ACCOUNT_BCA'],
+        VIRTUAL_ACCOUNT_BANK_MANDIRI: ['VIRTUAL_ACCOUNT_BANK_MANDIRI'],
+        VIRTUAL_ACCOUNT_MANDIRI: ['VIRTUAL_ACCOUNT_BANK_MANDIRI'],
+        VIRTUAL_ACCOUNT_BRI: ['VIRTUAL_ACCOUNT_BRI'],
+        VIRTUAL_ACCOUNT_BANK_PERMATA: ['VIRTUAL_ACCOUNT_BANK_PERMATA'],
+        VIRTUAL_ACCOUNT_PERMATA: ['VIRTUAL_ACCOUNT_BANK_PERMATA'],
+        VIRTUAL_ACCOUNT_CIMB: ['VIRTUAL_ACCOUNT_CIMB'],
+        ONLINE_TO_OFFLINE_ALFA: ['ONLINE_TO_OFFLINE_ALFA'],
+        ONLINE_TO_OFFLINE_ALFAMART: ['ONLINE_TO_OFFLINE_ALFA'],
+        ONLINE_TO_OFFLINE_INDOMARET: ['ONLINE_TO_OFFLINE_INDOMARET'],
+        EMONEY_DOKU: ['EMONEY_DOKU'],
+        EMONEY_DANA: ['EMONEY_DANA'],
+        EMONEY_OVO: ['EMONEY_OVO'],
+        EMONEY_SHOPEEPAY: ['EMONEY_SHOPEEPAY'],
+        EMONEY_SHOPEE_PAY: ['EMONEY_SHOPEEPAY'],
+
+        // Legacy / frontend shorthand names
+        BCA_VA: ['VIRTUAL_ACCOUNT_BCA'],
+        MANDIRI_VA: ['VIRTUAL_ACCOUNT_BANK_MANDIRI'],
+        BNI_VA: ['VIRTUAL_ACCOUNT_BNI'],
+        BRI_VA: ['VIRTUAL_ACCOUNT_BRI'],
+        PERMATA_VA: ['VIRTUAL_ACCOUNT_BANK_PERMATA'],
+        CIMB_VA: ['VIRTUAL_ACCOUNT_CIMB'],
+        DOKU_VA: ['VIRTUAL_ACCOUNT_DOKU'],
+        DANA: ['EMONEY_DANA'],
+        OVO: ['EMONEY_OVO'],
+        SHOPEEPAY: ['EMONEY_SHOPEEPAY'],
+        ALFAMART: ['ONLINE_TO_OFFLINE_ALFA'],
+        ALFA: ['ONLINE_TO_OFFLINE_ALFA'],
+        INDOMARET: ['ONLINE_TO_OFFLINE_INDOMARET'],
+      };
+
+      if (mapping[normalized]) {
+        return mapping[normalized];
+      }
+
+      if (
+        normalized.startsWith('VIRTUAL_ACCOUNT_') ||
+        normalized.startsWith('EMONEY_') ||
+        normalized.startsWith('ONLINE_TO_OFFLINE_')
+      ) {
+        return [normalized];
+      }
+
+      return undefined;
+    };
+
+    const paymentMethods = normalizeChannelToDoku(order.payment_channel);
+
+    // 1. Check if a valid payment URL already exists for this order with matching payment method
     const { data: existingPayment } = await supabaseClient
       .from('payments')
       .select('gateway_response')
@@ -60,18 +119,30 @@ serve(async (req: Request) => {
       .maybeSingle();
 
     if (existingPayment?.gateway_response?.response?.payment?.url) {
-      const existingUrl = existingPayment.gateway_response.response.payment.url;
-      const existingToken = existingPayment.gateway_response.response.payment.token_id || '';
-      return new Response(
-        JSON.stringify({
-          success: true,
-          data: {
-            token: existingToken,
-            redirect_url: existingUrl
-          }
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-      );
+      const existingMethods: string[] =
+        existingPayment.gateway_response.response.payment.payment_method_types || [];
+      
+      // Check if cached payment method types exactly match the requested methods
+      const isMethodMatching =
+        !paymentMethods ||
+        (Array.isArray(existingMethods) &&
+          existingMethods.length === paymentMethods.length &&
+          paymentMethods.every((m) => existingMethods.includes(m)));
+
+      if (isMethodMatching) {
+        const existingUrl = existingPayment.gateway_response.response.payment.url;
+        const existingToken = existingPayment.gateway_response.response.payment.token_id || '';
+        return new Response(
+          JSON.stringify({
+            success: true,
+            data: {
+              token: existingToken,
+              redirect_url: existingUrl,
+            },
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        );
+      }
     }
 
     // Persiapan parameter DOKU
@@ -94,24 +165,6 @@ serve(async (req: Request) => {
 
     // Hitung dueDate dalam menit (misal 60 menit)
     const paymentDueDate = 60;
-
-    // Mapping payment_channel ke DOKU payment_method_types agar DOKU HANYA menampilkan metode yang dipilih customer
-    const channelMapping: Record<string, string[]> = {
-      bca_va: ['VIRTUAL_ACCOUNT_BCA'],
-      mandiri_va: ['VIRTUAL_ACCOUNT_BANK_MANDIRI', 'VIRTUAL_ACCOUNT_MANDIRI'],
-      bni_va: ['VIRTUAL_ACCOUNT_BNI'],
-      bri_va: ['VIRTUAL_ACCOUNT_BRI'],
-      permata_va: ['VIRTUAL_ACCOUNT_BANK_PERMATA', 'VIRTUAL_ACCOUNT_PERMATA'],
-      cimb_va: ['VIRTUAL_ACCOUNT_CIMB', 'VIRTUAL_ACCOUNT_CIMB_NIAGA'],
-      qris: ['QRIS'],
-      dana: ['EMONEY_DANA', 'DANA'],
-      ovo: ['EMONEY_OVO', 'OVO'],
-      shopeepay: ['EMONEY_SHOPEEPAY', 'SHOPEEPAY'],
-      alfamart: ['ONLINE_TO_OFFLINE_ALFAMART', 'ALFAMART'],
-      indomaret: ['ONLINE_TO_OFFLINE_INDOMARET', 'INDOMARET'],
-    };
-
-    const paymentMethods = order.payment_channel ? channelMapping[order.payment_channel] : undefined;
 
     const dokuPayload: any = {
       order: {
