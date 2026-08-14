@@ -104,7 +104,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const secretKey = Deno.env.get('DOKU_SECRET_KEY');
+    const secretKey = (Deno.env.get('DOKU_SECRET_KEY') ?? '').trim();
     if (!secretKey) {
       console.error('Missing DOKU_SECRET_KEY environment variable');
       return new Response(

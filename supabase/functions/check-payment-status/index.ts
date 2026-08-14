@@ -53,9 +53,13 @@ serve(async (req: Request) => {
     }
 
     // DOKU Check Status API
-    const clientId = Deno.env.get('DOKU_CLIENT_ID') ?? '';
-    const secretKey = Deno.env.get('DOKU_SECRET_KEY') ?? '';
-    const dokuEndpoint = Deno.env.get('DOKU_API_URL') ?? 'https://api-sandbox.doku.com';
+    const clientId = (Deno.env.get('DOKU_CLIENT_ID') ?? '').trim();
+    const secretKey = (Deno.env.get('DOKU_SECRET_KEY') ?? '').trim();
+    const isProd =
+      Deno.env.get('DOKU_ENVIRONMENT')?.toLowerCase() === 'production' ||
+      Deno.env.get('ENVIRONMENT')?.toLowerCase() === 'production';
+    const defaultApiUrl = isProd ? 'https://api.doku.com' : 'https://api-sandbox.doku.com';
+    const dokuEndpoint = (Deno.env.get('DOKU_API_URL') ?? defaultApiUrl).trim().replace(/\/$/, '');
     const requestTarget = `/orders/v1/status/${order_number}`; 
     const requestId = crypto.randomUUID();
     const requestTimestamp = new Date().toISOString();
