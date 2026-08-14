@@ -48,7 +48,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
     {
       name: isAuthenticated ? 'Pesanan' : 'Katalog',
       href: isAuthenticated ? '/pesanan' : '/produk',
-      handDrawnName: isAuthenticated ? 'clipboard-list' : 'grid',
+      handDrawnName: isAuthenticated ? 'box' : 'grid',
       isActive: isAuthenticated
         ? pathname.startsWith('/pesanan')
         : pathname.startsWith('/produk') && pathname !== '/produk/customize-size',
