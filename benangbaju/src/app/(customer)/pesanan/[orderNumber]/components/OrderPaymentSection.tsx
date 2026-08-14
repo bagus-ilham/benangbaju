@@ -180,17 +180,15 @@ export function OrderPaymentSection({
             </div>
           )}
 
-          {/* E-Wallet Redirect/Deep Link */}
+          {/* Online Payment / E-Wallet Notice */}
           {checkoutUrl && !qrUrl && !vaNumber && !paymentCode && (
-            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-3">
-              <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
-                Pembayaran E-Wallet
+            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-1.5">
+              <span className="text-[10px] uppercase font-bold text-neutral-500 block tracking-widest">
+                Sesi Pembayaran Online / E-Wallet
               </span>
-              <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
-                <Button className="w-full py-3 text-xs uppercase tracking-widest font-bold">
-                  Buka Aplikasi E-Wallet
-                </Button>
-              </a>
+              <p className="text-[11px] text-neutral-600 font-sans">
+                Silakan klik tombol di bawah untuk melanjutkan pembayaran di portal pembayaran DOKU.
+              </p>
             </div>
           )}
         </div>
@@ -213,22 +211,35 @@ export function OrderPaymentSection({
             ) : (
               <>
                 {checkoutUrl ? (
-                  <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
-                    <Button variant="accent" className="w-full py-3 text-xs uppercase tracking-widest font-bold">
-                      Buka Halaman Pembayaran (Tab Baru)
-                    </Button>
-                  </a>
-                ) : (
-                  !vaNumber && !qrUrl && !paymentCode && (
+                  <div className="space-y-2">
+                    <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+                      <Button variant="accent" className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2">
+                        <HandDrawnIcon name="external-link" className="h-4 w-4" />
+                        <span>Buka Halaman Pembayaran</span>
+                      </Button>
+                    </a>
                     <Button
                       onClick={onPayOrder}
                       isLoading={isGeneratingToken}
-                      disabled={isGeneratingToken}
-                      className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
+                      disabled={isGeneratingToken || isVerifyingPayment}
+                      variant="outline"
+                      className="w-full py-2.5 text-[10px] uppercase tracking-wider font-bold border-neutral-300 text-brand-plum hover:bg-brand-blue/10 hover:border-brand-blue/50 flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
                     >
-                      Minta Kode Pembayaran
+                      <HandDrawnIcon name="refresh" className="h-3 w-3" />
+                      <span>Link Expired? Buat Link Pembayaran Baru</span>
                     </Button>
-                  )
+                  </div>
+                ) : (
+                  <Button
+                    onClick={onPayOrder}
+                    isLoading={isGeneratingToken}
+                    disabled={isGeneratingToken || isVerifyingPayment}
+                    variant="accent"
+                    className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2"
+                  >
+                    <HandDrawnIcon name="tag" className="h-4 w-4" />
+                    <span>Minta Kode / Link Pembayaran</span>
+                  </Button>
                 )}
                 <Button
                   onClick={onCheckStatus}

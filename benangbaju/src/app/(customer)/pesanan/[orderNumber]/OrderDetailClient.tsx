@@ -145,7 +145,11 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         if (result.order_status && result.order_status !== 'pending_payment') {
           setIsVerifyingPayment(false)
           refetch()
-          toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+          if (result.order_status === 'processing' || result.order_status === 'completed') {
+            toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+          } else if (result.order_status === 'cancelled' || result.order_status === 'expired') {
+            toast('Sesi pembayaran telah kedaluwarsa atau pesanan dibatalkan.', { icon: '⚠️' })
+          }
           return true // Status updated
         }
       } catch (err) {
@@ -184,8 +188,10 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       toast.dismiss('manual-check')
 
       if (result.order_status) {
-        if (result.order_status !== 'pending_payment') {
+        if (result.order_status === 'processing' || result.order_status === 'completed') {
           toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+        } else if (result.order_status === 'cancelled' || result.order_status === 'expired') {
+          toast('Sesi pembayaran telah kedaluwarsa atau pesanan dibatalkan.', { icon: '⚠️' })
         } else {
           toast('Pembayaran belum diterima/diproses. Silakan coba sesaat lagi.', { icon: 'ℹ️' })
         }
