@@ -110,27 +110,10 @@ export async function adminDeleteProductAction(productId: string) {
   return res.data
 }
 
-export async function logSearchAction(query: string, resultsCount: number) {
-  try {
-    const { createServerClient } = await import('@/lib/supabase/server')
-    const { safeLogError } = await import('@/lib/logger')
-    const supabase = await createServerClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    const trimmed = query.trim()
-    if (!trimmed || trimmed.length < 2) return
-
-    await supabase.from('search_logs').insert({
-      query: trimmed,
-      results_count: resultsCount,
-      user_id: user?.id || null,
-    })
-  } catch (error) {
-    // Non-blocking search logging error
-    console.error('Error logging search:', error)
-  }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function logSearchAction(_query: string, _resultsCount: number) {
+  // Search logging has been disabled to prevent database bloat
+  return
 }
 
 export async function toggleStockNotificationAction(variantId: string) {

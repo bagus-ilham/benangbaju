@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
 import { safeLogError } from '@/lib/logger'
-import { getProductsAction, logSearchAction } from '@/modules/products/actions'
+import { getProductsAction } from '@/modules/products/actions'
 import { type ProductListItem } from '@/modules/products/types'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
@@ -18,8 +18,6 @@ interface SearchOverlayProps {
   isOpen: boolean
   onClose: () => void
 }
-
-const POPULAR_SEARCH_TAGS = ['Kemeja', 'Blus', 'Dress', 'Rok', 'Hijab', 'Koleksi Terbaru']
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const router = useRouter()
@@ -77,7 +75,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const startTimer = setTimeout(() => setIsSearchingInstant(true), 0)
     const delayDebounceFn = setTimeout(async () => {
       try {
-        const res = await getProductsAction({ searchQuery: searchQuery.trim(), limit: 3 })
+        const res = await getProductsAction({ searchQuery: searchQuery.trim(), limit: 4 })
         setInstantResults(res.data || [])
       } catch (err) {
         safeLogError('Instant search error:', err)
@@ -115,7 +113,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const trimmed = searchQuery.trim()
     if (!trimmed) return
     saveRecentSearch(trimmed)
-    logSearchAction(trimmed, instantResults.length).catch(() => { })
     router.push(`/search?q=${encodeURIComponent(trimmed)}`)
     onClose()
   }
@@ -123,7 +120,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const handleSelectTag = (tag: string) => {
     setSearchQuery(tag)
     saveRecentSearch(tag)
-    logSearchAction(tag, 0).catch(() => { })
     router.push(`/search?q=${encodeURIComponent(tag)}`)
     onClose()
   }
@@ -176,7 +172,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
-                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"                  rightIcon={
+                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"
+                  rightIcon={
                     <button type="submit" aria-label="Cari produk">
                       <HandDrawnIcon name="search" className="h-4 w-4 text-brand-plum" />
                     </button>
@@ -185,56 +182,32 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 />
               </form>
 
-              {/* Popular Search Tags & Recent Searches when query is empty */}
-              {searchQuery.trim().length < 2 && (
+              {/* Recent Searches when query is empty */}
+              {searchQuery.trim().length < 2 && recentSearches.length > 0 && (
                 <div className="space-y-4 pt-2 border-t border-neutral-100">
-                  {/* Recent Searches */}
-                  {recentSearches.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1.5 text-neutral-400">
-                          <HandDrawnIcon name="history" className="h-3.5 w-3.5" />
-                          <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
-                            Pencarian Terakhir
-                          </span>
-                        </div>
-                        <button
-                          onClick={clearRecentSearches}
-                          className="text-[9px] text-neutral-400 hover:text-red-500 font-sans transition-colors"
-                        >
-                          Hapus
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {recentSearches.map((item) => (
-                          <button
-                            key={item}
-                            onClick={() => handleSelectTag(item)}
-                            className="text-[11px] font-sans bg-neutral-100 hover:bg-brand-gold/40 hover:text-brand-plum text-neutral-700 px-3 py-1 rounded-full transition-colors"
-                          >
-                            {item}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Popular Tags */}
                   <div className="space-y-2">
-                    <div className="flex items-center space-x-1.5 text-neutral-400">
-                      <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
-                      <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
-                        Pencarian Populer
-                      </span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-1.5 text-neutral-400">
+                        <HandDrawnIcon name="history" className="h-3.5 w-3.5" />
+                        <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
+                          Pencarian Terakhir
+                        </span>
+                      </div>
+                      <button
+                        onClick={clearRecentSearches}
+                        className="text-[9px] text-neutral-400 hover:text-red-500 font-sans transition-colors"
+                      >
+                        Hapus
+                      </button>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {POPULAR_SEARCH_TAGS.map((tag) => (
+                      {recentSearches.map((item) => (
                         <button
-                          key={tag}
-                          onClick={() => handleSelectTag(tag)}
-                          className="text-[11px] font-sans bg-brand-cream hover:bg-brand-gold hover:text-brand-plum border border-amber-200 text-brand-plum font-semibold px-3.5 py-1 rounded-full transition-all duration-200 cursor-pointer"
+                          key={item}
+                          onClick={() => handleSelectTag(item)}
+                          className="text-[11px] font-sans bg-neutral-100 hover:bg-brand-gold/40 hover:text-brand-plum text-neutral-700 px-3 py-1 rounded-full transition-colors"
                         >
-                          {tag}
+                          {item}
                         </button>
                       ))}
                     </div>

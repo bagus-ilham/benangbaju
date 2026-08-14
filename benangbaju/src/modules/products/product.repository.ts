@@ -2,6 +2,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
 import type { Json } from '@/shared/types/database'
 import { ProductFilters, ProductPayload } from './types'
+import { scoreProduct, type SearchCandidateProduct } from './product-search'
 
 export class ProductRepository {
   /**
@@ -22,6 +23,98 @@ export class ProductRepository {
     } = filters
 
     const offset = (page - 1) * limit
+
+    // JIKA ADA SEARCH QUERY: Gunakan pencarian cerdas multi-token + sinonim busana + relevance scoring
+    if (searchQuery && searchQuery.trim().length > 0) {
+      let baseSearchQuery = supabase
+        .from('products')
+        .select(
+          `
+          id, category_id, name, slug, is_featured, created_at, min_price, max_price,
+          description, short_description, meta_title, meta_description,
+          categories (id, name, slug),
+          product_variants (id, sku, name, price, compare_price, stock, is_active, product_variant_attrs(id, attr_name, attr_value)),
+          product_images (id, url, alt_text, sort_order, is_primary)
+        `
+        )
+        .eq('is_active', true)
+        .eq('product_variants.is_active', true)
+
+      if (categorySlug) {
+        const { data: categories } = await supabase.from('categories').select('id, slug, parent_id')
+        const category = categories?.find((c) => c.slug === categorySlug)
+        if (category) {
+          const categoryIds = [
+            category.id,
+            ...(categories?.filter((c) => c.parent_id === category.id).map((c) => c.id) || []),
+          ]
+          baseSearchQuery = baseSearchQuery.in('category_id', categoryIds)
+        } else {
+          return { data: [], count: 0 }
+        }
+      }
+
+      if (collectionSlug) {
+        const { data: junction } = await supabase
+          .from('collection_products')
+          .select('product_id, collections!inner(id, slug)')
+          .eq('collections.slug', collectionSlug)
+
+        const pIds = junction?.map((j) => j.product_id) || []
+        if (pIds.length > 0) {
+          baseSearchQuery = baseSearchQuery.in('id', pIds)
+        } else {
+          return { data: [], count: 0 }
+        }
+      }
+
+      if (productIds && productIds.length > 0) {
+        baseSearchQuery = baseSearchQuery.in('id', productIds)
+      }
+
+      if (minPrice !== undefined) {
+        baseSearchQuery = baseSearchQuery.gte('min_price', minPrice)
+      }
+      if (maxPrice !== undefined) {
+        baseSearchQuery = baseSearchQuery.lte('max_price', maxPrice)
+      }
+
+      const { data: searchCandidates, error } = await baseSearchQuery
+      if (error) throw error
+
+      if (!searchCandidates || searchCandidates.length === 0) {
+        return { data: [], count: 0 }
+      }
+
+      // Hitung skor relevansi untuk setiap produk
+      const scoredItems = searchCandidates
+        .map((p) => ({
+          product: p,
+          score: scoreProduct(p as unknown as SearchCandidateProduct, searchQuery),
+        }))
+        .filter((item) => item.score > 0)
+
+      // Pengurutan berdasarkan skor relevansi atau kriteria sortBy
+      scoredItems.sort((a, b) => {
+        if (sortBy === 'price-low') {
+          return (Number(a.product.min_price) || 0) - (Number(b.product.min_price) || 0)
+        }
+        if (sortBy === 'price-high') {
+          return (Number(b.product.min_price) || 0) - (Number(a.product.min_price) || 0)
+        }
+        if (sortBy === 'popular' || sortBy === 'featured') {
+          if (a.score !== b.score) return b.score - a.score
+          return (b.product.is_featured ? 1 : 0) - (a.product.is_featured ? 1 : 0)
+        }
+        // Default / newest: prioritas skor relevansi tertinggi, lalu tanggal terbaru
+        if (b.score !== a.score) return b.score - a.score
+        return new Date(b.product.created_at).getTime() - new Date(a.product.created_at).getTime()
+      })
+
+      const count = scoredItems.length
+      const paginatedData = scoredItems.slice(offset, offset + limit).map((s) => s.product)
+      return { data: paginatedData, count }
+    }
 
     let query = supabase
       .from('products')
@@ -67,15 +160,6 @@ export class ProductRepository {
 
     if (productIds && productIds.length > 0) {
       query = query.in('id', productIds)
-    }
-
-    if (searchQuery) {
-      const escapedSearch = searchQuery
-        .replace(/\\/g, '\\\\')
-        .replace(/%/g, '\\%')
-        .replace(/_/g, '\\_')
-        .replace(/,/g, '\\,')
-      query = query.or(`name.ilike.%${escapedSearch}%,description.ilike.%${escapedSearch}%`)
     }
 
     if (minPrice !== undefined) {
@@ -165,6 +249,34 @@ export class ProductRepository {
     const { page = 1, limit = 20, search = '' } = params
     const offset = (page - 1) * limit
 
+    if (search && search.trim().length > 0) {
+      const query = supabase.from('products').select(
+        `
+          id, name, slug, description, short_description, weight_gram, is_featured, is_active, created_at,
+          categories (name, slug),
+          product_variants (id, sku, name, price, compare_price, stock, is_active)
+        `
+      )
+
+      const { data: allAdminProducts, error } = await query
+      if (error) throw error
+
+      const scored = (allAdminProducts || [])
+        .map((p) => ({
+          product: p,
+          score: scoreProduct(p as unknown as SearchCandidateProduct, search),
+        }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score
+          return new Date(b.product.created_at).getTime() - new Date(a.product.created_at).getTime()
+        })
+
+      const count = scored.length
+      const paginatedData = scored.slice(offset, offset + limit).map((s) => s.product)
+      return { data: paginatedData, count }
+    }
+
     let query = supabase.from('products').select(
       `
         id, name, slug, description, short_description, weight_gram, is_featured, is_active, created_at,
@@ -173,15 +285,6 @@ export class ProductRepository {
       `,
       { count: 'exact' }
     )
-
-    if (search) {
-      const escapedSearch = search
-        .replace(/\\/g, '\\\\')
-        .replace(/%/g, '\\%')
-        .replace(/_/g, '\\_')
-        .replace(/,/g, '\\,')
-      query = query.or(`name.ilike.%${escapedSearch}%,description.ilike.%${escapedSearch}%`)
-    }
 
     const { data, count, error } = await query
       .order('created_at', { ascending: false })
