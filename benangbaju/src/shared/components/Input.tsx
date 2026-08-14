@@ -42,7 +42,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="text-neutral-400 hover:text-brand-plum transition-colors focus:outline-none p-1"
+          className="text-neutral-400 hover:text-brand-plum transition-colors focus:outline-none p-1 cursor-pointer"
           tabIndex={-1}
           aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
         >

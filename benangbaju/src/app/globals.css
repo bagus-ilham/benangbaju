@@ -202,6 +202,22 @@ select {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+button,
+[role="button"],
+[type="button"],
+[type="reset"],
+[type="submit"],
+summary,
+a {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+[disabled] {
+  cursor: not-allowed;
+}
+
 button {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }

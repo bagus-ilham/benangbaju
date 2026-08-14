@@ -216,7 +216,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
                 <SidebarLogo logoUrl={logoUrl} isMobile />
                 <button
                   onClick={() => setIsSidebarOpen(false)}
-                  className="text-neutral-400 hover:text-brand-black p-1"
+                  className="text-neutral-400 hover:text-brand-black p-1 cursor-pointer"
                   aria-label="Tutup sidebar"
                 >
                   <HandDrawnIcon name="close" className="h-5 w-5" aria-hidden="true" />
@@ -240,7 +240,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
         <header className="flex h-16 flex-shrink-0 border-b border-neutral-200 bg-brand-cream/95 backdrop-blur-md z-10">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-black lg:hidden"
+            className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-black lg:hidden cursor-pointer"
             aria-label="Buka menu admin"
             aria-expanded={isSidebarOpen}
           >

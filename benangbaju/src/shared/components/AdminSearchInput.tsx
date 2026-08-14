@@ -42,7 +42,7 @@ export function AdminSearchInput({
         <button
           type="button"
           onClick={() => onChange('')}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 transition"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 transition cursor-pointer p-1"
           aria-label="Bersihkan pencarian"
         >
           <HandDrawnIcon name="close" className="h-3.5 w-3.5" />

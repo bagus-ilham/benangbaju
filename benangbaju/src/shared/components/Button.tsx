@@ -31,7 +31,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={isLoading}
         className={cn(
           // Base styles — Modern premium rounded design with Mulish font
-          'inline-flex items-center justify-center font-sans font-bold tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] active:translate-y-0.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:ring-offset-1 select-none',
+          'inline-flex items-center justify-center font-sans font-bold tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] active:translate-y-0.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:ring-offset-1 select-none cursor-pointer',
           {
             // Variants — New Palette Hierarchy: 1. Cream, 2. Kuning (Gold), 3. Biru (Accent), 4. Plum
             'bg-brand-cream text-brand-plum hover:bg-[#eae6df] border border-neutral-300 shadow-sm hover:shadow-md':

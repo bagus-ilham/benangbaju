@@ -66,7 +66,7 @@ export function DesktopNavbar({
               type="button"
               onClick={onOpenMobileMenu}
               className={cn(
-                'lg:hidden p-2 -ml-2 shrink-0',
+                'lg:hidden p-2 -ml-2 shrink-0 cursor-pointer transition-colors duration-200',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
@@ -147,7 +147,7 @@ export function DesktopNavbar({
             <button
               onClick={onToggleSearch}
               className={cn(
-                'p-2',
+                'p-2 cursor-pointer transition-colors duration-200',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
@@ -161,7 +161,7 @@ export function DesktopNavbar({
             <Link
               href="/wishlist"
               className={cn(
-                'p-2 relative group hidden sm:inline-flex',
+                'p-2 relative group hidden sm:inline-flex cursor-pointer transition-colors duration-200',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
@@ -185,7 +185,7 @@ export function DesktopNavbar({
             <button
               onClick={onOpenCart}
               className={cn(
-                'p-2 relative group cursor-pointer',
+                'p-2 relative group cursor-pointer transition-colors duration-200',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
@@ -218,7 +218,7 @@ export function DesktopNavbar({
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={cn(
-                      'p-2 flex items-center',
+                      'p-2 flex items-center cursor-pointer transition-colors duration-200',
                       isTransparentHome
                         ? 'text-white/90 hover:text-white'
                         : 'text-neutral-600 hover:text-brand-plum'
@@ -256,7 +256,7 @@ export function DesktopNavbar({
                           <Link
                             href="/akun"
                             onClick={() => setIsUserMenuOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors"
+                            className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors cursor-pointer"
                           >
                             <HandDrawnIcon name="user" className="h-4 w-4" />
                             <span>Akun Saya</span>
@@ -266,7 +266,7 @@ export function DesktopNavbar({
                             <Link
                               href="/admin"
                               onClick={() => setIsUserMenuOpen(false)}
-                              className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors mt-0.5"
+                              className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors mt-0.5 cursor-pointer"
                             >
                               <div className="h-4 w-4 flex items-center justify-center bg-brand-blue text-brand-plum rounded-[4px] text-[8px] font-bold">
                                 A
@@ -282,7 +282,7 @@ export function DesktopNavbar({
                               setIsUserMenuOpen(false)
                               onLogout()
                             }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-medium rounded-md transition-colors"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-medium rounded-md transition-colors cursor-pointer"
                           >
                             <HandDrawnIcon name="logout" className="h-4 w-4" />
                             <span>Keluar</span>
@@ -296,7 +296,7 @@ export function DesktopNavbar({
                 <Link
                   href="/masuk"
                   className={cn(
-                    'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block',
+                    'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block cursor-pointer transition-colors duration-200',
                     isTransparentHome
                       ? 'text-white/90 hover:text-white'
                       : 'text-neutral-600 hover:text-brand-plum'

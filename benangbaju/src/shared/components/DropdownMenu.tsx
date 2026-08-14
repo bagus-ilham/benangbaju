@@ -73,6 +73,7 @@ export function DropdownMenuTrigger({
       onClick={() => ctx.setIsOpen(!ctx.isOpen)}
       aria-expanded={ctx.isOpen}
       aria-haspopup="menu"
+      className="cursor-pointer"
     >
       {children}
     </button>
@@ -100,7 +101,7 @@ export function DropdownMenuContent({
           exit={{ opacity: 0, scale: 0.95, y: -5 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
           className={cn(
-            'absolute z-50 mt-2 w-48 bg-brand-cream border border-neutral-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] p-1.5 outline-none',
+            'absolute z-50 mt-2 min-w-[160px] bg-brand-cream border border-neutral-200/80 rounded-xl shadow-[0_10px_40px_-10px_rgba(45,38,64,0.1)] p-1.5 outline-none font-sans',
             {
               'right-0 origin-top-right': align === 'right',
               'left-0 origin-top-left': align === 'left',
@@ -145,7 +146,7 @@ export function DropdownMenuItem({
         }
       }}
       className={cn(
-        'w-full text-left px-3 py-2 text-xs font-sans transition-colors duration-200 flex items-center gap-2 rounded-md',
+        'w-full text-left px-3 py-2 text-xs font-sans transition-colors duration-200 flex items-center gap-2 rounded-md cursor-pointer',
         disabled
           ? 'opacity-50 cursor-not-allowed text-neutral-400'
           : destructive

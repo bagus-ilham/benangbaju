@@ -263,11 +263,31 @@ export function AddressModal({
   const handleSelectDistrict = useCallback(
     (district: (typeof searchResults)[0]) => {
       skipProvinceFetchRef.current = true
-      setValue('province_name', district.province_name)
-      setValue('city_name', district.city_name)
-      setValue('district_name', district.district_name)
-      setValue('postal_code', district.postal_code || '')
-      setValue('zone_id', district.zone_id)
+      setValue('province_name', district.province_name, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+      setValue('city_name', district.city_name, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+      setValue('district_name', district.district_name, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+      setValue('postal_code', district.postal_code || '', {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+      setValue('zone_id', district.zone_id, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      })
       setSearchQuery(`${district.district_name}, ${district.city_name}`)
       setShowSuggestions(false)
       setFocusedIndex(-1)
@@ -380,8 +400,8 @@ export function AddressModal({
               if (searchQuery.length >= 2) setShowSuggestions(true)
             }}
             onBlur={() => {
-              // Delay to allow click on suggestion to register
-              setTimeout(() => setShowSuggestions(false), 200)
+              // Delay to allow click/touch on suggestion to register
+              setTimeout(() => setShowSuggestions(false), 250)
             }}
             onKeyDown={handleKeyDown}
             placeholder="Cari cth: Kebayoran Baru atau Bandung..."
@@ -399,7 +419,7 @@ export function AddressModal({
               ref={listboxRef}
               id={listboxId}
               role="listbox"
-              className="absolute z-10 w-full bg-brand-cream border border-neutral-200 shadow-lg max-h-48 overflow-y-auto mt-1 font-sans text-xs outline-none"
+              className="absolute z-50 w-full bg-brand-cream border border-neutral-200/80 shadow-2xl rounded-xl max-h-48 overflow-y-auto mt-1 font-sans text-xs outline-none divide-y divide-neutral-100"
             >
               {searchResults.map((district, index) => (
                 <div
@@ -407,17 +427,23 @@ export function AddressModal({
                   id={`${listboxId}-opt-${index}`}
                   role="option"
                   aria-selected={focusedIndex === index}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    handleSelectDistrict(district)
+                  }}
                   onClick={() => handleSelectDistrict(district)}
                   onMouseMove={() => setFocusedIndex(index)}
                   className={cn(
-                    'p-2.5 cursor-pointer border-b border-neutral-100 last:border-0 transition-colors',
-                    focusedIndex === index ? 'bg-neutral-50' : ''
+                    'p-3 cursor-pointer transition-colors select-none text-left',
+                    focusedIndex === index
+                      ? 'bg-brand-gold/40 text-brand-plum'
+                      : 'hover:bg-brand-gold/30 text-neutral-800'
                   )}
                 >
-                  <p className="font-bold text-neutral-800">
+                  <p className="font-bold text-brand-plum">
                     {district.district_name}, {district.city_name}
                   </p>
-                  <p className="text-[10px] text-neutral-400 uppercase tracking-wider">
+                  <p className="text-[10px] text-neutral-500 uppercase tracking-wider mt-0.5">
                     {district.province_name}{' '}
                     {district.postal_code ? `• ${district.postal_code}` : ''}
                   </p>

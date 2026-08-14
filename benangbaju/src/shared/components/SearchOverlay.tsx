@@ -145,7 +145,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           >
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors"
+              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors cursor-pointer p-1"
               aria-label="Tutup pencarian"
             >
               <HandDrawnIcon name="close" className="h-5 w-5" />
@@ -174,7 +174,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
                   className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"
                   rightIcon={
-                    <button type="submit" aria-label="Cari produk">
+                    <button type="submit" aria-label="Cari produk" className="cursor-pointer p-1">
                       <HandDrawnIcon name="search" className="h-4 w-4 text-brand-plum" />
                     </button>
                   }

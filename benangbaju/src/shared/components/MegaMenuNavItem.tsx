@@ -154,7 +154,7 @@ export function MegaMenuNavItem({
                       <button
                         type="button"
                         onClick={() => handleScroll('left')}
-                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
+                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
                         aria-label="Scroll left"
                       >
                         <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
@@ -162,7 +162,7 @@ export function MegaMenuNavItem({
                       <button
                         type="button"
                         onClick={() => handleScroll('right')}
-                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
                         aria-label="Scroll right"
                       >
                         <HandDrawnIcon name="chevron-right" className="h-4 w-4" />

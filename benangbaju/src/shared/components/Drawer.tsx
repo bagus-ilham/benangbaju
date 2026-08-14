@@ -113,7 +113,7 @@ export function Drawer({
               )}
               <button
                 onClick={onClose}
-                className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-brand-black"
+                className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-brand-black cursor-pointer"
                 aria-label="Tutup"
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" />

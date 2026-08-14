@@ -96,7 +96,7 @@ export function Modal({
               )}
               <button
                 onClick={onClose}
-                className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1"
+                className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1 cursor-pointer"
                 aria-label="Tutup"
               >
                 <HandDrawnIcon name="close" className="h-4 w-4" />

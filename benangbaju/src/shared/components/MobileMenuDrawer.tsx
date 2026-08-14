@@ -67,7 +67,7 @@ export function MobileMenuDrawer({
               <button
                 type="button"
                 onClick={onClose}
-                className="text-neutral-400 hover:text-brand-black p-1"
+                className="text-neutral-400 hover:text-brand-black p-1 cursor-pointer"
                 aria-label="Tutup menu"
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" />

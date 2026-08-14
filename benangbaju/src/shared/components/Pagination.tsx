@@ -63,7 +63,7 @@ export function Pagination({
           type="button"
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage <= 1}
-          className="p-2 border border-neutral-200 rounded-lg text-neutral-700 bg-white hover:bg-neutral-100 hover:border-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition duration-150 shadow-2xs"
+          className="p-2 border border-neutral-200 rounded-lg text-neutral-700 bg-white hover:bg-neutral-100 hover:border-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition duration-150 shadow-2xs cursor-pointer"
           aria-label="Halaman sebelumnya"
           title="Halaman sebelumnya"
         >
@@ -76,7 +76,7 @@ export function Pagination({
             <button
               type="button"
               onClick={() => onPageChange(1)}
-              className="h-8 min-w-[32px] px-2 border border-neutral-200 rounded-lg text-xs font-bold bg-white text-neutral-700 hover:bg-neutral-100 hover:border-neutral-300 transition duration-150 shadow-2xs"
+              className="h-8 min-w-[32px] px-2 border border-neutral-200 rounded-lg text-xs font-bold bg-white text-neutral-700 hover:bg-neutral-100 hover:border-neutral-300 transition duration-150 shadow-2xs cursor-pointer"
             >
               1
             </button>
@@ -95,7 +95,7 @@ export function Pagination({
               type="button"
               onClick={() => onPageChange(p)}
               className={cn(
-                'h-8 min-w-[32px] px-2 border rounded-lg text-xs font-bold transition duration-150 shadow-2xs',
+                'h-8 min-w-[32px] px-2 border rounded-lg text-xs font-bold transition duration-150 shadow-2xs cursor-pointer',
                 isActive
                   ? 'bg-brand-plum text-white border-brand-plum shadow-sm'
                   : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300'
@@ -116,7 +116,7 @@ export function Pagination({
             <button
               type="button"
               onClick={() => onPageChange(totalPages)}
-              className="h-8 min-w-[32px] px-2 border border-neutral-200 rounded-lg text-xs font-bold bg-white text-neutral-700 hover:bg-neutral-100 hover:border-neutral-300 transition duration-150 shadow-2xs"
+              className="h-8 min-w-[32px] px-2 border border-neutral-200 rounded-lg text-xs font-bold bg-white text-neutral-700 hover:bg-neutral-100 hover:border-neutral-300 transition duration-150 shadow-2xs cursor-pointer"
             >
               {totalPages}
             </button>
@@ -128,7 +128,7 @@ export function Pagination({
           type="button"
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage >= totalPages}
-          className="p-2 border border-neutral-200 rounded-lg text-neutral-700 bg-white hover:bg-neutral-100 hover:border-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition duration-150 shadow-2xs"
+          className="p-2 border border-neutral-200 rounded-lg text-neutral-700 bg-white hover:bg-neutral-100 hover:border-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition duration-150 shadow-2xs cursor-pointer"
           aria-label="Halaman berikutnya"
           title="Halaman berikutnya"
         >
