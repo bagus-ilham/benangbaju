@@ -25,7 +25,7 @@ export function AdminPageHeader({
         <span className="text-[10px] uppercase tracking-[0.2em] font-heading font-medium text-brand-accent">
           Admin Panel
         </span>
-        <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
+        <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-plum">
           {title}
         </h2>
         {subtitle && <p className="text-xs text-neutral-500 font-sans">{subtitle}</p>}

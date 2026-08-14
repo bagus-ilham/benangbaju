@@ -13,7 +13,7 @@ interface AdminStatCardProps {
 }
 
 const accentStyles = {
-  default: 'text-brand-black bg-neutral-100',
+  default: 'text-brand-plum bg-neutral-100',
   gold: 'text-brand-plum bg-brand-gold/40 rounded-xl',
   success: 'text-success bg-success-bg',
   warning: 'text-warning bg-warning-bg',
@@ -47,7 +47,7 @@ export function AdminStatCard({
           ) : null}
         </div>
       </div>
-      <p className="text-2xl font-heading font-semibold text-brand-black tracking-tight">{value}</p>
+      <p className="text-2xl font-heading font-semibold text-brand-plum tracking-tight">{value}</p>
       {hint && <p className="text-[10px] text-neutral-400 font-sans">{hint}</p>}
     </div>
   )

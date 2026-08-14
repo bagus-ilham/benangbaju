@@ -147,7 +147,7 @@ export function DesktopNavbar({
             <button
               onClick={onToggleSearch}
               className={cn(
-                'p-2 cursor-pointer transition-colors duration-200',
+                'p-2 relative group cursor-pointer transition-colors duration-200',
                 isTransparentHome
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
@@ -155,7 +155,7 @@ export function DesktopNavbar({
               aria-label="Cari produk"
               aria-expanded={isSearchOpen}
             >
-              <HandDrawnIcon name="search" className="h-4 w-4 md:h-5 md:w-5" />
+              <HandDrawnIcon name="search" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
             </button>
 
             <Link
@@ -218,7 +218,7 @@ export function DesktopNavbar({
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={cn(
-                      'p-2 flex items-center cursor-pointer transition-colors duration-200',
+                      'p-2 relative group flex items-center cursor-pointer transition-colors duration-200',
                       isTransparentHome
                         ? 'text-white/90 hover:text-white'
                         : 'text-neutral-600 hover:text-brand-plum'
@@ -227,7 +227,7 @@ export function DesktopNavbar({
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
                   >
-                    <HandDrawnIcon name="user" className="h-4 w-4 md:h-5 md:w-5" />
+                    <HandDrawnIcon name="user" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
                   </button>
 
                   {isUserMenuOpen && (
@@ -296,7 +296,7 @@ export function DesktopNavbar({
                 <Link
                   href="/masuk"
                   className={cn(
-                    'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block cursor-pointer transition-colors duration-200',
+                    'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block cursor-pointer transition-colors duration-200 nav-link-underline',
                     isTransparentHome
                       ? 'text-white/90 hover:text-white'
                       : 'text-neutral-600 hover:text-brand-plum'

@@ -178,7 +178,7 @@ export function ProductGallery({
         {/* Mobile Expand Hint */}
         <button
           onClick={() => setIsLightboxOpen(true)}
-          className="absolute top-3 right-3 p-2 bg-brand-black/60 backdrop-blur-xs text-white rounded-full z-10"
+          className="absolute top-3 right-3 p-2 bg-brand-plum/60 backdrop-blur-xs text-white rounded-full z-10 cursor-pointer"
           aria-label="Perbesar gambar"
         >
           <HandDrawnIcon name="eye" className="w-3.5 h-3.5 text-white" />

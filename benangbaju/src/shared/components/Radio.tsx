@@ -44,7 +44,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
           </div>
 
           {label && (
-            <span className="ml-3 text-xs text-neutral-700 font-sans group-hover:text-brand-black transition-colors peer-disabled:opacity-50">
+            <span className="ml-3 text-xs text-neutral-700 font-sans group-hover:text-brand-plum transition-colors peer-disabled:opacity-50">
               {label}
             </span>
           )}

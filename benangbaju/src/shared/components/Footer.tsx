@@ -47,14 +47,14 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 2: Pelayanan Pelanggan */}
             <div className="flex flex-col space-y-3">
-              <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
+              <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-plum">
                 Pelayanan
               </p>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/cara-belanja"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Cara Belanja
                   </Link>
@@ -62,7 +62,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/pengiriman"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Informasi Pengiriman
                   </Link>
@@ -70,7 +70,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/retur"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Kebijakan Pengembalian (Retur)
                   </Link>
@@ -78,7 +78,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kontak"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Hubungi Kami
                   </Link>
@@ -88,14 +88,14 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 3: Kebijakan & Hukum */}
             <div className="flex flex-col space-y-3">
-              <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
+              <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-plum">
                 Informasi
               </p>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/syarat-ketentuan"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Syarat & Ketentuan
                   </Link>
@@ -103,7 +103,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/kebijakan-privasi"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Kebijakan Privasi
                   </Link>
@@ -111,7 +111,7 @@ export function Footer(): React.JSX.Element {
                 <li>
                   <Link
                     href="/tentang"
-                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans"
+                    className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
                     Tentang Kami
                   </Link>
@@ -121,7 +121,7 @@ export function Footer(): React.JSX.Element {
 
             {/* Col 4: Social */}
             <div className="flex flex-col space-y-3">
-              <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-black">
+              <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-plum">
                 Ikuti Kami
               </p>
               <p className="text-xs text-neutral-600 font-sans mt-1">
@@ -133,7 +133,7 @@ export function Footer(): React.JSX.Element {
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-200 rounded-lg flex items-center justify-center"
                     aria-label="Instagram"
                   >
                     <HandDrawnIcon name="instagram" className="w-4 h-4" />
@@ -144,7 +144,7 @@ export function Footer(): React.JSX.Element {
                     href={tiktokUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-200 rounded-lg flex items-center justify-center"
                     aria-label="TikTok"
                   >
                     <HandDrawnIcon name="tiktok" className="w-4 h-4" />
@@ -155,7 +155,7 @@ export function Footer(): React.JSX.Element {
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-200 rounded-lg flex items-center justify-center"
                     aria-label="WhatsApp"
                   >
                     <HandDrawnIcon name="whatsapp" className="w-4 h-4" />
@@ -166,7 +166,7 @@ export function Footer(): React.JSX.Element {
                     href={shopeeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-250 rounded-lg flex items-center justify-center"
+                    className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-200 rounded-lg flex items-center justify-center"
                     aria-label="Shopee"
                   >
                     <HandDrawnIcon name="shopee" className="w-4 h-4" />
@@ -193,13 +193,13 @@ export function Footer(): React.JSX.Element {
               &copy; <CurrentYear /> Benangbaju. All rights reserved.
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-600 font-sans font-bold uppercase tracking-wider">
-              <Link href="/syarat-ketentuan" className="hover:text-brand-plum transition-colors">
+              <Link href="/syarat-ketentuan" className="hover:text-brand-plum transition-colors nav-link-underline">
                 Syarat
               </Link>
-              <Link href="/kebijakan-privasi" className="hover:text-brand-plum transition-colors">
+              <Link href="/kebijakan-privasi" className="hover:text-brand-plum transition-colors nav-link-underline">
                 Privasi
               </Link>
-              <Link href="/kontak" className="hover:text-brand-plum transition-colors">
+              <Link href="/kontak" className="hover:text-brand-plum transition-colors nav-link-underline">
                 Kontak
               </Link>
             </div>

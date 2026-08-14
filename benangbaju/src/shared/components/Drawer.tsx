@@ -104,7 +104,7 @@ export function Drawer({
               {title ? (
                 <h3
                   id={titleId}
-                  className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black"
+                  className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-plum"
                 >
                   {title}
                 </h3>
@@ -113,7 +113,7 @@ export function Drawer({
               )}
               <button
                 onClick={onClose}
-                className="text-neutral-400 hover:text-brand-black transition-colors duration-200 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-brand-black cursor-pointer"
+                className="text-neutral-400 hover:text-brand-plum transition-colors duration-200 p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-brand-plum cursor-pointer"
                 aria-label="Tutup"
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" />

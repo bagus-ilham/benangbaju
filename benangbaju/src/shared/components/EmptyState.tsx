@@ -95,7 +95,7 @@ export function EmptyState({
         </div>
       </div>
       <div className="space-y-2">
-        <h2 className="text-sm md:text-base font-heading font-semibold uppercase tracking-wider text-brand-black">
+        <h2 className="text-sm md:text-base font-heading font-semibold uppercase tracking-wider text-brand-plum">
           {title}
         </h2>
         <div className="stitch-divider stitch-divider-center" />

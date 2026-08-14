@@ -86,7 +86,7 @@ export function MegaMenuNavItem({
         className={cn(
           'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center gap-1 nav-link-underline h-16',
           isActive
-            ? 'text-brand-plum font-semibold font-bold'
+            ? 'text-brand-plum font-bold'
             : isTransparentHome
               ? 'text-white/90 hover:text-white'
               : 'text-neutral-600 hover:text-brand-plum'
@@ -112,7 +112,7 @@ export function MegaMenuNavItem({
               <div className="grid grid-cols-12 gap-8 items-start">
                 {/* Left Column: Link List */}
                 <div className="col-span-3 flex flex-col space-y-4 pr-4 border-r border-neutral-100">
-                  <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-black">
+                  <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-plum">
                     {isKategori ? 'Kategori Produk' : 'Koleksi Terbatas'}
                   </h3>
 

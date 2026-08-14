@@ -96,7 +96,7 @@ const SidebarFooter = ({
       <Link
         href="/"
         onClick={onNavigate}
-        className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-black transition-colors"
+        className="flex items-center w-full px-3 py-2 text-xs font-medium text-neutral-600 hover:text-brand-plum transition-colors"
       >
         <HandDrawnIcon name="external-link" className="mr-3 h-4 w-4" aria-hidden="true" />
         Ke Halaman Toko
@@ -216,7 +216,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
                 <SidebarLogo logoUrl={logoUrl} isMobile />
                 <button
                   onClick={() => setIsSidebarOpen(false)}
-                  className="text-neutral-400 hover:text-brand-black p-1 cursor-pointer"
+                  className="text-neutral-400 hover:text-brand-plum p-1 cursor-pointer transition-colors duration-200"
                   aria-label="Tutup sidebar"
                 >
                   <HandDrawnIcon name="close" className="h-5 w-5" aria-hidden="true" />
@@ -240,7 +240,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
         <header className="flex h-16 flex-shrink-0 border-b border-neutral-200 bg-brand-cream/95 backdrop-blur-md z-10">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-black lg:hidden cursor-pointer"
+            className="px-4 border-r border-neutral-200 text-neutral-500 hover:text-brand-plum lg:hidden cursor-pointer transition-colors duration-200"
             aria-label="Buka menu admin"
             aria-expanded={isSidebarOpen}
           >
@@ -263,7 +263,7 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
                   {profile?.name?.substring(0, 2) || user?.email?.substring(0, 2) || 'AD'}
                 </div>
                 <div className="hidden md:block">
-                  <p className="text-xs font-semibold text-brand-black">
+                  <p className="text-xs font-semibold text-brand-plum">
                     {profile?.name || 'Administrator'}
                   </p>
                   <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider">

@@ -94,7 +94,7 @@ export function MiniCartDrawer(): React.JSX.Element {
               </div>
               <button
                 onClick={() => setCartDrawerOpen(false)}
-                className="text-neutral-400 hover:text-brand-black p-1 transition-colors cursor-pointer"
+                className="text-neutral-400 hover:text-brand-plum p-1 transition-colors cursor-pointer"
                 aria-label="Tutup keranjang"
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" aria-hidden="true" />
@@ -139,7 +139,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                     <HandDrawnIcon name="shopping-bag" className="h-8 w-8" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-black">
+                    <p className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-plum">
                       Keranjang Anda Kosong
                     </p>
                     <p className="text-[10px] text-neutral-400 font-sans max-w-[200px]">
@@ -188,7 +188,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                           href={`/produk/${item.slug}`}
                           onClick={() => setCartDrawerOpen(false)}
                         >
-                          <h4 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-black hover:text-brand-accent transition-colors line-clamp-2">
+                          <h4 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors line-clamp-2">
                             {item.productName || item.name}
                           </h4>
                         </Link>
@@ -220,13 +220,13 @@ export function MiniCartDrawer(): React.JSX.Element {
                             onClick={() =>
                               handleQtyChange(item.variantId, item.quantity, -1, item.stock)
                             }
-                            className="p-1.5 text-neutral-500 hover:text-brand-black transition-colors cursor-pointer"
+                            className="p-1.5 text-neutral-500 hover:text-brand-plum transition-colors cursor-pointer"
                             aria-label="Kurangi jumlah"
                           >
                             <HandDrawnIcon name="minus" className="h-2.5 w-2.5" aria-hidden="true" />
                           </button>
                           <span
-                            className="px-2 text-[10px] font-sans font-semibold text-brand-black w-6 text-center select-none"
+                            className="px-2 text-[10px] font-sans font-semibold text-brand-plum w-6 text-center select-none"
                             aria-live="polite"
                           >
                             {item.quantity}
@@ -235,7 +235,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                             onClick={() =>
                               handleQtyChange(item.variantId, item.quantity, 1, item.stock)
                             }
-                            className="p-1.5 text-neutral-500 hover:text-brand-black transition-colors cursor-pointer"
+                            className="p-1.5 text-neutral-500 hover:text-brand-plum transition-colors cursor-pointer"
                             aria-label="Tambah jumlah"
                           >
                             <HandDrawnIcon name="plus" className="h-2.5 w-2.5" aria-hidden="true" />
@@ -243,7 +243,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                         </div>
 
                         {/* Price */}
-                        <span className="text-xs font-sans font-semibold text-brand-black">
+                        <span className="text-xs font-sans font-semibold text-brand-plum">
                           {formatIDR(item.price * item.quantity)}
                         </span>
                       </div>
@@ -337,7 +337,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                   <span className="text-xs font-heading font-semibold uppercase tracking-wider text-neutral-500">
                     Subtotal
                   </span>
-                  <span className="text-base font-sans font-bold text-brand-black">
+                  <span className="text-base font-sans font-bold text-brand-plum">
                     {formatIDR(subtotal)}
                   </span>
                 </div>

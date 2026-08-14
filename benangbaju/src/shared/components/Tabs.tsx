@@ -120,7 +120,7 @@ export function TabsTrigger({
       onClick={() => ctx.setActiveTab(value)}
       className={cn(
         'relative px-5 py-2.5 text-xs font-heading font-semibold uppercase tracking-wider transition-colors duration-200 whitespace-nowrap outline-none rounded-xl z-10 flex-1 sm:flex-none text-center cursor-pointer',
-        isActive ? 'text-brand-black' : 'text-neutral-500 hover:text-brand-black',
+        isActive ? 'text-brand-plum' : 'text-neutral-500 hover:text-brand-plum',
         className
       )}
     >
@@ -163,7 +163,7 @@ export function TabsContent({
       exit={{ opacity: 0, y: -5 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'py-6 outline-none focus-visible:ring-2 focus-visible:ring-brand-black/20',
+        'py-6 outline-none focus-visible:ring-2 focus-visible:ring-brand-plum/20',
         className
       )}
       tabIndex={0}

@@ -89,7 +89,7 @@ export function Tooltip({
             animate="visible"
             exit="exit"
             className={cn(
-              'absolute z-50 px-3 py-2 text-[10px] font-sans font-medium text-white bg-brand-black shadow-lg rounded-xl whitespace-nowrap pointer-events-none',
+              'absolute z-50 px-3 py-2 text-[10px] font-sans font-medium text-white bg-brand-plum shadow-lg rounded-xl whitespace-nowrap pointer-events-none',
               positionClasses[position],
               className
             )}
@@ -97,7 +97,7 @@ export function Tooltip({
             {content}
             {/* Simple arrow using a rotated square */}
             <div
-              className={cn('absolute w-2 h-2 bg-brand-black rotate-45 -z-10', {
+              className={cn('absolute w-2 h-2 bg-brand-plum rotate-45 -z-10', {
                 '-bottom-1 left-1/2 -translate-x-1/2': position === 'top',
                 '-top-1 left-1/2 -translate-x-1/2': position === 'bottom',
                 '-right-1 top-1/2 -translate-y-1/2': position === 'left',

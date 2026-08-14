@@ -151,7 +151,7 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
           className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-brand-plum [&_h2]:text-brand-plum"
         >
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
-            <span className="text-[11px] uppercase tracking-wider font-sans font-semibold text-brand-cream/70 mr-2">
+            <span className="text-[11px] uppercase tracking-wider font-sans font-semibold text-brand-plum mr-2">
               Berakhir Dalam:
             </span>
             <div className="flex items-center space-x-1.5 font-sans text-xs font-bold">
@@ -159,11 +159,11 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
               <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.hours)}
               </span>
-              <span className="text-brand-gold font-bold">:</span>
+              <span className="text-brand-plum/60 font-bold">:</span>
               <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.minutes)}
               </span>
-              <span className="text-brand-gold font-bold">:</span>
+              <span className="text-brand-plum/60 font-bold">:</span>
               <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.seconds)}
               </span>

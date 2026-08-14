@@ -93,13 +93,13 @@ export function DataTable<T extends { id?: string | number }>({
                         <HandDrawnIcon
                           name="chevron-up"
                           className={cn('w-2 h-2 text-neutral-300', {
-                            'text-brand-black': sortBy === col.key && sortDirection === 'asc',
+                            'text-brand-plum': sortBy === col.key && sortDirection === 'asc',
                           })}
                         />
                         <HandDrawnIcon
                           name="chevron-down"
                           className={cn('w-2 h-2 text-neutral-300', {
-                            'text-brand-black': sortBy === col.key && sortDirection === 'desc',
+                            'text-brand-plum': sortBy === col.key && sortDirection === 'desc',
                           })}
                         />
                       </div>

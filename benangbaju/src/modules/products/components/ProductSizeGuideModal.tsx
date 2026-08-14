@@ -38,7 +38,7 @@ export function ProductSizeGuideModal({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors cursor-pointer"
+              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-plum transition-colors cursor-pointer"
               aria-label="Tutup panduan ukuran"
             >
               <HandDrawnIcon name="close" className="h-5 w-5" />

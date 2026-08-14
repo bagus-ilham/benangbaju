@@ -183,7 +183,7 @@ export function ProductInfoSection({
           {selectedVariant.stock > 0 ? (
             <span>
               Stok Tersedia:{' '}
-              <strong className="text-brand-black">{selectedVariant.stock} pcs</strong>
+              <strong className="text-brand-plum">{selectedVariant.stock} pcs</strong>
             </span>
           ) : (
             <span className="text-red-500 font-semibold">Stok Habis</span>
@@ -199,18 +199,18 @@ export function ProductInfoSection({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onDecrement}
-              className="p-3 text-neutral-600 hover:text-brand-black transition-colors"
+              className="p-3 text-neutral-600 hover:text-brand-plum transition-colors cursor-pointer"
               disabled={!selectedVariant || selectedVariant.stock === 0}
             >
               <HandDrawnIcon name="minus" className="h-3 w-3" />
             </motion.button>
-            <span className="px-4 text-xs font-sans font-semibold text-brand-black w-8 text-center select-none">
+            <span className="px-4 text-xs font-sans font-semibold text-brand-plum w-8 text-center select-none">
               {quantity}
             </span>
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onIncrement}
-              className="p-3 text-neutral-600 hover:text-brand-black transition-colors"
+              className="p-3 text-neutral-600 hover:text-brand-plum transition-colors cursor-pointer"
               disabled={!selectedVariant || selectedVariant.stock === 0}
             >
               <HandDrawnIcon name="plus" className="h-3 w-3" />

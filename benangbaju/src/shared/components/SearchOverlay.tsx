@@ -145,7 +145,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           >
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-black transition-colors cursor-pointer p-1"
+              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-plum transition-colors cursor-pointer p-1"
               aria-label="Tutup pencarian"
             >
               <HandDrawnIcon name="close" className="h-5 w-5" />
@@ -157,7 +157,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
                     Cari Koleksi
                   </span>
-                  <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-black">
+                  <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-plum">
                     Pencarian Produk
                   </h3>
                 </div>
@@ -172,7 +172,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
-                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-black placeholder:text-neutral-300 focus:outline-none focus:ring-0"
+                  className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-plum placeholder:text-neutral-300 focus:outline-none focus:ring-0"
                   rightIcon={
                     <button type="submit" aria-label="Cari produk" className="cursor-pointer p-1">
                       <HandDrawnIcon name="search" className="h-4 w-4 text-brand-plum" />

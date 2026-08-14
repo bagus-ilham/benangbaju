@@ -70,8 +70,8 @@ export function MobileMenuAccordionItem({
         href={href}
         onClick={onClose}
         className={cn(
-          'flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-black',
-          isActive && 'text-brand-black font-semibold'
+          'flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200',
+          isActive && 'text-brand-plum font-semibold'
         )}
       >
         <span>{label}</span>
@@ -86,8 +86,8 @@ export function MobileMenuAccordionItem({
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
-          'flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-black w-full text-left',
-          isActive && 'text-brand-black font-semibold'
+          'flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200 w-full text-left',
+          isActive && 'text-brand-plum font-semibold'
         )}
       >
         <span>{label}</span>
@@ -120,9 +120,9 @@ export function MobileMenuAccordionItem({
                       href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
                       onClick={onClose}
                       className={cn(
-                        'text-xs font-sans text-neutral-500 hover:text-brand-black block py-1',
+                        'text-xs font-sans text-neutral-500 hover:text-brand-plum transition-colors duration-200 block py-1',
                         pathname === `/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}` &&
-                          'text-brand-black font-semibold'
+                          'text-brand-plum font-semibold'
                       )}
                     >
                       {item.name}
@@ -131,7 +131,7 @@ export function MobileMenuAccordionItem({
                   <Link
                     href={href}
                     onClick={onClose}
-                    className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 pt-2 block"
+                    className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 transition-opacity duration-200 pt-2 block"
                   >
                     Lihat Semua {label} &rarr;
                   </Link>

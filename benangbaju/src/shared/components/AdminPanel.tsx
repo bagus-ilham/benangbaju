@@ -27,7 +27,7 @@ export function AdminPanel({
     >
       {title && (
         <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-4">
-          <h3 className="text-[10px] uppercase font-heading font-bold tracking-widest text-brand-black flex items-center gap-2">
+          <h3 className="text-[10px] uppercase font-heading font-bold tracking-widest text-brand-plum flex items-center gap-2">
             {icon}
             {title}
           </h3>

@@ -114,7 +114,7 @@ export function CollectionSpotlight({
               <p
                 className={cn(
                   'text-xs md:text-sm font-sans leading-relaxed max-w-md',
-                  isDark ? 'text-neutral-300' : 'text-neutral-600'
+                  isDark ? 'text-brand-plum/80' : 'text-neutral-600'
                 )}
               >
                 {collection.description}
@@ -126,7 +126,7 @@ export function CollectionSpotlight({
               className={cn(
                 'inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.2em] transition-all duration-300 group/link',
                 isDark
-                  ? 'text-brand-cream hover:text-brand-gold'
+                  ? 'text-brand-plum hover:text-brand-blue'
                   : 'text-brand-plum hover:text-brand-blue'
               )}
             >

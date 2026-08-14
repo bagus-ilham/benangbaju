@@ -67,7 +67,7 @@ export function MobileMenuDrawer({
               <button
                 type="button"
                 onClick={onClose}
-                className="text-neutral-400 hover:text-brand-black p-1 cursor-pointer"
+                className="text-neutral-400 hover:text-brand-plum transition-colors duration-200 p-1 cursor-pointer"
                 aria-label="Tutup menu"
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" />
@@ -100,7 +100,7 @@ export function MobileMenuDrawer({
                         <Link
                           href="/akun"
                           onClick={onClose}
-                          className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-black"
+                          className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200"
                         >
                           <span>Akun Saya</span>
                           <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
@@ -109,7 +109,7 @@ export function MobileMenuDrawer({
                           <Link
                             href="/admin"
                             onClick={onClose}
-                            className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-black"
+                            className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200"
                           >
                             <span>Admin Panel</span>
                             <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
@@ -120,7 +120,7 @@ export function MobileMenuDrawer({
                             onClose()
                             if (onLogout) onLogout()
                           }}
-                          className="flex items-center justify-between py-2 w-full text-left text-xs font-heading font-medium uppercase tracking-widest text-red-600 hover:text-red-700"
+                          className="flex items-center justify-between py-2 w-full text-left text-xs font-heading font-medium uppercase tracking-widest text-red-600 hover:text-red-700 transition-colors duration-200"
                         >
                           <span>Keluar</span>
                           <HandDrawnIcon name="logout" className="h-3 w-3" />
@@ -130,10 +130,10 @@ export function MobileMenuDrawer({
                       <Link
                         href="/masuk"
                         onClick={onClose}
-                        className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-brand-black"
+                        className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200"
                       >
                         <span>Masuk</span>
-                        <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-brand-black" />
+                        <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                       </Link>
                     )}
                   </div>
