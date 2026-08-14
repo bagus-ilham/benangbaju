@@ -34,7 +34,7 @@ export default function CustomerError({
         </motion.div>
 
         <div className="space-y-2">
-          <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
+          <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-plum">
             Terjadi Gangguan pada Halaman
           </h1>
           <p className="text-xs text-neutral-500 leading-relaxed max-w-xs mx-auto">

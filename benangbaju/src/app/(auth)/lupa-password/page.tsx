@@ -57,21 +57,21 @@ export default function ForgotPasswordPage(): React.JSX.Element {
               priority
             />
           </div>
-          <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-black">
+          <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
             Lupa Kata Sandi
           </h2>
           <p className="text-[11px] md:text-xs text-neutral-400 font-sans">
-            Masukkan alamat email Anda untuk menerima tautan reset kata sandi.
+            Masukkan email yang terdaftar untuk menerima tautan reset kata sandi.
           </p>
         </div>
 
         {isSent ? (
-          <div className="space-y-6 text-center">
-            <div className="bg-neutral-50 border border-neutral-200 p-6 rounded-none text-xs leading-relaxed text-neutral-600">
-              Kami telah mengirimkan tautan untuk mengatur ulang kata sandi ke email{' '}
-              <strong className="text-brand-black">{email}</strong>. Silakan periksa kotak masuk
+          <div className="bg-neutral-50/50 border border-neutral-200 p-6 rounded-none text-center space-y-4">
+            <p className="text-xs text-neutral-600 leading-relaxed font-sans">
+              Kami telah mengirimkan instruksi pemulihan kata sandi ke{' '}
+              <strong className="text-brand-plum">{email}</strong>. Silakan periksa kotak masuk
               atau spam email Anda.
-            </div>
+            </p>
             <Link href="/masuk" className="w-full block">
               <Button variant="primary" className="w-full">
                 Kembali ke Halaman Masuk
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
           <div className="text-center mt-8 pt-4 border-t border-neutral-100">
             <p className="text-xs text-neutral-600 font-sans">
               Kembali ke{' '}
-              <Link href="/masuk" className="text-brand-black font-semibold hover:underline">
+              <Link href="/masuk" className="text-brand-plum font-semibold hover:underline">
                 Halaman Masuk
               </Link>
             </p>

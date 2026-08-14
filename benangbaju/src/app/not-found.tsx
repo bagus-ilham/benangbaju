@@ -10,7 +10,7 @@ export default function RootNotFound(): React.JSX.Element {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-black">
+          <h1 className="text-xl md:text-2xl font-heading font-light uppercase tracking-wider text-brand-plum">
             404 — Halaman Tidak Ditemukan
           </h1>
           <p className="text-xs text-neutral-500 leading-relaxed max-w-xs mx-auto">

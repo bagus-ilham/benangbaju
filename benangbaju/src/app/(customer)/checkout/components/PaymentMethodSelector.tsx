@@ -87,7 +87,7 @@ export function PaymentMethodSelector({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-        <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black flex items-center">
+        <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-plum flex items-center">
           <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-2 text-brand-plum" /> Metode Pembayaran Direct
         </h2>
         <span className="text-[10px] text-neutral-500 font-sans">Pilih metode bayar otomatis</span>
@@ -124,7 +124,7 @@ export function PaymentMethodSelector({
                     >
                       <div className="flex items-start justify-between space-x-2">
                         <div>
-                          <span className="font-heading font-bold text-xs text-brand-black block">
+                          <span className="font-heading font-bold text-xs text-brand-plum block">
                             {item.channel_name}
                           </span>
                           <span className="text-[10px] font-sans text-neutral-400 mt-0.5 block">

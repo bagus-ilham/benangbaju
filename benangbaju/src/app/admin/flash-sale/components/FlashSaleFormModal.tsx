@@ -265,8 +265,8 @@ export function FlashSaleFormModal({
         {/* Produk / Variant Section */}
         <div className="pt-4 border-t border-neutral-200">
           <div className="flex justify-between items-center mb-3">
-            <h4 className="font-heading font-bold uppercase tracking-widest text-brand-black text-[10px]">
-              Daftar Produk Flash Sale*
+            <h4 className="font-heading font-bold uppercase tracking-widest text-brand-plum text-[10px]">
+              Daftar Produk Flash Sale ({items.length})
             </h4>
             <Button
               type="button"

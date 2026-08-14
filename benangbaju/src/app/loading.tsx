@@ -20,7 +20,7 @@ export default function RootLoading(): React.JSX.Element {
             src="/image/svg/logo/logo-benangbaju.svg"
             alt="Benangbaju"
             fill
-            className="object-contain text-brand-black"
+            className="object-contain text-brand-plum"
           />
         </div>
         <div className="w-16 h-[1px] bg-neutral-200 overflow-hidden relative mt-1">

@@ -121,7 +121,7 @@ export function CatalogClient({
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
             Hasil pencarian untuk:{' '}
-            <strong className="text-brand-black">&quot;{searchQuery}&quot;</strong> ({totalCount}{' '}
+            <strong className="text-brand-plum">&quot;{searchQuery}&quot;</strong> ({totalCount}{' '}
             produk)
           </p>
         )}
@@ -130,7 +130,7 @@ export function CatalogClient({
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-200/60">
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum md:hidden py-2"
+            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum md:hidden py-2 cursor-pointer"
           >
             <HandDrawnIcon name="sliders" className="h-4 w-4" />
             <span>Filter</span>
@@ -145,7 +145,7 @@ export function CatalogClient({
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors p-1">
+                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors p-1 cursor-pointer">
                   <span>
                     {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || 'Urutkan'}
                   </span>
@@ -177,13 +177,13 @@ export function CatalogClient({
             </span>
 
             {categorySlug && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>
                   Kategori: {categories.find((c) => c.slug === categorySlug)?.name || categorySlug}
                 </span>
                 <button
                   onClick={() => handleCategorySelect(null)}
-                  className="hover:text-red-500 transition-colors ml-1"
+                  className="hover:text-red-500 transition-colors ml-1 cursor-pointer"
                   aria-label="Hapus filter kategori"
                 >
                   ✕
@@ -192,11 +192,11 @@ export function CatalogClient({
             )}
 
             {searchQuery && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>Cari: &quot;{searchQuery}&quot;</span>
                 <button
                   onClick={() => updateFilters({ q: null })}
-                  className="hover:text-red-500 transition-colors ml-1"
+                  className="hover:text-red-500 transition-colors ml-1 cursor-pointer"
                   aria-label="Hapus filter pencarian"
                 >
                   ✕
@@ -205,11 +205,11 @@ export function CatalogClient({
             )}
 
             {sortBy && sortBy !== 'newest' && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-black px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>Urutan: {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}</span>
                 <button
                   onClick={() => handleSortSelect('newest')}
-                  className="hover:text-red-500 transition-colors ml-1"
+                  className="hover:text-red-500 transition-colors ml-1 cursor-pointer"
                   aria-label="Hapus filter urutan"
                 >
                   ✕

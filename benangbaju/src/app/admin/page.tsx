@@ -150,7 +150,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
                     {stats.lowStockVariants.map((item: LowStockVariant) => (
                       <tr key={item.id}>
                         <td>
-                          <p className="font-semibold text-brand-black">{item.products?.name}</p>
+                          <p className="font-semibold text-brand-plum">{item.products?.name}</p>
                           <p className="text-[10px] text-neutral-400 font-normal">{item.name}</p>
                         </td>
                         <td className="font-mono">{item.sku || '-'}</td>
@@ -218,7 +218,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
                     <div>
                       <Link
                         href="/admin/pesanan"
-                        className="font-semibold text-brand-black hover:underline"
+                        className="font-semibold text-brand-plum hover:underline"
                       >
                         {order.order_number}
                       </Link>
@@ -233,7 +233,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-brand-black">
+                      <p className="font-bold text-brand-plum">
                         Rp {order.total_amount.toLocaleString('id-ID')}
                       </p>
                       <span
@@ -279,11 +279,11 @@ export default function AdminDashboardPage(): React.JSX.Element {
                     </p>
                     <p className="text-neutral-600 leading-relaxed text-[11px]">
                       Melakukan tindakan{' '}
-                      <span className="font-semibold text-brand-black font-mono text-[10px] bg-neutral-100 px-1 py-0.5">
+                      <span className="font-semibold text-brand-plum font-mono text-[10px] bg-neutral-100 px-1 py-0.5">
                         {log.action}
                       </span>{' '}
                       pada sumber data{' '}
-                      <span className="font-semibold text-brand-black">{log.resource_type}</span>{' '}
+                      <span className="font-semibold text-brand-plum">{log.resource_type}</span>{' '}
                       (ID: {log.resource_id || '-'})
                     </p>
                     <p className="text-[10px] text-neutral-400 font-normal">

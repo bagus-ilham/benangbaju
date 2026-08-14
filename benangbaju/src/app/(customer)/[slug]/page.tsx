@@ -57,7 +57,7 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
           content.sections.map((sec: any, idx: number) => (
             <section key={idx} className="space-y-4">
               {sec.heading && (
-                <h2 className="text-xl font-heading font-semibold text-brand-black">
+                <h2 className="text-xl font-heading font-semibold text-brand-plum">
                   {sec.heading}
                 </h2>
               )}

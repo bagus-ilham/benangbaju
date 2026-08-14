@@ -68,14 +68,14 @@ export default function CaraBelanjaPage(): React.JSX.Element {
           ))}
 
           <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-600 leading-relaxed font-medium rounded-2xl shadow-sm">
-            <p className="font-heading font-semibold text-brand-black mb-2 uppercase tracking-wider text-[10px]">
+            <p className="font-heading font-semibold text-brand-plum mb-2 uppercase tracking-wider text-[10px]">
               Butuh Bantuan Lebih Lanjut?
             </p>
             Jika Anda mengalami kendala saat checkout atau pembayaran, silakan hubungi Customer
             Service kami melalui halaman{' '}
             <Link
               href="/kontak"
-              className="text-brand-black underline font-semibold hover:text-brand-accent transition-colors"
+              className="text-brand-plum underline font-semibold hover:text-brand-blue transition-colors"
             >
               Hubungi Kami
             </Link>{' '}

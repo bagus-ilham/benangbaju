@@ -33,7 +33,7 @@ export default function CustomerNotFound(): React.JSX.Element {
               <Image src="/image/svg/decorative/accent-cross-stitch-alt.svg" alt="" fill unoptimized className="object-contain" />
             </div>
           </div>
-          <h1 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-black">
+          <h1 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
             Halaman Tidak Ditemukan
           </h1>
           <p className="text-xs text-neutral-500 leading-relaxed max-w-xs mx-auto pt-1">

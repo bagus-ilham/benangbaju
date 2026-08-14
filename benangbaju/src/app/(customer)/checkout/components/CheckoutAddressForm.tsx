@@ -38,14 +38,14 @@ export function CheckoutAddressForm({
       {/* Address Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-black flex items-center">
+          <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-plum flex items-center">
             <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 mr-2" /> Alamat Pengiriman
           </h2>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onAddNewAddress}
-            className="inline-flex items-center text-[11px] text-neutral-600 hover:text-brand-black font-heading font-medium uppercase tracking-wider transition-colors duration-200"
+            className="inline-flex items-center text-[11px] text-neutral-600 hover:text-brand-plum font-heading font-medium uppercase tracking-wider transition-colors duration-200"
           >
             <HandDrawnIcon name="plus" className="h-3 w-3 mr-1" /> Tambah Alamat
           </motion.button>

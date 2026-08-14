@@ -129,7 +129,7 @@ export default function AlamatPage(): React.JSX.Element {
         <div className="mt-12 pt-6 border-t border-neutral-100">
           <Link
             href="/akun"
-            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-accent transition duration-100"
+            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-plum transition-colors duration-200"
           >
             <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> Kembali ke Akun
           </Link>

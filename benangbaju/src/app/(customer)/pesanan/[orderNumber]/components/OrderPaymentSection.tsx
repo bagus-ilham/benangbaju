@@ -101,7 +101,7 @@ export function OrderPaymentSection({
         {order.payment_channel && (
           <div className="flex justify-between text-xs text-neutral-500 pt-1">
             <span>Metode Bayar</span>
-            <span className="font-semibold text-brand-black uppercase">{order.payment_channel.replace('_', ' ')}</span>
+            <span className="font-semibold text-brand-plum uppercase">{order.payment_channel.replace('_', ' ')}</span>
           </div>
         )}
         <div className="flex justify-between items-center text-brand-plum font-sans border-t border-neutral-200/60 pt-4 mt-2">

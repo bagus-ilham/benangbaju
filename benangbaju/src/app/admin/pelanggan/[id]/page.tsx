@@ -129,7 +129,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                     <li key={address.id} className="p-4 text-xs">
                       <div className="flex items-start justify-between mb-1">
                         <div>
-                          <span className="font-bold text-neutral-900 mr-2">
+                          <span className="font-bold text-brand-plum mr-2">
                             {address.recipient_name}
                           </span>
                           <span className="text-neutral-500">({address.phone})</span>
@@ -193,7 +193,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                           Varian: {item.variant?.name || '-'} | SKU: {item.variant?.sku || '-'}
                         </p>
                         <div className="mt-1 flex items-center space-x-4 text-neutral-700">
-                          <span className="font-medium text-brand-black">
+                          <span className="font-medium text-brand-plum">
                             {formatIDR(item.variant?.price || 0)}
                           </span>
                           <span>Qty: {item.quantity}</span>
@@ -242,7 +242,7 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                         <p className="font-bold text-neutral-900 truncate">
                           {item.product?.name || 'Produk Tidak Diketahui'}
                         </p>
-                        <p className="text-brand-black mt-1 font-medium">
+                        <p className="text-brand-plum mt-1 font-medium">
                           {formatIDR(item.product?.price || 0)}
                         </p>
                       </div>

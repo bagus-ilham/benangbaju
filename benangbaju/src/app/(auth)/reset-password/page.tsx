@@ -99,10 +99,10 @@ export default function ResetPasswordPage(): React.JSX.Element {
               priority
             />
           </div>
-          <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-black">
+          <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
             Reset Kata Sandi
           </h2>
-          <p className="text-[11px] md:text-xs text-neutral-400 font-sans">
+          <p className="text-[11px] md:text-xs text-neutral-600 font-sans">
             Masukkan kata sandi baru Anda di bawah ini.
           </p>
         </div>

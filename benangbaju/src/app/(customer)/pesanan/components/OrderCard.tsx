@@ -73,7 +73,7 @@ export function OrderCard({
               <p className="font-bold text-brand-plum truncate">
                 {item.product_name} - {item.variant_name}
               </p>
-              <p className="text-xs text-neutral-400 mt-0.5">
+              <p className="text-xs text-neutral-600 font-sans mt-0.5">
                 {item.quantity} x {formatIDR(item.price)}
               </p>
             </div>

@@ -64,7 +64,7 @@ export function AdminPaymentSettingsForm(): React.JSX.Element {
       <div className="border border-neutral-200 bg-brand-cream p-5 rounded-2xl space-y-4">
         <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
           <div>
-            <h3 className="text-xs uppercase font-bold tracking-widest text-brand-black flex items-center">
+            <h3 className="text-xs uppercase font-bold tracking-widest text-brand-plum flex items-center">
               <HandDrawnIcon name="tag" className="h-4 w-4 mr-2 text-brand-plum" /> Tarif Biaya Admin DOKU (Dibebankan ke Customer)
             </h3>
             <p className="text-[11px] text-neutral-500 font-sans mt-0.5">
@@ -81,7 +81,7 @@ export function AdminPaymentSettingsForm(): React.JSX.Element {
               <div key={config.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1 min-w-[200px]">
                   <div className="flex items-center space-x-2">
-                    <span className="font-heading font-bold text-xs text-brand-black">
+                    <span className="font-heading font-bold text-xs text-brand-plum">
                       {config.channel_name}
                     </span>
                     <span

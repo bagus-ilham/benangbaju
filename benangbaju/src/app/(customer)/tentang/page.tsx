@@ -76,7 +76,7 @@ export default function TentangPage(): React.JSX.Element {
           </div>
 
           <div className="border-t border-neutral-200 pt-10 text-center animate-fade-in">
-            <p className="text-sm md:text-base font-heading font-light uppercase tracking-[0.2em] text-brand-black leading-relaxed">
+            <p className="text-sm md:text-base font-heading font-light uppercase tracking-[0.2em] text-brand-plum leading-relaxed">
               &ldquo;Show How Really Well-Dressed You Are&rdquo;
             </p>
             <div className="stitch-divider stitch-divider-center mt-4" />

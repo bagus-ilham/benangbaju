@@ -37,7 +37,7 @@ export function FlashSaleVariantSearch({
               onClick={() => handleAddVariantItem(v)}
             >
               <div>
-                <p className="font-bold text-[10px] uppercase tracking-wider text-brand-black">
+                <p className="font-bold text-[10px] uppercase tracking-wider text-brand-plum">
                   {v.sku}
                 </p>
                 <p className="text-[10px] text-neutral-600 line-clamp-1">

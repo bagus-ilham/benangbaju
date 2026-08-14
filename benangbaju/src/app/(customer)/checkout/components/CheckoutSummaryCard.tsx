@@ -136,7 +136,7 @@ export function CheckoutSummaryCard({
                 <input
                   type="text"
                   placeholder="Masukkan kode voucher"
-                  className="flex-1 px-3 py-2 border border-neutral-200 focus:border-brand-black outline-none text-xs uppercase rounded-xl transition-colors duration-200 focus-ring-premium"
+                  className="flex-1 px-3 py-2 border border-neutral-200 focus:border-brand-plum outline-none text-xs uppercase rounded-xl transition-colors duration-200 focus-ring-premium"
                   value={voucherCodeInput}
                   onChange={(e) => onVoucherInputChange(e.target.value)}
                 />
@@ -202,18 +202,18 @@ export function CheckoutSummaryCard({
       <div className="space-y-3 text-xs text-neutral-500 border-b border-neutral-100 pb-5 mb-5 font-sans">
         <div className="flex justify-between">
           <span>Subtotal Produk</span>
-          <span className="font-semibold text-brand-black">{formatIDR(subtotal)}</span>
+          <span className="font-semibold text-brand-plum">{formatIDR(subtotal)}</span>
         </div>
         <div className="flex justify-between">
           <span>Ongkos Kirim</span>
-          <span className="font-semibold text-brand-black">
+          <span className="font-semibold text-brand-plum">
             {shippingCost > 0 ? formatIDR(shippingCost) : 'Pilih kurir...'}
           </span>
         </div>
         {paymentFee > 0 && (
           <div className="flex justify-between">
             <span>Biaya Layanan Pembayaran</span>
-            <span className="font-semibold text-brand-black">{formatIDR(paymentFee)}</span>
+            <span className="font-semibold text-brand-plum">{formatIDR(paymentFee)}</span>
           </div>
         )}
         {appliedVoucher && (
@@ -225,7 +225,7 @@ export function CheckoutSummaryCard({
       </div>
 
       {/* Grand Total */}
-      <div className="flex justify-between items-center text-brand-black font-heading mb-8">
+      <div className="flex justify-between items-center text-brand-plum font-heading mb-8">
         <span className="text-xs uppercase tracking-widest font-medium">Total Pembayaran</span>
         <span className="text-lg font-bold">{formatIDR(totalAmount)}</span>
       </div>

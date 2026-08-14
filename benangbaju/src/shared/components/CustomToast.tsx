@@ -57,7 +57,7 @@ export function CustomToast({
               {subtitle}
             </p>
             {description && (
-              <p className="text-[9px] text-neutral-400 uppercase font-sans mt-0.5">
+              <p className="text-[9px] text-neutral-600 uppercase font-sans mt-0.5">
                 {description}
               </p>
             )}

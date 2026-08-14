@@ -144,10 +144,10 @@ function RegisterContent(): React.JSX.Element {
                 priority
               />
             </div>
-            <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-black">
+            <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
               Daftar Akun
             </h2>
-            <p className="text-[11px] md:text-xs text-neutral-400 font-sans">
+            <p className="text-[11px] md:text-xs text-neutral-600 font-sans">
               Lengkapi data di bawah ini untuk bergabung dengan Benangbaju.
             </p>
           </motion.div>
@@ -245,7 +245,7 @@ function RegisterContent(): React.JSX.Element {
           >
             <p className="text-xs text-neutral-600 font-sans">
               Sudah memiliki akun?{' '}
-              <Link href="/masuk" className="text-brand-black font-semibold hover:underline">
+              <Link href="/masuk" className="text-brand-plum font-semibold hover:underline">
                 Masuk disini
               </Link>
             </p>

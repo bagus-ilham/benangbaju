@@ -68,7 +68,7 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
               </p>
             )}
             {banner.title && (
-              <h3 className="text-2xl md:text-3xl font-heading uppercase tracking-wider text-brand-black">
+              <h3 className="text-2xl md:text-3xl font-heading uppercase tracking-wider text-brand-plum">
                 {banner.title}
               </h3>
             )}

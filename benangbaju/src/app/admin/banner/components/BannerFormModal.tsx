@@ -60,7 +60,7 @@ export function BannerFormModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Desktop Banner Image Uploader & Preview */}
           <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10 rounded-2xl shadow-sm">
-            <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+            <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-plum">
               Gambar Desktop*
             </span>
             <div className="flex gap-3 items-start">
@@ -127,7 +127,7 @@ export function BannerFormModal({
 
           {/* Mobile Banner Image Uploader & Preview */}
           <div className="border border-neutral-200 p-4 space-y-3 bg-neutral-50/10 rounded-2xl shadow-sm">
-            <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-black/70">
+            <span className="block text-[10px] uppercase tracking-wider font-heading font-medium text-brand-plum">
               Gambar Mobile (Opsional)
             </span>
             <div className="flex gap-3 items-start">

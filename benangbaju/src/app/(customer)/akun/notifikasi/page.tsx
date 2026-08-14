@@ -82,7 +82,7 @@ export default function NotifikasiPage(): React.JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Quick Navigation Menu */}
           <div className="space-y-2 md:col-span-1">
-            <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-neutral-400 mb-4">
+            <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-neutral-600 mb-4">
               Navigasi Akun
             </h2>
 
@@ -150,7 +150,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                 <button
                   onClick={handleMarkAllRead}
                   disabled={markAllReadMutation.isPending}
-                  className="inline-flex items-center text-xs text-neutral-600 hover:text-neutral-950 hover:underline font-semibold"
+                  className="inline-flex items-center text-xs text-neutral-600 hover:text-brand-plum hover:underline font-semibold transition-colors duration-200 cursor-pointer"
                 >
                   <HandDrawnIcon name="mail" className="h-3.5 w-3.5 mr-1.5" /> Tandai Semua Dibaca
                 </button>

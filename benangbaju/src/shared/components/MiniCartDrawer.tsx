@@ -103,7 +103,7 @@ export function MiniCartDrawer(): React.JSX.Element {
 
             {/* Free Shipping Progress Bar */}
             {/* <div className="bg-brand-cream/60 px-6 py-3 border-b border-neutral-100 space-y-1.5">
-              <p className="text-[10px] font-heading font-medium uppercase tracking-wider text-brand-black text-center">
+              <p className="text-[10px] font-heading font-medium uppercase tracking-wider text-brand-plum text-center">
                 {subtotal >= 0 ? (
                   <span className="text-emerald-700 font-bold">
                     🎉 Selamat! Anda Mendapatkan Gratis Ongkir

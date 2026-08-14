@@ -14,7 +14,7 @@ export function AccountNavMenu({
 }: AccountNavMenuProps): React.JSX.Element {
   return (
     <motion.div variants={itemVariants} className="space-y-2 md:col-span-1">
-      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-neutral-400 mb-4">
+      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-neutral-600 mb-4">
         Navigasi Akun
       </h2>
 
