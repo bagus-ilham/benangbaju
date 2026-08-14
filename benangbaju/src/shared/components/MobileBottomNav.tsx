@@ -39,17 +39,17 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
       isActive: pathname === '/produk/customize-size',
     },
     {
-      name: 'Katalog',
-      href: '/produk',
-      handDrawnName: 'grid',
-      isActive: pathname.startsWith('/produk'),
-    },
-    {
       name: 'Wishlist',
       href: '/wishlist',
       handDrawnName: wishlistCount > 0 || pathname === '/wishlist' ? 'heart-filled' : 'heart',
       badge: wishlistCount > 0 ? wishlistCount : null,
       isActive: pathname === '/wishlist',
+    },
+    {
+      name: 'Katalog',
+      href: '/produk',
+      handDrawnName: 'grid',
+      isActive: pathname.startsWith('/produk') && pathname !== '/produk/customize-size',
     },
     {
       name: isAuthenticated ? 'Akun' : 'Masuk',
