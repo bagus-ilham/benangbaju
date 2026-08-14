@@ -52,11 +52,28 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const addItem = useCartStore((state) => state.addItem)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
 
+  const [isReordering, setIsReordering] = useState(false)
+
   // Re-order handler
   const handleReorder = async () => {
-    if (!order || !order.order_items || order.order_items.length === 0) return
+    if (!order || !order.order_items || order.order_items.length === 0 || isReordering) return
+    setIsReordering(true)
     try {
-      toast.loading('Menambahkan produk ke keranjang...', { id: 'reorder' })
+      toast.loading('Memproses pembatalan & pemesanan ulang...', { id: 'reorder' })
+
+      // If the current order is still pending_payment, cancel it automatically so its status updates immediately
+      if (order.status === 'pending_payment') {
+        try {
+          await cancelMutation.mutateAsync({
+            orderId: order.id,
+            reason: 'Sesi pembayaran kedaluwarsa (Dipesan ulang oleh customer)',
+          })
+          await refetch()
+        } catch (cancelErr) {
+          console.warn('Could not auto-cancel pending order during reorder:', cancelErr)
+        }
+      }
+
       for (const item of order.order_items) {
         if (item.variant_id) {
           await addItem(
@@ -76,10 +93,12 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
           )
         }
       }
-      toast.success('Produk berhasil ditambahkan ke keranjang!', { id: 'reorder' })
+      toast.success('Pesanan lama dibatalkan & produk berhasil ditambahkan ke keranjang!', { id: 'reorder' })
       setCartDrawerOpen(true)
     } catch {
-      toast.error('Gagal menambahkan ke keranjang.', { id: 'reorder' })
+      toast.error('Gagal memproses pemesanan ulang.', { id: 'reorder' })
+    } finally {
+      setIsReordering(false)
     }
   }
 
@@ -469,6 +488,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             isVerifyingPayment={isVerifyingPayment}
             isGeneratingToken={generatePaymentTokenMutation.isPending}
             isCheckingPayment={checkPaymentMutation.isPending}
+            isReordering={isReordering}
             onPayOrder={handlePayOrder}
             onCheckStatus={handleManualCheckStatus}
             onCancelOrder={() => setCancelConfirmOpen(true)}

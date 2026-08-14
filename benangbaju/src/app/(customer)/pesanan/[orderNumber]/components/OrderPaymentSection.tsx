@@ -17,6 +17,7 @@ interface OrderPaymentSectionProps {
   onCancelOrder: () => void
   onConfirmDelivery: () => void
   onReorder?: () => void
+  isReordering?: boolean
 }
 
 export function OrderPaymentSection({
@@ -30,6 +31,7 @@ export function OrderPaymentSection({
   onCancelOrder,
   onConfirmDelivery,
   onReorder,
+  isReordering,
 }: OrderPaymentSectionProps): React.JSX.Element {
   const [copiedCode, setCopiedCode] = useState(false)
 
@@ -255,11 +257,13 @@ export function OrderPaymentSection({
             {onReorder && (
               <Button
                 onClick={onReorder}
+                disabled={isReordering || isVerifyingPayment}
+                isLoading={isReordering}
                 variant="ghost"
                 className="w-full py-2 text-[10px] font-sans font-semibold text-neutral-500 hover:text-brand-blue flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
               >
                 <HandDrawnIcon name="refresh" className="h-3 w-3" />
-                <span>Sesi Expired? Pesan Ulang Produk Ini</span>
+                <span>Sesi Expired? Batalkan & Pesan Ulang</span>
               </Button>
             )}
           </>
@@ -274,6 +278,8 @@ export function OrderPaymentSection({
             {onReorder && (
               <Button
                 onClick={onReorder}
+                disabled={isReordering}
+                isLoading={isReordering}
                 variant="accent"
                 className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-1.5 cursor-pointer"
               >
