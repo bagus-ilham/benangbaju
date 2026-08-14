@@ -473,6 +473,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             onCheckStatus={handleManualCheckStatus}
             onCancelOrder={() => setCancelConfirmOpen(true)}
             onConfirmDelivery={() => setReceiptConfirmOpen(true)}
+            onReorder={handleReorder}
           />
         </div>
 

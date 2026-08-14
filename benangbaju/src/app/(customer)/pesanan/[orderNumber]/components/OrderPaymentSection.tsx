@@ -16,6 +16,7 @@ interface OrderPaymentSectionProps {
   onCheckStatus: () => void
   onCancelOrder: () => void
   onConfirmDelivery: () => void
+  onReorder?: () => void
 }
 
 export function OrderPaymentSection({
@@ -28,6 +29,7 @@ export function OrderPaymentSection({
   onCheckStatus,
   onCancelOrder,
   onConfirmDelivery,
+  onReorder,
 }: OrderPaymentSectionProps): React.JSX.Element {
   const [copiedCode, setCopiedCode] = useState(false)
 
@@ -211,42 +213,32 @@ export function OrderPaymentSection({
             ) : (
               <>
                 {checkoutUrl ? (
-                  <div className="space-y-2">
-                    <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
-                      <Button variant="accent" className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2">
-                        <HandDrawnIcon name="external-link" className="h-4 w-4" />
-                        <span>Buka Halaman Pembayaran</span>
-                      </Button>
-                    </a>
+                  <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+                    <Button variant="accent" className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2">
+                      <HandDrawnIcon name="external-link" className="h-4 w-4" />
+                      <span>Buka Halaman Pembayaran</span>
+                    </Button>
+                  </a>
+                ) : (
+                  !vaNumber && !qrUrl && !paymentCode && (
                     <Button
                       onClick={onPayOrder}
                       isLoading={isGeneratingToken}
                       disabled={isGeneratingToken || isVerifyingPayment}
-                      variant="outline"
-                      className="w-full py-2.5 text-[10px] uppercase tracking-wider font-bold border-neutral-300 text-brand-plum hover:bg-brand-blue/10 hover:border-brand-blue/50 flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
+                      variant="accent"
+                      className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2"
                     >
-                      <HandDrawnIcon name="refresh" className="h-3 w-3" />
-                      <span>Link Expired? Buat Link Pembayaran Baru</span>
+                      <HandDrawnIcon name="tag" className="h-4 w-4" />
+                      <span>Minta Kode / Link Pembayaran</span>
                     </Button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={onPayOrder}
-                    isLoading={isGeneratingToken}
-                    disabled={isGeneratingToken || isVerifyingPayment}
-                    variant="accent"
-                    className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2"
-                  >
-                    <HandDrawnIcon name="tag" className="h-4 w-4" />
-                    <span>Minta Kode / Link Pembayaran</span>
-                  </Button>
+                  )
                 )}
                 <Button
                   onClick={onCheckStatus}
                   isLoading={isCheckingPayment}
                   disabled={isCheckingPayment}
                   variant="outline"
-                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50 cursor-pointer"
                 >
                   Cek Status Pembayaran
                 </Button>
@@ -256,11 +248,40 @@ export function OrderPaymentSection({
               onClick={onCancelOrder}
               variant="outline"
               disabled={isVerifyingPayment}
-              className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-red-200 text-red-500 hover:bg-red-50"
+              className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-red-200 text-red-500 hover:bg-red-50 cursor-pointer"
             >
               Batalkan Pesanan
             </Button>
+            {onReorder && (
+              <Button
+                onClick={onReorder}
+                variant="ghost"
+                className="w-full py-2 text-[10px] font-sans font-semibold text-neutral-500 hover:text-brand-blue flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
+              >
+                <HandDrawnIcon name="refresh" className="h-3 w-3" />
+                <span>Sesi Expired? Pesan Ulang Produk Ini</span>
+              </Button>
+            )}
           </>
+        )}
+
+        {order.status === 'cancelled' && (
+          <div className="space-y-3">
+            <div className="flex items-center text-xs text-neutral-600 bg-neutral-100/70 p-3.5 border border-neutral-200 rounded-xl">
+              <HandDrawnIcon name="close" className="h-4 w-4 mr-2 shrink-0 text-red-500" />
+              <span>Pesanan ini telah dibatalkan atau sesi pembayaran telah kedaluwarsa.</span>
+            </div>
+            {onReorder && (
+              <Button
+                onClick={onReorder}
+                variant="accent"
+                className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <HandDrawnIcon name="refresh" className="h-3.5 w-3.5" />
+                <span>Pesan Ulang (Beli Lagi)</span>
+              </Button>
+            )}
+          </div>
         )}
 
         {order.status === 'shipped' && (
