@@ -58,7 +58,7 @@ async function verifyDokuNotificationSignature(
     const requestId = req.headers.get('Request-Id') || '';
     const requestTimestamp = req.headers.get('Request-Timestamp') || '';
     const incomingSignature = req.headers.get('Signature') || '';
-    const requestTarget = new URL(req.url).pathname;
+    const requestTarget = req.headers.get('Request-Target') || new URL(req.url).pathname;
 
     if (!incomingSignature || !clientId || !requestId || !requestTimestamp) {
       return false;

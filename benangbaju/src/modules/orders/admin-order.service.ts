@@ -4,7 +4,9 @@ import { ApiErrorCode } from '@/lib/api-errors'
 import { adminLogRepository } from '@/modules/admin-logs/admin-log.repository'
 import { createServerClient } from '@/lib/supabase/server'
 import { orderRepository } from './order.repository'
-import { AdminOrderListItem, AdminReturnRequestListItem } from './types'
+import { AdminOrderListItem, AdminReturnRequestListItem, Order } from './types'
+import { mapOrder } from './order.mapper'
+import { parseOneToMany, parseOneToOne } from '@/shared/utils/supabase-parser'
 
 export class AdminOrderService {
   async getOrders(
@@ -295,6 +297,33 @@ export class AdminOrderService {
     } catch (error: any) {
       safeLogError('Error updating tracking number:', error)
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal menyimpan nomor resi')
+    }
+  }
+
+  async getOrderDetail(orderNumber: string): Promise<ApiResponse<Order | null>> {
+    try {
+      const data = await orderRepository.findOneByOrderNumber(orderNumber)
+
+      if (!data) return ok(null)
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const order_items = parseOneToMany<any>(data.order_items)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const order_shipping = parseOneToOne<any>(data.order_shipping)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const payments = parseOneToMany<any>(data.payments)
+
+      return ok(
+        mapOrder({
+          ...data,
+          order_items,
+          order_shipping: order_shipping || null,
+          payments,
+        })
+      )
+    } catch (error) {
+      safeLogError('Error fetching admin order detail:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat detail pesanan')
     }
   }
 }

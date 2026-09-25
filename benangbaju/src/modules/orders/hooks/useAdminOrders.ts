@@ -6,6 +6,8 @@ import {
   adminUpdateReturnRequestAction,
   adminUpdateOrderStatusAction,
   adminUpdateTrackingNumberAction,
+  adminGetOrderDetailAction,
+  adminSyncPaymentStatusAction,
 } from '@/modules/orders/actions'
 
 export interface AdminUpdateOrderStatusInput {
@@ -88,6 +90,30 @@ export function useAdminUpdateReturnRequest() {
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['return-requests', 'orders'])
+    },
+  })
+}
+
+export function useAdminOrderDetail(orderNumber: string) {
+  return useQuery({
+    queryKey: ['admin', 'order-detail', orderNumber],
+    queryFn: () => adminGetOrderDetailAction(orderNumber),
+    enabled: !!orderNumber,
+  })
+}
+
+export function useAdminSyncPayment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (orderNumber: string) => {
+      const res = await adminSyncPaymentStatusAction(orderNumber)
+      if (!res.success) throw new Error(res.error?.message || 'Gagal menyinkronkan status pembayaran')
+      return res.data!
+    },
+    onSuccess: (_, orderNumber) => {
+      invalidateAdminQueries(queryClient, ['orders', 'dashboard'])
+      queryClient.invalidateQueries({ queryKey: ['admin', 'order-detail', orderNumber] })
+      queryClient.invalidateQueries({ queryKey: ['order', orderNumber] })
     },
   })
 }

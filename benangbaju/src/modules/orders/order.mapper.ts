@@ -78,6 +78,7 @@ export function mapOrder(
       qr_url: p.qr_url,
       snap_token: p.snap_token,
       payment_instructions: p.payment_instructions || null,
+      paid_at: p.paid_at || null,
       created_at: p.created_at,
       updated_at: p.updated_at,
     }
@@ -110,5 +111,11 @@ export function mapOrder(
     order_items,
     order_shipping,
     payments,
+    profiles: (row as any).profiles && !Array.isArray((row as any).profiles)
+      ? {
+          name: (row as any).profiles.name,
+          email: (row as any).profiles.email,
+        }
+      : null,
   }
 }

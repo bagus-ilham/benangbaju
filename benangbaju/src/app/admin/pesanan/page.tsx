@@ -6,6 +6,7 @@ import {
   useAdminReturnRequests,
   useAdminUpdateReturnRequest,
   useAdminUpdateOrderStatus,
+  useAdminSyncPayment,
 } from '@/app/admin/hooks/useAdmin'
 import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/modules/orders/types'
 import { Button, AdminPageHeader, HandDrawnIcon, Pagination, AdminSearchInput } from '@/shared/components'
@@ -50,6 +51,41 @@ export default function AdminOrdersPage(): React.JSX.Element {
 
   const updateReturnMutation = useAdminUpdateReturnRequest()
   const updateOrderStatusMutation = useAdminUpdateOrderStatus()
+  const syncPaymentMutation = useAdminSyncPayment()
+  const [syncingOrderNumber, setSyncingOrderNumber] = useState<string | null>(null)
+
+  const handleSyncPayment = async (orderNumber: string) => {
+    setSyncingOrderNumber(orderNumber)
+    toast.loading(`Mengecek status pembayaran ${orderNumber}...`, { id: `sync-${orderNumber}` })
+    try {
+      const res = await syncPaymentMutation.mutateAsync(orderNumber)
+      toast.dismiss(`sync-${orderNumber}`)
+      if (res.order_status === 'processing' || res.order_status === 'completed') {
+        toast.success(
+          `Pembayaran ${orderNumber} terverifikasi! Status pesanan otomatis diubah menjadi Diproses.`,
+          { id: `sync-${orderNumber}` }
+        )
+      } else if (res.order_status === 'cancelled' || res.order_status === 'expired') {
+        toast('Sesi pembayaran telah kedaluwarsa atau dibatalkan.', {
+          icon: '⚠️',
+          id: `sync-${orderNumber}`,
+        })
+      } else {
+        toast(res.message || 'Status di DOKU: Belum dibayar oleh customer.', {
+          icon: 'ℹ️',
+          id: `sync-${orderNumber}`,
+        })
+      }
+      refetchOrders()
+    } catch (err: any) {
+      toast.dismiss(`sync-${orderNumber}`)
+      toast.error(err.message || 'Gagal mengecek status pembayaran ke DOKU', {
+        id: `sync-${orderNumber}`,
+      })
+    } finally {
+      setSyncingOrderNumber(null)
+    }
+  }
 
   // Return request Modal control
   const [selectedReturn, setSelectedReturn] = useState<AdminReturnRequestListItem | null>(null)
@@ -183,6 +219,8 @@ export default function AdminOrdersPage(): React.JSX.Element {
             isError={ordersError}
             onRefetch={refetchOrders}
             onOpenQuickResi={handleOpenQuickResi}
+            onSyncPayment={handleSyncPayment}
+            syncingOrderNumber={syncingOrderNumber}
           />
         )}
 

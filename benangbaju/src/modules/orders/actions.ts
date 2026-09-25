@@ -3,6 +3,7 @@
 import { requireAdmin, requireAuth } from '@/lib/auth-guard'
 import { adminOrderService } from './admin-order.service'
 import { orderService } from './order.service'
+import { paymentSyncService } from './payment-sync.service'
 import type { CreateOrderParams } from '@/modules/orders/types'
 import {
   validateAndGetShippingRate,
@@ -58,6 +59,16 @@ export async function adminGetReturnRequestsAction() {
   return adminOrderService.getReturnRequests()
 }
 
+export async function adminGetOrderDetailAction(orderNumber: string) {
+  await requireAdmin()
+  return adminOrderService.getOrderDetail(orderNumber)
+}
+
+export async function adminSyncPaymentStatusAction(orderNumber: string) {
+  await requireAdmin()
+  return paymentSyncService.syncOrderPayment(orderNumber)
+}
+
 export async function getOrdersAction(userId: string, status?: string, page = 1, limit = 10) {
   const { user } = await requireAuth()
   if (user.id !== userId) throw new Error('Unauthorized')
@@ -65,7 +76,20 @@ export async function getOrdersAction(userId: string, status?: string, page = 1,
 }
 
 export async function getOrderDetailAction(orderNumber: string, userId?: string) {
-  const { user } = await requireAuth()
+  const { user, supabase } = await requireAuth()
+
+  // Check if caller is admin or staff
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'staff'
+  if (isAdmin) {
+    return adminOrderService.getOrderDetail(orderNumber)
+  }
+
   // If userId is provided, verify ownership. Otherwise use the authenticated user's ID.
   const effectiveUserId = userId || user.id
   if (user.id !== effectiveUserId) throw new Error('Unauthorized')
@@ -125,10 +149,23 @@ export async function checkPaymentStatusAction(orderNumber: string) {
     .select('user_id')
     .eq('order_number', orderNumber)
     .single()
-  if (error || !order || order.user_id !== user.id) {
+  if (error || !order) {
+    throw new Error('Pesanan tidak ditemukan')
+  }
+
+  // Check if caller is admin or order owner
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'staff'
+  if (!isAdmin && order.user_id !== user.id) {
     throw new Error('Unauthorized')
   }
-  return orderService.checkPaymentStatus(orderNumber)
+
+  return paymentSyncService.syncOrderPayment(orderNumber)
 }
 
 export async function lazyCancelExpiredOrdersAction() {

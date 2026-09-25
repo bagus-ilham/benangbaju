@@ -38,7 +38,7 @@ export class OrderRepository {
     let query = supabase
       .from('orders')
       .select(
-        '*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*)'
+        '*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*), profiles:user_id(name, email)'
       )
       .eq('order_number', cleanOrderNumber)
 
@@ -52,7 +52,7 @@ export class OrderRepository {
       // Fallback query if embedded product_reviews relationship fails in PostgREST
       let fallbackQuery = supabase
         .from('orders')
-        .select('*, order_items(*), order_shipping(*), payments(*)')
+        .select('*, order_items(*), order_shipping(*), payments(*), profiles:user_id(name, email)')
         .eq('order_number', cleanOrderNumber)
 
       if (userId) {

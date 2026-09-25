@@ -10,6 +10,8 @@ interface AdminOrdersTableProps {
   isError: boolean
   onRefetch: () => void
   onOpenQuickResi: (order: AdminOrderListItem) => void
+  onSyncPayment?: (orderNumber: string) => void
+  syncingOrderNumber?: string | null
 }
 
 export function AdminOrdersTable({
@@ -18,6 +20,8 @@ export function AdminOrdersTable({
   isError,
   onRefetch,
   onOpenQuickResi,
+  onSyncPayment,
+  syncingOrderNumber,
 }: AdminOrdersTableProps) {
   if (isLoading) {
     return (
@@ -84,6 +88,17 @@ export function AdminOrdersTable({
                 <OrderStatusBadge status={o.status} />
               </td>
               <td className="py-4 px-5 text-right space-x-1 whitespace-nowrap">
+                {o.status === 'pending_payment' && onSyncPayment && (
+                  <Button
+                    onClick={() => onSyncPayment(o.order_number)}
+                    isLoading={syncingOrderNumber === o.order_number}
+                    className="p-2 border-brand-plum text-brand-plum hover:bg-brand-plum/10 mr-1"
+                    variant="outline"
+                    title="Cek Status Pembayaran (DOKU)"
+                  >
+                    <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1 inline" /> Cek Bayar
+                  </Button>
+                )}
                 {o.status === 'processing' && (
                   <Button
                     onClick={() => onOpenQuickResi(o)}

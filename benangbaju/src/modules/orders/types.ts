@@ -74,6 +74,7 @@ export interface PaymentInfo {
   qr_url: string | null
   snap_token: string | null
   payment_instructions?: PaymentInstructions | null
+  paid_at?: string | null
   created_at: string
   updated_at: string
 }
@@ -97,6 +98,10 @@ export interface Order {
   order_items: OrderItem[]
   order_shipping: OrderShipping | null
   payments?: PaymentInfo[]
+  profiles?: {
+    name: string
+    email: string | null
+  } | null
 }
 
 export interface CreateOrderParams {

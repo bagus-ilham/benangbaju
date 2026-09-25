@@ -8,6 +8,8 @@ interface AdminOrderStatusPanelProps {
   handleUpdateStatus: (
     status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled'
   ) => void
+  handleSyncPayment?: () => void
+  isSyncingPayment?: boolean
 }
 
 export function AdminOrderStatusPanel({
@@ -15,6 +17,8 @@ export function AdminOrderStatusPanel({
   trackingNumber,
   setTrackingNumber,
   handleUpdateStatus,
+  handleSyncPayment,
+  isSyncingPayment = false,
 }: AdminOrderStatusPanelProps): React.JSX.Element {
   return (
     <AdminPanel title="Status Alur Kerja">
@@ -41,9 +45,20 @@ export function AdminOrderStatusPanel({
       <div className="space-y-2 pt-2 border-t border-neutral-100 mt-4">
         {status === 'pending_payment' && (
           <>
+            {handleSyncPayment && (
+              <Button
+                onClick={handleSyncPayment}
+                isLoading={isSyncingPayment}
+                className="w-full py-3 text-[10px] uppercase tracking-wider font-bold bg-brand-plum text-white hover:bg-brand-plum/90"
+              >
+                <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5 inline" />
+                Cek / Sinkronkan Status DOKU
+              </Button>
+            )}
             <Button
               onClick={() => handleUpdateStatus('processing')}
-              className="w-full py-3 text-[10px] uppercase tracking-wider font-bold"
+              variant="outline"
+              className="w-full py-3 text-[10px] uppercase tracking-wider font-bold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
             >
               Konfirmasi Pembayaran Manual
             </Button>

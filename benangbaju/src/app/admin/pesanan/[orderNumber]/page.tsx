@@ -2,8 +2,9 @@
 
 import React, { use, useState } from 'react'
 
-import { useOrderDetail } from '@/modules/orders/hooks/useOrders'
 import {
+  useAdminOrderDetail,
+  useAdminSyncPayment,
   useAdminUpdateOrderStatus,
   useAdminUpdateTrackingNumber,
 } from '@/modules/orders/hooks/useAdminOrders'
@@ -14,6 +15,7 @@ import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
 import { AdminOrderStatusPanel } from './components/AdminOrderStatusPanel'
+import { AdminOrderPaymentPanel } from './components/AdminOrderPaymentPanel'
 
 const supabase = createBrowserClient()
 
@@ -26,10 +28,11 @@ interface AdminOrderDetailPageProps {
 function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.JSX.Element {
   const { orderNumber } = use(params)
 
-  const { data: orderResponse, isLoading, isError, refetch } = useOrderDetail(orderNumber as string)
+  const { data: orderResponse, isLoading, isError, refetch } = useAdminOrderDetail(orderNumber as string)
   const order = orderResponse?.data
   const updateStatusMutation = useAdminUpdateOrderStatus()
   const updateTrackingMutation = useAdminUpdateTrackingNumber()
+  const syncPaymentMutation = useAdminSyncPayment()
 
   const [trackingNumber, setTrackingNumber] = useState('')
   const [isEditingResi, setIsEditingResi] = useState(false)
@@ -44,6 +47,31 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
         minute: '2-digit',
       })
     : '-'
+
+  const handleSyncPayment = async () => {
+    if (!order) return
+    toast.loading('Menghubungi gateway DOKU...', { id: 'sync-doku' })
+    try {
+      const res = await syncPaymentMutation.mutateAsync(order.order_number)
+      toast.dismiss('sync-doku')
+      if (res.order_status === 'processing' || res.order_status === 'completed') {
+        toast.success('Pembayaran terverifikasi! Status pesanan otomatis diubah menjadi Diproses.', {
+          id: 'sync-doku',
+        })
+      } else if (res.order_status === 'cancelled' || res.order_status === 'expired') {
+        toast('Sesi pembayaran telah kedaluwarsa atau dibatalkan.', { icon: '⚠️', id: 'sync-doku' })
+      } else {
+        toast(res.message || 'Status di DOKU: Belum dibayar oleh customer.', {
+          icon: 'ℹ️',
+          id: 'sync-doku',
+        })
+      }
+      refetch()
+    } catch (err: any) {
+      toast.dismiss('sync-doku')
+      toast.error(err.message || 'Gagal mengecek status pembayaran ke DOKU', { id: 'sync-doku' })
+    }
+  }
 
   const handleUpdateStatus = async (
     status: 'pending_payment' | 'processing' | 'shipped' | 'completed' | 'cancelled'
@@ -185,6 +213,23 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
+          {/* Customer Profile Info */}
+          {order.profiles && (
+            <AdminPanel title="Pelanggan">
+              <div className="flex items-center justify-between text-xs">
+                <div>
+                  <p className="font-bold text-neutral-900 text-sm">{order.profiles.name}</p>
+                  <p className="text-neutral-500 mt-0.5">{order.profiles.email || '-'}</p>
+                </div>
+                <div className="text-right text-neutral-400">
+                  <span className="bg-neutral-100 px-2 py-1 rounded text-[10px] uppercase font-mono">
+                    ID: {order.user_id.slice(0, 8)}...
+                  </span>
+                </div>
+              </div>
+            </AdminPanel>
+          )}
+
           <AdminPanel title="Item Belanja">
             <div className="divide-y divide-neutral-100">
               {order.order_items.map((item) => (
@@ -231,6 +276,14 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
             trackingNumber={trackingNumber}
             setTrackingNumber={setTrackingNumber}
             handleUpdateStatus={handleUpdateStatus}
+            handleSyncPayment={handleSyncPayment}
+            isSyncingPayment={syncPaymentMutation.isPending}
+          />
+
+          <AdminOrderPaymentPanel
+            order={order}
+            onSyncPayment={handleSyncPayment}
+            isSyncing={syncPaymentMutation.isPending}
           />
 
           <AdminPanel title="Rincian Biaya">
@@ -247,6 +300,14 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
                   Rp {order.shipping_cost.toLocaleString('id-ID')}
                 </span>
               </div>
+              {order.payment_fee > 0 && (
+                <div className="flex justify-between">
+                  <span>Biaya Layanan</span>
+                  <span className="font-semibold text-neutral-900">
+                    Rp {order.payment_fee.toLocaleString('id-ID')}
+                  </span>
+                </div>
+              )}
               {Number(order.discount_amount) > 0 && (
                 <div className="flex justify-between font-semibold">
                   <span>Voucher Diskon</span>
