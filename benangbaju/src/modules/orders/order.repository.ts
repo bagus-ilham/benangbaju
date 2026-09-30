@@ -1,6 +1,7 @@
-  import { isObject } from '@/lib/utils/validation'
+import { isObject } from '@/lib/utils/validation'
 import { invokeWithRetry } from '@/lib/utils/retry'
 import { createServerClient } from '@/lib/supabase/server'
+import { safeLogError } from '@/lib/logger'
 import { CreateOrderParams } from './types'
 
 export class OrderRepository {
@@ -264,13 +265,12 @@ export class OrderRepository {
       }
       return
     }
-    if (status === 'completed') {
-      return this.confirmDelivery(orderId)
-    }
+
+    const now = new Date().toISOString()
 
     const { error: orderErr } = await supabase
       .from('orders')
-      .update({ status, updated_at: new Date().toISOString() })
+      .update({ status, updated_at: now })
       .eq('id', orderId)
 
     if (orderErr) throw orderErr
@@ -280,11 +280,24 @@ export class OrderRepository {
         .from('order_shipping')
         .update({
           tracking_number: trackingNumber,
-          shipped_at: new Date().toISOString(),
+          shipped_at: now,
         })
         .eq('order_id', orderId)
 
       if (shippingErr) throw shippingErr
+    }
+
+    if (status === 'completed') {
+      const { error: shippingErr } = await supabase
+        .from('order_shipping')
+        .update({
+          delivered_at: now,
+        })
+        .eq('order_id', orderId)
+
+      if (shippingErr) {
+        safeLogError('Error updating order_shipping delivered_at:', shippingErr)
+      }
     }
   }
 
