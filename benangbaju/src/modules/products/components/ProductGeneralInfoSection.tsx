@@ -164,7 +164,6 @@ export function ProductGeneralInfoSection({
                   alt="Size guide preview"
                   fill
                   sizes="96px"
-                  unoptimized
                   className="object-cover"
                 />
             ) : (

@@ -71,7 +71,6 @@ export function BannerFormModal({
                     alt="Desktop Preview"
                     fill
                     sizes="80px"
-                    unoptimized
                     className="object-contain"
                     onError={(e) => {
                       e.currentTarget.src = 'https://placehold.co/150?text=Error'
@@ -138,7 +137,6 @@ export function BannerFormModal({
                     alt="Mobile Preview"
                     fill
                     sizes="40px"
-                    unoptimized
                     className="object-contain"
                     onError={(e) => {
                       e.currentTarget.src = 'https://placehold.co/150?text=Error'

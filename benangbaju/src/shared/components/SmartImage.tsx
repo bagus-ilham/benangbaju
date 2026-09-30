@@ -13,7 +13,7 @@ export function SmartImage({
   src,
   fallbackSrc = '/images/placeholder.jpg',
   onError,
-  unoptimized = true,
+  unoptimized = false,
   alt,
   ...props
 }: SmartImageProps): React.JSX.Element {

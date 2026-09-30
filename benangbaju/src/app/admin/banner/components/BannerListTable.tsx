@@ -46,7 +46,6 @@ export function BannerListTable({
                 alt={b.title || ''}
                 fill
                 sizes="96px"
-                unoptimized
                 className="object-cover"
                 onError={(e) => {
                   e.currentTarget.src = 'https://placehold.co/600x300?text=No+Image'

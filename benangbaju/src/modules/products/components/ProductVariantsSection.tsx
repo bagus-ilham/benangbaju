@@ -185,7 +185,6 @@ export function ProductVariantsSection({
                               alt={img.alt_text || 'Preview'}
                               fill
                               sizes="40px"
-                              unoptimized
                               className="object-cover"
                             />
                           ) : (

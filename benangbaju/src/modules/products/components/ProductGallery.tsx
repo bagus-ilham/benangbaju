@@ -39,7 +39,6 @@ export function ProductGallery({
 
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 })
   const [isZoomed, setIsZoomed] = useState(false)
-  const [hasIntentToZoom, setHasIntentToZoom] = useState(false)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
 
   const [direction, setDirection] = useState(0)
@@ -61,7 +60,6 @@ export function ProductGallery({
       if (nextIndex < 0) nextIndex = images.length - 1
       if (nextIndex >= images.length) nextIndex = 0
       setDirection(newDirection)
-      setHasIntentToZoom(false) // Reset HD intent on image change
       setActiveImage(images[nextIndex].url)
     },
     [images, activeImage]
@@ -88,7 +86,6 @@ export function ProductGallery({
       const variantImage = images.find((img) => img.variant_id === selectedVariantId)
       if (variantImage) {
         setDirection(1)
-        setHasIntentToZoom(false) // Reset HD intent on image change
 
         setActiveImage(variantImage.url)
 
@@ -205,7 +202,6 @@ export function ProductGallery({
         className="hidden md:block relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in rounded-2xl shadow-sm"
         onMouseEnter={() => {
           setIsZoomed(true)
-          setHasIntentToZoom(true) // Trigger lazy load of HD image
         }}
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
@@ -242,23 +238,6 @@ export function ProductGallery({
                 priority
               />
 
-              {/* 2. HD Image (Lazy Loaded on Hover, Unoptimized) */}
-              {hasIntentToZoom && !isMobile && (
-                <Image
-                  src={getProxiedImageUrl(activeImage)}
-                  alt={`${productName} HD`}
-                  fill
-                  unoptimized={true}
-                  className="object-cover pointer-events-none"
-                  style={{
-                    transformOrigin:
-                      isZoomed && !isMobile ? `${zoomPos.x}% ${zoomPos.y}%` : 'center',
-                    transform: isZoomed && !isMobile ? 'scale(2.2)' : 'scale(1)',
-                    transition: isZoomed && !isMobile ? 'none' : 'transform 0.3s ease-out',
-                    opacity: isZoomed ? 1 : 0,
-                  }}
-                />
-              )}
             </motion.div>
           )}
         </AnimatePresence>

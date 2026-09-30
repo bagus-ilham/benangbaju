@@ -68,7 +68,6 @@ export function ProductImageManager({
                         alt={img.alt_text || 'Preview'}
                         fill
                         sizes="64px"
-                        unoptimized
                         className="object-cover"
                       />
                     ) : (

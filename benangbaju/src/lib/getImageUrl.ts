@@ -7,7 +7,8 @@ const DEFAULT_PLACEHOLDER = '/images/placeholder.jpg'
 export function getProxiedImageUrl(originalUrl: string | null | undefined): string {
   if (!originalUrl) return DEFAULT_PLACEHOLDER
 
-  if (process.env.NEXT_PUBLIC_USE_CDN_WORKER === 'true') {
+  // CDN is enabled by default — set NEXT_PUBLIC_USE_CDN_WORKER=false to disable
+  if (process.env.NEXT_PUBLIC_USE_CDN_WORKER !== 'false') {
     if (originalUrl.startsWith(SUPABASE_STORAGE_PREFIX)) {
       return originalUrl.replace(SUPABASE_STORAGE_PREFIX, WORKER_URL)
     }
