@@ -33,6 +33,7 @@ remotePatterns.push({
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns,
     qualities: [60, 75],
     formats: ['image/avif', 'image/webp'],

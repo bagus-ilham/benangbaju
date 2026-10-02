@@ -35,10 +35,10 @@ export function getImageFallbackChain(originalUrl: string | null | undefined): s
     return [trimmed, DEFAULT_PLACEHOLDER]
   }
 
-  // Supabase Storage URL -> Tier 1: Cloudflare Worker, Tier 2: Supabase Storage, Tier 3: Local Placeholder
+  // Supabase Storage URL -> Tier 1: Cloudflare Worker, Tier 2: Local Placeholder (No raw Supabase leak)
   if (trimmed.startsWith(SUPABASE_STORAGE_PREFIX)) {
     const workerCdnUrl = trimmed.replace(SUPABASE_STORAGE_PREFIX, WORKER_URL)
-    return [workerCdnUrl, trimmed, DEFAULT_PLACEHOLDER]
+    return [workerCdnUrl, DEFAULT_PLACEHOLDER]
   }
 
   // Any other external URL
