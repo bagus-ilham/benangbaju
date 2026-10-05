@@ -144,12 +144,13 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
           toast.error('Pop-up terblokir browser. Harap izinkan pop-up.')
         }
       } else {
-        const { data: urlData } = supabase.storage
+        // Bucket `invoices` is private — use a short-lived signed URL
+        const { data: urlData } = await supabase.storage
           .from('invoices')
-          .getPublicUrl(`${order.order_number}.html`)
+          .createSignedUrl(`${order.order_number}.html`, 60)
 
-        if (urlData?.publicUrl) {
-          window.open(urlData.publicUrl, '_blank')
+        if (urlData?.signedUrl) {
+          window.open(urlData.signedUrl, '_blank')
         } else {
           toast.error('Gagal menemukan tautan unduh invoice')
         }
