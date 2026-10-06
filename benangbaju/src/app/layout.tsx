@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { Mulish, Caveat } from 'next/font/google'
+import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/siteUrl'
 import './globals.css'
 
 const mulish = Mulish({
@@ -22,7 +23,7 @@ const caveat = Caveat({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'),
+  metadataBase: new URL(SITE_URL),
   title: 'Benangbaju — Show How Really Well-Dressed You Are',
   description:
     'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
@@ -33,10 +34,11 @@ export const metadata: Metadata = {
     title: 'Benangbaju — Show How Really Well-Dressed You Are',
     description:
       'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
-    url: 'https://www.benangbaju.com',
+    url: SITE_URL,
     siteName: 'Benangbaju',
     locale: 'id_ID',
     type: 'website',
+    images: [DEFAULT_OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',

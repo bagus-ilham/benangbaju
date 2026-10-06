@@ -10,18 +10,23 @@ import { FeaturedProductsSection } from '@/modules/products/components/FeaturedP
 import { NewArrivalsSection } from '@/modules/products/components/NewArrivalsSection'
 import { RecentlyViewedSection } from '@/modules/products/components/RecentlyViewedSection'
 import { ProductGridSkeleton } from '@/shared/components'
+import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/siteUrl'
 
 export async function generateMetadata() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
   return {
     title: 'Benangbaju - Show How Really Well-Dressed You Are',
     description:
       'Belanja koleksi pakaian sederhana namun unik dari Benangbaju. Belanja mudah, cepat, dan aman.',
+    alternates: { canonical: `${SITE_URL}/` },
     openGraph: {
       title: 'Benangbaju - Show How Really Well-Dressed You Are',
       description: 'Temukan koleksi pakaian sederhana namun unik di Benangbaju.',
-      url: baseUrl,
+      url: `${SITE_URL}/`,
+      siteName: 'Benangbaju',
+      locale: 'id_ID',
       type: 'website',
+      // Must be explicit: a child openGraph object replaces the root one (incl. its image)
+      images: [DEFAULT_OG_IMAGE],
     },
   }
 }

@@ -6,6 +6,8 @@ import { productService } from '@/modules/products/product.service'
 import { ProductDetailClient } from './ProductDetailClient'
 import { RelatedProducts } from './RelatedProducts'
 import { ProductGridSkeleton } from '@/shared/components'
+import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/siteUrl'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface ProductPageProps {
   params: Promise<{
@@ -59,14 +61,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   try {
     const product = await getCachedProduct(slug)
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
+    const baseUrl = SITE_URL
 
-    // Determine primary image
+    // Determine primary image (always via CDN so crawlers never hit Supabase Storage)
     let imageUrl = ''
     if (product.product_images && product.product_images.length > 0) {
       const primaryImg =
         product.product_images.find((img) => img.is_primary) || product.product_images[0]
-      imageUrl = primaryImg.url
+      imageUrl = getProxiedImageUrl(primaryImg.url)
     }
 
     return {
@@ -83,14 +85,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
           product.short_description ||
           `Beli ${product.name} koleksi terbaik dari Benangbaju.`,
         url: `${baseUrl}/produk/${slug}`,
-        images: imageUrl ? [{ url: imageUrl }] : [],
+        images: imageUrl ? [{ url: imageUrl }] : [DEFAULT_OG_IMAGE],
         type: 'website',
       },
       twitter: {
         card: 'summary_large_image',
         title: product.meta_title || `${product.name} | Benangbaju`,
         description: product.meta_description || product.short_description || '',
-        images: imageUrl ? [imageUrl] : [],
+        images: imageUrl ? [imageUrl] : [DEFAULT_OG_IMAGE.url],
       },
     }
   } catch {
@@ -131,12 +133,12 @@ export default async function ProductDetailPage({
   ) : null
 
   // Generate JSON-LD
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
+  const baseUrl = SITE_URL
   let primaryImageUrl = ''
   if (product.product_images && product.product_images.length > 0) {
     const primaryImg =
       product.product_images.find((img) => img.is_primary) || product.product_images[0]
-    primaryImageUrl = primaryImg.url
+    primaryImageUrl = getProxiedImageUrl(primaryImg.url)
   }
 
   // Find cheapest price for Offer
