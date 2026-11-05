@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useProducts } from '@/modules/products/hooks/useProducts'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { PageContainer, ProductGridSkeleton, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 const gridVariants = {
   hidden: { opacity: 0 },
@@ -27,6 +28,8 @@ const cardVariants = {
 }
 
 function SearchResultsContent() {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
 
@@ -46,16 +49,16 @@ function SearchResultsContent() {
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero
-          eyebrow="Hasil Pencarian"
-          title={query ? `"${query}"` : 'Pencarian Produk'}
-          subtitle="Gagal memuat hasil pencarian"
+          eyebrow={isMY ? 'Search Results' : 'Hasil Pencarian'}
+          title={query ? `"${query}"` : (isMY ? 'Product Search' : 'Pencarian Produk')}
+          subtitle={isMY ? 'Failed to load search results' : 'Gagal memuat hasil pencarian'}
         />
         <PageContainer className="py-10 page-content">
           <EmptyState
-            title="Gagal Memuat Hasil Pencarian"
-            description="Terjadi kesalahan koneksi saat mencari produk. Silakan coba kembali."
+            title={isMY ? 'Failed to Load Search Results' : 'Gagal Memuat Hasil Pencarian'}
+            description={isMY ? 'Connection error occurred while searching products. Please try again.' : 'Terjadi kesalahan koneksi saat mencari produk. Silakan coba kembali.'}
             action={{
-              label: 'Coba Lagi',
+              label: isMY ? 'Try Again' : 'Coba Lagi',
               onClick: () => window.location.reload(),
             }}
           />
@@ -69,16 +72,16 @@ function SearchResultsContent() {
       <PageHero
         eyebrow="Hasil Pencarian"
         title={query ? `"${query}"` : 'Pencarian Produk'}
-        subtitle={`Ditemukan ${totalCount} produk yang cocok.`}
+        subtitle={isMY ? `Found ${totalCount} matching products.` : `Ditemukan ${totalCount} produk yang cocok.`}
       />
       <PageContainer className="py-10 page-content">
         {isLoading ? (
           <ProductGridSkeleton count={8} />
         ) : products.length === 0 ? (
           <EmptyState
-            title="Produk Tidak Ditemukan"
-            description={`Tidak ditemukan produk yang cocok dengan kata kunci "${query}".`}
-            action={{ label: 'Jelajahi Katalog', href: '/produk' }}
+            title={isMY ? 'No Products Found' : 'Produk Tidak Ditemukan'}
+            description={isMY ? `No products match the keyword "${query}".` : `Tidak ditemukan produk yang cocok dengan kata kunci "${query}".`}
+            action={{ label: isMY ? 'Explore Catalog' : 'Jelajahi Katalog', href: '/produk' }}
           />
         ) : (
           <motion.div

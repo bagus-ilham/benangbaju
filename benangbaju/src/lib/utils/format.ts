@@ -107,6 +107,7 @@ export function formatDateWithTimezone(
   const isMalaysia = countryCode?.toUpperCase() === 'MY'
   const timeZone = isMalaysia ? 'Asia/Kuala_Lumpur' : 'Asia/Jakarta'
   const tzSuffix = isMalaysia ? 'MYT (GMT+8)' : 'WIB'
+  const locale = isMalaysia ? 'en-GB' : 'id-ID'
 
   const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -119,7 +120,7 @@ export function formatDateWithTimezone(
     ...options,
   }
 
-  const formatted = new Intl.DateTimeFormat('id-ID', defaultOptions).format(d)
+  const formatted = new Intl.DateTimeFormat(locale, defaultOptions).format(d)
   return `${formatted} ${tzSuffix}`
 }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Input, Button, HandDrawnIcon } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface EditProfileFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +25,8 @@ export function EditProfileForm({
   handleUpdateProfile,
   isSaving,
 }: EditProfileFormProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   return (
     <motion.div
       variants={itemVariants}
@@ -37,23 +40,23 @@ export function EditProfileForm({
             className="w-4 h-4"
           />
         </motion.div>
-        Informasi Profil
+        {isMY ? 'Profile Information' : 'Informasi Profil'}
       </h2>
 
       <form onSubmit={handleUpdateProfile} className="space-y-6">
-        <Input label="Email (Tidak dapat diubah)" value={email} readOnly disabled />
+        <Input label={isMY ? "Email (Read-only)" : "Email (Tidak dapat diubah)"} value={email} readOnly disabled />
 
         <Input
-          label="Nama Lengkap*"
+          label={isMY ? "Full Name*" : "Nama Lengkap*"}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nama lengkap Anda"
+          placeholder={isMY ? "Your full name" : "Nama lengkap Anda"}
           maxLength={100}
           required
         />
 
         <Input
-          label="Nomor Telepon"
+          label={isMY ? "Phone Number" : "Nomor Telepon"}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           maxLength={20}
@@ -67,7 +70,7 @@ export function EditProfileForm({
             isLoading={isSaving}
             className="text-xs uppercase tracking-widest font-bold py-3 px-6"
           >
-            Simpan Perubahan
+            {isMY ? "Save Changes" : "Simpan Perubahan"}
           </Button>
         </div>
       </form>

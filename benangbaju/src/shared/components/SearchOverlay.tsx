@@ -6,7 +6,9 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { safeLogError } from '@/lib/logger'
 import { getProductsAction } from '@/modules/products/actions'
 import { type ProductListItem } from '@/modules/products/types'
@@ -22,6 +24,8 @@ interface SearchOverlayProps {
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
+  const market = useMarket()
+  const { myrExchangeRate } = useSiteSettings()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [instantResults, setInstantResults] = useState<ProductListItem[]>([])
@@ -52,9 +56,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           onClose()
         } else {
           // Open handled by parent or trigger toggle
-          const searchBtn = document.querySelector(
-            '[aria-label="Cari produk"]'
-          ) as HTMLButtonElement
+          const searchBtn = (document.querySelector(
+            '[aria-label="Search products"]'
+          ) || document.querySelector('[aria-label="Cari produk"]')) as HTMLButtonElement
           searchBtn?.click()
         }
       }
@@ -146,7 +150,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-neutral-400 hover:text-brand-plum transition-colors cursor-pointer p-1"
-              aria-label="Tutup pencarian"
+              aria-label={market === 'MY' ? 'Close search' : 'Tutup pencarian'}
             >
               <HandDrawnIcon name="close" className="h-5 w-5" />
             </button>
@@ -155,10 +159,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
-                    Cari Koleksi
+                    {market === 'MY' ? 'Explore Collection' : 'Cari Koleksi'}
                   </span>
                   <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-plum">
-                    Pencarian Produk
+                    {market === 'MY' ? 'Product Search' : 'Pencarian Produk'}
                   </h3>
                 </div>
                 <span className="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-2 py-1 rounded hidden sm:inline-block">
@@ -168,10 +172,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
               <form onSubmit={handleSearchSubmit} className="relative">
                 <Input
-                  label="Kata kunci"
+                  label={market === 'MY' ? 'Keywords' : 'Kata kunci'}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Masukkan kata kunci produk (cth: kemeja, blus, rok)..."
+                  placeholder={market === 'MY' ? 'Search apparel (e.g. blouse, skirt, palazzo, baju kurung)...' : 'Masukkan kata kunci produk (cth: kemeja, blus, rok)...'}
                   className="w-full bg-transparent border-none text-xl md:text-2xl font-sans font-light text-brand-plum placeholder:text-neutral-300 focus:outline-none focus:ring-0"
                   rightIcon={
                     <button type="submit" aria-label="Cari produk" className="cursor-pointer p-1">
@@ -190,7 +194,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       <div className="flex items-center space-x-1.5 text-neutral-400">
                         <HandDrawnIcon name="history" className="h-3.5 w-3.5" />
                         <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
-                          Pencarian Terakhir
+                          {market === 'MY' ? 'Recent Searches' : 'Pencarian Terakhir'}
                         </span>
                       </div>
                       <button
@@ -219,7 +223,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 <div className="border border-neutral-100 bg-neutral-50/50 p-4 -mt-2 space-y-3 rounded-xl">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-neutral-400">
-                      Hasil Pencarian Instan
+                      {market === 'MY' ? 'Instant Results' : 'Hasil Pencarian Instan'}
                     </span>
                     {isSearchingInstant && (
                       <div className="flex items-center space-x-1.5 text-brand-plum">
@@ -230,7 +234,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                           aria-hidden="true"
                         />
                         <span className="text-[8px] font-sans font-bold uppercase tracking-wider">
-                          Mencari...
+                          {market === 'MY' ? 'Searching...' : 'Mencari...'}
                         </span>
                       </div>
                     )}
@@ -273,9 +277,16 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                               <h4 className="text-[11px] font-sans font-bold uppercase tracking-wider text-brand-plum truncate group-hover:text-brand-plum transition-colors">
                                 {product.name}
                               </h4>
-                              <p className="text-[10px] font-sans font-medium text-neutral-500 mt-0.5">
-                                {formatIDR(minPrice)}
-                              </p>
+                              <div className="mt-0.5">
+                                <span className="text-[10px] font-sans font-medium text-neutral-600">
+                                  {formatIDR(minPrice)}
+                                </span>
+                                {market === 'MY' && (
+                                  <span className="text-[9px] font-sans font-bold text-emerald-800 ml-1.5">
+                                    {formatApproxMYR(minPrice, myrExchangeRate)}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div className="pr-2 text-neutral-300 group-hover:text-brand-plum transition-colors">
                               <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
@@ -288,13 +299,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         onClick={handleSearchSubmit}
                         className="w-full pt-2 pb-1 text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum hover:opacity-75 transition-colors"
                       >
-                        Lihat semua hasil untuk "{searchQuery}"
+                        {market === 'MY' ? `View all results for "${searchQuery}"` : `Lihat semua hasil untuk "${searchQuery}"`}
                       </button>
                     </div>
                   ) : !isSearchingInstant ? (
                     <div className="py-4 text-center">
                       <p className="text-[10px] text-neutral-500 font-sans">
-                        Tidak ada produk yang cocok dengan "{searchQuery}"
+                        {market === 'MY' ? `No products match "${searchQuery}"` : `Tidak ada produk yang cocok dengan "${searchQuery}"`}
                       </p>
                     </div>
                   ) : null}

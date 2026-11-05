@@ -6,6 +6,7 @@ import { Badge } from '@/shared/components/Badge'
 import { Button } from '@/shared/components/Button'
 import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface AddressCardProps {
   address: UserAddress
@@ -28,6 +29,8 @@ export function AddressCard({
   showActions = true,
   showSelectButton = false,
 }: AddressCardProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY' || address.country_code === 'MY'
   return (
     <div
       onClick={() => onSelect?.(address)}
@@ -51,7 +54,7 @@ export function AddressCard({
           <span className="font-bold text-brand-plum">{address.label}</span>
           {address.is_default && (
             <Badge variant="gold" className="text-[10px] py-0 px-2">
-              Utama
+              {isMY ? 'Default' : 'Utama'}
             </Badge>
           )}
         </div>
@@ -86,7 +89,7 @@ export function AddressCard({
                 }}
                 className="flex items-center text-xs text-neutral-600 hover:text-brand-accent transition duration-100"
               >
-                <HandDrawnIcon name="edit" className="h-3.5 w-3.5 mr-1" /> Ubah
+                <HandDrawnIcon name="edit" className="h-3.5 w-3.5 mr-1" /> {isMY ? 'Edit' : 'Ubah'}
               </button>
             )}
             {onDelete && !address.is_default && (
@@ -100,7 +103,7 @@ export function AddressCard({
                 }}
                 className="flex items-center text-xs text-red-500 hover:text-red-700 transition duration-100"
               >
-                <HandDrawnIcon name="trash" className="h-3.5 w-3.5 mr-1" /> Hapus
+                <HandDrawnIcon name="trash" className="h-3.5 w-3.5 mr-1" /> {isMY ? 'Delete' : 'Hapus'}
               </button>
             )}
           </div>
@@ -114,7 +117,7 @@ export function AddressCard({
               }}
               className="text-xs text-neutral-600 hover:text-brand-accent hover:underline font-semibold transition duration-100"
             >
-              Jadikan Utama
+              {isMY ? 'Set as Default' : 'Jadikan Utama'}
             </button>
           )}
         </div>
@@ -131,7 +134,7 @@ export function AddressCard({
               onSelect(address)
             }}
           >
-            Pilih Alamat Ini
+            {isMY ? 'Select Address' : 'Pilih Alamat'} Ini
           </Button>
         </div>
       )}

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface CatalogMobileFiltersProps {
   showMobileFilters: boolean
@@ -21,6 +22,8 @@ export function CatalogMobileFilters({
   handleCategorySelect,
   handleClearAll,
 }: CatalogMobileFiltersProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   return (
     <>
       <div
@@ -67,7 +70,7 @@ export function CatalogMobileFilters({
                   {!categorySlug && (
                     <span className="w-1.5 h-1.5 rounded-full bg-brand-plum shrink-0" />
                   )}
-                  <span>Semua Kategori</span>
+                  <span>{isMY ? 'All Categories' : 'Semua Kategori'}</span>
                 </button>
               </li>
               {categories.map((cat) => {

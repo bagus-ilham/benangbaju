@@ -20,14 +20,14 @@ describe('formatDateWithTimezone', () => {
   it('formats Malaysian dates with MYT (GMT+8) suffix and +1h offset', () => {
     const formatted = formatDateWithTimezone(utcDate, 'MY')
     expect(formatted).toContain('MYT (GMT+8)')
-    expect(formatted).toContain('11.30')
+    expect(formatted).toMatch(/11[:.]30/)
     expect(formatted).toContain('2026')
   })
 
   it('handles lowercase country code', () => {
     const formatted = formatDateWithTimezone(utcDate, 'my')
     expect(formatted).toContain('MYT (GMT+8)')
-    expect(formatted).toContain('11.30')
+    expect(formatted).toMatch(/11[:.]30/)
   })
 
   it('handles null, undefined, and invalid inputs gracefully', () => {
@@ -41,7 +41,7 @@ describe('formatDateWithTimezone', () => {
     const d = new Date(utcDate)
     const formatted = formatDateWithTimezone(d, 'MY')
     expect(formatted).toContain('MYT (GMT+8)')
-    expect(formatted).toContain('11.30')
+    expect(formatted).toMatch(/11[:.]30/)
   })
 })
 

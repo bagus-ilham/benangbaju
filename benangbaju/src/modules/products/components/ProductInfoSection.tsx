@@ -67,25 +67,27 @@ export function ProductInfoSection({
       const res = await toggleStockNotificationAction(selectedVariant.id)
       if (res.isSubscribed) {
         const { default: toast } = await import('react-hot-toast')
-        toast.success('Kami akan mengabari Anda jika stok produk ini telah tersedia kembali!')
+        toast.success(market === 'MY' ? 'We will notify you when this item is back in stock!' : 'Kami akan mengabari Anda jika stok produk ini telah tersedia kembali!')
       } else {
         const { default: toast } = await import('react-hot-toast')
-        toast.success('Langganan notifikasi restock dibatalkan.')
+        toast.success(market === 'MY' ? 'Restock notification cancelled.' : 'Langganan notifikasi restock dibatalkan.')
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const { default: toast } = await import('react-hot-toast')
       if (err.name === 'UnauthorizedError') {
-        toast.error('Silakan masuk (login) terlebih dahulu untuk mengaktifkan notifikasi restock.')
+        toast.error(market === 'MY' ? 'Please sign in first to enable restock notification.' : 'Silakan masuk (login) terlebih dahulu untuk mengaktifkan notifikasi restock.')
       } else {
-        toast.error('Gagal mengaktifkan notifikasi restock.')
+        toast.error(market === 'MY' ? 'Failed to enable restock notification.' : 'Gagal mengaktifkan notifikasi restock.')
       }
     }
   }
 
   const handleWhatsAppCS = () => {
     const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
-    const text = `Halo Admin Benangbaju, saya mau bertanya mengenai produk ${product.name}:\n${currentUrl}`
+    const text = market === 'MY'
+      ? `Hello Benangbaju CS, I would like to ask about this item (${product.name}):\n${currentUrl}`
+      : `Halo Admin Benangbaju, saya mau bertanya mengenai produk ${product.name}:\n${currentUrl}`
     const waBase = SOCIAL_LINKS.whatsapp || 'https://wa.me/6285179747449'
     const waUrl = `${waBase.includes('wa.me') ? waBase : `https://wa.me/${waBase}`}?text=${encodeURIComponent(text)}`
     window.open(waUrl, '_blank')
@@ -143,13 +145,30 @@ export function ProductInfoSection({
           )}
           </div>
           {market === 'MY' && (
-            <span className="text-xs font-sans font-bold text-emerald-800 mt-1">
-              {selectedVariant
-                ? formatApproxMYR(selectedVariant.price, myrExchangeRate)
-                : minPrice === maxPrice
-                  ? formatApproxMYR(minPrice, myrExchangeRate)
-                  : `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`}
-            </span>
+            <div className="flex items-center space-x-2.5 mt-1">
+              <span className="text-xs font-sans font-bold text-emerald-800">
+                {selectedVariant
+                  ? formatApproxMYR(selectedVariant.price, myrExchangeRate)
+                  : minPrice === maxPrice
+                    ? formatApproxMYR(minPrice, myrExchangeRate)
+                    : `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`}
+              </span>
+              {selectedVariant ? (
+                selectedVariant.compare_price &&
+                Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
+                  <span className="text-xs text-neutral-500 line-through font-sans">
+                    {formatApproxMYR(Number(selectedVariant.compare_price), myrExchangeRate)}
+                  </span>
+                )
+              ) : (
+                product.product_variants[0]?.compare_price &&
+                Number(product.product_variants[0].compare_price) > minPrice && (
+                  <span className="text-xs text-neutral-500 line-through font-sans">
+                    {formatApproxMYR(Number(product.product_variants[0].compare_price), myrExchangeRate)}
+                  </span>
+                )
+              )}
+            </div>
           )}
         </div>
       </motion.div>
@@ -239,7 +258,7 @@ export function ProductInfoSection({
             whileHover={{ scale: 1.05 }}
             onClick={onToggleWishlist}
             className="p-4 border border-neutral-200 hover:border-brand-accent bg-brand-cream transition-all text-neutral-600 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
-            aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
+            aria-label={liked ? (market === 'MY' ? 'Remove from wishlist' : 'Hapus dari wishlist') : (market === 'MY' ? 'Add to wishlist' : 'Tambah ke wishlist')}
           >
             <HandDrawnIcon
               name={liked ? 'heart-filled' : 'heart'}

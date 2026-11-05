@@ -1,17 +1,13 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { SmartLink as Link } from '@/shared/components'
-import Image from 'next/image'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
-import { PageHero, PageContainer, EmptyState, HandDrawnIcon } from '@/shared/components'
-import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { CategoriesClient } from './CategoriesClient'
+import { cacheLife, cacheTag } from 'next/cache'
 
 export const metadata: Metadata = {
   title: 'Kategori Produk | Benangbaju',
   description: 'Jelajahi berbagai kategori produk terbaik dari Benangbaju',
 }
-
-import { cacheLife, cacheTag } from 'next/cache'
 
 async function getCategories() {
   'use cache'
@@ -25,61 +21,5 @@ export default async function CategoriesIndexPage(): Promise<React.JSX.Element> 
   const categories = categoriesRes.data || []
   const parentCategories = categories.filter((cat) => !cat.parent_id)
 
-  return (
-    <div className="bg-brand-cream min-h-screen">
-      <PageHero
-        eyebrow="Kategori"
-        title="Jelajahi Kategori"
-        subtitle="Temukan koleksi pakaian sederhana namun unik berdasarkan kategori pilihan Anda."
-      />
-
-      <PageContainer className="py-12 md:py-16 page-content">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-          {parentCategories.map((cat, index) => (
-            <Link
-              key={cat.id}
-              href={`/kategori/${cat.slug}`}
-              className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-100 border border-neutral-200/80 rounded-2xl block hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
-            >
-
-              {cat.image_url ? (
-                <Image
-                  src={getProxiedImageUrl(cat.image_url)}
-                  alt={cat.name}
-                  fill
-                  sizes="(max-w-7xl) 33vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
-                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">
-                    {cat.name}
-                  </span>
-                </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-15" />
-
-              <div className="absolute top-4 left-4 px-2.5 py-1 bg-brand-gold/90 backdrop-blur-sm border border-brand-gold rounded-full z-20">
-                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum">
-                  0{index + 1}
-                </span>
-              </div>
-
-              <div className="absolute inset-0 flex flex-col items-center justify-end p-6 md:p-8 text-white text-center space-y-2 z-10">
-                <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-widest leading-none">
-                  {cat.name}
-                </h2>
-                <div className="w-8 h-px bg-brand-accent-light group-hover:w-16 transition-all duration-500" />
-                {cat.description && (
-                  <p className="text-[10px] text-neutral-300 font-sans line-clamp-2 max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    {cat.description}
-                  </p>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </PageContainer>
-    </div>
-  )
+  return <CategoriesClient parentCategories={parentCategories} />
 }

@@ -5,6 +5,8 @@ import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { ProductVariant } from '@/modules/products/types'
+import { useMarket } from '@/shared/stores/marketStore'
+import { translateVariantAttrName } from '@/lib/i18n'
 
 interface VariantPickerProps {
   variants: ProductVariant[]
@@ -17,6 +19,8 @@ export function VariantPicker({
   selectedVariantId,
   onVariantSelect,
 }: VariantPickerProps): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   // 1. Group all attribute names and their unique values
   const attributeGroups = useMemo(() => {
     const groups: Record<string, string[]> = {}
@@ -222,7 +226,7 @@ export function VariantPicker({
                 id={`label-variant-${name}`}
                 className="text-[11px] uppercase tracking-wider font-sans font-bold text-brand-plum"
               >
-                Pilih {name}{selectedValues[name] ? <span className="normal-case font-bold text-brand-accent-dark text-neutral-800 ml-1.5">: {selectedValues[name]}</span> : ''}
+                {isMY ? 'Select' : 'Pilih'} {translateVariantAttrName(name, isMY)}{selectedValues[name] ? <span className="normal-case font-bold text-brand-accent-dark text-neutral-800 ml-1.5">: {selectedValues[name]}</span> : ''}
               </span>
             </div>
             <div
@@ -240,7 +244,7 @@ export function VariantPicker({
                     role="radio"
                     aria-checked={isSelected}
                     disabled={disabled}
-                    aria-label={`${val}${disabled ? ' - Habis Terjual' : ''}`}
+                    aria-label={`${val}${disabled ? (isMY ? ' - Out of Stock' : ' - Habis Terjual') : ''}`}
                     onClick={() => handleSelect(name, val)}
                     whileHover={!disabled ? { y: -1 } : {}}
                     whileTap={!disabled ? { scale: 0.97 } : {}}

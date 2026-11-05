@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface AccountNavMenuProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,10 +13,13 @@ export function AccountNavMenu({
   itemVariants,
   handleSignOut,
 }: AccountNavMenuProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
+
   return (
     <motion.div variants={itemVariants} className="space-y-2 md:col-span-1">
       <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-neutral-600 mb-4">
-        Navigasi Akun
+        {isMY ? 'Account Navigation' : 'Navigasi Akun'}
       </h2>
 
       <Link href="/pesanan">
@@ -25,7 +29,7 @@ export function AccountNavMenu({
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <HandDrawnIcon name="clipboard-list" className="w-3.5 h-3.5" />
-          <span>Pesanan Saya</span>
+          <span>{isMY ? 'My Orders' : 'Pesanan Saya'}</span>
         </motion.div>
       </Link>
 
@@ -36,7 +40,7 @@ export function AccountNavMenu({
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <HandDrawnIcon name="map-pin" className="w-3.5 h-3.5" />
-          <span>Daftar Alamat</span>
+          <span>{isMY ? 'Saved Addresses' : 'Daftar Alamat'}</span>
         </motion.div>
       </Link>
 
@@ -47,7 +51,7 @@ export function AccountNavMenu({
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <HandDrawnIcon name="heart" className="w-3.5 h-3.5" />
-          <span>Wishlist Saya</span>
+          <span>{isMY ? 'My Wishlist' : 'Wishlist Saya'}</span>
         </motion.div>
       </Link>
 
@@ -58,7 +62,7 @@ export function AccountNavMenu({
           className="flex items-center space-x-3 px-4 py-3 border border-neutral-200/80 text-brand-plum hover:text-brand-plum font-sans font-bold tracking-wide uppercase transition-colors duration-200 rounded-xl text-xs bg-brand-cream cursor-pointer shadow-xs"
         >
           <HandDrawnIcon name="bell" className="w-3.5 h-3.5" />
-          <span>Notifikasi Saya</span>
+          <span>{isMY ? 'My Notifications' : 'Notifikasi Saya'}</span>
         </motion.div>
       </Link>
 
@@ -73,7 +77,7 @@ export function AccountNavMenu({
         className="w-full flex items-center space-x-3 px-4 py-3 border border-red-200 text-red-600 hover:text-red-700 font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-xl text-xs text-left bg-brand-cream cursor-pointer shadow-xs"
       >
         <HandDrawnIcon name="logout" className="w-3.5 h-3.5" />
-        <span>Keluar dari Akun</span>
+        <span>{isMY ? 'Sign Out' : 'Keluar dari Akun'}</span>
       </motion.button>
     </motion.div>
   )

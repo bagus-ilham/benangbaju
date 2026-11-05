@@ -12,9 +12,12 @@ import type { UserAddress } from '@/modules/shipping/types'
 import { AddressCard } from '@/modules/users/components/AddressCard'
 import { AddressModal } from '@/modules/users/components/AddressModal'
 import { AuthLoading, Button, PageContainer, PageHero, HandDrawnIcon, SmartLink as Link } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
 export default function AlamatPage(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [modalOpen, setModalOpen] = useState(false)
@@ -68,18 +71,18 @@ export default function AlamatPage(): React.JSX.Element {
   return (
     <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
-        eyebrow="Pengiriman"
-        title="Daftar Alamat"
-        subtitle="Kelola alamat pengiriman Anda untuk memudahkan proses checkout."
+        eyebrow={isMY ? "Shipping" : "Pengiriman"}
+        title={isMY ? "Saved Addresses" : "Daftar Alamat"}
+        subtitle={isMY ? "Manage your delivery addresses for seamless checkout." : "Kelola alamat pengiriman Anda untuk memudahkan proses checkout."}
       />
       <PageContainer size="lg" className="py-10 page-content">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-500">
             <Link href="/akun" className="hover:text-brand-plum transition font-sans font-bold">
-              Akun Saya
+              {isMY ? "My Account" : "Akun Saya"}
             </Link>
             <span>/</span>
-            <span className="text-brand-plum font-bold">Daftar Alamat</span>
+            <span className="text-brand-plum font-bold">{isMY ? "Saved Addresses" : "Daftar Alamat"}</span>
           </div>
           <Button
             onClick={() => {
@@ -89,7 +92,7 @@ export default function AlamatPage(): React.JSX.Element {
             variant="accent"
             className="flex items-center justify-center text-xs uppercase tracking-widest font-bold py-3 px-5"
           >
-            <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-2" /> Tambah Alamat
+            <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-2" /> {isMY ? "Add Address" : "Tambah Alamat"}
           </Button>
         </div>
 
@@ -112,7 +115,7 @@ export default function AlamatPage(): React.JSX.Element {
           </div>
         ) : (
           <div className="text-center py-16 border border-dashed border-neutral-200 bg-neutral-50/50">
-            <p className="text-sm text-neutral-500 mb-4">Anda belum memiliki alamat pengiriman.</p>
+            <p className="text-sm text-neutral-500 mb-4">{isMY ? "You have no saved shipping addresses." : "Anda belum memiliki alamat pengiriman."}</p>
             <Button
               onClick={() => {
                 setAddressToEdit(null)
@@ -121,7 +124,7 @@ export default function AlamatPage(): React.JSX.Element {
               variant="outline"
               className="text-xs uppercase tracking-widest font-semibold"
             >
-              Tambah Alamat Pertama
+              {isMY ? "Add Your First Address" : "Tambah Alamat Pertama"}
             </Button>
           </div>
         )}
@@ -131,7 +134,7 @@ export default function AlamatPage(): React.JSX.Element {
             href="/akun"
             className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-plum transition-colors duration-200"
           >
-            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> Kembali ke Akun
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> {isMY ? "Back to Account" : "Kembali ke Akun"}
           </Link>
         </div>
       </PageContainer>

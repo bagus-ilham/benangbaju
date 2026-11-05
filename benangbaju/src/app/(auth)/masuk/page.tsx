@@ -6,11 +6,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, Card, AuthLoading } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import toast from 'react-hot-toast'
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google'
 
 function LoginContent() {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createBrowserClient()
@@ -114,10 +117,10 @@ function LoginContent() {
               />
             </div>
             <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
-              Masuk Akun
+              {isMY ? 'Sign In' : 'Masuk Akun'}
             </h2>
             <p className="text-[11px] md:text-xs text-neutral-600 font-sans">
-              Silakan masukkan email dan kata sandi Anda untuk melanjutkan.
+              {isMY ? 'Please enter your email and password to continue.' : 'Silakan masukkan email dan kata sandi Anda untuk melanjutkan.'}
             </p>
           </motion.div>
 
@@ -137,7 +140,7 @@ function LoginContent() {
             <motion.div variants={fadeUpItem} className="flex flex-col space-y-1 font-sans">
               <div className="flex justify-between items-center">
                 <label htmlFor="password" className="text-[10px] uppercase tracking-wider font-sans font-bold text-brand-plum">
-                  Kata Sandi
+                  {isMY ? 'Password' : 'Kata Sandi'}
                 </label>
                 <Link
                   href="/lupa-password"
@@ -171,7 +174,7 @@ function LoginContent() {
               <div className="w-full border-t border-neutral-200/80"></div>
             </div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
-              <span className="bg-brand-cream px-3 text-neutral-600">Atau masuk dengan</span>
+              <span className="bg-brand-cream px-3 text-neutral-600">{isMY ? 'Or sign in with' : 'Atau masuk dengan'}</span>
             </div>
           </motion.div>
 
@@ -193,7 +196,7 @@ function LoginContent() {
             className="text-center mt-8 pt-4 border-t border-neutral-100"
           >
             <p className="text-xs text-neutral-600 font-sans">
-              Belum punya akun?{' '}
+              {isMY ? "Don't have an account? " : "Belum punya akun? "}
               <Link href="/daftar" className="text-brand-plum font-semibold hover:underline">
                 Daftar sekarang
               </Link>

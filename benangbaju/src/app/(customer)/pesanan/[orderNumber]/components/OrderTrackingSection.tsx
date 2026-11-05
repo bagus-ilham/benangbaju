@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface OrderTrackingSectionProps {
   status: string
@@ -11,11 +12,13 @@ export function OrderTrackingSection({
   status,
   cancelReason,
 }: OrderTrackingSectionProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const steps = [
-    { id: 'pending_payment', label: 'Menunggu Pembayaran', icon: <HandDrawnIcon name="clock" className="h-4 w-4" /> },
-    { id: 'processing', label: 'Diproses Seller', icon: <HandDrawnIcon name="package" className="h-4 w-4" /> },
-    { id: 'shipped', label: 'Dalam Pengiriman', icon: <HandDrawnIcon name="truck" className="h-4 w-4" /> },
-    { id: 'completed', label: 'Pesanan Selesai', icon: <HandDrawnIcon name="check-circle" className="h-4 w-4" /> },
+    { id: 'pending_payment', label: isMY ? 'Pending Payment' : 'Menunggu Pembayaran', icon: <HandDrawnIcon name="clock" className="h-4 w-4" /> },
+    { id: 'processing', label: isMY ? 'Processing' : 'Diproses Seller', icon: <HandDrawnIcon name="package" className="h-4 w-4" /> },
+    { id: 'shipped', label: isMY ? 'In Transit / Shipped' : 'Dalam Pengiriman', icon: <HandDrawnIcon name="truck" className="h-4 w-4" /> },
+    { id: 'completed', label: isMY ? 'Delivered & Completed' : 'Pesanan Selesai', icon: <HandDrawnIcon name="check-circle" className="h-4 w-4" /> },
   ]
 
   const statusIndex = steps.findIndex((step) => step.id === status)
@@ -24,14 +27,14 @@ export function OrderTrackingSection({
     return (
       <div className="border border-error-border p-5 bg-error-bg card-hover-lift rounded-2xl">
         <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-error mb-4">
-          Status Pesanan
+          {isMY ? 'Order Status' : 'Status Pesanan'}
         </p>
         <div className="flex items-center space-x-3 text-error text-xs font-semibold">
           <HandDrawnIcon name="close" className="h-5 w-5" />
           <div>
-            <p className="font-bold uppercase tracking-wider text-xs">Pesanan Dibatalkan</p>
+            <p className="font-bold uppercase tracking-wider text-xs">{isMY ? 'Order Cancelled' : 'Pesanan Dibatalkan'}</p>
             {cancelReason && (
-              <p className="font-normal text-error/80 mt-1">Alasan: {cancelReason}</p>
+              <p className="font-normal text-error/80 mt-1">{isMY ? `Reason: ${cancelReason}` : `Alasan: ${cancelReason}`}</p>
             )}
           </div>
         </div>
@@ -43,7 +46,7 @@ export function OrderTrackingSection({
     <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans">
       <div className="flex items-center justify-between">
         <p className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
-          Pelacakan Pesanan Live
+          {isMY ? 'Live Order Tracking' : 'Pelacakan Pesanan Live'}
         </p>
         {statusIndex >= 0 && (
           <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-brand-blue/20 border border-brand-blue/40 rounded-full text-[10px] font-sans font-bold text-brand-plum uppercase tracking-wider">

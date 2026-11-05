@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { getActiveCollectionsAction } from '@/modules/collections/actions'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface MobileMenuItem {
   name: string
@@ -25,6 +26,8 @@ export function MobileMenuAccordionItem({
   pathname,
   onClose,
 }: MobileMenuAccordionItemProps) {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [isExpanded, setIsExpanded] = useState(false)
   const [items, setItems] = useState<MobileMenuItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -133,7 +136,7 @@ export function MobileMenuAccordionItem({
                     onClick={onClose}
                     className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 transition-opacity duration-200 pt-2 block"
                   >
-                    Lihat Semua {label} &rarr;
+                    {isMY ? `View All ${label} →` : `Lihat Semua ${label} →`}
                   </Link>
                 </>
               )}

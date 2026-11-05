@@ -4,6 +4,7 @@ import { Modal, Button, Input, Textarea, Checkbox, HandDrawnIcon } from '@/share
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { createBrowserClient } from '@/lib/supabase/client'
+import { useMarket } from '@/shared/stores/marketStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface OrderReviewModalProps {
@@ -21,6 +22,8 @@ export function OrderReviewModal({
   submitReviewMutation,
   refetch,
 }: OrderReviewModalProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewBody, setReviewBody] = useState('')
   const [reviewTitle, setReviewTitle] = useState('')
@@ -33,18 +36,18 @@ export function OrderReviewModal({
     if (e.target.files) {
       const selected = Array.from(e.target.files)
       if (reviewFiles.length + selected.length > 2) {
-        toast.error('Maksimal hanya 2 foto yang diperbolehkan')
+        toast.error(isMY ? 'Maximum 2 photos allowed.' : 'Maksimal hanya 2 foto yang diperbolehkan')
         return
       }
 
       const validFiles = selected.filter((f) => f.type.startsWith('image/'))
       if (validFiles.length !== selected.length) {
-        toast.error('Hanya file gambar yang diperbolehkan')
+        toast.error(isMY ? 'Only image files are allowed.' : 'Hanya file gambar yang diperbolehkan')
       }
 
       const smallFiles = validFiles.filter((f) => f.size <= 2 * 1024 * 1024)
       if (smallFiles.length !== validFiles.length) {
-        toast.error('Ukuran maksimal per foto adalah 2MB')
+        toast.error(isMY ? 'Maximum file size per photo is 2MB.' : 'Ukuran maksimal per foto adalah 2MB')
       }
 
       setReviewFiles((prev) => [...prev, ...smallFiles].slice(0, 2))
@@ -172,7 +175,7 @@ export function OrderReviewModal({
 
           <div className="space-y-1">
             <Input
-              label="Judul Ulasan (Opsional)"
+              label={isMY ? 'Review Title (Optional)' : 'Judul Ulasan (Opsional)'}
               type="text"
               value={reviewTitle}
               onChange={(e) => setReviewTitle(e.target.value)}
@@ -187,7 +190,7 @@ export function OrderReviewModal({
               onChange={(e) => setReviewBody(e.target.value)}
               rows={4}
               required
-              placeholder="Tulis pendapat Anda tentang produk ini..."
+              placeholder={isMY ? 'Share your thoughts about this item...' : 'Tulis pendapat Anda tentang produk ini...'}
             />
           </div>
 
@@ -201,13 +204,13 @@ export function OrderReviewModal({
               htmlFor="is-anonymous"
               className="text-xs text-neutral-600 select-none cursor-pointer"
             >
-              Kirim sebagai Anonim (Sembunyikan nama Anda)
+              {isMY ? 'Submit as Anonymous (Hide your name)' : 'Kirim sebagai Anonim (Sembunyikan nama Anda)'}
             </label>
           </div>
 
           <div className="space-y-2">
             <label className="block text-[10px] uppercase tracking-widest text-neutral-600 font-semibold">
-              Lampirkan Foto (Maks 2 Foto, 2MB/Foto)
+              {isMY ? 'Attach Photos (Max 2 photos, 2MB each)' : 'Lampirkan Foto (Maks 2 Foto, 2MB/Foto)'}
             </label>
 
             <div className="flex flex-wrap gap-3">
@@ -231,7 +234,7 @@ export function OrderReviewModal({
               {reviewFiles.length < 2 && (
                 <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-accent hover:border-brand-accent cursor-pointer transition-colors">
                   <HandDrawnIcon name="image" className="h-5 w-5 mb-1" />
-                  <span className="text-[9px] uppercase tracking-wider font-semibold">Tambah</span>
+                  <span className="text-[9px] uppercase tracking-wider font-semibold">{isMY ? 'Add' : 'Tambah'}</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -260,7 +263,7 @@ export function OrderReviewModal({
               disabled={submitReviewMutation.isPending || isUploading}
               className="flex-1 py-3 text-xs uppercase tracking-widest font-bold"
             >
-              {isUploading ? 'Mengunggah...' : 'Kirim Ulasan'}
+              {isUploading ? (isMY ? 'Uploading...' : 'Mengunggah...') : (isMY ? 'Submit Review' : 'Kirim Ulasan')}
             </Button>
           </div>
         </form>

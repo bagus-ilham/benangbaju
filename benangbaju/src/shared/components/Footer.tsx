@@ -5,8 +5,11 @@ import { SmartLink as Link, CurrentYear, SmartImage as Image, HandDrawnIcon } fr
 
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { useMarket } from '@/shared/stores/marketStore'
 
 export function Footer(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl } = useSiteSettings()
 
   return (
@@ -39,8 +42,7 @@ export function Footer(): React.JSX.Element {
                   />
                 </div>
                 <p className="text-xs text-neutral-600 leading-relaxed max-w-xs font-sans">
-                  Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan
-                  diri lewat sepotong pakaian yang sederhana namun unik.
+                  {isMY ? 'Benangbaju is here to help you express your true self through simple yet distinctively crafted daily apparel.' : 'Benangbaju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.'}
                 </p>
               </div>
             </div>
@@ -125,7 +127,7 @@ export function Footer(): React.JSX.Element {
                 Ikuti Kami
               </p>
               <p className="text-xs text-neutral-600 font-sans mt-1">
-                Temukan inspirasi gaya unik di media sosial kami.
+                {isMY ? 'Discover style inspiration on our social channels.' : 'Temukan inspirasi gaya unik di media sosial kami.'}
               </p>
               <div className="flex space-x-3 pt-1">
                 {instagramUrl && (

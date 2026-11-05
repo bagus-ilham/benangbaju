@@ -1,0 +1,79 @@
+'use client'
+
+import React from 'react'
+import { SmartLink as Link } from '@/shared/components'
+import Image from 'next/image'
+import { PageHero, PageContainer } from '@/shared/components'
+import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { useMarket } from '@/shared/stores/marketStore'
+import type { Category } from '@/modules/categories/types'
+
+interface CategoriesClientProps {
+  parentCategories: Category[]
+}
+
+export function CategoriesClient({ parentCategories }: CategoriesClientProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
+
+  return (
+    <div className="bg-brand-cream min-h-screen">
+      <PageHero
+        eyebrow={isMY ? 'Categories' : 'Kategori'}
+        title={isMY ? 'Explore Categories' : 'Jelajahi Kategori'}
+        subtitle={
+          isMY
+            ? 'Discover distinctively crafted apparel curated by your favorite categories.'
+            : 'Temukan koleksi pakaian sederhana namun unik berdasarkan kategori pilihan Anda.'
+        }
+      />
+
+      <PageContainer className="py-12 md:py-16 page-content">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+          {parentCategories.map((cat, index) => (
+            <Link
+              key={cat.id}
+              href={`/kategori/${cat.slug}`}
+              className="group relative h-80 md:h-96 w-full overflow-hidden bg-neutral-100 border border-neutral-200/80 rounded-2xl block hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
+            >
+              {cat.image_url ? (
+                <Image
+                  src={getProxiedImageUrl(cat.image_url)}
+                  alt={cat.name}
+                  fill
+                  sizes="(max-w-7xl) 33vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
+                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">
+                    {cat.name}
+                  </span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-15" />
+
+              <div className="absolute top-4 left-4 px-2.5 py-1 bg-brand-gold/90 backdrop-blur-sm border border-brand-gold rounded-full z-20">
+                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-plum">
+                  0{index + 1}
+                </span>
+              </div>
+
+              <div className="absolute inset-0 flex flex-col items-center justify-end p-6 md:p-8 text-white text-center space-y-2 z-10">
+                <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-widest leading-none">
+                  {cat.name}
+                </h2>
+                <div className="w-8 h-px bg-brand-accent-light group-hover:w-16 transition-all duration-500" />
+                {cat.description && (
+                  <p className="text-[10px] text-neutral-300 font-sans line-clamp-2 max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    {cat.description}
+                  </p>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </PageContainer>
+    </div>
+  )
+}

@@ -20,6 +20,7 @@ import {
 import { CatalogDesktopFilters, CatalogMobileFilters } from './components'
 import { cn } from '@/lib/utils'
 import { useTransition } from 'react'
+import { useMarket } from '@/shared/stores/marketStore'
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Terkini' },
@@ -48,6 +49,8 @@ export function CatalogClient({
   categories,
   filters,
 }: CatalogClientProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
 
   const { categorySlug, sortBy = 'newest', searchQuery, page = 1, limit = 12 } = filters
@@ -108,9 +111,9 @@ export function CatalogClient({
   return (
     <div className="bg-brand-cream min-h-screen">
       <PageHero
-        eyebrow="Katalog Pakaian"
-        title={categorySlug ? 'Kategori Produk' : 'Koleksi Kami'}
-        subtitle="Jelajahi koleksi pakaian sederhana namun unik dari Benangbaju."
+        eyebrow={isMY ? 'Apparel Catalog' : 'Katalog Pakaian'}
+        title={isMY ? (categorySlug ? 'Product Category' : 'Our Collection') : (categorySlug ? 'Kategori Produk' : 'Koleksi Kami')}
+        subtitle={isMY ? 'Explore simple yet distinctively crafted apparel by Benangbaju.' : 'Jelajahi koleksi pakaian sederhana namun unik dari Benangbaju.'}
       />
       <PageContainer
         className={cn(
@@ -120,7 +123,7 @@ export function CatalogClient({
       >
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
-            Hasil pencarian untuk:{' '}
+            {isMY ? 'Search results for:' : 'Hasil pencarian untuk:'}{' '}
             <strong className="text-brand-plum">&quot;{searchQuery}&quot;</strong> ({totalCount}{' '}
             produk)
           </p>
@@ -133,7 +136,7 @@ export function CatalogClient({
             className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum md:hidden py-2 cursor-pointer"
           >
             <HandDrawnIcon name="sliders" className="h-4 w-4" />
-            <span>Filter</span>
+            <span>{isMY ? 'Filter' : 'Filter'}</span>
           </button>
 
           <div className="hidden md:block" />
@@ -147,7 +150,21 @@ export function CatalogClient({
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center space-x-1 bg-transparent text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors p-1 cursor-pointer">
                   <span>
-                    {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || 'Urutkan'}
+                    {
+                    (() => {
+                      const found = SORT_OPTIONS.find((opt) => opt.value === sortBy)
+                      if (!found) return isMY ? 'Sort' : 'Urutkan'
+                      if (!isMY) return found.label
+                      const enMap: Record<string, string> = {
+                        newest: 'Newest',
+                        featured: 'Featured',
+                        'price-low': 'Price: Low to High',
+                        'price-high': 'Price: High to Low',
+                        popular: 'Most Popular',
+                      }
+                      return enMap[found.value] || found.label
+                    })()
+                  }
                   </span>
                   <HandDrawnIcon name="chevron-down" className="w-3.5 h-3.5" />
                 </button>
@@ -161,7 +178,15 @@ export function CatalogClient({
                       sortBy === opt.value && 'font-bold text-brand-plum bg-brand-blue/15'
                     )}
                   >
-                    {opt.label}
+                    {
+                    isMY ? ({
+                      newest: 'Newest',
+                      featured: 'Featured',
+                      'price-low': 'Price: Low to High',
+                      'price-high': 'Price: High to Low',
+                      popular: 'Most Popular',
+                    }[opt.value] || opt.label) : opt.label
+                  }
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -173,13 +198,13 @@ export function CatalogClient({
         {(categorySlug || searchQuery || (sortBy && sortBy !== 'newest')) && (
           <div className="flex flex-wrap items-center gap-2 mb-8 p-3 bg-brand-cream border border-neutral-200/80 rounded-xl">
             <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-neutral-600">
-              Filter Aktif:
+              {isMY ? 'Active Filters:' : 'Filter Aktif:'}
             </span>
 
             {categorySlug && (
               <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>
-                  Kategori: {categories.find((c) => c.slug === categorySlug)?.name || categorySlug}
+                  {isMY ? 'Category: ' : 'Kategori: '}{categories.find((c) => c.slug === categorySlug)?.name || categorySlug}
                 </span>
                 <button
                   onClick={() => handleCategorySelect(null)}
@@ -193,7 +218,7 @@ export function CatalogClient({
 
             {searchQuery && (
               <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
-                <span>Cari: &quot;{searchQuery}&quot;</span>
+                <span>{isMY ? 'Search: ' : 'Cari: '}&quot;{searchQuery}&quot;</span>
                 <button
                   onClick={() => updateFilters({ q: null })}
                   className="hover:text-red-500 transition-colors ml-1 cursor-pointer"
@@ -206,7 +231,7 @@ export function CatalogClient({
 
             {sortBy && sortBy !== 'newest' && (
               <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
-                <span>Urutan: {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}</span>
+                <span>{isMY ? 'Sort: ' : 'Urutan: '}{SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}</span>
                 <button
                   onClick={() => handleSortSelect('newest')}
                   className="hover:text-red-500 transition-colors ml-1 cursor-pointer"
@@ -221,7 +246,7 @@ export function CatalogClient({
               onClick={handleClearAll}
               className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-600 hover:text-brand-plum underline underline-offset-2 transition-colors ml-auto"
             >
-              Hapus Semua
+              {isMY ? 'Clear All' : 'Hapus Semua'}
             </button>
           </div>
         )}
@@ -251,11 +276,11 @@ export function CatalogClient({
             {initialProducts.length === 0 ? (
               <EmptyState
                 handDrawnIcon="package"
-                title="Produk Tidak Ditemukan"
-                description="Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya."
+                title={isMY ? 'No Products Found' : 'Produk Tidak Ditemukan'}
+                description={isMY ? 'Sorry, we could not find any products matching your filters. Try resetting your filters to explore other pieces.' : 'Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya.'}
                 action={
                   categorySlug || searchQuery
-                    ? { label: 'Tampilkan Semua Produk', onClick: handleClearAll }
+                    ? { label: isMY ? 'Show All Products' : 'Tampilkan Semua Produk', onClick: handleClearAll }
                     : undefined
                 }
                 className="py-12 md:py-20"

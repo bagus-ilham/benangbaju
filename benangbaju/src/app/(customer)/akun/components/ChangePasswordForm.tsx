@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Input, Button, HandDrawnIcon } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface ChangePasswordFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,6 +23,8 @@ export function ChangePasswordForm({
   handleUpdatePassword,
   isSavingPassword,
 }: ChangePasswordFormProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   return (
     <motion.div
       variants={itemVariants}
@@ -32,25 +35,25 @@ export function ChangePasswordForm({
         <motion.div whileHover={{ y: [0, -2, 2, -2, 0] }} className="mr-2">
           <HandDrawnIcon name="lock" className="w-4 h-4" />
         </motion.div>
-        Ganti Kata Sandi
+        {isMY ? 'Change Password' : 'Ganti Kata Sandi'}
       </h2>
 
       <form onSubmit={handleUpdatePassword} className="space-y-6">
         <Input
-          label="Kata Sandi Baru*"
+          label={isMY ? "New Password*" : "Kata Sandi Baru*"}
           type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="Minimal 8 karakter"
+          placeholder={isMY ? "Min. 8 characters" : "Minimal 8 karakter"}
           required
         />
 
         <Input
-          label="Konfirmasi Kata Sandi Baru*"
+          label={isMY ? "Confirm New Password*" : "Konfirmasi Kata Sandi Baru*"}
           type="password"
           value={confirmNewPassword}
           onChange={(e) => setConfirmNewPassword(e.target.value)}
-          placeholder="Ulangi kata sandi baru"
+          placeholder={isMY ? "Re-enter new password" : "Ulangi kata sandi baru"}
           required
         />
 
@@ -61,7 +64,7 @@ export function ChangePasswordForm({
             isLoading={isSavingPassword}
             className="text-xs uppercase tracking-widest font-bold py-3 px-6"
           >
-            Perbarui Kata Sandi
+            {isMY ? "Update Password" : "Perbarui Kata Sandi"}
           </Button>
         </div>
       </form>

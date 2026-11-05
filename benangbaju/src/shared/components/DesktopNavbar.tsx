@@ -5,6 +5,7 @@ import { SmartLink as Link, SmartImage as Image, HandDrawnIcon, MarketSwitcher }
 import { motion } from 'framer-motion'
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
 import { MegaMenuNavItem } from './MegaMenuNavItem'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -46,6 +47,8 @@ export function DesktopNavbar({
   user,
   onLogout,
 }: DesktopNavbarProps) {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const isTransparentHome = pathname === '/' && !isScrolled
 
@@ -71,7 +74,7 @@ export function DesktopNavbar({
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
               )}
-              aria-label="Buka menu"
+              aria-label={isMY ? 'Open menu' : 'Buka menu'}
             >
               <HandDrawnIcon name="menu" className="h-5 w-5" />
             </button>
@@ -153,7 +156,7 @@ export function DesktopNavbar({
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
               )}
-              aria-label="Cari produk"
+              aria-label={isMY ? 'Search products' : 'Cari produk'}
               aria-expanded={isSearchOpen}
             >
               <HandDrawnIcon name="search" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
@@ -191,7 +194,7 @@ export function DesktopNavbar({
                   ? 'text-white/90 hover:text-white'
                   : 'text-neutral-600 hover:text-brand-plum'
               )}
-              aria-label="Keranjang"
+              aria-label={isMY ? 'Shopping Bag' : 'Keranjang'}
             >
               <motion.div
                 animate={animateCart ? { scale: [1, 1.25, 0.95, 1], rotate: [0, -8, 8, 0] } : {}}
@@ -224,7 +227,7 @@ export function DesktopNavbar({
                         ? 'text-white/90 hover:text-white'
                         : 'text-neutral-600 hover:text-brand-plum'
                     )}
-                    aria-label="Menu pengguna"
+                    aria-label={isMY ? 'User menu' : 'Menu pengguna'}
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
                   >
@@ -246,7 +249,7 @@ export function DesktopNavbar({
                       >
                         <div className="px-4 py-3 border-b border-neutral-200/60 bg-brand-cream">
                           <p className="text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-wider mb-0.5">
-                            Halo,
+                            {isMY ? 'Hello,' : 'Halo,'}
                           </p>
                           <p className="text-sm font-bold text-brand-plum truncate">
                             {profile?.name || user?.email}
@@ -260,7 +263,7 @@ export function DesktopNavbar({
                             className="flex items-center gap-2 px-3 py-2 text-xs text-neutral-600 hover:bg-brand-blue/15 hover:text-brand-plum font-bold rounded-lg transition-colors cursor-pointer"
                           >
                             <HandDrawnIcon name="user" className="h-4 w-4" />
-                            <span>Akun Saya</span>
+                            <span>{isMY ? 'My Account' : 'Akun Saya'}</span>
                           </Link>
 
                           {(profile?.role?.toLowerCase() === 'admin' || profile?.role?.toLowerCase() === 'staff') && (
@@ -286,7 +289,7 @@ export function DesktopNavbar({
                             className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-medium rounded-md transition-colors cursor-pointer"
                           >
                             <HandDrawnIcon name="logout" className="h-4 w-4" />
-                            <span>Keluar</span>
+                            <span>{isMY ? 'Sign Out' : 'Keluar'}</span>
                           </button>
                         </div>
                       </motion.div>

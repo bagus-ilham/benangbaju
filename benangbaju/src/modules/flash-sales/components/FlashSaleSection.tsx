@@ -8,6 +8,7 @@ import { FlashSaleDetail } from '@/modules/flash-sales/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
 import { Button, PageContainer, SectionHeader } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface FlashSaleSectionProps {
   flashSale: FlashSaleDetail | null
@@ -15,6 +16,8 @@ interface FlashSaleSectionProps {
 }
 
 export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSectionProps): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [timeLeft, setTimeLeft] = useState<{
     hours: number
     minutes: number
@@ -146,13 +149,13 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
         <SectionHeader
           align="left"
           showDivider={false}
-          eyebrow="Penawaran Terbatas"
+          eyebrow={isMY ? 'Limited Time Offer' : 'Penawaran Terbatas'}
           title={flashSale.name || 'Flash Sale'}
           className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-brand-plum [&_h2]:text-brand-plum"
         >
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
             <span className="text-[11px] uppercase tracking-wider font-sans font-semibold text-brand-plum mr-2">
-              Berakhir Dalam:
+              {isMY ? 'Ends In:' : 'Berakhir Dalam:'}
             </span>
             <div className="flex items-center space-x-1.5 font-sans text-xs font-bold">
               {/* Dusty Blue background MUST use Deep Plum text per §4 */}
@@ -199,7 +202,7 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
                 variant="accent"
                 size="md"
               >
-                Lihat Semua Flash Sale
+                {isMY ? 'View All Flash Sale' : 'Lihat Semua Flash Sale'}
               </Button>
             </Link>
           </div>

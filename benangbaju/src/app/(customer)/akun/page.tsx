@@ -11,6 +11,7 @@ import { Button, Input, AuthLoading, PageContainer, PageHero } from '@/shared/co
 import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { AccountNavMenu, EditProfileForm, ChangePasswordForm } from './components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 const supabase = createBrowserClient()
 
@@ -34,6 +35,8 @@ const itemVariants = {
 }
 
 export default function AkunPage(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
   const {
     user,

@@ -35,6 +35,11 @@ export function ProductStickyAction({
   const { myrExchangeRate } = useSiteSettings()
 
   const currentPrice = selectedVariant ? Number(selectedVariant.price) : minPrice
+  const comparePrice = selectedVariant?.compare_price
+    ? Number(selectedVariant.compare_price)
+    : product.product_variants[0]?.compare_price
+      ? Number(product.product_variants[0].compare_price)
+      : null
 
   return (
     <AnimatePresence>
@@ -70,10 +75,23 @@ export function ProductStickyAction({
                   <span className="text-xs font-sans font-bold text-brand-plum">
                     {formatIDR(currentPrice)}
                   </span>
-                  {market === 'MY' && (
-                    <span className="text-[10px] font-sans font-semibold text-emerald-800">
-                      ({formatApproxMYR(currentPrice, myrExchangeRate)})
+                  {comparePrice && comparePrice > currentPrice && (
+                    <span className="text-[10px] text-neutral-500 line-through font-sans">
+                      {formatIDR(comparePrice)}
                     </span>
+                  )}
+                  {market === 'MY' && (
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-[10px] font-sans font-semibold text-emerald-800">
+                        ({formatApproxMYR(currentPrice, myrExchangeRate)}
+                      </span>
+                      {comparePrice && comparePrice > currentPrice && (
+                        <span className="text-[9px] text-neutral-500 line-through font-sans">
+                          {formatApproxMYR(comparePrice, myrExchangeRate)}
+                        </span>
+                      )}
+                      <span className="text-[10px] font-sans font-semibold text-emerald-800">)</span>
+                    </div>
                   )}
                 </div>
               </div>

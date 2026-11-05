@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, Card, SmartImage as Image } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
 export default function ResetPasswordPage(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
   const supabase = createBrowserClient()
 
@@ -109,20 +112,20 @@ export default function ResetPasswordPage(): React.JSX.Element {
 
         <form onSubmit={handleReset} className="space-y-4">
           <Input
-            label="Kata Sandi Baru"
+            label={isMY ? "New Password" : "Kata Sandi Baru"}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Minimal 6 karakter"
+            placeholder={isMY ? "Min. 6 characters" : "Minimal 6 karakter"}
             required
           />
 
           <Input
-            label="Konfirmasi Kata Sandi Baru"
+            label={isMY ? "Confirm New Password" : "Konfirmasi Kata Sandi Baru"}
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Ulangi kata sandi baru"
+            placeholder={isMY ? "Repeat new password" : "Ulangi kata sandi baru"}
             required
           />
 

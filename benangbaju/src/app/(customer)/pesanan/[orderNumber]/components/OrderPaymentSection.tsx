@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Button, SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { formatApproxMYR, buildWhatsAppUrl } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
 interface OrderPaymentSectionProps {
@@ -39,9 +40,11 @@ export function OrderPaymentSection({
   const [copiedCode, setCopiedCode] = useState(false)
   const [isDownloadingQR, setIsDownloadingQR] = useState(false)
 
+  const market = useMarket()
   const isMalaysia =
     order.order_shipping?.country_code === 'MY' ||
     order.shipping_address?.country_code === 'MY'
+  const isMY = market === 'MY' || isMalaysia
 
   // Get active payment info
   const payment = Array.isArray(order.payments) ? order.payments[0] : order.payments
@@ -100,26 +103,26 @@ export function OrderPaymentSection({
     <div className="border border-neutral-200/80 p-5 bg-brand-cream h-fit space-y-5 relative overflow-hidden rounded-2xl shadow-xs font-sans">
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
       <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
-        Rincian & Metode Pembayaran
+        {isMY ? 'Payment Summary & Methods' : 'Rincian & Metode Pembayaran'}
       </h2>
 
       {/* Cost Breakdown */}
       <div className="space-y-3 text-sm text-neutral-600">
         <div className="flex justify-between">
-          <span>Subtotal Produk</span>
+          <span>{isMY ? 'Product Subtotal' : 'Subtotal Produk'}</span>
           <span className="font-bold text-brand-plum">
             Rp {order.subtotal?.toLocaleString('id-ID')}
           </span>
         </div>
         <div className="flex justify-between">
-          <span>Ongkos Kirim</span>
+          <span>{isMY ? 'Shipping Cost' : 'Ongkos Kirim'}</span>
           <span className="font-bold text-brand-plum">
             Rp {order.shipping_cost?.toLocaleString('id-ID')}
           </span>
         </div>
         {Number(order.payment_fee) > 0 && (
           <div className="flex justify-between">
-            <span>Biaya Layanan Pembayaran</span>
+            <span>{isMY ? 'Payment Processing Fee' : 'Biaya Layanan Pembayaran'}</span>
             <span className="font-bold text-brand-plum">
               Rp {Number(order.payment_fee).toLocaleString('id-ID')}
             </span>
@@ -127,7 +130,7 @@ export function OrderPaymentSection({
         )}
         {Number(order.discount_amount) > 0 && (
           <div className="flex justify-between text-neutral-800 font-bold">
-            <span>Diskon Voucher</span>
+            <span>{isMY ? 'Voucher Discount' : 'Diskon Voucher'}</span>
             <span className="text-red-600">
               - Rp {order.discount_amount.toLocaleString('id-ID')}
             </span>
@@ -135,7 +138,7 @@ export function OrderPaymentSection({
         )}
         {order.payment_channel && (
           <div className="flex justify-between text-xs text-neutral-500 pt-1">
-            <span>Metode Bayar</span>
+            <span>{isMY ? 'Payment Method' : 'Metode Bayar'}</span>
             <span className="font-semibold text-brand-plum uppercase">
               {order.payment_channel.replace(/_/g, ' ')}
             </span>
@@ -143,7 +146,7 @@ export function OrderPaymentSection({
         )}
         <div className="border-t border-neutral-200/60 pt-4 mt-2">
           <div className="flex justify-between items-center text-brand-plum font-sans">
-            <span className="text-sm font-bold">Total Pembayaran</span>
+            <span className="text-sm font-bold">{isMY ? 'Total Amount' : 'Total Pembayaran'}</span>
             <span className="text-lg font-bold text-brand-plum">
               Rp {order.total_amount?.toLocaleString('id-ID')}
             </span>
@@ -154,7 +157,7 @@ export function OrderPaymentSection({
                 {formatApproxMYR(order.total_amount, myrExchangeRate)}
               </span>
               <p className="text-[10px] text-neutral-400 mt-0.5">
-                *Estimasi Ringgit Malaysia (pembayaran tetap dalam IDR)
+                {isMY ? '*Approximate in Ringgit Malaysia (settlement in IDR)' : '*Estimasi Ringgit Malaysia (pembayaran tetap dalam IDR)'}
               </p>
             </div>
           )}
@@ -168,7 +171,7 @@ export function OrderPaymentSection({
           {vaNumber && (
             <div className="bg-white p-4 rounded-xl border border-brand-plum/20 space-y-2">
               <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
-                Nomor Virtual Account
+                {isMY ? 'Virtual Account Number' : 'Nomor Virtual Account'}
               </span>
               <div className="flex items-center justify-between">
                 <span className="font-mono text-lg font-bold text-brand-plum tracking-wider">
@@ -180,11 +183,11 @@ export function OrderPaymentSection({
                   onClick={() => handleCopy(vaNumber)}
                   className="text-[10px] py-1.5 px-3 uppercase tracking-wider font-bold"
                 >
-                  {copiedCode ? 'Tersalin' : 'Salin VA'}
+                  {copiedCode ? (isMY ? 'Copied' : 'Tersalin') : (isMY ? 'Copy VA' : 'Salin VA')}
                 </Button>
               </div>
               <p className="text-[10px] text-neutral-500 font-sans">
-                Transfer melalui m-Banking atau ATM ke nomor Virtual Account di atas.
+                {isMY ? 'Transfer via m-Banking or ATM to the Virtual Account number above.' : 'Transfer melalui m-Banking atau ATM ke nomor Virtual Account di atas.'}
               </p>
             </div>
           )}
@@ -193,7 +196,7 @@ export function OrderPaymentSection({
           {paymentCode && !vaNumber && (
             <div className="bg-white p-4 rounded-xl border border-brand-plum/20 space-y-2">
               <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
-                Kode Pembayaran Minimarket
+                {isMY ? 'Convenience Store Payment Code' : 'Kode Pembayaran Minimarket'}
               </span>
               <div className="flex items-center justify-between">
                 <span className="font-mono text-lg font-bold text-brand-plum tracking-wider">
@@ -205,7 +208,7 @@ export function OrderPaymentSection({
                   onClick={() => handleCopy(paymentCode)}
                   className="text-[10px] py-1.5 px-3 uppercase tracking-wider font-bold"
                 >
-                  {copiedCode ? 'Tersalin' : 'Salin Kode'}
+                  {copiedCode ? (isMY ? 'Copied' : 'Tersalin') : (isMY ? 'Copy Code' : 'Salin Kode')}
                 </Button>
               </div>
               <p className="text-[10px] text-neutral-500 font-sans">
@@ -219,7 +222,7 @@ export function OrderPaymentSection({
             <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
-                  Scan QRIS Cross-Border
+                  {isMY ? 'Scan Cross-Border QRIS (DuitNow)' : 'Scan QRIS Cross-Border'}
                 </span>
                 <Button
                   type="button"
@@ -230,7 +233,7 @@ export function OrderPaymentSection({
                   className="text-[10px] py-1 px-2.5 uppercase font-bold flex items-center gap-1"
                 >
                   <HandDrawnIcon name="download" className="h-3 w-3" />
-                  <span>Unduh QR</span>
+                  <span>{isMY ? 'Download QR' : 'Unduh QR'}</span>
                 </Button>
               </div>
 
@@ -243,12 +246,12 @@ export function OrderPaymentSection({
                 <div className="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-1.5 text-xs text-emerald-950 font-sans">
                   <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1">
                     <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
-                    <span>Petunjuk Scan from Gallery (Bank / E-Wallet Malaysia)</span>
+                    <span>{isMY ? 'Scan from Gallery Guide (Malaysian Bank / E-Wallet)' : 'Petunjuk Scan from Gallery (Bank / E-Wallet Malaysia)'}</span>
                   </p>
                   <ol className="list-decimal list-inside text-[11px] text-emerald-900/90 space-y-1 leading-relaxed">
-                    <li>Klik <strong>Unduh QR</strong> di atas atau simpan tangkapan layar (screenshot) kode QR ini.</li>
-                    <li>Buka aplikasi perbankan atau e-wallet Malaysia Anda (Touch &apos;n Go, Maybank MAE, CIMB Octo, dll).</li>
-                    <li>Pilih menu <strong>DuitNow QR / Scan</strong>, lalu pilih opsi <strong>Upload / Scan from Gallery</strong>. Selesaikan transaksi via PIN.</li>
+                    <li>{isMY ? <>Click <strong>Download QR</strong> above or save a screenshot of this QR code.</> : <>Klik <strong>Unduh QR</strong> di atas atau simpan tangkapan layar (screenshot) kode QR ini.</>}</li>
+                    <li>{isMY ? <>Open your Malaysian banking or e-wallet app (Touch &apos;n Go, Maybank MAE, CIMB Octo, etc).</> : <>Buka aplikasi perbankan atau e-wallet Malaysia Anda (Touch &apos;n Go, Maybank MAE, CIMB Octo, dll).</>}</li>
+                    <li>{isMY ? <>Select <strong>DuitNow QR / Scan</strong>, choose <strong>Upload / Scan from Gallery</strong>, and authorize payment with your PIN.</> : <>Pilih menu <strong>DuitNow QR / Scan</strong>, lalu pilih opsi <strong>Upload / Scan from Gallery</strong>. Selesaikan transaksi via PIN.</>}</li>
                   </ol>
                 </div>
               ) : (
@@ -309,7 +312,7 @@ export function OrderPaymentSection({
                   <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
                     <Button variant="accent" className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2">
                       <HandDrawnIcon name="external-link" className="h-4 w-4" />
-                      <span>Buka Halaman Pembayaran</span>
+                      <span>{isMY ? 'Open Payment Page' : 'Buka Halaman Pembayaran'}</span>
                     </Button>
                   </a>
                 ) : (
@@ -322,7 +325,7 @@ export function OrderPaymentSection({
                       className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2"
                     >
                       <HandDrawnIcon name="tag" className="h-4 w-4" />
-                      <span>Minta Kode / Link Pembayaran</span>
+                      <span>{isMY ? 'Request Payment Link / Code' : 'Minta Kode / Link Pembayaran'}</span>
                     </Button>
                   )
                 )}
@@ -333,7 +336,7 @@ export function OrderPaymentSection({
                   variant="outline"
                   className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50 cursor-pointer"
                 >
-                  Cek Status Pembayaran
+                  {isMY ? 'Check Payment Status' : 'Cek Status Pembayaran'}
                 </Button>
               </>
             )}
@@ -343,7 +346,7 @@ export function OrderPaymentSection({
               disabled={isVerifyingPayment}
               className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-red-200 text-red-500 hover:bg-red-50 cursor-pointer"
             >
-              Batalkan Pesanan
+              {isMY ? 'Cancel Order' : 'Batalkan Pesanan'}
             </Button>
             {onReorder && (
               <Button
@@ -354,7 +357,7 @@ export function OrderPaymentSection({
                 className="w-full py-2 text-[10px] font-sans font-semibold text-neutral-500 hover:text-brand-blue flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
               >
                 <HandDrawnIcon name="refresh" className="h-3 w-3" />
-                <span>Sesi Expired? Batalkan & Pesan Ulang</span>
+                <span>{isMY ? 'Session Expired? Cancel & Re-order' : 'Sesi Expired? Batalkan & Pesan Ulang'}</span>
               </Button>
             )}
           </>
@@ -364,7 +367,7 @@ export function OrderPaymentSection({
           <div className="space-y-3">
             <div className="flex items-center text-xs text-neutral-600 bg-neutral-100/70 p-3.5 border border-neutral-200 rounded-xl">
               <HandDrawnIcon name="close" className="h-4 w-4 mr-2 shrink-0 text-red-500" />
-              <span>Pesanan ini telah dibatalkan atau sesi pembayaran telah kedaluwarsa.</span>
+              <span>{isMY ? 'This order has been cancelled or the payment session has expired.' : 'Pesanan ini telah dibatalkan atau sesi pembayaran telah kedaluwarsa.'}</span>
             </div>
             {onReorder && (
               <Button
@@ -375,7 +378,7 @@ export function OrderPaymentSection({
                 className="w-full py-3 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <HandDrawnIcon name="refresh" className="h-3.5 w-3.5" />
-                <span>Pesan Ulang (Beli Lagi)</span>
+                <span>{isMY ? 'Re-order Items' : 'Pesan Ulang (Beli Lagi)'}</span>
               </Button>
             )}
           </div>
@@ -386,7 +389,7 @@ export function OrderPaymentSection({
             onClick={onConfirmDelivery}
             className="w-full py-3 text-xs uppercase tracking-widest font-semibold"
           >
-            Konfirmasi Penerimaan Barang
+            {isMY ? 'Confirm Order Received' : 'Konfirmasi Penerimaan Barang'}
           </Button>
         )}
 
@@ -394,17 +397,17 @@ export function OrderPaymentSection({
           <div className="flex flex-col gap-3">
             <div className="flex items-center text-xs text-green-700 bg-green-50 p-3 border border-green-200 rounded-xl">
               <HandDrawnIcon name="check-circle" className="h-4 w-4 mr-2 shrink-0" />
-              <span>Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!</span>
+              <span>{isMY ? 'Order completed. Thank you for shopping with Benangbaju!' : 'Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!'}</span>
             </div>
 
             {isMalaysia ? (
               <div className="p-4 bg-amber-50/80 border border-amber-200/90 rounded-xl space-y-2.5 text-xs text-amber-950 font-sans">
                 <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
                   <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
-                  <span>Pesanan Internasional (Final Sale)</span>
+                  <span>{isMY ? 'International Order (Final Sale)' : 'Pesanan Internasional (Final Sale)'}</span>
                 </div>
                 <p className="text-[11px] text-amber-900/90 leading-relaxed">
-                  Pesanan pengiriman ke Malaysia bersifat final dan tidak dapat mengajukan retur mandiri. Jika Anda menerima barang yang cacat produksi atau pesanan tidak sesuai, hubungi Customer Care melalui WhatsApp.
+                  {isMY ? 'Orders delivered to Malaysia are final sale and not eligible for self-service returns. If you received a defective item or wrong order, please contact Customer Care via WhatsApp.' : 'Pesanan pengiriman ke Malaysia bersifat final dan tidak dapat mengajukan retur mandiri. Jika Anda menerima barang yang cacat produksi atau pesanan tidak sesuai, hubungi Customer Care melalui WhatsApp.'}
                 </p>
                 <a
                   href={buildWhatsAppUrl(
@@ -416,7 +419,7 @@ export function OrderPaymentSection({
                   className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
                 >
                   <HandDrawnIcon name="sparkles" className="h-4 w-4" />
-                  <span>Hubungi CS via WhatsApp</span>
+                  <span>{isMY ? 'Contact Support via WhatsApp' : 'Hubungi CS via WhatsApp'}</span>
                 </a>
               </div>
             ) : returnRequest ? (
@@ -444,7 +447,7 @@ export function OrderPaymentSection({
                   variant="outline"
                   className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-800 text-neutral-800 hover:bg-neutral-50"
                 >
-                  Ajukan Retur Barang
+                  {isMY ? 'Request Return' : 'Ajukan Retur Barang'}
                 </Button>
               </Link>
             )}

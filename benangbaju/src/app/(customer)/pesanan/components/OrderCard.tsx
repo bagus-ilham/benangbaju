@@ -1,7 +1,9 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, SmartLink as Link } from '@/shared/components'
-import { formatIDR, formatDateWithTimezone } from '@/lib/utils'
+import { formatIDR, formatApproxMYR, formatDateWithTimezone } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { OrderStatusBadge } from './OrderStatusBadge'
 
 interface OrderItem {
@@ -39,6 +41,9 @@ export function OrderCard({
   onPayOrder,
   onConfirmDelivery,
 }: OrderCardProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY' || order.order_shipping?.country_code === 'MY'
+  const { myrExchangeRate } = useSiteSettings()
   const shipping = Array.isArray(order.order_shipping)
     ? order.order_shipping[0]
     : order.order_shipping
@@ -54,7 +59,7 @@ export function OrderCard({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-neutral-200/60 mb-4 text-sm gap-2">
         <div className="space-y-1">
           <p className="font-bold text-brand-plum">
-            No. Pesanan:{' '}
+            {isMY ? 'Order No.:' : 'No. Pesanan:'}{' '}
             <Link
               href={`/pesanan/${order.order_number}`}
               className="underline hover:text-brand-blue"
@@ -63,7 +68,7 @@ export function OrderCard({
             </Link>
           </p>
           <p className="text-xs text-neutral-600 font-sans">
-            Tanggal: {formatDateWithTimezone(order.created_at, countryCode)}
+            {isMY ? 'Date: ' : 'Tanggal: '}{formatDateWithTimezone(order.created_at, countryCode)}
           </p>
         </div>
         <div>
@@ -83,9 +88,16 @@ export function OrderCard({
                 {item.quantity} x {formatIDR(item.price)}
               </p>
             </div>
-            <span className="font-bold text-brand-plum whitespace-nowrap">
-              {formatIDR(item.subtotal)}
-            </span>
+            <div className="text-right whitespace-nowrap">
+              <span className="font-bold text-brand-plum block">
+                {formatIDR(item.subtotal)}
+              </span>
+              {isMY && (
+                <span className="text-[10px] font-semibold text-emerald-800 block">
+                  {formatApproxMYR(item.subtotal, myrExchangeRate)}
+                </span>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -93,10 +105,15 @@ export function OrderCard({
       {/* Total amount & Action buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-neutral-200/60 gap-4 font-sans">
         <div className="text-sm">
-          <span className="text-neutral-600">Total Pembayaran:</span>{' '}
+          <span className="text-neutral-600">{isMY ? 'Total Amount:' : 'Total Pembayaran:'}</span>{' '}
           <span className="font-bold text-brand-plum text-base">
             {formatIDR(order.total_amount)}
           </span>
+          {isMY && (
+            <span className="text-xs font-bold text-emerald-800 ml-2">
+              ({formatApproxMYR(order.total_amount, myrExchangeRate)})
+            </span>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2">

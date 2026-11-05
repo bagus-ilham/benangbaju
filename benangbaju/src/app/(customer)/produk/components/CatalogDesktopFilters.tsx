@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface CatalogDesktopFiltersProps {
   categories: Category[]
@@ -18,6 +19,8 @@ export function CatalogDesktopFilters({
   handleCategorySelect,
   handleClearAll,
 }: CatalogDesktopFiltersProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   return (
     <aside className="hidden md:block w-48 flex-shrink-0 space-y-6">
       <div className="flex items-center justify-between">
@@ -46,7 +49,7 @@ export function CatalogDesktopFilters({
             {!categorySlug && (
               <span className="w-1.5 h-1.5 rounded-full bg-brand-plum shrink-0" />
             )}
-            <span>Semua Kategori</span>
+            <span>{isMY ? 'All Categories' : 'Semua Kategori'}</span>
           </button>
         </li>
         {categories.map((cat) => {

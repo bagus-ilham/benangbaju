@@ -202,7 +202,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                         Impact: Mencegah penghapusan item keranjang yang tidak disengaja */}
                         <button
                           onClick={() => {
-                            if (window.confirm('Hapus item ini dari keranjang?')) {
+                            if (window.confirm(market === 'MY' ? 'Remove this item from your bag?' : 'Hapus item ini dari keranjang?')) {
                               removeItem(item.variantId)
                             }
                           }}
@@ -248,13 +248,27 @@ export function MiniCartDrawer(): React.JSX.Element {
 
                         {/* Price */}
                         <div className="text-right">
-                          <span className="text-xs font-sans font-semibold text-brand-plum">
-                            {formatIDR(item.price * item.quantity)}
-                          </span>
-                          {market === 'MY' && (
-                            <span className="block text-[9px] font-sans font-bold text-emerald-800">
-                              {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <span className="text-xs font-sans font-semibold text-brand-plum">
+                              {formatIDR(item.price * item.quantity)}
                             </span>
+                            {item.comparePrice && item.comparePrice > item.price && (
+                              <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                {formatIDR(item.comparePrice * item.quantity)}
+                              </span>
+                            )}
+                          </div>
+                          {market === 'MY' && (
+                            <div className="flex items-center justify-end space-x-1.5">
+                              <span className="block text-[9px] font-sans font-bold text-emerald-800">
+                                {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                              </span>
+                              {item.comparePrice && item.comparePrice > item.price && (
+                                <span className="text-[9px] font-sans text-neutral-400 line-through">
+                                  {formatApproxMYR(item.comparePrice * item.quantity, myrExchangeRate)}
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
                       </div>
@@ -301,9 +315,30 @@ export function MiniCartDrawer(): React.JSX.Element {
                               <p className="text-[11px] font-sans font-bold uppercase text-brand-plum truncate">
                                 {p.name}
                               </p>
-                              <p className="text-[10px] font-sans font-bold text-brand-plum">
-                                {formatIDR(p.minPrice)}
-                              </p>
+                              <div className="flex flex-col">
+                                <div className="flex items-center space-x-1.5">
+                                  <span className="text-[10px] font-sans font-bold text-brand-plum">
+                                    {formatIDR(p.minPrice)}
+                                  </span>
+                                  {p.comparePrice && p.comparePrice > p.minPrice && (
+                                    <span className="text-[9px] font-sans text-neutral-400 line-through">
+                                      {formatIDR(p.comparePrice)}
+                                    </span>
+                                  )}
+                                </div>
+                                {market === 'MY' && (
+                                  <div className="flex items-center space-x-1">
+                                    <span className="text-[9px] font-sans font-semibold text-emerald-800">
+                                      {formatApproxMYR(p.minPrice, myrExchangeRate)}
+                                    </span>
+                                    {p.comparePrice && p.comparePrice > p.minPrice && (
+                                      <span className="text-[8px] font-sans text-neutral-400 line-through">
+                                        {formatApproxMYR(p.comparePrice, myrExchangeRate)}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                           <Button

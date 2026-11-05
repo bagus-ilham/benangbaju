@@ -31,7 +31,7 @@ export function OrderShippingSection({
         <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
         <div className="flex items-center justify-between border-b border-neutral-200/60 pb-2">
           <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
-            Informasi Pengiriman
+            {isMalaysia ? 'Shipping Information' : 'Informasi Pengiriman'}
           </h2>
           {isMalaysia && (
             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -57,7 +57,7 @@ export function OrderShippingSection({
             </p>
             <div className="pt-2 text-xs border-t border-neutral-100 mt-2 space-y-2 text-neutral-600">
               <p>
-                Kurir:{' '}
+                {isMalaysia ? 'Courier:' : 'Kurir:'}{' '}
                 <span className="font-semibold text-neutral-700 uppercase">
                   {orderShipping.courier_name}
                 </span>
@@ -65,7 +65,7 @@ export function OrderShippingSection({
               {trackingNumbers.length > 0 ? (
                 <div className="space-y-1.5">
                   <span className="text-[11px] text-neutral-500 font-medium block">
-                    No. Resi Pelacakan:
+                    {isMalaysia ? 'Tracking Number(s):' : 'No. Resi Pelacakan:'}
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {trackingNumbers.map((trackingNo) => {
@@ -90,7 +90,7 @@ export function OrderShippingSection({
                 </div>
               ) : orderShipping.tracking_number ? (
                 <p>
-                  No. Resi:{' '}
+                  {isMalaysia ? 'Tracking Number:' : 'No. Resi:'}{' '}
                   <span className="font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 select-all">
                     {orderShipping.tracking_number}
                   </span>
@@ -99,14 +99,14 @@ export function OrderShippingSection({
             </div>
           </div>
         ) : (
-          <p className="text-sm text-neutral-600 italic">Data pengiriman tidak ditemukan.</p>
+          <p className="text-sm text-neutral-600 italic">{isMalaysia ? 'Shipping data not found.' : 'Data pengiriman tidak ditemukan.'}</p>
         )}
       </div>
 
       {notes && (
         <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-brand-cream/30 space-y-2 rounded-2xl">
           <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent">
-            Catatan dari Anda
+            {isMalaysia ? 'Order Notes' : 'Catatan dari Anda'}
           </h2>
           <p className="text-sm text-neutral-700 whitespace-pre-wrap">{notes}</p>
         </div>

@@ -24,6 +24,8 @@ import { SmartLink as Link } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { OrderCard } from './components/OrderCard'
 import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
+import { useMarket } from '@/shared/stores/marketStore'
+import { getOrderStatusLabel } from '@/lib/i18n'
 
 const STATUS_TABS = [
   { id: 'all', label: 'Semua' },
@@ -35,6 +37,8 @@ const STATUS_TABS = [
 ]
 
 export default function PesananPage(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const [activeTab, setActiveTab] = useState('all')
@@ -187,7 +191,7 @@ export default function PesananPage(): React.JSX.Element {
                   : 'border-transparent text-neutral-500 hover:text-brand-blue hover:border-brand-blue/40'
               }`}
             >
-              {tab.label}
+              {tab.id === 'all' ? (isMY ? 'All' : 'Semua') : getOrderStatusLabel(tab.id, isMY)}
             </button>
           ))}
         </div>
@@ -225,9 +229,9 @@ export default function PesananPage(): React.JSX.Element {
         ) : (
           <EmptyState
             handDrawnIcon="clipboard-list"
-            title="Belum Ada Pesanan"
-            description="Belum ada pesanan dengan status ini."
-            action={{ label: 'Belanja Sekarang', href: '/produk' }}
+            title={isMY ? 'No Orders Yet' : 'Belum Ada Pesanan'}
+            description={isMY ? 'No orders found with this status.' : 'Belum ada pesanan dengan status ini.'}
+            action={{ label: isMY ? 'Shop Now' : 'Belanja Sekarang', href: '/produk' }}
           />
         )}
 
@@ -236,7 +240,7 @@ export default function PesananPage(): React.JSX.Element {
             href="/akun"
             className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-blue transition-colors duration-200"
           >
-            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> Kembali ke Akun
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> {isMY ? 'Back to Account' : 'Kembali ke Akun'}
           </Link>
         </div>
       </PageContainer>
@@ -245,13 +249,12 @@ export default function PesananPage(): React.JSX.Element {
       <Modal
         isOpen={cancelOrderInfo !== null}
         onClose={() => setCancelOrderInfo(null)}
-        title="Batalkan Pesanan"
+        title={isMY ? 'Cancel Order' : 'Batalkan Pesanan'}
         size="sm"
       >
         <div className="space-y-6">
           <p className="text-sm text-neutral-600">
-            Apakah Anda yakin ingin membatalkan pesanan {cancelOrderInfo?.number}? Tindakan ini
-            tidak dapat dibatalkan.
+            {isMY ? `Are you sure you want to cancel order ${cancelOrderInfo?.number}? This action cannot be undone.` : `Apakah Anda yakin ingin membatalkan pesanan ${cancelOrderInfo?.number}? Tindakan ini tidak dapat dibatalkan.`}
           </p>
           <div className="flex gap-3">
             <Button
@@ -277,13 +280,12 @@ export default function PesananPage(): React.JSX.Element {
       <Modal
         isOpen={receiptOrderInfo !== null}
         onClose={() => setReceiptOrderInfo(null)}
-        title="Selesaikan Pesanan"
+        title={isMY ? 'Complete Order' : 'Selesaikan Pesanan'}
         size="sm"
       >
         <div className="space-y-6">
           <p className="text-sm text-neutral-600">
-            Apakah Anda sudah menerima barang untuk pesanan {receiptOrderInfo?.number} dan yakin
-            ingin menyelesaikannya?
+            {isMY ? `Have you received your package for order ${receiptOrderInfo?.number} and would like to mark it as completed?` : `Apakah Anda sudah menerima barang untuk pesanan ${receiptOrderInfo?.number} dan yakin ingin menyelesaikannya?`}
           </p>
           <div className="flex gap-3">
             <Button

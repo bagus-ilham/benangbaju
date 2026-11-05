@@ -235,7 +235,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
             handDrawnIcon="alert-triangle"
             title="Akses Ditolak"
             description="Retur hanya bisa diajukan untuk pesanan dengan status Selesai."
-            action={{ label: 'Kembali ke Pesanan', href: '/pesanan' }}
+            action={{ label: 'Back to Order', href: '/pesanan' }}
           />
         </PageContainer>
       </div>
@@ -246,33 +246,33 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
   if (isMalaysia) {
     return (
       <div className="bg-brand-cream min-h-screen">
-        <PageHero eyebrow="Retur Internasional" title="Kebijakan Final Sale" variant="cream" />
+        <PageHero eyebrow="International Orders" title="Final Sale Policy" variant="cream" />
         <PageContainer size="md" className="py-12 page-content">
           <div className="bg-white border border-neutral-200/80 rounded-2xl p-6 sm:p-8 text-center space-y-4 max-w-lg mx-auto shadow-xs">
             <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto">
               <HandDrawnIcon name="sparkles" className="h-6 w-6 text-amber-700" />
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-plum">
-              Pesanan Internasional (Final Sale)
+              International Order (Final Sale)
             </h3>
             <p className="text-xs text-neutral-600 leading-relaxed font-sans">
-              Mohon maaf, pengiriman ke Malaysia bersifat <strong>Final Sale</strong> sehingga pengajuan retur mandiri melalui website tidak tersedia.
+              Orders shipped to Malaysia are <strong>Final Sale</strong>. Self-service returns through the website are not available.
             </p>
             <p className="text-xs text-neutral-600 leading-relaxed font-sans">
-              Apabila terdapat produk yang diterima mengalami cacat produksi atau salah kirim, silakan hubungi tim Customer Service kami melalui WhatsApp dengan menyertakan foto/video unboxing.
+              If you received a defective item or incorrect delivery, please contact our Customer Service team via WhatsApp with unboxing photo/video proof.
             </p>
             <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
               <a
                 href={buildWhatsAppUrl(
                   '6285179747449',
-                  `Halo Benangbaju, saya ingin konfirmasi kendala produk pada pesanan #${order.order_number} (Malaysia).`
+                  `Hello Benangbaju, I would like to report an issue with items in order #${order.order_number} (Malaysia).`
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center py-2.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
               >
                 <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
-                <span>Hubungi CS via WhatsApp</span>
+                <span>Contact Support on WhatsApp</span>
               </a>
               <Link
                 href={`/pesanan/${order.order_number}`}

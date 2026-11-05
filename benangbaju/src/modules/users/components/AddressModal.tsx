@@ -122,6 +122,7 @@ export function AddressModal({
 }: AddressModalProps): React.JSX.Element {
   const isEdit = !!addressToEdit
   const market = useMarketStore((state) => state.market)
+  
 
   const {
     control,
@@ -150,6 +151,7 @@ export function AddressModal({
     control,
     name: 'country_code',
   }) || 'ID') as SupportedCountryCode
+  const isMY = market === 'MY' || countryCode === 'MY'
 
   const provinceName = useWatch({
     control,
@@ -390,12 +392,12 @@ export function AddressModal({
       : INDONESIA_PROVINCES.map((p) => ({ label: p, value: p }))
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? 'Ubah Alamat' : 'Tambah Alamat Baru'}>
+    <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? (isMY ? 'Edit Address' : 'Ubah Alamat') : (isMY ? 'Add New Address' : 'Tambah Alamat Baru')}>
       <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5 text-sm font-sans">
         {/* Country Selector */}
         <div className="space-y-1.5">
           <label className="block text-xs font-semibold text-neutral-700">
-            Negara Tujuan Pengiriman*
+            {isMY ? 'Destination Country*' : 'Negara Tujuan Pengiriman*'}
           </label>
           <div className="grid grid-cols-2 gap-3">
             {SUPPORTED_COUNTRIES.map((c) => {
@@ -440,8 +442,8 @@ export function AddressModal({
             render={({ field }) => (
               <Input
                 {...field}
-                label="Label Alamat (cth: Rumah, Kantor)*"
-                placeholder="cth: Rumah"
+                label={isMY ? "Address Label (e.g. Home, Office)*" : "Label Alamat (cth: Rumah, Kantor)*"}
+                placeholder={isMY ? "e.g. Home" : "cth: Rumah"}
                 error={errors.label?.message}
               />
             )}
@@ -452,8 +454,8 @@ export function AddressModal({
             render={({ field }) => (
               <Input
                 {...field}
-                label="Nama Penerima*"
-                placeholder="Nama lengkap penerima"
+                label={isMY ? "Recipient Name*" : "Nama Penerima*"}
+                placeholder={isMY ? "Recipient full name" : "Nama lengkap penerima"}
                 error={errors.recipient_name?.message}
               />
             )}
@@ -468,15 +470,15 @@ export function AddressModal({
               {...field}
               label={
                 countryCode === 'MY'
-                  ? 'Nomor Telepon Penerima (Malaysia)*'
-                  : 'Nomor Telepon Penerima (Indonesia)*'
+                  ? (isMY ? 'Recipient Phone Number (Malaysia)*' : 'Nomor Telepon Penerima (Malaysia)*')
+                  : (isMY ? 'Recipient Phone Number (Indonesia)*' : 'Nomor Telepon Penerima (Indonesia)*')
               }
               placeholder={
                 countryCode === 'MY' ? 'cth: +60123456789 atau 012-3456789' : 'cth: 08123456789'
               }
               helperText={
                 countryCode === 'MY'
-                  ? 'Gunakan nomor WhatsApp aktif untuk kemudahan konfirmasi pengiriman.'
+                  ? (isMY ? 'Active WhatsApp number recommended for delivery notifications.' : 'Gunakan nomor WhatsApp aktif untuk kemudahan konfirmasi pengiriman.')
                   : undefined
               }
               error={errors.phone?.message}
@@ -562,11 +564,11 @@ export function AddressModal({
           name="province_name"
           render={({ field }) => (
             <Select
-              label={countryCode === 'MY' ? 'Negeri (State - Semenanjung)*' : 'Provinsi*'}
+              label={countryCode === 'MY' ? (isMY ? 'State (Peninsular Malaysia)*' : 'Negeri (State - Semenanjung)*') : (isMY ? 'Province*' : 'Provinsi*')}
               value={field.value}
               onChange={field.onChange}
               options={provinceOptions}
-              placeholder={countryCode === 'MY' ? 'Pilih Negeri' : 'Pilih Provinsi'}
+              placeholder={countryCode === 'MY' ? (isMY ? 'Select State' : 'Pilih Negeri') : (isMY ? 'Select Province' : 'Pilih Provinsi')}
               error={errors.province_name?.message}
             />
           )}
@@ -580,7 +582,7 @@ export function AddressModal({
             render={({ field }) => (
               <Input
                 {...field}
-                label={countryCode === 'MY' ? 'Bandar / Daerah (City)*' : 'Kota/Kabupaten*'}
+                label={countryCode === 'MY' ? (isMY ? 'City / Town*' : 'Bandar / Daerah (City)*') : (isMY ? 'City / Regency*' : 'Kota/Kabupaten*')}
                 placeholder={
                   countryCode === 'MY' ? 'cth: Shah Alam / Petaling Jaya' : 'cth: Jakarta Barat'
                 }
@@ -614,11 +616,11 @@ export function AddressModal({
           render={({ field }) => (
             <Input
               {...field}
-              label={countryCode === 'MY' ? 'Poskod (5 digit)*' : 'Kode Pos (5 digit)*'}
+              label={countryCode === 'MY' ? (isMY ? 'Postcode (5 digits)*' : 'Poskod (5 digit)*') : (isMY ? 'Postal Code (5 digits)*' : 'Kode Pos (5 digit)*')}
               placeholder={countryCode === 'MY' ? 'cth: 50450' : 'cth: 12110'}
               helperText={
                 countryCode === 'MY'
-                  ? 'Pengiriman saat ini mencakup Semenanjung Malaysia (Poskod 01000–86999).'
+                  ? (isMY ? 'Delivery covers Peninsular Malaysia (Postcodes 01000–86999).' : 'Pengiriman saat ini mencakup Semenanjung Malaysia (Poskod 01000–86999).')
                   : undefined
               }
               error={errors.postal_code?.message}
@@ -634,8 +636,8 @@ export function AddressModal({
               {...field}
               label={
                 countryCode === 'MY'
-                  ? 'Alamat Lengkap (No. Rumah, Jalan, Kawasan / Taman / Bangunan)*'
-                  : 'Alamat Lengkap (Jalan, No. Rumah, RT/RW, Blok, Gg)*'
+                  ? (isMY ? 'Full Address (Unit / House No, Street, Building / Residential Area)*' : 'Alamat Lengkap (No. Rumah, Jalan, Kawasan / Taman / Bangunan)*')
+                  : (isMY ? 'Full Address (Street, House No, Unit / Block)*' : 'Alamat Lengkap (Jalan, No. Rumah, RT/RW, Blok, Gg)*')
               }
               placeholder={
                 countryCode === 'MY'
@@ -644,7 +646,7 @@ export function AddressModal({
               }
               helperText={
                 countryCode === 'MY'
-                  ? 'Kurir ekspor tidak dapat mengirim ke P.O. Box atau Peti Surat.'
+                  ? (isMY ? 'Export couriers cannot deliver to P.O. Box addresses.' : 'Kurir ekspor tidak dapat mengirim ke P.O. Box atau Peti Surat.')
                   : undefined
               }
               error={errors.full_address?.message}
@@ -657,7 +659,7 @@ export function AddressModal({
           name="is_default"
           render={({ field: { value, onChange } }) => (
             <Checkbox
-              label="Jadikan alamat utama (default)"
+              label={isMY ? "Set as default address" : "Jadikan alamat utama (default)"}
               checked={value}
               onChange={(e) => onChange(e.target.checked)}
               className="py-1"
@@ -670,7 +672,7 @@ export function AddressModal({
             Batal
           </Button>
           <Button type="submit" disabled={isSaving}>
-            {isSaving ? 'Menyimpan...' : 'Simpan Alamat'}
+            {isSaving ? (isMY ? 'Saving...' : 'Menyimpan...') : (isMY ? 'Save Address' : 'Simpan Alamat')}
           </Button>
         </div>
       </form>

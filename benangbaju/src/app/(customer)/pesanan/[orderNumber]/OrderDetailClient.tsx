@@ -26,6 +26,7 @@ import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useQuery } from '@tanstack/react-query'
 import { useSiteSettings } from '@/modules/settings/hooks/useAdminSettings'
+import { useMarket } from '@/shared/stores/marketStore'
 import { formatDateWithTimezone } from '@/lib/utils'
 import { trackPurchase } from '@/lib/analytics'
 
@@ -40,6 +41,8 @@ interface OrderDetailPageProps {
 function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element | null {
   const { orderNumber } = params
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
+  const market = useMarket()
+  const isMY = market === 'MY'
   const searchParams = useSearchParams()
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
@@ -460,8 +463,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   return (
     <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
-        eyebrow="Pesanan Saya"
-        title="Detail Pesanan"
+        eyebrow={isMY ? 'My Orders' : 'Pesanan Saya'}
+        title={isMY ? 'Order Details' : 'Detail Pesanan'}
         subtitle={`No. ${order.order_number} · ${formattedDate || '...'}`}
       >
         <div className="flex flex-wrap items-center gap-4 mt-2">
@@ -469,7 +472,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             href="/pesanan"
             className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-600 hover:text-brand-plum transition"
           >
-            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-1" /> Kembali
+            <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-1" /> {isMY ? 'Back' : 'Kembali'}
           </Link>
           {order.status !== 'pending_payment' && order.status !== 'cancelled' && (
             <div className="flex items-center space-x-2">
@@ -479,14 +482,14 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
                 isLoading={isInvoiceLoading}
                 className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
               >
-                <HandDrawnIcon name="download" className="h-3.5 w-3.5 mr-2" /> Unduh Invoice
+                <HandDrawnIcon name="download" className="h-3.5 w-3.5 mr-2" /> {isMY ? 'Download Invoice' : 'Unduh Invoice'}
               </Button>
               <Button
                 onClick={handleReorder}
                 variant="accent"
                 className="flex items-center text-[10px] uppercase tracking-wider font-bold py-2 px-4"
               >
-                <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Beli Lagi
+                <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> {isMY ? 'Re-order' : 'Beli Lagi'}
               </Button>
             </div>
           )}
@@ -532,12 +535,12 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       <Modal
         isOpen={cancelConfirmOpen}
         onClose={() => setCancelConfirmOpen(false)}
-        title="Batalkan Pesanan"
+        title={isMY ? 'Cancel Order' : 'Batalkan Pesanan'}
         size="sm"
       >
         <div className="space-y-6">
           <p className="text-sm text-neutral-600">
-            Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan.
+            {isMY ? 'Are you sure you want to cancel this order? This action cannot be undone.' : 'Apakah Anda yakin ingin membatalkan pesanan ini? Tindakan ini tidak dapat dibatalkan.'}
           </p>
           <div className="flex gap-3">
             <Button
@@ -562,12 +565,12 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       <Modal
         isOpen={receiptConfirmOpen}
         onClose={() => setReceiptConfirmOpen(false)}
-        title="Selesaikan Pesanan"
+        title={isMY ? 'Complete Order' : 'Selesaikan Pesanan'}
         size="sm"
       >
         <div className="space-y-6">
           <p className="text-sm text-neutral-600">
-            Apakah Anda sudah menerima barang untuk pesanan ini dan yakin ingin menyelesaikannya?
+            {isMY ? 'Have you received the items for this order and would like to mark it as completed?' : 'Apakah Anda sudah menerima barang untuk pesanan ini dan yakin ingin menyelesaikannya?'}
           </p>
           <div className="flex gap-3">
             <Button

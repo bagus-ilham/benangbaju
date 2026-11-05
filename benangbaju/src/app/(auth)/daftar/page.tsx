@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Button, Input, Card } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import toast from 'react-hot-toast'
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google'
@@ -25,6 +26,8 @@ export default function RegisterPage(): React.JSX.Element {
 }
 
 function RegisterContent(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const router = useRouter()
   const supabase = createBrowserClient()
 
@@ -148,17 +151,17 @@ function RegisterContent(): React.JSX.Element {
               Daftar Akun
             </h2>
             <p className="text-[11px] md:text-xs text-neutral-600 font-sans">
-              Lengkapi data di bawah ini untuk bergabung dengan Benangbaju.
+              {isMY ? 'Complete the details below to join Benangbaju.' : 'Lengkapi data di bawah ini untuk bergabung dengan Benangbaju.'}
             </p>
           </motion.div>
 
           <form onSubmit={handleRegister} className="space-y-4">
             <motion.div variants={fadeUpItem}>
               <Input
-                label="Nama Lengkap"
+                label={isMY ? "Full Name" : "Nama Lengkap"}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Masukkan nama lengkap Anda"
+                placeholder={isMY ? "Enter your full name" : "Masukkan nama lengkap Anda"}
                 required
                 autoComplete="name"
               />
@@ -178,7 +181,7 @@ function RegisterContent(): React.JSX.Element {
 
             <motion.div variants={fadeUpItem}>
               <Input
-                label="Nomor Telepon (Optional)"
+                label={isMY ? "Phone Number (Optional)" : "Nomor Telepon (Optional)"}
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
@@ -189,11 +192,11 @@ function RegisterContent(): React.JSX.Element {
 
             <motion.div variants={fadeUpItem}>
               <Input
-                label="Kata Sandi"
+                label={isMY ? "Password" : "Kata Sandi"}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimal 8 karakter"
+                placeholder={isMY ? "Min. 8 characters" : "Minimal 8 karakter"}
                 required
                 autoComplete="new-password"
               />
@@ -201,11 +204,11 @@ function RegisterContent(): React.JSX.Element {
 
             <motion.div variants={fadeUpItem}>
               <Input
-                label="Konfirmasi Kata Sandi"
+                label={isMY ? "Confirm Password" : "Konfirmasi Kata Sandi"}
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Ulangi kata sandi"
+                placeholder={isMY ? "Repeat password" : "Ulangi kata sandi"}
                 required
                 autoComplete="new-password"
               />
@@ -223,7 +226,7 @@ function RegisterContent(): React.JSX.Element {
               <div className="w-full border-t border-neutral-200/80" />
             </div>
             <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
-              <span className="bg-brand-cream px-3 text-neutral-600">Atau daftar dengan</span>
+              <span className="bg-brand-cream px-3 text-neutral-600">{isMY ? 'Or register with' : 'Atau daftar dengan'}</span>
             </div>
           </motion.div>
 
@@ -244,7 +247,7 @@ function RegisterContent(): React.JSX.Element {
             className="text-center mt-8 pt-4 border-t border-neutral-100"
           >
             <p className="text-xs text-neutral-600 font-sans">
-              Sudah memiliki akun?{' '}
+              {isMY ? 'Already have an account? ' : 'Sudah memiliki akun? '}
               <Link href="/masuk" className="text-brand-plum font-semibold hover:underline">
                 Masuk disini
               </Link>

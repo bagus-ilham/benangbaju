@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { getActiveCategoriesAction } from '@/modules/categories/actions'
 import { getActiveCollectionsAction } from '@/modules/collections/actions'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface MegaMenuItem {
   name: string
@@ -28,6 +29,8 @@ export function MegaMenuNavItem({
   isActive,
   isTransparentHome,
 }: MegaMenuNavItemProps) {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [isHovered, setIsHovered] = useState(false)
   const [items, setItems] = useState<MegaMenuItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -113,7 +116,7 @@ export function MegaMenuNavItem({
                 {/* Left Column: Link List */}
                 <div className="col-span-3 flex flex-col space-y-4 pr-4 border-r border-neutral-100">
                   <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-plum">
-                    {isKategori ? 'Kategori Produk' : 'Koleksi Terbatas'}
+                    {isMY ? (isKategori ? 'Product Categories' : 'Curated Collections') : (isKategori ? 'Kategori Produk' : 'Koleksi Terbatas')}
                   </h3>
 
                   {isLoading ? (
@@ -142,7 +145,7 @@ export function MegaMenuNavItem({
                       href={href}
                       className="text-[11px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 transition-opacity flex items-center gap-1.5"
                     >
-                      JELAJAHI SEMUA &rarr;
+                      {isMY ? 'VIEW ALL →' : 'JELAJAHI SEMUA →'}
                     </Link>
                   </div>
                 </div>

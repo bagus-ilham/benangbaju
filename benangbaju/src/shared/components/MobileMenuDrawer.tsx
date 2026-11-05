@@ -8,6 +8,7 @@ import { MobileMenuAccordionItem } from './MobileMenuAccordionItem'
 import type { User } from '@supabase/supabase-js'
 
 import Image from 'next/image'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface MobileMenuDrawerProps {
   isOpen: boolean
@@ -32,6 +33,8 @@ export function MobileMenuDrawer({
   user,
   onLogout,
 }: MobileMenuDrawerProps) {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const drawerRef = React.useRef<HTMLDivElement>(null)
 
   useFocusTrap(isOpen, drawerRef, {
@@ -68,7 +71,7 @@ export function MobileMenuDrawer({
                 type="button"
                 onClick={onClose}
                 className="text-neutral-400 hover:text-brand-plum transition-colors duration-200 p-1 cursor-pointer"
-                aria-label="Tutup menu"
+                aria-label={isMY ? 'Close menu' : 'Tutup menu'}
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" />
               </button>
@@ -92,7 +95,7 @@ export function MobileMenuDrawer({
                       <>
                         <div className="px-2 mb-4 bg-brand-gold/20 border border-amber-200/60 rounded-xl p-3">
                           <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider mb-1">
-                            Halo,
+                            {isMY ? 'Hello,' : 'Halo,'}
                           </p>
                           <p className="text-sm font-sans font-bold text-brand-plum truncate">
                             {profile?.name || user?.email}
@@ -103,7 +106,7 @@ export function MobileMenuDrawer({
                           onClick={onClose}
                           className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200"
                         >
-                          <span>Akun Saya</span>
+                          <span>{isMY ? 'My Account' : 'Akun Saya'}</span>
                           <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                         </Link>
                         {(profile?.role?.toLowerCase() === 'admin' || profile?.role?.toLowerCase() === 'staff') && (
@@ -123,7 +126,7 @@ export function MobileMenuDrawer({
                           }}
                           className="flex items-center justify-between py-2 w-full text-left text-xs font-heading font-medium uppercase tracking-widest text-red-600 hover:text-red-700 transition-colors duration-200"
                         >
-                          <span>Keluar</span>
+                          <span>{isMY ? 'Sign Out' : 'Keluar'}</span>
                           <HandDrawnIcon name="logout" className="h-3 w-3" />
                         </button>
                       </>
@@ -133,7 +136,7 @@ export function MobileMenuDrawer({
                         onClick={onClose}
                         className="flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200"
                       >
-                        <span>Masuk</span>
+                        <span>{isMY ? 'Sign In' : 'Masuk'}</span>
                         <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                       </Link>
                     )}

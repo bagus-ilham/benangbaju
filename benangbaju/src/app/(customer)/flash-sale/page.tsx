@@ -2,8 +2,7 @@ import React from 'react'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createStaticClient } from '@/lib/supabase/static'
 import { flashSaleService } from '@/modules/flash-sales/flash-sale.service'
-import { FlashSaleSection } from '@/modules/flash-sales/components/FlashSaleSection'
-import { PageHero, PageContainer, EmptyState } from '@/shared/components'
+import { FlashSaleClient } from './FlashSaleClient'
 
 async function getCachedFlashSale() {
   'use cache'
@@ -16,29 +15,7 @@ async function getCachedFlashSale() {
 
 export default async function FlashSalePage(): Promise<React.JSX.Element> {
   const flashSaleResponse = await getCachedFlashSale()
-  const flashSale = flashSaleResponse.data
+  const flashSale = flashSaleResponse.data ?? null
 
-  return (
-    <div className="bg-brand-cream min-h-screen">
-      <PageHero
-        eyebrow="Penawaran Spesial"
-        title="Flash Sale"
-        subtitle="Diskon terbatas dengan waktu terbatas. Jangan lewatkan penawaran eksklusif ini."
-        variant="dark"
-      />
-
-      {flashSale ? (
-        <FlashSaleSection flashSale={flashSale} isFullPage={true} />
-      ) : (
-        <PageContainer>
-          <EmptyState
-            handDrawnIcon="sparkles"
-            title="Tidak Ada Flash Sale Aktif"
-            description="Saat ini sedang tidak ada promo flash sale yang berlangsung. Nantikan promo menarik berikutnya dari kami!"
-            action={{ label: 'Belanja Produk', href: '/produk' }}
-          />
-        </PageContainer>
-      )}
-    </div>
-  )
+  return <FlashSaleClient flashSale={flashSale} />
 }

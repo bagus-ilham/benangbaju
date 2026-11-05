@@ -6,7 +6,9 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button, Card, PageContainer, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import toast from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -14,6 +16,8 @@ export default function CartPage(): React.JSX.Element {
   const items = useCartStore((state) => state.items)
   const updateQuantity = useCartStore((state) => state.updateQuantity)
   const removeItem = useCartStore((state) => state.removeItem)
+  const market = useMarket()
+  const { myrExchangeRate } = useSiteSettings()
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
@@ -35,13 +39,13 @@ export default function CartPage(): React.JSX.Element {
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero
-          eyebrow="Pembelian Anda"
-          title="Keranjang Belanja"
-          subtitle="Memuat keranjang belanja Anda..."
+          eyebrow={market === 'MY' ? 'Your Shopping Bag' : 'Pembelian Anda'}
+          title={market === 'MY' ? 'Shopping Bag' : 'Keranjang Belanja'}
+          subtitle={market === 'MY' ? 'Loading your shopping bag...' : 'Memuat keranjang belanja Anda...'}
         />
         <PageContainer className="py-10 page-content">
           <div className="py-20 text-center text-xs text-neutral-400 uppercase tracking-widest animate-pulse">
-            Memuat keranjang...
+            {market === 'MY' ? 'Loading bag...' : 'Memuat keranjang...'}
           </div>
         </PageContainer>
       </div>
@@ -57,12 +61,12 @@ export default function CartPage(): React.JSX.Element {
     const newQty = currentQty + change
     if (newQty <= 0) {
       await removeItem(variantId)
-      toast.success('Produk dihapus dari keranjang.')
+      toast.success(market === 'MY' ? 'Item removed from bag.' : 'Produk dihapus dari keranjang.')
       return
     }
 
     if (newQty > stock) {
-      toast.error('Jumlah pembelian melebihi stok yang tersedia.')
+      toast.error(market === 'MY' ? 'Quantity exceeds available stock.' : 'Jumlah pembelian melebihi stok yang tersedia.')
       return
     }
 
@@ -71,7 +75,7 @@ export default function CartPage(): React.JSX.Element {
 
   const handleRemove = async (variantId: string, name: string) => {
     await removeItem(variantId)
-    toast.success(`${name} dihapus dari keranjang.`)
+    toast.success(market === 'MY' ? `${name} removed from bag.` : `${name} dihapus dari keranjang.`)
   }
 
   return (
@@ -80,15 +84,15 @@ export default function CartPage(): React.JSX.Element {
         eyebrow="Pembelian Anda"
         title="Keranjang Belanja"
         subtitle={
-          items.length > 0 ? `${totalQuantity} item dalam keranjang` : 'Keranjang belanja Anda'
+          market === 'MY' ? (items.length > 0 ? `${totalQuantity} items in bag` : 'Your shopping bag') : (items.length > 0 ? `${totalQuantity} item dalam keranjang` : 'Keranjang belanja Anda')
         }
       />
       <PageContainer className="py-10 page-content">
         {items.length === 0 ? (
           <EmptyState
-            title="Keranjang Anda Kosong"
-            description="Anda belum menambahkan produk apapun ke dalam keranjang belanja."
-            action={{ label: 'Jelajahi Produk', href: '/produk' }}
+            title={market === 'MY' ? 'Your Bag is Empty' : 'Keranjang Anda Kosong'}
+            description={market === 'MY' ? 'You have not added any pieces to your shopping bag yet.' : 'Anda belum menambahkan produk apapun ke dalam keranjang belanja.'}
+            action={{ label: market === 'MY' ? 'Explore Collection' : 'Jelajahi Produk', href: '/produk' }}
           />
         ) : (
           // Cart Grid Layout
@@ -126,20 +130,34 @@ export default function CartPage(): React.JSX.Element {
                           </Link>
                           {item.variantName && (
                             <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-sans font-semibold">
-                              Varian: {item.variantName}
+                              {market === 'MY' ? 'Variant:' : 'Varian:'} {item.variantName}
                             </p>
                           )}
                           {item.sku && (
                             <p className="text-[9px] text-neutral-600 font-sans">SKU: {item.sku}</p>
                           )}
-                          <div className="flex items-baseline space-x-2 pt-1">
-                            <span className="text-xs font-sans font-bold text-brand-plum">
-                              {formatIDR(item.price * item.quantity)}
-                            </span>
-                            {item.comparePrice && item.comparePrice > item.price && (
-                              <span className="text-[10px] font-sans text-neutral-600 line-through">
-                                {formatIDR(item.comparePrice * item.quantity)}
+                          <div className="flex flex-col pt-1">
+                            <div className="flex items-baseline space-x-2">
+                              <span className="text-xs font-sans font-bold text-brand-plum">
+                                {formatIDR(item.price * item.quantity)}
                               </span>
+                              {item.comparePrice && item.comparePrice > item.price && (
+                                <span className="text-[10px] font-sans text-neutral-600 line-through">
+                                  {formatIDR(item.comparePrice * item.quantity)}
+                                </span>
+                              )}
+                            </div>
+                            {market === 'MY' && (
+                              <div className="flex items-baseline space-x-1.5 mt-0.5">
+                                <span className="text-[10px] font-sans font-bold text-emerald-800">
+                                  {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                                </span>
+                                {item.comparePrice && item.comparePrice > item.price && (
+                                  <span className="text-[9px] font-sans text-neutral-500 line-through">
+                                    {formatApproxMYR(item.comparePrice * item.quantity, myrExchangeRate)}
+                                  </span>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -152,7 +170,7 @@ export default function CartPage(): React.JSX.Element {
                             type="button"
                             onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
                             className="p-2 text-neutral-600 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
-                            aria-label="Kurangi jumlah"
+                            aria-label={market === 'MY' ? 'Reduce quantity' : 'Kurangi jumlah'}
                           >
                             <HandDrawnIcon name="minus" className="h-3 w-3" />
                           </button>
@@ -163,7 +181,7 @@ export default function CartPage(): React.JSX.Element {
                             type="button"
                             onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
                             className="p-2 text-neutral-600 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
-                            aria-label="Tambah jumlah"
+                            aria-label={market === 'MY' ? 'Increase quantity' : 'Tambah jumlah'}
                           >
                             <HandDrawnIcon name="plus" className="h-3 w-3" />
                           </button>
@@ -174,10 +192,10 @@ export default function CartPage(): React.JSX.Element {
                             type="button"
                             onClick={() => handleRemove(item.variantId, item.productName || item.name)}
                             className="p-2 text-neutral-400 hover:text-red-600 transition-colors flex items-center space-x-1 text-xs font-sans cursor-pointer"
-                            aria-label="Hapus produk"
+                            aria-label={market === 'MY' ? 'Delete item' : 'Hapus produk'}
                           >
                             <HandDrawnIcon name="trash" className="h-3.5 w-3.5" />
-                            <span className="hidden sm:inline text-[10px]">Hapus</span>
+                            <span className="hidden sm:inline text-[10px]">{market === 'MY' ? 'Remove' : 'Hapus'}</span>
                           </button>
                         </div>
                       </div>
@@ -200,31 +218,40 @@ export default function CartPage(): React.JSX.Element {
               >
                 <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
                 <h2 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">
-                  Ringkasan Belanja
+                  {market === 'MY' ? 'Order Summary' : 'Ringkasan Belanja'}
                 </h2>
 
                 <div className="space-y-3 text-xs font-sans text-neutral-600">
                   <div className="flex justify-between">
-                    <span>Jumlah Barang</span>
+                    <span>{market === 'MY' ? 'Total Items' : 'Jumlah Barang'}</span>
                     <span className="text-brand-plum font-semibold">{totalQuantity} pcs</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Total Harga (Base)</span>
+                    <span>{market === 'MY' ? 'Base Price' : 'Total Harga (Base)'}</span>
                     <span>{formatIDR(originalSubtotal)}</span>
                   </div>
                   {totalDiscount > 0 && (
                     <div className="flex justify-between text-red-600 font-semibold">
-                      <span>Total Diskon Produk</span>
+                      <span>{market === 'MY' ? 'Total Discount' : 'Total Diskon Produk'}</span>
                       <span>-{formatIDR(totalDiscount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-xs text-neutral-400 italic pt-1">
-                    <span>* Ongkos kirim dihitung saat checkout</span>
+                    <span>{market === 'MY' ? '* Shipping fees will be calculated at checkout' : '* Ongkos kirim dihitung saat checkout'}</span>
                   </div>
 
-                  <div className="flex justify-between border-t border-neutral-200 pt-4 text-sm font-sans font-bold text-brand-plum">
-                    <span>Subtotal</span>
-                    <span className="text-base font-bold">{formatIDR(subtotal)}</span>
+                  <div className="flex flex-col border-t border-neutral-200 pt-4">
+                    <div className="flex justify-between text-sm font-sans font-bold text-brand-plum">
+                      <span>Subtotal</span>
+                      <span className="text-base font-bold">{formatIDR(subtotal)}</span>
+                    </div>
+                    {market === 'MY' && (
+                      <div className="flex justify-end mt-1">
+                        <span className="text-xs font-sans font-bold text-emerald-800">
+                          {formatApproxMYR(subtotal, myrExchangeRate)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -234,14 +261,15 @@ export default function CartPage(): React.JSX.Element {
                     size="lg"
                     className="w-full flex items-center justify-center space-x-2 font-bold"
                   >
-                    <span>Lanjut Ke Checkout</span>
+                    <span>{market === 'MY' ? 'Proceed to Checkout' : 'Lanjut Ke Checkout'}</span>
                     <HandDrawnIcon name="arrow-right" className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
 
                 <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-blue p-4 rounded-xl text-[10px] text-neutral-600 leading-relaxed font-sans">
-                  Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank
-                  otomatis, QRIS, e-Wallet via DOKU.
+                  {market === 'MY'
+                    ? 'Complete your order securely. We support Cross-Border DuitNow / Touch \'n Go QR via DOKU.'
+                    : 'Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank otomatis, QRIS, e-Wallet via DOKU.'}
                 </div>
               </Card>
             </motion.div>

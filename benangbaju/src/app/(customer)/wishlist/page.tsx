@@ -14,9 +14,12 @@ import {
   HandDrawnIcon,
 } from '@/shared/components'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
+import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
 export default function WishlistPage(): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const productIds = useWishlistStore((state) => state.productIds)
   const clearWishlist = useWishlistStore((state) => state.clearWishlist)
 
@@ -38,7 +41,7 @@ export default function WishlistPage(): React.JSX.Element {
   const handleMoveAllToCart = async () => {
     if (products.length === 0) return
     try {
-      toast.loading('Memindahkan produk ke keranjang...', { id: 'move-all' })
+      toast.loading(isMY ? 'Moving items to bag...' : 'Memindahkan produk ke keranjang...', { id: 'move-all' })
       let addedCount = 0
       for (const product of products) {
         const availableVariant =
@@ -68,10 +71,10 @@ export default function WishlistPage(): React.JSX.Element {
           addedCount++
         }
       }
-      toast.success(`${addedCount} produk dipindahkan ke keranjang!`, { id: 'move-all' })
+      toast.success(isMY ? `${addedCount} items moved to bag!` : `${addedCount} produk dipindahkan ke keranjang!`, { id: 'move-all' })
       setCartDrawerOpen(true)
     } catch {
-      toast.error('Gagal memindahkan produk.', { id: 'move-all' })
+      toast.error(isMY ? 'Failed to move items.' : 'Gagal memindahkan produk.', { id: 'move-all' })
     }
   }
 
@@ -79,16 +82,16 @@ export default function WishlistPage(): React.JSX.Element {
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero
-          eyebrow="Koleksi Disukai"
-          title="Daftar Keinginan"
-          subtitle="Simpan produk favorit Anda dan belanja kapan saja."
+          eyebrow={isMY ? 'Saved Collection' : 'Koleksi Disukai'}
+          title={isMY ? 'Wishlist' : 'Daftar Keinginan'}
+          subtitle={isMY ? 'Save your favorite pieces and shop anytime.' : 'Simpan produk favorit Anda dan belanja kapan saja.'}
         />
         <PageContainer className="py-10 page-content">
           <EmptyState
-            title="Gagal Memuat Wishlist"
-            description="Terjadi kesalahan saat memuat daftar keinginan Anda. Silakan coba kembali."
+            title={isMY ? 'Failed to Load Wishlist' : 'Gagal Memuat Wishlist'}
+            description={isMY ? 'An error occurred while loading your wishlist. Please try again.' : 'Terjadi kesalahan saat memuat daftar keinginan Anda. Silakan coba kembali.'}
             action={{
-              label: 'Coba Lagi',
+              label: isMY ? 'Try Again' : 'Coba Lagi',
               onClick: () => window.location.reload(),
             }}
           />
@@ -109,9 +112,9 @@ export default function WishlistPage(): React.JSX.Element {
           <ProductGridSkeleton count={4} />
         ) : !hasItems ? (
           <EmptyState
-            title="Daftar Keinginan Kosong"
-            description="Anda belum menambahkan produk apapun ke dalam daftar keinginan Anda."
-            action={{ label: 'Cari Produk Pilihan', href: '/produk' }}
+            title={isMY ? 'Your Wishlist is Empty' : 'Daftar Keinginan Kosong'}
+            description={isMY ? 'You have not added any pieces to your wishlist yet.' : 'Anda belum menambahkan produk apapun ke dalam daftar keinginan Anda.'}
+            action={{ label: isMY ? 'Explore Collection' : 'Cari Produk Pilihan', href: '/produk' }}
           />
         ) : (
           <div className="space-y-6">
@@ -120,7 +123,7 @@ export default function WishlistPage(): React.JSX.Element {
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="heart" className="w-4 h-4" />
                 <span className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum">
-                  {products.length} Produk Tersimpan
+                  {products.length} {isMY ? 'Saved Items' : 'Produk Tersimpan'}
                 </span>
               </div>
               <div className="flex items-center space-x-2">
@@ -130,7 +133,7 @@ export default function WishlistPage(): React.JSX.Element {
                   size="sm"
                   className="text-[10px] uppercase font-bold text-neutral-600 hover:text-red-600"
                 >
-                  <HandDrawnIcon name="trash" className="w-3.5 h-3.5 mr-1" /> Kosongkan
+                  <HandDrawnIcon name="trash" className="w-3.5 h-3.5 mr-1" /> {isMY ? 'Clear All' : 'Kosongkan'}
                 </Button>
                 <Button
                   onClick={handleMoveAllToCart}
@@ -138,7 +141,7 @@ export default function WishlistPage(): React.JSX.Element {
                   size="sm"
                   className="text-[10px] uppercase font-bold flex items-center"
                 >
-                  <HandDrawnIcon name="shopping-bag" className="w-3.5 h-3.5 mr-1.5" /> Pindahkan Semua ke Keranjang
+                  <HandDrawnIcon name="shopping-bag" className="w-3.5 h-3.5 mr-1.5" /> {isMY ? 'Move All to Bag' : 'Pindahkan Semua ke Keranjang'}
                 </Button>
               </div>
             </div>

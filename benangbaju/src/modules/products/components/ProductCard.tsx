@@ -128,7 +128,7 @@ export const ProductCard = React.memo(function ProductCard({
         {product.is_featured && !discountPercent && (
           <div className="absolute top-3 left-3 z-10">
             <Badge variant="gold" size="sm">
-              Pilihan
+              {market === 'MY' ? 'Featured' : 'Pilihan'}
             </Badge>
           </div>
         )}
@@ -140,9 +140,9 @@ export const ProductCard = React.memo(function ProductCard({
             e.stopPropagation()
             toggleWishlist(product.id)
             if (liked) {
-              toast.success('Produk dihapus dari Wishlist', { icon: '🤍' })
+              toast.success(market === 'MY' ? 'Product removed from Wishlist' : 'Produk dihapus dari Wishlist', { icon: '🤍' })
             } else {
-              toast.success('Produk disimpan ke Wishlist', { icon: '❤️' })
+              toast.success(market === 'MY' ? 'Product added to Wishlist' : 'Produk disimpan ke Wishlist', { icon: '❤️' })
             }
           }}
           className="absolute top-3 right-3 p-1.5 bg-brand-cream/85 hover:bg-brand-cream border border-neutral-100 transition-all rounded-xl duration-300 hover:scale-110 active:scale-90 z-10 shadow-sm"
@@ -170,7 +170,7 @@ export const ProductCard = React.memo(function ProductCard({
         {product.product_variants.every((v) => v.stock === 0) && (
           <div className="absolute inset-0 bg-brand-cream/60 flex items-center justify-center pointer-events-none">
             <Badge variant="brand" size="md">
-              Habis Terjual
+              {market === 'MY' ? 'Sold Out' : 'Habis Terjual'}
             </Badge>
           </div>
         )}
@@ -207,11 +207,18 @@ export const ProductCard = React.memo(function ProductCard({
             )}
           </div>
           {market === 'MY' && (
-            <span className="text-[10px] font-sans font-semibold text-emerald-800">
-              {minPrice !== maxPrice
-                ? `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`
-                : formatApproxMYR(minPrice, myrExchangeRate)}
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] font-sans font-semibold text-emerald-800">
+                {minPrice !== maxPrice
+                  ? `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`
+                  : formatApproxMYR(minPrice, myrExchangeRate)}
+              </span>
+              {comparePrice && comparePrice > minPrice && (
+                <span className="text-[10px] font-sans text-neutral-500 line-through">
+                  {formatApproxMYR(comparePrice, myrExchangeRate)}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>

@@ -73,7 +73,7 @@ export function CheckoutSummaryCard({
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
       <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center justify-between border-b border-neutral-100 pb-3">
         <span className="flex items-center">
-          <HandDrawnIcon name="shopping-bag" className="h-3.5 w-3.5 mr-2" /> Ringkasan Pesanan
+          <HandDrawnIcon name="shopping-bag" className="h-3.5 w-3.5 mr-2" /> {isMalaysia ? 'Order Summary' : 'Ringkasan Pesanan'}
         </span>
       </h2>
 
@@ -104,9 +104,28 @@ export function CheckoutSummaryCard({
               <p className="text-[10px] text-neutral-400 mt-0.5 font-sans">Qty: {item.quantity}</p>
             </div>
             <div className="text-right">
-              <p className="font-sans font-bold text-brand-plum">
-                {formatIDR(item.price * item.quantity)}
-              </p>
+              <div className="flex items-center justify-end space-x-1.5">
+                <span className="font-sans font-bold text-brand-plum">
+                  {formatIDR(item.price * item.quantity)}
+                </span>
+                {item.comparePrice && item.comparePrice > item.price && (
+                  <span className="text-[10px] text-neutral-400 line-through font-sans">
+                    {formatIDR(item.comparePrice * item.quantity)}
+                  </span>
+                )}
+              </div>
+              {isMalaysia && (
+                <div className="flex items-center justify-end space-x-1 mt-0.5">
+                  <span className="text-[10px] font-sans font-semibold text-emerald-800">
+                    {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                  </span>
+                  {item.comparePrice && item.comparePrice > item.price && (
+                    <span className="text-[9px] text-neutral-400 line-through font-sans">
+                      {formatApproxMYR(item.comparePrice * item.quantity, myrExchangeRate)}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -115,7 +134,7 @@ export function CheckoutSummaryCard({
       {/* Voucher Code Form */}
       <div className="pb-6 border-b border-neutral-100 mb-6">
         <label className="block text-[10px] uppercase tracking-widest font-heading font-bold text-neutral-400 mb-2">
-          Masukkan Kode Voucher
+          {isMalaysia ? 'Enter Promo Code' : 'Masukkan Kode Voucher'}
         </label>
         <AnimatePresence mode="wait">
           {appliedVoucher ? (
@@ -129,7 +148,7 @@ export function CheckoutSummaryCard({
             >
               <div className="flex items-center space-x-2 text-brand-plum font-heading font-medium uppercase tracking-wider text-[10px]">
                 <HandDrawnIcon name="tag" className="h-3 w-3" />
-                <span>{appliedVoucher.code} diterapkan</span>
+                <span>{appliedVoucher.code} {isMalaysia ? 'applied' : 'diterapkan'}</span>
               </div>
               <motion.button
                 whileTap={{ scale: 0.95 }}
@@ -145,7 +164,7 @@ export function CheckoutSummaryCard({
               <div className="flex space-x-2">
                 <input
                   type="text"
-                  placeholder="Masukkan kode voucher"
+                  placeholder={isMalaysia ? 'Enter promo code' : 'Masukkan kode voucher'}
                   className="flex-1 px-3 py-2 border border-neutral-200 focus:border-brand-plum outline-none text-xs uppercase rounded-xl transition-colors duration-200 focus-ring-premium"
                   value={voucherCodeInput}
                   onChange={(e) => onVoucherInputChange(e.target.value)}
@@ -165,7 +184,7 @@ export function CheckoutSummaryCard({
               {availableVouchers && availableVouchers.length > 0 && (
                 <div className="pt-1 space-y-1.5">
                   <span className="text-[9px] uppercase tracking-widest font-heading font-medium text-neutral-400 block">
-                    Pilih Voucher Tersedia
+                    {isMalaysia ? 'Available Promo Vouchers' : 'Pilih Voucher Tersedia'}
                   </span>
                   <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
                     {availableVouchers.map((voucher) => {
@@ -196,7 +215,7 @@ export function CheckoutSummaryCard({
                               : `${formatIDR(voucher.value)} OFF`}
                           </div>
                           <div className="text-[8px] text-neutral-400 font-sans">
-                            Min. Belanja: {formatIDR(voucher.min_purchase)}
+                            {isMalaysia ? `Min. Spend: ${formatIDR(voucher.min_purchase)}` : `Min. Belanja: ${formatIDR(voucher.min_purchase)}`}
                           </div>
                         </button>
                       )
@@ -212,24 +231,24 @@ export function CheckoutSummaryCard({
       {/* Cost Calculation Details */}
       <div className="space-y-3 text-xs text-neutral-500 border-b border-neutral-100 pb-5 mb-5 font-sans">
         <div className="flex justify-between">
-          <span>Subtotal Produk</span>
+          <span>{isMalaysia ? 'Item Subtotal' : 'Subtotal Produk'}</span>
           <span className="font-semibold text-brand-plum">{formatIDR(subtotal)}</span>
         </div>
         <div className="flex justify-between">
-          <span>Ongkos Kirim</span>
+          <span>{isMalaysia ? 'Shipping Fee' : 'Ongkos Kirim'}</span>
           <span className="font-semibold text-brand-plum">
-            {shippingCost > 0 ? formatIDR(shippingCost) : 'Pilih kurir...'}
+            {shippingCost > 0 ? formatIDR(shippingCost) : (isMalaysia ? 'Select courier...' : 'Pilih kurir...')}
           </span>
         </div>
         {paymentFee > 0 && (
           <div className="flex justify-between">
-            <span>Biaya Layanan Pembayaran</span>
+            <span>{isMalaysia ? 'Payment Service Fee' : 'Biaya Layanan Pembayaran'}</span>
             <span className="font-semibold text-brand-plum">{formatIDR(paymentFee)}</span>
           </div>
         )}
         {appliedVoucher && (
           <div className="flex justify-between font-semibold">
-            <span>Diskon Voucher</span>
+            <span>{isMalaysia ? 'Voucher Discount' : 'Diskon Voucher'}</span>
             <span className="text-red-600">- {formatIDR(discountAmount)}</span>
           </div>
         )}
@@ -238,7 +257,7 @@ export function CheckoutSummaryCard({
       {/* Grand Total */}
       <div className="mb-6">
         <div className="flex justify-between items-center text-brand-plum font-heading">
-          <span className="text-xs uppercase tracking-widest font-medium">Total Pembayaran</span>
+          <span className="text-xs uppercase tracking-widest font-medium">{isMalaysia ? 'Grand Total' : 'Total Pembayaran'}</span>
           <span className="text-lg font-bold">{formatIDR(totalAmount)}</span>
         </div>
         {isMalaysia && (
@@ -247,7 +266,7 @@ export function CheckoutSummaryCard({
               {formatApproxMYR(totalAmount, myrExchangeRate)}
             </span>
             <p className="text-[10px] text-neutral-400 mt-0.5 font-sans">
-              *Estimasi Ringgit Malaysia. Pembayaran diproses dalam IDR via QRIS Cross-Border.
+              {isMalaysia ? '*Malaysian Ringgit estimate. Payment is processed in IDR via QRIS Cross-Border (DuitNow / Touch \'n Go).' : '*Estimasi Ringgit Malaysia. Pembayaran diproses dalam IDR via QRIS Cross-Border.'}
             </p>
           </div>
         )}
@@ -272,18 +291,18 @@ export function CheckoutSummaryCard({
         variant="accent"
         onClick={onPaymentSubmit}
         isLoading={isCheckoutProcessing}
-        loadingText={isPaymentTokenLoading ? 'Menghubungi DOKU...' : 'Memproses Pesanan...'}
+        loadingText={isPaymentTokenLoading ? (isMalaysia ? 'Connecting to payment gateway...' : 'Menghubungi DOKU...') : (isMalaysia ? 'Processing order...' : 'Memproses Pesanan...')}
         className="w-full py-4 text-xs uppercase tracking-widest font-bold"
         disabled={!canSubmit || isQrisLimitExceeded}
       >
-        Bayar Sekarang
+        {isMalaysia ? 'Pay Now' : 'Bayar Sekarang'}
       </Button>
 
       {/* Mini Trust Badges */}
       <div className="flex items-center justify-center space-x-6 mt-6">
         <div className="flex items-center space-x-1.5 text-neutral-400">
           <HandDrawnIcon name="lock" className="h-3 w-3" />
-          <span className="text-[9px] font-sans">Pembayaran Aman</span>
+          <span className="text-[9px] font-sans">{isMalaysia ? 'Secure Payment' : 'Pembayaran Aman'}</span>
         </div>
         <div className="flex items-center space-x-1.5 text-neutral-400">
           <HandDrawnIcon name="clothes" className="h-3 w-3" />

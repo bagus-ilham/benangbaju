@@ -7,12 +7,15 @@ import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useAuthStore } from '@/modules/users/stores/authStore'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface MobileBottomNavProps {
   onOpenSearch?: () => void
 }
 
 export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const pathname = usePathname()
   const wishlistCount = useWishlistStore((state) => state.productIds.length)
   const { isAuthenticated } = useAuthStore()
@@ -27,26 +30,26 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
     isActive: boolean
   }> = [
     {
-      name: 'Beranda',
+      name: isMY ? 'Home' : 'Beranda',
       href: '/',
       handDrawnName: 'home',
       isActive: pathname === '/',
     },
     {
-      name: 'Custom Size',
+      name: isMY ? 'Custom Size' : 'Custom Size',
       href: '/produk/customize-size',
       handDrawnName: 'measuring-tape',
       isActive: pathname === '/produk/customize-size',
     },
     {
-      name: 'Wishlist',
+      name: isMY ? 'Wishlist' : 'Wishlist',
       href: '/wishlist',
       handDrawnName: wishlistCount > 0 || pathname === '/wishlist' ? 'heart-filled' : 'heart',
       badge: wishlistCount > 0 ? wishlistCount : null,
       isActive: pathname === '/wishlist',
     },
     {
-      name: isAuthenticated ? 'Pesanan' : 'Katalog',
+      name: isMY ? (isAuthenticated ? 'Orders' : 'Catalog') : (isAuthenticated ? 'Pesanan' : 'Katalog'),
       href: isAuthenticated ? '/pesanan' : '/produk',
       handDrawnName: isAuthenticated ? 'box' : 'grid',
       isActive: isAuthenticated
@@ -54,7 +57,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
         : pathname.startsWith('/produk') && pathname !== '/produk/customize-size',
     },
     {
-      name: isAuthenticated ? 'Akun' : 'Masuk',
+      name: isMY ? (isAuthenticated ? 'Account' : 'Sign In') : (isAuthenticated ? 'Akun' : 'Masuk'),
       href: isAuthenticated ? '/akun' : '/masuk',
       handDrawnName: 'user',
       isActive: pathname === '/akun' || pathname === '/masuk',
