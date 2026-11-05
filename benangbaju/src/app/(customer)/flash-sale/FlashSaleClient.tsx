@@ -46,3 +46,4 @@ export function FlashSaleClient({ flashSale }: FlashSaleClientProps): React.JSX.
     </div>
   )
 }
+

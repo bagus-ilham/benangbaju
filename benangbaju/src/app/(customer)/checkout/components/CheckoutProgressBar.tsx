@@ -1,12 +1,15 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface CheckoutProgressBarProps {
   checkoutStep: 'shipping' | 'payment'
 }
 
 export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const isShippingDone = checkoutStep === 'payment'
 
   return (

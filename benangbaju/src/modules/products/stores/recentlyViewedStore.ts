@@ -6,6 +6,7 @@ export interface RecentlyViewedProduct {
   name: string
   slug: string
   price: number
+  comparePrice?: number | null
   imageUrl: string | null
 }
 

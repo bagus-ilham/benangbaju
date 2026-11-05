@@ -6,6 +6,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/modules/users/stores/authStore'
+import { useMarket } from '@/shared/stores/marketStore'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/modules/shipping/hooks/useShipping'
@@ -34,6 +35,7 @@ interface AppliedVoucher {
 }
 
 export default function CheckoutPage(): React.JSX.Element {
+  const market = useMarket()
   const [supabase] = useState(() => createBrowserClient())
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
@@ -439,9 +441,9 @@ export default function CheckoutPage(): React.JSX.Element {
   return (
     <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
-        eyebrow="Pembelian"
+        eyebrow={market === "MY" || isMalaysia ? "Checkout" : "Pembelian"}
         title="Checkout"
-        subtitle="Lengkapi alamat pengiriman dan pilih metode pembayaran."
+        subtitle={market === "MY" || isMalaysia ? "Complete your delivery address and choose a payment method." : "Lengkapi alamat pengiriman dan pilih metode pembayaran."}
       />
       <PageContainer size="lg" className="py-10 page-content">
         <CheckoutProgressBar checkoutStep={checkoutStep} />
@@ -450,10 +452,8 @@ export default function CheckoutPage(): React.JSX.Element {
           <div className="mb-6 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 flex items-start gap-3">
             <HandDrawnIcon name="alert-triangle" className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-semibold text-red-800">Pengiriman Internasional Dinonaktifkan</p>
-              <p className="mt-0.5 text-red-700">
-                Pengiriman ke Malaysia saat ini sedang dinonaktifkan sementara oleh sistem. Silakan pilih alamat pengiriman di Indonesia atau hubungi Customer Service kami.
-              </p>
+              <p className="font-semibold text-red-800">{market === "MY" || isMalaysia ? "International Shipping Disabled" : "Pengiriman Internasional Dinonaktifkan"}</p>
+              <p className="mt-0.5 text-red-700">{market === "MY" || isMalaysia ? "Shipping to Malaysia is currently paused by the system. Please select an Indonesian delivery address or contact Customer Care." : "Pengiriman ke Malaysia saat ini sedang dinonaktifkan sementara oleh sistem. Silakan pilih alamat pengiriman di Indonesia atau hubungi Customer Service kami."}</p>
             </div>
           </div>
         )}
@@ -479,6 +479,7 @@ export default function CheckoutPage(): React.JSX.Element {
               notes={notes}
               onNotesChange={setNotes}
               totalWeightGram={totalWeight}
+              myrExchangeRate={myrExchangeRate}
             />
 
             {/* PAYMENT METHOD SELECTOR */}

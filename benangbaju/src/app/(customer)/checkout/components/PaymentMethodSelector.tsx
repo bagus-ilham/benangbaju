@@ -4,6 +4,7 @@ import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
 import type { PaymentFeeConfig } from '@/modules/orders/types'
 
 interface PaymentMethodSelectorProps {
@@ -52,6 +53,8 @@ export function PaymentMethodSelector({
   loading = false,
   countryCode = 'ID',
 }: PaymentMethodSelectorProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = countryCode === 'MY' || market === 'MY'
   const isMalaysia = countryCode === 'MY'
   const baseAmount = Math.max(0, subtotal + shippingCost - discountAmount)
 
@@ -96,10 +99,10 @@ export function PaymentMethodSelector({
     <div className="space-y-6">
       <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
         <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-plum flex items-center">
-          <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-2 text-brand-plum" /> Metode Pembayaran
+          <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-2 text-brand-plum" /> {isMY ? 'Payment Method' : 'Metode Pembayaran'}
         </h2>
         <span className="text-[10px] text-neutral-500 font-sans">
-          {isMalaysia ? 'Pembayaran Internasional' : 'Pilih metode bayar otomatis'}
+          {isMalaysia ? (isMY ? 'International Payment' : 'Pembayaran Internasional') : (isMY ? 'Choose automated payment' : 'Pilih metode bayar otomatis')}
         </span>
       </div>
 
@@ -111,11 +114,17 @@ export function PaymentMethodSelector({
               DuitNow QR / Cross-Border QRIS
             </span>
           </div>
-          <p className="text-[11px] text-amber-900 leading-relaxed">
-            Pembayaran dari Malaysia menggunakan <strong>QRIS Cross-Border</strong>. Anda dapat memindai kode QR
-            menggunakan aplikasi bank atau e-wallet Malaysia (<strong>Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Public Bank, dll.</strong>).
-            Nominal IDR akan otomatis dikonversi ke <strong>MYR (RM)</strong> oleh DuitNow.
-          </p>
+          {isMY ? (
+            <p className="text-[11px] text-amber-900 leading-relaxed">
+              Payments from Malaysia are settled via <strong>Cross-Border QRIS (DuitNow)</strong>. You can scan the QR code using any Malaysian banking or e-wallet app (<strong>Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Public Bank, etc.</strong>). The IDR total is converted automatically to <strong>MYR (RM)</strong> upon checkout.
+            </p>
+          ) : (
+            <p className="text-[11px] text-amber-900 leading-relaxed">
+              Pembayaran dari Malaysia menggunakan <strong>QRIS Cross-Border</strong>. Anda dapat memindai kode QR
+              menggunakan aplikasi bank atau e-wallet Malaysia (<strong>Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Public Bank, dll.</strong>).
+              Nominal IDR akan otomatis dikonversi ke <strong>MYR (RM)</strong> oleh DuitNow.
+            </p>
+          )}
         </div>
       )}
 

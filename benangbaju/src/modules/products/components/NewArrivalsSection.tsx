@@ -7,6 +7,7 @@ import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
 import { Button, PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface NewArrivalsSectionProps {
   products: ProductListItem[]
@@ -15,14 +16,16 @@ interface NewArrivalsSectionProps {
 export function NewArrivalsSection({
   products,
 }: NewArrivalsSectionProps): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   if (products.length === 0) return null
 
   return (
     <section className="bg-brand-cream section-texture py-16 md:py-20 border-b border-neutral-200/80 font-sans">
       <PageContainer>
         <SectionHeader
-          eyebrow="Koleksi Terbaru"
-          title="Keluaran Terbaru"
+          eyebrow={isMY ? "Fresh Drops" : "Koleksi Terbaru"}
+          title={isMY ? "New Arrivals" : "Keluaran Terbaru"}
           className="[&_h2]:text-brand-plum"
         />
 
@@ -53,7 +56,7 @@ export function NewArrivalsSection({
         >
           <Link href="/produk?urutkan=newest">
             <Button variant="accent" size="lg" className="min-w-[200px] font-bold">
-              Lihat Semua Koleksi Terbaru
+              {isMY ? "View All New Arrivals" : "Lihat Semua Koleksi Terbaru"}
             </Button>
           </Link>
         </motion.div>

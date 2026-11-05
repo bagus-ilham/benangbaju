@@ -6,8 +6,11 @@ import { useRecentlyViewedStore } from '@/modules/products/stores/recentlyViewed
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
 import { PageContainer, SectionHeader } from '@/shared/components'
+import { useMarket } from '@/shared/stores/marketStore'
 
 export function RecentlyViewedSection(): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const { products } = useRecentlyViewedStore()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -71,7 +74,7 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
   return (
     <section className="bg-brand-cream py-16 font-sans border-t border-neutral-200/60">
       <PageContainer>
-        <SectionHeader eyebrow="Riwayat Anda" title="Terakhir Dilihat" />
+        <SectionHeader eyebrow={isMY ? "Your History" : "Riwayat Anda"} title={isMY ? "Recently Viewed" : "Terakhir Dilihat"} />
 
         {/* Horizontal scroll on mobile, grid on desktop */}
         <div className="flex md:grid md:grid-cols-4 gap-x-4 gap-y-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">

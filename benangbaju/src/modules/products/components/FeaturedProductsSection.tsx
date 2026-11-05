@@ -7,6 +7,7 @@ import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
 import { Button, PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface FeaturedProductsSectionProps {
   products: ProductListItem[]
@@ -15,6 +16,8 @@ interface FeaturedProductsSectionProps {
 export function FeaturedProductsSection({
   products,
 }: FeaturedProductsSectionProps): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   if (products.length === 0) return null
 
   return (
@@ -23,7 +26,7 @@ export function FeaturedProductsSection({
       <div className="absolute inset-0 gradient-mesh pointer-events-none" aria-hidden />
 
       <PageContainer className="relative">
-        <SectionHeader eyebrow="Kurasi Terbaik" title="Produk Pilihan" />
+        <SectionHeader eyebrow={isMY ? "Best Curation" : "Kurasi Terbaik"} title={isMY ? "Featured Pieces" : "Produk Pilihan"} />
 
         <motion.div
           variants={staggerContainer}
@@ -52,7 +55,7 @@ export function FeaturedProductsSection({
         >
           <Link href="/produk?urutkan=featured">
             <Button variant="accent" size="md" className="font-bold">
-              Lihat Semua Produk Pilihan
+              {isMY ? "View All Featured" : "Lihat Semua Produk Pilihan"}
             </Button>
           </Link>
         </motion.div>

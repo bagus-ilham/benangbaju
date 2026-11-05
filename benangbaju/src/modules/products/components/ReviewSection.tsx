@@ -7,6 +7,7 @@ import { HandDrawnIcon } from '@/shared/components'
 import { useReviews } from '@/modules/reviews/hooks/useReviews'
 import { ProductRatingSummary } from '@/modules/products/types'
 import { cn, formatDate } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 import toast from 'react-hot-toast'
@@ -18,6 +19,8 @@ interface ReviewHelpfulButtonProps {
 }
 
 function ReviewHelpfulButton({ reviewId, initialCount }: ReviewHelpfulButtonProps) {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [count, setCount] = React.useState(initialCount)
   const [hasVoted, setHasVoted] = React.useState(false)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
@@ -30,9 +33,9 @@ function ReviewHelpfulButton({ reviewId, initialCount }: ReviewHelpfulButtonProp
       if (res.success && res.data !== undefined) {
         setCount(res.data)
         setHasVoted(true)
-        toast.success('Terima kasih atas masukan Anda!')
+        toast.success(isMY ? 'Thank you for your feedback!' : 'Terima kasih atas masukan Anda!')
       } else {
-        toast.error('Gagal mengirim tanggapan.')
+        toast.error(isMY ? 'Failed to submit feedback.' : 'Gagal mengirim tanggapan.')
       }
     } catch {
       toast.error('Terjadi kesalahan.')
@@ -54,7 +57,7 @@ function ReviewHelpfulButton({ reviewId, initialCount }: ReviewHelpfulButtonProp
     >
       <HandDrawnIcon name="thumbs-up" className="h-3 w-3" />
       <span>
-        {hasVoted ? 'Terbantu' : 'Membantu'} ({count})
+        {hasVoted ? (isMY ? 'Helpful' : 'Terbantu') : (isMY ? 'Helpful' : 'Membantu')} ({count})
       </span>
     </button>
   )
@@ -66,6 +69,8 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const { data: reviewsRes, isLoading } = useReviews(productId)
   const reviews = reviewsRes?.data || []
 
@@ -92,7 +97,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
     return (
       <div className="py-10 space-y-4">
         <h2 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
-          Ulasan Pembeli ({total})
+          {isMY ? "Customer Reviews" : "Ulasan Pembeli"} ({total})
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="h-44 bg-neutral-50 border border-neutral-200/60 skeleton-shimmer" />
@@ -122,7 +127,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
           </div>
           <div className="flex space-x-1">{renderStars(avgRating, 'h-4 w-4')}</div>
           <p className="text-[11px] text-neutral-600 font-sans leading-relaxed">
-            Berdasarkan {total} ulasan terverifikasi dari pembeli.
+            {isMY ? `Based on ${total} verified customer reviews.` : `Berdasarkan ${total} ulasan terverifikasi dari pembeli.`}
           </p>
         </div>
 
@@ -130,7 +135,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
         <div className="flex-1 space-y-6">
           {reviews.length === 0 ? (
             <div className="text-xs text-neutral-600 font-sans italic py-4">
-              Belum ada ulasan untuk produk ini.
+              {isMY ? "No reviews for this product yet." : "Belum ada ulasan untuk produk ini."}
             </div>
           ) : (
             <div className="divide-y divide-neutral-100">
@@ -139,7 +144,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col space-y-1">
                       <span className="text-xs font-sans font-bold text-brand-plum">
-                        {review.is_anonymous ? 'Anonim' : review.profiles?.name || 'Customer'}
+                        {review.is_anonymous ? (isMY ? 'Anonymous' : 'Anonim') : review.profiles?.name || 'Customer'}
                       </span>
                       <div className="flex items-center space-x-2">
                         <div className="flex">{renderStars(review.rating)}</div>
@@ -193,7 +198,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                   {review.review_replies && review.review_replies.length > 0 && (
                     <div className="bg-neutral-50/80 p-4 border-l-4 border-brand-blue mt-3 space-y-1 rounded-r-xl rounded-l-sm">
                       <p className="text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum">
-                        Balasan dari Benangbaju
+                        {isMY ? "Reply from Benangbaju" : "Balasan dari Benangbaju"}
                       </p>
                       <p className="text-xs text-neutral-600 font-sans leading-relaxed italic">
                         "{review.review_replies[0].body}"

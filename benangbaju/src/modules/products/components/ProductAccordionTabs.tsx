@@ -153,7 +153,7 @@ export function ProductAccordionTabs({
                       <div className="space-y-2">
                         {unit === 'INCH' && !hasInch && hasCm && (
                           <p className="text-[10px] text-amber-900 bg-amber-50 border border-amber-200 p-2 rounded-xl">
-                            Catatan: Panduan ukuran dalam CM. Konversi: <strong>1 inch = 2.54 cm</strong>.
+                            {market === 'MY' ? <>Note: Sizing chart in CM. Conversion: <strong>1 inch = 2.54 cm</strong>.</> : <>Catatan: Panduan ukuran dalam CM. Konversi: <strong>1 inch = 2.54 cm</strong>.</>}
                           </p>
                         )}
                         {guideToShow.trim().startsWith('http') ? (

@@ -5,6 +5,7 @@ import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Category } from '@/modules/categories/types'
+import { useMarket } from '@/shared/stores/marketStore'
 import { PageContainer, SectionHeader } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -14,6 +15,8 @@ interface CategorySectionProps {
 }
 
 export function CategorySection({ categories }: CategorySectionProps): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const scrollRef = useRef<HTMLDivElement>(null)
   if (categories.length === 0) return null
 
@@ -31,7 +34,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
       <PageContainer>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <SectionHeader eyebrow="Kategori Pilihan" title="Kategori Belanja" />
+            <SectionHeader eyebrow={isMY ? "Featured Categories" : "Kategori Pilihan"} title={isMY ? "Shop by Category" : "Kategori Belanja"} />
           </div>
           {mainCategories.length > 4 && (
             <div className="flex items-center space-x-2 pb-6">

@@ -10,6 +10,7 @@ import { ProductCard } from '@/modules/products/components/ProductCard'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 import { EASE_PREMIUM } from '@/lib/motion'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface CollectionShowcaseProps {
   collection: Collection
@@ -24,6 +25,8 @@ export function CollectionShowcase({
   index = 0,
   decorativeSvg,
 }: CollectionShowcaseProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const isReversed = index % 2 === 1
   const bgColor = isReversed ? 'bg-brand-gold/60' : 'bg-brand-blue/50'
   const textColor = 'text-brand-plum'
@@ -202,7 +205,7 @@ export function CollectionShowcase({
                     >
                       <HandDrawnIcon name="arrow-right" className="w-5 h-5" />
                     </div>
-                    <span className="font-medium text-sm">Lihat Semua</span>
+                    <span className="font-medium text-sm">{isMY ? "View All" : "Lihat Semua"}</span>
                   </Link>
                 </div>
               )}

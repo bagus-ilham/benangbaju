@@ -3,7 +3,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, Textarea, HandDrawnIcon } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
 import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 
 interface CheckoutAddressFormProps {
@@ -19,6 +20,7 @@ interface CheckoutAddressFormProps {
   notes: string
   onNotesChange: (notes: string) => void
   totalWeightGram?: number
+  myrExchangeRate?: number
 }
 
 export function CheckoutAddressForm({
@@ -34,7 +36,10 @@ export function CheckoutAddressForm({
   notes,
   onNotesChange,
   totalWeightGram = 0,
+  myrExchangeRate = 3600,
 }: CheckoutAddressFormProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY' || selectedAddress?.country_code === 'MY'
   const isMalaysia = selectedAddress?.country_code === 'MY'
 
   return (
@@ -43,7 +48,7 @@ export function CheckoutAddressForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-plum flex items-center">
-            <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 mr-2" /> Alamat Pengiriman
+            <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 mr-2" /> {isMY ? "Delivery Address" : "Alamat Pengiriman"}
           </h2>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -51,7 +56,7 @@ export function CheckoutAddressForm({
             onClick={onAddNewAddress}
             className="inline-flex items-center text-[11px] text-neutral-600 hover:text-brand-plum font-heading font-medium uppercase tracking-wider transition-colors duration-200"
           >
-            <HandDrawnIcon name="plus" className="h-3 w-3 mr-1" /> Tambah Alamat
+            <HandDrawnIcon name="plus" className="h-3 w-3 mr-1" /> {isMY ? "Add Address" : "Tambah Alamat"}
           </motion.button>
         </div>
 
@@ -67,7 +72,7 @@ export function CheckoutAddressForm({
               >
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-sans font-bold text-xs text-brand-plum uppercase tracking-wider">
-                    {selectedAddress.label} (Pilihan)
+                    {selectedAddress.label} {isMY ? "(Selected)" : "(Pilihan)"}
                   </p>
                   {isMalaysia && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -91,7 +96,7 @@ export function CheckoutAddressForm({
               </motion.div>
             ) : (
               <p className="text-sm text-red-500 font-medium font-sans">
-                Harap pilih atau tambahkan alamat baru
+                {isMY ? "Please select or add a delivery address" : "Harap pilih atau tambahkan alamat baru"}
               </p>
             )}
 
@@ -99,7 +104,7 @@ export function CheckoutAddressForm({
             {addresses.length > 1 && (
               <div className="border border-neutral-200/80 p-4 space-y-3 bg-brand-cream rounded-2xl">
                 <p className="text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-widest">
-                  Pilih Alamat Lain:
+                  {isMY ? "Select Another Address:" : "Pilih Alamat Lain:"}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
                   {addresses
@@ -145,14 +150,14 @@ export function CheckoutAddressForm({
         ) : (
           <div className="text-center py-8 border border-dashed border-neutral-200">
             <p className="text-xs text-neutral-400 mb-3">
-              Anda belum menambahkan alamat pengiriman.
+              {isMY ? "You have not added a shipping address yet." : "Anda belum menambahkan alamat pengiriman."}
             </p>
             <Button
               onClick={onAddNewAddress}
               variant="outline"
               className="text-xs uppercase font-semibold"
             >
-              Tambah Alamat Baru
+              {isMY ? "Add New Address" : "Tambah Alamat Baru"}
             </Button>
           </div>
         )}
@@ -163,14 +168,14 @@ export function CheckoutAddressForm({
         <div className="p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl space-y-1.5 text-xs text-amber-950 font-sans">
           <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
             <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
-            <span>Ketentuan Pengiriman Internasional (DDU & Final Sale)</span>
+            <span>{isMY ? "International Shipping Terms (DDU & Final Sale)" : "Ketentuan Pengiriman Internasional (DDU & Final Sale)"}</span>
           </div>
           <ul className="list-disc list-inside text-[11px] text-amber-900/90 space-y-1 leading-relaxed">
             <li>
-              <strong>DDU (Delivered Duty Unpaid):</strong> Pajak SST & bea cukai Malaysia (apabila nilai pesanan melebihi De Minimis RM 500) ditanggung oleh penerima saat paket tiba.
+              {isMY ? <><strong>DDU (Delivered Duty Unpaid):</strong> Malaysian SST & import duties (if order CIF value exceeds De Minimis RM 500) are borne by the recipient upon parcel arrival.</> : <><strong>DDU (Delivered Duty Unpaid):</strong> Pajak SST & bea cukai Malaysia (apabila nilai pesanan melebihi De Minimis RM 500) ditanggung oleh penerima saat paket tiba.</>}
             </li>
             <li>
-              <strong>Final Sale:</strong> Pesanan lintas batas tidak dapat diretur mandiri. Bila produk rusak/salah kirim, hubungi Customer Care melalui WhatsApp.
+              {isMY ? <><strong>Final Sale:</strong> Cross-border orders are not eligible for self-service returns. If an item is damaged or incorrect, contact Customer Care via WhatsApp.</> : <><strong>Final Sale:</strong> Pesanan lintas batas tidak dapat diretur mandiri. Bila produk rusak/salah kirim, hubungi Customer Care melalui WhatsApp.</>}
             </li>
           </ul>
         </div>
@@ -180,18 +185,18 @@ export function CheckoutAddressForm({
       <div className="space-y-4 pt-4 border-t border-neutral-100">
         <div className="flex items-center justify-between">
           <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum flex items-center">
-            <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> Opsi Pengiriman
+            <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> {isMY ? "Shipping Options" : "Opsi Pengiriman"}
           </h2>
           {totalWeightGram > 0 && (
             <span className="text-[11px] text-neutral-500 font-sans font-medium">
-              Total Berat: <span className="font-bold text-brand-plum">{(totalWeightGram / 1000).toFixed(2)} kg</span>
+              {isMY ? "Total Weight: " : "Total Berat: "}<span className="font-bold text-brand-plum">{(totalWeightGram / 1000).toFixed(2)} kg</span>
             </span>
           )}
         </div>
 
         {!selectedAddress ? (
           <p className="text-xs text-neutral-400 italic font-sans">
-            Pilih alamat pengiriman untuk melihat opsi kurir.
+            {isMY ? "Select a delivery address to view shipping options." : "Pilih alamat pengiriman untuk melihat opsi kurir."}
           </p>
         ) : shippingLoading ? (
           <div className="space-y-2">
@@ -227,12 +232,19 @@ export function CheckoutAddressForm({
                   <span className="font-sans font-bold text-xs text-brand-plum uppercase tracking-wider">
                     {option.courier_name}
                   </span>
-                  <span className="font-sans font-bold text-xs text-brand-plum">
-                    {formatIDR(option.price)}
-                  </span>
+                  <div className="text-right">
+                    <span className="font-sans font-bold text-xs text-brand-plum block">
+                      {formatIDR(option.price)}
+                    </span>
+                    {isMalaysia && (
+                      <span className="text-[10px] font-bold text-emerald-800 block">
+                        {formatApproxMYR(option.price, myrExchangeRate)}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <p className="text-[11px] text-neutral-500 font-sans">
-                  Estimasi tiba: {option.etd_min} - {option.etd_max} Hari
+                  {isMY ? `Estimated delivery: ${option.etd_min} - ${option.etd_max} Days` : `Estimasi tiba: ${option.etd_min} - ${option.etd_max} Hari`}
                 </p>
                 {selectedCourier?.id === option.id && (
                   <div className="absolute top-2 right-2 bg-brand-blue text-brand-plum rounded-full p-0.5">
@@ -244,7 +256,7 @@ export function CheckoutAddressForm({
           </div>
         ) : (
           <p className="text-xs text-red-500 font-semibold">
-            Mohon maaf, kurir belum tersedia untuk wilayah ini. Silakan hubungi admin kami.
+            {isMY ? "Sorry, courier service is not available for this area. Please contact support." : "Mohon maaf, kurir belum tersedia untuk wilayah ini. Silakan hubungi admin kami."}
           </p>
         )}
       </div>
@@ -252,14 +264,14 @@ export function CheckoutAddressForm({
       {/* Note Section */}
       <div className="space-y-2 pt-4 border-t border-neutral-100">
         <Textarea
-          label="Catatan Pesanan"
+          label={isMY ? "Order Notes" : "Catatan Pesanan"}
           id="order-notes"
-          placeholder="Tulis instruksi khusus (cth: ukuran tambahan, warna cadangan, dll)..."
+          placeholder={isMY ? "Special delivery instructions (optional)..." : "Tulis instruksi khusus (cth: ukuran tambahan, warna cadangan, dll)..."}
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
           maxLength={200}
           rows={3}
-          helperText={`${notes.length}/200 karakter`}
+          helperText={isMY ? `${notes.length}/200 characters` : `${notes.length}/200 karakter`}
         />
       </div>
     </div>

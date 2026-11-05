@@ -5,12 +5,15 @@ import { ProductListItem } from '@/modules/products/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { SectionHeader } from '@/shared/components'
 import { motion } from 'framer-motion'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface RelatedProductsProps {
   products: ProductListItem[]
 }
 
 export function RelatedProducts({ products }: RelatedProductsProps): React.JSX.Element | null {
+  const market = useMarket()
+  const isMY = market === 'MY'
   if (products.length === 0) return null
 
   const containerVariants = {
@@ -31,8 +34,8 @@ export function RelatedProducts({ products }: RelatedProductsProps): React.JSX.E
   return (
     <div className="py-12 border-t border-neutral-100 space-y-8">
       <SectionHeader
-        eyebrow="Rekomendasi Kami"
-        title="Produk Serupa"
+        eyebrow={isMY ? "Our Recommendations" : "Rekomendasi Kami"}
+        title={isMY ? "Related Products" : "Produk Serupa"}
         showDivider={true}
         align="center"
         className="mb-8"

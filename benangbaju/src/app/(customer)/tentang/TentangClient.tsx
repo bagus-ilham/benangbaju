@@ -96,3 +96,4 @@ export function TentangClient(): React.JSX.Element {
     </div>
   )
 }
+

@@ -77,3 +77,4 @@ export function CategoriesClient({ parentCategories }: CategoriesClientProps): R
     </div>
   )
 }
+

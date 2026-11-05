@@ -19,6 +19,7 @@ import {
 import { PageContainer, CustomToast } from '@/shared/components'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
+import { useMarket } from '@/shared/stores/marketStore'
 import {
   useRecentlyViewedStore,
   RecentlyViewedState,
@@ -45,6 +46,8 @@ export function ProductDetailClient({
   product,
   relatedProductsNode,
 }: ProductDetailClientProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const addItem = useCartStore((state) => state.addItem)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
 
@@ -73,22 +76,22 @@ export function ProductDetailClient({
     try {
       await toggleWishlist(product.id, selectedVariant?.id)
       if (liked) {
-        toast.success('Dihapus dari wishlist.')
+        toast.success(isMY ? 'Removed from wishlist.' : 'Dihapus dari wishlist.')
       } else {
         toast.custom((t) => (
           <CustomToast
             t={t}
-            title="Ditambahkan ke Wishlist"
+            title={isMY ? "Added to Wishlist" : "Ditambahkan ke Wishlist"}
             subtitle={`${product.name}${selectedVariant ? ` (${selectedVariant.name})` : ''}`}
-            description="Tersimpan di daftar impian Anda."
+            description={isMY ? "Saved to your dream list." : "Tersimpan di daftar impian Anda."}
             imageUrl={product.product_images[0]?.url}
-            actionLabel="Lihat"
+            actionLabel={isMY ? "View" : "Lihat"}
             onAction={() => router.push('/wishlist')}
           />
         ))
       }
     } catch {
-      toast.error('Gagal memperbarui wishlist.')
+      toast.error(isMY ? 'Failed to update wishlist.' : 'Gagal memperbarui wishlist.')
     }
   }
 
@@ -107,15 +110,16 @@ export function ProductDetailClient({
   // 1. Record viewed item in recently viewed list on load
   useEffect(() => {
     // Find representative price (first active variant price)
-    const basePrice = product.product_variants[0]?.price
-      ? Number(product.product_variants[0].price)
-      : 0
+    const firstVariant = product.product_variants[0]
+    const basePrice = firstVariant?.price ? Number(firstVariant.price) : 0
+    const baseComparePrice = firstVariant?.compare_price ? Number(firstVariant.compare_price) : null
 
     addProductToRecentlyViewed({
       id: product.id,
       name: product.name,
       slug: product.slug,
       price: basePrice,
+      comparePrice: baseComparePrice,
       imageUrl: product.product_images[0]?.url || null,
     })
 
@@ -131,12 +135,12 @@ export function ProductDetailClient({
   // 2. Add item to cart handler
   const handleAddToCart = async () => {
     if (!selectedVariant) {
-      toast.error('Silakan pilih varian (ukuran/warna) terlebih dahulu.')
+      toast.error(isMY ? 'Please select a variant (size/color) first.' : 'Silakan pilih varian (ukuran/warna) terlebih dahulu.')
       return
     }
 
     if (selectedVariant.stock <= 0) {
-      toast.error('Stok untuk varian ini habis.')
+      toast.error(isMY ? 'This variant is out of stock.' : 'Stok untuk varian ini habis.')
       return
     }
 
@@ -171,16 +175,16 @@ export function ProductDetailClient({
       toast.custom((t) => (
         <CustomToast
           t={t}
-          title="Berhasil Ditambahkan!"
+          title={isMY ? "Added to Bag!" : "Berhasil Ditambahkan!"}
           subtitle={product.name}
-          description={`Varian: ${selectedVariant.name} • Qty: ${quantity}`}
+          description={isMY ? `Variant: ${selectedVariant.name} • Qty: ${quantity}` : `Varian: ${selectedVariant.name} • Qty: ${quantity}`}
           imageUrl={product.product_images[0]?.url}
           actionLabel="Lihat"
           onAction={() => setCartDrawerOpen(true)}
         />
       ))
     } catch {
-      toast.error('Gagal menambahkan ke keranjang.')
+      toast.error(isMY ? 'Failed to add to bag.' : 'Gagal menambahkan ke keranjang.')
     } finally {
       setIsAdding(false)
     }
@@ -189,12 +193,12 @@ export function ProductDetailClient({
   // 2b. Buy now handler (adds to cart and redirects to checkout)
   const handleBuyNow = async () => {
     if (!selectedVariant) {
-      toast.error('Silakan pilih varian (ukuran/warna) terlebih dahulu.')
+      toast.error(isMY ? 'Please select a variant (size/color) first.' : 'Silakan pilih varian (ukuran/warna) terlebih dahulu.')
       return
     }
 
     if (selectedVariant.stock <= 0) {
-      toast.error('Stok untuk varian ini habis.')
+      toast.error(isMY ? 'This variant is out of stock.' : 'Stok untuk varian ini habis.')
       return
     }
 
@@ -228,7 +232,7 @@ export function ProductDetailClient({
       )
       router.push('/checkout')
     } catch {
-      toast.error('Gagal memproses pembelian.')
+      toast.error(isMY ? 'Failed to process purchase.' : 'Gagal memproses pembelian.')
     } finally {
       setIsBuying(false)
     }
@@ -263,7 +267,7 @@ export function ProductDetailClient({
           </Link>
           <span>/</span>
           <Link href="/produk" className="hover:text-brand-plum transition-colors">
-            Produk
+            {isMY ? 'Shop' : 'Produk'}
           </Link>
           <span>/</span>
           {product.categories && (
