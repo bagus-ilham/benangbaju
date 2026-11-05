@@ -110,7 +110,7 @@ export const ProductCard = React.memo(function ProductCard({
             </div>
           ) : (
             <div className="flex items-center justify-center w-full h-full text-xs text-neutral-400 font-sans">
-              Tidak ada gambar
+              {market === 'MY' ? 'No image' : 'Tidak ada gambar'}
             </div>
           )}
         </Link>
@@ -146,7 +146,7 @@ export const ProductCard = React.memo(function ProductCard({
             }
           }}
           className="absolute top-3 right-3 p-1.5 bg-brand-cream/85 hover:bg-brand-cream border border-neutral-100 transition-all rounded-xl duration-300 hover:scale-110 active:scale-90 z-10 shadow-sm"
-          aria-label={liked ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
+          aria-label={liked ? (market === 'MY' ? 'Remove from wishlist' : 'Hapus dari wishlist') : (market === 'MY' ? 'Add to wishlist' : 'Tambah ke wishlist')}
           aria-pressed={liked}
         >
           <motion.div

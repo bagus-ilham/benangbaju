@@ -201,7 +201,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         onClick={clearRecentSearches}
                         className="text-[9px] text-neutral-400 hover:text-red-500 font-sans transition-colors"
                       >
-                        Hapus
+                        {market === 'MY' ? 'Clear' : 'Hapus'}
                       </button>
                     </div>
                     <div className="flex flex-wrap gap-2">

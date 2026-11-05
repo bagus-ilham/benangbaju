@@ -34,3 +34,4 @@ describe('getImageUrl resilience & logo mapping', () => {
     expect(chain[1]).toBe('/images/placeholder.jpg')
   })
 })
+

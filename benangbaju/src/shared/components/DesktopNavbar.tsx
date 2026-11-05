@@ -306,7 +306,7 @@ export function DesktopNavbar({
                       : 'text-neutral-600 hover:text-brand-plum'
                   )}
                 >
-                  Masuk
+                  {isMY ? 'Sign In' : 'Masuk'}
                 </Link>
               )}
             </div>

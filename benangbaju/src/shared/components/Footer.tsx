@@ -50,7 +50,7 @@ export function Footer(): React.JSX.Element {
             {/* Col 2: Pelayanan Pelanggan */}
             <div className="flex flex-col space-y-3">
               <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-plum">
-                Pelayanan
+                {isMY ? 'Customer Care' : 'Pelayanan'}
               </p>
               <ul className="space-y-2">
                 <li>
@@ -58,7 +58,7 @@ export function Footer(): React.JSX.Element {
                     href="/cara-belanja"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Cara Belanja
+                    {isMY ? 'How to Shop' : 'Cara Belanja'}
                   </Link>
                 </li>
                 <li>
@@ -66,7 +66,7 @@ export function Footer(): React.JSX.Element {
                     href="/pengiriman"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Informasi Pengiriman
+                    {isMY ? 'Shipping Information' : 'Informasi Pengiriman'}
                   </Link>
                 </li>
                 <li>
@@ -74,7 +74,7 @@ export function Footer(): React.JSX.Element {
                     href="/retur"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Kebijakan Pengembalian (Retur)
+                    {isMY ? 'Return Policy' : 'Kebijakan Pengembalian (Retur)'}
                   </Link>
                 </li>
                 <li>
@@ -82,7 +82,7 @@ export function Footer(): React.JSX.Element {
                     href="/kontak"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Hubungi Kami
+                    {isMY ? 'Contact Us' : 'Hubungi Kami'}
                   </Link>
                 </li>
               </ul>
@@ -91,7 +91,7 @@ export function Footer(): React.JSX.Element {
             {/* Col 3: Kebijakan & Hukum */}
             <div className="flex flex-col space-y-3">
               <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-plum">
-                Informasi
+                {isMY ? 'Information' : 'Informasi'}
               </p>
               <ul className="space-y-2">
                 <li>
@@ -99,7 +99,7 @@ export function Footer(): React.JSX.Element {
                     href="/syarat-ketentuan"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Syarat & Ketentuan
+                    {isMY ? 'Terms & Conditions' : 'Syarat & Ketentuan'}
                   </Link>
                 </li>
                 <li>
@@ -107,7 +107,7 @@ export function Footer(): React.JSX.Element {
                     href="/kebijakan-privasi"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Kebijakan Privasi
+                    {isMY ? 'Privacy Policy' : 'Kebijakan Privasi'}
                   </Link>
                 </li>
                 <li>
@@ -115,7 +115,7 @@ export function Footer(): React.JSX.Element {
                     href="/tentang"
                     className="text-xs text-neutral-600 hover:text-brand-plum transition-colors font-sans nav-link-underline inline-block"
                   >
-                    Tentang Kami
+                    {isMY ? 'About Us' : 'Tentang Kami'}
                   </Link>
                 </li>
               </ul>
@@ -124,7 +124,7 @@ export function Footer(): React.JSX.Element {
             {/* Col 4: Social */}
             <div className="flex flex-col space-y-3">
               <p className="text-[10px] sm:text-xs font-heading font-bold uppercase tracking-widest text-brand-plum">
-                Ikuti Kami
+                {isMY ? 'Follow Us' : 'Ikuti Kami'}
               </p>
               <p className="text-xs text-neutral-600 font-sans mt-1">
                 {isMY ? 'Discover style inspiration on our social channels.' : 'Temukan inspirasi gaya unik di media sosial kami.'}
@@ -196,13 +196,13 @@ export function Footer(): React.JSX.Element {
             </p>
             <div className="flex space-x-6 text-[10px] text-neutral-600 font-sans font-bold uppercase tracking-wider">
               <Link href="/syarat-ketentuan" className="hover:text-brand-plum transition-colors nav-link-underline">
-                Syarat
+                {isMY ? 'Terms' : 'Syarat'}
               </Link>
               <Link href="/kebijakan-privasi" className="hover:text-brand-plum transition-colors nav-link-underline">
-                Privasi
+                {isMY ? 'Privacy' : 'Privasi'}
               </Link>
               <Link href="/kontak" className="hover:text-brand-plum transition-colors nav-link-underline">
-                Kontak
+                {isMY ? 'Contact' : 'Kontak'}
               </Link>
             </div>
           </div>

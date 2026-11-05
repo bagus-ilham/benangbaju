@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Banner } from '@/modules/banners/types'
 import { Button } from '@/shared/components'
 import { cn } from '@/lib/utils'
-
+import { useMarket } from '@/shared/stores/marketStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface HeroSectionProps {
@@ -14,6 +14,8 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
@@ -33,16 +35,17 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
       <div className="relative w-full bg-brand-cream flex items-center justify-center h-[50vh] min-h-[360px] md:h-[70vh] font-sans">
         <div className="text-center space-y-4 max-w-lg px-4">
           <h2 className="text-3xl md:text-5xl font-sans font-bold uppercase tracking-widest text-brand-plum leading-tight">
-            Elegan dalam Kesederhanaan
+            {isMY ? 'Elegance in Simplicity' : 'Elegan dalam Kesederhanaan'}
           </h2>
           <p className="text-xs text-neutral-600 font-sans max-w-sm mx-auto">
-            Temukan paduan pakaian sederhana namun unik yang nyaman untuk aktivitas harian hingga
-            acara spesial Anda.
+            {isMY
+              ? 'Discover comfortable and distinctively simple apparel designed for both daily wear and special moments.'
+              : 'Temukan paduan pakaian sederhana namun unik yang nyaman untuk aktivitas harian hingga acara spesial Anda.'}
           </p>
           <div className="pt-4">
             <Link href="/produk">
               <Button variant="accent" size="md" className="font-bold">
-                Belanja Sekarang
+                {isMY ? 'Shop Now' : 'Belanja Sekarang'}
               </Button>
             </Link>
           </div>
@@ -68,7 +71,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
       onMouseLeave={() => setIsHovered(false)}
       role="region"
       aria-roledescription="carousel"
-      aria-label="Koleksi Banner Utama"
+      aria-label={isMY ? 'Main Banner Collection' : 'Koleksi Banner Utama'}
     >
       {/* Banner Slide */}
       <AnimatePresence mode="wait">
@@ -80,7 +83,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           className="relative w-full h-full"
           role="group"
           aria-roledescription="slide"
-          aria-label={`Slide ${currentIndex + 1} dari ${banners.length}`}
+          aria-label={isMY ? `Slide ${currentIndex + 1} of ${banners.length}` : `Slide ${currentIndex + 1} dari ${banners.length}`}
         >
           {/* Desktop Banner Image (Visible on Desktop / MD screens) */}
           <div className="hidden md:block absolute inset-0 w-full h-full">
@@ -153,7 +156,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                     >
                       <Link href={currentBanner.link_url}>
                         <Button variant="accent" size="lg">
-                          Jelajahi Koleksi
+                          {isMY ? 'Explore Collection' : 'Jelajahi Koleksi'}
                         </Button>
                       </Link>
                     </motion.div>
@@ -171,7 +174,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           <button
             onClick={handlePrev}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-brand-plum/50 hover:bg-brand-plum/90 text-white backdrop-blur-md border border-white/20 transition-all duration-300 rounded-full hidden md:block"
-            aria-label="Slide sebelumnya"
+            aria-label={isMY ? 'Previous slide' : 'Slide sebelumnya'}
           >
             <HandDrawnIcon name="chevron-left" className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -179,7 +182,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           <button
             onClick={handleNext}
             className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-brand-plum/50 hover:bg-brand-plum/90 text-white backdrop-blur-md border border-white/20 transition-all duration-300 rounded-full hidden md:block"
-            aria-label="Slide berikutnya"
+            aria-label={isMY ? 'Next slide' : 'Slide berikutnya'}
           >
             <HandDrawnIcon name="chevron-right" className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -191,7 +194,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className="p-1 flex items-center justify-center focus:outline-none rounded-full"
-                aria-label={`Buka slide ${idx + 1}`}
+                aria-label={isMY ? `Go to slide ${idx + 1}` : `Buka slide ${idx + 1}`}
                 aria-current={idx === currentIndex ? 'true' : undefined}
               >
                 <span
