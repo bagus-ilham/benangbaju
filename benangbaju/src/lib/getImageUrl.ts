@@ -4,17 +4,32 @@ const SUPABASE_STORAGE_PREFIX = `${supabaseBaseUrl.replace(/\/$/, '')}/storage/v
 const WORKER_URL = 'https://cdn.benangbaju.com'
 const DEFAULT_PLACEHOLDER = '/images/placeholder.jpg'
 
+const LEGACY_PATH_MAP: Record<string, string> = {
+  '/svg/logo-benangbaju.svg': '/image/svg/logo/logo-benangbaju.svg',
+  '/svg/logo-favicon.svg': '/image/svg/logo/logo-favicon.svg',
+  '/logo.PNG': '/image/svg/logo/logo-benangbaju.svg',
+  '/logo.png': '/image/svg/logo/logo-benangbaju.svg',
+  '/logo_favicon.PNG': '/image/svg/logo/logo-favicon.svg',
+  '/logo_favicon.png': '/image/svg/logo/logo-favicon.svg',
+}
+
+function resolveAssetPath(url: string): string {
+  return LEGACY_PATH_MAP[url] || url
+}
+
 export function getProxiedImageUrl(originalUrl: string | null | undefined): string {
   if (!originalUrl) return DEFAULT_PLACEHOLDER
 
+  const normalized = resolveAssetPath(originalUrl.trim())
+
   // CDN is enabled by default — set NEXT_PUBLIC_USE_CDN_WORKER=false to disable
   if (process.env.NEXT_PUBLIC_USE_CDN_WORKER !== 'false') {
-    if (originalUrl.startsWith(SUPABASE_STORAGE_PREFIX)) {
-      return originalUrl.replace(SUPABASE_STORAGE_PREFIX, WORKER_URL)
+    if (normalized.startsWith(SUPABASE_STORAGE_PREFIX)) {
+      return normalized.replace(SUPABASE_STORAGE_PREFIX, WORKER_URL)
     }
   }
 
-  return originalUrl
+  return normalized
 }
 
 /**
@@ -28,7 +43,7 @@ export function getImageFallbackChain(originalUrl: string | null | undefined): s
     return [DEFAULT_PLACEHOLDER]
   }
 
-  const trimmed = originalUrl.trim()
+  const trimmed = resolveAssetPath(originalUrl.trim())
 
   // Local static asset (e.g. /image/svg/logo/logo-benangbaju.svg)
   if (trimmed.startsWith('/')) {
@@ -44,5 +59,3 @@ export function getImageFallbackChain(originalUrl: string | null | undefined): s
   // Any other external URL
   return [trimmed, DEFAULT_PLACEHOLDER]
 }
-
-

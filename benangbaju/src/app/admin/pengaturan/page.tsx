@@ -92,10 +92,17 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   },
   {
     key: 'store_logo_url',
-    value: '/logo.PNG',
+    value: '/image/svg/logo/logo-benangbaju.svg',
     type: 'image',
     group: 'general',
     label: 'URL Logo Toko',
+  },
+  {
+    key: 'store_favicon_url',
+    value: '/image/svg/logo/logo-favicon.svg',
+    type: 'image',
+    group: 'general',
+    label: 'URL Favicon Toko',
   },
   {
     key: 'enable_malaysia_shipping',

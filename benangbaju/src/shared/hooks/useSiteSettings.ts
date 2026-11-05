@@ -15,10 +15,26 @@ export function useSiteSettings() {
 
   const logoSetting = getSetting(['store_logo_url'])
   const rawLogo = logoSetting?.value?.trim()
-  const logoUrl =
-    rawLogo && rawLogo !== '/logo.PNG' && rawLogo !== '/images/placeholder.jpg'
-      ? rawLogo
-      : '/image/svg/logo/logo-benangbaju.svg'
+  const normalizeLogoUrl = (url: string | undefined): string => {
+    if (!url || url === '/logo.PNG' || url === '/logo.png' || url === '/images/placeholder.jpg') {
+      return '/image/svg/logo/logo-benangbaju.svg'
+    }
+    if (url === '/svg/logo-benangbaju.svg') {
+      return '/image/svg/logo/logo-benangbaju.svg'
+    }
+    return url
+  }
+  const logoUrl = normalizeLogoUrl(rawLogo)
+
+  const faviconSetting = getSetting(['store_favicon_url'])
+  const rawFavicon = faviconSetting?.value?.trim()
+  const normalizeFaviconUrl = (url: string | undefined): string => {
+    if (!url || url === '/logo_favicon.PNG' || url === '/logo_favicon.png' || url === '/favicon.ico' || url === '/svg/logo-favicon.svg') {
+      return '/image/svg/logo/logo-favicon.svg'
+    }
+    return url
+  }
+  const faviconUrl = normalizeFaviconUrl(rawFavicon)
 
   const getSocialUrl = (
     settingValue: string | undefined,
@@ -52,6 +68,7 @@ export function useSiteSettings() {
     ...query,
     settings,
     logoUrl,
+    faviconUrl,
     instagramUrl,
     tiktokUrl,
     whatsappUrl,

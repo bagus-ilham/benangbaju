@@ -22,10 +22,26 @@ export function SmartImage({
 
   useEffect(() => {
     if (typeof src === 'string') {
-      const urls = getImageFallbackChain(src)
-      if (fallbackSrc && !urls.includes(fallbackSrc)) {
-        urls.push(fallbackSrc)
+      const urls: string[] = []
+      const trimmedSrc = src.trim()
+
+      if (trimmedSrc) {
+        const baseChain = getImageFallbackChain(trimmedSrc)
+        for (const u of baseChain) {
+          if (u !== '/images/placeholder.jpg' && !urls.includes(u)) {
+            urls.push(u)
+          }
+        }
       }
+
+      if (fallbackSrc && fallbackSrc.trim() && !urls.includes(fallbackSrc.trim())) {
+        urls.push(fallbackSrc.trim())
+      }
+
+      if (!urls.includes('/images/placeholder.jpg')) {
+        urls.push('/images/placeholder.jpg')
+      }
+
       setChain(urls)
       setCurrentIndex(0)
     } else {
