@@ -28,6 +28,8 @@ interface VoucherFormModalProps {
   setStartsAt: (val: string) => void
   expires_at: string
   setExpiresAt: (val: string) => void
+  applicable_countries: string[]
+  setApplicableCountries: (val: string[]) => void
   is_active: boolean
   setIsActive: (val: boolean) => void
   is_hidden: boolean
@@ -60,6 +62,8 @@ export function VoucherFormModal({
   setStartsAt,
   expires_at,
   setExpiresAt,
+  applicable_countries,
+  setApplicableCountries,
   is_active,
   setIsActive,
   is_hidden,
@@ -87,6 +91,43 @@ export function VoucherFormModal({
             placeholder="cth: Promo Gajian Juni"
             required
           />
+        </div>
+
+        {/* Applicable Countries Selector */}
+        <div className="space-y-1.5">
+          <label className="font-bold text-neutral-600 uppercase tracking-wider text-[10px]">
+            Berlaku untuk Negara*
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: 'Semua (ID & MY)', flag: '🌐', value: ['ID', 'MY'] },
+              { label: 'Khusus Indonesia', flag: '🇮🇩', value: ['ID'] },
+              { label: 'Khusus Malaysia', flag: '🇲🇾', value: ['MY'] },
+            ].map((opt) => {
+              const isSelected =
+                opt.value.length === applicable_countries.length &&
+                opt.value.every((c) => applicable_countries.includes(c))
+
+              return (
+                <button
+                  key={opt.label}
+                  type="button"
+                  onClick={() => setApplicableCountries(opt.value)}
+                  className={`py-2 px-2 border text-center text-[10px] font-semibold transition rounded flex flex-col items-center gap-1 ${
+                    isSelected
+                      ? 'border-neutral-900 bg-neutral-900 text-white'
+                      : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                  }`}
+                >
+                  <span className="text-sm">{opt.flag}</span>
+                  <span>{opt.label}</span>
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-[10px] text-neutral-400">
+            Batasi voucher khusus pembeli Indonesia (misal: subsidi ongkir domestik) atau pembeli Malaysia.
+          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

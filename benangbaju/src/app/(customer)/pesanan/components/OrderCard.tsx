@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, SmartLink as Link } from '@/shared/components'
-import { formatIDR, formatDate } from '@/lib/utils'
+import { formatIDR, formatDateWithTimezone } from '@/lib/utils'
 import { OrderStatusBadge } from './OrderStatusBadge'
 
 interface OrderItem {
@@ -20,6 +20,8 @@ interface Order {
   created_at: string
   total_amount: number
   order_items: OrderItem[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  order_shipping?: any
 }
 
 interface OrderCardProps {
@@ -37,6 +39,10 @@ export function OrderCard({
   onPayOrder,
   onConfirmDelivery,
 }: OrderCardProps): React.JSX.Element {
+  const shipping = Array.isArray(order.order_shipping)
+    ? order.order_shipping[0]
+    : order.order_shipping
+  const countryCode = shipping?.country_code
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -57,7 +63,7 @@ export function OrderCard({
             </Link>
           </p>
           <p className="text-xs text-neutral-600 font-sans">
-            Tanggal: {formatDate(order.created_at)}
+            Tanggal: {formatDateWithTimezone(order.created_at, countryCode)}
           </p>
         </div>
         <div>

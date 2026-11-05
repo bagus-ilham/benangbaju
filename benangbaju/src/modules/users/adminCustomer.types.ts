@@ -18,9 +18,13 @@ export interface CustomerAddress {
   full_address: string
   province_name: string
   city_name: string
-  district_name: string
+  district_name: string | null
   postal_code: string
   is_default: boolean
+  country_code?: string | null
+  zone_id?: string | null
+  created_at?: string
+  user_id?: string
 }
 
 export interface CustomerCartItem {

@@ -26,7 +26,7 @@ export class PaymentSyncService {
       // 1. Fetch Order from Database
       const { data: order, error: orderError } = await supabase
         .from('orders')
-        .select('id, order_number, user_id, status, total_amount')
+        .select('id, order_number, user_id, status, total_amount, order_shipping(country_code)')
         .eq('order_number', cleanOrderNumber)
         .maybeSingle()
 
@@ -136,16 +136,20 @@ export class PaymentSyncService {
 
       // Fetch or verify existing payment record
       const { data: paymentRecord } = await (supabase.from as any)('payments')
-        .select('id')
+        .select('id, gateway_response, paid_at')
         .eq('order_id', order.id)
         .maybeSingle()
+
+      const updatedGatewayResponse = paymentRecord?.gateway_response
+        ? { ...paymentRecord.gateway_response, status_check: dokuData }
+        : dokuData
 
       if (paymentRecord) {
         await (supabase.from as any)('payments')
           .update({
             status: paymentStatus,
-            gateway_response: dokuData,
-            paid_at: paymentStatus === 'success' ? paidDate : null,
+            gateway_response: updatedGatewayResponse,
+            paid_at: paymentStatus === 'success' ? (paymentRecord.paid_at || paidDate) : null,
             updated_at: new Date().toISOString(),
           })
           .eq('id', paymentRecord.id)
@@ -159,14 +163,24 @@ export class PaymentSyncService {
             .update({ status: 'processing', updated_at: new Date().toISOString() })
             .eq('id', order.id)
 
-          // Insert Notification for Customer
+          // Insert Notification for Customer (bilingual EN for MY, ID for domestic)
           try {
+            const rawShipping = (order as any).order_shipping
+            const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
+            const isMalaysia = shipping?.country_code === 'MY'
+
             await supabase.from('notifications').insert({
               user_id: order.user_id,
               type: 'payment_success',
-              title: 'Pembayaran Berhasil!',
-              message: `Pembayaran untuk pesanan ${order.order_number} berhasil diverifikasi. Pesanan Anda sedang diproses.`,
-              data: { order_id: order.id, order_number: order.order_number },
+              title: isMalaysia ? 'Payment Successful!' : 'Pembayaran Berhasil!',
+              message: isMalaysia
+                ? `Payment for order #${order.order_number} has been verified. Your order is now being prepared for international dispatch.`
+                : `Pembayaran untuk pesanan ${order.order_number} berhasil diverifikasi. Pesanan Anda sedang diproses.`,
+              data: {
+                order_id: order.id,
+                order_number: order.order_number,
+                country_code: shipping?.country_code || 'ID',
+              },
             })
           } catch (notifErr) {
             safeLogError('PAYMENT_NOTIFICATION_ERROR', notifErr)

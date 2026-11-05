@@ -7,13 +7,15 @@ export class VoucherRepository {
   async validateVoucher(
     code: string,
     subtotal: number,
-    userId: string
+    userId: string,
+    countryCode = 'ID'
   ): Promise<VoucherValidationResult> {
     const supabase = await createServerClient()
     const { data, error } = await supabase.rpc('validate_voucher', {
       p_code: code,
       p_subtotal: subtotal,
       p_user_id: userId,
+      p_country_code: countryCode,
     })
 
     if (error) {
@@ -58,7 +60,7 @@ export class VoucherRepository {
     const { data, error, count } = await supabase
       .from('vouchers')
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at',
+        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at',
         { count: 'exact' }
       )
       .order('created_at', { ascending: false })
@@ -85,18 +87,23 @@ export class VoucherRepository {
     is_hidden: boolean
     starts_at: string
     expires_at: string
+    applicable_countries?: string[] | null
   }): Promise<Voucher> {
     const supabase = await createServerClient()
     const sanitizedData = {
       ...voucherData,
       code: voucherData.code.trim().toUpperCase(),
+      applicable_countries:
+        voucherData.applicable_countries && voucherData.applicable_countries.length > 0
+          ? voucherData.applicable_countries
+          : ['ID', 'MY'],
     }
 
     const { data, error } = await supabase
       .from('vouchers')
       .insert(sanitizedData)
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at'
+        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at'
       )
       .single()
 
@@ -134,12 +141,17 @@ export class VoucherRepository {
       is_hidden: boolean
       starts_at: string
       expires_at: string
+      applicable_countries?: string[] | null
     }
   ): Promise<Voucher> {
     const supabase = await createServerClient()
     const sanitizedData = {
       ...voucherData,
       code: voucherData.code.trim().toUpperCase(),
+      applicable_countries:
+        voucherData.applicable_countries && voucherData.applicable_countries.length > 0
+          ? voucherData.applicable_countries
+          : ['ID', 'MY'],
     }
 
     const { data, error } = await supabase
@@ -147,7 +159,7 @@ export class VoucherRepository {
       .update(sanitizedData)
       .eq('id', voucherId)
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, created_at'
+        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at'
       )
       .single()
 

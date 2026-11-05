@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { Button, SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { formatApproxMYR, buildWhatsAppUrl } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
 interface OrderPaymentSectionProps {
@@ -18,6 +19,7 @@ interface OrderPaymentSectionProps {
   onConfirmDelivery: () => void
   onReorder?: () => void
   isReordering?: boolean
+  myrExchangeRate?: number
 }
 
 export function OrderPaymentSection({
@@ -32,8 +34,14 @@ export function OrderPaymentSection({
   onConfirmDelivery,
   onReorder,
   isReordering,
+  myrExchangeRate = 3600,
 }: OrderPaymentSectionProps): React.JSX.Element {
   const [copiedCode, setCopiedCode] = useState(false)
+  const [isDownloadingQR, setIsDownloadingQR] = useState(false)
+
+  const isMalaysia =
+    order.order_shipping?.country_code === 'MY' ||
+    order.shipping_address?.country_code === 'MY'
 
   // Get active payment info
   const payment = Array.isArray(order.payments) ? order.payments[0] : order.payments
@@ -63,6 +71,29 @@ export function OrderPaymentSection({
     setCopiedCode(true)
     toast.success('Nomor / kode berhasil disalin!')
     setTimeout(() => setCopiedCode(false), 2000)
+  }
+
+  const handleDownloadQR = async () => {
+    if (!qrUrl) return
+    setIsDownloadingQR(true)
+    try {
+      const response = await fetch(qrUrl)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = `qris-${order.order_number}.png`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
+      toast.success('Gambar QRIS berhasil diunduh!')
+    } catch {
+      // Fallback: open image in new tab if CORS prevents direct blob download
+      window.open(qrUrl, '_blank')
+    } finally {
+      setIsDownloadingQR(false)
+    }
   }
 
   return (
@@ -105,14 +136,28 @@ export function OrderPaymentSection({
         {order.payment_channel && (
           <div className="flex justify-between text-xs text-neutral-500 pt-1">
             <span>Metode Bayar</span>
-            <span className="font-semibold text-brand-plum uppercase">{order.payment_channel.replace('_', ' ')}</span>
+            <span className="font-semibold text-brand-plum uppercase">
+              {order.payment_channel.replace(/_/g, ' ')}
+            </span>
           </div>
         )}
-        <div className="flex justify-between items-center text-brand-plum font-sans border-t border-neutral-200/60 pt-4 mt-2">
-          <span className="text-sm font-bold">Total Pembayaran</span>
-          <span className="text-lg font-bold text-brand-plum">
-            Rp {order.total_amount?.toLocaleString('id-ID')}
-          </span>
+        <div className="border-t border-neutral-200/60 pt-4 mt-2">
+          <div className="flex justify-between items-center text-brand-plum font-sans">
+            <span className="text-sm font-bold">Total Pembayaran</span>
+            <span className="text-lg font-bold text-brand-plum">
+              Rp {order.total_amount?.toLocaleString('id-ID')}
+            </span>
+          </div>
+          {isMalaysia && (
+            <div className="text-right mt-1">
+              <span className="text-xs font-bold text-emerald-800">
+                {formatApproxMYR(order.total_amount, myrExchangeRate)}
+              </span>
+              <p className="text-[10px] text-neutral-400 mt-0.5">
+                *Estimasi Ringgit Malaysia (pembayaran tetap dalam IDR)
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -172,27 +217,72 @@ export function OrderPaymentSection({
           {/* QRIS Display */}
           {qrUrl && (
             <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-3">
-              <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
-                Scan QRIS
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
+                  Scan QRIS Cross-Border
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadQR}
+                  isLoading={isDownloadingQR}
+                  className="text-[10px] py-1 px-2.5 uppercase font-bold flex items-center gap-1"
+                >
+                  <HandDrawnIcon name="download" className="h-3 w-3" />
+                  <span>Unduh QR</span>
+                </Button>
+              </div>
+
               <div className="relative w-48 h-48 mx-auto bg-neutral-50 border p-2 rounded-lg flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={qrUrl} alt="Scan QRIS" className="w-full h-full object-contain" />
               </div>
-              <p className="text-[10px] text-neutral-500 font-sans">
-                Buka aplikasi bank atau e-wallet Anda (BCA, Mandiri, GoPay, OVO, DANA, dll) lalu scan kode di atas.
-              </p>
+
+              {isMalaysia ? (
+                <div className="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-1.5 text-xs text-emerald-950 font-sans">
+                  <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1">
+                    <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
+                    <span>Petunjuk Scan from Gallery (Bank / E-Wallet Malaysia)</span>
+                  </p>
+                  <ol className="list-decimal list-inside text-[11px] text-emerald-900/90 space-y-1 leading-relaxed">
+                    <li>Klik <strong>Unduh QR</strong> di atas atau simpan tangkapan layar (screenshot) kode QR ini.</li>
+                    <li>Buka aplikasi perbankan atau e-wallet Malaysia Anda (Touch &apos;n Go, Maybank MAE, CIMB Octo, dll).</li>
+                    <li>Pilih menu <strong>DuitNow QR / Scan</strong>, lalu pilih opsi <strong>Upload / Scan from Gallery</strong>. Selesaikan transaksi via PIN.</li>
+                  </ol>
+                </div>
+              ) : (
+                <p className="text-[10px] text-neutral-500 font-sans">
+                  Buka aplikasi bank atau e-wallet Anda (BCA, Mandiri, GoPay, OVO, DANA, dll) lalu scan kode di atas.
+                </p>
+              )}
             </div>
           )}
 
           {/* Online Payment / E-Wallet Notice */}
           {checkoutUrl && !qrUrl && !vaNumber && !paymentCode && (
-            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-1.5">
+            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-2">
               <span className="text-[10px] uppercase font-bold text-neutral-500 block tracking-widest">
-                Sesi Pembayaran Online / E-Wallet
+                {isMalaysia ? 'Sesi Pembayaran QRIS Cross-Border' : 'Sesi Pembayaran Online / E-Wallet'}
               </span>
               <p className="text-[11px] text-neutral-600 font-sans">
-                Silakan klik tombol di bawah untuk melanjutkan pembayaran di portal pembayaran DOKU.
+                {isMalaysia
+                  ? 'Silakan klik tombol di bawah untuk membuka halaman QRIS DOKU, lalu ikuti petunjuk Scan from Gallery.'
+                  : 'Silakan klik tombol di bawah untuk melanjutkan pembayaran di portal pembayaran DOKU.'}
               </p>
+              {isMalaysia && (
+                <div className="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-1.5 text-xs text-emerald-950 font-sans mt-2">
+                  <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1">
+                    <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
+                    <span>Petunjuk Scan from Gallery (Bank / E-Wallet Malaysia)</span>
+                  </p>
+                  <ol className="list-decimal list-inside text-[11px] text-emerald-900/90 space-y-1 leading-relaxed">
+                    <li>Buka halaman pembayaran DOKU melalui tombol di bawah.</li>
+                    <li>Simpan tangkapan layar (screenshot) kode QRIS yang tampil di layar ponsel/laptop Anda.</li>
+                    <li>Buka aplikasi perbankan atau e-wallet Malaysia Anda (Touch &apos;n Go, Maybank MAE, CIMB Octo, dll), pilih menu <strong>Scan QR / DuitNow</strong> lalu pilih <strong>Upload / Scan from Gallery</strong>. Nilai MYR dikonversi otomatis oleh bank Anda.</li>
+                  </ol>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -204,6 +294,7 @@ export function OrderPaymentSection({
           <>
             {isVerifyingPayment ? (
               <div className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold uppercase tracking-wider rounded-xl">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/image/svg/logo/logo-jarum-benang.svg"
                   alt=""
@@ -305,7 +396,30 @@ export function OrderPaymentSection({
               <HandDrawnIcon name="check-circle" className="h-4 w-4 mr-2 shrink-0" />
               <span>Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!</span>
             </div>
-            {returnRequest ? (
+
+            {isMalaysia ? (
+              <div className="p-4 bg-amber-50/80 border border-amber-200/90 rounded-xl space-y-2.5 text-xs text-amber-950 font-sans">
+                <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
+                  <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
+                  <span>Pesanan Internasional (Final Sale)</span>
+                </div>
+                <p className="text-[11px] text-amber-900/90 leading-relaxed">
+                  Pesanan pengiriman ke Malaysia bersifat final dan tidak dapat mengajukan retur mandiri. Jika Anda menerima barang yang cacat produksi atau pesanan tidak sesuai, hubungi Customer Care melalui WhatsApp.
+                </p>
+                <a
+                  href={buildWhatsAppUrl(
+                    '6285179747449',
+                    `Halo Benangbaju, saya ingin konfirmasi terkait pesanan #${order.order_number} (Malaysia).`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
+                >
+                  <HandDrawnIcon name="sparkles" className="h-4 w-4" />
+                  <span>Hubungi CS via WhatsApp</span>
+                </a>
+              </div>
+            ) : returnRequest ? (
               <div className="p-3.5 bg-brand-cream/90 border border-brand-gold/80 rounded-xl flex items-center justify-between shadow-2xs">
                 <span className="text-[11px] font-bold text-brand-plum uppercase tracking-wider flex items-center gap-1.5">
                   <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 text-brand-plum" />

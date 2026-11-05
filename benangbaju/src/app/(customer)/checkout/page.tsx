@@ -11,19 +11,19 @@ import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/modules/shipping/hooks/useShipping'
 import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 import { useCreateOrder, useGeneratePaymentToken } from '@/modules/orders/hooks/useOrders'
-import { usePaymentFeeConfigs } from '@/modules/settings/hooks/useAdminSettings'
+import { usePaymentFeeConfigs, useSiteSettings } from '@/modules/settings/hooks/useAdminSettings'
 import type { PaymentFeeConfig } from '@/modules/orders/types'
 import { validateVoucherAction } from '@/modules/vouchers/actions'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { AddressModal } from '@/modules/users/components/AddressModal'
-import { AuthLoading, PageContainer, PageHero } from '@/shared/components'
+import { AuthLoading, PageContainer, PageHero, HandDrawnIcon } from '@/shared/components'
 import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar, PaymentMethodSelector } from './components'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { SmartLink as Link } from '@/shared/components'
+import { calculateChannelFee } from './components/PaymentMethodSelector'
+import { DEFAULT_WEIGHT_GRAM, QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
+import { trackInitiateCheckout } from '@/lib/analytics'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
-
 
 interface AppliedVoucher {
   code: string
@@ -46,7 +46,6 @@ export default function CheckoutPage(): React.JSX.Element {
   const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null)
   const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(null)
   const [selectedChannel, setSelectedChannel] = useState<PaymentFeeConfig | null>(null)
-  const [paymentFee, setPaymentFee] = useState(0)
   const [notes, setNotes] = useState('')
   const [voucherCodeInput, setVoucherCodeInput] = useState('')
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null)
@@ -58,9 +57,27 @@ export default function CheckoutPage(): React.JSX.Element {
   const checkoutInitiated = useRef(false)
   const hasCheckedEmptyCart = useRef(false)
 
-  // Fetch payment fee configs
+  // Fetch payment fee configs & site settings
   const { data: feeConfigsRes, isLoading: feeConfigsLoading } = usePaymentFeeConfigs()
   const feeConfigs = useMemo(() => feeConfigsRes?.data || [], [feeConfigsRes?.data])
+
+  const { data: siteSettingsRes } = useSiteSettings()
+  const siteSettings = useMemo(() => {
+    const map: Record<string, string> = {}
+    siteSettingsRes?.data?.forEach((s) => {
+      map[s.key] = s.value
+    })
+    return map
+  }, [siteSettingsRes?.data])
+
+  const myrExchangeRate = useMemo(() => {
+    const rate = parseFloat(siteSettings['myr_exchange_rate'] || '3600')
+    return isNaN(rate) || rate <= 0 ? 3600 : rate
+  }, [siteSettings])
+
+  const isMalaysiaShippingEnabled = useMemo(() => {
+    return siteSettings['enable_malaysia_shipping'] !== 'false'
+  }, [siteSettings])
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -111,6 +128,10 @@ export default function CheckoutPage(): React.JSX.Element {
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
   const addresses = useMemo(() => addressesRes?.data || [], [addressesRes?.data])
 
+  // Current Address Country Code
+  const currentCountryCode = selectedAddress?.country_code || 'ID'
+  const isMalaysia = currentCountryCode === 'MY'
+
   // Fetch available active vouchers
   const { data: availableVouchers } = useQuery({
     queryKey: ['checkout-available-vouchers'],
@@ -119,7 +140,7 @@ export default function CheckoutPage(): React.JSX.Element {
       const { data, error } = await supabase
         .from('vouchers')
         .select(
-          'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, created_at'
+          'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, applicable_countries, created_at'
         )
         .eq('is_active', true)
         .eq('is_hidden', false)
@@ -133,6 +154,16 @@ export default function CheckoutPage(): React.JSX.Element {
     },
   })
 
+  // Filter available vouchers for the current shipping country
+  const filteredAvailableVouchers = useMemo(() => {
+    return (availableVouchers || []).filter((v) => {
+      const countries = v.applicable_countries
+      if (!countries || countries.length === 0) return true
+      if (countries.includes('ALL')) return true
+      return countries.includes(currentCountryCode)
+    })
+  }, [availableVouchers, currentCountryCode])
+
   // Set default address initially
   useEffect(() => {
     if (addresses && addresses.length > 0) {
@@ -141,6 +172,17 @@ export default function CheckoutPage(): React.JSX.Element {
       setSelectedAddress(defaultAddr)
     }
   }, [addresses])
+
+  // When switching to Malaysia address, automatically lock/select QRIS channel
+  useEffect(() => {
+    if (isMalaysia && feeConfigs.length > 0) {
+      const qrisConfig = feeConfigs.find((c) => c.channel_code === 'QRIS' && c.is_active)
+      if (qrisConfig && selectedChannel?.channel_code !== 'QRIS') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSelectedChannel(qrisConfig)
+      }
+    }
+  }, [isMalaysia, feeConfigs, selectedChannel])
 
   const variantIdsStr = useMemo(
     () =>
@@ -169,7 +211,7 @@ export default function CheckoutPage(): React.JSX.Element {
     enabled: displayItems.length > 0,
   })
 
-  // Calculate total weight - wait until variantDetails is fetched to avoid double fetching shipping rates
+  // Calculate total weight with DEFAULT_WEIGHT_GRAM (400g) fallback
   const totalWeight = useMemo(() => {
     if (!variantDetails) return 0
 
@@ -177,8 +219,15 @@ export default function CheckoutPage(): React.JSX.Element {
       const detail = variantDetails.find((v) => v.id === item.variantId) as any
       const product = Array.isArray(detail?.products) ? detail.products[0] : detail?.products
 
-      const weight = detail?.weight_gram ?? product?.weight_gram ?? 1000
-      return acc + (Number(weight) || 1000) * (item.quantity || 1)
+      const variantWeight = Number(detail?.weight_gram)
+      const productWeight = Number(product?.weight_gram)
+      const weight =
+        !isNaN(variantWeight) && variantWeight > 0
+          ? variantWeight
+          : !isNaN(productWeight) && productWeight > 0
+          ? productWeight
+          : DEFAULT_WEIGHT_GRAM
+      return acc + weight * (item.quantity || 1)
     }, 0)
   }, [displayItems, variantDetails])
 
@@ -213,18 +262,62 @@ export default function CheckoutPage(): React.JSX.Element {
     }
   }
 
+  // Reactively calculate paymentFee based on current baseAmount
+  const baseAmount = Math.max(0, subtotal + shippingCost - discountAmount)
+  const paymentFee = useMemo(() => {
+    if (!selectedChannel) return 0
+    return calculateChannelFee(selectedChannel, baseAmount)
+  }, [selectedChannel, baseAmount])
+
   const totalAmount = Math.max(0, subtotal - discountAmount + shippingCost + paymentFee)
 
-  const handleSelectPaymentChannel = (channel: PaymentFeeConfig, fee: number) => {
+  // Track InitiateCheckout event with strictly locked IDR currency
+  const hasTrackedCheckout = useRef(false)
+  useEffect(() => {
+    if (cartItems.length > 0 && !hasTrackedCheckout.current) {
+      hasTrackedCheckout.current = true
+      trackInitiateCheckout(
+        cartItems.map((i) => ({
+          id: i.variantId,
+          name: i.name,
+          price: i.price,
+          quantity: i.quantity,
+        })),
+        totalAmount
+      )
+    }
+  }, [cartItems, totalAmount])
+
+  // Re-verify applied voucher if destination country changes
+  useEffect(() => {
+    if (appliedVoucher && currentCountryCode) {
+      validateVoucherAction(appliedVoucher.code, subtotal, currentCountryCode)
+        .then((res) => {
+          if (!res.success) {
+            toast.error(
+              `Voucher ${appliedVoucher.code} tidak berlaku untuk pengiriman ke ${
+                currentCountryCode === 'MY' ? 'Malaysia' : 'Indonesia'
+              }`
+            )
+            setAppliedVoucher(null)
+          }
+        })
+        .catch(() => {
+          setAppliedVoucher(null)
+        })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCountryCode])
+
+  const handleSelectPaymentChannel = (channel: PaymentFeeConfig) => {
     setSelectedChannel(channel)
-    setPaymentFee(fee)
   }
 
   const handleApplyVoucherDirectly = async (code: string) => {
     if (!user) return
     setVoucherLoading(true)
     try {
-      const result = await validateVoucherAction(code, subtotal)
+      const result = await validateVoucherAction(code, subtotal, currentCountryCode)
       if (result.success) {
         const validVoucher = result.data
         // Fetch full details of the voucher to know constraints
@@ -269,6 +362,19 @@ export default function CheckoutPage(): React.JSX.Element {
     if (!user) return
     if (!selectedAddress) {
       toast.error('Harap pilih alamat pengiriman')
+      return
+    }
+    if (isMalaysia && !isMalaysiaShippingEnabled) {
+      toast.error('Pengiriman ke Malaysia sedang dinonaktifkan sementara.')
+      return
+    }
+    const isQrisChannel = selectedChannel?.channel_code?.toUpperCase() === 'QRIS'
+    if ((isMalaysia || isQrisChannel) && totalAmount > QRIS_MAX_AMOUNT_IDR) {
+      toast.error(
+        isMalaysia
+          ? 'Total pembayaran melebihi batas transaksi QRIS Cross-Border (Rp 10.000.000)'
+          : 'Total pembayaran melebihi batas regulasi pembayaran QRIS (maksimal Rp 10.000.000)'
+      )
       return
     }
     if (!selectedCourier) {
@@ -340,6 +446,18 @@ export default function CheckoutPage(): React.JSX.Element {
       <PageContainer size="lg" className="py-10 page-content">
         <CheckoutProgressBar checkoutStep={checkoutStep} />
 
+        {isMalaysia && !isMalaysiaShippingEnabled && (
+          <div className="mb-6 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 flex items-start gap-3">
+            <HandDrawnIcon name="alert-triangle" className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-semibold text-red-800">Pengiriman Internasional Dinonaktifkan</p>
+              <p className="mt-0.5 text-red-700">
+                Pengiriman ke Malaysia saat ini sedang dinonaktifkan sementara oleh sistem. Silakan pilih alamat pengiriman di Indonesia atau hubungi Customer Service kami.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT: SHIPPING & PAYMENT DETAILS */}
           <motion.div
@@ -360,6 +478,7 @@ export default function CheckoutPage(): React.JSX.Element {
               shippingLoading={shippingLoading}
               notes={notes}
               onNotesChange={setNotes}
+              totalWeightGram={totalWeight}
             />
 
             {/* PAYMENT METHOD SELECTOR */}
@@ -372,6 +491,7 @@ export default function CheckoutPage(): React.JSX.Element {
                 shippingCost={shippingCost}
                 discountAmount={discountAmount}
                 loading={feeConfigsLoading}
+                countryCode={currentCountryCode}
               />
             </div>
           </motion.div>
@@ -396,12 +516,18 @@ export default function CheckoutPage(): React.JSX.Element {
               onApplyVoucher={handleApplyVoucher}
               onApplyVoucherDirectly={handleApplyVoucherDirectly}
               onRemoveVoucher={handleRemoveVoucher}
-              availableVouchers={availableVouchers || []}
+              availableVouchers={filteredAvailableVouchers}
               voucherLoading={voucherLoading}
               onPaymentSubmit={handlePlaceOrder}
               isCheckoutProcessing={isCheckoutProcessing}
               isPaymentTokenLoading={generatePaymentTokenMutation.isPending}
-              canSubmit={!!(selectedAddress && selectedCourier && selectedChannel)}
+              canSubmit={
+                !!(selectedAddress && selectedCourier && selectedChannel) &&
+                (!isMalaysia || isMalaysiaShippingEnabled)
+              }
+              selectedChannelCode={selectedChannel?.channel_code || null}
+              isMalaysia={isMalaysia}
+              myrExchangeRate={myrExchangeRate}
             />
           </motion.div>
         </div>

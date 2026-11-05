@@ -6,13 +6,17 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 import { useProducts } from '@/modules/products/hooks/useProducts'
 
 export function MiniCartDrawer(): React.JSX.Element {
+  const market = useMarket()
+  const { myrExchangeRate } = useSiteSettings()
   const items = useCartStore((state) => state.items)
   const isCartDrawerOpen = useCartStore((state) => state.isCartDrawerOpen)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
@@ -89,7 +93,7 @@ export function MiniCartDrawer(): React.JSX.Element {
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="shopping-bag" className="h-4 w-4" aria-hidden="true" />
                 <span className="font-sans text-sm font-bold tracking-[0.15em] text-brand-plum uppercase">
-                  KERANJANG ({totalQuantity})
+                  {market === 'MY' ? `SHOPPING BAG (${totalQuantity})` : `KERANJANG (${totalQuantity})`}
                 </span>
               </div>
               <button
@@ -140,10 +144,10 @@ export function MiniCartDrawer(): React.JSX.Element {
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-plum">
-                      Keranjang Anda Kosong
+                      {market === 'MY' ? 'Your Bag is Empty' : 'Keranjang Anda Kosong'}
                     </p>
                     <p className="text-[10px] text-neutral-400 font-sans max-w-[200px]">
-                      Simpan produk impian Anda untuk memproses checkout.
+                      {market === 'MY' ? 'Add your favorite pieces to proceed to checkout.' : 'Simpan produk impian Anda untuk memproses checkout.'}
                     </p>
                   </div>
                   <Button
@@ -152,7 +156,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                     size="sm"
                     className="text-[10px] uppercase font-bold tracking-wider mt-2"
                   >
-                    Jelajahi Produk
+                    {market === 'MY' ? 'Explore Collection' : 'Jelajahi Produk'}
                   </Button>
                 </div>
               ) : (
@@ -210,7 +214,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                       </div>
 
                       <p className="text-[9px] uppercase tracking-wider font-heading font-medium text-neutral-400">
-                        Varian: {item.variantName || 'Default'}
+                        {market === 'MY' ? 'Variant:' : 'Varian:'} {item.variantName || 'Default'}
                       </p>
 
                       <div className="flex justify-between items-end pt-1">
@@ -243,9 +247,16 @@ export function MiniCartDrawer(): React.JSX.Element {
                         </div>
 
                         {/* Price */}
-                        <span className="text-xs font-sans font-semibold text-brand-plum">
-                          {formatIDR(item.price * item.quantity)}
-                        </span>
+                        <div className="text-right">
+                          <span className="text-xs font-sans font-semibold text-brand-plum">
+                            {formatIDR(item.price * item.quantity)}
+                          </span>
+                          {market === 'MY' && (
+                            <span className="block text-[9px] font-sans font-bold text-emerald-800">
+                              {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -258,7 +269,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                   <div className="flex items-center space-x-1.5 text-brand-plum">
                     <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
                     <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
-                      Lengkapi Penampilan Anda
+                      {market === 'MY' ? 'Complete Your Look' : 'Lengkapi Penampilan Anda'}
                     </span>
                   </div>
                   <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
@@ -320,7 +331,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                             }}
                             className="px-2.5 py-1 text-[9px] font-sans font-bold uppercase tracking-wider rounded-lg shrink-0"
                           >
-                            + Tambah
+                            {market === 'MY' ? '+ Add' : '+ Tambah'}
                           </Button>
                         </div>
                       )
@@ -337,9 +348,16 @@ export function MiniCartDrawer(): React.JSX.Element {
                   <span className="text-xs font-heading font-semibold uppercase tracking-wider text-neutral-500">
                     Subtotal
                   </span>
-                  <span className="text-base font-sans font-bold text-brand-plum">
-                    {formatIDR(subtotal)}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-base font-sans font-bold text-brand-plum">
+                      {formatIDR(subtotal)}
+                    </span>
+                    {market === 'MY' && (
+                      <span className="block text-xs font-sans font-bold text-emerald-800">
+                        {formatApproxMYR(subtotal, myrExchangeRate)}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -348,7 +366,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                       variant="outline"
                       className="w-full text-[10px] uppercase font-bold py-3.5"
                     >
-                      Lihat Keranjang
+                      {market === 'MY' ? 'View Bag' : 'Lihat Keranjang'}
                     </Button>
                   </Link>
                   <Link
@@ -367,7 +385,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                 </div>
 
                 <p className="text-[8px] text-center text-neutral-400 leading-normal font-sans">
-                  * Biaya pengiriman dan kode diskon akan dihitung di halaman checkout.
+                  {market === 'MY' ? '* Shipping fees and promo codes will be calculated at checkout.' : '* Biaya pengiriman dan kode diskon akan dihitung di halaman checkout.'}
                 </p>
               </div>
             )}

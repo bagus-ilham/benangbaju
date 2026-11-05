@@ -7,16 +7,13 @@ import { useOrderDetail } from '@/modules/orders/hooks/useOrders'
 import { createBrowserClient } from '@/lib/supabase/client'
 import {
   Button,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Input,
   PageHero,
   PageContainer,
   EmptyState,
   AuthLoading,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Select,
 } from '@/shared/components'
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { buildWhatsAppUrl } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -78,7 +75,6 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
   // Initialize checkboxes & quantities
   useEffect(() => {
     if (order?.order_items) {
-      // Only initialize if we haven't set up the state yet to prevent resetting selections on background refetches
       if (Object.keys(selectedItems).length > 0) return
 
       const initialChecked: Record<string, boolean> = {}
@@ -133,9 +129,16 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     setReturnFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const isMalaysia = order?.order_shipping?.country_code === 'MY'
+
   const handleSubmitReturn = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !order) return
+
+    if (isMalaysia) {
+      toast.error('Pesanan internasional tidak dapat mengajukan retur mandiri')
+      return
+    }
 
     // Validate items selection
     const itemsToReturn = Object.keys(selectedItems).filter((key) => selectedItems[key])
@@ -186,12 +189,10 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         const mediaUrls: string[] = []
         for (const file of returnFiles) {
           try {
-            // Upload to 'products' bucket to save quota/configuration
             const url = await uploadImage(file, 'products')
             if (url) mediaUrls.push(url)
           } catch (uploadErr) {
             console.error('Failed to upload a return file:', uploadErr)
-            // continue with others
           }
         }
 
@@ -202,18 +203,17 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
             sort_order: idx,
           }))
 
-          const { error: mediaError } = await supabase.from('return_media').insert(mediaData)
-
-          if (mediaError) console.error('Error inserting return media:', mediaError)
+          await supabase.from('return_media').insert(mediaData)
         }
         toast.dismiss('return-media')
       }
 
       toast.success('Pengajuan retur berhasil dikirim!')
-      router.push(`/pesanan/${order.order_number}?return_submitted=1`)
-    } catch (err: unknown) {
-      console.error('Error submitting return:', err)
-      toast.error('Gagal mengirim pengajuan retur. Silakan coba lagi.')
+      router.push(`/pesanan/${order.order_number}`)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.error(err)
+      toast.error(err.message || 'Gagal mengajukan retur')
     } finally {
       setIsSubmitting(false)
     }
@@ -237,6 +237,51 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
             description="Retur hanya bisa diajukan untuk pesanan dengan status Selesai."
             action={{ label: 'Kembali ke Pesanan', href: '/pesanan' }}
           />
+        </PageContainer>
+      </div>
+    )
+  }
+
+  // Malaysia International Order: Final Sale Notice
+  if (isMalaysia) {
+    return (
+      <div className="bg-brand-cream min-h-screen">
+        <PageHero eyebrow="Retur Internasional" title="Kebijakan Final Sale" variant="cream" />
+        <PageContainer size="md" className="py-12 page-content">
+          <div className="bg-white border border-neutral-200/80 rounded-2xl p-6 sm:p-8 text-center space-y-4 max-w-lg mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto">
+              <HandDrawnIcon name="sparkles" className="h-6 w-6 text-amber-700" />
+            </div>
+            <h3 className="font-heading font-bold text-lg text-brand-plum">
+              Pesanan Internasional (Final Sale)
+            </h3>
+            <p className="text-xs text-neutral-600 leading-relaxed font-sans">
+              Mohon maaf, pengiriman ke Malaysia bersifat <strong>Final Sale</strong> sehingga pengajuan retur mandiri melalui website tidak tersedia.
+            </p>
+            <p className="text-xs text-neutral-600 leading-relaxed font-sans">
+              Apabila terdapat produk yang diterima mengalami cacat produksi atau salah kirim, silakan hubungi tim Customer Service kami melalui WhatsApp dengan menyertakan foto/video unboxing.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+              <a
+                href={buildWhatsAppUrl(
+                  '6285179747449',
+                  `Halo Benangbaju, saya ingin konfirmasi kendala produk pada pesanan #${order.order_number} (Malaysia).`
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center py-2.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
+              >
+                <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
+                <span>Hubungi CS via WhatsApp</span>
+              </a>
+              <Link
+                href={`/pesanan/${order.order_number}`}
+                className="inline-flex items-center justify-center py-2.5 px-5 border border-neutral-300 hover:bg-neutral-50 text-neutral-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
+              >
+                <span>Kembali ke Pesanan</span>
+              </Link>
+            </div>
+          </div>
         </PageContainer>
       </div>
     )

@@ -58,6 +58,7 @@ export function ShippingRatesTable({
             <th className="py-4 px-6">Zona</th>
             <th className="py-4 px-6 text-right">Biaya Awal</th>
             <th className="py-4 px-6 text-right">Tarif / Kg</th>
+            <th className="py-4 px-6 text-center">Batas Berat</th>
             <th className="py-4 px-6 text-center">Estimasi Tiba</th>
             <th className="py-4 px-6 text-center">Status</th>
             <th className="py-4 px-6 text-right">Aksi</th>
@@ -76,15 +77,25 @@ export function ShippingRatesTable({
               <td className="py-4 px-6 text-right text-neutral-600">
                 {formatIDR(rate.price_per_kg)}
               </td>
+              <td className="py-4 px-6 text-center text-neutral-600">
+                {rate.max_weight_gram ? (
+                  <span className="font-semibold text-neutral-800">
+                    {(rate.max_weight_gram / 1000).toFixed(0)} kg
+                  </span>
+                ) : (
+                  <span className="text-neutral-400 italic">Tanpa Batas</span>
+                )}
+              </td>
               <td className="py-4 px-6 text-center">
                 {rate.etd_days_min} - {rate.etd_days_max} Hari
               </td>
               <td className="py-4 px-6 text-center">
                 <span
-                  className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${rate.is_active
+                  className={`inline-block text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 ${
+                    rate.is_active
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}
+                  }`}
                 >
                   {rate.is_active ? 'Aktif' : 'Nonaktif'}
                 </span>
@@ -92,13 +103,15 @@ export function ShippingRatesTable({
               <td className="py-4 px-6 text-right space-x-1.5">
                 <button
                   onClick={() => onEdit(rate)}
-                  className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200"
+                  className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200 rounded"
+                  title="Edit Tarif"
                 >
                   <HandDrawnIcon name="edit" className="h-3 w-3" />
                 </button>
                 <button
                   onClick={() => onDelete(rate.id, rate.courier_name)}
-                  className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50"
+                  className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50 rounded"
+                  title="Hapus Tarif"
                 >
                   <HandDrawnIcon name="trash" className="h-3 w-3" />
                 </button>

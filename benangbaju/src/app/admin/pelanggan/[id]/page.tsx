@@ -143,7 +143,9 @@ export default function AdminCustomerDetailPage({ params }: AdminCustomerDetailP
                       <p className="text-neutral-600 mb-1">{address.label}</p>
                       <p className="text-neutral-700 leading-relaxed">{address.full_address}</p>
                       <p className="text-neutral-500 mt-1">
-                        {address.district_name}, {address.city_name}, {address.province_name}{' '}
+                        {[address.district_name, address.city_name, address.province_name]
+                          .filter(Boolean)
+                          .join(', ')}{' '}
                         {address.postal_code}
                       </p>
                     </li>

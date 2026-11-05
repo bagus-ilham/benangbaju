@@ -48,6 +48,8 @@ export const productSchema = z.object({
     meta_title: z.string().nullable().optional(),
     meta_description: z.string().nullable().optional(),
     size_guide: z.string().nullable().optional(),
+    size_guide_inch: z.string().nullable().optional(),
+    hs_code: z.string().nullable().optional(),
     care_guide: z.string().nullable().optional(),
   }),
   variants: z.array(productVariantSchema).min(1, 'Minimal satu varian produk'),
@@ -73,6 +75,8 @@ export function mapInitialDataToForm(initialData?: InitialProductData): ProductF
         meta_title: initialData.meta_title || '',
         meta_description: initialData.meta_description || '',
         size_guide: initialData.size_guide || '',
+        size_guide_inch: initialData.size_guide_inch || '',
+        hs_code: initialData.hs_code || '',
         care_guide: initialData.care_guide || '',
       },
       variants:
@@ -125,6 +129,8 @@ export function mapInitialDataToForm(initialData?: InitialProductData): ProductF
       meta_title: '',
       meta_description: '',
       size_guide: '',
+      size_guide_inch: '',
+      hs_code: '',
       care_guide: '',
     },
     variants: [

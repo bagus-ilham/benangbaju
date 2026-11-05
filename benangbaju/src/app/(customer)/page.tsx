@@ -57,6 +57,18 @@ export default async function Homepage(): Promise<React.JSX.Element> {
     url: baseUrl,
     logo: `${baseUrl}/images/logo.png`,
     sameAs: ['https://www.instagram.com/benangbaju', 'https://www.facebook.com/benangbaju'],
+    areaServed: [
+      {
+        '@type': 'Country',
+        name: 'Indonesia',
+        identifier: 'ID',
+      },
+      {
+        '@type': 'Country',
+        name: 'Malaysia',
+        identifier: 'MY',
+      },
+    ],
   }
 
   const websiteJsonLd = {

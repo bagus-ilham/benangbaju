@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon, MarketSwitcher } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { MobileMenuAccordionItem } from './MobileMenuAccordionItem'
@@ -16,7 +16,7 @@ interface MobileMenuDrawerProps {
   pathname: string
   isAuthenticated: boolean
   isMounted: boolean
-  profile?: Record<string, any> | null
+  profile?: { name?: string | null; role?: string | null } | null
   user?: User | null
   onLogout?: () => void
 }
@@ -74,6 +74,7 @@ export function MobileMenuDrawer({
               </button>
             </div>
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+              <MarketSwitcher variant="full" />
               <nav className="flex flex-col space-y-4">
                 {navLinks.map((link) => (
                   <MobileMenuAccordionItem

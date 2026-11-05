@@ -21,5 +21,6 @@ export interface Voucher {
   used_count: number
   is_active: boolean
   is_hidden: boolean
+  applicable_countries?: string[] | null
   created_at: string
 }

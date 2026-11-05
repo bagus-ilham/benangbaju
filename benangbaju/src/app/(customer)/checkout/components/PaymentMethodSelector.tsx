@@ -14,6 +14,7 @@ interface PaymentMethodSelectorProps {
   shippingCost: number
   discountAmount: number
   loading?: boolean
+  countryCode?: string
 }
 
 export function calculateChannelFee(
@@ -49,12 +50,19 @@ export function PaymentMethodSelector({
   shippingCost,
   discountAmount,
   loading = false,
+  countryCode = 'ID',
 }: PaymentMethodSelectorProps): React.JSX.Element {
+  const isMalaysia = countryCode === 'MY'
   const baseAmount = Math.max(0, subtotal + shippingCost - discountAmount)
 
   const activeConfigs = useMemo(() => {
-    return (feeConfigs || []).filter((c) => c.is_active)
-  }, [feeConfigs])
+    const list = (feeConfigs || []).filter((c) => c.is_active)
+    if (isMalaysia) {
+      // In Malaysia, only cross-border QRIS (DuitNow) is supported
+      return list.filter((c) => c.category === 'qris' || c.channel_code?.toUpperCase() === 'QRIS')
+    }
+    return list
+  }, [feeConfigs, isMalaysia])
 
   const groupedConfigs = useMemo(() => {
     const groups: Record<string, PaymentFeeConfig[]> = {
@@ -88,10 +96,28 @@ export function PaymentMethodSelector({
     <div className="space-y-6">
       <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
         <h2 className="text-xs uppercase tracking-widest font-heading font-bold text-brand-plum flex items-center">
-          <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-2 text-brand-plum" /> Metode Pembayaran Direct
+          <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-2 text-brand-plum" /> Metode Pembayaran
         </h2>
-        <span className="text-[10px] text-neutral-500 font-sans">Pilih metode bayar otomatis</span>
+        <span className="text-[10px] text-neutral-500 font-sans">
+          {isMalaysia ? 'Pembayaran Internasional' : 'Pilih metode bayar otomatis'}
+        </span>
       </div>
+
+      {isMalaysia && (
+        <div className="p-3.5 bg-amber-50/70 border border-amber-200 text-xs rounded-xl space-y-1.5 font-sans">
+          <div className="flex items-center gap-2">
+            <span className="text-base">🇲🇾</span>
+            <span className="font-bold text-amber-950 text-[11px] uppercase tracking-wide">
+              DuitNow QR / Cross-Border QRIS
+            </span>
+          </div>
+          <p className="text-[11px] text-amber-900 leading-relaxed">
+            Pembayaran dari Malaysia menggunakan <strong>QRIS Cross-Border</strong>. Anda dapat memindai kode QR
+            menggunakan aplikasi bank atau e-wallet Malaysia (<strong>Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Public Bank, dll.</strong>).
+            Nominal IDR akan otomatis dikonversi ke <strong>MYR (RM)</strong> oleh DuitNow.
+          </p>
+        </div>
+      )}
 
       <div className="space-y-6">
         {Object.entries(groupedConfigs).map(([category, items]) => {
@@ -101,7 +127,8 @@ export function PaymentMethodSelector({
           return (
             <div key={category} className="space-y-3">
               <span className="text-[10px] uppercase tracking-widest font-heading font-bold text-neutral-400 flex items-center">
-                <HandDrawnIcon name={categoryMeta.iconName} className="h-3 w-3 mr-1.5" /> {categoryMeta.label}
+                <HandDrawnIcon name={categoryMeta.iconName} className="h-3 w-3 mr-1.5" />{' '}
+                {isMalaysia ? 'QRIS / DuitNow Cross-Border' : categoryMeta.label}
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -125,7 +152,7 @@ export function PaymentMethodSelector({
                       <div className="flex items-start justify-between space-x-2">
                         <div>
                           <span className="font-heading font-bold text-xs text-brand-plum block">
-                            {item.channel_name}
+                            {isMalaysia ? 'QRIS / DuitNow Malaysia' : item.channel_name}
                           </span>
                           <span className="text-[10px] font-sans text-neutral-400 mt-0.5 block">
                             {item.fee_type === 'flat'

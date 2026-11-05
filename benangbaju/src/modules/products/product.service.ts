@@ -101,6 +101,8 @@ export class ProductService {
         product_marketplace_links,
         product_rating_summary,
         size_guide: data.size_guide,
+        size_guide_inch: data.size_guide_inch,
+        hs_code: data.hs_code,
         care_guide: data.care_guide,
       })
     } catch (error) {

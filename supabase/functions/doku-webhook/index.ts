@@ -181,7 +181,7 @@ serve(async (req: Request) => {
     // 3. FETCH ORDER FROM DATABASE & AMOUNT CROSS-CHECKING
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .select('id, order_number, user_id, status, total_amount')
+      .select('id, order_number, user_id, status, total_amount, order_shipping(country_code)')
       .eq('order_number', invoiceNumber)
       .single();
 
@@ -251,13 +251,23 @@ serve(async (req: Request) => {
         .update({ status: 'processing' })
         .eq('id', order.id);
 
-      // Create notification for customer
+      // Create notification for customer (bilingual EN for MY, ID for domestic)
+      const rawShipping = order.order_shipping;
+      const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping;
+      const isMalaysia = shipping?.country_code === 'MY';
+
       await supabase.from('notifications').insert({
         user_id: order.user_id,
         type: 'payment_success',
-        title: 'Pembayaran Berhasil!',
-        message: `Pembayaran untuk pesanan ${order.order_number} berhasil diterima. Pesanan sedang diproses.`,
-        data: { order_id: order.id, order_number: order.order_number },
+        title: isMalaysia ? 'Payment Successful!' : 'Pembayaran Berhasil!',
+        message: isMalaysia
+          ? `Payment for order #${order.order_number} has been received. Your order is now being prepared for international dispatch.`
+          : `Pembayaran untuk pesanan ${order.order_number} berhasil diterima. Pesanan sedang diproses.`,
+        data: {
+          order_id: order.id,
+          order_number: order.order_number,
+          country_code: shipping?.country_code || 'ID',
+        },
       });
 
       // Trigger generate-invoice Edge Function

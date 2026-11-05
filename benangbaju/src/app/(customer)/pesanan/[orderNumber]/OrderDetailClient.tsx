@@ -25,6 +25,9 @@ import toast from 'react-hot-toast'
 import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useQuery } from '@tanstack/react-query'
+import { useSiteSettings } from '@/modules/settings/hooks/useAdminSettings'
+import { formatDateWithTimezone } from '@/lib/utils'
+import { trackPurchase } from '@/lib/analytics'
 
 const supabase = createBrowserClient()
 
@@ -53,6 +56,13 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
 
   const [isReordering, setIsReordering] = useState(false)
+
+  const { data: siteSettingsRes } = useSiteSettings()
+  const myrExchangeRate = React.useMemo(() => {
+    const s = siteSettingsRes?.data?.find((item) => item.key === 'myr_exchange_rate')
+    const rate = parseFloat(s?.value || '3600')
+    return isNaN(rate) || rate <= 0 ? 3600 : rate
+  }, [siteSettingsRes?.data])
 
   // Re-order handler
   const handleReorder = async () => {
@@ -128,18 +138,35 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
 
   useEffect(() => {
     if (order?.created_at) {
+      const countryCode = order.order_shipping?.country_code || 'ID'
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFormattedDate(
-        new Date(order.created_at).toLocaleDateString('id-ID', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      )
+      setFormattedDate(formatDateWithTimezone(order.created_at, countryCode))
     }
-  }, [order?.created_at])
+  }, [order?.created_at, order?.order_shipping?.country_code])
+
+  // Track Purchase event with strictly locked IDR currency
+  const hasTrackedPurchase = useRef(false)
+  useEffect(() => {
+    if (
+      order &&
+      (order.status === 'processing' || order.status === 'completed') &&
+      !hasTrackedPurchase.current
+    ) {
+      hasTrackedPurchase.current = true
+      trackPurchase({
+        orderNumber: order.order_number,
+        totalAmount: Number(order.total_amount),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        items: (order.order_items || []).map((item: any) => ({
+          id: item.variant_id || item.id,
+          name: item.product_name,
+          price: Number(item.price),
+          quantity: item.quantity,
+          variant: item.variant_name,
+        })),
+      })
+    }
+  }, [order])
 
   const cancelMutation = useCancelOrder()
   const confirmMutation = useConfirmDelivery()
@@ -495,6 +522,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             onCancelOrder={() => setCancelConfirmOpen(true)}
             onConfirmDelivery={() => setReceiptConfirmOpen(true)}
             onReorder={handleReorder}
+            myrExchangeRate={myrExchangeRate}
           />
         </div>
 

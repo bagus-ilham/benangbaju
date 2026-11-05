@@ -6,11 +6,23 @@ import {
   adminUpsertSettingsAction,
   getPaymentFeeConfigsAction,
   adminUpdatePaymentFeeConfigAction,
+  getSiteSettingsAction,
 } from '@/modules/settings/actions'
 import type { SiteSetting } from '@/modules/settings/types'
 import type { PaymentFeeConfig } from '@/modules/orders/types'
 
 import { ApiListResponse, ApiResponse } from '@/lib/api-response'
+
+export function useSiteSettings(): import('@tanstack/react-query').UseQueryResult<
+  NoInfer<ApiListResponse<SiteSetting>>,
+  Error
+> {
+  return useQuery({
+    queryKey: ['site-settings'],
+    queryFn: () => getSiteSettingsAction(),
+    staleTime: 5 * 60 * 1000,
+  })
+}
 
 export function useAdminSettings(): import('@tanstack/react-query').UseQueryResult<
   NoInfer<ApiListResponse<SiteSetting>>,

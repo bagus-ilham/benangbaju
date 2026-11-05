@@ -10,10 +10,10 @@ import { parseOneToMany, parseOneToOne } from '@/shared/utils/supabase-parser'
 
 export class AdminOrderService {
   async getOrders(
-    params: { status?: string; search?: string; page?: number; limit?: number } = {}
+    params: { status?: string; search?: string; page?: number; limit?: number; countryCode?: string } = {}
   ): Promise<ApiListResponse<AdminOrderListItem>> {
     try {
-      const { page = 1, limit = 20, status = 'all', search = '' } = params
+      const { page = 1, limit = 20, status = 'all', search = '', countryCode = 'all' } = params
       const offset = (page - 1) * limit
 
       let escapedSearch = ''
@@ -29,6 +29,7 @@ export class AdminOrderService {
         escapedSearch,
         offset,
         limit,
+        countryCode,
       })
 
       if (!data) return paginated([], page, limit, 0)
@@ -36,11 +37,12 @@ export class AdminOrderService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const orders: AdminOrderListItem[] = data.map((row: any) => {
         const rawCat = row.profiles
+        const profileObj = Array.isArray(rawCat) ? rawCat[0] : rawCat
         let profiles: { name: string; email: string | null } | null = null
-        if (rawCat && !Array.isArray(rawCat)) {
+        if (profileObj) {
           profiles = {
-            name: rawCat.name,
-            email: rawCat.email,
+            name: profileObj.name,
+            email: profileObj.email,
           }
         }
 
@@ -61,22 +63,24 @@ export class AdminOrderService {
         }))
 
         const rawShipping = row.order_shipping
+        const shippingObj = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
         let order_shipping = null
-        if (rawShipping && !Array.isArray(rawShipping)) {
+        if (shippingObj) {
           order_shipping = {
-            id: rawShipping.id,
-            order_id: rawShipping.order_id,
-            recipient_name: rawShipping.recipient_name,
-            phone: rawShipping.phone,
-            full_address: rawShipping.full_address,
-            province_name: rawShipping.province_name,
-            city_name: rawShipping.city_name,
-            district_name: rawShipping.district_name,
-            postal_code: rawShipping.postal_code,
-            courier_name: rawShipping.courier_name,
-            tracking_number: rawShipping.tracking_number,
-            shipped_at: rawShipping.shipped_at,
-            delivered_at: rawShipping.delivered_at,
+            id: shippingObj.id,
+            order_id: shippingObj.order_id,
+            recipient_name: shippingObj.recipient_name,
+            phone: shippingObj.phone,
+            full_address: shippingObj.full_address,
+            province_name: shippingObj.province_name,
+            city_name: shippingObj.city_name,
+            district_name: shippingObj.district_name,
+            postal_code: shippingObj.postal_code,
+            courier_name: shippingObj.courier_name,
+            tracking_number: shippingObj.tracking_number,
+            shipped_at: shippingObj.shipped_at,
+            delivered_at: shippingObj.delivered_at,
+            country_code: shippingObj.country_code || 'ID',
           }
         }
 
@@ -130,17 +134,23 @@ export class AdminOrderService {
       try {
         const { data: order } = await supabase
           .from('orders')
-          .select('user_id, order_number')
+          .select('user_id, order_number, order_shipping(country_code, tracking_number)')
           .eq('id', orderId)
           .single()
 
         if (order?.user_id) {
+          const rawShipping = order.order_shipping
+          const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
+          const countryCode = shipping?.country_code || 'ID'
+          const effectiveTrackingNumber = trackingNumber || shipping?.tracking_number
+
           const { notificationService } = await import('@/modules/notifications/notification.service')
           await notificationService.sendOrderStatusNotification(
             order.user_id,
             order.order_number,
             status,
-            trackingNumber
+            effectiveTrackingNumber,
+            countryCode
           )
         }
       } catch (notifErr) {
@@ -291,6 +301,32 @@ export class AdminOrderService {
         orderId,
         `Updated tracking number`
       )
+
+      // Send notification to customer if order is already shipped
+      try {
+        const { data: order } = await supabase
+          .from('orders')
+          .select('user_id, order_number, status, order_shipping(country_code)')
+          .eq('id', orderId)
+          .single()
+
+        if (order?.user_id && order.status === 'shipped') {
+          const rawShipping = order.order_shipping
+          const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
+          const countryCode = shipping?.country_code || 'ID'
+
+          const { notificationService } = await import('@/modules/notifications/notification.service')
+          await notificationService.sendOrderStatusNotification(
+            order.user_id,
+            order.order_number,
+            'shipped',
+            trackingNumber,
+            countryCode
+          )
+        }
+      } catch (notifErr) {
+        safeLogError('Error sending tracking update notification:', notifErr)
+      }
 
       return ok(null)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

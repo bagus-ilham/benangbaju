@@ -8,10 +8,11 @@ export class VoucherService {
   async validateVoucher(
     code: string,
     subtotal: number,
-    userId: string
+    userId: string,
+    countryCode = 'ID'
   ): Promise<ApiResponse<VoucherValidationResult>> {
     try {
-      const result = await voucherRepository.validateVoucher(code, subtotal, userId)
+      const result = await voucherRepository.validateVoucher(code, subtotal, userId, countryCode)
       return ok(result)
     } catch (error: any) {
       safeLogError('Error in VoucherService.validateVoucher:', error)
@@ -40,6 +41,7 @@ export class VoucherService {
     usage_per_user: number
     is_active: boolean
     is_hidden: boolean
+    applicable_countries?: string[] | null
     starts_at: string
     expires_at: string
   }): Promise<ApiResponse<Voucher>> {
@@ -69,6 +71,7 @@ export class VoucherService {
       usage_per_user: number
       is_active: boolean
       is_hidden: boolean
+      applicable_countries?: string[] | null
       starts_at: string
       expires_at: string
     }

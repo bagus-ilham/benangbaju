@@ -18,6 +18,7 @@ interface CheckoutAddressFormProps {
   shippingLoading: boolean
   notes: string
   onNotesChange: (notes: string) => void
+  totalWeightGram?: number
 }
 
 export function CheckoutAddressForm({
@@ -32,7 +33,10 @@ export function CheckoutAddressForm({
   shippingLoading,
   notes,
   onNotesChange,
+  totalWeightGram = 0,
 }: CheckoutAddressFormProps): React.JSX.Element {
+  const isMalaysia = selectedAddress?.country_code === 'MY'
+
   return (
     <div className="space-y-8">
       {/* Address Section */}
@@ -61,9 +65,16 @@ export function CheckoutAddressForm({
                 layoutId="selectedAddressBox"
                 className="border border-brand-blue bg-brand-blue/10 p-4 relative rounded-2xl shadow-xs"
               >
-                <p className="font-sans font-bold text-xs text-brand-plum uppercase tracking-wider">
-                  {selectedAddress.label} (Pilihan)
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-sans font-bold text-xs text-brand-plum uppercase tracking-wider">
+                    {selectedAddress.label} (Pilihan)
+                  </p>
+                  {isMalaysia && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      🇲🇾 Malaysia (Semenanjung)
+                    </span>
+                  )}
+                </div>
                 <p className="font-sans font-bold text-brand-plum mt-1.5 text-xs">
                   {selectedAddress.recipient_name} | {selectedAddress.phone}
                 </p>
@@ -71,8 +82,11 @@ export function CheckoutAddressForm({
                   {selectedAddress.full_address}
                 </p>
                 <p className="text-[10px] text-neutral-500 mt-1 font-sans">
-                  {selectedAddress.district_name}, {selectedAddress.city_name},{' '}
-                  {selectedAddress.province_name} {selectedAddress.postal_code}
+                  {[selectedAddress.district_name, selectedAddress.city_name, selectedAddress.province_name]
+                    .filter(Boolean)
+                    .join(', ')}{' '}
+                  {selectedAddress.postal_code}
+                  {isMalaysia ? ', Malaysia' : ''}
                 </p>
               </motion.div>
             ) : (
@@ -106,9 +120,16 @@ export function CheckoutAddressForm({
                         }}
                         className="p-3 border border-neutral-200/80 text-xs cursor-pointer bg-brand-cream transition-all duration-200 rounded-xl hover:shadow-xs"
                       >
-                        <p className="font-sans font-bold text-[10px] text-brand-plum uppercase tracking-wider">
-                          {address.label}
-                        </p>
+                        <div className="flex items-center justify-between">
+                          <p className="font-sans font-bold text-[10px] text-brand-plum uppercase tracking-wider">
+                            {address.label}
+                          </p>
+                          {address.country_code === 'MY' && (
+                            <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                              🇲🇾 MY
+                            </span>
+                          )}
+                        </div>
                         <p className="font-sans text-neutral-700 mt-1 font-medium">
                           {address.recipient_name}
                         </p>
@@ -137,11 +158,36 @@ export function CheckoutAddressForm({
         )}
       </div>
 
+      {/* International Terms Notice for Malaysia Orders */}
+      {isMalaysia && (
+        <div className="p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl space-y-1.5 text-xs text-amber-950 font-sans">
+          <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
+            <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
+            <span>Ketentuan Pengiriman Internasional (DDU & Final Sale)</span>
+          </div>
+          <ul className="list-disc list-inside text-[11px] text-amber-900/90 space-y-1 leading-relaxed">
+            <li>
+              <strong>DDU (Delivered Duty Unpaid):</strong> Pajak SST & bea cukai Malaysia (apabila nilai pesanan melebihi De Minimis RM 500) ditanggung oleh penerima saat paket tiba.
+            </li>
+            <li>
+              <strong>Final Sale:</strong> Pesanan lintas batas tidak dapat diretur mandiri. Bila produk rusak/salah kirim, hubungi Customer Care melalui WhatsApp.
+            </li>
+          </ul>
+        </div>
+      )}
+
       {/* Shipping Method Section */}
       <div className="space-y-4 pt-4 border-t border-neutral-100">
-        <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum flex items-center">
-          <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> Opsi Pengiriman
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum flex items-center">
+            <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> Opsi Pengiriman
+          </h2>
+          {totalWeightGram > 0 && (
+            <span className="text-[11px] text-neutral-500 font-sans font-medium">
+              Total Berat: <span className="font-bold text-brand-plum">{(totalWeightGram / 1000).toFixed(2)} kg</span>
+            </span>
+          )}
+        </div>
 
         {!selectedAddress ? (
           <p className="text-xs text-neutral-400 italic font-sans">

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SmartLink as Link, SmartImage as Image, HandDrawnIcon } from '@/shared/components'
+import { SmartLink as Link, SmartImage as Image, HandDrawnIcon, MarketSwitcher } from '@/shared/components'
 import { motion } from 'framer-motion'
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
@@ -79,7 +79,7 @@ export function DesktopNavbar({
             <nav className="hidden lg:flex items-center space-x-4 xl:space-x-7">
               {navLinks.map((link) => {
                 const isMegaMenu =
-                  link.name.toUpperCase() === 'KATEGORI' || link.name.toUpperCase() === 'KOLEKSI'
+                  link.href === '/kategori' || link.href === '/koleksi' || link.name.toUpperCase() === 'KATEGORI' || link.name.toUpperCase() === 'KOLEKSI'
 
                 if (isMegaMenu) {
                   return (
@@ -144,6 +144,7 @@ export function DesktopNavbar({
 
           {/* Right Column: Action Icons */}
           <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4">
+            <MarketSwitcher variant="compact" isTransparentHome={isTransparentHome} />
             <button
               onClick={onToggleSearch}
               className={cn(

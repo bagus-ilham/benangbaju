@@ -4,7 +4,8 @@ import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, HandDrawnIcon } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -36,6 +37,9 @@ interface CheckoutSummaryCardProps {
   isCheckoutProcessing: boolean
   isPaymentTokenLoading: boolean
   canSubmit: boolean
+  selectedChannelCode?: string | null
+  isMalaysia?: boolean
+  myrExchangeRate?: number
 }
 
 export function CheckoutSummaryCard({
@@ -57,7 +61,13 @@ export function CheckoutSummaryCard({
   isCheckoutProcessing,
   isPaymentTokenLoading,
   canSubmit,
+  selectedChannelCode = null,
+  isMalaysia = false,
+  myrExchangeRate = 3600,
 }: CheckoutSummaryCardProps): React.JSX.Element {
+  const isQris = selectedChannelCode?.toUpperCase() === 'QRIS' || isMalaysia
+  const isQrisLimitExceeded = isQris && totalAmount > QRIS_MAX_AMOUNT_IDR
+
   return (
     <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
@@ -166,10 +176,11 @@ export function CheckoutSummaryCard({
                           type="button"
                           disabled={!isSpendMet}
                           onClick={() => onApplyVoucherDirectly(voucher.code)}
-                          className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-xl relative overflow-hidden select-none ${isSpendMet
+                          className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-xl relative overflow-hidden select-none ${
+                            isSpendMet
                               ? 'border-brand-accent/40 bg-brand-accent-muted/5 hover:bg-brand-accent-muted/10 cursor-pointer animate-pulse-gentle'
                               : 'border-neutral-200 bg-neutral-50/50 opacity-40 cursor-not-allowed'
-                            }`}
+                          }`}
                         >
                           <div className="flex justify-between items-center mb-0.5">
                             <span className="font-heading font-bold text-[10px] text-brand-plum uppercase tracking-wider">
@@ -225,10 +236,35 @@ export function CheckoutSummaryCard({
       </div>
 
       {/* Grand Total */}
-      <div className="flex justify-between items-center text-brand-plum font-heading mb-8">
-        <span className="text-xs uppercase tracking-widest font-medium">Total Pembayaran</span>
-        <span className="text-lg font-bold">{formatIDR(totalAmount)}</span>
+      <div className="mb-6">
+        <div className="flex justify-between items-center text-brand-plum font-heading">
+          <span className="text-xs uppercase tracking-widest font-medium">Total Pembayaran</span>
+          <span className="text-lg font-bold">{formatIDR(totalAmount)}</span>
+        </div>
+        {isMalaysia && (
+          <div className="text-right mt-1.5 pt-1.5 border-t border-neutral-200/50">
+            <span className="text-xs font-bold text-emerald-800 font-sans">
+              {formatApproxMYR(totalAmount, myrExchangeRate)}
+            </span>
+            <p className="text-[10px] text-neutral-400 mt-0.5 font-sans">
+              *Estimasi Ringgit Malaysia. Pembayaran diproses dalam IDR via QRIS Cross-Border.
+            </p>
+          </div>
+        )}
       </div>
+
+      {/* QRIS Limit Exceeded Warning */}
+      {isQrisLimitExceeded && (
+        <div className="mb-6 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-sans leading-relaxed">
+          <p className="font-bold flex items-center gap-1.5">
+            <HandDrawnIcon name="alert-triangle" className="h-3.5 w-3.5 text-red-600 shrink-0" />
+            <span>Transaksi Melebihi Batas QRIS</span>
+          </p>
+          <p className="text-[11px] mt-1 text-red-600">
+            Maksimal transaksi QRIS Cross-Border adalah {formatIDR(QRIS_MAX_AMOUNT_IDR)}. Silakan kurangi jumlah pesanan untuk melanjutkan checkout.
+          </p>
+        </div>
+      )}
 
       {/* Payment trigger button */}
       <Button
@@ -238,7 +274,7 @@ export function CheckoutSummaryCard({
         isLoading={isCheckoutProcessing}
         loadingText={isPaymentTokenLoading ? 'Menghubungi DOKU...' : 'Memproses Pesanan...'}
         className="w-full py-4 text-xs uppercase tracking-widest font-bold"
-        disabled={!canSubmit}
+        disabled={!canSubmit || isQrisLimitExceeded}
       >
         Bayar Sekarang
       </Button>

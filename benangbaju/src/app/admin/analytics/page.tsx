@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useAdminAnalytics } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
 import dynamic from 'next/dynamic'
-import { formatIDR } from '@/lib/utils/format'
+import { formatIDR, formatApproxMYR } from '@/lib/utils/format'
 import { HandDrawnIcon, Button } from '@/shared/components'
 
 const RevenueTrendChart = dynamic(
@@ -46,6 +46,14 @@ export default function AdminAnalyticsPage() {
       ['--- PENGGUNAAN VOUCHER ---'],
       ['Kode Voucher', 'Jumlah Penggunaan', 'Total Diskon (IDR)'],
       ...analytics.voucherUsage.map((v) => [v.code, v.count, v.totalDiscount]),
+      [],
+      ['--- PERFORMA PASAR (NEGARA) ---'],
+      ['Negara', 'Jumlah Pesanan Sukses', 'Total Pendapatan (IDR)'],
+      ...(analytics.countryBreakdown || []).map((c) => [
+        c.countryCode === 'MY' ? 'Malaysia (MY)' : 'Indonesia (ID)',
+        c.ordersCount,
+        c.revenue,
+      ]),
     ]
 
     const csvContent =
@@ -147,6 +155,81 @@ export default function AdminAnalyticsPage() {
           <p className="text-[10px] text-neutral-400 mt-1">Pada pesanan sukses</p>
         </div>
       </div>
+
+      {/* Performa Pasar: ID vs MY */}
+      {(() => {
+        const idData = analytics.countryBreakdown?.find((c) => c.countryCode === 'ID') || {
+          ordersCount: 0,
+          revenue: 0,
+        }
+        const myData = analytics.countryBreakdown?.find((c) => c.countryCode === 'MY') || {
+          ordersCount: 0,
+          revenue: 0,
+        }
+        const totalMarketRev = idData.revenue + myData.revenue || 1
+        const idRevPercent = Math.round((idData.revenue / totalMarketRev) * 100)
+        const myRevPercent = Math.round((myData.revenue / totalMarketRev) * 100)
+
+        return (
+          <div className="bg-brand-cream border border-neutral-200 p-6 rounded-2xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-neutral-200/70 gap-2">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-1.5">
+                  <HandDrawnIcon name="globe" className="w-4 h-4 text-brand-plum" />
+                  <span>Performa Pasar: Domestik (🇮🇩 ID) vs Ekspor (🇲🇾 MY)</span>
+                </h3>
+                <p className="text-[11px] text-neutral-500 font-sans mt-0.5">
+                  Distribusi transaksi sukses berdasarkan negara tujuan pengiriman dalam {days} hari
+                  terakhir.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Card Indonesia */}
+              <div className="p-4 bg-white/60 border border-neutral-200/80 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-xs text-neutral-900 flex items-center gap-1.5">
+                    <span>🇮🇩</span>
+                    <span>Indonesia (Domestik)</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full">
+                    {idRevPercent}% Pendapatan
+                  </span>
+                </div>
+                <p className="text-xl font-bold text-brand-plum">{formatIDR(idData.revenue)}</p>
+                <div className="flex items-center justify-between text-xs text-neutral-600 pt-1 border-t border-neutral-100 font-sans">
+                  <span>Jumlah Pesanan Sukses</span>
+                  <span className="font-bold text-neutral-900">{idData.ordersCount} pesanan</span>
+                </div>
+              </div>
+
+              {/* Card Malaysia */}
+              <div className="p-4 bg-white/60 border border-emerald-200/80 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
+                    <span>🇲🇾</span>
+                    <span>Malaysia (Semenanjung)</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                    {myRevPercent}% Pendapatan
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-xl font-bold text-emerald-900">{formatIDR(myData.revenue)}</p>
+                  <span className="text-xs font-semibold text-emerald-700">
+                    ({formatApproxMYR(myData.revenue)})
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-neutral-600 pt-1 border-t border-neutral-100 font-sans">
+                  <span>Jumlah Pesanan Ekspor</span>
+                  <span className="font-bold text-emerald-900">{myData.ordersCount} pesanan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Grafik Penjualan */}

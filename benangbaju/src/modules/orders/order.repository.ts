@@ -10,7 +10,7 @@ export class OrderRepository {
     let query = supabase
       .from('orders')
       .select(
-        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at)',
+        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at, country_code)',
         { count: 'exact' }
       )
       .eq('user_id', userId)
@@ -39,7 +39,7 @@ export class OrderRepository {
     let query = supabase
       .from('orders')
       .select(
-        '*, order_items(*, product_reviews(id, rating, body)), order_shipping(*), payments(*), profiles:user_id(name, email)'
+        '*, order_items(*, product_reviews:product_reviews!product_reviews_order_item_id_fkey(id, rating, body), product_variants(weight_gram, products(weight_gram, hs_code))), order_shipping(*), payments(*), profiles:user_id(name, email)'
       )
       .eq('order_number', cleanOrderNumber)
 
@@ -53,7 +53,7 @@ export class OrderRepository {
       // Fallback query if embedded product_reviews relationship fails in PostgREST
       let fallbackQuery = supabase
         .from('orders')
-        .select('*, order_items(*), order_shipping(*), payments(*), profiles:user_id(name, email)')
+        .select('*, order_items(*, product_variants(weight_gram, products(weight_gram, hs_code))), order_shipping(*), payments(*), profiles:user_id(name, email)')
         .eq('order_number', cleanOrderNumber)
 
       if (userId) {
@@ -196,16 +196,25 @@ export class OrderRepository {
   }
 
   async adminFindMany(
-    params: { status?: string; escapedSearch?: string; offset?: number; limit?: number } = {}
+    params: {
+      status?: string
+      escapedSearch?: string
+      offset?: number
+      limit?: number
+      countryCode?: string
+    } = {}
   ) {
     const supabase = await createServerClient()
-    const { status = 'all', escapedSearch = '', offset = 0, limit = 20 } = params
+    const { status = 'all', escapedSearch = '', offset = 0, limit = 20, countryCode = 'all' } = params
+
+    const shippingRelation =
+      countryCode === 'MY' || countryCode === 'ID' ? 'order_shipping!inner' : 'order_shipping!left'
 
     let query = supabase.from('orders').select(
       `
         id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at,
         order_items (id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal),
-        order_shipping!left (id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at),
+        ${shippingRelation} (id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at, country_code),
         profiles!left (name, email)
       `,
       { count: 'exact' }
@@ -213,6 +222,12 @@ export class OrderRepository {
 
     if (status && status !== 'all') {
       query = query.eq('status', status)
+    }
+
+    if (countryCode === 'MY') {
+      query = query.eq('order_shipping.country_code', 'MY')
+    } else if (countryCode === 'ID') {
+      query = query.eq('order_shipping.country_code', 'ID')
     }
 
     if (escapedSearch) {

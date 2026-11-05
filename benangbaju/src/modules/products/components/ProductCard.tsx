@@ -8,7 +8,9 @@ import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { ProductListItem } from '@/modules/products/types'
-import { cn, formatIDR } from '@/lib/utils'
+import { cn, formatIDR, formatApproxMYR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { Badge } from '@/shared/components/Badge'
 import toast from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -29,6 +31,8 @@ export const ProductCard = React.memo(function ProductCard({
   const [isHovered, setIsHovered] = useState(false)
   const [showAltImage, setShowAltImage] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
+  const market = useMarket()
+  const { myrExchangeRate } = useSiteSettings()
 
   const liked = isLiked
 
@@ -189,15 +193,24 @@ export const ProductCard = React.memo(function ProductCard({
         </Link>
 
         {/* Price Tag (Caption/Price scale: 13px/700 Mulish) */}
-        <div className="flex items-center space-x-2 pt-0.5">
-          <span className="text-[13px] font-sans font-bold text-brand-plum">
-            {minPrice !== maxPrice
-              ? `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`
-              : formatIDR(minPrice)}
-          </span>
-          {comparePrice && comparePrice > minPrice && (
-            <span className="text-xs font-sans text-neutral-600 line-through">
-              {formatIDR(comparePrice)}
+        <div className="flex flex-col pt-0.5">
+          <div className="flex items-center space-x-2">
+            <span className="text-[13px] font-sans font-bold text-brand-plum">
+              {minPrice !== maxPrice
+                ? `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`
+                : formatIDR(minPrice)}
+            </span>
+            {comparePrice && comparePrice > minPrice && (
+              <span className="text-xs font-sans text-neutral-600 line-through">
+                {formatIDR(comparePrice)}
+              </span>
+            )}
+          </div>
+          {market === 'MY' && (
+            <span className="text-[10px] font-sans font-semibold text-emerald-800">
+              {minPrice !== maxPrice
+                ? `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`
+                : formatApproxMYR(minPrice, myrExchangeRate)}
             </span>
           )}
         </div>

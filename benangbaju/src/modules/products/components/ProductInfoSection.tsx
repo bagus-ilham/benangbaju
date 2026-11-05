@@ -6,7 +6,9 @@ import { HandDrawnIcon } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
 import { VariantPicker } from '@/modules/products/components'
-import { formatIDR, cn } from '@/lib/utils'
+import { formatIDR, formatApproxMYR, cn } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
 
 interface ProductInfoSectionProps {
@@ -55,6 +57,9 @@ export function ProductInfoSection({
   onBuyNow,
   thumbnailsNode,
 }: ProductInfoSectionProps): React.JSX.Element {
+  const market = useMarket()
+  const { myrExchangeRate } = useSiteSettings()
+
   const handleStockNotification = async () => {
     if (!selectedVariant) return
     try {
@@ -100,7 +105,8 @@ export function ProductInfoSection({
         </h1>
 
         {/* Price display */}
-        <div className="flex items-baseline space-x-3 pt-2">
+        <div className="flex flex-col pt-2">
+          <div className="flex items-baseline space-x-3">
           <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
             {selectedVariant
               ? formatIDR(selectedVariant.price)
@@ -135,6 +141,16 @@ export function ProductInfoSection({
               </>
             )
           )}
+          </div>
+          {market === 'MY' && (
+            <span className="text-xs font-sans font-bold text-emerald-800 mt-1">
+              {selectedVariant
+                ? formatApproxMYR(selectedVariant.price, myrExchangeRate)
+                : minPrice === maxPrice
+                  ? formatApproxMYR(minPrice, myrExchangeRate)
+                  : `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`}
+            </span>
+          )}
         </div>
       </motion.div>
 
@@ -166,7 +182,7 @@ export function ProductInfoSection({
                 onClick={onSizeGuideOpen}
                 className="text-[9px] uppercase tracking-wider font-heading font-semibold text-neutral-600 hover:text-brand-plum transition-colors underline underline-offset-2 cursor-pointer"
               >
-                Panduan Ukuran
+                {market === 'MY' ? 'Size Guide' : 'Panduan Ukuran'}
               </button>
             </div>
           )}
@@ -182,11 +198,11 @@ export function ProductInfoSection({
         <motion.div variants={itemVariants} className="text-[11px] text-neutral-600 font-sans">
           {selectedVariant.stock > 0 ? (
             <span>
-              Stok Tersedia:{' '}
+              {market === 'MY' ? 'Stock Available: ' : 'Stok Tersedia: '}
               <strong className="text-brand-plum">{selectedVariant.stock} pcs</strong>
             </span>
           ) : (
-            <span className="text-red-500 font-semibold">Stok Habis</span>
+            <span className="text-red-500 font-semibold">{market === 'MY' ? 'Out of Stock' : 'Stok Habis'}</span>
           )}
         </motion.div>
       )}
@@ -245,10 +261,10 @@ export function ProductInfoSection({
             disabled={!selectedVariant || selectedVariant.stock === 0}
           >
             {!selectedVariant
-              ? 'Pilih Varian'
+              ? (market === 'MY' ? 'Choose Variant' : 'Pilih Varian')
               : selectedVariant.stock === 0
-                ? 'Stok Habis'
-                : 'Tambah Ke Keranjang'}
+                ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
+                : (market === 'MY' ? 'Add to Bag' : 'Tambah Ke Keranjang')}
           </Button>
 
           {/* Buy Now Button */}
@@ -260,10 +276,10 @@ export function ProductInfoSection({
             disabled={!selectedVariant || selectedVariant.stock === 0}
           >
             {!selectedVariant
-              ? 'Pilih Varian'
+              ? (market === 'MY' ? 'Choose Variant' : 'Pilih Varian')
               : selectedVariant.stock === 0
-                ? 'Stok Habis'
-                : 'Beli Sekarang'}
+                ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
+                : (market === 'MY' ? 'Buy Now' : 'Beli Sekarang')}
           </Button>
         </div>
 
@@ -273,7 +289,7 @@ export function ProductInfoSection({
             variant="outline"
             className="w-full text-xs font-semibold uppercase tracking-wider text-neutral-600 border-neutral-300 hover:text-brand-plum hover:border-brand-plum hover:bg-brand-cream/60 py-2.5 transition-all"
           >
-            <HandDrawnIcon name="bell" className="h-3.5 w-3.5 mr-1.5" /> Kabari Saya Saat Restock
+            <HandDrawnIcon name="bell" className="h-3.5 w-3.5 mr-1.5" /> {market === 'MY' ? 'Notify Me When Restocked' : 'Kabari Saya Saat Restock'}
           </Button>
         )}
 
@@ -282,7 +298,7 @@ export function ProductInfoSection({
           variant="ghost"
           className="w-full text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-50/80 border border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 py-2.5 transition-all group/wa"
         >
-          <HandDrawnIcon name="whatsapp" className="h-3.5 w-3.5 mr-1.5" /> Tanya CS via WhatsApp
+          <HandDrawnIcon name="whatsapp" className="h-3.5 w-3.5 mr-1.5" /> {market === 'MY' ? 'Chat with CS on WhatsApp' : 'Tanya CS via WhatsApp'}
         </Button>
       </motion.div>
 
@@ -298,20 +314,24 @@ export function ProductInfoSection({
         >
           <HandDrawnIcon name="truck" className="h-4 w-4" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
-            Gratis ongkir
+            {market === 'MY' ? 'Direct to MY' : 'Gratis ongkir'}
           </span>
-          <span className="text-[8px] text-neutral-600 font-sans">Tanpa minimum pembelanjaan</span>
+          <span className="text-[8px] text-neutral-600 font-sans">
+            {market === 'MY' ? '4-7 Days from Bandung' : 'Tanpa minimum pembelanjaan'}
+          </span>
         </motion.div>
         <motion.div
           whileHover={{ y: -3 }}
           transition={{ duration: 0.2 }}
           className="flex flex-col items-center text-center space-y-1 cursor-default group"
         >
-          <HandDrawnIcon name="refresh" className="h-4 w-4" />
+          <HandDrawnIcon name={market === 'MY' ? 'sparkles' : 'refresh'} className="h-4 w-4" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
-            7 Hari Retur
+            {market === 'MY' ? 'DuitNow / TNG QR' : '7 Hari Retur'}
           </span>
-          <span className="text-[8px] text-neutral-600 font-sans">Bebas tukar ukuran</span>
+          <span className="text-[8px] text-neutral-600 font-sans">
+            {market === 'MY' ? 'Easy Cross-Border Pay' : 'Bebas tukar ukuran'}
+          </span>
         </motion.div>
         <motion.div
           whileHover={{ y: -3 }}
@@ -320,9 +340,11 @@ export function ProductInfoSection({
         >
           <HandDrawnIcon name="clothes" className="h-4 w-4" />
           <span className="text-[9px] uppercase tracking-wider font-sans font-bold text-brand-plum">
-            Kualitas Premium
+            {market === 'MY' ? '100% Authentic' : 'Kualitas Premium'}
           </span>
-          <span className="text-[8px] text-neutral-600 font-sans">Bahan terkurasi</span>
+          <span className="text-[8px] text-neutral-600 font-sans">
+            {market === 'MY' ? 'Curated Bandung Apparel' : 'Bahan terkurasi'}
+          </span>
         </motion.div>
       </motion.div>
     </>

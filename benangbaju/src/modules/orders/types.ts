@@ -9,6 +9,8 @@ export interface OrderItem {
   price: number
   quantity: number
   subtotal: number
+  weight_gram?: number | null
+  hs_code?: string | null
   product_reviews?: {
     id: string
     rating: number
@@ -24,12 +26,13 @@ export interface OrderShipping {
   full_address: string
   province_name: string
   city_name: string
-  district_name: string
+  district_name: string | null
   postal_code: string
   courier_name: string
   tracking_number: string | null
   shipped_at: string | null
   delivered_at: string | null
+  country_code?: string | null
 }
 
 export interface PaymentFeeConfig {
@@ -74,6 +77,8 @@ export interface PaymentInfo {
   qr_url: string | null
   snap_token: string | null
   payment_instructions?: PaymentInstructions | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  gateway_response?: any
   paid_at?: string | null
   created_at: string
   updated_at: string
@@ -202,4 +207,3 @@ export interface AdminReturnRequestListItem {
     sort_order: number
   }>
 }
-

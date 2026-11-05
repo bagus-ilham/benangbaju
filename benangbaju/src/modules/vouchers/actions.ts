@@ -4,9 +4,9 @@ import { voucherService } from './voucher.service'
 import { requireAdmin, requireAuth } from '@/lib/auth-guard'
 
 // Public / Auth Actions
-export async function validateVoucherAction(code: string, subtotal: number) {
+export async function validateVoucherAction(code: string, subtotal: number, countryCode = 'ID') {
   const { user } = await requireAuth()
-  return voucherService.validateVoucher(code, subtotal, user.id)
+  return voucherService.validateVoucher(code, subtotal, user.id, countryCode)
 }
 
 // Admin Actions
@@ -26,6 +26,7 @@ export async function createAdminVoucherAction(voucherData: {
   usage_per_user: number
   is_active: boolean
   is_hidden: boolean
+  applicable_countries?: string[] | null
   starts_at: string
   expires_at: string
 }) {
@@ -46,6 +47,7 @@ export async function updateAdminVoucherAction(
     usage_per_user: number
     is_active: boolean
     is_hidden: boolean
+    applicable_countries?: string[] | null
     starts_at: string
     expires_at: string
   }

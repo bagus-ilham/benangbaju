@@ -28,7 +28,7 @@ export function SettingsForm({
   handleSaveSettings,
 }: SettingsFormProps): React.JSX.Element {
   return (
-    <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl">
+    <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl font-sans text-xs">
       {Object.entries(settingsByGroup).map(([group, list]) => (
         <div key={group} className="border border-neutral-200 bg-brand-cream p-5 rounded-2xl space-y-4">
           <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2">
@@ -39,7 +39,7 @@ export function SettingsForm({
             {list.map((setting) => (
               <div key={setting.key} className="space-y-1">
                 {setting.key === 'homepage_spotlight_collection_1' ||
-                  setting.key === 'homepage_spotlight_collection_2' ? (
+                setting.key === 'homepage_spotlight_collection_2' ? (
                   <Select
                     label={setting.label || setting.key}
                     value={fields[setting.key] || ''}
@@ -54,6 +54,27 @@ export function SettingsForm({
                         })),
                     ]}
                   />
+                ) : setting.key === 'enable_malaysia_shipping' ? (
+                  <Select
+                    label={setting.label || setting.key}
+                    value={fields[setting.key] || 'true'}
+                    onChange={(val) => handleFieldChange(setting.key, val)}
+                    options={[
+                      { label: 'Aktif — Buka pengiriman ke Semenanjung Malaysia', value: 'true' },
+                      { label: 'Nonaktif — Tutup pengiriman ke Malaysia', value: 'false' },
+                    ]}
+                  />
+                ) : setting.key === 'myr_exchange_rate' ? (
+                  <div>
+                    <Input
+                      label={setting.label || setting.key}
+                      type="number"
+                      value={fields[setting.key] || ''}
+                      onChange={(e) => handleFieldChange(setting.key, e.target.value)}
+                      placeholder="cth: 3600"
+                      helperText={`Simulasi: 1 MYR ≈ Rp ${(Number(fields[setting.key]) || 3600).toLocaleString('id-ID')} (Rp 100.000 ≈ RM ${(100000 / (Number(fields[setting.key]) || 3600)).toFixed(2)})`}
+                    />
+                  </div>
                 ) : setting.type === 'boolean' ? (
                   <Select
                     label={setting.label || setting.key}

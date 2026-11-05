@@ -1,43 +1,55 @@
 /**
- * Kamus sinonim kata kunci busana (Indonesian - English)
- * Memastikan pencarian seperti "kemeja" menemukan "shirt", "blus" menemukan "blouse", dll.
+ * Kamus sinonim kata kunci busana (Indonesian, Malaysian, English)
+ * Memastikan pencarian seperti "kemeja" menemukan "shirt", "blus" menemukan "blouse",
+ * "seluar" menemukan "celana", "slack" menemukan "trouser", dll.
  */
 export const CLOTHING_SYNONYMS: Record<string, string[]> = {
   // Atasan / Tops (Kategori umum & spesifik)
-  atasan: ['atasan', 'top', 'tops', 'shirt', 'shirts', 'blouse', 'blus', 'kemeja', 'kaos'],
-  top: ['top', 'tops', 'atasan', 'shirt', 'blouse', 'kemeja', 'blus'],
-  tops: ['top', 'tops', 'atasan', 'shirt', 'blouse', 'kemeja', 'blus'],
+  atasan: ['atasan', 'top', 'tops', 'shirt', 'shirts', 'blouse', 'blus', 'kemeja', 'kaos', 'tunik', 'tunic'],
+  top: ['top', 'tops', 'atasan', 'shirt', 'blouse', 'kemeja', 'blus', 'tunik'],
+  tops: ['top', 'tops', 'atasan', 'shirt', 'blouse', 'kemeja', 'blus', 'tunik'],
   kemeja: ['kemeja', 'shirt', 'shirts'],
   shirt: ['shirt', 'shirts', 'kemeja'],
   shirts: ['shirt', 'shirts', 'kemeja'],
-  blus: ['blus', 'blouse'],
-  blouse: ['blouse', 'blus'],
-  kaos: ['kaos', 'tshirt', 't-shirt', 'tee'],
+  blus: ['blus', 'blouse', 'tunik', 'tunic'],
+  blouse: ['blouse', 'blus', 'tunik', 'tunic'],
+  kaos: ['kaos', 'tshirt', 't-shirt', 'tee', 'singlet'],
   tshirt: ['tshirt', 't-shirt', 'kaos', 'tee'],
-  turtleneck: ['turtleneck', 'inner', 'manset'],
-  inner: ['inner', 'manset', 'turtleneck'],
-  manset: ['manset', 'inner', 'turtleneck'],
+  tee: ['tee', 'kaos', 'tshirt', 't-shirt'],
+  tunik: ['tunik', 'tunic', 'blouse', 'blus', 'atasan', 'top', 'baju'],
+  tunic: ['tunic', 'tunik', 'blouse', 'blus', 'atasan', 'top', 'baju'],
+  turtleneck: ['turtleneck', 'inner', 'manset', 'singlet'],
+  inner: ['inner', 'manset', 'turtleneck', 'singlet'],
+  manset: ['manset', 'inner', 'turtleneck', 'singlet'],
+  singlet: ['singlet', 'inner', 'manset', 'turtleneck', 'tanktop', 'tank top'],
 
-  // Bawahan / Bottoms (Kategori umum & spesifik)
-  bawahan: ['bawahan', 'bottoms', 'pants', 'skirt', 'celana', 'rok', 'culotte', 'kulot'],
-  bottoms: ['bottoms', 'bawahan', 'pants', 'skirt', 'celana', 'rok', 'culotte', 'kulot'],
-  celana: ['celana', 'pants', 'trouser', 'trousers', 'culotte', 'kulot'],
-  pants: ['pants', 'celana', 'trouser', 'trousers', 'culotte', 'kulot'],
-  trouser: ['trouser', 'trousers', 'celana', 'pants'],
-  trousers: ['trouser', 'trousers', 'celana', 'pants'],
-  kulot: ['kulot', 'culotte', 'celana', 'pants'],
-  culotte: ['culotte', 'kulot', 'celana', 'pants'],
-  rok: ['rok', 'skirt'],
-  skirt: ['skirt', 'rok'],
+  // Bawahan / Bottoms (Kategori umum & spesifik, termasuk istilah Malaysia: seluar, slack, palazzo, skirt)
+  bawahan: ['bawahan', 'bottoms', 'pants', 'skirt', 'celana', 'rok', 'culotte', 'kulot', 'seluar', 'slack', 'palazzo', 'kain'],
+  bottoms: ['bottoms', 'bawahan', 'pants', 'skirt', 'celana', 'rok', 'culotte', 'kulot', 'seluar', 'slack', 'palazzo', 'kain'],
+  celana: ['celana', 'seluar', 'pants', 'trouser', 'trousers', 'culotte', 'kulot', 'palazzo', 'palazo', 'slack', 'slacks'],
+  seluar: ['seluar', 'celana', 'pants', 'trouser', 'trousers', 'culotte', 'kulot', 'palazzo', 'palazo', 'slack', 'slacks'],
+  pants: ['pants', 'celana', 'seluar', 'trouser', 'trousers', 'culotte', 'kulot', 'palazzo', 'slack'],
+  trouser: ['trouser', 'trousers', 'celana', 'seluar', 'pants', 'slack'],
+  trousers: ['trouser', 'trousers', 'celana', 'seluar', 'pants', 'slack'],
+  kulot: ['kulot', 'culotte', 'celana', 'seluar', 'palazzo', 'palazo', 'pants'],
+  culotte: ['culotte', 'kulot', 'celana', 'seluar', 'palazzo', 'palazo', 'pants'],
+  palazzo: ['palazzo', 'palazo', 'kulot', 'culotte', 'celana', 'seluar', 'pants'],
+  palazo: ['palazo', 'palazzo', 'kulot', 'culotte', 'celana', 'seluar', 'pants'],
+  slack: ['slack', 'slacks', 'celana', 'seluar', 'pants', 'trouser', 'trousers'],
+  slacks: ['slacks', 'slack', 'celana', 'seluar', 'pants', 'trouser', 'trousers'],
+  rok: ['rok', 'skirt', 'kain'],
+  skirt: ['skirt', 'rok', 'kain'],
+  kain: ['kain', 'skirt', 'rok'],
 
-  // Dress & Gamis
-  dress: ['dress', 'gaun', 'gamis', 'terusan'],
+  // Dress, Gamis & Kurung
+  dress: ['dress', 'gaun', 'gamis', 'terusan', 'kurung'],
   gaun: ['gaun', 'dress', 'gamis'],
-  gamis: ['gamis', 'dress', 'gaun', 'abaya'],
+  gamis: ['gamis', 'dress', 'gaun', 'abaya', 'kurung'],
   abaya: ['abaya', 'gamis', 'dress'],
-  set: ['set', 'oneset', 'one-set', 'setelan'],
+  kurung: ['kurung', 'gamis', 'dress', 'setelan', 'set'],
+  set: ['set', 'oneset', 'one-set', 'setelan', 'kurung'],
   oneset: ['oneset', 'one-set', 'set', 'setelan'],
-  setelan: ['setelan', 'oneset', 'one-set', 'set'],
+  setelan: ['setelan', 'oneset', 'one-set', 'set', 'kurung'],
 
   // Outerwear
   jaket: ['jaket', 'jacket', 'outerwear', 'outer', 'vest', 'rompi'],
@@ -49,21 +61,45 @@ export const CLOTHING_SYNONYMS: Record<string, string[]> = {
   cardigan: ['cardigan', 'kardigan', 'outer'],
   kardigan: ['kardigan', 'cardigan', 'outer'],
 
-  // Hijab & Aksesoris
-  hijab: ['hijab', 'jilbab', 'kerudung', 'square', 'pashmina', 'khimar', 'paris'],
-  jilbab: ['jilbab', 'hijab', 'kerudung', 'square', 'pashmina', 'khimar'],
-  kerudung: ['kerudung', 'hijab', 'jilbab', 'square', 'pashmina'],
-  square: ['square', 'hijab', 'segiempat', 'segi empat', 'paris'],
+  // Hijab & Aksesoris (termasuk tudung, bawal, bengkung)
+  hijab: ['hijab', 'jilbab', 'kerudung', 'square', 'pashmina', 'khimar', 'paris', 'tudung', 'shawl'],
+  jilbab: ['jilbab', 'hijab', 'kerudung', 'square', 'pashmina', 'khimar', 'tudung'],
+  kerudung: ['kerudung', 'hijab', 'jilbab', 'square', 'pashmina', 'tudung'],
+  tudung: ['tudung', 'hijab', 'jilbab', 'kerudung', 'shawl', 'pashmina'],
+  square: ['square', 'hijab', 'segiempat', 'segi empat', 'paris', 'bawal'],
+  bawal: ['bawal', 'square', 'hijab', 'segiempat', 'paris'],
   pashmina: ['pashmina', 'pasmina', 'hijab', 'shawl'],
   pasmina: ['pasmina', 'pashmina', 'hijab', 'shawl'],
-  sabuk: ['sabuk', 'belt', 'obi'],
-  belt: ['belt', 'sabuk', 'obi'],
-  obi: ['obi', 'belt', 'sabuk'],
+  shawl: ['shawl', 'pashmina', 'pasmina', 'hijab'],
+  sabuk: ['sabuk', 'belt', 'obi', 'bengkung'],
+  belt: ['belt', 'sabuk', 'obi', 'bengkung'],
+  obi: ['obi', 'belt', 'sabuk', 'bengkung'],
+  bengkung: ['bengkung', 'obi', 'belt', 'sabuk'],
 
   // Umum
   baju: ['baju', 'pakaian', 'shirt', 'blouse', 'top', 'tops', 'dress', 'kemeja', 'blus'],
   pakaian: ['pakaian', 'baju', 'outfit', 'busana'],
   busana: ['busana', 'pakaian', 'baju', 'outfit'],
+}
+
+/**
+ * Pemetaan frasa multi-kata untuk normalisasi query sebelum tokenisasi
+ */
+export const MULTI_WORD_PHRASE_MAP: Record<string, string> = {
+  'baju t': 'kaos',
+  't-shirt': 'tshirt',
+  't shirt': 'tshirt',
+  'tank top': 'singlet',
+  'tali pinggang': 'sabuk',
+  'ikat pinggang': 'sabuk',
+  'seluar panjang': 'celana',
+  'seluar pendek': 'celana',
+  'celana panjang': 'celana',
+  'celana pendek': 'celana',
+  'baju kurung': 'kurung',
+  'segi empat': 'square',
+  'segiempat': 'square',
+  'one set': 'oneset',
 }
 
 /**
@@ -102,14 +138,28 @@ export interface SearchCandidateProduct {
  * Mengembalikan nilai > 0 jika cocok, dan 0 jika tidak memenuhi kriteria pencarian.
  */
 export function scoreProduct(product: SearchCandidateProduct, query: string): number {
-  const cleanQuery = query.trim().toLowerCase()
-  const tokens = cleanQuery.split(/\s+/).filter(Boolean)
-  if (tokens.length === 0) return 0
+  let cleanQuery = query.trim().toLowerCase()
+  if (!cleanQuery) return 0
 
   const name = (product.name || '').toLowerCase()
   const slug = (product.slug || '').toLowerCase()
   const shortDesc = (product.short_description || '').toLowerCase()
   const desc = (product.description || '').toLowerCase()
+
+  // 1. Direct full query exact matches (paling tinggi)
+  if (name === cleanQuery) return 1000
+  if (name.includes(cleanQuery)) return 500
+  if (slug.includes(cleanQuery)) return 400
+
+  // Normalisasi frasa multi-kata (e.g. "baju t" -> "kaos", "tali pinggang" -> "sabuk")
+  for (const [phrase, replacement] of Object.entries(MULTI_WORD_PHRASE_MAP)) {
+    if (cleanQuery.includes(phrase)) {
+      cleanQuery = cleanQuery.replace(new RegExp(phrase, 'g'), replacement)
+    }
+  }
+
+  const tokens = cleanQuery.split(/\s+/).filter(Boolean)
+  if (tokens.length === 0) return 0
 
   // Ambil nama & slug kategori
   let catName = ''
@@ -129,11 +179,6 @@ export function scoreProduct(product: SearchCandidateProduct, query: string): nu
     .map((v) => `${v.name || ''} ${v.sku || ''}`)
     .join(' ')
     .toLowerCase()
-
-  // 1. Direct full query exact matches (paling tinggi)
-  if (name === cleanQuery) return 1000
-  if (name.includes(cleanQuery)) return 500
-  if (slug.includes(cleanQuery)) return 400
 
   // 2. Tokenize query dengan sinonim busana
   const tokenGroups = tokens.map((t) => ({

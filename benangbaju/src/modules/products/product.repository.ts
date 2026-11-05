@@ -199,7 +199,7 @@ export class ProductRepository {
       .from('products')
       .select(
         `
-        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at, size_guide, care_guide, meta_title, meta_description,
+        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at, size_guide, size_guide_inch, hs_code, care_guide, meta_title, meta_description,
         categories (name, slug),
         product_variants (*, product_variant_attrs(*)),
         product_images (*),
@@ -277,7 +277,7 @@ export class ProductRepository {
       return { data: paginatedData, count }
     }
 
-    let query = supabase.from('products').select(
+    const query = supabase.from('products').select(
       `
         id, name, slug, description, short_description, weight_gram, is_featured, is_active, created_at,
         categories (name, slug),

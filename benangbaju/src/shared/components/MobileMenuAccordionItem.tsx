@@ -30,8 +30,8 @@ export function MobileMenuAccordionItem({
   const [isLoading, setIsLoading] = useState(false)
   const [hasFetched, setHasFetched] = useState(false)
 
-  const isKategori = label.toUpperCase() === 'KATEGORI'
-  const isKoleksi = label.toUpperCase() === 'KOLEKSI'
+  const isKategori = href === '/kategori' || label.toUpperCase() === 'KATEGORI' || label.toUpperCase() === 'CATEGORIES'
+  const isKoleksi = href === '/koleksi' || label.toUpperCase() === 'KOLEKSI' || label.toUpperCase() === 'COLLECTIONS'
   const isAccordion = isKategori || isKoleksi
   const isActive = pathname === href || pathname.startsWith(href + '/')
 

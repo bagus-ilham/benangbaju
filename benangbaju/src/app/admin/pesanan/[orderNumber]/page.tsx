@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
 import { AdminOrderStatusPanel } from './components/AdminOrderStatusPanel'
 import { AdminOrderPaymentPanel } from './components/AdminOrderPaymentPanel'
+import { formatDateWithTimezone } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
@@ -39,13 +40,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
   const [editResiNumber, setEditResiNumber] = useState('')
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const formattedDate = order?.created_at
-    ? new Date(order.created_at).toLocaleString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+    ? formatDateWithTimezone(order.created_at, order.order_shipping?.country_code)
     : '-'
 
   const handleSyncPayment = async () => {
@@ -186,8 +181,11 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
     )
   }
 
+  const isMalaysia = order.order_shipping?.country_code === 'MY'
+  const declaredValueIdr = Math.max(0, Number(order.subtotal || 0) - Number(order.discount_amount || 0))
+
   return (
-    <div className="space-y-8 max-w-4xl mx-auto font-sans text-xs">
+    <div className="space-y-6 max-w-4xl mx-auto font-sans text-xs">
       <AdminPageHeader
         title={`Pesanan ${order.order_number}`}
         subtitle={formattedDate ? `Dibuat pada: ${formattedDate}` : 'Dibuat pada: ...'}
@@ -211,6 +209,21 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
           </Button>
         </div>
       </AdminPageHeader>
+
+      {/* Export Malaysia Banner */}
+      {isMalaysia && (
+        <div className="flex items-center gap-3 p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-950">
+          <span className="text-2xl">🇲🇾</span>
+          <div>
+            <p className="font-bold text-xs uppercase tracking-wide text-amber-900">
+              Pesanan Ekspor: Semenanjung Malaysia (West Malaysia)
+            </p>
+            <p className="text-[11px] text-amber-800 mt-0.5">
+              Tujuan internasional via {order.order_shipping?.courier_name || 'Kurir Ekspor'}. Gunakan panel Deklarasi Bea Cukai di bawah untuk mempermudah booking kurir ekspor (KiriminAja / Lion Parcel / Ninja Van MY).
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
@@ -254,6 +267,8 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
 
           <AdminOrderShippingPanel
             orderShipping={order.order_shipping}
+            orderItems={order.order_items}
+            declaredValueIdr={declaredValueIdr}
             isEditingResi={isEditingResi}
             editResiNumber={editResiNumber}
             setEditResiNumber={setEditResiNumber}

@@ -33,8 +33,8 @@ export function MegaMenuNavItem({
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const isKategori = label.toUpperCase() === 'KATEGORI'
-  const isKoleksi = label.toUpperCase() === 'KOLEKSI'
+  const isKategori = href === '/kategori' || label.toUpperCase() === 'KATEGORI' || label.toUpperCase() === 'CATEGORIES'
+  const isKoleksi = href === '/koleksi' || label.toUpperCase() === 'KOLEKSI' || label.toUpperCase() === 'COLLECTIONS'
 
   useEffect(() => {
     if ((isKategori || isKoleksi) && items.length === 0) {

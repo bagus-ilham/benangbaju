@@ -20,7 +20,6 @@ export function useSiteSettings() {
       ? rawLogo
       : '/image/svg/logo/logo-benangbaju.svg'
 
-
   const getSocialUrl = (
     settingValue: string | undefined,
     platform: keyof typeof SOCIAL_LINKS,
@@ -42,6 +41,13 @@ export function useSiteSettings() {
   const shopeeSetting = getSetting(['social_shopee'])
   const shopeeUrl = getSocialUrl(shopeeSetting?.value, 'shopee', 'https://shopee.co.id/')
 
+  const myrRateSetting = getSetting(['myr_exchange_rate'])
+  const parsedMyrRate = parseFloat(myrRateSetting?.value || '3600')
+  const myrExchangeRate = !isNaN(parsedMyrRate) && parsedMyrRate > 0 ? parsedMyrRate : 3600
+
+  const malaysiaShippingSetting = getSetting(['enable_malaysia_shipping'])
+  const isMalaysiaShippingEnabled = malaysiaShippingSetting?.value !== 'false'
+
   return {
     ...query,
     settings,
@@ -50,5 +56,7 @@ export function useSiteSettings() {
     tiktokUrl,
     whatsappUrl,
     shopeeUrl,
+    myrExchangeRate,
+    isMalaysiaShippingEnabled,
   }
 }

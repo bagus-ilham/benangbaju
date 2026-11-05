@@ -52,8 +52,16 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
+    const shipping = Array.isArray(order.order_shipping) ? order.order_shipping[0] : order.order_shipping;
+    const profile = Array.isArray(order.profiles) ? order.profiles[0] : order.profiles;
+    const isMalaysia = shipping?.country_code === 'MY';
+
     // Normalisasi dan mapping payment_channel ke DOKU payment_method_types
     const normalizeChannelToDoku = (channel: string | null | undefined): string[] | undefined => {
+      if (isMalaysia) {
+        return ['QRIS'];
+      }
+
       if (!channel) return undefined;
       const normalized = channel.trim().toUpperCase();
       
@@ -111,6 +119,14 @@ serve(async (req: Request) => {
 
     const paymentMethods = normalizeChannelToDoku(order.payment_channel);
 
+    // Limit check for QRIS transaction (Rp 10.000.000)
+    if (
+      (isMalaysia || paymentMethods?.includes('QRIS') || order.payment_channel?.toUpperCase() === 'QRIS') &&
+      Number(order.total_amount) > 10000000
+    ) {
+      throw new Error('Total transaksi melebihi batas regulasi pembayaran QRIS (maksimal Rp 10.000.000)');
+    }
+
     // 1. Check if a valid payment URL already exists for this order with matching payment method
     const { data: existingPayment } = await supabaseClient
       .from('payments')
@@ -166,6 +182,16 @@ serve(async (req: Request) => {
     // Hitung dueDate dalam menit (misal 60 menit)
     const paymentDueDate = 60;
 
+    // Normalisasi nomor telepon
+    let customerPhone = String(shipping?.phone || '08123456789').replace(/[^\d+]/g, '');
+    if (isMalaysia && !customerPhone.startsWith('+60') && !customerPhone.startsWith('60')) {
+      if (customerPhone.startsWith('0')) {
+        customerPhone = '+60' + customerPhone.slice(1);
+      } else {
+        customerPhone = '+60' + customerPhone;
+      }
+    }
+
     const dokuPayload: any = {
       order: {
         amount: Math.round(Number(order.total_amount)),
@@ -177,9 +203,12 @@ serve(async (req: Request) => {
       },
       customer: {
         id: String(user.id),
-        name: String(order.profiles?.name || order.order_shipping?.recipient_name || 'Customer'),
-        email: String(order.profiles?.email || 'customer@example.com'),
-        phone: String(order.order_shipping?.phone || '08123456789'),
+        name: String(profile?.name || shipping?.recipient_name || 'Customer'),
+        email: String(profile?.email || 'customer@example.com'),
+        phone: customerPhone,
+        country: isMalaysia ? 'MY' : 'ID',
+        address: shipping?.full_address || undefined,
+        postcode: shipping?.postal_code || undefined,
       }
     };
 

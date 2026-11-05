@@ -23,10 +23,10 @@ export interface AdminUpdateReturnRequestInput {
   refundAmount?: number | null
 }
 
-export function useAdminOrders(status = 'all', search = '', page = 1, limit = 20) {
+export function useAdminOrders(status = 'all', search = '', page = 1, limit = 20, countryCode = 'all') {
   return useQuery({
-    queryKey: ['admin', 'orders', status, search, page, limit],
-    queryFn: () => adminGetOrdersAction({ status, search, page, limit }),
+    queryKey: ['admin', 'orders', status, search, page, limit, countryCode],
+    queryFn: () => adminGetOrdersAction({ status, search, page, limit, countryCode }),
   })
 }
 

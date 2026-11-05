@@ -71,6 +71,8 @@ export interface InitialProductData {
   meta_title: string | null
   meta_description: string | null
   size_guide?: string | null
+  size_guide_inch?: string | null
+  hs_code?: string | null
   care_guide?: string | null
   product_variants?: InitialProductVariant[]
   product_images?: InitialProductImage[]
@@ -368,6 +370,8 @@ export function ProductForm({
         meta_title: data.productData.meta_title?.trim() || null,
         meta_description: data.productData.meta_description?.trim() || null,
         size_guide: data.productData.size_guide?.trim() || null,
+        size_guide_inch: data.productData.size_guide_inch?.trim() || null,
+        hs_code: data.productData.hs_code?.trim() || null,
         care_guide: data.productData.care_guide?.trim() || null,
       },
       variants: cleanedVariants,
@@ -450,12 +454,16 @@ export function ProductForm({
             onCategoryChange={(val) => setValue('productData.category_id', val)}
             weightGram={productData.weight_gram}
             onWeightGramChange={(val) => setValue('productData.weight_gram', val)}
+            hsCode={productData.hs_code || ''}
+            onHsCodeChange={(val) => setValue('productData.hs_code', val)}
             shortDescription={productData.short_description || ''}
             onShortDescriptionChange={(val) => setValue('productData.short_description', val)}
             description={productData.description || ''}
             onDescriptionChange={(val) => setValue('productData.description', val)}
             sizeGuide={productData.size_guide || ''}
             onSizeGuideChange={(val) => setValue('productData.size_guide', val)}
+            sizeGuideInch={productData.size_guide_inch || ''}
+            onSizeGuideInchChange={(val) => setValue('productData.size_guide_inch', val)}
             careGuide={productData.care_guide || ''}
             onCareGuideChange={(val) => setValue('productData.care_guide', val)}
             isActive={productData.is_active}

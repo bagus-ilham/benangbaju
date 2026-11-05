@@ -63,16 +63,26 @@ export class NotificationService {
     userId: string,
     orderNumber: string,
     status: string,
-    trackingNumber?: string
+    trackingNumber?: string,
+    countryCode?: string
   ): Promise<void> {
-    const statusTitles: Record<string, string> = {
+    const isMalaysia = countryCode?.toUpperCase() === 'MY'
+
+    const idTitles: Record<string, string> = {
       processing: 'Pesanan Diproses',
       shipped: 'Pesanan Dikirim',
       completed: 'Pesanan Selesai',
       cancelled: 'Pesanan Dibatalkan',
     }
 
-    const statusMessages: Record<string, string> = {
+    const enTitles: Record<string, string> = {
+      processing: 'Order Processing',
+      shipped: 'Order Shipped ✈️',
+      completed: 'Order Completed',
+      cancelled: 'Order Cancelled',
+    }
+
+    const idMessages: Record<string, string> = {
       processing: `Pesanan Anda #${orderNumber} sedang diproses oleh penjual.`,
       shipped: trackingNumber
         ? `Pesanan Anda #${orderNumber} telah dikirim dengan resi: ${trackingNumber}.`
@@ -81,16 +91,36 @@ export class NotificationService {
       cancelled: `Pesanan Anda #${orderNumber} telah dibatalkan.`,
     }
 
-    const title = statusTitles[status] || 'Pembaruan Pesanan'
+    const enMessages: Record<string, string> = {
+      processing: `Order #${orderNumber} is being prepared and packed for international dispatch.`,
+      shipped: trackingNumber
+        ? `Order #${orderNumber} has been dispatched with tracking number: ${trackingNumber}.`
+        : `Order #${orderNumber} is on its way to Malaysia.`,
+      completed: `Order #${orderNumber} has been completed. Thank you for shopping with Benangbaju!`,
+      cancelled: `Order #${orderNumber} has been cancelled.`,
+    }
+
+    const statusTitles = isMalaysia ? enTitles : idTitles
+    const statusMessages = isMalaysia ? enMessages : idMessages
+
+    const title = statusTitles[status] || (isMalaysia ? 'Order Update' : 'Pembaruan Pesanan')
     const message =
-      statusMessages[status] || `Status pesanan #${orderNumber} diperbarui menjadi ${status}.`
+      statusMessages[status] ||
+      (isMalaysia
+        ? `Status for order #${orderNumber} updated to ${status}.`
+        : `Status pesanan #${orderNumber} diperbarui menjadi ${status}.`)
 
     await this.createNotification({
       userId,
       type: 'order_status',
       title,
       message,
-      data: { order_number: orderNumber, status, tracking_number: trackingNumber },
+      data: {
+        order_number: orderNumber,
+        status,
+        tracking_number: trackingNumber,
+        country_code: countryCode || 'ID',
+      },
     })
   }
 }

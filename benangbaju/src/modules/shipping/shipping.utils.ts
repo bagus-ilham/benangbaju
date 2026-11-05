@@ -10,12 +10,12 @@ export type CartItemWithWeight = {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function validateAndGetShippingRate(
-  zoneId: any,
+  zoneId: string | null | undefined,
   totalWeight: number,
   params: CreateOrderParams
 ) {
+  if (!zoneId) return undefined
   const shippingRes = await shippingService.calculateShippingRates(zoneId, totalWeight)
   if (!shippingRes.success || !shippingRes.data) return undefined
   const validRates = shippingRes.data
@@ -32,10 +32,19 @@ export function calculateCartWeight(cartItems: CartItemWithWeight[]): number {
     const variant = item.product_variants
     const product = Array.isArray(variant?.products) ? variant.products[0] : variant?.products
 
-    const weight = variant?.weight_gram ?? product?.weight_gram
-    const num = Number(weight)
+    const variantWeight = Number(variant?.weight_gram)
+    const productWeight = Number(product?.weight_gram)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const itemWeight = Number((item as any)?.weight_gram)
+
     const parsedWeight =
-      isNaN(num) || weight === undefined || weight === null ? DEFAULT_WEIGHT_GRAM : num
+      !isNaN(variantWeight) && variantWeight > 0
+        ? variantWeight
+        : !isNaN(productWeight) && productWeight > 0
+        ? productWeight
+        : !isNaN(itemWeight) && itemWeight > 0
+        ? itemWeight
+        : DEFAULT_WEIGHT_GRAM
 
     return acc + parsedWeight * (item.quantity || 1)
   }, 0)

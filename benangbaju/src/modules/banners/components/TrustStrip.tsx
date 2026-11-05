@@ -4,12 +4,15 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { PageContainer, HandDrawnIcon, type HandDrawnIconName } from '@/shared/components'
 import { staggerContainer, fadeUpItem } from '@/lib/motion'
+import { useMarket } from '@/shared/stores/marketStore'
 
-const TRUST_ITEMS: Array<{
+interface TrustItem {
   handDrawnName: HandDrawnIconName
   title: string
   description: string
-}> = [
+}
+
+const TRUST_ITEMS_ID: TrustItem[] = [
   {
     handDrawnName: 'truck',
     title: 'Gratis Ongkir',
@@ -32,7 +35,33 @@ const TRUST_ITEMS: Array<{
   },
 ]
 
+const TRUST_ITEMS_MY: TrustItem[] = [
+  {
+    handDrawnName: 'truck',
+    title: 'West Malaysia Delivery',
+    description: 'Direct from Bandung atelier',
+  },
+  {
+    handDrawnName: 'sparkles',
+    title: 'Premium Fabrics',
+    description: 'Curated & comfortable cotton linen',
+  },
+  {
+    handDrawnName: 'clothes',
+    title: '100% Authentic',
+    description: 'Official Benangbaju original',
+  },
+  {
+    handDrawnName: 'shield-check',
+    title: 'DuitNow QR Pay',
+    description: "Touch 'n Go, MAE, CIMB supported",
+  },
+]
+
 export function TrustStrip(): React.JSX.Element {
+  const market = useMarket()
+  const items = market === 'MY' ? TRUST_ITEMS_MY : TRUST_ITEMS_ID
+
   return (
     <section className="relative bg-brand-gold border-b border-brand-gold/80 py-3.5 md:py-6 overflow-hidden text-brand-plum">
       {/* Decorative Background Pattern */}
@@ -49,7 +78,7 @@ export function TrustStrip(): React.JSX.Element {
           viewport={{ once: true, amount: 0.3 }}
           className="flex flex-nowrap items-center justify-between overflow-x-auto scrollbar-none snap-x gap-3 sm:gap-4 md:grid md:grid-cols-4 md:gap-6 py-1"
         >
-          {TRUST_ITEMS.map((item) => (
+          {items.map((item) => (
             <motion.div
               key={item.title}
               variants={fadeUpItem}

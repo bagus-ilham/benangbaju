@@ -4,7 +4,9 @@ import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { useMarket } from '@/shared/stores/marketStore'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -29,6 +31,11 @@ export function ProductStickyAction({
   onAddToCart,
   onBuyNow,
 }: ProductStickyActionProps): React.JSX.Element {
+  const market = useMarket()
+  const { myrExchangeRate } = useSiteSettings()
+
+  const currentPrice = selectedVariant ? Number(selectedVariant.price) : minPrice
+
   return (
     <AnimatePresence>
       {showStickyBar && (
@@ -59,9 +66,16 @@ export function ProductStickyAction({
                 <div className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum line-clamp-1">
                   {product.name}
                 </div>
-                <p className="text-xs font-sans font-bold text-brand-plum mt-0.5">
-                  {selectedVariant ? formatIDR(selectedVariant.price) : formatIDR(minPrice)}
-                </p>
+                <div className="flex items-baseline gap-1.5 mt-0.5">
+                  <span className="text-xs font-sans font-bold text-brand-plum">
+                    {formatIDR(currentPrice)}
+                  </span>
+                  {market === 'MY' && (
+                    <span className="text-[10px] font-sans font-semibold text-emerald-800">
+                      ({formatApproxMYR(currentPrice, myrExchangeRate)})
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -72,10 +86,12 @@ export function ProductStickyAction({
                 <div className="text-xs font-sans text-neutral-600">
                   {selectedVariant ? (
                     <span>
-                      Varian: <strong className="text-brand-plum">{selectedVariant.name}</strong>
+                      {market === 'MY' ? 'Variant:' : 'Varian:'} <strong className="text-brand-plum">{selectedVariant.name}</strong>
                     </span>
                   ) : (
-                    <span className="italic text-neutral-400">Pilih varian di atas</span>
+                    <span className="italic text-neutral-400">
+                      {market === 'MY' ? 'Choose variant above' : 'Pilih varian di atas'}
+                    </span>
                   )}
                 </div>
               )}
@@ -89,7 +105,7 @@ export function ProductStickyAction({
                   isLoading={isAdding}
                   disabled={!selectedVariant || selectedVariant.stock === 0}
                 >
-                  Keranjang
+                  {market === 'MY' ? 'Bag' : 'Keranjang'}
                 </Button>
                 <Button
                   onClick={onBuyNow}
@@ -99,7 +115,7 @@ export function ProductStickyAction({
                   isLoading={isBuying}
                   disabled={!selectedVariant || selectedVariant.stock === 0}
                 >
-                  Beli
+                  {market === 'MY' ? 'Buy Now' : 'Beli'}
                 </Button>
               </div>
             </div>

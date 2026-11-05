@@ -55,6 +55,7 @@ export default function AdminShippingPage(): React.JSX.Element {
   const [editingZone, setEditingZone] = useState<ShippingZone | null>(null)
   const [zoneName, setZoneName] = useState('')
   const [zoneDesc, setZoneDesc] = useState('')
+  const [zoneCountryCode, setZoneCountryCode] = useState<'ID' | 'MY'>('ID')
   const [zoneActive, setZoneActive] = useState(true)
   const [selectedProvinces, setSelectedProvinces] = useState<string[]>([])
 
@@ -65,6 +66,7 @@ export default function AdminShippingPage(): React.JSX.Element {
   const [rateCourier, setRateCourier] = useState('')
   const [ratePricePerKg, setRatePricePerKg] = useState(0)
   const [rateMinWeight, setRateMinWeight] = useState(1000)
+  const [rateMaxWeight, setRateMaxWeight] = useState<number | null>(null)
   const [rateBasePrice, setRateBasePrice] = useState(0)
   const [rateEtdMin, setRateEtdMin] = useState(1)
   const [rateEtdMax, setRateEtdMax] = useState(3)
@@ -78,15 +80,24 @@ export default function AdminShippingPage(): React.JSX.Element {
       setZoneDesc(zone.description || '')
       setZoneActive(zone.is_active)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const isMy = zone.shipping_zone_coverage?.some((c: any) => c.country_code === 'MY')
+      setZoneCountryCode(isMy ? 'MY' : 'ID')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setSelectedProvinces(zone.shipping_zone_coverage?.map((c: any) => c.province_name) || [])
     } else {
       setEditingZone(null)
       setZoneName('')
       setZoneDesc('')
+      setZoneCountryCode('ID')
       setZoneActive(true)
       setSelectedProvinces([])
     }
     setZoneModalOpen(true)
+  }
+
+  const handleCountryCodeChange = (country: 'ID' | 'MY') => {
+    setZoneCountryCode(country)
+    setSelectedProvinces([])
   }
 
   const handleToggleProvince = (p: string) => {
@@ -102,9 +113,15 @@ export default function AdminShippingPage(): React.JSX.Element {
       return
     }
 
+    if (selectedProvinces.length === 0) {
+      toast.error('Pilih minimal 1 wilayah cakupan untuk zona ini')
+      return
+    }
+
     const zonePayload = {
       name: zoneName.trim(),
       description: zoneDesc.trim() || null,
+      country_code: zoneCountryCode,
       is_active: zoneActive,
     }
 
@@ -155,6 +172,7 @@ export default function AdminShippingPage(): React.JSX.Element {
       setRateCourier(rate.courier_name)
       setRatePricePerKg(Number(rate.price_per_kg))
       setRateMinWeight(rate.min_weight_gram)
+      setRateMaxWeight(rate.max_weight_gram ?? null)
       setRateBasePrice(Number(rate.base_price))
       setRateEtdMin(rate.etd_days_min)
       setRateEtdMax(rate.etd_days_max)
@@ -165,6 +183,7 @@ export default function AdminShippingPage(): React.JSX.Element {
       setRateCourier('')
       setRatePricePerKg(0)
       setRateMinWeight(1000)
+      setRateMaxWeight(null)
       setRateBasePrice(0)
       setRateEtdMin(1)
       setRateEtdMax(3)
@@ -175,7 +194,7 @@ export default function AdminShippingPage(): React.JSX.Element {
 
   const handleSaveRate = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!rateZoneId || !rateCourier.trim() || ratePricePerKg <= 0 || rateBasePrice <= 0) {
+    if (!rateZoneId || !rateCourier.trim() || ratePricePerKg <= 0 || rateBasePrice < 0) {
       toast.error('Harap isi semua kolom wajib dengan benar')
       return
     }
@@ -185,6 +204,7 @@ export default function AdminShippingPage(): React.JSX.Element {
       courier_name: rateCourier.trim(),
       price_per_kg: ratePricePerKg,
       min_weight_gram: rateMinWeight,
+      max_weight_gram: rateMaxWeight || null,
       base_price: rateBasePrice,
       etd_days_min: rateEtdMin,
       etd_days_max: rateEtdMax,
@@ -222,17 +242,11 @@ export default function AdminShippingPage(): React.JSX.Element {
     }
   }
 
-  const handleRefresh = () => {
-    refetchZones()
-    refetchRates()
-    toast.success('Data diperbarui')
-  }
-
   return (
     <div className="space-y-8">
       <AdminPageHeader
         title="Manajemen Pengiriman"
-        subtitle="Kelola zona pengiriman custom beserta tarif per kg untuk setiap ekspedisi."
+        subtitle="Kelola zona pengiriman custom (Domestik Indonesia & Ekspor Malaysia) beserta tarif per kg untuk setiap ekspedisi."
       >
         <Button
           onClick={() => {
@@ -250,43 +264,54 @@ export default function AdminShippingPage(): React.JSX.Element {
       <div className="flex border-b border-neutral-200">
         <button
           onClick={() => setActiveTab('zones')}
-          className={`flex items-center py-3 px-6 text-xs font-heading tracking-wider uppercase font-semibold border-b-2 transition-all ${activeTab === 'zones'
-              ? 'border-neutral-900 text-neutral-950 bg-brand-cream'
-              : 'border-transparent text-neutral-400 hover:text-neutral-700'
-            }`}
+          className={`py-3 px-6 text-xs uppercase tracking-wider font-bold transition border-b-2 flex items-center ${
+            activeTab === 'zones'
+              ? 'border-neutral-900 text-neutral-900'
+              : 'border-transparent text-neutral-400 hover:text-neutral-600'
+          }`}
         >
-          <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 mr-2" /> Zona Pengiriman ({zones?.length || 0})
+          <HandDrawnIcon name="map-pin" className="h-4 w-4 mr-1.5" /> Zona Wilayah ({zones.length})
         </button>
         <button
           onClick={() => setActiveTab('rates')}
-          className={`flex items-center py-3 px-6 text-xs font-heading tracking-wider uppercase font-semibold border-b-2 transition-all ${activeTab === 'rates'
-              ? 'border-neutral-900 text-neutral-950 bg-brand-cream'
-              : 'border-transparent text-neutral-400 hover:text-neutral-700'
-            }`}
+          className={`py-3 px-6 text-xs uppercase tracking-wider font-bold transition border-b-2 flex items-center ${
+            activeTab === 'rates'
+              ? 'border-neutral-900 text-neutral-900'
+              : 'border-transparent text-neutral-400 hover:text-neutral-600'
+          }`}
         >
-          <HandDrawnIcon name="truck" className="h-3.5 w-3.5 mr-2" /> Tarif Kurir ({rates?.length || 0})
+          <HandDrawnIcon name="tag" className="h-4 w-4 mr-1.5" /> Tarif Kurir ({rates.length})
         </button>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <div className="space-y-1">
+          <h2 className="text-base font-bold text-neutral-900">
+            {activeTab === 'zones' ? 'Daftar Zona Pengiriman' : 'Daftar Tarif Kurir'}
+          </h2>
+          <p className="text-xs text-neutral-500">
+            {activeTab === 'zones'
+              ? 'Kelompokkan provinsi ke dalam zona biaya untuk perhitungan ongkir otomatis.'
+              : 'Konfigurasikan biaya dasar dan tarif progresif per kg per zona wilayah.'}
+          </p>
+        </div>
+        <Button
+          onClick={() => (activeTab === 'zones' ? handleOpenZoneModal() : handleOpenRateModal())}
+          className="text-xs uppercase font-bold tracking-wider py-2.5 px-4"
+        >
+          <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" />
+          {activeTab === 'zones' ? 'Tambah Zona Baru' : 'Tambah Tarif Baru'}
+        </Button>
       </div>
 
       <AnimatePresence mode="wait">
         {activeTab === 'zones' ? (
           <motion.div
-            key="zones-tab"
-            initial={{ opacity: 0, y: 10 }}
+            key="zones"
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-6"
+            exit={{ opacity: 0, y: -4 }}
           >
-            <div className="flex justify-end">
-              <Button
-                onClick={() => handleOpenZoneModal()}
-                className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
-              >
-                <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Zona Baru
-              </Button>
-            </div>
-
             <ShippingZonesTable
               zones={zones}
               isLoading={zonesLoading}
@@ -298,23 +323,11 @@ export default function AdminShippingPage(): React.JSX.Element {
           </motion.div>
         ) : (
           <motion.div
-            key="rates-tab"
-            initial={{ opacity: 0, y: 10 }}
+            key="rates"
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-6"
+            exit={{ opacity: 0, y: -4 }}
           >
-            <div className="flex justify-end">
-              <Button
-                onClick={() => handleOpenRateModal()}
-                disabled={!zones || zones.length === 0}
-                className="text-xs font-bold uppercase tracking-wider py-2.5 px-4"
-              >
-                <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Tarif Baru
-              </Button>
-            </div>
-
             <ShippingRatesTable
               rates={rates}
               isLoading={ratesLoading}
@@ -336,6 +349,8 @@ export default function AdminShippingPage(): React.JSX.Element {
         setZoneName={setZoneName}
         zoneDesc={zoneDesc}
         setZoneDesc={setZoneDesc}
+        zoneCountryCode={zoneCountryCode}
+        setZoneCountryCode={handleCountryCodeChange}
         selectedProvinces={selectedProvinces}
         handleToggleProvince={handleToggleProvince}
         zoneActive={zoneActive}
@@ -357,6 +372,10 @@ export default function AdminShippingPage(): React.JSX.Element {
         setRateBasePrice={setRateBasePrice}
         ratePricePerKg={ratePricePerKg}
         setRatePricePerKg={setRatePricePerKg}
+        rateMinWeight={rateMinWeight}
+        setRateMinWeight={setRateMinWeight}
+        rateMaxWeight={rateMaxWeight}
+        setRateMaxWeight={setRateMaxWeight}
         rateEtdMin={rateEtdMin}
         setRateEtdMin={setRateEtdMin}
         rateEtdMax={rateEtdMax}

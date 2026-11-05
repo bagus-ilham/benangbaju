@@ -40,7 +40,7 @@ serve(async (req: Request) => {
     // Ambil order
     const { data: order, error: orderError } = await supabaseClient
       .from('orders')
-      .select('*')
+      .select('*, order_shipping(country_code)')
       .eq('order_number', order_number)
       .single();
 
@@ -51,6 +51,13 @@ serve(async (req: Request) => {
     if (order.user_id !== user.id) {
       throw new Error('Unauthorized');
     }
+
+    // Fetch existing payment record to preserve gateway instructions/URL
+    const { data: existingPayment } = await supabaseClient
+      .from('payments')
+      .select('*')
+      .eq('order_id', order.id)
+      .maybeSingle();
 
     // DOKU Check Status API
     const clientId = (Deno.env.get('DOKU_CLIENT_ID') ?? '').trim();
@@ -88,27 +95,86 @@ serve(async (req: Request) => {
     let newStatus = order.status;
     let paymentStatus = 'pending';
 
+    const transactionStatus = dokuData.transaction?.status?.toUpperCase();
+    const dokuOrderStatus = dokuData.order?.status?.toUpperCase();
+
     // Map DOKU status to our status
-    if (dokuResponse.ok && dokuData.transaction && dokuData.transaction.status === 'SUCCESS') {
+    if (dokuResponse.ok && transactionStatus === 'SUCCESS') {
       newStatus = 'processing';
       paymentStatus = 'success';
-    } else if (dokuData.transaction && dokuData.transaction.status === 'FAILED') {
-      paymentStatus = 'failed';
+    } else if (
+      transactionStatus === 'FAILED' ||
+      transactionStatus === 'EXPIRED' ||
+      dokuOrderStatus === 'ORDER_EXPIRED'
+    ) {
+      newStatus = 'cancelled';
+      paymentStatus = transactionStatus === 'FAILED' ? 'failed' : 'expired';
     }
 
-    // Update status pesanan jika sukses, tapi jangan ubah order yang sudah di terminal state (cancelled/completed)
-    const isTerminalState = ['cancelled', 'completed'].includes(order.status);
+    // Update status pesanan jika status berubah, tapi jangan ubah order yang sudah di terminal state
+    const isTerminalState = ['cancelled', 'completed', 'processing', 'shipped'].includes(order.status);
     if (newStatus !== order.status && !isTerminalState) {
-      await supabaseClient
-        .from('orders')
-        .update({ status: newStatus })
-        .eq('id', order.id);
+      if (newStatus === 'processing' && order.status === 'pending_payment') {
+        await supabaseClient
+          .from('orders')
+          .update({ status: 'processing' })
+          .eq('id', order.id);
+
+        // Create notification for customer (bilingual EN for MY, ID for domestic)
+        const rawShipping = order.order_shipping;
+        const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping;
+        const isMalaysia = shipping?.country_code === 'MY';
+
+        await supabaseClient.from('notifications').insert({
+          user_id: order.user_id,
+          type: 'payment_success',
+          title: isMalaysia ? 'Payment Successful!' : 'Pembayaran Berhasil!',
+          message: isMalaysia
+            ? `Payment for order #${order.order_number} has been received. Your order is now being prepared for international dispatch.`
+            : `Pembayaran untuk pesanan ${order.order_number} berhasil diterima. Pesanan sedang diproses.`,
+          data: {
+            order_id: order.id,
+            order_number: order.order_number,
+            country_code: shipping?.country_code || 'ID',
+          },
+        });
+
+        // Trigger generate-invoice Edge Function
+        try {
+          await supabaseClient.functions.invoke('generate-invoice', {
+            body: { order_number: order.order_number },
+          });
+        } catch (err) {
+          console.error('Error invoking generate-invoice from check-payment-status:', err);
+        }
+      } else if (newStatus === 'cancelled' && order.status === 'pending_payment') {
+        // Gunakan RPC cancel_order dengan nama parameter p_cancel_reason yang benar agar stok varian dilepas
+        await supabaseClient.rpc('cancel_order', {
+          p_order_id: order.id,
+          p_cancel_reason: `Sesi pembayaran ${paymentStatus} dari payment gateway (DOKU)`,
+        });
+      } else {
+        await supabaseClient
+          .from('orders')
+          .update({ status: newStatus })
+          .eq('id', order.id);
+      }
     }
+
+    // Merge gateway response to preserve existing checkout URL and instruction metadata
+    const updatedGatewayResponse = existingPayment?.gateway_response
+      ? { ...existingPayment.gateway_response, status_check: dokuData }
+      : dokuData;
 
     // Update payments table if it exists
     await supabaseClient
       .from('payments')
-      .update({ status: paymentStatus, gateway_response: dokuData })
+      .update({
+        status: paymentStatus,
+        gateway_response: updatedGatewayResponse,
+        paid_at: paymentStatus === 'success' ? (existingPayment?.paid_at || new Date().toISOString()) : null,
+        updated_at: new Date().toISOString(),
+      })
       .eq('order_id', order.id);
 
     return new Response(

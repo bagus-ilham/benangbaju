@@ -22,6 +22,7 @@ function mapSiteSetting(row: any): SiteSetting {
     seo: 'seo',
     payment: 'payment',
     social: 'social',
+    shipping: 'shipping',
   }
   return {
     key: row.key,

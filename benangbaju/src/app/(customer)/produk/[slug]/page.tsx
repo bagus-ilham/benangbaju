@@ -171,6 +171,18 @@ export default async function ProductDetailPage({
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       itemCondition: 'https://schema.org/NewCondition',
+      eligibleRegion: [
+        {
+          '@type': 'Country',
+          name: 'Indonesia',
+          identifier: 'ID',
+        },
+        {
+          '@type': 'Country',
+          name: 'Malaysia',
+          identifier: 'MY',
+        },
+      ],
     },
   }
 

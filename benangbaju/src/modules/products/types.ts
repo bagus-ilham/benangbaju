@@ -91,6 +91,8 @@ export interface ProductDetailItem extends Omit<
   product_marketplace_links: ProductMarketplaceLink[]
   product_rating_summary: ProductRatingSummary | null
   size_guide: string | null
+  size_guide_inch?: string | null
+  hs_code?: string | null
   care_guide: string | null
 }
 
@@ -104,6 +106,8 @@ export interface AdminProductListItem {
   is_featured: boolean
   is_active: boolean
   created_at: string
+  size_guide_inch?: string | null
+  hs_code?: string | null
   categories: {
     name: string
     slug: string
@@ -188,6 +192,8 @@ export interface ProductPayload {
     meta_title: string | null
     meta_description: string | null
     size_guide: string | null
+    size_guide_inch?: string | null
+    hs_code?: string | null
     care_guide: string | null
   }
   variants: ProductVariantPayload[]

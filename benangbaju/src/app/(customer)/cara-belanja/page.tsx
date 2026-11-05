@@ -30,7 +30,7 @@ const steps: Array<{
   {
     handDrawnName: 'kancing',
     title: '4. Lakukan Pembayaran Instan (DOKU Checkout)',
-    desc: 'Tinjau total biaya, lalu klik tombol pembayaran. Layanan DOKU Checkout pop-up akan muncul secara otomatis. Anda bisa membayar dengan Bank Transfer, e-Wallet, atau Kartu Kredit.',
+    desc: 'Tinjau total biaya, lalu klik tombol pembayaran. Layanan DOKU Checkout akan muncul secara otomatis. Anda bisa membayar dengan Virtual Account Bank, QRIS (termasuk DuitNow / Touch \'n Go Cross-Border untuk Malaysia), e-Wallet, atau Minimarket.',
   },
   {
     handDrawnName: 'clipboard-list',
@@ -66,6 +66,48 @@ export default function CaraBelanjaPage(): React.JSX.Element {
               </div>
             </div>
           ))}
+
+          {/* Malaysia QRIS / DuitNow Payment Guide */}
+          <div className="border border-emerald-300 bg-emerald-50/70 p-6 md:p-8 rounded-2xl shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-emerald-200 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🇲🇾</span>
+                <h2 className="font-sans text-xs font-bold text-emerald-950 uppercase tracking-wider">
+                  Panduan Pembayaran Pelanggan Malaysia (DuitNow QR / Scan from Gallery)
+                </h2>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Cross-Border
+              </span>
+            </div>
+
+            <p className="text-xs text-emerald-900 leading-relaxed font-medium">
+              Pelanggan dari Semenanjung Malaysia dapat melakukan pembayaran instan tanpa kartu kredit
+              menggunakan seluruh aplikasi perbankan dan e-wallet resmi Malaysia:
+            </p>
+
+            <ol className="list-decimal list-inside text-xs text-emerald-950/90 space-y-2 font-sans font-medium leading-relaxed">
+              <li>
+                <strong>Unduh / Screenshot QR:</strong> Pada layar pembayaran pesanan, klik tombol{' '}
+                <strong>Unduh QR</strong> atau simpan tangkapan layar (screenshot) kode QRIS yang
+                tampil.
+              </li>
+              <li>
+                <strong>Buka Bank / E-Wallet Malaysia:</strong> Buka aplikasi perbankan atau dompet
+                digital Anda (Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Bank Islam, dll).
+              </li>
+              <li>
+                <strong>Pilih Scan from Gallery:</strong> Masuk ke menu <strong>DuitNow QR / Scan</strong>,
+                lalu pilih opsi <strong>Upload QR / Scan from Gallery</strong> dan pilih gambar kode QR
+                yang telah disimpan.
+              </li>
+              <li>
+                <strong>Konfirmasi Nilai MYR:</strong> Nilai Ringgit Malaysia (MYR) dikonversi secara
+                otomatis oleh bank Anda sesuai kurs devisa resmi saat pemindaian. Masukkan PIN untuk
+                menyelesaikan transaksi. Status pesanan akan terverifikasi otomatis.
+              </li>
+            </ol>
+          </div>
 
           <div className="border border-neutral-200 bg-brand-cream/50 p-6 md:p-8 text-xs text-neutral-600 leading-relaxed font-medium rounded-2xl shadow-sm">
             <p className="font-heading font-semibold text-brand-plum mb-2 uppercase tracking-wider text-[10px]">

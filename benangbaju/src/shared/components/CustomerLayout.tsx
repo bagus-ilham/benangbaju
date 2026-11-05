@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { SmartLink as Link } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import { DesktopNavbar } from './DesktopNavbar'
@@ -10,6 +10,7 @@ import { useAuthStore } from '@/modules/users/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
+import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 import { AnimatePresence } from 'framer-motion'
 import { MiniCartDrawer } from './MiniCartDrawer'
@@ -26,19 +27,31 @@ interface CustomerLayoutProps {
   children: React.ReactNode
 }
 
-const navLinks = [
-  { name: 'Katalog', href: '/produk' },
-  { name: 'Kategori', href: '/kategori' },
-  { name: 'Koleksi', href: '/koleksi' },
-  { name: 'Flash Sale', href: '/flash-sale' },
-  { name: 'Tentang Kami', href: '/tentang' },
-]
-
 export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Element {
   const pathname = usePathname()
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
   const { logoUrl, whatsappUrl } = useSiteSettings()
+  const market = useMarket()
+
+  const navLinks = useMemo(() => {
+    if (market === 'MY') {
+      return [
+        { name: 'Catalog', href: '/produk' },
+        { name: 'Categories', href: '/kategori' },
+        { name: 'Collections', href: '/koleksi' },
+        { name: 'Flash Sale', href: '/flash-sale' },
+        { name: 'About Us', href: '/tentang' },
+      ]
+    }
+    return [
+      { name: 'Katalog', href: '/produk' },
+      { name: 'Kategori', href: '/kategori' },
+      { name: 'Koleksi', href: '/koleksi' },
+      { name: 'Flash Sale', href: '/flash-sale' },
+      { name: 'Tentang Kami', href: '/tentang' },
+    ]
+  }, [market])
 
   const { user, profile, isAuthenticated, clearAuth } = useAuthStore()
   const totalQuantity = useCartStore((state) =>
@@ -55,10 +68,12 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
   const [isMounted, setIsMounted] = useState(false)
 
   // Reset mobile menu and search overlay when navigating
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname)
     setIsMobileMenuOpen(false)
     setIsSearchOpen(false)
-  }, [pathname])
+  }
 
   useEffect(() => {
     let ticking = false
@@ -126,16 +141,30 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       >
         Lewati ke konten
       </a>
-      {/* Announcement bar — 2. Kuning (Secondary) */}
+      {/* Announcement bar */}
       <div className="bg-brand-gold text-brand-plum text-center py-2 px-4 border-b border-amber-200/80">
         <p className="text-[10px] font-sans font-bold uppercase tracking-[0.15em]">
-          Gratis ongkir tanpa minimum belanja &mdash;{' '}
-          <Link
-            href="/produk"
-            className="underline underline-offset-2 hover:opacity-80 transition-opacity"
-          >
-            Belanja Sekarang
-          </Link>
+          {market === 'MY' ? (
+            <>
+              🇲🇾 Direct Shipping to West Malaysia from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
+              <Link
+                href="/produk"
+                className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                Shop Now
+              </Link>
+            </>
+          ) : (
+            <>
+              Gratis ongkir tanpa minimum belanja &mdash;{' '}
+              <Link
+                href="/produk"
+                className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                Belanja Sekarang
+              </Link>
+            </>
+          )}
         </p>
       </div>
 

@@ -53,4 +53,70 @@ export const SOCIAL_LINKS = {
   shopee: process.env.NEXT_PUBLIC_SOCIAL_SHOPEE || 'https://shopee.co.id/benangbaju',
 } as const
 
-export const DEFAULT_WEIGHT_GRAM = 1000
+export const DEFAULT_WEIGHT_GRAM = 400
+
+export const QRIS_MAX_AMOUNT_IDR = 10_000_000
+
+export const SUPPORTED_COUNTRIES = [
+  { code: 'ID', name: 'Indonesia', flag: '🇮🇩', phonePrefix: '+62' },
+  { code: 'MY', name: 'Malaysia (Semenanjung)', flag: '🇲🇾', phonePrefix: '+60' },
+] as const
+
+export type SupportedCountryCode = (typeof SUPPORTED_COUNTRIES)[number]['code']
+
+export const INDONESIA_PROVINCES = [
+  'Aceh',
+  'Sumatera Utara',
+  'Sumatera Barat',
+  'Riau',
+  'Kepulauan Riau',
+  'Jambi',
+  'Sumatera Selatan',
+  'Bangka Belitung',
+  'Bengkulu',
+  'Lampung',
+  'DKI Jakarta',
+  'Jawa Barat',
+  'Banten',
+  'Jawa Tengah',
+  'DI Yogyakarta',
+  'Jawa Timur',
+  'Bali',
+  'Nusa Tenggara Barat',
+  'Nusa Tenggara Timur',
+  'Kalimantan Barat',
+  'Kalimantan Tengah',
+  'Kalimantan Selatan',
+  'Kalimantan Timur',
+  'Kalimantan Utara',
+  'Sulawesi Utara',
+  'Gorontalo',
+  'Sulawesi Tengah',
+  'Sulawesi Barat',
+  'Sulawesi Selatan',
+  'Sulawesi Tenggara',
+  'Maluku',
+  'Maluku Utara',
+  'Papua',
+  'Papua Barat',
+  'Papua Selatan',
+  'Papua Tengah',
+  'Papua Pegunungan',
+  'Papua Barat Daya',
+] as const
+
+export const MALAYSIA_WEST_STATES = [
+  'Johor',
+  'Kedah',
+  'Kelantan',
+  'Melaka',
+  'Negeri Sembilan',
+  'Pahang',
+  'Perak',
+  'Perlis',
+  'Pulau Pinang',
+  'Selangor',
+  'Terengganu',
+  'Wilayah Persekutuan Kuala Lumpur',
+  'Wilayah Persekutuan Putrajaya',
+] as const

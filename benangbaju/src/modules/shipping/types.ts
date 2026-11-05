@@ -6,9 +6,10 @@ export interface UserAddress {
   phone: string
   province_name: string
   city_name: string
-  district_name: string
+  district_name: string | null
   postal_code: string
   full_address: string
+  country_code?: string
   zone_id: string | null
   is_default: boolean
   created_at: string
@@ -42,8 +43,9 @@ export interface ShippingZone {
   id: string
   name: string
   description: string | null
+  country_code?: string
   is_active: boolean
-  shipping_zone_coverage?: { province_name: string }[]
+  shipping_zone_coverage?: { province_name: string; country_code?: string }[]
 }
 
 export interface ShippingRate {
@@ -55,6 +57,7 @@ export interface ShippingRate {
   base_price: number
   etd_days_min: number
   etd_days_max: number
+  max_weight_gram?: number | null
   is_active: boolean
   shipping_zones?: { name: string } | null
 }

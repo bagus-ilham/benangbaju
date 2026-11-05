@@ -1,3 +1,5 @@
+import { normalizePhoneE164 } from './validation'
+
 /**
  * Formats a number as Indonesian Rupiah (IDR).
  */
@@ -12,6 +14,50 @@ export function formatIDR(amount: number | string): string {
   })
     .format(numericAmount)
     .replace(/^Rp\s*/i, 'Rp ') // Ensure exactly one space after Rp
+}
+
+/**
+ * Formats an IDR amount to approximate Malaysian Ringgit (MYR).
+ * Example: formatApproxMYR(360000, 3600) -> "≈ RM 100.00"
+ */
+export function formatApproxMYR(amountIdr: number, rateIdrPerMyr: number = 3600): string {
+  if (!amountIdr || amountIdr <= 0 || !rateIdrPerMyr || rateIdrPerMyr <= 0) {
+    return '≈ RM 0.00'
+  }
+  const myr = amountIdr / rateIdrPerMyr
+  const formatted = myr.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+  return `≈ RM ${formatted}`
+}
+
+/**
+ * Builds a direct WhatsApp chat URL with proper country code.
+ */
+export function buildWhatsAppUrl(
+  phone: string,
+  message?: string,
+  defaultCountryCode: 'ID' | 'MY' = 'ID'
+): string {
+  const clean = phone.replace(/[\s\-()]/g, '')
+  if (!clean) return ''
+
+  let targetCountry: 'ID' | 'MY' = defaultCountryCode
+  if (clean.startsWith('+60') || clean.startsWith('60')) {
+    targetCountry = 'MY'
+  } else if (clean.startsWith('+62') || clean.startsWith('62')) {
+    targetCountry = 'ID'
+  }
+
+  const normalized = normalizePhoneE164(clean, targetCountry)
+  const digits = normalized.replace(/^\+/, '')
+
+  const baseUrl = `https://wa.me/${digits}`
+  if (message && message.trim()) {
+    return `${baseUrl}?text=${encodeURIComponent(message.trim())}`
+  }
+  return baseUrl
 }
 
 /**
@@ -36,6 +82,45 @@ export function formatDate(
     ...options,
   }
   return new Intl.DateTimeFormat('id-ID', defaultOptions).format(d)
+}
+
+/**
+ * Formats a date with explicit timezone notation:
+ * - For 'MY': uses 'Asia/Kuala_Lumpur' and appends 'MYT (GMT+8)'.
+ * - For 'ID' or default: uses 'Asia/Jakarta' and appends 'WIB'.
+ */
+export function formatDateWithTimezone(
+  date: string | Date | null | undefined,
+  countryCode?: 'ID' | 'MY' | string | null,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  if (!date) return '-'
+  let d: Date
+  if (typeof date === 'string') {
+    const normalized = date.includes('T') ? date : date.replace(' ', 'T')
+    d = new Date(normalized)
+  } else {
+    d = date
+  }
+  if (isNaN(d.getTime())) return '-'
+
+  const isMalaysia = countryCode?.toUpperCase() === 'MY'
+  const timeZone = isMalaysia ? 'Asia/Kuala_Lumpur' : 'Asia/Jakarta'
+  const tzSuffix = isMalaysia ? 'MYT (GMT+8)' : 'WIB'
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone,
+    ...options,
+  }
+
+  const formatted = new Intl.DateTimeFormat('id-ID', defaultOptions).format(d)
+  return `${formatted} ${tzSuffix}`
 }
 
 /**

@@ -39,6 +39,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
   const [usage_per_user, setUsagePerUser] = useState(1)
   const [starts_at, setStartsAt] = useState('')
   const [expires_at, setExpiresAt] = useState('')
+  const [applicable_countries, setApplicableCountries] = useState<string[]>(['ID', 'MY'])
   const [is_active, setIsActive] = useState(true)
   const [is_hidden, setIsHidden] = useState(false)
 
@@ -54,6 +55,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
     setUsagePerUser(1)
     setStartsAt('')
     setExpiresAt('')
+    setApplicableCountries(['ID', 'MY'])
     setIsActive(true)
     setIsHidden(false)
     setIsOpen(true)
@@ -75,6 +77,11 @@ export default function AdminVouchersPage(): React.JSX.Element {
     setUsagePerUser(v.usage_per_user || 1)
     setStartsAt(formatLocalISO(v.starts_at))
     setExpiresAt(formatLocalISO(v.expires_at))
+    setApplicableCountries(
+      v.applicable_countries && v.applicable_countries.length > 0
+        ? v.applicable_countries
+        : ['ID', 'MY']
+    )
     setIsActive(v.is_active !== false)
     setIsHidden(v.is_hidden === true)
     setIsOpen(true)
@@ -96,6 +103,11 @@ export default function AdminVouchersPage(): React.JSX.Element {
     setUsagePerUser(v.usage_per_user || 1)
     setStartsAt(formatLocalISO(v.starts_at || ''))
     setExpiresAt(formatLocalISO(v.expires_at || ''))
+    setApplicableCountries(
+      v.applicable_countries && v.applicable_countries.length > 0
+        ? v.applicable_countries
+        : ['ID', 'MY']
+    )
     setIsActive(v.is_active !== false)
     setIsHidden(v.is_hidden === true)
     setIsOpen(true)
@@ -137,6 +149,11 @@ export default function AdminVouchersPage(): React.JSX.Element {
       return
     }
 
+    if (applicable_countries.length === 0) {
+      toast.error('Pilih minimal 1 negara yang berlaku untuk voucher ini')
+      return
+    }
+
     if (starts_at && expires_at && new Date(expires_at) <= new Date(starts_at)) {
       toast.error('Tanggal akhir berlaku (expired) harus setelah tanggal mulai aktif')
       return
@@ -153,6 +170,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
       usage_per_user: Number(usage_per_user) || 1,
       starts_at: new Date(starts_at).toISOString(),
       expires_at: new Date(expires_at).toISOString(),
+      applicable_countries,
       is_active,
       is_hidden,
     }
@@ -171,31 +189,31 @@ export default function AdminVouchersPage(): React.JSX.Element {
       setIsOpen(false)
       refetch()
     } catch (err: unknown) {
-      console.error(err)
-      const errorMessage = err instanceof Error ? err.message : 'Gagal menyimpan voucher'
-      toast.error(errorMessage)
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan voucher'
+      toast.error(message)
     }
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <AdminPageHeader title="Kupon Voucher" subtitle="Kelola diskon belanja dan penawaran khusus.">
+    <div className="space-y-8">
+      <AdminPageHeader
+        title="Kupon & Voucher"
+        subtitle="Kelola kode promosi diskon belanja dan subsidi ongkir (Domestik ID / Ekspor MY)."
+      >
         <Button
           onClick={handleOpenAdd}
-          className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-5"
+          className="text-xs uppercase font-bold tracking-wider py-2.5 px-4"
         >
           <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Voucher
         </Button>
       </AdminPageHeader>
 
-      {/* Main Table */}
       <div className="border border-neutral-200 bg-brand-cream rounded-2xl overflow-hidden">
         {isLoading ? (
-          <div className="py-24 text-center">
-            <p className="text-neutral-400 text-xs tracking-widest uppercase animate-pulse">
-              Memuat voucher...
-            </p>
+          <div className="p-8 space-y-4 animate-pulse">
+            <div className="h-4 bg-neutral-200 w-1/4 rounded" />
+            <div className="h-10 bg-neutral-100 rounded" />
+            <div className="h-10 bg-neutral-100 rounded" />
           </div>
         ) : isError ? (
           <div className="py-24 text-center">
@@ -234,14 +252,31 @@ export default function AdminVouchersPage(): React.JSX.Element {
                       <span className="font-bold text-neutral-900 text-sm block font-mono select-all tracking-wider">
                         {v.code}
                       </span>
-                      <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
+                      <span className="text-[10px] text-neutral-500 font-normal mt-0.5 block">
                         {v.name}
                       </span>
-                      {v.is_hidden && (
-                        <span className="inline-block mt-1 px-1.5 py-0.5 bg-neutral-200 text-neutral-600 text-[9px] font-bold tracking-widest uppercase rounded">
-                          Tersembunyi
-                        </span>
-                      )}
+                      <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                        {v.applicable_countries?.includes('MY') &&
+                        !v.applicable_countries?.includes('ID') ? (
+                          <span className="inline-block px-1.5 py-0.5 bg-neutral-100 text-neutral-800 text-[9px] font-bold rounded border border-neutral-200">
+                            🇲🇾 Khusus Malaysia
+                          </span>
+                        ) : v.applicable_countries?.includes('ID') &&
+                          !v.applicable_countries?.includes('MY') ? (
+                          <span className="inline-block px-1.5 py-0.5 bg-neutral-100 text-neutral-800 text-[9px] font-bold rounded border border-neutral-200">
+                            🇮🇩 Khusus Indonesia
+                          </span>
+                        ) : (
+                          <span className="inline-block px-1.5 py-0.5 bg-neutral-100 text-neutral-800 text-[9px] font-bold rounded border border-neutral-200">
+                            🌐 Semua (ID & MY)
+                          </span>
+                        )}
+                        {v.is_hidden && (
+                          <span className="inline-block px-1.5 py-0.5 bg-neutral-200 text-neutral-600 text-[9px] font-bold tracking-widest uppercase rounded">
+                            Tersembunyi
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-4 text-neutral-600">
                       <p className="font-bold text-neutral-900 text-sm">
@@ -270,10 +305,11 @@ export default function AdminVouchersPage(): React.JSX.Element {
                     <td className="py-4 px-4 text-center">
                       <button
                         onClick={() => handleToggleActive(v)}
-                        className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${v.is_active
+                        className={`inline-flex items-center text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 transition ${
+                          v.is_active
                             ? 'bg-neutral-900 text-white border border-neutral-900'
                             : 'bg-brand-cream text-neutral-400 border border-neutral-200'
-                          }`}
+                        }`}
                       >
                         {v.is_active ? 'Aktif' : 'Nonaktif'}
                       </button>
@@ -338,6 +374,8 @@ export default function AdminVouchersPage(): React.JSX.Element {
         setStartsAt={setStartsAt}
         expires_at={expires_at}
         setExpiresAt={setExpiresAt}
+        applicable_countries={applicable_countries}
+        setApplicableCountries={setApplicableCountries}
         is_active={is_active}
         setIsActive={setIsActive}
         is_hidden={is_hidden}

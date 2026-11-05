@@ -23,6 +23,7 @@ import {
   useRecentlyViewedStore,
   RecentlyViewedState,
 } from '@/modules/products/stores/recentlyViewedStore'
+import { trackViewContent, trackAddToCart } from '@/lib/analytics'
 
 import toast from 'react-hot-toast'
 
@@ -117,6 +118,14 @@ export function ProductDetailClient({
       price: basePrice,
       imageUrl: product.product_images[0]?.url || null,
     })
+
+    // Track ViewContent event with strictly locked IDR currency
+    trackViewContent({
+      id: product.id,
+      name: product.name,
+      price: basePrice,
+      category: product.categories?.name,
+    })
   }, [product, addProductToRecentlyViewed])
 
   // 2. Add item to cart handler
@@ -147,6 +156,18 @@ export function ProductDetailClient({
       }
 
       await addItem(cartItem, quantity)
+
+      // Track AddToCart event with strictly locked IDR currency
+      trackAddToCart(
+        {
+          id: product.id,
+          name: product.name,
+          price: Number(selectedVariant.price),
+          variant: selectedVariant.name,
+          category: product.categories?.name,
+        },
+        quantity
+      )
       toast.custom((t) => (
         <CustomToast
           t={t}
@@ -193,6 +214,18 @@ export function ProductDetailClient({
       }
 
       await addItem(cartItem, quantity)
+
+      // Track AddToCart event with strictly locked IDR currency
+      trackAddToCart(
+        {
+          id: product.id,
+          name: product.name,
+          price: Number(selectedVariant.price),
+          variant: selectedVariant.name,
+          category: product.categories?.name,
+        },
+        quantity
+      )
       router.push('/checkout')
     } catch {
       toast.error('Gagal memproses pembelian.')
@@ -347,6 +380,7 @@ export function ProductDetailClient({
         isOpen={isSizeGuideOpen}
         onClose={() => setIsSizeGuideOpen(false)}
         productSizeGuide={product.size_guide}
+        productSizeGuideInch={product.size_guide_inch}
       />
     </div>
   )

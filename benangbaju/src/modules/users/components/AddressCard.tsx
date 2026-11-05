@@ -67,7 +67,9 @@ export function AddressCard({
         <p>{address.phone}</p>
         <p className="mt-1 leading-relaxed">{address.full_address}</p>
         <p className="text-xs text-neutral-500 font-medium">
-          {address.district_name}, {address.city_name}, {address.province_name}{' '}
+          {[address.district_name, address.city_name, address.province_name]
+            .filter(Boolean)
+            .join(', ')}{' '}
           {address.postal_code}
         </p>
       </div>

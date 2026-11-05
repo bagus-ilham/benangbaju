@@ -1,16 +1,28 @@
-import type { Database } from '@/shared/types/database'
 import { Order, OrderItem, OrderShipping, PaymentInfo } from './types'
 
 export function mapOrder(
-  row: Database['public']['Tables']['orders']['Row'] & {
-    order_items: Database['public']['Tables']['order_items']['Row'][]
-    order_shipping: Database['public']['Tables']['order_shipping']['Row'] | null
-    payments?: Database['public']['Tables']['payments']['Row'][]
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  row: any
 ): Order {
-  const order_items: OrderItem[] = row.order_items.map((item: any) => {
+  const rawItems = Array.isArray(row.order_items) ? row.order_items : []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const order_items: OrderItem[] = rawItems.map((item: any) => {
     const rawReview = item.product_reviews
     const review = Array.isArray(rawReview) ? rawReview[0] : rawReview ? rawReview : null
+    const pv = item.product_variants
+    const product = Array.isArray(pv?.products) ? pv.products[0] : pv?.products
+    const variantWeight = Number(pv?.weight_gram)
+    const productWeight = Number(product?.weight_gram)
+    const itemWeight = Number(item.weight_gram)
+    const weight_gram =
+      !isNaN(variantWeight) && variantWeight > 0
+        ? variantWeight
+        : !isNaN(productWeight) && productWeight > 0
+        ? productWeight
+        : !isNaN(itemWeight) && itemWeight > 0
+        ? itemWeight
+        : null
+    const hs_code = (product?.hs_code || item.hs_code || '').trim() || null
 
     return {
       id: item.id,
@@ -23,6 +35,8 @@ export function mapOrder(
       price: item.price,
       quantity: item.quantity,
       subtotal: item.subtotal,
+      weight_gram,
+      hs_code,
       product_reviews: review
         ? {
             id: review.id,
@@ -34,27 +48,30 @@ export function mapOrder(
   })
 
   const rawShipping = row.order_shipping
+  const shippingObj = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
   let order_shipping: OrderShipping | null = null
-  if (rawShipping) {
+  if (shippingObj) {
     order_shipping = {
-      id: rawShipping.id,
-      order_id: rawShipping.order_id,
-      recipient_name: rawShipping.recipient_name,
-      phone: rawShipping.phone,
-      full_address: rawShipping.full_address,
-      province_name: rawShipping.province_name,
-      city_name: rawShipping.city_name,
-      district_name: rawShipping.district_name,
-      postal_code: rawShipping.postal_code,
-      courier_name: rawShipping.courier_name || '',
-      tracking_number: rawShipping.tracking_number,
-      shipped_at: rawShipping.shipped_at,
-      delivered_at: rawShipping.delivered_at,
+      id: shippingObj.id,
+      order_id: shippingObj.order_id,
+      recipient_name: shippingObj.recipient_name,
+      phone: shippingObj.phone,
+      full_address: shippingObj.full_address,
+      province_name: shippingObj.province_name,
+      city_name: shippingObj.city_name,
+      district_name: shippingObj.district_name,
+      postal_code: shippingObj.postal_code,
+      courier_name: shippingObj.courier_name || '',
+      tracking_number: shippingObj.tracking_number,
+      shipped_at: shippingObj.shipped_at,
+      delivered_at: shippingObj.delivered_at,
+      country_code: shippingObj.country_code || 'ID',
     }
   }
 
   const rawPayments = row.payments
   const paymentsList = Array.isArray(rawPayments) ? rawPayments : []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payments = paymentsList.map((p: any) => {
     const paymentStatusMap: Record<string, PaymentInfo['status']> = {
       pending: 'pending',
@@ -78,6 +95,7 @@ export function mapOrder(
       qr_url: p.qr_url,
       snap_token: p.snap_token,
       payment_instructions: p.payment_instructions || null,
+      gateway_response: p.gateway_response || null,
       paid_at: p.paid_at || null,
       created_at: p.created_at,
       updated_at: p.updated_at,
@@ -101,8 +119,8 @@ export function mapOrder(
     subtotal: row.subtotal,
     shipping_cost: row.shipping_cost,
     discount_amount: row.discount_amount,
-    payment_fee: Number((row as any).payment_fee || 0),
-    payment_channel: (row as any).payment_channel || null,
+    payment_fee: Number(row.payment_fee || 0),
+    payment_channel: row.payment_channel || null,
     total_amount: row.total_amount,
     notes: row.notes,
     cancel_reason: row.cancel_reason,
@@ -111,11 +129,12 @@ export function mapOrder(
     order_items,
     order_shipping,
     payments,
-    profiles: (row as any).profiles && !Array.isArray((row as any).profiles)
-      ? {
-          name: (row as any).profiles.name,
-          email: (row as any).profiles.email,
-        }
-      : null,
+    profiles:
+      row.profiles && !Array.isArray(row.profiles)
+        ? {
+            name: row.profiles.name,
+            email: row.profiles.email,
+          }
+        : null,
   }
 }

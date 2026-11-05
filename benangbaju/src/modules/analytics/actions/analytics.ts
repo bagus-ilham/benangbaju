@@ -13,10 +13,17 @@ export interface TopProductData {
   revenue: number
 }
 
+export interface CountryBreakdownItem {
+  countryCode: string
+  ordersCount: number
+  revenue: number
+}
+
 export interface AnalyticsData {
   revenueTrends: RevenueData[]
   topProducts: TopProductData[]
   voucherUsage: { code: string; count: number; totalDiscount: number }[]
+  countryBreakdown: CountryBreakdownItem[]
   abandonedCartsCount: number
   totalRevenue: number
   totalOrders: number
@@ -94,10 +101,23 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
     .map(([code, vdata]) => ({ code, ...vdata }))
     .sort((a, b) => b.count - a.count)
 
+  const countryBreakdown = (
+    (data.country_breakdown as Array<{
+      country_code: string
+      orders_count: number | string
+      revenue: number | string
+    }>) || []
+  ).map((item) => ({
+    countryCode: item.country_code,
+    ordersCount: Number(item.orders_count),
+    revenue: Number(item.revenue),
+  }))
+
   return {
     revenueTrends,
     topProducts,
     voucherUsage,
+    countryBreakdown,
     abandonedCartsCount: cartsRes.count || 0,
     totalRevenue: Number(data.total_revenue || 0),
     totalOrders: Number(data.total_orders || 0),

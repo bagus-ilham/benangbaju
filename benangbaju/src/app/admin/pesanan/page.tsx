@@ -11,6 +11,7 @@ import {
 import type { AdminReturnRequestListItem, AdminOrderListItem } from '@/modules/orders/types'
 import { Button, AdminPageHeader, HandDrawnIcon, Pagination, AdminSearchInput } from '@/shared/components'
 import toast from 'react-hot-toast'
+import { formatDate } from '@/lib/utils'
 import {
   AdminOrdersTable,
   AdminReturnsTable,
@@ -30,17 +31,18 @@ const TABS = [
 
 export default function AdminOrdersPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState('all')
+  const [countryFilter, setCountryFilter] = useState<'all' | 'ID' | 'MY'>('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const limit = 10
 
-  // Queries
+  // Queries (now filtered server-side by countryFilter, with total pagination preserved)
   const {
     data: ordersData,
     isLoading: ordersLoading,
     isError: ordersError,
     refetch: refetchOrders,
-  } = useAdminOrders(activeTab === 'returns' ? 'all' : activeTab, search, page, limit)
+  } = useAdminOrders(activeTab === 'returns' ? 'all' : activeTab, search, page, limit, countryFilter)
   const {
     data: returnsDataResponse,
     isLoading: returnsLoading,
@@ -150,18 +152,99 @@ export default function AdminOrdersPage(): React.JSX.Element {
     }
   }
 
-  const orders = ordersData?.success ? ordersData.data || [] : []
+  const rawOrders = ordersData?.success ? ordersData.data || [] : []
   const totalCount = ordersData?.success ? ordersData.pagination?.total_count || 0 : 0
   const totalPages = Math.ceil(totalCount / limit)
+  const displayedOrders = rawOrders
+
+  // Export CSV handler
+  const handleExportCSV = () => {
+    if (displayedOrders.length === 0) {
+      toast.error('Tidak ada data pesanan untuk diekspor')
+      return
+    }
+
+    const headers = [
+      'No Pesanan',
+      'Tanggal Beli',
+      'Nama Penerima',
+      'Negara Tujuan',
+      'Nomor Telepon',
+      'Provinsi/Negeri',
+      'Kota/Bandar',
+      'Kecamatan',
+      'Kode Pos',
+      'Alamat Lengkap',
+      'Kurir',
+      'No Resi',
+      'Total Belanja IDR',
+      'Status Pesanan',
+    ]
+
+    const rows = displayedOrders.map((o) => {
+      const s = o.order_shipping
+      const country = s?.country_code === 'MY' ? 'Malaysia' : 'Indonesia'
+      return [
+        `"${o.order_number}"`,
+        `"${formatDate(o.created_at)}"`,
+        `"${(s?.recipient_name || '').replace(/"/g, '""')}"`,
+        `"${country}"`,
+        `"${s?.phone || ''}"`,
+        `"${(s?.province_name || '').replace(/"/g, '""')}"`,
+        `"${(s?.city_name || '').replace(/"/g, '""')}"`,
+        `"${(s?.district_name || '').replace(/"/g, '""')}"`,
+        `"${s?.postal_code || ''}"`,
+        `"${(s?.full_address || '').replace(/"/g, '""')}"`,
+        `"${(s?.courier_name || '').replace(/"/g, '""')}"`,
+        `"${(s?.tracking_number || '').replace(/"/g, '""')}"`,
+        o.total_amount,
+        `"${o.status}"`,
+      ].join(',')
+    })
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `pesanan_${countryFilter}_${new Date().toISOString().slice(0, 10)}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    toast.success('File CSV pesanan berhasil diunduh!')
+  }
 
   return (
     <div className="space-y-6">
       <AdminPageHeader
         title="Manajemen Pesanan"
-        subtitle="Pantau status transaksi, konfirmasi pembayaran, dan kelola retur."
-      />
+        subtitle="Pantau status transaksi domestik & ekspor Malaysia, konfirmasi pembayaran, dan kelola retur."
+      >
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => {
+              refetchOrders()
+              refetchReturns()
+            }}
+            variant="outline"
+            className="text-xs font-semibold py-2 px-3 border-neutral-200"
+          >
+            <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 mr-1.5" /> Segarkan
+          </Button>
+          {activeTab !== 'returns' && (
+            <Button
+              onClick={handleExportCSV}
+              variant="outline"
+              className="text-xs font-semibold py-2 px-3 border-neutral-800 text-neutral-800 hover:bg-neutral-50"
+            >
+              <HandDrawnIcon name="download" className="h-3.5 w-3.5 mr-1.5" /> Export CSV
+            </Button>
+          )}
+        </div>
+      </AdminPageHeader>
 
-      {/* Tabs */}
+      {/* Status Tabs */}
       <div className="flex border-b border-neutral-200 overflow-x-auto space-x-6 text-xs font-sans">
         {TABS.map((tab) => (
           <button
@@ -170,10 +253,11 @@ export default function AdminOrdersPage(): React.JSX.Element {
               setActiveTab(tab.id)
               setPage(1)
             }}
-            className={`pb-3 font-semibold uppercase tracking-wider transition border-b-2 whitespace-nowrap ${activeTab === tab.id
+            className={`pb-3 font-semibold uppercase tracking-wider transition border-b-2 whitespace-nowrap ${
+              activeTab === tab.id
                 ? 'border-neutral-900 text-neutral-900'
                 : 'border-transparent text-neutral-400 hover:text-neutral-600'
-              }`}
+            }`}
           >
             {tab.label}
             {tab.id === 'returns' && returnsData.length > 0 && (
@@ -188,17 +272,62 @@ export default function AdminOrdersPage(): React.JSX.Element {
         ))}
       </div>
 
-      {/* Toolbar */}
+      {/* Toolbar: Search & Country Destination Filter */}
       {activeTab !== 'returns' && (
-        <div className="flex bg-brand-cream border border-neutral-200 p-4 rounded-2xl items-center space-x-3">
-          <AdminSearchInput
-            placeholder="Cari No. Pesanan atau nama penerima..."
-            value={search}
-            onChange={(val) => {
-              setSearch(val)
-              setPage(1)
-            }}
-          />
+        <div className="flex flex-col sm:flex-row gap-3 bg-brand-cream border border-neutral-200 p-4 rounded-2xl sm:items-center sm:justify-between">
+          <div className="flex-1 max-w-md">
+            <AdminSearchInput
+              placeholder="Cari No. Pesanan atau nama penerima..."
+              value={search}
+              onChange={(val) => {
+                setSearch(val)
+                setPage(1)
+              }}
+            />
+          </div>
+
+          {/* Country Filter Toggle */}
+          <div className="flex items-center gap-1.5 bg-neutral-100 p-1 rounded-xl text-xs font-semibold">
+            <button
+              onClick={() => {
+                setCountryFilter('all')
+                setPage(1)
+              }}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                countryFilter === 'all'
+                  ? 'bg-white text-neutral-900 shadow-xs'
+                  : 'text-neutral-500 hover:text-neutral-800'
+              }`}
+            >
+              Semua Negara
+            </button>
+            <button
+              onClick={() => {
+                setCountryFilter('ID')
+                setPage(1)
+              }}
+              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+                countryFilter === 'ID'
+                  ? 'bg-white text-neutral-900 shadow-xs'
+                  : 'text-neutral-500 hover:text-neutral-800'
+              }`}
+            >
+              <span>🇮🇩</span> Domestik (ID)
+            </button>
+            <button
+              onClick={() => {
+                setCountryFilter('MY')
+                setPage(1)
+              }}
+              className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+                countryFilter === 'MY'
+                  ? 'bg-white text-neutral-900 shadow-xs'
+                  : 'text-neutral-500 hover:text-neutral-800'
+              }`}
+            >
+              <span>🇲🇾</span> Ekspor (MY)
+            </button>
+          </div>
         </div>
       )}
 
@@ -214,7 +343,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
           />
         ) : (
           <AdminOrdersTable
-            orders={orders}
+            orders={displayedOrders}
             isLoading={ordersLoading}
             isError={ordersError}
             onRefetch={refetchOrders}

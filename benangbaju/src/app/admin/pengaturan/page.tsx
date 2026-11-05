@@ -10,30 +10,13 @@ import {
 } from '@/app/admin/hooks/useAdmin'
 import type { SiteSetting } from '@/modules/settings/types'
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Button,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Input,
   AdminPageHeader,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ClientDateTime,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Tabs,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  TabsList,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  TabsTrigger,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  DataTable,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Select,
+  HandDrawnIcon,
 } from '@/shared/components'
-import { HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { ActivityLogsTable } from './components/ActivityLogsTable'
 import { SettingsForm } from './components/SettingsForm'
 import { AdminPaymentSettingsForm } from './components/AdminPaymentSettingsForm'
-import type {} from '@/shared/components/DataTable'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
@@ -113,6 +96,20 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
     type: 'image',
     group: 'general',
     label: 'URL Logo Toko',
+  },
+  {
+    key: 'enable_malaysia_shipping',
+    value: 'true',
+    type: 'boolean',
+    group: 'shipping',
+    label: 'Aktifkan Pengiriman ke Malaysia (Semenanjung)',
+  },
+  {
+    key: 'myr_exchange_rate',
+    value: '3600',
+    type: 'number',
+    group: 'shipping',
+    label: 'Estimasi Kurs IDR per 1 MYR (Contoh: 3600)',
   },
 ]
 
@@ -199,8 +196,9 @@ export default function AdminSettingsPage(): React.JSX.Element {
   }, {})
 
   const groupLabels: Record<string, string> = {
-    general: 'Pengaturan Umum',
-    seo: 'Pengaturan SEO',
+    general: 'Pengaturan Umum Toko',
+    shipping: 'Pengiriman & Ekspor Internasional (Malaysia)',
+    seo: 'Pengaturan SEO & Meta',
     payment: 'Metode Pembayaran',
     social: 'Sosial & Kontak',
   }
@@ -209,7 +207,7 @@ export default function AdminSettingsPage(): React.JSX.Element {
     <div className="space-y-6">
       <AdminPageHeader
         title="Pengaturan & Log"
-        subtitle="Kelola preferensi situs, tarif biaya pembayaran, dan pantau riwayat audit log admin."
+        subtitle="Kelola preferensi situs, kurs konversi, tarif biaya pembayaran, dan pantau riwayat audit log admin."
       />
 
       {/* Tabs */}

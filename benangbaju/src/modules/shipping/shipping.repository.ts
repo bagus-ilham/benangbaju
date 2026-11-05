@@ -10,7 +10,7 @@ export class ShippingRepository {
     const { data, error } = await supabase
       .from('user_addresses')
       .select(
-        'id, user_id, label, recipient_name, phone, province_name, city_name, district_name, postal_code, full_address, zone_id, is_default, created_at'
+        'id, user_id, label, recipient_name, phone, province_name, city_name, district_name, postal_code, full_address, country_code, zone_id, is_default, created_at'
       )
       .eq('user_id', userId)
       .order('is_default', { ascending: false })
@@ -152,7 +152,7 @@ export class ShippingRepository {
     const to = from + limit - 1
     const { data, error, count } = await supabase
       .from('shipping_zones')
-      .select('*, shipping_zone_coverage(province_name)', { count: 'exact' })
+      .select('*, shipping_zone_coverage(province_name, country_code)', { count: 'exact' })
       .order('name', { ascending: true })
       .range(from, to)
 
@@ -161,7 +161,7 @@ export class ShippingRepository {
   }
 
   async adminCreateShippingZone(
-    zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>,
+    zone: Omit<ShippingZone, 'id' | 'shipping_zone_coverage'> & { country_code?: string },
     provinces: string[]
   ) {
     const supabase = await createServerClient()
@@ -176,7 +176,7 @@ export class ShippingRepository {
 
   async adminUpdateShippingZone(
     zoneId: string,
-    zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>>,
+    zone: Partial<Omit<ShippingZone, 'id' | 'shipping_zone_coverage'>> & { country_code?: string },
     provinces?: string[]
   ) {
     const supabase = await createServerClient()

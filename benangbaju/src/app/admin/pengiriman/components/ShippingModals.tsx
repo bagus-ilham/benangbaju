@@ -2,43 +2,7 @@
 
 import React from 'react'
 import { Modal, Input, Textarea, Select, Switch, Button } from '@/shared/components'
-
-const PROVINCES = [
-  'DKI Jakarta',
-  'Jawa Barat',
-  'Jawa Tengah',
-  'Jawa Timur',
-  'DI Yogyakarta',
-  'Banten',
-  'Sumatera Utara',
-  'Sumatera Barat',
-  'Sumatera Selatan',
-  'Riau',
-  'Lampung',
-  'Aceh',
-  'Jambi',
-  'Bengkulu',
-  'Kepulauan Riau',
-  'Kepulauan Bangka Belitung',
-  'Kalimantan Barat',
-  'Kalimantan Timur',
-  'Kalimantan Selatan',
-  'Kalimantan Tengah',
-  'Kalimantan Utara',
-  'Sulawesi Selatan',
-  'Sulawesi Utara',
-  'Sulawesi Tengah',
-  'Sulawesi Tenggara',
-  'Gorontalo',
-  'Sulawesi Barat',
-  'Bali',
-  'Nusa Tenggara Barat',
-  'Nusa Tenggara Timur',
-  'Papua',
-  'Papua Barat',
-  'Maluku',
-  'Maluku Utara',
-]
+import { INDONESIA_PROVINCES, MALAYSIA_WEST_STATES } from '@/lib/constants'
 
 export function ShippingZoneModal({
   isOpen,
@@ -49,6 +13,8 @@ export function ShippingZoneModal({
   setZoneName,
   zoneDesc,
   setZoneDesc,
+  zoneCountryCode = 'ID',
+  setZoneCountryCode,
   selectedProvinces,
   handleToggleProvince,
   zoneActive,
@@ -56,6 +22,8 @@ export function ShippingZoneModal({
   isPending,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
+  const provinceList = zoneCountryCode === 'MY' ? MALAYSIA_WEST_STATES : INDONESIA_PROVINCES
+
   return (
     <Modal
       isOpen={isOpen}
@@ -63,13 +31,56 @@ export function ShippingZoneModal({
       title={editingZone ? 'Ubah Zona Pengiriman' : 'Tambah Zona Baru'}
       size="lg"
     >
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 font-sans text-xs">
+        {/* Country Selector */}
+        <div className="flex flex-col space-y-1.5">
+          <label className="font-bold text-neutral-600 uppercase tracking-wider text-[10px]">
+            Negara Cakupan*
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (setZoneCountryCode && zoneCountryCode !== 'ID') {
+                  setZoneCountryCode('ID')
+                }
+              }}
+              className={`flex items-center justify-center gap-2 py-2 px-3 border text-xs font-semibold transition ${
+                zoneCountryCode === 'ID'
+                  ? 'border-neutral-900 bg-neutral-900 text-white'
+                  : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+              }`}
+            >
+              <span>🇮🇩</span>
+              <span>Indonesia (38 Provinsi)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (setZoneCountryCode && zoneCountryCode !== 'MY') {
+                  setZoneCountryCode('MY')
+                }
+              }}
+              className={`flex items-center justify-center gap-2 py-2 px-3 border text-xs font-semibold transition ${
+                zoneCountryCode === 'MY'
+                  ? 'border-neutral-900 bg-neutral-900 text-white'
+                  : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+              }`}
+            >
+              <span>🇲🇾</span>
+              <span>Malaysia Barat (13 Negeri)</span>
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col space-y-1">
           <Input
             label="Nama Zona*"
             type="text"
             required
-            placeholder="cth: Pulau Jawa"
+            placeholder={
+              zoneCountryCode === 'MY' ? 'cth: Malaysia Barat (West Malaysia)' : 'cth: Pulau Jawa'
+            }
             value={zoneName}
             onChange={(e) => setZoneName(e.target.value)}
           />
@@ -81,25 +92,31 @@ export function ShippingZoneModal({
             placeholder="Deskripsi wilayah cakupan..."
             value={zoneDesc}
             onChange={(e) => setZoneDesc(e.target.value)}
-            rows={3}
+            rows={2}
           />
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label className="font-bold text-neutral-500 uppercase tracking-wider text-xs">
-            Pilih Cakupan Provinsi* (Minimal 1)
-          </label>
+          <div className="flex justify-between items-center">
+            <label className="font-bold text-neutral-500 uppercase tracking-wider text-[10px]">
+              {zoneCountryCode === 'MY' ? 'Pilih Negeri / Wilayah Cakupan*' : 'Pilih Cakupan Provinsi*'} (Minimal 1)
+            </label>
+            <span className="text-[10px] text-neutral-400">
+              {selectedProvinces.length} wilayah terpilih
+            </span>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-neutral-50 border border-neutral-200 max-h-48 overflow-y-auto">
-            {PROVINCES.map((p) => {
+            {provinceList.map((p) => {
               const isSelected = selectedProvinces.includes(p)
               return (
                 <div
                   key={p}
                   onClick={() => handleToggleProvince(p)}
-                  className={`p-2 border text-[10px] font-medium text-center cursor-pointer transition select-none ${isSelected
+                  className={`p-2 border text-[10px] font-medium text-center cursor-pointer transition select-none ${
+                    isSelected
                       ? 'bg-neutral-950 text-white border-neutral-950'
                       : 'bg-brand-cream text-neutral-600 border-neutral-200 hover:border-neutral-400'
-                    }`}
+                  }`}
                 >
                   {p}
                 </div>
@@ -149,6 +166,10 @@ export function ShippingRateModal({
   setRateBasePrice,
   ratePricePerKg,
   setRatePricePerKg,
+  rateMinWeight,
+  setRateMinWeight,
+  rateMaxWeight,
+  setRateMaxWeight,
   rateEtdMin,
   setRateEtdMin,
   rateEtdMax,
@@ -165,7 +186,7 @@ export function ShippingRateModal({
       title={editingRate ? 'Ubah Tarif Kurir' : 'Tambah Tarif Baru'}
       size="md"
     >
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 font-sans text-xs">
         <div className="flex flex-col space-y-1">
           <Select
             label="Pilih Zona Pengiriman*"
@@ -182,7 +203,7 @@ export function ShippingRateModal({
             label="Nama Ekspedisi / Layanan*"
             type="text"
             required
-            placeholder="cth: JNE REG"
+            placeholder="cth: Ninja Van MY atau Lion Parcel INTERPACK"
             value={rateCourier}
             onChange={(e) => setRateCourier(e.target.value)}
           />
@@ -207,6 +228,35 @@ export function ShippingRateModal({
               min={0}
               value={ratePricePerKg.toString()}
               onChange={(e) => setRatePricePerKg(Math.max(0, parseInt(e.target.value) || 0))}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col space-y-1">
+            <Input
+              label="Berat Min (Gram)*"
+              type="number"
+              required
+              min={1}
+              value={(rateMinWeight || 1000).toString()}
+              onChange={(e) =>
+                setRateMinWeight && setRateMinWeight(Math.max(1, parseInt(e.target.value) || 1000))
+              }
+            />
+          </div>
+          <div className="flex flex-col space-y-1">
+            <Input
+              label="Batas Berat Maks (Gram)"
+              type="number"
+              min={0}
+              placeholder="30000 (Kosongkan jika tanpa batas)"
+              value={rateMaxWeight ? rateMaxWeight.toString() : ''}
+              onChange={(e) =>
+                setRateMaxWeight &&
+                setRateMaxWeight(e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null)
+              }
+              helperText="Cth: 30000 gr (30 kg) untuk batas kurir ekspor."
             />
           </div>
         </div>

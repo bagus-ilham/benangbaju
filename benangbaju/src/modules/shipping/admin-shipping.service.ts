@@ -19,6 +19,7 @@ export class AdminShippingService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const shipping_zone_coverage = coverageList.map((c: any) => ({
           province_name: c.province_name,
+          country_code: c.country_code || 'ID',
         }))
         return {
           id: row.id,
@@ -136,6 +137,7 @@ export class AdminShippingService {
           base_price: row.base_price,
           price_per_kg: row.price_per_kg,
           min_weight_gram: row.min_weight_gram,
+          max_weight_gram: row.max_weight_gram ?? null,
           etd_days_min: row.etd_days_min || row.estimated_days_min || 0,
           etd_days_max: row.etd_days_max || row.estimated_days_max || 0,
           is_active: row.is_active,
