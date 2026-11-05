@@ -45,6 +45,7 @@ export const metadata: Metadata = {
     title: 'Benangbaju — Show How Really Well-Dressed You Are',
     description:
       'Kami adalah brand fashion asal Bandung yang berdiri tahun 2021. Benang Baju hadir untuk membantu kamu menunjukkan bahwa kamu dapat mengekspresikan diri lewat sepotong pakaian yang sederhana namun unik.',
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 
@@ -59,21 +60,17 @@ export default function RootLayout({
         className="min-h-full flex flex-col font-sans bg-brand-cream text-brand-plum selection:bg-brand-gold selection:text-brand-plum"
         suppressHydrationWarning
       >
-        <Providers>{children}</Providers>
-
-        {/* Phase 1: Vercel Web Analytics & Speed Insights */}
-        <Analytics />
-        <SpeedInsights />
-
-        {/* Phase 2: Google Analytics & Tag Manager */}
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID &&
-          process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID !== 'G-XXXXXXX' && (
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        <Providers>
+          {children}
+          <Analytics />
+          <SpeedInsights />
+          {process.env.NEXT_PUBLIC_GA_ID && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
           )}
-        {process.env.NEXT_PUBLIC_GTM_CONTAINER_ID &&
-          process.env.NEXT_PUBLIC_GTM_CONTAINER_ID !== 'GTM-XXXXXXX' && (
-            <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_CONTAINER_ID} />
+          {process.env.NEXT_PUBLIC_GTM_ID && (
+            <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
           )}
+        </Providers>
       </body>
     </html>
   )

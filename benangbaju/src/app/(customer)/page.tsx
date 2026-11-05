@@ -28,6 +28,12 @@ export async function generateMetadata() {
       // Must be explicit: a child openGraph object replaces the root one (incl. its image)
       images: [DEFAULT_OG_IMAGE],
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Benangbaju - Show How Really Well-Dressed You Are',
+      description: 'Temukan koleksi pakaian sederhana namun unik di Benangbaju.',
+      images: [DEFAULT_OG_IMAGE],
+    },
   }
 }
 

@@ -20,7 +20,8 @@ export const SITE_URL = normalizeSiteUrl(process.env.NEXT_PUBLIC_BASE_URL)
 /** Default share image (served by src/app/opengraph-image.png file convention). */
 export const DEFAULT_OG_IMAGE = {
   url: `${SITE_URL}/opengraph-image.png`,
-  width: 1024,
-  height: 1024,
-  alt: 'Benangbaju',
+  width: 800,
+  height: 800,
+  type: 'image/png',
+  alt: 'Benangbaju — Show How Really Well-Dressed You Are',
 }
