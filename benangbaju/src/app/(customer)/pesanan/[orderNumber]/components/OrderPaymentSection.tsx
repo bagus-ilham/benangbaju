@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Button, SmartLink as Link, HandDrawnIcon } from '@/shared/components'
-import { formatApproxMYR, buildWhatsAppUrl } from '@/lib/utils'
+import { formatApproxMYR, buildWhatsAppUrl, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
@@ -42,6 +42,7 @@ export function OrderPaymentSection({
 
   const market = useMarket()
   const isMalaysia =
+    order.country_code === 'MY' ||
     order.order_shipping?.country_code === 'MY' ||
     order.shipping_address?.country_code === 'MY'
   const isMY = market === 'MY' || isMalaysia
@@ -154,7 +155,9 @@ export function OrderPaymentSection({
           {isMalaysia && (
             <div className="text-right mt-1">
               <span className="text-xs font-bold text-emerald-800">
-                {formatApproxMYR(order.total_amount, myrExchangeRate)}
+                {order.total_myr
+                  ? formatMYR(Number(order.total_myr))
+                  : formatApproxMYR(order.total_amount, myrExchangeRate)}
               </span>
               <p className="text-[10px] text-neutral-400 mt-0.5">
                 {isMY ? '*Approximate in Ringgit Malaysia (settlement in IDR)' : '*Estimasi Ringgit Malaysia (pembayaran tetap dalam IDR)'}
@@ -243,16 +246,29 @@ export function OrderPaymentSection({
               </div>
 
               {isMalaysia ? (
-                <div className="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-1.5 text-xs text-emerald-950 font-sans">
-                  <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1">
+                <div className="p-3.5 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-2 text-xs text-emerald-950 font-sans">
+                  <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1.5 border-b border-emerald-200/60 pb-1.5">
                     <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
-                    <span>{isMY ? 'Scan from Gallery Guide (Malaysian Bank / E-Wallet)' : 'Petunjuk Scan from Gallery (Bank / E-Wallet Malaysia)'}</span>
+                    <span>{isMY ? '🇲🇾 How to Pay with Malaysian Banking / E-Wallet' : '🇲🇾 Panduan Bayar via Bank / E-Wallet Malaysia'}</span>
                   </p>
-                  <ol className="list-decimal list-inside text-[11px] text-emerald-900/90 space-y-1 leading-relaxed">
-                    <li>{isMY ? <>Click <strong>Download QR</strong> above or save a screenshot of this QR code.</> : <>Klik <strong>Unduh QR</strong> di atas atau simpan tangkapan layar (screenshot) kode QR ini.</>}</li>
-                    <li>{isMY ? <>Open your Malaysian banking or e-wallet app (Touch &apos;n Go, Maybank MAE, CIMB Octo, etc).</> : <>Buka aplikasi perbankan atau e-wallet Malaysia Anda (Touch &apos;n Go, Maybank MAE, CIMB Octo, dll).</>}</li>
-                    <li>{isMY ? <>Select <strong>DuitNow QR / Scan</strong>, choose <strong>Upload / Scan from Gallery</strong>, and authorize payment with your PIN.</> : <>Pilih menu <strong>DuitNow QR / Scan</strong>, lalu pilih opsi <strong>Upload / Scan from Gallery</strong>. Selesaikan transaksi via PIN.</>}</li>
-                  </ol>
+                  <div className="grid grid-cols-1 gap-2 text-[11px] text-emerald-950/90 leading-relaxed">
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+                      <span>{isMY ? <>Click <strong>Download QR</strong> above or save a screenshot of this QR code.</> : <>Klik <strong>Unduh QR</strong> di atas atau simpan tangkapan layar (screenshot) kode QR ini.</>}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+                      <span>{isMY ? <>Open your Malaysian banking or e-wallet app (<strong>Touch &apos;n Go, Maybank MAE, CIMB Octo, Public Bank PB engage, etc</strong>).</> : <>Buka aplikasi perbankan atau e-wallet Malaysia Anda (<strong>Touch &apos;n Go, Maybank MAE, CIMB Octo, Public Bank PB engage, dll</strong>).</>}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+                      <span>{isMY ? <>Select <strong>DuitNow QR / Scan</strong>, tap <strong>Scan from Gallery / Album</strong>, and select the saved QR image.</> : <>Pilih menu <strong>DuitNow QR / Scan</strong>, lalu pilih opsi <strong>Scan from Gallery / Album</strong> dan pilih gambar QR yang tadi disimpan.</>}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">4</span>
+                      <span>{isMY ? <>The total is displayed in <strong>MYR (RM)</strong> automatically. Authorize with your PIN and your order updates immediately.</> : <>Nominal otomatis terkonversi ke <strong>MYR (RM)</strong> oleh DuitNow. Masukkan PIN dan pesanan Anda langsung lunas.</>}</span>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <p className="text-[10px] text-neutral-500 font-sans">
@@ -274,16 +290,29 @@ export function OrderPaymentSection({
                   : 'Silakan klik tombol di bawah untuk melanjutkan pembayaran di portal pembayaran DOKU.'}
               </p>
               {isMalaysia && (
-                <div className="p-3 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-1.5 text-xs text-emerald-950 font-sans mt-2">
-                  <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1">
+                <div className="p-3.5 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-2 text-xs text-emerald-950 font-sans mt-2">
+                  <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1.5 border-b border-emerald-200/60 pb-1.5">
                     <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
-                    <span>Petunjuk Scan from Gallery (Bank / E-Wallet Malaysia)</span>
+                    <span>{isMY ? '🇲🇾 How to Pay with Malaysian Banking / E-Wallet' : '🇲🇾 Panduan Bayar via Bank / E-Wallet Malaysia'}</span>
                   </p>
-                  <ol className="list-decimal list-inside text-[11px] text-emerald-900/90 space-y-1 leading-relaxed">
-                    <li>Buka halaman pembayaran DOKU melalui tombol di bawah.</li>
-                    <li>Simpan tangkapan layar (screenshot) kode QRIS yang tampil di layar ponsel/laptop Anda.</li>
-                    <li>Buka aplikasi perbankan atau e-wallet Malaysia Anda (Touch &apos;n Go, Maybank MAE, CIMB Octo, dll), pilih menu <strong>Scan QR / DuitNow</strong> lalu pilih <strong>Upload / Scan from Gallery</strong>. Nilai MYR dikonversi otomatis oleh bank Anda.</li>
-                  </ol>
+                  <div className="grid grid-cols-1 gap-2 text-[11px] text-emerald-950/90 leading-relaxed">
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+                      <span>{isMY ? <>Click <strong>Open Payment Page</strong> below to view the QRIS payment session.</> : <>Klik <strong>Buka Halaman Pembayaran</strong> di bawah untuk membuka sesi QRIS.</>}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+                      <span>{isMY ? <>Take a screenshot of the QRIS code displayed on your screen.</> : <>Simpan tangkapan layar (screenshot) kode QRIS yang tampil di layar Anda.</>}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+                      <span>{isMY ? <>Open your Malaysian banking or e-wallet app (<strong>Touch &apos;n Go, MAE, CIMB Octo, etc.</strong>), choose <strong>Scan QR / DuitNow</strong>, then tap <strong>Scan from Gallery</strong>.</> : <>Buka aplikasi perbankan atau e-wallet Malaysia Anda (<strong>Touch &apos;n Go, MAE, CIMB Octo, dll</strong>), pilih menu <strong>Scan QR / DuitNow</strong> lalu pilih <strong>Scan from Gallery</strong>.</>}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full bg-emerald-200/80 text-emerald-900 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">4</span>
+                      <span>{isMY ? <>Confirm the automatically converted <strong>MYR (RM)</strong> amount with your PIN.</> : <>Konfirmasi nominal yang telah otomatis dikonversi ke <strong>MYR (RM)</strong> oleh DuitNow dengan PIN Anda.</>}</span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

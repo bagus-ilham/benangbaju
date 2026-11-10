@@ -59,7 +59,7 @@ export const QRIS_MAX_AMOUNT_IDR = 10_000_000
 
 export const SUPPORTED_COUNTRIES = [
   { code: 'ID', name: 'Indonesia', flag: '🇮🇩', phonePrefix: '+62' },
-  { code: 'MY', name: 'Malaysia (Semenanjung)', flag: '🇲🇾', phonePrefix: '+60' },
+  { code: 'MY', name: 'Malaysia', flag: '🇲🇾', phonePrefix: '+60' },
 ] as const
 
 export type SupportedCountryCode = (typeof SUPPORTED_COUNTRIES)[number]['code']
@@ -119,4 +119,15 @@ export const MALAYSIA_WEST_STATES = [
   'Terengganu',
   'Wilayah Persekutuan Kuala Lumpur',
   'Wilayah Persekutuan Putrajaya',
+] as const
+
+export const MALAYSIA_EAST_STATES = [
+  'Sabah',
+  'Sarawak',
+  'Wilayah Persekutuan Labuan',
+] as const
+
+export const MALAYSIA_STATES = [
+  ...MALAYSIA_WEST_STATES,
+  ...MALAYSIA_EAST_STATES,
 ] as const

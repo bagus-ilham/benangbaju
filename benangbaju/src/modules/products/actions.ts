@@ -116,9 +116,22 @@ export async function logSearchAction(_query: string, _resultsCount: number) {
   return
 }
 
-export async function toggleStockNotificationAction(variantId: string) {
+export async function toggleStockNotificationAction(variantId: string, marketParam?: 'ID' | 'MY') {
   const { requireAuth } = await import('@/lib/auth-guard')
   const { user, supabase } = await requireAuth()
+
+  let userMarket: 'ID' | 'MY' = marketParam || 'ID'
+  if (!marketParam) {
+    try {
+      const { cookies } = await import('next/headers')
+      const cookieStore = await cookies()
+      if (cookieStore.get('bb_market')?.value === 'MY') {
+        userMarket = 'MY'
+      }
+    } catch {
+      userMarket = 'ID'
+    }
+  }
 
   const { data: existing } = await supabase
     .from('stock_notifications')
@@ -135,6 +148,7 @@ export async function toggleStockNotificationAction(variantId: string) {
     const { error } = await supabase.from('stock_notifications').insert({
       user_id: user.id,
       variant_id: variantId,
+      market: userMarket,
     })
     if (error) return { success: false, isSubscribed: false, error: error.message }
     return { success: true, isSubscribed: true }

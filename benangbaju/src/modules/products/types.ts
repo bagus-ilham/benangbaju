@@ -16,6 +16,9 @@ export interface ProductVariant {
   name: string
   price: number
   compare_price: number | null
+  regular_price?: number
+  regular_compare_price?: number | null
+  flash_sale_target_market?: 'ALL' | 'ID' | 'MY'
   stock: number
   weight_gram: number | null
   is_active: boolean
@@ -85,6 +88,9 @@ export interface ProductDetailItem extends Omit<
 > {
   description: string | null
   short_description: string | null
+  description_en?: string | null
+  short_description_en?: string | null
+  care_guide_en?: string | null
   meta_title: string | null
   meta_description: string | null
   weight_gram: number
@@ -102,6 +108,9 @@ export interface AdminProductListItem {
   slug: string
   description: string | null
   short_description: string | null
+  description_en?: string | null
+  short_description_en?: string | null
+  care_guide_en?: string | null
   weight_gram: number
   is_featured: boolean
   is_active: boolean
@@ -186,6 +195,9 @@ export interface ProductPayload {
     slug: string
     description: string | null
     short_description: string | null
+    description_en?: string | null
+    short_description_en?: string | null
+    care_guide_en?: string | null
     weight_gram: number
     is_active: boolean
     is_featured: boolean

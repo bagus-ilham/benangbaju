@@ -2,7 +2,12 @@
 
 import React from 'react'
 import { Modal, Input, Textarea, Select, Switch, Button } from '@/shared/components'
-import { INDONESIA_PROVINCES, MALAYSIA_WEST_STATES } from '@/lib/constants'
+import {
+  INDONESIA_PROVINCES,
+  MALAYSIA_STATES,
+  MALAYSIA_WEST_STATES,
+  MALAYSIA_EAST_STATES,
+} from '@/lib/constants'
 
 export function ShippingZoneModal({
   isOpen,
@@ -22,7 +27,7 @@ export function ShippingZoneModal({
   isPending,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
-  const provinceList = zoneCountryCode === 'MY' ? MALAYSIA_WEST_STATES : INDONESIA_PROVINCES
+  const provinceList = zoneCountryCode === 'MY' ? MALAYSIA_STATES : INDONESIA_PROVINCES
 
   return (
     <Modal
@@ -68,7 +73,7 @@ export function ShippingZoneModal({
               }`}
             >
               <span>🇲🇾</span>
-              <span>Malaysia Barat (13 Negeri)</span>
+              <span>Malaysia (16 Negeri & WP)</span>
             </button>
           </div>
         </div>
@@ -79,7 +84,9 @@ export function ShippingZoneModal({
             type="text"
             required
             placeholder={
-              zoneCountryCode === 'MY' ? 'cth: Malaysia Barat (West Malaysia)' : 'cth: Pulau Jawa'
+              zoneCountryCode === 'MY'
+                ? 'cth: Malaysia Barat (West) atau Malaysia Timur (East)'
+                : 'cth: Pulau Jawa'
             }
             value={zoneName}
             onChange={(e) => setZoneName(e.target.value)}
@@ -105,6 +112,33 @@ export function ShippingZoneModal({
               {selectedProvinces.length} wilayah terpilih
             </span>
           </div>
+
+          {zoneCountryCode === 'MY' && (
+            <div className="flex flex-wrap items-center gap-1.5 pb-1">
+              <button
+                type="button"
+                onClick={() => {
+                  MALAYSIA_WEST_STATES.forEach((st) => {
+                    if (!selectedProvinces.includes(st)) handleToggleProvince(st)
+                  })
+                }}
+                className="px-2 py-0.5 text-[9px] font-semibold bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded text-neutral-700"
+              >
+                + Semenanjung (13)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  MALAYSIA_EAST_STATES.forEach((st) => {
+                    if (!selectedProvinces.includes(st)) handleToggleProvince(st)
+                  })
+                }}
+                className="px-2 py-0.5 text-[9px] font-semibold bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded text-neutral-700"
+              >
+                + Sabah, Sarawak, Labuan (3)
+              </button>
+            </div>
+          )}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-neutral-50 border border-neutral-200 max-h-48 overflow-y-auto">
             {provinceList.map((p) => {
               const isSelected = selectedProvinces.includes(p)

@@ -107,24 +107,89 @@ export function PaymentMethodSelector({
       </div>
 
       {isMalaysia && (
-        <div className="p-3.5 bg-amber-50/70 border border-amber-200 text-xs rounded-xl space-y-1.5 font-sans">
-          <div className="flex items-center gap-2">
-            <span className="text-base">🇲🇾</span>
-            <span className="font-bold text-amber-950 text-[11px] uppercase tracking-wide">
-              DuitNow QR / Cross-Border QRIS
+        <div className="p-4 bg-gradient-to-br from-amber-50/90 via-orange-50/40 to-brand-cream border border-amber-200/90 text-xs rounded-2xl space-y-3 font-sans shadow-xs">
+          <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🇲🇾</span>
+              <div>
+                <span className="font-heading font-bold text-amber-950 text-xs block">
+                  DuitNow QR / Cross-Border QRIS
+                </span>
+                <span className="text-[10px] text-amber-800">
+                  {isMY
+                    ? 'Official Bank Negara Malaysia & Bank Indonesia payment link'
+                    : 'Kerjasama resmi Bank Indonesia & Bank Negara Malaysia'}
+                </span>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300/60">
+              Instant
             </span>
           </div>
-          {isMY ? (
-            <p className="text-[11px] text-amber-900 leading-relaxed">
-              Payments from Malaysia are settled via <strong>Cross-Border QRIS (DuitNow)</strong>. You can scan the QR code using any Malaysian banking or e-wallet app (<strong>Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Public Bank, etc.</strong>). The IDR total is converted automatically to <strong>MYR (RM)</strong> upon checkout.
-            </p>
-          ) : (
-            <p className="text-[11px] text-amber-900 leading-relaxed">
-              Pembayaran dari Malaysia menggunakan <strong>QRIS Cross-Border</strong>. Anda dapat memindai kode QR
-              menggunakan aplikasi bank atau e-wallet Malaysia (<strong>Touch &apos;n Go eWallet, Maybank MAE, CIMB Octo, Public Bank, dll.</strong>).
-              Nominal IDR akan otomatis dikonversi ke <strong>MYR (RM)</strong> oleh DuitNow.
-            </p>
-          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-100">
+              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+                1
+              </div>
+              <div className="text-[11px] leading-snug">
+                <strong className="block text-neutral-800">
+                  {isMY ? 'Open Bank / E-Wallet' : 'Buka Bank / E-Wallet'}
+                </strong>
+                <span className="text-neutral-500 text-[10px]">
+                  Touch &apos;n Go, MAE, CIMB Octo, PB engage, dll.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-100">
+              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+                2
+              </div>
+              <div className="text-[11px] leading-snug">
+                <strong className="block text-neutral-800">
+                  {isMY ? 'Scan DuitNow QR' : 'Pindai Kode QRIS'}
+                </strong>
+                <span className="text-neutral-500 text-[10px]">
+                  {isMY
+                    ? 'Scan screen directly or upload screenshot'
+                    : 'Scan langsung atau unggah tangkapan layar'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-100">
+              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+                3
+              </div>
+              <div className="text-[11px] leading-snug">
+                <strong className="block text-neutral-800">
+                  {isMY ? 'Real-time MYR Rate' : 'Konversi Otomatis MYR'}
+                </strong>
+                <span className="text-neutral-500 text-[10px]">
+                  {isMY
+                    ? 'Total in RM auto-converted on phone screen'
+                    : 'Nominal tertera otomatis dalam Ringgit (RM)'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-100">
+              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+                4
+              </div>
+              <div className="text-[11px] leading-snug">
+                <strong className="block text-neutral-800">
+                  {isMY ? 'Instant Verification' : 'Verifikasi Otomatis'}
+                </strong>
+                <span className="text-neutral-500 text-[10px]">
+                  {isMY
+                    ? 'Authorize with PIN, order verified instantly'
+                    : 'Masukkan PIN, pesanan langsung terverifikasi'}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

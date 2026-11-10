@@ -6,7 +6,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/modules/users/stores/authStore'
-import { useMarket } from '@/shared/stores/marketStore'
+import { useMarketStore } from '@/shared/stores/marketStore'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/modules/shipping/hooks/useShipping'
@@ -22,6 +22,7 @@ import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar, PaymentM
 import { calculateChannelFee } from './components/PaymentMethodSelector'
 import { DEFAULT_WEIGHT_GRAM, QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 import { trackInitiateCheckout } from '@/lib/analytics'
+import { getMyPrice, type MyPriceRounding } from '@/lib/utils'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
@@ -35,7 +36,7 @@ interface AppliedVoucher {
 }
 
 export default function CheckoutPage(): React.JSX.Element {
-  const market = useMarket()
+  const { market, setMarket } = useMarketStore()
   const [supabase] = useState(() => createBrowserClient())
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
@@ -72,10 +73,18 @@ export default function CheckoutPage(): React.JSX.Element {
     return map
   }, [siteSettingsRes?.data])
 
-  const myrExchangeRate = useMemo(() => {
+  const myPricingConfig = useMemo(() => {
     const rate = parseFloat(siteSettings['myr_exchange_rate'] || '3600')
-    return isNaN(rate) || rate <= 0 ? 3600 : rate
+    const markup = parseFloat(siteSettings['my_price_markup_percent'] || '0')
+    const rounding = (siteSettings['my_price_rounding'] || 'none') as MyPriceRounding
+    return {
+      exchangeRate: isNaN(rate) || rate <= 0 ? 3600 : rate,
+      markupPercent: isNaN(markup) ? 0 : markup,
+      rounding,
+    }
   }, [siteSettings])
+
+  const myrExchangeRate = myPricingConfig.exchangeRate || 3600
 
   const isMalaysiaShippingEnabled = useMemo(() => {
     return siteSettings['enable_malaysia_shipping'] !== 'false'
@@ -130,9 +139,27 @@ export default function CheckoutPage(): React.JSX.Element {
   const { data: addressesRes, isLoading: addressesLoading } = useUserAddresses(user?.id || '')
   const addresses = useMemo(() => addressesRes?.data || [], [addressesRes?.data])
 
-  // Current Address Country Code
-  const currentCountryCode = selectedAddress?.country_code || 'ID'
+  // Current Address Country Code (fallback to active market or 'ID')
+  const currentCountryCode = selectedAddress?.country_code || market || 'ID'
   const isMalaysia = currentCountryCode === 'MY'
+
+  // R3: Automatically align market store with destination address country when address changes
+  const lastAlignedAddressIdRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (selectedAddress?.id && selectedAddress.id !== lastAlignedAddressIdRef.current) {
+      lastAlignedAddressIdRef.current = selectedAddress.id
+      const addrCountry = selectedAddress.country_code as 'ID' | 'MY' | undefined
+      if (addrCountry && addrCountry !== market) {
+        setMarket(addrCountry)
+        toast(
+          addrCountry === 'MY'
+            ? 'Harga disesuaikan untuk pengiriman ke Malaysia.'
+            : 'Harga disesuaikan untuk pengiriman ke Indonesia.',
+          { icon: 'ℹ️' }
+        )
+      }
+    }
+  }, [selectedAddress?.id, selectedAddress?.country_code, market, setMarket])
 
   // Fetch available active vouchers
   const { data: availableVouchers } = useQuery({
@@ -247,8 +274,15 @@ export default function CheckoutPage(): React.JSX.Element {
     setSelectedCourier(null)
   }, [selectedAddress])
 
-  // Calculate Prices
-  const subtotal = displayItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  // Calculate Prices (using marked-up charged IDR for Malaysia)
+  const subtotal = useMemo(() => {
+    return displayItems.reduce((acc, item) => {
+      const unitPrice = isMalaysia
+        ? getMyPrice(item.price, myPricingConfig).chargedIdr
+        : item.price
+      return acc + unitPrice * item.quantity
+    }, 0)
+  }, [displayItems, isMalaysia, myPricingConfig])
   const shippingCost = selectedCourier ? selectedCourier.price : 0
 
   // Calculate Discount Amount
@@ -290,16 +324,17 @@ export default function CheckoutPage(): React.JSX.Element {
     }
   }, [cartItems, totalAmount])
 
-  // Re-verify applied voucher if destination country changes
+  // Re-verify applied voucher if destination country or subtotal changes
   useEffect(() => {
     if (appliedVoucher && currentCountryCode) {
       validateVoucherAction(appliedVoucher.code, subtotal, currentCountryCode)
         .then((res) => {
           if (!res.success) {
             toast.error(
-              `Voucher ${appliedVoucher.code} tidak berlaku untuk pengiriman ke ${
-                currentCountryCode === 'MY' ? 'Malaysia' : 'Indonesia'
-              }`
+              res.error?.message ||
+                (currentCountryCode === 'MY'
+                  ? `Promo code ${appliedVoucher.code} is not applicable for Malaysia orders`
+                  : `Voucher ${appliedVoucher.code} tidak berlaku untuk pengiriman ke Indonesia`)
             )
             setAppliedVoucher(null)
           }
@@ -309,7 +344,7 @@ export default function CheckoutPage(): React.JSX.Element {
         })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCountryCode])
+  }, [currentCountryCode, subtotal])
 
   const handleSelectPaymentChannel = (channel: PaymentFeeConfig) => {
     setSelectedChannel(channel)
@@ -336,14 +371,18 @@ export default function CheckoutPage(): React.JSX.Element {
           value: voucherInfo?.value || 0,
           max_discount: voucherInfo?.max_discount,
         })
-        toast.success(`Voucher ${validVoucher.code} berhasil digunakan!`)
+        toast.success(
+          isMalaysia
+            ? `Promo code ${validVoucher.code} applied successfully!`
+            : `Voucher ${validVoucher.code} berhasil digunakan!`
+        )
       } else {
-        toast.error(result.error?.message || 'Voucher tidak valid')
+        toast.error(result.error?.message || (isMalaysia ? 'Voucher is not valid' : 'Voucher tidak valid'))
         setAppliedVoucher(null)
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal memvalidasi voucher')
+      toast.error(isMalaysia ? 'Failed to validate voucher' : 'Gagal memvalidasi voucher')
     } finally {
       setVoucherLoading(false)
     }
@@ -357,7 +396,7 @@ export default function CheckoutPage(): React.JSX.Element {
   const handleRemoveVoucher = () => {
     setAppliedVoucher(null)
     setVoucherCodeInput('')
-    toast.success('Voucher dihapus')
+    toast.success(isMalaysia ? 'Promo code removed' : 'Voucher dihapus')
   }
 
   const handlePlaceOrder = async () => {
@@ -529,6 +568,7 @@ export default function CheckoutPage(): React.JSX.Element {
               selectedChannelCode={selectedChannel?.channel_code || null}
               isMalaysia={isMalaysia}
               myrExchangeRate={myrExchangeRate}
+              myPricingConfig={myPricingConfig}
             />
           </motion.div>
         </div>

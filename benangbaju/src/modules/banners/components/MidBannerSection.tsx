@@ -4,19 +4,31 @@ import React from 'react'
 import { getImageProps } from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { Banner } from '@/modules/banners/types'
+import { useMarket } from '@/shared/stores/marketStore'
 
 interface MidBannerSectionProps {
   banners: Banner[]
 }
 
 export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.Element | null {
-  if (!banners || banners.length === 0) return null
+  const market = useMarket()
+  const isMY = market === 'MY'
 
-  // For simplicity, we just take the first mid banner to display
-  const banner = banners[0]
+  const filteredBanners = React.useMemo(() => {
+    return (banners || []).filter(
+      (b) => !b.target_market || b.target_market === 'ALL' || b.target_market === market
+    )
+  }, [banners, market])
+
+  if (!filteredBanners || filteredBanners.length === 0) return null
+
+  // Take the first matching banner to display
+  const banner = filteredBanners[0]
+  const bannerTitle = (isMY && banner.title_en) ? banner.title_en : banner.title
+  const bannerSubtitle = (isMY && banner.subtitle_en) ? banner.subtitle_en : banner.subtitle
 
   const commonProps = {
-    alt: banner.title || 'Mid Banner',
+    alt: bannerTitle || 'Mid Banner',
     fill: true,
     sizes: '100vw',
     quality: 90,
@@ -57,19 +69,18 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
         />
       </picture>
 
-      {/* Optional Overlay if there is text, but for mid banners often the image contains the text itself.
-          If we want to show title/subtitle, we can add it here. For now, we keep it simple. */}
-      {(banner.title || banner.subtitle) && (
+      {/* Optional Overlay if there is text, but for mid banners often the image contains the text itself. */}
+      {(bannerTitle || bannerSubtitle) && (
         <div className="absolute inset-0 bg-black/20 flex items-center justify-center text-center">
           <div className="p-6 bg-brand-cream/90 backdrop-blur-sm shadow-xl max-w-lg">
-            {banner.subtitle && (
+            {bannerSubtitle && (
               <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-500 mb-2">
-                {banner.subtitle}
+                {bannerSubtitle}
               </p>
             )}
-            {banner.title && (
+            {bannerTitle && (
               <h3 className="text-2xl md:text-3xl font-heading uppercase tracking-wider text-brand-plum">
-                {banner.title}
+                {bannerTitle}
               </h3>
             )}
           </div>

@@ -77,7 +77,7 @@ export default function AkunPage(): React.JSX.Element {
     if (!user) return
 
     if (!name.trim()) {
-      toast.error('Nama lengkap tidak boleh kosong')
+      toast.error(isMY ? 'Full name cannot be empty' : 'Nama lengkap tidak boleh kosong')
       return
     }
 
@@ -102,11 +102,11 @@ export default function AkunPage(): React.JSX.Element {
           ...data,
           role,
         })
-        toast.success('Profil berhasil diperbarui')
+        toast.success(isMY ? 'Profile updated successfully' : 'Profil berhasil diperbarui')
       }
     } catch (err: unknown) {
       console.error('Error updating profile:', err)
-      const message = err instanceof Error ? err.message : 'Gagal memperbarui profil'
+      const message = err instanceof Error ? err.message : (isMY ? 'Failed to update profile' : 'Gagal memperbarui profil')
       toast.error(message)
     } finally {
       setIsSaving(false)
@@ -116,15 +116,15 @@ export default function AkunPage(): React.JSX.Element {
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newPassword || !confirmNewPassword) {
-      toast.error('Semua kolom kata sandi wajib diisi')
+      toast.error(isMY ? 'All password fields are required' : 'Semua kolom kata sandi wajib diisi')
       return
     }
     if (newPassword !== confirmNewPassword) {
-      toast.error('Konfirmasi kata sandi baru tidak cocok')
+      toast.error(isMY ? 'New password confirmation does not match' : 'Konfirmasi kata sandi baru tidak cocok')
       return
     }
     if (newPassword.length < 8) {
-      toast.error('Kata sandi baru harus minimal 8 karakter')
+      toast.error(isMY ? 'New password must be at least 8 characters' : 'Kata sandi baru harus minimal 8 karakter')
       return
     }
 
@@ -136,12 +136,12 @@ export default function AkunPage(): React.JSX.Element {
 
       if (error) throw error
 
-      toast.success('Kata sandi berhasil diperbarui')
+      toast.success(isMY ? 'Password updated successfully' : 'Kata sandi berhasil diperbarui')
       setNewPassword('')
       setConfirmNewPassword('')
     } catch (err: unknown) {
       console.error('Error updating password:', err)
-      const message = err instanceof Error ? err.message : 'Gagal memperbarui kata sandi'
+      const message = err instanceof Error ? err.message : (isMY ? 'Failed to update password' : 'Gagal memperbarui kata sandi')
       toast.error(message)
     } finally {
       setIsSavingPassword(false)
@@ -152,24 +152,28 @@ export default function AkunPage(): React.JSX.Element {
     try {
       await supabase.auth.signOut()
       clearAuth()
-      toast.success('Berhasil keluar')
+      toast.success(isMY ? 'Signed out successfully' : 'Berhasil keluar')
       router.push('/')
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      toast.error('Gagal keluar dari akun')
+      toast.error(isMY ? 'Failed to sign out' : 'Gagal keluar dari akun')
     }
   }
 
   if (authLoading || !isAuthenticated) {
-    return <AuthLoading message="Memuat halaman..." />
+    return <AuthLoading message={isMY ? 'Loading page...' : 'Memuat halaman...'} />
   }
 
   return (
     <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero
-        eyebrow="Profil Pengguna"
-        title="Akun Saya"
-        subtitle="Kelola informasi pribadi Anda dan akses riwayat pesanan Anda."
+        eyebrow={isMY ? 'User Profile' : 'Profil Pengguna'}
+        title={isMY ? 'My Account' : 'Akun Saya'}
+        subtitle={
+          isMY
+            ? 'Manage your personal information and access your order history.'
+            : 'Kelola informasi pribadi Anda dan akses riwayat pesanan Anda.'
+        }
       />
       <PageContainer size="lg" className="py-10 page-content">
         <motion.div initial="hidden" animate="visible" variants={containerVariants}>

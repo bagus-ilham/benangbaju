@@ -11,7 +11,8 @@ import {
   type CartItemWithWeight,
 } from '@/modules/shipping/shipping.utils'
 import { fail, type ApiResponse } from '@/lib/api-response'
-import { validateMalaysiaWestPostalCode, hasPoBoxAddress } from '@/lib/utils/validation'
+import { validateMalaysiaStatePostalCodeMatch, hasPoBoxAddress } from '@/lib/utils/validation'
+import { getMyPrice, type MyPriceRounding } from '@/lib/utils/pricing'
 import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 
 const ERROR_CODES = {
@@ -202,7 +203,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     const [addressRes, cartRes, feeConfigsRes, settingsRes] = await Promise.all([
       supabase
         .from('user_addresses')
-        .select('id, zone_id, country_code, postal_code, full_address')
+        .select('id, zone_id, country_code, postal_code, full_address, province_name')
         .eq('id', params.addressId)
         .eq('user_id', user.id)
         .single(),
@@ -218,7 +219,12 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       supabase
         .from('site_settings')
         .select('key, value')
-        .in('key', ['enable_malaysia_shipping', 'myr_exchange_rate']),
+        .in('key', [
+          'enable_malaysia_shipping',
+          'myr_exchange_rate',
+          'my_price_markup_percent',
+          'my_price_rounding',
+        ]),
     ])
 
     const address = addressRes.data
@@ -237,11 +243,14 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
         return fail(ERROR_CODES.INVALID_SHIPPING, 'Pengiriman ke Malaysia saat ini sedang dinonaktifkan')
       }
 
-      const postalCheck = validateMalaysiaWestPostalCode(address.postal_code || '')
+      const postalCheck = validateMalaysiaStatePostalCodeMatch(
+        address.province_name || '',
+        address.postal_code || ''
+      )
       if (!postalCheck.valid) {
         return fail(
           ERROR_CODES.INVALID_ADDRESS,
-          'Poskod Malaysia tidak valid atau berada di luar cakupan Semenanjung'
+          postalCheck.errorMessage || 'Poskod Malaysia tidak valid untuk negeri yang dipilih'
         )
       }
 
@@ -314,12 +323,15 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       sale_price: number | string | null
       quota: number | null
       sold_count: number | null
+      flash_sales?: {
+        target_market?: string | null
+      } | null
     }
     let activeFlashItems: ActiveFlashItem[] = []
     if (variantIds.length > 0) {
       const { data: fData } = await supabase
         .from('flash_sale_items')
-        .select('variant_id, sale_price, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at)')
+        .select('variant_id, sale_price, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at, target_market)')
         .in('variant_id', variantIds)
         .eq('flash_sales.is_active', true)
         .lte('flash_sales.starts_at', nowIso)
@@ -327,6 +339,14 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       activeFlashItems = (fData || []) as unknown as ActiveFlashItem[]
     }
 
+    const exchangeRate =
+      Number(settingsRes.data?.find((s) => s.key === 'myr_exchange_rate')?.value) || 3600
+    const markupPercent =
+      Number(settingsRes.data?.find((s) => s.key === 'my_price_markup_percent')?.value) || 0
+    const rounding = (settingsRes.data?.find((s) => s.key === 'my_price_rounding')?.value ||
+      'none') as MyPriceRounding
+
+    const orderCountry = isMalaysia ? 'MY' : 'ID'
     let serverSubtotal = 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const ci of newCartItems as any[]) {
@@ -334,9 +354,13 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       const flash = activeFlashItems.find(
         (f) =>
           f.variant_id === ci.variant_id &&
-          (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota))
+          (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota)) &&
+          (!f.flash_sales?.target_market || f.flash_sales.target_market === 'ALL' || f.flash_sales.target_market === orderCountry)
       )
-      const unitPrice = flash?.sale_price != null ? Number(flash.sale_price) : Number(pv?.price) || 0
+      let unitPrice = flash?.sale_price != null ? Number(flash.sale_price) : Number(pv?.price) || 0
+      if (isMalaysia) {
+        unitPrice = getMyPrice(unitPrice, { exchangeRate, markupPercent, rounding }).chargedIdr
+      }
       serverSubtotal += unitPrice * (ci.quantity || 1)
     }
 

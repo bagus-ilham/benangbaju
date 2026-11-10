@@ -42,17 +42,17 @@ function RegisterContent(): React.JSX.Element {
     e.preventDefault()
 
     if (!name || !email || !password || !confirmPassword) {
-      toast.error('Semua kolom wajib diisi.')
+      toast.error(isMY ? 'All required fields must be filled.' : 'Semua kolom wajib diisi.')
       return
     }
 
     if (password !== confirmPassword) {
-      toast.error('Konfirmasi kata sandi tidak cocok.')
+      toast.error(isMY ? 'Password confirmation does not match.' : 'Konfirmasi kata sandi tidak cocok.')
       return
     }
 
     if (password.length < 8) {
-      toast.error('Kata sandi harus minimal 8 karakter.')
+      toast.error(isMY ? 'Password must be at least 8 characters.' : 'Kata sandi harus minimal 8 karakter.')
       return
     }
 
@@ -148,7 +148,7 @@ function RegisterContent(): React.JSX.Element {
               />
             </div>
             <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
-              Daftar Akun
+              {isMY ? 'Create Account' : 'Daftar Akun'}
             </h2>
             <p className="text-[11px] md:text-xs text-neutral-600 font-sans">
               {isMY ? 'Complete the details below to join Benangbaju.' : 'Lengkapi data di bawah ini untuk bergabung dengan Benangbaju.'}
@@ -181,11 +181,11 @@ function RegisterContent(): React.JSX.Element {
 
             <motion.div variants={fadeUpItem}>
               <Input
-                label={isMY ? "Phone Number (Optional)" : "Nomor Telepon (Optional)"}
+                label={isMY ? "Phone Number (Optional)" : "Nomor Telepon (Opsional)"}
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="0812xxxxxxxx"
+                placeholder={isMY ? "+6012xxxxxxxx" : "0812xxxxxxxx"}
                 autoComplete="tel"
               />
             </motion.div>
@@ -216,7 +216,7 @@ function RegisterContent(): React.JSX.Element {
 
             <motion.div variants={fadeUpItem}>
               <Button type="submit" variant="accent" className="w-full mt-4 font-bold" isLoading={isLoading}>
-                Daftar
+                {isMY ? "Create Account" : "Daftar"}
               </Button>
             </motion.div>
           </form>
@@ -249,7 +249,7 @@ function RegisterContent(): React.JSX.Element {
             <p className="text-xs text-neutral-600 font-sans">
               {isMY ? 'Already have an account? ' : 'Sudah memiliki akun? '}
               <Link href="/masuk" className="text-brand-plum font-semibold hover:underline">
-                Masuk disini
+                {isMY ? 'Sign in here' : 'Masuk disini'}
               </Link>
             </p>
           </motion.div>

@@ -31,7 +31,7 @@ export class ProductRepository {
         .select(
           `
           id, category_id, name, slug, is_featured, created_at, min_price, max_price,
-          description, short_description, meta_title, meta_description,
+          description, short_description, description_en, short_description_en, care_guide_en, meta_title, meta_description,
           categories (id, name, slug),
           product_variants (id, sku, name, price, compare_price, stock, is_active, product_variant_attrs(id, attr_name, attr_value)),
           product_images (id, url, alt_text, sort_order, is_primary)
@@ -199,7 +199,7 @@ export class ProductRepository {
       .from('products')
       .select(
         `
-        id, category_id, name, slug, description, short_description, weight_gram, is_featured, created_at, size_guide, size_guide_inch, hs_code, care_guide, meta_title, meta_description,
+        id, category_id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, created_at, size_guide, size_guide_inch, hs_code, care_guide, meta_title, meta_description,
         categories (name, slug),
         product_variants (*, product_variant_attrs(*)),
         product_images (*),
@@ -252,7 +252,7 @@ export class ProductRepository {
     if (search && search.trim().length > 0) {
       const query = supabase.from('products').select(
         `
-          id, name, slug, description, short_description, weight_gram, is_featured, is_active, created_at,
+          id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, is_active, created_at,
           categories (name, slug),
           product_variants (id, sku, name, price, compare_price, stock, is_active)
         `
@@ -279,7 +279,7 @@ export class ProductRepository {
 
     const query = supabase.from('products').select(
       `
-        id, name, slug, description, short_description, weight_gram, is_featured, is_active, created_at,
+        id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, is_active, created_at,
         categories (name, slug),
         product_variants (id, sku, name, price, compare_price, stock, is_active)
       `,

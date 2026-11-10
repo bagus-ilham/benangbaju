@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Modal, Button, Input, Select, Switch } from '@/shared/components'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
+import { formatMYR } from '@/lib/utils'
 
 interface VoucherFormModalProps {
   isOpen: boolean
@@ -69,6 +71,8 @@ export function VoucherFormModal({
   is_hidden,
   setIsHidden,
 }: VoucherFormModalProps): React.JSX.Element {
+  const { myrExchangeRate } = useSiteSettings()
+  const isApplicableToMY = applicable_countries.includes('MY')
   return (
     <Modal
       isOpen={isOpen}
@@ -130,6 +134,34 @@ export function VoucherFormModal({
           </p>
         </div>
 
+        {/* Malaysia Calculation Helper Banner */}
+        {isApplicableToMY && (
+          <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1.5 font-sans">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-[11px] text-amber-950 flex items-center gap-1.5">
+                <span>🇲🇾</span> Kalkulator Nilai Malaysia (Kurs: 1 RM = Rp {myrExchangeRate.toLocaleString('id-ID')})
+              </span>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap pt-0.5">
+              <span className="text-[10px] font-semibold text-neutral-600">Isi Cepat Potongan Flat:</span>
+              {[10, 15, 20, 30, 50].map((rm) => (
+                <button
+                  key={rm}
+                  type="button"
+                  onClick={() => {
+                    setDiscountType('fixed')
+                    setValue(Math.round(rm * myrExchangeRate))
+                  }}
+                  className="px-2 py-0.5 text-[10px] font-bold bg-white border border-amber-300 rounded text-amber-950 hover:bg-amber-100 transition"
+                  title={`Set potongan ke Rp ${(rm * myrExchangeRate).toLocaleString('id-ID')} (RM ${rm})`}
+                >
+                  RM {rm}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1">
             <Select
@@ -148,34 +180,55 @@ export function VoucherFormModal({
             />
           </div>
 
-          <Input
-            label="Nilai Potongan*"
-            type="number"
-            value={value}
-            onChange={(e) => setValue(Math.max(0, parseFloat(e.target.value) || 0))}
-            placeholder="cth: 10 atau 50000"
-            required
-          />
+          <div>
+            <Input
+              label="Nilai Potongan*"
+              type="number"
+              value={value}
+              onChange={(e) => setValue(Math.max(0, parseFloat(e.target.value) || 0))}
+              placeholder="cth: 10 atau 50000"
+              required
+            />
+            {isApplicableToMY && discount_type === 'fixed' && value > 0 && (
+              <span className="text-[10px] text-amber-900 font-semibold mt-1 block">
+                ≈ {formatMYR(Math.round((value / myrExchangeRate) * 100) / 100)}
+              </span>
+            )}
+          </div>
 
-          <Input
-            label="Minimal Belanja (Rp)*"
-            type="number"
-            value={min_purchase}
-            onChange={(e) => setMinPurchase(Math.max(0, parseFloat(e.target.value) || 0))}
-            required
-          />
+          <div>
+            <Input
+              label="Minimal Belanja (Rp)*"
+              type="number"
+              value={min_purchase}
+              onChange={(e) => setMinPurchase(Math.max(0, parseFloat(e.target.value) || 0))}
+              required
+            />
+            {isApplicableToMY && min_purchase > 0 && (
+              <span className="text-[10px] text-amber-900 font-semibold mt-1 block">
+                ≈ {formatMYR(Math.round((min_purchase / myrExchangeRate) * 100) / 100)}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <Input
-            label="Maksimal Potongan (Maks Rp)"
-            type="number"
-            value={max_discount || ''}
-            onChange={(e) =>
-              setMaxDiscount(e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null)
-            }
-            placeholder="Kosongkan jika tidak dibatasi"
-          />
+          <div>
+            <Input
+              label="Maksimal Potongan (Maks Rp)"
+              type="number"
+              value={max_discount || ''}
+              onChange={(e) =>
+                setMaxDiscount(e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null)
+              }
+              placeholder="Kosongkan jika tidak dibatasi"
+            />
+            {isApplicableToMY && max_discount && max_discount > 0 ? (
+              <span className="text-[10px] text-amber-900 font-semibold mt-1 block">
+                ≈ {formatMYR(Math.round((max_discount / myrExchangeRate) * 100) / 100)}
+              </span>
+            ) : null}
+          </div>
 
           <Input
             label="Batas Penggunaan Total"

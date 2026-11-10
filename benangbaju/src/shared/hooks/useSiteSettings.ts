@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getSiteSettingsAction } from '@/modules/settings/actions'
 import { SOCIAL_LINKS } from '@/lib/constants'
+import type { MyPricingConfig, MyPriceRounding } from '@/lib/utils/pricing'
 
 export function useSiteSettings() {
   const query = useQuery({
@@ -57,12 +59,43 @@ export function useSiteSettings() {
   const shopeeSetting = getSetting(['social_shopee'])
   const shopeeUrl = getSocialUrl(shopeeSetting?.value, 'shopee', 'https://shopee.co.id/')
 
+  const shopeeMySetting = getSetting(['shopee_my_url'])
+  const shopeeMyUrl = shopeeMySetting?.value?.trim() || ''
+
   const myrRateSetting = getSetting(['myr_exchange_rate'])
   const parsedMyrRate = parseFloat(myrRateSetting?.value || '3600')
   const myrExchangeRate = !isNaN(parsedMyrRate) && parsedMyrRate > 0 ? parsedMyrRate : 3600
 
+  const markupSetting = getSetting(['my_price_markup_percent'])
+  const parsedMarkup = parseFloat(markupSetting?.value || '0')
+  const myPriceMarkupPercent = !isNaN(parsedMarkup) && parsedMarkup >= 0 ? parsedMarkup : 0
+
+  const roundingSetting = getSetting(['my_price_rounding'])
+  const rawRounding = roundingSetting?.value?.toLowerCase().trim()
+  const myPriceRounding: MyPriceRounding =
+    rawRounding === 'x.90' || rawRounding === 'whole' ? rawRounding : 'none'
+
+  const myPricingConfig: MyPricingConfig = useMemo(
+    () => ({
+      exchangeRate: myrExchangeRate,
+      markupPercent: myPriceMarkupPercent,
+      rounding: myPriceRounding,
+    }),
+    [myrExchangeRate, myPriceMarkupPercent, myPriceRounding]
+  )
+
   const malaysiaShippingSetting = getSetting(['enable_malaysia_shipping'])
   const isMalaysiaShippingEnabled = malaysiaShippingSetting?.value !== 'false'
+
+  const freeShippingIdrSetting = getSetting(['free_shipping_threshold_idr'])
+  const parsedFreeShippingIdr = parseFloat(freeShippingIdrSetting?.value || '500000')
+  const freeShippingThresholdIdr =
+    !isNaN(parsedFreeShippingIdr) && parsedFreeShippingIdr > 0 ? parsedFreeShippingIdr : 500000
+
+  const freeShippingMyrSetting = getSetting(['free_shipping_threshold_myr'])
+  const parsedFreeShippingMyr = parseFloat(freeShippingMyrSetting?.value || '150')
+  const freeShippingThresholdMyr =
+    !isNaN(parsedFreeShippingMyr) && parsedFreeShippingMyr > 0 ? parsedFreeShippingMyr : 150
 
   return {
     ...query,
@@ -73,7 +106,13 @@ export function useSiteSettings() {
     tiktokUrl,
     whatsappUrl,
     shopeeUrl,
+    shopeeMyUrl,
     myrExchangeRate,
+    myPriceMarkupPercent,
+    myPriceRounding,
+    myPricingConfig,
     isMalaysiaShippingEnabled,
+    freeShippingThresholdIdr,
+    freeShippingThresholdMyr,
   }
 }

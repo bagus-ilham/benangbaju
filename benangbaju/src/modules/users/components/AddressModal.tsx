@@ -18,14 +18,14 @@ import { cn } from '@/lib/utils'
 import { useMarketStore } from '@/shared/stores/marketStore'
 import {
   INDONESIA_PROVINCES,
-  MALAYSIA_WEST_STATES,
+  MALAYSIA_STATES,
   SUPPORTED_COUNTRIES,
   type SupportedCountryCode,
 } from '@/lib/constants'
 import {
   isValidPhoneByCountry,
   normalizePhoneE164,
-  validateMalaysiaWestPostalCode,
+  validateMalaysiaStatePostalCodeMatch,
   hasPoBoxAddress,
   validatePostalCode,
 } from '@/lib/utils/validation'
@@ -83,22 +83,18 @@ const addressSchema = z
         })
       }
     } else if (data.country_code === 'MY') {
-      const pcResult = validateMalaysiaWestPostalCode(data.postal_code)
-      if (!pcResult.valid) {
-        if (pcResult.reason === 'east_malaysia') {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['postal_code'],
-            message:
-              'Pengiriman saat ini hanya mencakup Semenanjung Malaysia (Poskod 01000–86999). Belum melayani Sabah, Sarawak, atau Labuan.',
-          })
-        } else {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['postal_code'],
-            message: 'Poskod Malaysia harus 5 digit angka (01000–86999)',
-          })
-        }
+      const matchResult = validateMalaysiaStatePostalCodeMatch(
+        data.province_name,
+        data.postal_code
+      )
+      if (!matchResult.valid) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['postal_code'],
+          message:
+            matchResult.errorMessage ||
+            'Poskod Malaysia tidak valid untuk negeri yang dipilih.',
+        })
       }
     }
   })
@@ -269,6 +265,23 @@ export function AddressModal({
   const onSubmitForm = async (data: AddressFormValues) => {
     const normalizedPhone = normalizePhoneE164(data.phone, data.country_code)
 
+    let resolvedZoneId = data.zone_id
+    if (!resolvedZoneId && data.province_name.trim()) {
+      try {
+        const { data: zoneRow } = await supabase
+          .from('shipping_zone_coverage')
+          .select('zone_id')
+          .eq('country_code', data.country_code)
+          .ilike('province_name', data.province_name.trim())
+          .maybeSingle()
+        if (zoneRow?.zone_id) {
+          resolvedZoneId = zoneRow.zone_id
+        }
+      } catch {
+        // Fallback to null if lookup fails
+      }
+    }
+
     const addressData = {
       user_id: userId,
       label: data.label.trim(),
@@ -280,7 +293,7 @@ export function AddressModal({
       district_name: data.country_code === 'MY' ? null : (data.district_name?.trim() || null),
       postal_code: data.postal_code.trim(),
       full_address: data.full_address.trim(),
-      zone_id: data.zone_id,
+      zone_id: resolvedZoneId,
       is_default: data.is_default,
     }
 
@@ -388,7 +401,7 @@ export function AddressModal({
 
   const provinceOptions =
     countryCode === 'MY'
-      ? MALAYSIA_WEST_STATES.map((s) => ({ label: s, value: s }))
+      ? MALAYSIA_STATES.map((s) => ({ label: s, value: s }))
       : INDONESIA_PROVINCES.map((p) => ({ label: p, value: p }))
 
   return (
@@ -564,7 +577,7 @@ export function AddressModal({
           name="province_name"
           render={({ field }) => (
             <Select
-              label={countryCode === 'MY' ? (isMY ? 'State (Peninsular Malaysia)*' : 'Negeri (State - Semenanjung)*') : (isMY ? 'Province*' : 'Provinsi*')}
+              label={countryCode === 'MY' ? (isMY ? 'State (Negeri)*' : 'Negeri (State)*') : (isMY ? 'Province*' : 'Provinsi*')}
               value={field.value}
               onChange={field.onChange}
               options={provinceOptions}
@@ -620,7 +633,7 @@ export function AddressModal({
               placeholder={countryCode === 'MY' ? 'cth: 50450' : 'cth: 12110'}
               helperText={
                 countryCode === 'MY'
-                  ? (isMY ? 'Delivery covers Peninsular Malaysia (Postcodes 01000–86999).' : 'Pengiriman saat ini mencakup Semenanjung Malaysia (Poskod 01000–86999).')
+                  ? (isMY ? 'Delivery covers Peninsular & East Malaysia (01000–98999).' : 'Mencakup Semenanjung, Sabah, Sarawak & Labuan (Poskod 01000–98999).')
                   : undefined
               }
               error={errors.postal_code?.message}

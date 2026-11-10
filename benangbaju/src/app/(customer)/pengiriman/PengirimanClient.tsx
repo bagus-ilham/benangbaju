@@ -33,14 +33,19 @@ export function PengirimanClient(): React.JSX.Element {
 
   const internationalPartners = [
     {
-      name: 'Ninja Van International',
+      name: 'Ninja Van International (West Malaysia)',
       area: isMY ? 'Peninsular Malaysia (Postcodes 01000–86999)' : 'Semenanjung Malaysia (Poskod 01000–86999)',
       timeline: isMY ? '3 – 7 business days (Cross-border Air Freight)' : '3 – 7 hari kerja (Cross-border Air Freight)',
     },
     {
-      name: 'Lion Parcel INTERPACK',
-      area: isMY ? 'Peninsular Malaysia (Postcodes 01000–86999)' : 'Semenanjung Malaysia (Poskod 01000–86999)',
-      timeline: isMY ? '3 – 7 business days (Bandung Hub via CGK)' : '3 – 7 hari kerja (Hub Bandung via CGK)',
+      name: 'Lion Parcel INTERPACK (West & East Malaysia)',
+      area: isMY ? 'All Malaysia (Postcodes 01000–98999)' : 'Seluruh Malaysia (Poskod 01000–98999)',
+      timeline: isMY ? '3 – 7 days (West) / 7 – 14 days (East)' : '3 – 7 hari (Barat) / 7 – 14 hari (Timur)',
+    },
+    {
+      name: 'International Air Express (East Malaysia)',
+      area: isMY ? 'Sabah, Sarawak & WP Labuan (Postcodes 87000–98999)' : 'Sabah, Sarawak & WP Labuan (Poskod 87000–98999)',
+      timeline: isMY ? '7 – 14 business days (Cross-border Air)' : '7 – 14 hari kerja (Cross-border Air)',
     },
   ]
 
@@ -143,8 +148,8 @@ export function PengirimanClient(): React.JSX.Element {
                 <span>🇲🇾</span>
                 <span>
                   {isMY
-                    ? 'International Shipping: Peninsular Malaysia (West Malaysia)'
-                    : 'Pengiriman Internasional: Semenanjung Malaysia (West Malaysia)'}
+                    ? 'International Shipping: Peninsular & East Malaysia'
+                    : 'Pengiriman Internasional: Seluruh Malaysia (Barat & Timur)'}
                 </span>
               </h2>
               <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -178,12 +183,12 @@ export function PengirimanClient(): React.JSX.Element {
               <div className="p-5 bg-white/70 border border-neutral-200/80 rounded-2xl space-y-2">
                 <h3 className="font-bold text-xs text-brand-plum uppercase tracking-wider flex items-center gap-1.5">
                   <HandDrawnIcon name="map-pin" className="h-3.5 w-3.5 text-brand-plum" />
-                  <span>{isMY ? '13 Peninsular Malaysia Regions' : 'Cakupan 13 Wilayah Semenanjung'}</span>
+                  <span>{isMY ? '16 Malaysian States & Federal Territories' : 'Cakupan 16 Negeri & Wilayah Persekutuan'}</span>
                 </h3>
                 <p className="text-[11px] text-neutral-600 leading-relaxed font-sans">
                   {isMY
-                    ? 'Serving Kuala Lumpur, Selangor, Johor, Penang, Perak, Kedah, Melaka, Negeri Sembilan, Pahang, Terengganu, Kelantan, Perlis, and Putrajaya (Peninsular postcodes 01000–86999). Shipping to East Malaysia (Sabah, Sarawak, Labuan) and P.O. Box addresses is currently not supported.'
-                    : 'Melayani Kuala Lumpur, Selangor, Johor, Penang, Perak, Kedah, Melaka, Negeri Sembilan, Pahang, Terengganu, Kelantan, Perlis, dan Putrajaya (Poskod Semenanjung 01000–86999). Pengiriman ke Malaysia Timur (Sabah, Sarawak, Labuan) dan alamat P.O. Box belum didukung saat ini.'}
+                    ? 'Serving Peninsular Malaysia (West: postcodes 01000–86999) as well as Sabah, Sarawak, and Federal Territory of Labuan (East: postcodes 87000–98999). P.O. Box addresses are not supported by international air couriers.'
+                    : 'Melayani Semenanjung Malaysia (Barat: poskod 01000–86999) serta Sabah, Sarawak, dan Wilayah Persekutuan Labuan (Timur: poskod 87000–98999). Alamat P.O. Box tidak didukung oleh kurir udara internasional.'}
                 </p>
               </div>
 
@@ -242,7 +247,7 @@ export function PengirimanClient(): React.JSX.Element {
 
           {/* Philosophy Footer quote */}
           <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-600 uppercase tracking-widest font-bold font-sans">
-            &ldquo;From Bandung to Peninsular Malaysia — crafted with care, delivered with love.&rdquo;
+            &ldquo;From Bandung to Malaysia — crafted with care, delivered with love.&rdquo;
           </div>
         </div>
       </PageContainer>

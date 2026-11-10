@@ -1,18 +1,24 @@
 import React from 'react'
 import { HandDrawnIcon } from '@/shared/components'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
+import { getMyPrice } from '@/lib/utils/pricing'
 import type { FlashSaleFormItem } from './FlashSaleFormModal'
 
 interface FlashSaleItemsTableProps {
   items: FlashSaleFormItem[]
   handleUpdateItemField: (idx: number, field: keyof FlashSaleFormItem, value: number) => void
   handleRemoveItem: (idx: number) => void
+  showMalaysiaPreview?: boolean
 }
 
 export function FlashSaleItemsTable({
   items,
   handleUpdateItemField,
   handleRemoveItem,
+  showMalaysiaPreview = true,
 }: FlashSaleItemsTableProps): React.JSX.Element {
+  const { myPricingConfig } = useSiteSettings()
+
   return (
     <div className="border border-neutral-200 bg-neutral-50/50 rounded-xl overflow-hidden">
       {items.length === 0 ? (
@@ -41,17 +47,27 @@ export function FlashSaleItemsTable({
                     <span className="text-[9px] text-neutral-500 uppercase">{it.name}</span>
                   </td>
                   <td className="py-2 px-3 text-neutral-500">
-                    Rp {it.original_price.toLocaleString()}
+                    <div>Rp {it.original_price.toLocaleString('id-ID')}</div>
+                    {showMalaysiaPreview && it.original_price > 0 && (
+                      <div className="text-[9px] text-emerald-700 font-semibold mt-0.5">
+                        🇲🇾 {getMyPrice(it.original_price, myPricingConfig).formattedMyr}
+                      </div>
+                    )}
                   </td>
                   <td className="py-2 px-3">
                     <input
                       type="number"
-                      className="w-20 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px] rounded-lg"
+                      className="w-24 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px] rounded-lg"
                       value={it.sale_price}
                       onChange={(e) =>
                         handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
                       }
                     />
+                    {showMalaysiaPreview && it.sale_price > 0 && (
+                      <div className="text-[9px] text-emerald-700 font-semibold mt-0.5">
+                        🇲🇾 {getMyPrice(it.sale_price, myPricingConfig).formattedMyr}
+                      </div>
+                    )}
                   </td>
                   <td className="py-2 px-3">
                     <input

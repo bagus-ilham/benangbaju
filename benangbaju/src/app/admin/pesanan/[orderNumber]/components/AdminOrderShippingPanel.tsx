@@ -7,6 +7,8 @@ import type { OrderItem } from '@/modules/orders/types'
 import toast from 'react-hot-toast'
 
 interface AdminOrderShippingPanelProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  order?: any
   orderShipping?: {
     recipient_name: string
     phone: string
@@ -30,6 +32,7 @@ interface AdminOrderShippingPanelProps {
 }
 
 export function AdminOrderShippingPanel({
+  order,
   orderShipping,
   orderItems = [],
   declaredValueIdr = 0,
@@ -49,11 +52,48 @@ export function AdminOrderShippingPanel({
   }
 
   const isMalaysia = orderShipping.country_code === 'MY'
+  const isEastMalaysia =
+    isMalaysia &&
+    (orderShipping.province_name?.toLowerCase().includes('sabah') ||
+      orderShipping.province_name?.toLowerCase().includes('sarawak') ||
+      orderShipping.province_name?.toLowerCase().includes('labuan') ||
+      (parseInt(orderShipping.postal_code || '0', 10) >= 87000 &&
+        parseInt(orderShipping.postal_code || '0', 10) <= 98999))
+
+  const countryDisplay = isMalaysia
+    ? isEastMalaysia
+      ? 'Malaysia (Malaysia Timur - Sabah/Sarawak/Labuan)'
+      : 'Malaysia (Malaysia Barat - Semenanjung)'
+    : 'Indonesia'
+
   const whatsappUrl = buildWhatsAppUrl(
     orderShipping.phone,
     undefined,
     isMalaysia ? 'MY' : 'ID'
   )
+
+  const handlePrintCommercialInvoice = async () => {
+    try {
+      const { generateCommercialInvoiceHtml } = await import('@/lib/utils/invoice-generator')
+      const orderData = {
+        ...order,
+        order_shipping: orderShipping,
+        order_items: orderItems,
+      }
+      const html = generateCommercialInvoiceHtml(orderData)
+      const printWindow = window.open('', '_blank')
+      if (printWindow) {
+        printWindow.document.open()
+        printWindow.document.write(html)
+        printWindow.document.close()
+      } else {
+        toast.error('Pop-up terblokir browser. Harap izinkan pop-up.')
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Gagal membuat Commercial Invoice')
+    }
+  }
 
   // Calculate total package weight
   const totalWeightGram = orderItems.reduce((acc, item) => {
@@ -91,7 +131,7 @@ export function AdminOrderShippingPanel({
             orderShipping.district_name ? `Kecamatan ${orderShipping.district_name}` : null,
             orderShipping.city_name,
             `${orderShipping.province_name} ${orderShipping.postal_code}`,
-            isMalaysia ? 'Malaysia (Semenanjung)' : 'Indonesia',
+            countryDisplay,
           ]
             .filter(Boolean)
             .join(', ')}
@@ -190,7 +230,7 @@ export function AdminOrderShippingPanel({
                 </span>
               </div>
               <span className="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-mono font-bold">
-                Ekspor Malaysia
+                {isEastMalaysia ? 'Ekspor East Malaysia' : 'Ekspor West Malaysia'}
               </span>
             </div>
 
@@ -261,6 +301,15 @@ export function AdminOrderShippingPanel({
                     className="text-brand-plum font-semibold hover:underline text-[11px]"
                   >
                     Salin Data Booking
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePrintCommercialInvoice}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-plum bg-white border border-amber-300 px-2.5 py-1 rounded hover:bg-amber-100 transition shadow-2xs cursor-pointer"
+                    title="Cetak Commercial Invoice Deklarasi Bea Cukai"
+                  >
+                    <HandDrawnIcon name="clipboard-list" className="h-3 w-3" />
+                    <span>Cetak Commercial Invoice</span>
                   </button>
                   <a
                     href="https://kiriminaja.com"

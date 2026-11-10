@@ -10,7 +10,8 @@ import { useMarket } from '@/shared/stores/marketStore'
 export function Footer(): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
-  const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl } = useSiteSettings()
+  const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl, shopeeMyUrl } = useSiteSettings()
+  const activeShopeeUrl = isMY ? shopeeMyUrl : shopeeUrl
 
   return (
     <footer className="relative bg-brand-cream border-t border-neutral-200/80 pb-20 md:pb-0">
@@ -163,13 +164,13 @@ export function Footer(): React.JSX.Element {
                     <HandDrawnIcon name="whatsapp" className="w-4 h-4" />
                   </a>
                 )}
-                {shopeeUrl && (
+                {activeShopeeUrl && (
                   <a
-                    href={shopeeUrl}
+                    href={activeShopeeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 border border-neutral-200 text-neutral-500 hover:border-amber-300 hover:text-brand-plum hover:bg-brand-gold/40 transition-all duration-200 rounded-lg flex items-center justify-center"
-                    aria-label="Shopee"
+                    aria-label={isMY ? 'Shopee Malaysia' : 'Shopee'}
                   >
                     <HandDrawnIcon name="shopee" className="w-4 h-4" />
                   </a>

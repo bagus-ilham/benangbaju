@@ -35,6 +35,9 @@ export default function AdminBannersPage(): React.JSX.Element {
   // Form states
   const [title, setTitle] = useState('')
   const [subtitle, setSubtitle] = useState('')
+  const [title_en, setTitleEn] = useState('')
+  const [subtitle_en, setSubtitleEn] = useState('')
+  const [target_market, setTargetMarket] = useState<'ALL' | 'ID' | 'MY'>('ALL')
   const [image_url, setImageUrl] = useState('')
   const [image_mobile_url, setImageMobileUrl] = useState('')
   const [link_url, setLinkUrl] = useState('')
@@ -48,6 +51,9 @@ export default function AdminBannersPage(): React.JSX.Element {
     setEditingBanner(null)
     setTitle('')
     setSubtitle('')
+    setTitleEn('')
+    setSubtitleEn('')
+    setTargetMarket('ALL')
     setImageUrl('')
     setImageMobileUrl('')
     setLinkUrl('')
@@ -63,6 +69,9 @@ export default function AdminBannersPage(): React.JSX.Element {
     setEditingBanner(b)
     setTitle(b.title || '')
     setSubtitle(b.subtitle || '')
+    setTitleEn(b.title_en || '')
+    setSubtitleEn(b.subtitle_en || '')
+    setTargetMarket((b.target_market as 'ALL' | 'ID' | 'MY') || 'ALL')
     setImageUrl(b.image_url || '')
     setImageMobileUrl(b.image_mobile_url || '')
     setLinkUrl(b.link_url || '')
@@ -78,6 +87,9 @@ export default function AdminBannersPage(): React.JSX.Element {
     setEditingBanner(null)
     setTitle((b.title || 'Untitled Banner') + ' (Copy)')
     setSubtitle(b.subtitle || '')
+    setTitleEn(b.title_en ? b.title_en + ' (Copy)' : '')
+    setSubtitleEn(b.subtitle_en || '')
+    setTargetMarket((b.target_market as 'ALL' | 'ID' | 'MY') || 'ALL')
     setImageUrl(b.image_url || '')
     setImageMobileUrl(b.image_mobile_url || '')
     setLinkUrl(b.link_url || '')
@@ -146,6 +158,9 @@ export default function AdminBannersPage(): React.JSX.Element {
     const payload = {
       title: title.trim(),
       subtitle: subtitle.trim() || null,
+      title_en: title_en.trim() || null,
+      subtitle_en: subtitle_en.trim() || null,
+      target_market: target_market || 'ALL',
       image_url: image_url.trim(),
       image_mobile_url: image_mobile_url.trim() || null,
       link_url: link_url.trim() || null,
@@ -210,6 +225,12 @@ export default function AdminBannersPage(): React.JSX.Element {
         setTitle={setTitle}
         subtitle={subtitle}
         setSubtitle={setSubtitle}
+        title_en={title_en}
+        setTitleEn={setTitleEn}
+        subtitle_en={subtitle_en}
+        setSubtitleEn={setSubtitleEn}
+        target_market={target_market}
+        setTargetMarket={setTargetMarket}
         image_url={image_url}
         setImageUrl={setImageUrl}
         image_mobile_url={image_mobile_url}

@@ -17,7 +17,7 @@ export class BannerRepository {
     const { data, error, count } = await supabase
       .from('banners')
       .select(
-        'id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at',
+        'id, title, subtitle, title_en, subtitle_en, target_market, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at',
         { count: 'exact' }
       )
       .eq('is_active', true)
@@ -41,7 +41,7 @@ export class BannerRepository {
     const { data, error, count } = await supabase
       .from('banners')
       .select(
-        'id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at',
+        'id, title, subtitle, title_en, subtitle_en, target_market, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at',
         { count: 'exact' }
       )
       .order('sort_order', { ascending: true })
@@ -58,6 +58,9 @@ export class BannerRepository {
   async adminCreateBanner(bannerData: {
     title: string
     subtitle: string | null
+    title_en?: string | null
+    subtitle_en?: string | null
+    target_market?: 'ALL' | 'ID' | 'MY'
     image_url: string
     image_mobile_url: string | null
     link_url: string | null
@@ -72,7 +75,7 @@ export class BannerRepository {
       .from('banners')
       .insert(bannerData)
       .select(
-        'id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at'
+        'id, title, subtitle, title_en, subtitle_en, target_market, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at'
       )
       .single()
 
@@ -97,6 +100,9 @@ export class BannerRepository {
     bannerData: {
       title?: string
       subtitle: string | null
+      title_en?: string | null
+      subtitle_en?: string | null
+      target_market?: 'ALL' | 'ID' | 'MY'
       image_url: string
       image_mobile_url: string | null
       link_url: string | null
@@ -119,7 +125,7 @@ export class BannerRepository {
       .update(bannerData)
       .eq('id', bannerId)
       .select(
-        'id, title, subtitle, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at'
+        'id, title, subtitle, title_en, subtitle_en, target_market, image_url, image_mobile_url, link_url, position, sort_order, is_active, starts_at, ends_at, created_at'
       )
       .single()
 

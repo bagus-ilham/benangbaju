@@ -146,7 +146,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
         <p className="text-[10px] font-sans font-bold uppercase tracking-[0.15em]">
           {market === 'MY' ? (
             <>
-              🇲🇾 Direct Shipping to West Malaysia from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
+              🇲🇾 Direct Shipping to Malaysia (West & East) from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
               <Link
                 href="/produk"
                 className="underline underline-offset-2 hover:opacity-80 transition-opacity"

@@ -24,6 +24,11 @@ export function mapOrder(
         : null
     const hs_code = (product?.hs_code || item.hs_code || '').trim() || null
 
+    const unitPriceMyr =
+      item.unit_price_myr != null && !isNaN(Number(item.unit_price_myr))
+        ? Number(item.unit_price_myr)
+        : null
+
     return {
       id: item.id,
       order_id: item.order_id,
@@ -35,6 +40,7 @@ export function mapOrder(
       price: item.price,
       quantity: item.quantity,
       subtotal: item.subtotal,
+      unit_price_myr: unitPriceMyr,
       weight_gram,
       hs_code,
       product_reviews: review
@@ -122,6 +128,17 @@ export function mapOrder(
     payment_fee: Number(row.payment_fee || 0),
     payment_channel: row.payment_channel || null,
     total_amount: row.total_amount,
+    country_code: row.country_code || order_shipping?.country_code || 'ID',
+    exchange_rate_at_order:
+      row.exchange_rate_at_order != null && !isNaN(Number(row.exchange_rate_at_order))
+        ? Number(row.exchange_rate_at_order)
+        : null,
+    markup_percent_at_order:
+      row.markup_percent_at_order != null && !isNaN(Number(row.markup_percent_at_order))
+        ? Number(row.markup_percent_at_order)
+        : null,
+    total_myr:
+      row.total_myr != null && !isNaN(Number(row.total_myr)) ? Number(row.total_myr) : null,
     notes: row.notes,
     cancel_reason: row.cancel_reason,
     created_at: row.created_at,

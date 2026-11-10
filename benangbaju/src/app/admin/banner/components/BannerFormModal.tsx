@@ -16,6 +16,12 @@ export function BannerFormModal({
   setTitle,
   subtitle,
   setSubtitle,
+  title_en,
+  setTitleEn,
+  subtitle_en,
+  setSubtitleEn,
+  target_market,
+  setTargetMarket,
   image_url,
   setImageUrl,
   image_mobile_url,
@@ -44,16 +50,31 @@ export function BannerFormModal({
       <form onSubmit={onSubmit} className="space-y-5 text-xs font-sans">
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label="Judul Banner"
+            label="Judul Banner (ID)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="cth: New Collection Edisi Summer"
           />
           <Input
-            label="Sub-judul Banner"
+            label="Sub-judul Banner (ID)"
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
             placeholder="cth: Diskon hingga 30% untuk produk terpilih"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 p-3 bg-neutral-100/50 border border-neutral-200/80 rounded-xl">
+          <Input
+            label="Judul Banner (English / MY - Opsional)"
+            value={title_en || ''}
+            onChange={(e) => setTitleEn(e.target.value)}
+            placeholder="e.g. Summer Edition Collection"
+          />
+          <Input
+            label="Sub-judul Banner (English / MY - Opsional)"
+            value={subtitle_en || ''}
+            onChange={(e) => setSubtitleEn(e.target.value)}
+            placeholder="e.g. Up to 30% off selected items"
           />
         </div>
 
@@ -190,8 +211,8 @@ export function BannerFormModal({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-1 col-span-1">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div className="space-y-1">
             <Select
               label="Posisi Tampil*"
               value={position}
@@ -199,6 +220,20 @@ export function BannerFormModal({
               options={[
                 { label: 'Hero Slider Depan', value: 'homepage_hero' },
                 { label: 'Banner Tengah Halaman', value: 'mid_banner' },
+              ]}
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Select
+              label="Target Market*"
+              value={target_market || 'ALL'}
+              onChange={setTargetMarket}
+              options={[
+                { label: 'Semua Market (ID & MY)', value: 'ALL' },
+                { label: 'Khusus Indonesia (ID)', value: 'ID' },
+                { label: 'Khusus Malaysia (MY)', value: 'MY' },
               ]}
               required
             />

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, react/no-unescaped-entities */
 import React from 'react'
 import { Button } from '@/shared/components'
-import { formatApproxMYR } from '@/lib/utils'
+import { formatApproxMYR, formatMYR } from '@/lib/utils'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 
 interface OrderItemsListProps {
@@ -13,8 +13,15 @@ export function OrderItemsList({
   order,
   onOpenReviewModal,
 }: OrderItemsListProps): React.JSX.Element {
-  const isMalaysia = order.order_shipping?.country_code === 'MY'
+  const isMalaysia =
+    order.country_code === 'MY' ||
+    order.order_shipping?.country_code === 'MY' ||
+    order.shipping_address?.country_code === 'MY'
   const { myrExchangeRate } = useSiteSettings()
+  const effectiveExchangeRate = order?.exchange_rate_at_order
+    ? Number(order.exchange_rate_at_order)
+    : myrExchangeRate
+
   return (
     <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
       <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
@@ -34,6 +41,11 @@ export function OrderItemsList({
               </p>
               <p className="text-xs text-neutral-400 mt-0.5">
                 {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
+                {isMalaysia && item.unit_price_myr && (
+                  <span className="ml-1.5 text-emerald-800 font-semibold">
+                    ({formatMYR(Number(item.unit_price_myr))})
+                  </span>
+                )}
               </p>
               {order.status === 'completed' && (
                 <div className="mt-2">
@@ -59,7 +71,9 @@ export function OrderItemsList({
               </p>
               {isMalaysia && (
                 <p className="text-xs font-bold text-emerald-800">
-                  {formatApproxMYR(item.subtotal, myrExchangeRate)}
+                  {item.unit_price_myr
+                    ? formatMYR(Number(item.unit_price_myr) * item.quantity)
+                    : formatApproxMYR(item.subtotal, effectiveExchangeRate)}
                 </p>
               )}
             </div>

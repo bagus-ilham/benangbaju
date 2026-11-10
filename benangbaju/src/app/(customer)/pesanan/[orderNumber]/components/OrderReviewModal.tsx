@@ -5,7 +5,6 @@ import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useMarket } from '@/shared/stores/marketStore'
-import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface OrderReviewModalProps {
   selectedReviewItem: any
@@ -62,7 +61,7 @@ export function OrderReviewModal({
     e.preventDefault()
     if (!selectedReviewItem || !user?.id) return
     if (!reviewBody.trim()) {
-      toast.error('Silakan isi ulasan Anda')
+      toast.error(isMY ? 'Please write your review' : 'Silakan isi ulasan Anda')
       return
     }
 
@@ -82,7 +81,7 @@ export function OrderReviewModal({
       }
 
       if (!finalProductId) {
-        toast.error('Gagal memverifikasi informasi produk')
+        toast.error(isMY ? 'Failed to verify product info' : 'Gagal memverifikasi informasi produk')
         return
       }
 
@@ -95,7 +94,7 @@ export function OrderReviewModal({
           mediaUrls.push(url)
         }
       } catch (uploadErr: any) {
-        toast.error(uploadErr.message || 'Gagal mengunggah foto review')
+        toast.error(uploadErr.message || (isMY ? 'Failed to upload photo' : 'Gagal mengunggah foto review'))
         setIsUploading(false)
         return
       }
@@ -115,16 +114,16 @@ export function OrderReviewModal({
       setIsUploading(false)
 
       if (res && res.success) {
-        toast.success('Ulasan berhasil dikirim!')
+        toast.success(isMY ? 'Review submitted successfully!' : 'Ulasan berhasil dikirim!')
         refetch()
         onClose()
       } else {
-        toast.error('Gagal mengirimkan ulasan')
+        toast.error(isMY ? 'Failed to submit review' : 'Gagal mengirimkan ulasan')
       }
     } catch (err) {
       console.error(err)
       setIsUploading(false)
-      toast.error('Terjadi kesalahan saat mengirimkan ulasan')
+      toast.error(isMY ? 'Error submitting review' : 'Terjadi kesalahan saat mengirimkan ulasan')
     }
   }
 
@@ -132,28 +131,28 @@ export function OrderReviewModal({
     <Modal
       isOpen={selectedReviewItem !== null}
       onClose={onClose}
-      title="Tulis Ulasan Produk"
+      title={isMY ? 'Write Product Review' : 'Tulis Ulasan Produk'}
       size="md"
     >
       {selectedReviewItem && (
         <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-brand-blue font-sans font-bold mb-1">
-              Nama Produk
+              {isMY ? 'Product Name' : 'Nama Produk'}
             </p>
             <h3 className="text-sm font-bold text-brand-plum font-sans">
               {selectedReviewItem.product_name}
             </h3>
             {selectedReviewItem.variant_name && (
               <p className="text-xs text-neutral-600 mt-0.5 font-sans">
-                Varian: {selectedReviewItem.variant_name}
+                {isMY ? 'Variant:' : 'Varian:'} {selectedReviewItem.variant_name}
               </p>
             )}
           </div>
 
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-neutral-600 font-sans font-bold mb-2">
-              Rating Produk
+              {isMY ? 'Product Rating' : 'Rating Produk'}
             </label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -179,13 +178,13 @@ export function OrderReviewModal({
               type="text"
               value={reviewTitle}
               onChange={(e) => setReviewTitle(e.target.value)}
-              placeholder="Contoh: Kualitas sangat baik!"
+              placeholder={isMY ? 'e.g. Great quality and fit!' : 'Contoh: Kualitas sangat baik!'}
             />
           </div>
 
           <div className="space-y-1">
             <Textarea
-              label="Isi Ulasan"
+              label={isMY ? 'Review Details' : 'Isi Ulasan'}
               value={reviewBody}
               onChange={(e) => setReviewBody(e.target.value)}
               rows={4}
@@ -254,7 +253,7 @@ export function OrderReviewModal({
               variant="outline"
               className="flex-1 py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50"
             >
-              Batal
+              {isMY ? 'Cancel' : 'Batal'}
             </Button>
             <Button
               type="submit"

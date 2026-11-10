@@ -68,7 +68,7 @@ export function AdminOrdersTable({
         </thead>
         <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
           {orders.map((o) => {
-            const isMalaysia = o.order_shipping?.country_code === 'MY'
+            const isMalaysia = o.country_code === 'MY' || o.order_shipping?.country_code === 'MY'
 
             return (
               <tr key={o.id} className="hover:bg-neutral-50/20 transition duration-150">
@@ -93,7 +93,12 @@ export function AdminOrdersTable({
                   </p>
                 </td>
                 <td className="py-4 px-4 text-center font-bold text-neutral-900">
-                  {formatIDR(o.total_amount)}
+                  <div>{formatIDR(o.total_amount)}</div>
+                  {o.total_myr && (
+                    <div className="text-[10px] text-emerald-800 font-semibold mt-0.5">
+                      RM {Number(o.total_myr).toFixed(2)}
+                    </div>
+                  )}
                 </td>
                 <td className="py-4 px-4 text-center">
                   <OrderStatusBadge status={o.status} />

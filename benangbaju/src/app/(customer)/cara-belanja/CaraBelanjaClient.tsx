@@ -27,7 +27,7 @@ export function CaraBelanjaClient(): React.JSX.Element {
         {
           handDrawnName: 'truck',
           title: '3. Enter Shipping Address & Select Courier',
-          desc: 'Click "Checkout" and enter your West Malaysia address (Postcode 01000–86999). International shipping rates will be calculated by package weight.',
+          desc: 'Click "Checkout" and enter your Malaysia address (West & East Malaysia, Postcode 01000–98999). International shipping rates will be calculated by package weight.',
         },
         {
           handDrawnName: 'kancing',

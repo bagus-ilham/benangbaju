@@ -4,6 +4,7 @@ export interface CustomerProfile {
   email: string | null
   phone: string | null
   avatar_url: string | null
+  country_code?: string | null
   role: string
   is_active: boolean
   created_at: string

@@ -17,6 +17,7 @@ export interface CountryBreakdownItem {
   countryCode: string
   ordersCount: number
   revenue: number
+  revenueMyr?: number
 }
 
 export interface AnalyticsData {
@@ -29,7 +30,10 @@ export interface AnalyticsData {
   totalOrders: number
 }
 
-export async function getAdminAnalyticsAction(days: number = 30): Promise<AnalyticsData> {
+export async function getAdminAnalyticsAction(
+  days: number = 30,
+  marketFilter: 'ALL' | 'ID' | 'MY' = 'ALL'
+): Promise<AnalyticsData> {
   const { supabase } = await requireAdmin()
 
   const startDate = new Date()
@@ -41,18 +45,27 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
   yesterday.setHours(yesterday.getHours() - 24)
   const yesterdayStr = yesterday.toISOString()
 
+  let voucherQuery = supabase
+    .from('orders')
+    .select('voucher_id, discount_amount, vouchers(code)')
+    .in('status', ['processing', 'shipped', 'completed'])
+    .gte('created_at', startDateStr)
+    .not('voucher_id', 'is', null)
+
+  if (marketFilter !== 'ALL') {
+    voucherQuery = voucherQuery.eq('country_code', marketFilter)
+  }
+
   const [rpcRes, cartsRes, voucherRes] = await Promise.all([
-    supabase.rpc('get_analytics_data', { p_start_date: startDateStr }),
+    supabase.rpc('get_analytics_data', {
+      p_start_date: startDateStr,
+      p_country_code: marketFilter,
+    }),
     supabase
       .from('carts')
       .select('*', { count: 'exact', head: true })
       .lte('created_at', yesterdayStr),
-    supabase
-      .from('orders')
-      .select('voucher_id, discount_amount, vouchers(code)')
-      .in('status', ['processing', 'shipped', 'completed'])
-      .gte('created_at', startDateStr)
-      .not('voucher_id', 'is', null),
+    voucherQuery,
   ])
 
   if (rpcRes.error) throw new Error(rpcRes.error.message)
@@ -106,11 +119,13 @@ export async function getAdminAnalyticsAction(days: number = 30): Promise<Analyt
       country_code: string
       orders_count: number | string
       revenue: number | string
+      revenue_myr?: number | string
     }>) || []
   ).map((item) => ({
     countryCode: item.country_code,
     ordersCount: Number(item.orders_count),
     revenue: Number(item.revenue),
+    revenueMyr: item.revenue_myr ? Number(item.revenue_myr) : undefined,
   }))
 
   return {

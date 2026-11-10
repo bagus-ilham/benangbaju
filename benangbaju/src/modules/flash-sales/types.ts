@@ -34,6 +34,7 @@ export interface FlashSaleDetail {
   starts_at: string
   ends_at: string
   is_active: boolean
+  target_market?: 'ALL' | 'ID' | 'MY'
   flash_sale_items: FlashSaleItemDetail[]
 }
 
@@ -45,6 +46,7 @@ export interface AdminFlashSaleListItem {
   starts_at: string
   ends_at: string
   is_active: boolean
+  target_market?: 'ALL' | 'ID' | 'MY'
   flash_sale_items: Array<{
     id: string
     variant_id: string

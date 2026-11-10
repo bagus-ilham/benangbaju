@@ -15,12 +15,41 @@ export function ProductMarketplaceLinks({
   onRemoveLink,
   onUpdateLinkField,
 }: ProductMarketplaceLinksProps): React.JSX.Element {
+  const handlePlatformChange = (idx: number, platform: string) => {
+    onUpdateLinkField(idx, 'platform', platform)
+    const current = marketplaceLinks[idx]
+    if (!current?.label || current.label.includes('Shopee')) {
+      if (platform === 'shopee_my') {
+        onUpdateLinkField(idx, 'label', 'Buy on Shopee Malaysia')
+      } else if (platform === 'shopee') {
+        onUpdateLinkField(idx, 'label', 'Beli di Shopee')
+      }
+    }
+  }
+
+  const handleUrlChange = (idx: number, url: string) => {
+    onUpdateLinkField(idx, 'url', url)
+    const trimmed = url.toLowerCase().trim()
+    if (trimmed.includes('shopee.com.my') || trimmed.includes('my.xiapibuy.com')) {
+      onUpdateLinkField(idx, 'platform', 'shopee_my')
+      const current = marketplaceLinks[idx]
+      if (!current?.label || current.label === 'Beli di Shopee' || !current.label.trim()) {
+        onUpdateLinkField(idx, 'label', 'Buy on Shopee Malaysia')
+      }
+    }
+  }
+
   return (
     <div className="border border-neutral-200 bg-brand-cream p-6 rounded-2xl space-y-4 shadow-sm">
       <div className="flex justify-between items-center border-b border-neutral-100 pb-2.5">
-        <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
-          Platform Marketplace (E-Commerce)
-        </h3>
+        <div>
+          <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400">
+            Platform Marketplace (E-Commerce)
+          </h3>
+          <p className="text-[10px] text-neutral-500 mt-0.5">
+            Link Shopee Malaysia akan ditampilkan khusus saat pengunjung memilih mode Malaysia (MY).
+          </p>
+        </div>
         <Button
           type="button"
           onClick={onAddLink}
@@ -53,11 +82,13 @@ export function ProductMarketplaceLinks({
                   <Select
                     label="Platform"
                     value={link.platform}
-                    onChange={(val) => onUpdateLinkField(idx, 'platform', val)}
+                    onChange={(val) => handlePlatformChange(idx, val)}
                     options={[
-                      { label: 'Shopee', value: 'shopee' },
+                      { label: 'Shopee Indonesia', value: 'shopee' },
+                      { label: 'Shopee Malaysia (🇲🇾 shopee.com.my)', value: 'shopee_my' },
                       { label: 'TikTok Shop', value: 'tiktok' },
                       { label: 'Tokopedia', value: 'tokopedia' },
+                      { label: 'Lazada', value: 'lazada' },
                     ]}
                   />
                 </div>
@@ -68,7 +99,7 @@ export function ProductMarketplaceLinks({
                     type="text"
                     value={link.label || ''}
                     onChange={(e) => onUpdateLinkField(idx, 'label', e.target.value)}
-                    placeholder="Cek di Shopee"
+                    placeholder={link.platform === 'shopee_my' ? 'Buy on Shopee Malaysia' : 'Beli di Shopee'}
                   />
                 </div>
               </div>
@@ -78,8 +109,12 @@ export function ProductMarketplaceLinks({
                   label="URL Link"
                   type="text"
                   value={link.url}
-                  onChange={(e) => onUpdateLinkField(idx, 'url', e.target.value)}
-                  placeholder="https://shopee.co.id/..."
+                  onChange={(e) => handleUrlChange(idx, e.target.value)}
+                  placeholder={
+                    link.platform === 'shopee_my'
+                      ? 'https://shopee.com.my/product/...'
+                      : 'https://shopee.co.id/...'
+                  }
                   required
                 />
               </div>

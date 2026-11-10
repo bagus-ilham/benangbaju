@@ -129,9 +129,20 @@ export default function AdminCustomersPage(): React.JSX.Element {
                           {(customer.name || 'U').substring(0, 2)}
                         </div>
                         <div>
-                          <p className="text-neutral-900 font-bold text-sm">
-                            {customer.name || 'No Name'}
-                          </p>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <p className="text-neutral-900 font-bold text-sm">
+                              {customer.name || 'No Name'}
+                            </p>
+                            {customer.country_code === 'MY' ? (
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                🇲🇾 MY
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-neutral-100 text-neutral-700 border border-neutral-200">
+                                🇮🇩 ID
+                              </span>
+                            )}
+                          </div>
                           <p className="text-[10px] text-neutral-400 font-mono mt-0.5">
                             {customer.id}
                           </p>
@@ -143,10 +154,29 @@ export default function AdminCustomersPage(): React.JSX.Element {
                         <HandDrawnIcon name="mail" className="h-3 w-3 mr-1.5" />
                         <span>{customer.email || '-'}</span>
                       </p>
-                      <p className="flex items-center text-neutral-600">
-                        <HandDrawnIcon name="whatsapp" className="h-3 w-3 mr-1.5" />
-                        <span>{customer.phone || '-'}</span>
-                      </p>
+                      {customer.phone ? (
+                        <a
+                          href={(() => {
+                            let clean = customer.phone.replace(/\D/g, '')
+                            if (clean.startsWith('0')) {
+                              clean = (customer.country_code === 'MY' ? '60' : '62') + clean.slice(1)
+                            }
+                            return `https://wa.me/${clean}`
+                          })()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-neutral-600 hover:text-emerald-700 transition-colors"
+                          title="Buka Chat WhatsApp"
+                        >
+                          <HandDrawnIcon name="whatsapp" className="h-3 w-3 mr-1.5 text-emerald-600" />
+                          <span className="hover:underline">{customer.phone}</span>
+                        </a>
+                      ) : (
+                        <p className="flex items-center text-neutral-400">
+                          <HandDrawnIcon name="whatsapp" className="h-3 w-3 mr-1.5" />
+                          <span>-</span>
+                        </p>
+                      )}
                     </td>
                     <td className="py-4 px-6">
                       <p className="flex items-center text-neutral-600">

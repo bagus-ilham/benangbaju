@@ -99,6 +99,62 @@ describe('proxy middleware', () => {
     )
   })
 
+  it('should override and set bb_market cookie when ?market=MY query parameter is present', async () => {
+    const searchParams = new URLSearchParams('market=my')
+    const req = {
+      nextUrl: {
+        pathname: '/produk',
+        searchParams,
+        clone: () => ({ searchParams: { set: vi.fn() } }),
+      },
+      headers: new Headers(),
+      cookies: {
+        getAll: vi.fn().mockReturnValue([{ name: 'bb_market', value: 'ID' }]),
+        get: vi.fn().mockReturnValue({ name: 'bb_market', value: 'ID' }),
+      },
+    } as unknown as NextRequest
+
+    const res = await proxy(req)
+    expect(res.type).toBe('next')
+    expect(mockCookiesSet).toHaveBeenCalledWith(
+      'bb_market',
+      'MY',
+      expect.objectContaining({
+        path: '/',
+        maxAge: 31536000,
+        sameSite: 'lax',
+      })
+    )
+  })
+
+  it('should set bb_market=ID cookie when ?market=ID query parameter is present even if currently MY', async () => {
+    const searchParams = new URLSearchParams('market=ID')
+    const req = {
+      nextUrl: {
+        pathname: '/produk',
+        searchParams,
+        clone: () => ({ searchParams: { set: vi.fn() } }),
+      },
+      headers: new Headers(),
+      cookies: {
+        getAll: vi.fn().mockReturnValue([{ name: 'bb_market', value: 'MY' }]),
+        get: vi.fn().mockReturnValue({ name: 'bb_market', value: 'MY' }),
+      },
+    } as unknown as NextRequest
+
+    const res = await proxy(req)
+    expect(res.type).toBe('next')
+    expect(mockCookiesSet).toHaveBeenCalledWith(
+      'bb_market',
+      'ID',
+      expect.objectContaining({
+        path: '/',
+        maxAge: 31536000,
+        sameSite: 'lax',
+      })
+    )
+  })
+
   it('should not set bb_market cookie if visitor country is not Malaysia', async () => {
     const headers = new Headers()
     headers.set('x-vercel-ip-country', 'ID')

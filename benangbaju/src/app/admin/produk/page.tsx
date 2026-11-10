@@ -23,10 +23,12 @@ import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { Column } from '@/shared/components/DataTable'
+import { bulkTranslateEmptyProductsAction } from '@/modules/products/translate.actions'
 
 export default function AdminProductListPage(): React.JSX.Element {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [isBulkTranslating, setIsBulkTranslating] = useState(false)
   const limit = 10
 
   const { data: dataRes, isLoading, isError, refetch } = useAdminProducts(page, limit, search)
@@ -76,6 +78,37 @@ export default function AdminProductListPage(): React.JSX.Element {
     [deleteMutation, refetch]
   )
 
+  const handleBulkTranslate = useCallback(async () => {
+    setIsBulkTranslating(true)
+    toast.loading('Menerjemahkan produk yang belum memiliki teks Inggris...', { id: 'bulk-translate' })
+    try {
+      const res = await bulkTranslateEmptyProductsAction(5)
+      if (!res.success || !res.data) {
+        toast.error(res.error || 'Gagal menjalankan bulk translate', { id: 'bulk-translate' })
+        return
+      }
+      if (res.data.translatedCount === 0) {
+        toast.success('Semua produk aktif sudah memiliki terjemahan Bahasa Inggris!', {
+          id: 'bulk-translate',
+        })
+      } else {
+        const remMsg =
+          res.data.remainingCount > 0
+            ? ` (${res.data.remainingCount} produk lagi tersisa, klik lagi untuk melanjutkan)`
+            : ''
+        toast.success(
+          `Berhasil menerjemahkan ${res.data.translatedCount} produk ke Bahasa Inggris!${remMsg}`,
+          { id: 'bulk-translate', duration: 5000 }
+        )
+        refetch()
+      }
+    } catch {
+      toast.error('Terjadi kesalahan saat menerjemahkan produk', { id: 'bulk-translate' })
+    } finally {
+      setIsBulkTranslating(false)
+    }
+  }, [refetch])
+
   const products = dataRes?.data || []
   const totalCount = dataRes?.pagination?.total_count || 0
   const totalPages = Math.ceil(totalCount / limit)
@@ -85,16 +118,29 @@ export default function AdminProductListPage(): React.JSX.Element {
       {
         key: 'name',
         header: 'Nama Produk',
-        render: (p) => (
-          <div>
-            <span className="font-semibold text-neutral-900 text-sm block hover:text-neutral-600 transition">
-              {p.name}
-            </span>
-            <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block font-mono uppercase">
-              Slug: {p.slug}
-            </span>
-          </div>
-        ),
+        render: (p) => {
+          const hasEnglish = Boolean(p.description_en?.trim() || p.short_description_en?.trim())
+          return (
+            <div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="font-semibold text-neutral-900 text-sm block hover:text-neutral-600 transition">
+                  {p.name}
+                </span>
+                {hasEnglish && (
+                  <span
+                    className="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300"
+                    title="Memiliki deskripsi Bahasa Inggris (Malaysia)"
+                  >
+                    🇲🇾 EN
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block font-mono uppercase">
+                Slug: {p.slug}
+              </span>
+            </div>
+          )
+        },
       },
       {
         key: 'categories',
@@ -209,6 +255,16 @@ export default function AdminProductListPage(): React.JSX.Element {
         subtitle="Kelola katalog produk, harga, varian, dan stok."
       >
         <div className="flex items-center space-x-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleBulkTranslate}
+            disabled={isBulkTranslating}
+            className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-4 border-amber-300 bg-amber-50/70 text-amber-900 hover:bg-amber-100"
+            title="Terjemahkan otomatis produk aktif yang kolom Bahasa Inggris-nya masih kosong (maks 5 produk per klik)"
+          >
+            {isBulkTranslating ? 'Menerjemahkan...' : '✨ Bulk Translate (EN)'}
+          </Button>
           <Link href="/admin/stok-harga">
             <Button variant="outline" className="text-xs uppercase font-bold tracking-widest flex items-center py-3 px-4 border-neutral-300">
               <HandDrawnIcon name="tag" className="h-3.5 w-3.5 mr-1.5 text-brand-plum" /> Quick Stok & Harga

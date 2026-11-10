@@ -96,7 +96,11 @@ export function ProductAccordionTabs({
             {activeTab === 'details' && (
               <div className="space-y-2">
                 <p className="whitespace-pre-line">
-                  {formatProductDescription(product.description)}
+                  {formatProductDescription(
+                    market === 'MY'
+                      ? product.description_en || product.description
+                      : product.description
+                  )}
                 </p>
                 {selectedVariant && (
                   <p className="text-[10px] text-neutral-600 font-sans">
@@ -204,21 +208,30 @@ export function ProductAccordionTabs({
             )}
             {activeTab === 'care' && (
               <div className="space-y-1 whitespace-pre-line">
-                {product.care_guide ? (
-                  product.care_guide.replace(/<br\s*\/?>/gi, '\n')
-                ) : market === 'MY' ? (
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>Machine wash cold with similar colors</li>
-                    <li>Do not bleach</li>
-                    <li>Warm iron if necessary</li>
-                  </ul>
-                ) : (
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>Cuci dengan suhu dingin menggunakan warna senada</li>
-                    <li>Hindari pemutih pakaian</li>
-                    <li>Setrika dengan suhu rendah jika diperlukan</li>
-                  </ul>
-                )}
+                {(() => {
+                  const effectiveCare =
+                    market === 'MY'
+                      ? product.care_guide_en || product.care_guide
+                      : product.care_guide
+
+                  if (effectiveCare) {
+                    return effectiveCare.replace(/<br\s*\/?>/gi, '\n')
+                  }
+
+                  return market === 'MY' ? (
+                    <ul className="list-disc pl-4 space-y-1">
+                      <li>Machine wash cold with similar colors</li>
+                      <li>Do not bleach</li>
+                      <li>Warm iron if necessary</li>
+                    </ul>
+                  ) : (
+                    <ul className="list-disc pl-4 space-y-1">
+                      <li>Cuci dengan suhu dingin menggunakan warna senada</li>
+                      <li>Hindari pemutih pakaian</li>
+                      <li>Setrika dengan suhu rendah jika diperlukan</li>
+                    </ul>
+                  )
+                })()}
               </div>
             )}
           </motion.div>

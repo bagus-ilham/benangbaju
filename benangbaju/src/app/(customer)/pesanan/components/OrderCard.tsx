@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, SmartLink as Link } from '@/shared/components'
-import { formatIDR, formatApproxMYR, formatDateWithTimezone } from '@/lib/utils'
+import { formatIDR, formatApproxMYR, formatMYR, formatDateWithTimezone } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { OrderStatusBadge } from './OrderStatusBadge'
@@ -13,6 +13,7 @@ interface OrderItem {
   quantity: number
   price: number
   subtotal: number
+  unit_price_myr?: number | null
 }
 
 interface Order {
@@ -21,6 +22,10 @@ interface Order {
   status: string
   created_at: string
   total_amount: number
+  country_code?: string | null
+  exchange_rate_at_order?: number | null
+  markup_percent_at_order?: number | null
+  total_myr?: number | null
   order_items: OrderItem[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   order_shipping?: any
@@ -42,12 +47,15 @@ export function OrderCard({
   onConfirmDelivery,
 }: OrderCardProps): React.JSX.Element {
   const market = useMarket()
-  const isMY = market === 'MY' || order.order_shipping?.country_code === 'MY'
-  const { myrExchangeRate } = useSiteSettings()
   const shipping = Array.isArray(order.order_shipping)
     ? order.order_shipping[0]
     : order.order_shipping
-  const countryCode = shipping?.country_code
+  const countryCode = order.country_code || shipping?.country_code
+  const isMY = market === 'MY' || countryCode === 'MY'
+  const { myrExchangeRate: siteSettingsRate } = useSiteSettings()
+  const effectiveExchangeRate = order.exchange_rate_at_order
+    ? Number(order.exchange_rate_at_order)
+    : siteSettingsRate
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -86,6 +94,11 @@ export function OrderCard({
               </p>
               <p className="text-xs text-neutral-600 font-sans mt-0.5">
                 {item.quantity} x {formatIDR(item.price)}
+                {isMY && item.unit_price_myr && (
+                  <span className="ml-1.5 text-emerald-800 font-semibold">
+                    ({formatMYR(Number(item.unit_price_myr))})
+                  </span>
+                )}
               </p>
             </div>
             <div className="text-right whitespace-nowrap">
@@ -94,7 +107,9 @@ export function OrderCard({
               </span>
               {isMY && (
                 <span className="text-[10px] font-semibold text-emerald-800 block">
-                  {formatApproxMYR(item.subtotal, myrExchangeRate)}
+                  {item.unit_price_myr
+                    ? formatMYR(Number(item.unit_price_myr) * item.quantity)
+                    : formatApproxMYR(item.subtotal, effectiveExchangeRate)}
                 </span>
               )}
             </div>
@@ -111,7 +126,9 @@ export function OrderCard({
           </span>
           {isMY && (
             <span className="text-xs font-bold text-emerald-800 ml-2">
-              ({formatApproxMYR(order.total_amount, myrExchangeRate)})
+              ({order.total_myr
+                ? formatMYR(Number(order.total_myr))
+                : formatApproxMYR(order.total_amount, effectiveExchangeRate)})
             </span>
           )}
         </div>

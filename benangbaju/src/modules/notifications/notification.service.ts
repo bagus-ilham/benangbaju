@@ -69,35 +69,63 @@ export class NotificationService {
     const isMalaysia = countryCode?.toUpperCase() === 'MY'
 
     const idTitles: Record<string, string> = {
+      pending: 'Menunggu Pembayaran',
+      pending_payment: 'Menunggu Pembayaran',
+      paid: 'Pembayaran Diterima',
       processing: 'Pesanan Diproses',
+      packed: 'Pesanan Telah Dikemas',
       shipped: 'Pesanan Dikirim',
+      delivered: 'Pesanan Telah Diterima',
       completed: 'Pesanan Selesai',
       cancelled: 'Pesanan Dibatalkan',
+      return_requested: 'Pengajuan Retur Dikirim',
+      refunded: 'Dana Dikembalikan',
     }
 
     const enTitles: Record<string, string> = {
+      pending: 'Pending Payment',
+      pending_payment: 'Pending Payment',
+      paid: 'Payment Received ✅',
       processing: 'Order Processing',
+      packed: 'Order Packed & Ready',
       shipped: 'Order Shipped ✈️',
+      delivered: 'Order Delivered 🎉',
       completed: 'Order Completed',
       cancelled: 'Order Cancelled',
+      return_requested: 'Return Request Received',
+      refunded: 'Refund Processed',
     }
 
     const idMessages: Record<string, string> = {
+      pending: `Pesanan Anda #${orderNumber} menunggu pembayaran.`,
+      pending_payment: `Pesanan Anda #${orderNumber} menunggu pembayaran.`,
+      paid: `Pembayaran pesanan #${orderNumber} telah diverifikasi. Kami akan segera memproses pesanan Anda.`,
       processing: `Pesanan Anda #${orderNumber} sedang diproses oleh penjual.`,
+      packed: `Pesanan Anda #${orderNumber} telah selesai dikemas dan siap diserahkan ke kurir.`,
       shipped: trackingNumber
         ? `Pesanan Anda #${orderNumber} telah dikirim dengan resi: ${trackingNumber}.`
         : `Pesanan Anda #${orderNumber} sedang dalam perjalanan.`,
+      delivered: `Pesanan Anda #${orderNumber} telah sampai di tujuan. Sila periksa paket Anda.`,
       completed: `Pesanan Anda #${orderNumber} telah selesai. Terima kasih telah berbelanja!`,
       cancelled: `Pesanan Anda #${orderNumber} telah dibatalkan.`,
+      return_requested: `Pengajuan retur untuk pesanan #${orderNumber} sedang ditinjau oleh tim kami.`,
+      refunded: `Pengembalian dana untuk pesanan #${orderNumber} telah selesai diproses.`,
     }
 
     const enMessages: Record<string, string> = {
+      pending: `Order #${orderNumber} is awaiting payment.`,
+      pending_payment: `Order #${orderNumber} is awaiting payment.`,
+      paid: `Payment for order #${orderNumber} has been verified. We are preparing your order.`,
       processing: `Order #${orderNumber} is being prepared and packed for international dispatch.`,
+      packed: `Order #${orderNumber} is carefully packed and queued for courier pickup.`,
       shipped: trackingNumber
         ? `Order #${orderNumber} has been dispatched with tracking number: ${trackingNumber}.`
         : `Order #${orderNumber} is on its way to Malaysia.`,
+      delivered: `Order #${orderNumber} has been delivered. Please check your package.`,
       completed: `Order #${orderNumber} has been completed. Thank you for shopping with Benangbaju!`,
       cancelled: `Order #${orderNumber} has been cancelled.`,
+      return_requested: `Your return request for order #${orderNumber} has been received and is being reviewed.`,
+      refunded: `Refund for order #${orderNumber} has been processed successfully.`,
     }
 
     const statusTitles = isMalaysia ? enTitles : idTitles

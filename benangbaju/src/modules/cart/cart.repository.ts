@@ -72,7 +72,55 @@ export class CartRepository {
       .eq('cart_id', cartId)
 
     if (error) throw error
-    return data
+    if (!data || data.length === 0) return []
+
+    // Check active flash sales for items in cart
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const variantIds = data.map((ci: any) => ci.variant_id).filter(Boolean)
+    const flashMap = new Map<string, number>()
+
+    if (variantIds.length > 0) {
+      let activeMarket = 'ID'
+      try {
+        const { cookies } = await import('next/headers')
+        const cookieStore = await cookies()
+        const marketCookie = cookieStore.get('bb_market')?.value
+        if (marketCookie === 'MY' || marketCookie === 'ID') {
+          activeMarket = marketCookie
+        }
+      } catch {
+        // Fallback to ID in non-request contexts
+      }
+
+      const nowIso = new Date().toISOString()
+      const { data: flashItems } = await supabase
+        .from('flash_sale_items')
+        .select('variant_id, sale_price, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at, target_market)')
+        .in('variant_id', variantIds)
+        .eq('flash_sales.is_active', true)
+        .lte('flash_sales.starts_at', nowIso)
+        .gt('flash_sales.ends_at', nowIso)
+
+      if (flashItems) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const f of flashItems as any[]) {
+          const targetMarket = f.flash_sales?.target_market || 'ALL'
+          const isMarketMatch = targetMarket === 'ALL' || targetMarket === activeMarket
+          if (
+            isMarketMatch &&
+            (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota))
+          ) {
+            flashMap.set(f.variant_id, Number(f.sale_price))
+          }
+        }
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return data.map((item: any) => ({
+      ...item,
+      flash_sale_price: flashMap.get(item.variant_id),
+    }))
   }
 
   async upsertItems(cartId: string, items: CartItemDbData[]) {

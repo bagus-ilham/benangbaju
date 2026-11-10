@@ -96,7 +96,10 @@ export type Database = {
           sort_order: number
           starts_at: string | null
           subtitle: string | null
+          subtitle_en: string | null
+          target_market: 'ALL' | 'ID' | 'MY'
           title: string | null
+          title_en: string | null
         }
         Insert: {
           created_at?: string
@@ -110,7 +113,10 @@ export type Database = {
           sort_order?: number
           starts_at?: string | null
           subtitle?: string | null
+          subtitle_en?: string | null
+          target_market?: 'ALL' | 'ID' | 'MY'
           title?: string | null
+          title_en?: string | null
         }
         Update: {
           created_at?: string
@@ -124,7 +130,10 @@ export type Database = {
           sort_order?: number
           starts_at?: string | null
           subtitle?: string | null
+          subtitle_en?: string | null
+          target_market?: 'ALL' | 'ID' | 'MY'
           title?: string | null
+          title_en?: string | null
         }
         Relationships: []
       }
@@ -411,6 +420,7 @@ export type Database = {
           is_active: boolean
           name: string
           starts_at: string
+          target_market: 'ALL' | 'ID' | 'MY'
         }
         Insert: {
           banner_url?: string | null
@@ -421,6 +431,7 @@ export type Database = {
           is_active?: boolean
           name: string
           starts_at: string
+          target_market?: 'ALL' | 'ID' | 'MY'
         }
         Update: {
           banner_url?: string | null
@@ -431,6 +442,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           starts_at?: string
+          target_market?: 'ALL' | 'ID' | 'MY'
         }
         Relationships: []
       }
@@ -551,6 +563,7 @@ export type Database = {
           quantity: number
           sku: string
           subtotal: number
+          unit_price_myr: number | null
           variant_id: string | null
           variant_name: string
         }
@@ -563,6 +576,7 @@ export type Database = {
           quantity: number
           sku: string
           subtotal: number
+          unit_price_myr?: number | null
           variant_id?: string | null
           variant_name: string
         }
@@ -575,6 +589,7 @@ export type Database = {
           quantity?: number
           sku?: string
           subtotal?: number
+          unit_price_myr?: number | null
           variant_id?: string | null
           variant_name?: string
         }
@@ -674,9 +689,12 @@ export type Database = {
         Row: {
           cancel_reason: string | null
           cancelled_at: string | null
+          country_code: string
           created_at: string
           discount_amount: number
+          exchange_rate_at_order: number | null
           id: string
+          markup_percent_at_order: number | null
           notes: string | null
           order_number: string
           payment_channel: string | null
@@ -685,6 +703,7 @@ export type Database = {
           status: string
           subtotal: number
           total_amount: number
+          total_myr: number | null
           updated_at: string
           user_id: string
           voucher_id: string | null
@@ -692,9 +711,12 @@ export type Database = {
         Insert: {
           cancel_reason?: string | null
           cancelled_at?: string | null
+          country_code?: string
           created_at?: string
           discount_amount?: number
+          exchange_rate_at_order?: number | null
           id?: string
+          markup_percent_at_order?: number | null
           notes?: string | null
           order_number: string
           payment_channel?: string | null
@@ -703,6 +725,7 @@ export type Database = {
           status?: string
           subtotal: number
           total_amount: number
+          total_myr?: number | null
           updated_at?: string
           user_id: string
           voucher_id?: string | null
@@ -710,9 +733,12 @@ export type Database = {
         Update: {
           cancel_reason?: string | null
           cancelled_at?: string | null
+          country_code?: string
           created_at?: string
           discount_amount?: number
+          exchange_rate_at_order?: number | null
           id?: string
+          markup_percent_at_order?: number | null
           notes?: string | null
           order_number?: string
           payment_channel?: string | null
@@ -721,6 +747,7 @@ export type Database = {
           status?: string
           subtotal?: number
           total_amount?: number
+          total_myr?: number | null
           updated_at?: string
           user_id?: string
           voucher_id?: string | null
@@ -1191,9 +1218,11 @@ export type Database = {
       products: {
         Row: {
           care_guide: string | null
+          care_guide_en: string | null
           category_id: string
           created_at: string
           description: string | null
+          description_en: string | null
           hs_code: string | null
           id: string
           is_active: boolean
@@ -1205,6 +1234,7 @@ export type Database = {
           name: string
           search_vector: unknown
           short_description: string | null
+          short_description_en: string | null
           size_guide: string | null
           size_guide_inch: string | null
           slug: string
@@ -1213,9 +1243,11 @@ export type Database = {
         }
         Insert: {
           care_guide?: string | null
+          care_guide_en?: string | null
           category_id: string
           created_at?: string
           description?: string | null
+          description_en?: string | null
           hs_code?: string | null
           id?: string
           is_active?: boolean
@@ -1227,6 +1259,7 @@ export type Database = {
           name: string
           search_vector?: unknown
           short_description?: string | null
+          short_description_en?: string | null
           size_guide?: string | null
           size_guide_inch?: string | null
           slug: string
@@ -1235,9 +1268,11 @@ export type Database = {
         }
         Update: {
           care_guide?: string | null
+          care_guide_en?: string | null
           category_id?: string
           created_at?: string
           description?: string | null
+          description_en?: string | null
           hs_code?: string | null
           id?: string
           is_active?: boolean
@@ -1249,6 +1284,7 @@ export type Database = {
           name?: string
           search_vector?: unknown
           short_description?: string | null
+          short_description_en?: string | null
           size_guide?: string | null
           size_guide_inch?: string | null
           slug?: string
@@ -1801,6 +1837,7 @@ export type Database = {
           created_at: string
           id: string
           is_notified: boolean
+          market: string
           notified_at: string | null
           user_id: string
           variant_id: string
@@ -1809,6 +1846,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_notified?: boolean
+          market?: string
           notified_at?: string | null
           user_id: string
           variant_id: string
@@ -1817,6 +1855,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_notified?: boolean
+          market?: string
           notified_at?: string | null
           user_id?: string
           variant_id?: string
@@ -2218,7 +2257,7 @@ export type Database = {
         Returns: Json
       }
       generate_order_number: { Args: never; Returns: string }
-      get_analytics_data: { Args: { p_start_date: string }; Returns: Json }
+      get_analytics_data: { Args: { p_start_date: string; p_country_code?: string }; Returns: Json }
       get_dashboard_revenue: { Args: never; Returns: number }
       is_admin:
         | { Args: never; Returns: boolean }

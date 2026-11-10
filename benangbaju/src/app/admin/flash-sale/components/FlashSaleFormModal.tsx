@@ -51,6 +51,8 @@ interface FlashSaleFormModalProps {
   setEndsAt: (val: string) => void
   is_active: boolean
   setIsActive: (val: boolean) => void
+  target_market: 'ALL' | 'ID' | 'MY'
+  setTargetMarket: (val: 'ALL' | 'ID' | 'MY') => void
   items: FlashSaleFormItem[]
   setItems: React.Dispatch<React.SetStateAction<FlashSaleFormItem[]>>
 }
@@ -73,6 +75,8 @@ export function FlashSaleFormModal({
   setEndsAt,
   is_active,
   setIsActive,
+  target_market,
+  setTargetMarket,
   items,
   setItems,
 }: FlashSaleFormModalProps) {
@@ -144,6 +148,7 @@ export function FlashSaleFormModal({
         starts_at: new Date(starts_at).toISOString(),
         ends_at: new Date(ends_at).toISOString(),
         is_active,
+        target_market,
       },
       items,
     }
@@ -180,6 +185,33 @@ export function FlashSaleFormModal({
           placeholder="cth: Flash Sale Akhir Bulan Juni"
           required
         />
+
+        <div>
+          <label className="block text-[10px] font-heading font-bold text-neutral-400 uppercase tracking-widest mb-1.5">
+            Target Pasar (Market)
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { id: 'ALL', label: '🌐 Semua (ID & MY)', desc: 'Aktif untuk Indonesia dan Malaysia' },
+              { id: 'ID', label: '🇮🇩 Khusus ID', desc: 'Hanya pembeli Indonesia' },
+              { id: 'MY', label: '🇲🇾 Khusus MY', desc: 'Hanya pembeli Malaysia' },
+            ].map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => setTargetMarket(m.id as 'ALL' | 'ID' | 'MY')}
+                className={`p-2.5 rounded-xl border text-left transition-all ${
+                  target_market === m.id
+                    ? 'border-brand-burgundy bg-brand-burgundy/5 text-brand-burgundy font-medium ring-1 ring-brand-burgundy'
+                    : 'border-neutral-200 hover:border-neutral-300 text-neutral-600'
+                }`}
+              >
+                <div className="font-semibold text-xs">{m.label}</div>
+                <div className="text-[10px] text-neutral-400 mt-0.5 line-clamp-1">{m.desc}</div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <Input
@@ -297,6 +329,7 @@ export function FlashSaleFormModal({
             items={items}
             handleUpdateItemField={handleUpdateItemField}
             handleRemoveItem={handleRemoveItem}
+            showMalaysiaPreview={target_market === 'ALL' || target_market === 'MY'}
           />
         </div>
 

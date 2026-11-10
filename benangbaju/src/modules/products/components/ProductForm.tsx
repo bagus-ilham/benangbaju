@@ -70,6 +70,9 @@ export interface InitialProductData {
   is_featured: boolean
   meta_title: string | null
   meta_description: string | null
+  short_description_en?: string | null
+  description_en?: string | null
+  care_guide_en?: string | null
   size_guide?: string | null
   size_guide_inch?: string | null
   hs_code?: string | null
@@ -99,7 +102,7 @@ export function ProductForm({
   const { data: collectionsRes, isLoading: colsLoading } = useAdminCollections()
   const collections = collectionsRes?.data || []
 
-  const { watch, setValue, handleSubmit, reset } = useForm<ProductFormValues>({
+  const { watch, setValue, getValues, handleSubmit, reset } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: mapInitialDataToForm(initialData),
   })
@@ -332,18 +335,20 @@ export function ProductForm({
   }
 
   const handleUpdateLinkField = (idx: number, field: string, value: string | number | null) => {
-    const currentLinks = watch('links')
+    const currentLinks = getValues('links')
     setValue(
       'links',
-      currentLinks.map((link, i) => (i === idx ? { ...link, [field]: value } : link))
+      currentLinks.map((link, i) => (i === idx ? { ...link, [field]: value } : link)),
+      { shouldDirty: true }
     )
   }
 
   const handleRemoveLink = (idx: number) => {
-    const currentLinks = watch('links')
+    const currentLinks = getValues('links')
     setValue(
       'links',
-      currentLinks.filter((_, i) => i !== idx)
+      currentLinks.filter((_, i) => i !== idx),
+      { shouldDirty: true }
     )
   }
 
@@ -364,6 +369,9 @@ export function ProductForm({
         slug: data.productData.slug.trim(),
         description: data.productData.description?.trim() || null,
         short_description: data.productData.short_description?.trim() || null,
+        short_description_en: data.productData.short_description_en?.trim() || null,
+        description_en: data.productData.description_en?.trim() || null,
+        care_guide_en: data.productData.care_guide_en?.trim() || null,
         weight_gram: data.productData.weight_gram,
         is_active: data.productData.is_active,
         is_featured: data.productData.is_featured,
@@ -458,14 +466,20 @@ export function ProductForm({
             onHsCodeChange={(val) => setValue('productData.hs_code', val)}
             shortDescription={productData.short_description || ''}
             onShortDescriptionChange={(val) => setValue('productData.short_description', val)}
+            shortDescriptionEn={productData.short_description_en || ''}
+            onShortDescriptionEnChange={(val) => setValue('productData.short_description_en', val)}
             description={productData.description || ''}
             onDescriptionChange={(val) => setValue('productData.description', val)}
+            descriptionEn={productData.description_en || ''}
+            onDescriptionEnChange={(val) => setValue('productData.description_en', val)}
             sizeGuide={productData.size_guide || ''}
             onSizeGuideChange={(val) => setValue('productData.size_guide', val)}
             sizeGuideInch={productData.size_guide_inch || ''}
             onSizeGuideInchChange={(val) => setValue('productData.size_guide_inch', val)}
             careGuide={productData.care_guide || ''}
             onCareGuideChange={(val) => setValue('productData.care_guide', val)}
+            careGuideEn={productData.care_guide_en || ''}
+            onCareGuideEnChange={(val) => setValue('productData.care_guide_en', val)}
             isActive={productData.is_active}
             onIsActiveChange={(val) => setValue('productData.is_active', val)}
             isFeatured={productData.is_featured}

@@ -60,7 +60,7 @@ export function EditProfileForm({
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           maxLength={20}
-          placeholder="cth: 08123456789"
+          placeholder={isMY ? "e.g. +60123456789" : "cth: 08123456789"}
         />
 
         <div className="pt-4 border-t border-neutral-200/60 flex justify-end">

@@ -55,9 +55,26 @@ export function FlashSaleListTable({
                 return (
                   <tr key={camp.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
-                      <span className="font-semibold text-neutral-900 text-sm block">
-                        {camp.name}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-neutral-900 text-sm">
+                          {camp.name}
+                        </span>
+                        {camp.target_market === 'ID' && (
+                          <span className="text-[10px] font-semibold bg-rose-50 text-rose-700 px-2 py-0.5 rounded-full border border-rose-200">
+                            🇮🇩 ID
+                          </span>
+                        )}
+                        {camp.target_market === 'MY' && (
+                          <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
+                            🇲🇾 MY
+                          </span>
+                        )}
+                        {(!camp.target_market || camp.target_market === 'ALL') && (
+                          <span className="text-[10px] font-semibold bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full border border-neutral-200">
+                            🌐 ALL
+                          </span>
+                        )}
+                      </div>
                       {isRunning && (
                         <span className="inline-block mt-1 text-[8px] bg-red-600 text-white font-bold tracking-wider uppercase px-2 py-0.5 rounded-full">
                           Sedang Berjalan (LIVE)

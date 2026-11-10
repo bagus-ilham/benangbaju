@@ -17,7 +17,7 @@ export async function checkAndDispatchStockNotifications(
   try {
     const { data: pending } = await supabase
       .from('stock_notifications')
-      .select('id, user_id, product_variants(name, products(name, slug))')
+      .select('id, user_id, market, product_variants(name, products(name, slug))')
       .eq('variant_id', variantId)
       .eq('is_notified', false)
 
@@ -25,20 +25,23 @@ export async function checkAndDispatchStockNotifications(
 
     const nowIso = new Date().toISOString()
     const notificationInserts = pending.map((item) => {
+      const isMY = item.market === 'MY'
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const variantName = (item.product_variants as any)?.name || 'Varian'
+      const variantName = (item.product_variants as any)?.name || (isMY ? 'Variant' : 'Varian')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const productName = (item.product_variants as any)?.products?.name || 'Produk'
+      const productName = (item.product_variants as any)?.products?.name || (isMY ? 'Product' : 'Produk')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const productSlug = (item.product_variants as any)?.products?.slug || ''
 
       return {
         user_id: item.user_id,
         type: 'stock_restock',
-        title: 'Produk Tersedia Kembali!',
-        message: `${productName} (${variantName}) kini sudah restock dan tersedia kembali.`,
+        title: isMY ? 'Back in Stock! ✨' : 'Produk Tersedia Kembali!',
+        message: isMY
+          ? `${productName} (${variantName}) is back in stock and ready to order.`
+          : `${productName} (${variantName}) kini sudah restock dan tersedia kembali.`,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        data: { variant_id: variantId, product_slug: productSlug } as any,
+        data: { variant_id: variantId, product_slug: productSlug, market: item.market || 'ID' } as any,
       }
     })
 

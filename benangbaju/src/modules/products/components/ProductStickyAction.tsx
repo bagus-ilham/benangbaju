@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/shared/components'
-import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { formatIDR, getMyPrice } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
@@ -32,7 +32,8 @@ export function ProductStickyAction({
   onBuyNow,
 }: ProductStickyActionProps): React.JSX.Element {
   const market = useMarket()
-  const { myrExchangeRate } = useSiteSettings()
+  const isMY = market === 'MY'
+  const { myPricingConfig } = useSiteSettings()
 
   const currentPrice = selectedVariant ? Number(selectedVariant.price) : minPrice
   const comparePrice = selectedVariant?.compare_price
@@ -72,26 +73,31 @@ export function ProductStickyAction({
                   {product.name}
                 </div>
                 <div className="flex items-baseline gap-1.5 mt-0.5">
-                  <span className="text-xs font-sans font-bold text-brand-plum">
-                    {formatIDR(currentPrice)}
-                  </span>
-                  {comparePrice && comparePrice > currentPrice && (
-                    <span className="text-[10px] text-neutral-500 line-through font-sans">
-                      {formatIDR(comparePrice)}
-                    </span>
-                  )}
-                  {market === 'MY' && (
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-[10px] font-sans font-semibold text-emerald-800">
-                        ({formatApproxMYR(currentPrice, myrExchangeRate)}
+                  {isMY ? (
+                    <>
+                      <span className="text-xs font-sans font-bold text-brand-plum">
+                        {getMyPrice(currentPrice, myPricingConfig).formattedMyr}
                       </span>
                       {comparePrice && comparePrice > currentPrice && (
-                        <span className="text-[9px] text-neutral-500 line-through font-sans">
-                          {formatApproxMYR(comparePrice, myrExchangeRate)}
+                        <span className="text-[10px] text-neutral-500 line-through font-sans">
+                          {getMyPrice(comparePrice, myPricingConfig).formattedMyr}
                         </span>
                       )}
-                      <span className="text-[10px] font-sans font-semibold text-emerald-800">)</span>
-                    </div>
+                      <span className="text-[10px] font-sans font-semibold text-neutral-500">
+                        (≈ {formatIDR(getMyPrice(currentPrice, myPricingConfig).chargedIdr)})
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-xs font-sans font-bold text-brand-plum">
+                        {formatIDR(currentPrice)}
+                      </span>
+                      {comparePrice && comparePrice > currentPrice && (
+                        <span className="text-[10px] text-neutral-500 line-through font-sans">
+                          {formatIDR(comparePrice)}
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

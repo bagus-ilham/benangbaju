@@ -137,6 +137,9 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
   }, [flashSale])
 
   if (!flashSale || !timeLeft) return null
+  if (flashSale.target_market && flashSale.target_market !== 'ALL' && flashSale.target_market !== market) {
+    return null
+  }
 
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 

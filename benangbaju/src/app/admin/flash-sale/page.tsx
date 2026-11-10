@@ -61,6 +61,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
   const [starts_at, setStartsAt] = useState('')
   const [ends_at, setEndsAt] = useState('')
   const [is_active, setIsActive] = useState(true)
+  const [target_market, setTargetMarket] = useState<'ALL' | 'ID' | 'MY'>('ALL')
 
   // Campaign items state
   const [items, setItems] = useState<FlashSaleFormItem[]>([])
@@ -73,6 +74,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
     setStartsAt('')
     setEndsAt('')
     setIsActive(true)
+    setTargetMarket('ALL')
     setItems([])
     setIsOpen(true)
   }
@@ -85,6 +87,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
     setStartsAt(formatLocalISO(camp.starts_at))
     setEndsAt(formatLocalISO(camp.ends_at))
     setIsActive(camp.is_active !== false)
+    setTargetMarket(camp.target_market || 'ALL')
 
     if (camp.flash_sale_items) {
       setItems(
@@ -111,6 +114,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
     setStartsAt(formatLocalISO(camp.starts_at))
     setEndsAt(formatLocalISO(camp.ends_at))
     setIsActive(camp.is_active !== false)
+    setTargetMarket(camp.target_market || 'ALL')
 
     if (camp.flash_sale_items) {
       setItems(
@@ -218,6 +222,8 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
         setEndsAt={setEndsAt}
         is_active={is_active}
         setIsActive={setIsActive}
+        target_market={target_market}
+        setTargetMarket={setTargetMarket}
         items={items}
         setItems={setItems}
       />

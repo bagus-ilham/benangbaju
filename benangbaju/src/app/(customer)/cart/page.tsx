@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button, Card, PageContainer, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
-import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { formatIDR, getMyPrice, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import toast from 'react-hot-toast'
@@ -17,7 +17,8 @@ export default function CartPage(): React.JSX.Element {
   const updateQuantity = useCartStore((state) => state.updateQuantity)
   const removeItem = useCartStore((state) => state.removeItem)
   const market = useMarket()
-  const { myrExchangeRate } = useSiteSettings()
+  const isMY = market === 'MY'
+  const { myPricingConfig, freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
@@ -27,6 +28,40 @@ export default function CartPage(): React.JSX.Element {
     return acc + basePrice * item.quantity
   }, 0)
   const totalDiscount = originalSubtotal - subtotal
+
+  const totalMyr = isMY
+    ? items.reduce(
+        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity,
+        0
+      )
+    : 0
+  const chargedSubtotal = isMY
+    ? items.reduce(
+        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity,
+        0
+      )
+    : subtotal
+  const originalMyr = isMY
+    ? items.reduce(
+        (acc, item) =>
+          acc + getMyPrice(item.comparePrice || item.price, myPricingConfig).priceMyr * item.quantity,
+        0
+      )
+    : 0
+  const originalChargedSubtotal = isMY
+    ? items.reduce(
+        (acc, item) =>
+          acc + getMyPrice(item.comparePrice || item.price, myPricingConfig).chargedIdr * item.quantity,
+        0
+      )
+    : originalSubtotal
+
+  const targetThreshold = isMY ? freeShippingThresholdMyr : freeShippingThresholdIdr
+  const currentProgressAmount = isMY ? totalMyr : subtotal
+  const isFreeShipping = items.length > 0 && currentProgressAmount >= targetThreshold
+  const remainingAmount = Math.max(0, targetThreshold - currentProgressAmount)
+  const progressPercent =
+    items.length === 0 ? 0 : Math.min(100, (currentProgressAmount / targetThreshold) * 100)
 
   const [isMounted, setIsMounted] = useState(false)
 
@@ -98,7 +133,54 @@ export default function CartPage(): React.JSX.Element {
           // Cart Grid Layout
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left: Cart Items List (8 cols) */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 space-y-4">
+              {/* Free Shipping Progress Bar */}
+              <div className="bg-white/80 border border-neutral-200/80 rounded-2xl p-4 md:p-5 shadow-xs space-y-2">
+                <div className="flex items-center justify-between text-xs font-heading font-medium tracking-wide text-brand-plum">
+                  <span>
+                    {isFreeShipping ? (
+                      <span className="text-emerald-700 font-bold flex items-center gap-1.5">
+                        <span>🎉</span>
+                        {isMY
+                          ? 'Congratulations! You Unlocked Free Shipping to Malaysia'
+                          : 'Selamat! Anda Mendapatkan Gratis Ongkir'}
+                      </span>
+                    ) : (
+                      <>
+                        {isMY ? (
+                          <>
+                            Add{' '}
+                            <span className="font-bold text-brand-plum">
+                              {formatMYR(remainingAmount)}
+                            </span>{' '}
+                            more for <span className="font-bold">Free Shipping to Malaysia</span>
+                          </>
+                        ) : (
+                          <>
+                            Belanja{' '}
+                            <span className="font-bold text-brand-plum">
+                              {formatIDR(remainingAmount)}
+                            </span>{' '}
+                            lagi untuk <span className="font-bold">Gratis Ongkir</span>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </span>
+                  <span className="text-[11px] font-sans font-semibold text-neutral-400">
+                    {Math.round(progressPercent)}%
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-neutral-200/70 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-brand-gold to-amber-300 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-0">
                 <AnimatePresence mode="popLayout">
                   {items.map((item) => (
@@ -137,24 +219,32 @@ export default function CartPage(): React.JSX.Element {
                             <p className="text-[9px] text-neutral-600 font-sans">SKU: {item.sku}</p>
                           )}
                           <div className="flex flex-col pt-1">
-                            <div className="flex items-baseline space-x-2">
-                              <span className="text-xs font-sans font-bold text-brand-plum">
-                                {formatIDR(item.price * item.quantity)}
-                              </span>
-                              {item.comparePrice && item.comparePrice > item.price && (
-                                <span className="text-[10px] font-sans text-neutral-600 line-through">
-                                  {formatIDR(item.comparePrice * item.quantity)}
-                                </span>
-                              )}
-                            </div>
-                            {market === 'MY' && (
-                              <div className="flex items-baseline space-x-1.5 mt-0.5">
-                                <span className="text-[10px] font-sans font-bold text-emerald-800">
-                                  {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                            {isMY ? (
+                              <>
+                                <div className="flex items-baseline space-x-2">
+                                  <span className="text-xs font-sans font-bold text-brand-plum">
+                                    {formatMYR(getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity)}
+                                  </span>
+                                  {item.comparePrice && item.comparePrice > item.price && (
+                                    <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                      {formatMYR(getMyPrice(item.comparePrice, myPricingConfig).priceMyr * item.quantity)}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-baseline space-x-1 mt-0.5">
+                                  <span className="text-[10px] font-sans font-semibold text-neutral-500">
+                                    ≈ {formatIDR(getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity)}
+                                  </span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="flex items-baseline space-x-2">
+                                <span className="text-xs font-sans font-bold text-brand-plum">
+                                  {formatIDR(item.price * item.quantity)}
                                 </span>
                                 {item.comparePrice && item.comparePrice > item.price && (
-                                  <span className="text-[9px] font-sans text-neutral-500 line-through">
-                                    {formatApproxMYR(item.comparePrice * item.quantity, myrExchangeRate)}
+                                  <span className="text-[10px] font-sans text-neutral-600 line-through">
+                                    {formatIDR(item.comparePrice * item.quantity)}
                                   </span>
                                 )}
                               </div>
@@ -226,34 +316,63 @@ export default function CartPage(): React.JSX.Element {
                     <span>{market === 'MY' ? 'Total Items' : 'Jumlah Barang'}</span>
                     <span className="text-brand-plum font-semibold">{totalQuantity} pcs</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-baseline">
                     <span>{market === 'MY' ? 'Base Price' : 'Total Harga (Base)'}</span>
-                    <span>{formatIDR(originalSubtotal)}</span>
+                    <div className="text-right">
+                      <span>
+                        {isMY ? formatMYR(originalMyr) : formatIDR(originalSubtotal)}
+                      </span>
+                      {isMY && (
+                        <span className="block text-[10px] text-neutral-400">
+                          ≈ {formatIDR(originalChargedSubtotal)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {totalDiscount > 0 && (
                     <div className="flex justify-between text-red-600 font-semibold">
                       <span>{market === 'MY' ? 'Total Discount' : 'Total Diskon Produk'}</span>
-                      <span>-{formatIDR(totalDiscount)}</span>
+                      <span>
+                        -{isMY ? formatMYR(originalMyr - totalMyr) : formatIDR(totalDiscount)}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between text-xs text-neutral-400 italic pt-1">
-                    <span>{market === 'MY' ? '* Shipping fees will be calculated at checkout' : '* Ongkos kirim dihitung saat checkout'}</span>
+                    <span>
+                      {market === 'MY'
+                        ? '* Charged in IDR via QRIS. Shipping fees calculated at checkout.'
+                        : '* Ongkos kirim dihitung saat checkout'}
+                    </span>
                   </div>
 
                   <div className="flex flex-col border-t border-neutral-200 pt-4">
                     <div className="flex justify-between text-sm font-sans font-bold text-brand-plum">
                       <span>Subtotal</span>
-                      <span className="text-base font-bold">{formatIDR(subtotal)}</span>
+                      <span className="text-base font-bold">
+                        {isMY ? formatMYR(totalMyr) : formatIDR(subtotal)}
+                      </span>
                     </div>
-                    {market === 'MY' && (
+                    {isMY && (
                       <div className="flex justify-end mt-1">
-                        <span className="text-xs font-sans font-bold text-emerald-800">
-                          {formatApproxMYR(subtotal, myrExchangeRate)}
+                        <span className="text-xs font-sans font-semibold text-neutral-500">
+                          ≈ {formatIDR(chargedSubtotal)}
                         </span>
                       </div>
                     )}
                   </div>
                 </div>
+
+                {isMY && totalMyr >= 450 && (
+                  <div className="p-3 bg-amber-50 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 leading-snug flex items-start gap-2">
+                    <span className="text-base shrink-0">ℹ️</span>
+                    <div>
+                      <span className="font-semibold">Malaysian Customs Notice:</span>{' '}
+                      {totalMyr >= 500
+                        ? 'Orders exceeding RM 500 may be subject to SST / import duty upon arrival according to Malaysian Royal Customs regulations.'
+                        : 'Your order is approaching the RM 500 De Minimis duty-free threshold. Shipments above RM 500 may incur local customs duties.'}
+                    </div>
+                  </div>
+                )}
 
                 <Link href="/checkout" className="block w-full pt-2">
                   <Button

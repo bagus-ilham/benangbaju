@@ -61,6 +61,18 @@ export const useMarketStore = create<MarketState>()(
         setCookie('bb_market', market)
       },
       syncFromCookie: () => {
+        // 1. Check URL query param ?market= (e.g. from Meta/TikTok Ads campaign link)
+        if (typeof window !== 'undefined') {
+          const urlParams = new URLSearchParams(window.location.search)
+          const urlMarket = urlParams.get('market')?.toUpperCase()
+          if (urlMarket === 'ID' || urlMarket === 'MY') {
+            set({ market: urlMarket as Market, isHydrated: true })
+            setCookie('bb_market', urlMarket)
+            return
+          }
+        }
+
+        // 2. Fallback to bb_market cookie
         const cookieVal = getCookie('bb_market')?.toUpperCase()
         if (cookieVal === 'ID' || cookieVal === 'MY') {
           set({ market: cookieVal as Market, isHydrated: true })

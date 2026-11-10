@@ -16,7 +16,7 @@ import toast from 'react-hot-toast'
 import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
 import { AdminOrderStatusPanel } from './components/AdminOrderStatusPanel'
 import { AdminOrderPaymentPanel } from './components/AdminOrderPaymentPanel'
-import { formatDateWithTimezone } from '@/lib/utils'
+import { formatDateWithTimezone, formatMYR } from '@/lib/utils'
 
 const supabase = createBrowserClient()
 
@@ -119,16 +119,28 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
     if (!order) return
     setIsInvoiceLoading(true)
     try {
-      const { data: invoiceRes, error } = await supabase.functions.invoke('generate-invoice', {
-        body: { order_number: order.order_number },
-      })
+      let htmlContent: string | null = null
+      const isMalaysiaOrder =
+        order.country_code === 'MY' || order.order_shipping?.country_code === 'MY'
 
-      if (error || !invoiceRes.success) {
-        toast.error('Gagal menghasilkan invoice')
-        return
+      if (!isMalaysiaOrder) {
+        try {
+          const { data: invoiceRes, error } = await supabase.functions.invoke('generate-invoice', {
+            body: { order_number: order.order_number },
+          })
+          if (!error && invoiceRes?.success && invoiceRes?.data?.html) {
+            htmlContent = invoiceRes.data.html
+          }
+        } catch {
+          // Fallback to client generator
+        }
       }
 
-      const htmlContent = invoiceRes.data?.html
+      if (!htmlContent) {
+        const { generateCustomerInvoiceHtml } = await import('@/lib/utils/invoice-generator')
+        htmlContent = generateCustomerInvoiceHtml(order, { isBilingualMY: isMalaysiaOrder })
+      }
+
       if (htmlContent) {
         const printWindow = window.open('', '_blank')
         if (printWindow) {
@@ -139,16 +151,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
           toast.error('Pop-up terblokir browser. Harap izinkan pop-up.')
         }
       } else {
-        // Bucket `invoices` is private — use a short-lived signed URL
-        const { data: urlData } = await supabase.storage
-          .from('invoices')
-          .createSignedUrl(`${order.order_number}.html`, 60)
-
-        if (urlData?.signedUrl) {
-          window.open(urlData.signedUrl, '_blank')
-        } else {
-          toast.error('Gagal menemukan tautan unduh invoice')
-        }
+        toast.error('Gagal menghasilkan invoice')
       }
     } catch (err) {
       console.error(err)
@@ -181,7 +184,10 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
     )
   }
 
-  const isMalaysia = order.order_shipping?.country_code === 'MY'
+  const isMalaysia = order.country_code === 'MY' || order.order_shipping?.country_code === 'MY'
+  const isEastMalaysia =
+    isMalaysia &&
+    /sabah|sarawak|labuan/i.test(order.order_shipping?.province_name || '')
   const declaredValueIdr = Math.max(0, Number(order.subtotal || 0) - Number(order.discount_amount || 0))
 
   return (
@@ -216,7 +222,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
           <span className="text-2xl">🇲🇾</span>
           <div>
             <p className="font-bold text-xs uppercase tracking-wide text-amber-900">
-              Pesanan Ekspor: Semenanjung Malaysia (West Malaysia)
+              Pesanan Ekspor: {isEastMalaysia ? 'Malaysia Timur (Sabah / Sarawak / Labuan)' : 'Semenanjung Malaysia (West Malaysia)'}
             </p>
             <p className="text-[11px] text-amber-800 mt-0.5">
               Tujuan internasional via {order.order_shipping?.courier_name || 'Kurir Ekspor'}. Gunakan panel Deklarasi Bea Cukai di bawah untuk mempermudah booking kurir ekspor (KiriminAja / Lion Parcel / Ninja Van MY).
@@ -255,17 +261,30 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
                     </p>
                     <p className="text-xs text-neutral-500 mt-0.5">
                       {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
+                      {isMalaysia && item.unit_price_myr && (
+                        <span className="ml-1.5 text-emerald-800 font-semibold">
+                          ({formatMYR(Number(item.unit_price_myr))})
+                        </span>
+                      )}
                     </p>
                   </div>
-                  <span className="font-bold text-neutral-900 whitespace-nowrap">
-                    Rp {item.subtotal.toLocaleString('id-ID')}
-                  </span>
+                  <div className="text-right whitespace-nowrap">
+                    <span className="font-bold text-neutral-900 block">
+                      Rp {item.subtotal.toLocaleString('id-ID')}
+                    </span>
+                    {isMalaysia && item.unit_price_myr && (
+                      <span className="text-[11px] font-bold text-emerald-800 block">
+                        {formatMYR(Number(item.unit_price_myr) * item.quantity)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           </AdminPanel>
 
           <AdminOrderShippingPanel
+            order={order}
             orderShipping={order.order_shipping}
             orderItems={order.order_items}
             declaredValueIdr={declaredValueIdr}

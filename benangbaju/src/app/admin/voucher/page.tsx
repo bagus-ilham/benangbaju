@@ -11,6 +11,8 @@ import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO, formatDate, formatIDR } from '@/lib/utils/format'
+import { formatMYR } from '@/lib/utils'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { Voucher } from '@/modules/vouchers/types'
 import { VoucherFormModal } from './components/VoucherFormModal'
 
@@ -19,10 +21,14 @@ const supabase = createBrowserClient()
 export default function AdminVouchersPage(): React.JSX.Element {
   const { data: vouchersRes, isLoading, isError, refetch } = useAdminVouchers()
   const vouchers = vouchersRes?.data || []
+  const { myrExchangeRate } = useSiteSettings()
 
   const createMutation = useAdminCreateVoucher()
   const updateMutation = useAdminUpdateVoucher()
   const deleteMutation = useAdminDeleteVoucher()
+
+  // Filter state
+  const [countryFilter, setCountryFilter] = useState<'ALL' | 'GLOBAL' | 'ID' | 'MY'>('ALL')
 
   // Modal control states
   const [isOpen, setIsOpen] = useState(false)
@@ -194,6 +200,17 @@ export default function AdminVouchersPage(): React.JSX.Element {
     }
   }
 
+  const filteredVouchers = vouchers.filter((v: Voucher) => {
+    const isMY = v.applicable_countries?.includes('MY') && !v.applicable_countries?.includes('ID')
+    const isID = v.applicable_countries?.includes('ID') && !v.applicable_countries?.includes('MY')
+    const isGlobal = !isMY && !isID
+
+    if (countryFilter === 'GLOBAL') return isGlobal
+    if (countryFilter === 'ID') return isID
+    if (countryFilter === 'MY') return isMY
+    return true
+  })
+
   return (
     <div className="space-y-8">
       <AdminPageHeader
@@ -207,6 +224,48 @@ export default function AdminVouchersPage(): React.JSX.Element {
           <HandDrawnIcon name="plus" className="h-3.5 w-3.5 mr-1.5" /> Tambah Voucher
         </Button>
       </AdminPageHeader>
+
+      {/* Country Filter Tabs */}
+      <div className="flex items-center gap-2 border-b border-neutral-200 pb-3 overflow-x-auto text-xs font-sans">
+        {[
+          { key: 'ALL', label: `Semua Voucher (${vouchers.length})` },
+          {
+            key: 'GLOBAL',
+            label: `🌐 Global ID & MY (${
+              vouchers.filter(
+                (v) =>
+                  !((v.applicable_countries?.includes('MY') && !v.applicable_countries?.includes('ID')) ||
+                    (v.applicable_countries?.includes('ID') && !v.applicable_countries?.includes('MY')))
+              ).length
+            })`,
+          },
+          {
+            key: 'ID',
+            label: `🇮🇩 Khusus ID (${
+              vouchers.filter((v) => v.applicable_countries?.includes('ID') && !v.applicable_countries?.includes('MY')).length
+            })`,
+          },
+          {
+            key: 'MY',
+            label: `🇲🇾 Khusus MY (${
+              vouchers.filter((v) => v.applicable_countries?.includes('MY') && !v.applicable_countries?.includes('ID')).length
+            })`,
+          },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setCountryFilter(tab.key as any)}
+            className={`px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap ${
+              countryFilter === tab.key
+                ? 'bg-neutral-900 text-white'
+                : 'bg-brand-cream border border-neutral-200 text-neutral-600 hover:border-neutral-300'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
       <div className="border border-neutral-200 bg-brand-cream rounded-2xl overflow-hidden">
         {isLoading ? (
@@ -228,9 +287,9 @@ export default function AdminVouchersPage(): React.JSX.Element {
               Coba Lagi
             </Button>
           </div>
-        ) : vouchers.length === 0 ? (
+        ) : filteredVouchers.length === 0 ? (
           <div className="py-24 text-center text-neutral-400 italic text-xs">
-            Belum ada kupon diskon ditambahkan.
+            {vouchers.length === 0 ? 'Belum ada kupon diskon ditambahkan.' : 'Tidak ada voucher untuk filter negara ini.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -246,7 +305,7 @@ export default function AdminVouchersPage(): React.JSX.Element {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-                {vouchers.map((v: Voucher) => (
+                {filteredVouchers.map((v: Voucher) => (
                   <tr key={v.id} className="hover:bg-neutral-50/20 transition duration-150">
                     <td className="py-4 px-5">
                       <span className="font-bold text-neutral-900 text-sm block font-mono select-all tracking-wider">
@@ -284,8 +343,18 @@ export default function AdminVouchersPage(): React.JSX.Element {
                           ? `${v.value}%`
                           : formatIDR(v.value)}
                       </p>
+                      {v.applicable_countries?.includes('MY') && v.discount_type === 'fixed' && (
+                        <p className="text-[10px] text-amber-900 font-semibold">
+                          ≈ {formatMYR(Math.round((v.value / myrExchangeRate) * 100) / 100)}
+                        </p>
+                      )}
                       <p className="text-[10px] text-neutral-450 font-normal">
                         Min Belanja: {formatIDR(v.min_purchase)}
+                        {v.applicable_countries?.includes('MY') && v.min_purchase > 0 && (
+                          <span className="text-amber-900 font-medium ml-1">
+                            (≈ {formatMYR(Math.round((v.min_purchase / myrExchangeRate) * 100) / 100)})
+                          </span>
+                        )}
                       </p>
                     </td>
                     <td className="py-4 px-4 text-center">

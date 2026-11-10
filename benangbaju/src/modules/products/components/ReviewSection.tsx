@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
+﻿/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import React from 'react'
@@ -117,7 +117,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
         <div className="flex flex-col space-y-4 md:w-1/3 bg-brand-cream border border-neutral-200/80 p-6 md:p-8 rounded-2xl shadow-xs relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
           <h2 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
-            Ulasan Pembeli
+            {isMY ? 'Customer Reviews' : 'Ulasan Pembeli'}
           </h2>
           <div className="flex items-baseline space-x-2">
             <span className="text-4xl font-sans font-bold text-brand-plum tracking-tight">
@@ -151,7 +151,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                         {review.is_verified_purchase && (
                           <span className="flex items-center text-[9px] uppercase tracking-wider text-brand-blue font-sans font-bold">
                             <HandDrawnIcon name="check-circle" className="h-2.5 w-2.5 mr-1" />
-                            Terverifikasi
+                            {isMY ? 'Verified Purchase' : 'Terverifikasi'}
                           </span>
                         )}
                       </div>

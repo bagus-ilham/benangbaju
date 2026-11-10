@@ -129,7 +129,8 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     setReturnFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const isMalaysia = order?.order_shipping?.country_code === 'MY'
+  const isMalaysia =
+    order?.country_code === 'MY' || order?.order_shipping?.country_code === 'MY'
 
   const handleSubmitReturn = async (e: React.FormEvent) => {
     e.preventDefault()

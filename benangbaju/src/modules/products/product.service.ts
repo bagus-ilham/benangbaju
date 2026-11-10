@@ -44,7 +44,7 @@ export class ProductService {
         if (activeSale && activeSale.flash_sale_items && activeSale.flash_sale_items.length > 0) {
           const fsMap = new Map(
             activeSale.flash_sale_items
-              .filter((item) => item.quota > item.sold_count)
+              .filter((item) => item.quota === 0 || item.quota > item.sold_count)
               .map((item) => [item.variant_id, item])
           )
 
@@ -53,6 +53,9 @@ export class ProductService {
             if (fsItem) {
               return {
                 ...v,
+                regular_price: Number(v.price),
+                regular_compare_price: v.compare_price ? Number(v.compare_price) : null,
+                flash_sale_target_market: activeSale.target_market || 'ALL',
                 price: Number(fsItem.sale_price),
                 compare_price: Number(fsItem.original_price) || Number(v.price),
               }
@@ -90,6 +93,9 @@ export class ProductService {
         slug: data.slug,
         description: data.description,
         short_description: data.short_description,
+        description_en: data.description_en,
+        short_description_en: data.short_description_en,
+        care_guide_en: data.care_guide_en,
         meta_title: data.meta_title,
         meta_description: data.meta_description,
         weight_gram: data.weight_gram,

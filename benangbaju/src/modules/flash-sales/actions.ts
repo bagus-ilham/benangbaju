@@ -16,6 +16,7 @@ export async function adminCreateFlashSaleAction(
     starts_at: string
     ends_at: string
     is_active: boolean
+    target_market?: 'ALL' | 'ID' | 'MY'
   },
   items: {
     variant_id: string
@@ -37,6 +38,7 @@ export async function adminUpdateFlashSaleAction(
     starts_at: string
     ends_at: string
     is_active: boolean
+    target_market?: 'ALL' | 'ID' | 'MY'
   },
   items: {
     variant_id: string

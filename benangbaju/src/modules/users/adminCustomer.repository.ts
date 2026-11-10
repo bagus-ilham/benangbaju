@@ -13,9 +13,12 @@ export class AdminCustomerRepository {
     const to = from + limit - 1
     const { data, count, error } = await supabase
       .from('profiles')
-      .select('id, name, email, phone, avatar_url, role, is_active, created_at, updated_at', {
-        count: 'exact',
-      })
+      .select(
+        'id, name, email, phone, avatar_url, role, is_active, created_at, updated_at, user_addresses(country_code, is_default)',
+        {
+          count: 'exact',
+        }
+      )
       .neq('role', 'admin')
       .order('created_at', { ascending: false })
       .range(from, to)
@@ -25,17 +28,27 @@ export class AdminCustomerRepository {
       return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal memuat daftar pelanggan')
     }
 
-    const profiles = (data || []).map((row) => ({
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      phone: row.phone,
-      avatar_url: row.avatar_url,
-      role: row.role,
-      is_active: row.is_active,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    }))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profiles = (data || []).map((row: any) => {
+      const addresses = Array.isArray(row.user_addresses) ? row.user_addresses : []
+      const defaultAddr = addresses.find((a: any) => a.is_default) || addresses[0]
+      const phoneStr = (row.phone || '').trim()
+      const isMyPhone = phoneStr.startsWith('+60') || phoneStr.startsWith('60')
+      const countryCode = defaultAddr?.country_code === 'MY' || isMyPhone ? 'MY' : 'ID'
+
+      return {
+        id: row.id,
+        name: row.name,
+        email: row.email,
+        phone: row.phone,
+        avatar_url: row.avatar_url,
+        country_code: countryCode,
+        role: row.role,
+        is_active: row.is_active,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+      }
+    })
 
     return paginated(profiles, page, limit, count || 0)
   }

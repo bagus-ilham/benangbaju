@@ -66,6 +66,36 @@ export function ProductDetailClient({
   const [showStickyBar, setShowStickyBar] = useState(false)
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
 
+  // B3-2: Filter flash sale price overlay based on active market
+  const effectiveProduct = React.useMemo<ProductDetailItem>(() => {
+    const resolvedVariants = (product.product_variants || []).map((v) => {
+      if (
+        v.flash_sale_target_market &&
+        v.flash_sale_target_market !== 'ALL' &&
+        v.flash_sale_target_market !== market &&
+        v.regular_price !== undefined
+      ) {
+        return {
+          ...v,
+          price: v.regular_price,
+          compare_price: v.regular_compare_price ?? null,
+        }
+      }
+      return v
+    })
+    return {
+      ...product,
+      product_variants: resolvedVariants,
+    }
+  }, [product, market])
+
+  const effectiveSelectedVariant = React.useMemo<ProductVariant | null>(() => {
+    if (!selectedVariant) return null
+    return (
+      effectiveProduct.product_variants.find((v) => v.id === selectedVariant.id) || selectedVariant
+    )
+  }, [selectedVariant, effectiveProduct.product_variants])
+
   const [activeImage, setActiveImage] = useState<string | null>(
     product.product_images.find((img) => img.is_primary)?.url ||
       product.product_images[0]?.url ||
@@ -110,36 +140,36 @@ export function ProductDetailClient({
   // 1. Record viewed item in recently viewed list on load
   useEffect(() => {
     // Find representative price (first active variant price)
-    const firstVariant = product.product_variants[0]
+    const firstVariant = effectiveProduct.product_variants[0]
     const basePrice = firstVariant?.price ? Number(firstVariant.price) : 0
     const baseComparePrice = firstVariant?.compare_price ? Number(firstVariant.compare_price) : null
 
     addProductToRecentlyViewed({
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
+      id: effectiveProduct.id,
+      name: effectiveProduct.name,
+      slug: effectiveProduct.slug,
       price: basePrice,
       comparePrice: baseComparePrice,
-      imageUrl: product.product_images[0]?.url || null,
+      imageUrl: effectiveProduct.product_images[0]?.url || null,
     })
 
     // Track ViewContent event with strictly locked IDR currency
     trackViewContent({
-      id: product.id,
-      name: product.name,
+      id: effectiveProduct.id,
+      name: effectiveProduct.name,
       price: basePrice,
-      category: product.categories?.name,
+      category: effectiveProduct.categories?.name,
     })
-  }, [product, addProductToRecentlyViewed])
+  }, [effectiveProduct, addProductToRecentlyViewed])
 
   // 2. Add item to cart handler
   const handleAddToCart = async () => {
-    if (!selectedVariant) {
+    if (!effectiveSelectedVariant) {
       toast.error(isMY ? 'Please select a variant (size/color) first.' : 'Silakan pilih varian (ukuran/warna) terlebih dahulu.')
       return
     }
 
-    if (selectedVariant.stock <= 0) {
+    if (effectiveSelectedVariant.stock <= 0) {
       toast.error(isMY ? 'This variant is out of stock.' : 'Stok untuk varian ini habis.')
       return
     }
@@ -147,16 +177,16 @@ export function ProductDetailClient({
     setIsAdding(true)
     try {
       const cartItem = {
-        variantId: selectedVariant.id,
-        productName: product.name,
-        variantName: selectedVariant.name,
-        name: product.name,
-        sku: selectedVariant.sku,
-        price: Number(selectedVariant.price),
-        comparePrice: selectedVariant.compare_price ? Number(selectedVariant.compare_price) : null,
-        imageUrl: product.product_images[0]?.url || null,
-        slug: product.slug,
-        stock: selectedVariant.stock,
+        variantId: effectiveSelectedVariant.id,
+        productName: effectiveProduct.name,
+        variantName: effectiveSelectedVariant.name,
+        name: effectiveProduct.name,
+        sku: effectiveSelectedVariant.sku,
+        price: Number(effectiveSelectedVariant.price),
+        comparePrice: effectiveSelectedVariant.compare_price ? Number(effectiveSelectedVariant.compare_price) : null,
+        imageUrl: effectiveProduct.product_images[0]?.url || null,
+        slug: effectiveProduct.slug,
+        stock: effectiveSelectedVariant.stock,
       }
 
       await addItem(cartItem, quantity)
@@ -164,11 +194,11 @@ export function ProductDetailClient({
       // Track AddToCart event with strictly locked IDR currency
       trackAddToCart(
         {
-          id: product.id,
-          name: product.name,
-          price: Number(selectedVariant.price),
-          variant: selectedVariant.name,
-          category: product.categories?.name,
+          id: effectiveProduct.id,
+          name: effectiveProduct.name,
+          price: Number(effectiveSelectedVariant.price),
+          variant: effectiveSelectedVariant.name,
+          category: effectiveProduct.categories?.name,
         },
         quantity
       )
@@ -176,10 +206,10 @@ export function ProductDetailClient({
         <CustomToast
           t={t}
           title={isMY ? "Added to Bag!" : "Berhasil Ditambahkan!"}
-          subtitle={product.name}
-          description={isMY ? `Variant: ${selectedVariant.name} • Qty: ${quantity}` : `Varian: ${selectedVariant.name} • Qty: ${quantity}`}
-          imageUrl={product.product_images[0]?.url}
-          actionLabel="Lihat"
+          subtitle={effectiveProduct.name}
+          description={isMY ? `Variant: ${effectiveSelectedVariant.name} • Qty: ${quantity}` : `Varian: ${effectiveSelectedVariant.name} • Qty: ${quantity}`}
+          imageUrl={effectiveProduct.product_images[0]?.url}
+          actionLabel={isMY ? "View" : "Lihat"}
           onAction={() => setCartDrawerOpen(true)}
         />
       ))
@@ -192,12 +222,12 @@ export function ProductDetailClient({
 
   // 2b. Buy now handler (adds to cart and redirects to checkout)
   const handleBuyNow = async () => {
-    if (!selectedVariant) {
+    if (!effectiveSelectedVariant) {
       toast.error(isMY ? 'Please select a variant (size/color) first.' : 'Silakan pilih varian (ukuran/warna) terlebih dahulu.')
       return
     }
 
-    if (selectedVariant.stock <= 0) {
+    if (effectiveSelectedVariant.stock <= 0) {
       toast.error(isMY ? 'This variant is out of stock.' : 'Stok untuk varian ini habis.')
       return
     }
@@ -205,16 +235,16 @@ export function ProductDetailClient({
     setIsBuying(true)
     try {
       const cartItem = {
-        variantId: selectedVariant.id,
-        productName: product.name,
-        variantName: selectedVariant.name,
-        name: product.name,
-        sku: selectedVariant.sku,
-        price: Number(selectedVariant.price),
-        comparePrice: selectedVariant.compare_price ? Number(selectedVariant.compare_price) : null,
-        imageUrl: product.product_images[0]?.url || null,
-        slug: product.slug,
-        stock: selectedVariant.stock,
+        variantId: effectiveSelectedVariant.id,
+        productName: effectiveProduct.name,
+        variantName: effectiveSelectedVariant.name,
+        name: effectiveProduct.name,
+        sku: effectiveSelectedVariant.sku,
+        price: Number(effectiveSelectedVariant.price),
+        comparePrice: effectiveSelectedVariant.compare_price ? Number(effectiveSelectedVariant.compare_price) : null,
+        imageUrl: effectiveProduct.product_images[0]?.url || null,
+        slug: effectiveProduct.slug,
+        stock: effectiveSelectedVariant.stock,
       }
 
       await addItem(cartItem, quantity)
@@ -222,11 +252,11 @@ export function ProductDetailClient({
       // Track AddToCart event with strictly locked IDR currency
       trackAddToCart(
         {
-          id: product.id,
-          name: product.name,
-          price: Number(selectedVariant.price),
-          variant: selectedVariant.name,
-          category: product.categories?.name,
+          id: effectiveProduct.id,
+          name: effectiveProduct.name,
+          price: Number(effectiveSelectedVariant.price),
+          variant: effectiveSelectedVariant.name,
+          category: effectiveProduct.categories?.name,
         },
         quantity
       )
@@ -239,8 +269,8 @@ export function ProductDetailClient({
   }
 
   const handleIncrement = () => {
-    if (!selectedVariant) return
-    setQuantity((prev) => Math.min(prev + 1, selectedVariant.stock))
+    if (!effectiveSelectedVariant) return
+    setQuantity((prev) => Math.min(prev + 1, effectiveSelectedVariant.stock))
   }
 
   const handleDecrement = () => {
@@ -248,7 +278,7 @@ export function ProductDetailClient({
   }
 
   // Calculate pricing displays based on selections
-  const variants = product.product_variants || []
+  const variants = effectiveProduct.product_variants || []
   const minPrice = variants.length > 0 ? Math.min(...variants.map((v: ProductVariant) => Number(v.price))) : 0
   const maxPrice = variants.length > 0 ? Math.max(...variants.map((v: ProductVariant) => Number(v.price))) : 0
 
@@ -304,9 +334,9 @@ export function ProductDetailClient({
 
             <div className="hidden md:block space-y-8">
               <motion.div variants={itemVariants}>
-                <MarketplaceLinks links={product.product_marketplace_links} />
+                <MarketplaceLinks links={effectiveProduct.product_marketplace_links} />
               </motion.div>
-              <ProductAccordionTabs product={product} selectedVariant={selectedVariant} />
+              <ProductAccordionTabs product={effectiveProduct} selectedVariant={effectiveSelectedVariant} />
             </div>
           </motion.div>
 
@@ -325,8 +355,8 @@ export function ProductDetailClient({
             className="md:col-span-5 md:sticky md:top-24 space-y-6"
           >
             <ProductInfoSection
-              product={product}
-              selectedVariant={selectedVariant}
+              product={effectiveProduct}
+              selectedVariant={effectiveSelectedVariant}
               minPrice={minPrice}
               maxPrice={maxPrice}
               quantity={quantity}
@@ -345,25 +375,25 @@ export function ProductDetailClient({
               onBuyNow={handleBuyNow}
               thumbnailsNode={
                 <ProductThumbnails
-                  images={product.product_images}
+                  images={effectiveProduct.product_images}
                   activeImage={activeImage}
                   setActiveImage={setActiveImage}
-                  productName={product.name}
+                  productName={effectiveProduct.name}
                 />
               }
             />
 
             <div className="md:hidden space-y-6 pt-4 border-t border-neutral-100">
               <motion.div variants={itemVariants}>
-                <MarketplaceLinks links={product.product_marketplace_links} />
+                <MarketplaceLinks links={effectiveProduct.product_marketplace_links} />
               </motion.div>
-              <ProductAccordionTabs product={product} selectedVariant={selectedVariant} />
+              <ProductAccordionTabs product={effectiveProduct} selectedVariant={effectiveSelectedVariant} />
             </div>
           </motion.div>
         </div>
 
         {/* Reviews Section at the bottom */}
-        <ReviewSection productId={product.id} ratingSummary={product.product_rating_summary} />
+        <ReviewSection productId={effectiveProduct.id} ratingSummary={effectiveProduct.product_rating_summary} />
 
         {/* Related Products Section (Loaded asynchronously via Server Component) */}
         {relatedProductsNode}
@@ -371,8 +401,8 @@ export function ProductDetailClient({
 
       <ProductStickyAction
         showStickyBar={showStickyBar}
-        product={product}
-        selectedVariant={selectedVariant}
+        product={effectiveProduct}
+        selectedVariant={effectiveSelectedVariant}
         minPrice={minPrice}
         isAdding={isAdding}
         isBuying={isBuying}

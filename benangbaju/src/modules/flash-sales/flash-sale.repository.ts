@@ -20,7 +20,7 @@ export class FlashSaleRepository {
       .from('flash_sales')
       .select(
         `
-          id, name, description, banner_url, starts_at, ends_at, is_active,
+          id, name, description, banner_url, starts_at, ends_at, is_active, target_market,
           flash_sale_items (
             id, flash_sale_id, variant_id, original_price, sale_price, discount_percent, quota, sold_count,
             product_variants (
@@ -100,6 +100,7 @@ export class FlashSaleRepository {
       starts_at: activeSale.starts_at,
       ends_at: activeSale.ends_at,
       is_active: activeSale.is_active,
+      target_market: (activeSale as any).target_market || 'ALL',
       flash_sale_items,
     })
   }
@@ -112,7 +113,7 @@ export class FlashSaleRepository {
       .from('flash_sales')
       .select(
         `
-        id, name, description, banner_url, starts_at, ends_at, is_active,
+        id, name, description, banner_url, starts_at, ends_at, is_active, target_market,
         flash_sale_items (
           id, variant_id, original_price, sale_price, quota, sold_count,
           product_variants (
@@ -163,6 +164,7 @@ export class FlashSaleRepository {
         starts_at: sale.starts_at,
         ends_at: sale.ends_at,
         is_active: sale.is_active,
+        target_market: (sale as any).target_market || 'ALL',
         flash_sale_items,
       }
     })
@@ -178,6 +180,7 @@ export class FlashSaleRepository {
       starts_at: string
       ends_at: string
       is_active: boolean
+      target_market?: 'ALL' | 'ID' | 'MY'
     },
     items: {
       variant_id: string
@@ -228,6 +231,7 @@ export class FlashSaleRepository {
       starts_at: string
       ends_at: string
       is_active: boolean
+      target_market?: 'ALL' | 'ID' | 'MY'
     },
     items: {
       variant_id: string

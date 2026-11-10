@@ -17,6 +17,9 @@ export async function getAdminBannersAction(page = 1, limit = 20) {
 export async function createAdminBannerAction(bannerData: {
   title: string
   subtitle: string | null
+  title_en?: string | null
+  subtitle_en?: string | null
+  target_market?: 'ALL' | 'ID' | 'MY'
   image_url: string
   image_mobile_url: string | null
   link_url: string | null
@@ -35,6 +38,9 @@ export async function updateAdminBannerAction(
   bannerData: {
     title?: string
     subtitle: string | null
+    title_en?: string | null
+    subtitle_en?: string | null
+    target_market?: 'ALL' | 'ID' | 'MY'
     image_url: string
     image_mobile_url: string | null
     link_url: string | null

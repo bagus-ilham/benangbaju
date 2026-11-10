@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { ProductListItem } from '@/modules/products/types'
-import { cn, formatIDR, formatApproxMYR } from '@/lib/utils'
+import { cn, formatIDR, getMyPrice } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { Badge } from '@/shared/components/Badge'
@@ -32,7 +32,8 @@ export const ProductCard = React.memo(function ProductCard({
   const [showAltImage, setShowAltImage] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const market = useMarket()
-  const { myrExchangeRate } = useSiteSettings()
+  const isMY = market === 'MY'
+  const { myPricingConfig } = useSiteSettings()
 
   const liked = isLiked
 
@@ -192,30 +193,40 @@ export const ProductCard = React.memo(function ProductCard({
           </span>
         </Link>
 
-        {/* Price Tag (Caption/Price scale: 13px/700 Mulish) */}
+        {/* Price Tag */}
         <div className="flex flex-col pt-0.5">
-          <div className="flex items-center space-x-2">
-            <span className="text-[13px] font-sans font-bold text-brand-plum">
-              {minPrice !== maxPrice
-                ? `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`
-                : formatIDR(minPrice)}
-            </span>
-            {comparePrice && comparePrice > minPrice && (
-              <span className="text-xs font-sans text-neutral-600 line-through">
-                {formatIDR(comparePrice)}
-              </span>
-            )}
-          </div>
-          {market === 'MY' && (
+          {isMY ? (
+            <>
+              <div className="flex items-center space-x-2">
+                <span className="text-[13px] font-sans font-bold text-brand-plum">
+                  {minPrice !== maxPrice
+                    ? `${getMyPrice(minPrice, myPricingConfig).formattedMyr} - ${getMyPrice(maxPrice, myPricingConfig).formattedMyr}`
+                    : getMyPrice(minPrice, myPricingConfig).formattedMyr}
+                </span>
+                {comparePrice && comparePrice > minPrice && (
+                  <span className="text-xs font-sans text-neutral-500 line-through">
+                    {getMyPrice(comparePrice, myPricingConfig).formattedMyr}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center space-x-1.5 mt-0.5">
+                <span className="text-[10px] font-sans font-semibold text-neutral-500">
+                  {minPrice !== maxPrice
+                    ? `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)} - ${formatIDR(getMyPrice(maxPrice, myPricingConfig).chargedIdr)}`
+                    : `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)}`}
+                </span>
+              </div>
+            </>
+          ) : (
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-sans font-semibold text-emerald-800">
+              <span className="text-[13px] font-sans font-bold text-brand-plum">
                 {minPrice !== maxPrice
-                  ? `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`
-                  : formatApproxMYR(minPrice, myrExchangeRate)}
+                  ? `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`
+                  : formatIDR(minPrice)}
               </span>
               {comparePrice && comparePrice > minPrice && (
-                <span className="text-[10px] font-sans text-neutral-500 line-through">
-                  {formatApproxMYR(comparePrice, myrExchangeRate)}
+                <span className="text-xs font-sans text-neutral-600 line-through">
+                  {formatIDR(comparePrice)}
                 </span>
               )}
             </div>

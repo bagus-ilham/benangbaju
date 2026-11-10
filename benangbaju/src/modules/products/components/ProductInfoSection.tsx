@@ -6,7 +6,7 @@ import { HandDrawnIcon } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
 import { VariantPicker } from '@/modules/products/components'
-import { formatIDR, formatApproxMYR, cn } from '@/lib/utils'
+import { formatIDR, getMyPrice, cn } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
@@ -58,13 +58,14 @@ export function ProductInfoSection({
   thumbnailsNode,
 }: ProductInfoSectionProps): React.JSX.Element {
   const market = useMarket()
-  const { myrExchangeRate } = useSiteSettings()
+  const isMY = market === 'MY'
+  const { myPricingConfig } = useSiteSettings()
 
   const handleStockNotification = async () => {
     if (!selectedVariant) return
     try {
       const { toggleStockNotificationAction } = await import('@/modules/products/actions')
-      const res = await toggleStockNotificationAction(selectedVariant.id)
+      const res = await toggleStockNotificationAction(selectedVariant.id, market)
       if (res.isSubscribed) {
         const { default: toast } = await import('react-hot-toast')
         toast.success(market === 'MY' ? 'We will notify you when this item is back in stock!' : 'Kami akan mengabari Anda jika stok produk ini telah tersedia kembali!')
@@ -108,64 +109,93 @@ export function ProductInfoSection({
 
         {/* Price display */}
         <div className="flex flex-col pt-2">
-          <div className="flex items-baseline space-x-3">
-          <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
-            {selectedVariant
-              ? formatIDR(selectedVariant.price)
-              : minPrice === maxPrice
-                ? formatIDR(minPrice)
-                : `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`}
-          </span>
+          {isMY ? (
+            <>
+              <div className="flex items-baseline space-x-3">
+                <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
+                  {selectedVariant
+                    ? getMyPrice(Number(selectedVariant.price), myPricingConfig).formattedMyr
+                    : minPrice === maxPrice
+                      ? getMyPrice(minPrice, myPricingConfig).formattedMyr
+                      : `${getMyPrice(minPrice, myPricingConfig).formattedMyr} - ${getMyPrice(maxPrice, myPricingConfig).formattedMyr}`}
+                </span>
 
-          {/* Compare Price & Sale Badge */}
-          {selectedVariant ? (
-            selectedVariant.compare_price &&
-            Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
-              <>
-                <span className="text-xs text-neutral-600 line-through font-sans">
-                  {formatIDR(selectedVariant.compare_price)}
+                {/* Compare Price & Sale Badge in MYR */}
+                {selectedVariant ? (
+                  selectedVariant.compare_price &&
+                  Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
+                    <>
+                      <span className="text-xs text-neutral-500 line-through font-sans">
+                        {getMyPrice(Number(selectedVariant.compare_price), myPricingConfig).formattedMyr}
+                      </span>
+                      <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
+                        -{Math.round(((Number(selectedVariant.compare_price) - Number(selectedVariant.price)) / Number(selectedVariant.compare_price)) * 100)}%
+                      </span>
+                    </>
+                  )
+                ) : (
+                  product.product_variants[0]?.compare_price &&
+                  Number(product.product_variants[0].compare_price) > minPrice && (
+                    <>
+                      <span className="text-xs text-neutral-500 line-through font-sans">
+                        {getMyPrice(Number(product.product_variants[0].compare_price), myPricingConfig).formattedMyr}
+                      </span>
+                      <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
+                        -{Math.round(((Number(product.product_variants[0].compare_price) - minPrice) / Number(product.product_variants[0].compare_price)) * 100)}%
+                      </span>
+                    </>
+                  )
+                )}
+              </div>
+
+              {/* Secondary IDR and QRIS rate note */}
+              <div className="flex items-center space-x-2 mt-1">
+                <span className="text-xs font-sans font-semibold text-neutral-600">
+                  {selectedVariant
+                    ? `≈ ${formatIDR(getMyPrice(Number(selectedVariant.price), myPricingConfig).chargedIdr)}`
+                    : minPrice === maxPrice
+                      ? `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)}`
+                      : `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)} - ${formatIDR(getMyPrice(maxPrice, myPricingConfig).chargedIdr)}`}
                 </span>
-                <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
-                  -{Math.round(((Number(selectedVariant.compare_price) - Number(selectedVariant.price)) / Number(selectedVariant.compare_price)) * 100)}%
+                <span className="text-[10px] font-sans text-neutral-400">
+                  (Charged in IDR via QRIS)
                 </span>
-              </>
-            )
+              </div>
+            </>
           ) : (
-            product.product_variants[0]?.compare_price &&
-            Number(product.product_variants[0].compare_price) > minPrice && (
-              <>
-                <span className="text-xs text-neutral-600 line-through font-sans">
-                  {formatIDR(product.product_variants[0].compare_price)}
-                </span>
-                <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
-                  -{Math.round(((Number(product.product_variants[0].compare_price) - minPrice) / Number(product.product_variants[0].compare_price)) * 100)}%
-                </span>
-              </>
-            )
-          )}
-          </div>
-          {market === 'MY' && (
-            <div className="flex items-center space-x-2.5 mt-1">
-              <span className="text-xs font-sans font-bold text-emerald-800">
+            <div className="flex items-baseline space-x-3">
+              <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
                 {selectedVariant
-                  ? formatApproxMYR(selectedVariant.price, myrExchangeRate)
+                  ? formatIDR(selectedVariant.price)
                   : minPrice === maxPrice
-                    ? formatApproxMYR(minPrice, myrExchangeRate)
-                    : `${formatApproxMYR(minPrice, myrExchangeRate)} - ${formatApproxMYR(maxPrice, myrExchangeRate)}`}
+                    ? formatIDR(minPrice)
+                    : `${formatIDR(minPrice)} - ${formatIDR(maxPrice)}`}
               </span>
+
+              {/* Compare Price & Sale Badge */}
               {selectedVariant ? (
                 selectedVariant.compare_price &&
                 Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
-                  <span className="text-xs text-neutral-500 line-through font-sans">
-                    {formatApproxMYR(Number(selectedVariant.compare_price), myrExchangeRate)}
-                  </span>
+                  <>
+                    <span className="text-xs text-neutral-600 line-through font-sans">
+                      {formatIDR(selectedVariant.compare_price)}
+                    </span>
+                    <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
+                      -{Math.round(((Number(selectedVariant.compare_price) - Number(selectedVariant.price)) / Number(selectedVariant.compare_price)) * 100)}%
+                    </span>
+                  </>
                 )
               ) : (
                 product.product_variants[0]?.compare_price &&
                 Number(product.product_variants[0].compare_price) > minPrice && (
-                  <span className="text-xs text-neutral-500 line-through font-sans">
-                    {formatApproxMYR(Number(product.product_variants[0].compare_price), myrExchangeRate)}
-                  </span>
+                  <>
+                    <span className="text-xs text-neutral-600 line-through font-sans">
+                      {formatIDR(product.product_variants[0].compare_price)}
+                    </span>
+                    <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
+                      -{Math.round(((Number(product.product_variants[0].compare_price) - minPrice) / Number(product.product_variants[0].compare_price)) * 100)}%
+                    </span>
+                  </>
                 )
               )}
             </div>
@@ -174,14 +204,20 @@ export function ProductInfoSection({
       </motion.div>
 
       {/* Description intro */}
-      {product.short_description && (
-        <motion.p
-          variants={itemVariants}
-          className="text-xs text-neutral-600 font-sans leading-relaxed whitespace-pre-line"
-        >
-          {product.short_description}
-        </motion.p>
-      )}
+      {(() => {
+        const displayShortDesc = isMY
+          ? product.short_description_en || product.short_description
+          : product.short_description
+        if (!displayShortDesc) return null
+        return (
+          <motion.p
+            variants={itemVariants}
+            className="text-xs text-neutral-600 font-sans leading-relaxed whitespace-pre-line"
+          >
+            {displayShortDesc}
+          </motion.p>
+        )
+      })()}
 
       {/* Thumbnails */}
       {thumbnailsNode && (

@@ -1,4 +1,5 @@
 import { normalizePhoneE164 } from './validation'
+export { formatMYR } from './pricing'
 
 /**
  * Formats a number as Indonesian Rupiah (IDR).

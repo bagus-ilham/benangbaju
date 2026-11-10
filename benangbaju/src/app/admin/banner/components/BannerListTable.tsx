@@ -56,6 +56,11 @@ export function BannerListTable({
               <span className="font-semibold text-neutral-900 text-sm block">
                 {b.title || 'Untitled Banner'}
               </span>
+              {(b as any).title_en && (
+                <span className="text-[10px] text-emerald-800 font-medium block">
+                  EN: {(b as any).title_en}
+                </span>
+              )}
               {b.subtitle && (
                 <span className="text-[10px] text-neutral-400 font-normal mt-0.5 block">
                   {b.subtitle}
@@ -73,6 +78,33 @@ export function BannerListTable({
             {b.position === 'homepage_hero' ? 'Hero Slider' : 'Mid Banner'}
           </span>
         ),
+      },
+      {
+        key: 'target_market',
+        header: <div className="text-center w-full">Market</div>,
+        className: 'text-center',
+        render: (b) => {
+          const tm = (b as any).target_market || 'ALL'
+          if (tm === 'MY') {
+            return (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                🇲🇾 MY
+              </span>
+            )
+          }
+          if (tm === 'ID') {
+            return (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-50 text-red-700 border border-red-200">
+                🇮🇩 ID
+              </span>
+            )
+          }
+          return (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-neutral-100 text-neutral-700 border border-neutral-200">
+              ALL
+            </span>
+          )
+        },
       },
       {
         key: 'sort_order',

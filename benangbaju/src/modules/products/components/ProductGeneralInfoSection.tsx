@@ -1,9 +1,10 @@
-import React from 'react'
-import { Input, Select, Checkbox, Textarea, Switch } from '@/shared/components'
+import React, { useState } from 'react'
+import { Input, Select, Checkbox, Textarea, Switch, Button, HandDrawnIcon } from '@/shared/components'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
+import { translateProductContentAction } from '@/modules/products/translate.actions'
 
 interface ProductGeneralInfoSectionProps {
   name: string
@@ -18,14 +19,20 @@ interface ProductGeneralInfoSectionProps {
   onHsCodeChange: (val: string) => void
   shortDescription: string
   onShortDescriptionChange: (val: string) => void
+  shortDescriptionEn: string
+  onShortDescriptionEnChange: (val: string) => void
   description: string
   onDescriptionChange: (val: string) => void
+  descriptionEn: string
+  onDescriptionEnChange: (val: string) => void
   sizeGuide: string
   onSizeGuideChange: (val: string) => void
   sizeGuideInch: string
   onSizeGuideInchChange: (val: string) => void
   careGuide: string
   onCareGuideChange: (val: string) => void
+  careGuideEn: string
+  onCareGuideEnChange: (val: string) => void
   isActive: boolean
   onIsActiveChange: (val: boolean) => void
   isFeatured: boolean
@@ -53,14 +60,20 @@ export function ProductGeneralInfoSection({
   onHsCodeChange,
   shortDescription,
   onShortDescriptionChange,
+  shortDescriptionEn,
+  onShortDescriptionEnChange,
   description,
   onDescriptionChange,
+  descriptionEn,
+  onDescriptionEnChange,
   sizeGuide,
   onSizeGuideChange,
   sizeGuideInch,
   onSizeGuideInchChange,
   careGuide,
   onCareGuideChange,
+  careGuideEn,
+  onCareGuideEnChange,
   isActive,
   onIsActiveChange,
   isFeatured,
@@ -72,6 +85,43 @@ export function ProductGeneralInfoSection({
   selectedCollections,
   onToggleCollection,
 }: ProductGeneralInfoSectionProps): React.JSX.Element {
+  const [contentLanguage, setContentLanguage] = useState<'id' | 'en'>('id')
+  const [isTranslating, setIsTranslating] = useState(false)
+
+  const handleAutoTranslate = async () => {
+    if (!description.trim() && !shortDescription.trim() && !careGuide.trim()) {
+      toast.error('Isi deskripsi atau panduan perawatan Bahasa Indonesia terlebih dahulu.')
+      return
+    }
+
+    setIsTranslating(true)
+    const toastId = toast.loading('Menerjemahkan konten via Gemini AI (Modest Fashion Malaysia)...')
+    try {
+      const res = await translateProductContentAction({
+        shortDescription,
+        description,
+        careGuide,
+      })
+
+      if (!res.success || !res.data) {
+        toast.error(res.error || 'Gagal menerjemahkan konten', { id: toastId })
+        return
+      }
+
+      if (res.data.shortDescriptionEn) onShortDescriptionEnChange(res.data.shortDescriptionEn)
+      if (res.data.descriptionEn) onDescriptionEnChange(res.data.descriptionEn)
+      if (res.data.careGuideEn) onCareGuideEnChange(res.data.careGuideEn)
+
+      setContentLanguage('en')
+      toast.success('Draf terjemahan berhasil dibuat! Silakan tinjau dan simpan.', { id: toastId })
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan saat menerjemahkan', {
+        id: toastId,
+      })
+    } finally {
+      setIsTranslating(false)
+    }
+  }
   return (
     <div className="border border-neutral-200 bg-brand-cream p-6 rounded-2xl space-y-5 shadow-sm">
       <h3 className="text-xs uppercase font-bold tracking-widest text-neutral-400 border-b border-neutral-100 pb-2.5">
@@ -194,21 +244,94 @@ export function ProductGeneralInfoSection({
         )}
       </div>
 
-      <Textarea
-        label="Deskripsi Singkat"
-        value={shortDescription}
-        onChange={(e) => onShortDescriptionChange(e.target.value)}
-        placeholder="Tulis deskripsi singkat..."
-        rows={2}
-      />
+      {/* Bilingual Content Switcher & Auto-Translate */}
+      <div className="pt-2 border-t border-neutral-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-1.5 p-1 bg-neutral-100/90 rounded-xl border border-neutral-200/80 w-fit">
+            <button
+              type="button"
+              onClick={() => setContentLanguage('id')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                contentLanguage === 'id'
+                  ? 'bg-white text-neutral-900 shadow-xs'
+                  : 'text-neutral-500 hover:text-neutral-900'
+              }`}
+            >
+              🇮🇩 Bahasa Indonesia
+            </button>
+            <button
+              type="button"
+              onClick={() => setContentLanguage('en')}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                contentLanguage === 'en'
+                  ? 'bg-white text-neutral-900 shadow-xs'
+                  : 'text-neutral-500 hover:text-neutral-900'
+              }`}
+            >
+              <span>🇲🇾 English (Malaysia)</span>
+              {(shortDescriptionEn || descriptionEn || careGuideEn) && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              )}
+            </button>
+          </div>
 
-      <Textarea
-        label="Deskripsi Lengkap"
-        value={description}
-        onChange={(e) => onDescriptionChange(e.target.value)}
-        placeholder="Tulis spesifikasi lengkap, bahan, dan cara perawatan..."
-        rows={5}
-      />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleAutoTranslate}
+            isLoading={isTranslating}
+            className="text-[11px] font-bold py-1.5 px-3 border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100/80 flex items-center gap-1.5 w-fit"
+            title="Terjemahkan otomatis teks Bahasa Indonesia ke English menggunakan Gemini AI"
+          >
+            <HandDrawnIcon name="sparkles" className="w-3.5 h-3.5 text-amber-700" />
+            <span>✨ Auto-Translate via AI</span>
+          </Button>
+        </div>
+
+        {contentLanguage === 'id' ? (
+          <div className="space-y-4">
+            <Textarea
+              label="Deskripsi Singkat (ID)"
+              value={shortDescription}
+              onChange={(e) => onShortDescriptionChange(e.target.value)}
+              placeholder="Tulis deskripsi singkat dalam Bahasa Indonesia..."
+              rows={2}
+            />
+
+            <Textarea
+              label="Deskripsi Lengkap (ID)"
+              value={description}
+              onChange={(e) => onDescriptionChange(e.target.value)}
+              placeholder="Tulis spesifikasi lengkap, bahan, dan detail produk..."
+              rows={5}
+            />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="p-2.5 bg-brand-cream/60 border border-neutral-200/80 rounded-xl text-[11px] text-neutral-600">
+              <span className="font-semibold text-brand-plum">Target Pasar Malaysia:</span> Versi
+              English akan ditampilkan saat customer berbelanja dalam mode Malaysia (MY). Jika
+              dikosongkan, sistem otomatis menggunakan versi Bahasa Indonesia sebagai fallback.
+            </div>
+
+            <Textarea
+              label="Short Description (English / Malaysia)"
+              value={shortDescriptionEn}
+              onChange={(e) => onShortDescriptionEnChange(e.target.value)}
+              placeholder="e.g. Elegantly tailored relaxed-fit shirt crafted from breathable cotton linen..."
+              rows={2}
+            />
+
+            <Textarea
+              label="Full Description (English / Malaysia)"
+              value={descriptionEn}
+              onChange={(e) => onDescriptionEnChange(e.target.value)}
+              placeholder="Write full product specifications, silhouette, and modest styling advice..."
+              rows={5}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Size Guides Section (CM & Inch) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -355,13 +478,23 @@ export function ProductGeneralInfoSection({
         </div>
       </div>
 
-      <Textarea
-        label="Panduan Perawatan (Care Guide)"
-        value={careGuide}
-        onChange={(e) => onCareGuideChange(e.target.value)}
-        placeholder="Tulis petunjuk perawatan produk..."
-        rows={3}
-      />
+      {contentLanguage === 'id' ? (
+        <Textarea
+          label="Panduan Perawatan (Care Guide - ID)"
+          value={careGuide}
+          onChange={(e) => onCareGuideChange(e.target.value)}
+          placeholder="Tulis petunjuk perawatan produk dalam Bahasa Indonesia..."
+          rows={3}
+        />
+      ) : (
+        <Textarea
+          label="Care Guide (English / Malaysia)"
+          value={careGuideEn}
+          onChange={(e) => onCareGuideEnChange(e.target.value)}
+          placeholder="e.g. Machine wash cold with similar colors. Do not bleach. Warm iron if necessary..."
+          rows={3}
+        />
+      )}
 
       <div className="flex items-center space-x-6 pt-2">
         <Switch

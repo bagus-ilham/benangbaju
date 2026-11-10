@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, HandDrawnIcon } from '@/shared/components'
-import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { formatIDR, getMyPrice, formatMYR, type MyPricingConfig } from '@/lib/utils'
 import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -40,6 +40,7 @@ interface CheckoutSummaryCardProps {
   selectedChannelCode?: string | null
   isMalaysia?: boolean
   myrExchangeRate?: number
+  myPricingConfig?: MyPricingConfig
 }
 
 export function CheckoutSummaryCard({
@@ -64,9 +65,18 @@ export function CheckoutSummaryCard({
   selectedChannelCode = null,
   isMalaysia = false,
   myrExchangeRate = 3600,
+  myPricingConfig,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   const isQris = selectedChannelCode?.toUpperCase() === 'QRIS' || isMalaysia
   const isQrisLimitExceeded = isQris && totalAmount > QRIS_MAX_AMOUNT_IDR
+
+  const itemSubtotalMyr = React.useMemo(() => {
+    if (!isMalaysia) return 0
+    return displayItems.reduce((acc, item) => {
+      const my = getMyPrice(item.price, myPricingConfig)
+      return acc + my.priceMyr * item.quantity
+    }, 0)
+  }, [displayItems, isMalaysia, myPricingConfig])
 
   return (
     <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
@@ -104,24 +114,32 @@ export function CheckoutSummaryCard({
               <p className="text-[10px] text-neutral-400 mt-0.5 font-sans">Qty: {item.quantity}</p>
             </div>
             <div className="text-right">
-              <div className="flex items-center justify-end space-x-1.5">
-                <span className="font-sans font-bold text-brand-plum">
-                  {formatIDR(item.price * item.quantity)}
-                </span>
-                {item.comparePrice && item.comparePrice > item.price && (
-                  <span className="text-[10px] text-neutral-400 line-through font-sans">
-                    {formatIDR(item.comparePrice * item.quantity)}
-                  </span>
-                )}
-              </div>
-              {isMalaysia && (
-                <div className="flex items-center justify-end space-x-1 mt-0.5">
-                  <span className="text-[10px] font-sans font-semibold text-emerald-800">
-                    {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+              {isMalaysia ? (
+                <>
+                  <div className="flex items-center justify-end space-x-1.5">
+                    <span className="font-sans font-bold text-brand-plum">
+                      {formatMYR(getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity)}
+                    </span>
+                    {item.comparePrice && item.comparePrice > item.price && (
+                      <span className="text-[10px] text-neutral-400 line-through font-sans">
+                        {formatMYR(getMyPrice(item.comparePrice, myPricingConfig).priceMyr * item.quantity)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-end space-x-1 mt-0.5">
+                    <span className="text-[9px] font-sans font-semibold text-neutral-500">
+                      ≈ {formatIDR(getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity)}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-end space-x-1.5">
+                  <span className="font-sans font-bold text-brand-plum">
+                    {formatIDR(item.price * item.quantity)}
                   </span>
                   {item.comparePrice && item.comparePrice > item.price && (
-                    <span className="text-[9px] text-neutral-400 line-through font-sans">
-                      {formatApproxMYR(item.comparePrice * item.quantity, myrExchangeRate)}
+                    <span className="text-[10px] text-neutral-400 line-through font-sans">
+                      {formatIDR(item.comparePrice * item.quantity)}
                     </span>
                   )}
                 </div>
@@ -156,7 +174,7 @@ export function CheckoutSummaryCard({
                 onClick={onRemoveVoucher}
                 className="text-red-500 font-bold hover:text-red-700 transition ml-2"
               >
-                Hapus
+                {isMalaysia ? 'Remove' : 'Hapus'}
               </motion.button>
             </motion.div>
           ) : (
@@ -176,7 +194,7 @@ export function CheckoutSummaryCard({
                   onClick={onApplyVoucher}
                   isLoading={voucherLoading}
                 >
-                  Pakai
+                  {isMalaysia ? 'Apply' : 'Pakai'}
                 </Button>
               </div>
 
@@ -211,11 +229,21 @@ export function CheckoutSummaryCard({
                           </div>
                           <div className="text-[9px] font-heading font-bold text-neutral-700">
                             {voucher.discount_type === 'percentage'
-                              ? `${voucher.value}% OFF`
-                              : `${formatIDR(voucher.value)} OFF`}
+                              ? `${voucher.value}% OFF${
+                                  voucher.max_discount
+                                    ? isMalaysia
+                                      ? ` (Max ${formatMYR(Math.round((voucher.max_discount / myrExchangeRate) * 100) / 100)})`
+                                      : ` (Maks ${formatIDR(voucher.max_discount)})`
+                                    : ''
+                                }`
+                              : isMalaysia
+                                ? `${formatMYR(Math.round((voucher.value / myrExchangeRate) * 100) / 100)} OFF`
+                                : `${formatIDR(voucher.value)} OFF`}
                           </div>
                           <div className="text-[8px] text-neutral-400 font-sans">
-                            {isMalaysia ? `Min. Spend: ${formatIDR(voucher.min_purchase)}` : `Min. Belanja: ${formatIDR(voucher.min_purchase)}`}
+                            {isMalaysia
+                              ? `Min. Spend: ${formatMYR(Math.round((voucher.min_purchase / myrExchangeRate) * 100) / 100)}`
+                              : `Min. Belanja: ${formatIDR(voucher.min_purchase)}`}
                           </div>
                         </button>
                       )
@@ -230,26 +258,74 @@ export function CheckoutSummaryCard({
 
       {/* Cost Calculation Details */}
       <div className="space-y-3 text-xs text-neutral-500 border-b border-neutral-100 pb-5 mb-5 font-sans">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-baseline">
           <span>{isMalaysia ? 'Item Subtotal' : 'Subtotal Produk'}</span>
-          <span className="font-semibold text-brand-plum">{formatIDR(subtotal)}</span>
+          <div className="text-right">
+            <span className="font-semibold text-brand-plum">
+              {isMalaysia ? formatMYR(itemSubtotalMyr) : formatIDR(subtotal)}
+            </span>
+            {isMalaysia && (
+              <span className="block text-[10px] text-neutral-400">
+                ≈ {formatIDR(subtotal)}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex justify-between">
+
+        <div className="flex justify-between items-baseline">
           <span>{isMalaysia ? 'Shipping Fee' : 'Ongkos Kirim'}</span>
-          <span className="font-semibold text-brand-plum">
-            {shippingCost > 0 ? formatIDR(shippingCost) : (isMalaysia ? 'Select courier...' : 'Pilih kurir...')}
-          </span>
+          <div className="text-right">
+            <span className="font-semibold text-brand-plum">
+              {shippingCost > 0
+                ? isMalaysia
+                  ? formatMYR(Math.round((shippingCost / myrExchangeRate) * 100) / 100)
+                  : formatIDR(shippingCost)
+                : isMalaysia
+                  ? 'Select courier...'
+                  : 'Pilih kurir...'}
+            </span>
+            {isMalaysia && shippingCost > 0 && (
+              <span className="block text-[10px] text-neutral-400">
+                ≈ {formatIDR(shippingCost)}
+              </span>
+            )}
+          </div>
         </div>
+
         {paymentFee > 0 && (
-          <div className="flex justify-between">
+          <div className="flex justify-between items-baseline">
             <span>{isMalaysia ? 'Payment Service Fee' : 'Biaya Layanan Pembayaran'}</span>
-            <span className="font-semibold text-brand-plum">{formatIDR(paymentFee)}</span>
+            <div className="text-right">
+              <span className="font-semibold text-brand-plum">
+                {isMalaysia
+                  ? formatMYR(Math.round((paymentFee / myrExchangeRate) * 100) / 100)
+                  : formatIDR(paymentFee)}
+              </span>
+              {isMalaysia && (
+                <span className="block text-[10px] text-neutral-400">
+                  ≈ {formatIDR(paymentFee)}
+                </span>
+              )}
+            </div>
           </div>
         )}
+
         {appliedVoucher && (
-          <div className="flex justify-between font-semibold">
+          <div className="flex justify-between items-baseline font-semibold">
             <span>{isMalaysia ? 'Voucher Discount' : 'Diskon Voucher'}</span>
-            <span className="text-red-600">- {formatIDR(discountAmount)}</span>
+            <div className="text-right text-red-600">
+              <span>
+                -{' '}
+                {isMalaysia
+                  ? formatMYR(Math.round((discountAmount / myrExchangeRate) * 100) / 100)
+                  : formatIDR(discountAmount)}
+              </span>
+              {isMalaysia && (
+                <span className="block text-[10px] text-neutral-400 font-normal">
+                  ≈ -{formatIDR(discountAmount)}
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -257,16 +333,22 @@ export function CheckoutSummaryCard({
       {/* Grand Total */}
       <div className="mb-6">
         <div className="flex justify-between items-center text-brand-plum font-heading">
-          <span className="text-xs uppercase tracking-widest font-medium">{isMalaysia ? 'Grand Total' : 'Total Pembayaran'}</span>
-          <span className="text-lg font-bold">{formatIDR(totalAmount)}</span>
+          <span className="text-xs uppercase tracking-widest font-medium">
+            {isMalaysia ? 'Grand Total' : 'Total Pembayaran'}
+          </span>
+          <span className="text-lg font-bold">
+            {isMalaysia
+              ? formatMYR(Math.round((totalAmount / myrExchangeRate) * 100) / 100)
+              : formatIDR(totalAmount)}
+          </span>
         </div>
         {isMalaysia && (
           <div className="text-right mt-1.5 pt-1.5 border-t border-neutral-200/50">
-            <span className="text-xs font-bold text-emerald-800 font-sans">
-              {formatApproxMYR(totalAmount, myrExchangeRate)}
+            <span className="text-xs font-semibold text-neutral-500 font-sans">
+              ≈ {formatIDR(totalAmount)}
             </span>
             <p className="text-[10px] text-neutral-400 mt-0.5 font-sans">
-              {isMalaysia ? '*Malaysian Ringgit estimate. Payment is processed in IDR via QRIS Cross-Border (DuitNow / Touch \'n Go).' : '*Estimasi Ringgit Malaysia. Pembayaran diproses dalam IDR via QRIS Cross-Border.'}
+              *Charged in IDR via QRIS (DuitNow / Touch &apos;n Go). Your bank&apos;s rate may differ slightly.
             </p>
           </div>
         )}
@@ -281,6 +363,19 @@ export function CheckoutSummaryCard({
           </p>
           <p className="text-[11px] mt-1 text-red-600">
             Maksimal transaksi QRIS Cross-Border adalah {formatIDR(QRIS_MAX_AMOUNT_IDR)}. Silakan kurangi jumlah pesanan untuk melanjutkan checkout.
+          </p>
+        </div>
+      )}
+
+      {/* Neutral De Minimis Customs notice (B2-5) */}
+      {isMalaysia && itemSubtotalMyr >= 450 && (
+        <div className="mb-6 p-3.5 bg-neutral-100/80 border border-neutral-200/80 rounded-xl text-neutral-600 text-xs font-sans leading-relaxed">
+          <p className="font-bold flex items-center gap-1.5 text-neutral-800 text-[11px] uppercase tracking-wide">
+            <HandDrawnIcon name="alert-triangle" className="h-3.5 w-3.5 text-neutral-600 shrink-0" />
+            <span>Customs & Import Notice</span>
+          </p>
+          <p className="text-[11px] mt-1 text-neutral-600">
+            Orders shipped to Malaysia with item subtotal exceeding <strong>RM 500</strong> may be subject to Malaysian customs import duty and sales tax upon arrival.
           </p>
         </div>
       )}

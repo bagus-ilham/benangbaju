@@ -16,20 +16,33 @@ interface HeroSectionProps {
 export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
+
+  const filteredBanners = React.useMemo(() => {
+    return (banners || []).filter(
+      (b) => !b.target_market || b.target_market === 'ALL' || b.target_market === market
+    )
+  }, [banners, market])
+
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
-    if (banners.length <= 1 || isHovered) return
+    if (currentIndex >= filteredBanners.length) {
+      setCurrentIndex(0)
+    }
+  }, [filteredBanners.length, currentIndex])
+
+  useEffect(() => {
+    if (filteredBanners.length <= 1 || isHovered) return
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length)
+      setCurrentIndex((prev) => (prev + 1) % filteredBanners.length)
     }, 6000) // 6 seconds auto-rotate
 
     return () => clearInterval(interval)
-  }, [banners, isHovered])
+  }, [filteredBanners, isHovered])
 
-  if (banners.length === 0) {
+  if (filteredBanners.length === 0) {
     // Elegant high fashion fallback placeholder banner
     return (
       <div className="relative w-full bg-brand-cream flex items-center justify-center h-[50vh] min-h-[360px] md:h-[70vh] font-sans">
@@ -54,14 +67,16 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     )
   }
 
-  const currentBanner = banners[currentIndex]
+  const currentBanner = filteredBanners[currentIndex]
+  const bannerTitle = (isMY && currentBanner.title_en) ? currentBanner.title_en : currentBanner.title
+  const bannerSubtitle = (isMY && currentBanner.subtitle_en) ? currentBanner.subtitle_en : currentBanner.subtitle
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)
+    setCurrentIndex((prev) => (prev - 1 + filteredBanners.length) % filteredBanners.length)
   }
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % banners.length)
+    setCurrentIndex((prev) => (prev + 1) % filteredBanners.length)
   }
 
   return (
@@ -83,13 +98,13 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           className="relative w-full h-full"
           role="group"
           aria-roledescription="slide"
-          aria-label={isMY ? `Slide ${currentIndex + 1} of ${banners.length}` : `Slide ${currentIndex + 1} dari ${banners.length}`}
+          aria-label={isMY ? `Slide ${currentIndex + 1} of ${filteredBanners.length}` : `Slide ${currentIndex + 1} dari ${filteredBanners.length}`}
         >
           {/* Desktop Banner Image (Visible on Desktop / MD screens) */}
           <div className="hidden md:block absolute inset-0 w-full h-full">
             <Image
               src={getProxiedImageUrl(currentBanner.image_url)}
-              alt={currentBanner.title || 'Banner Desktop'}
+              alt={bannerTitle || 'Banner Desktop'}
               fill
               priority
               quality={75}
@@ -102,7 +117,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           <div className="block md:hidden absolute inset-0 w-full h-full">
             <Image
               src={getProxiedImageUrl(currentBanner.image_mobile_url || currentBanner.image_url)}
-              alt={currentBanner.title || 'Banner Mobile'}
+              alt={bannerTitle || 'Banner Mobile'}
               fill
               priority
               quality={75}
@@ -112,11 +127,11 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
           </div>
 
           {/* Clean content without overlay */}
-          {(currentBanner.title || currentBanner.subtitle || currentBanner.link_url) && (
+          {(bannerTitle || bannerSubtitle || currentBanner.link_url) && (
             <div className="absolute inset-0 flex items-center z-20">
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
                 <div className="max-w-md md:max-w-xl text-left space-y-4 md:space-y-6">
-                  {currentBanner.subtitle && (
+                  {bannerSubtitle && (
                     <motion.span
                       initial={{ y: 20, opacity: 0 }}
                       animate={{
@@ -126,11 +141,11 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                       }}
                       className="inline-block text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-brand-gold bg-brand-plum/70 px-4 py-1.5 rounded-full"
                     >
-                      {currentBanner.subtitle}
+                      {bannerSubtitle}
                     </motion.span>
                   )}
 
-                  {currentBanner.title && (
+                  {bannerTitle && (
                     <motion.h1
                       initial={{ y: 30, opacity: 0 }}
                       animate={{
@@ -140,7 +155,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                       }}
                       className="text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-wide text-white leading-[1.15] drop-shadow-md"
                     >
-                      {currentBanner.title}
+                      {bannerTitle}
                     </motion.h1>
                   )}
 
@@ -169,7 +184,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
       </AnimatePresence>
 
       {/* Slider Controls (Only if multiple banners exist) */}
-      {banners.length > 1 && (
+      {filteredBanners.length > 1 && (
         <>
           <button
             onClick={handlePrev}
@@ -189,7 +204,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
 
           {/* Dots */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex space-x-2 bg-brand-plum/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15">
-            {banners.map((_, idx) => (
+            {filteredBanners.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}

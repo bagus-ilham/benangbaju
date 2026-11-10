@@ -60,6 +60,7 @@ export class AdminOrderService {
           price: item.price,
           quantity: item.quantity,
           subtotal: item.subtotal,
+          unit_price_myr: item.unit_price_myr != null ? Number(item.unit_price_myr) : null,
         }))
 
         const rawShipping = row.order_shipping
@@ -100,6 +101,12 @@ export class AdminOrderService {
           cancel_reason: row.cancel_reason,
           created_at: row.created_at,
           updated_at: row.updated_at,
+          country_code: row.country_code || order_shipping?.country_code || 'ID',
+          exchange_rate_at_order:
+            row.exchange_rate_at_order != null ? Number(row.exchange_rate_at_order) : null,
+          markup_percent_at_order:
+            row.markup_percent_at_order != null ? Number(row.markup_percent_at_order) : null,
+          total_myr: row.total_myr != null ? Number(row.total_myr) : null,
           order_items,
           order_shipping,
           profiles,
@@ -134,14 +141,14 @@ export class AdminOrderService {
       try {
         const { data: order } = await supabase
           .from('orders')
-          .select('user_id, order_number, order_shipping(country_code, tracking_number)')
+          .select('user_id, order_number, country_code, order_shipping(country_code, tracking_number)')
           .eq('id', orderId)
           .single()
 
         if (order?.user_id) {
           const rawShipping = order.order_shipping
           const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
-          const countryCode = shipping?.country_code || 'ID'
+          const countryCode = order.country_code || shipping?.country_code || 'ID'
           const effectiveTrackingNumber = trackingNumber || shipping?.tracking_number
 
           const { notificationService } = await import('@/modules/notifications/notification.service')
@@ -306,14 +313,14 @@ export class AdminOrderService {
       try {
         const { data: order } = await supabase
           .from('orders')
-          .select('user_id, order_number, status, order_shipping(country_code)')
+          .select('user_id, order_number, status, country_code, order_shipping(country_code)')
           .eq('id', orderId)
           .single()
 
         if (order?.user_id && order.status === 'shipped') {
           const rawShipping = order.order_shipping
           const shipping = Array.isArray(rawShipping) ? rawShipping[0] : rawShipping
-          const countryCode = shipping?.country_code || 'ID'
+          const countryCode = order.country_code || shipping?.country_code || 'ID'
 
           const { notificationService } = await import('@/modules/notifications/notification.service')
           await notificationService.sendOrderStatusNotification(

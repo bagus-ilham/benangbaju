@@ -134,24 +134,36 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     response.headers.set('x-api-version', '1.0')
   }
 
-  // Geo-IP Auto-Detect for Malaysia market (sets bb_market=MY cookie on first visit from MY)
-  const existingMarketCookie =
-    request.cookies.get?.('bb_market')?.value ||
-    request.cookies.getAll?.().find((c) => c.name === 'bb_market')?.value
+  // Market Detection: 1. Explicit ?market=MY/ID (Ads) -> 2. Cookie bb_market -> 3. Geo-IP Header
+  const marketParam = request.nextUrl?.searchParams?.get?.('market')?.toUpperCase()
 
-  if (!existingMarketCookie) {
-    const geoCountry =
-      request.headers.get('x-vercel-ip-country') ||
-      request.headers.get('cf-ipcountry') ||
-      request.headers.get('x-country-code')
+  if (marketParam === 'MY' || marketParam === 'ID') {
+    if (response?.cookies?.set) {
+      response.cookies.set('bb_market', marketParam, {
+        path: '/',
+        maxAge: 31536000, // 1 year
+        sameSite: 'lax',
+      })
+    }
+  } else {
+    const existingMarketCookie =
+      request.cookies.get?.('bb_market')?.value ||
+      request.cookies.getAll?.().find((c) => c.name === 'bb_market')?.value
 
-    if (geoCountry && geoCountry.toUpperCase() === 'MY') {
-      if (response?.cookies?.set) {
-        response.cookies.set('bb_market', 'MY', {
-          path: '/',
-          maxAge: 31536000, // 1 year
-          sameSite: 'lax',
-        })
+    if (!existingMarketCookie) {
+      const geoCountry =
+        request.headers.get('x-vercel-ip-country') ||
+        request.headers.get('cf-ipcountry') ||
+        request.headers.get('x-country-code')
+
+      if (geoCountry && geoCountry.toUpperCase() === 'MY') {
+        if (response?.cookies?.set) {
+          response.cookies.set('bb_market', 'MY', {
+            path: '/',
+            maxAge: 31536000, // 1 year
+            sameSite: 'lax',
+          })
+        }
       }
     }
   }

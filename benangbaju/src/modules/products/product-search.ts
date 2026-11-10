@@ -122,6 +122,8 @@ export interface SearchCandidateProduct {
   slug?: string | null
   description?: string | null
   short_description?: string | null
+  description_en?: string | null
+  short_description_en?: string | null
   meta_title?: string | null
   meta_description?: string | null
   category_id?: string | null
@@ -143,8 +145,8 @@ export function scoreProduct(product: SearchCandidateProduct, query: string): nu
 
   const name = (product.name || '').toLowerCase()
   const slug = (product.slug || '').toLowerCase()
-  const shortDesc = (product.short_description || '').toLowerCase()
-  const desc = (product.description || '').toLowerCase()
+  const shortDesc = `${product.short_description || ''} ${product.short_description_en || ''}`.toLowerCase()
+  const desc = `${product.description || ''} ${product.description_en || ''}`.toLowerCase()
 
   // 1. Direct full query exact matches (paling tinggi)
   if (name === cleanQuery) return 1000

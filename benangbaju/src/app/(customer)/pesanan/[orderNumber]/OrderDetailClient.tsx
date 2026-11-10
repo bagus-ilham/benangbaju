@@ -59,13 +59,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
 
   const [isReordering, setIsReordering] = useState(false)
-
   const { data: siteSettingsRes } = useSiteSettings()
-  const myrExchangeRate = React.useMemo(() => {
-    const s = siteSettingsRes?.data?.find((item) => item.key === 'myr_exchange_rate')
-    const rate = parseFloat(s?.value || '3600')
-    return isNaN(rate) || rate <= 0 ? 3600 : rate
-  }, [siteSettingsRes?.data])
 
   // Re-order handler
   const handleReorder = async () => {
@@ -87,27 +81,91 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         }
       }
 
-      for (const item of order.order_items) {
-        if (item.variant_id) {
-          await addItem(
-            {
-              variantId: item.variant_id,
-              productName: item.product_name || 'Produk',
-              variantName: item.variant_name || 'Default',
-              name: item.product_name || 'Produk',
-              sku: item.sku || '',
-              price: Number(item.price),
-              comparePrice: null,
-              imageUrl: null,
-              slug: '',
-              stock: item.quantity || 1,
-            },
-            item.quantity || 1
+      // Fetch fresh variant pricing and stock to prevent stale prices or out of stock items
+      const variantIds = order.order_items.map((i) => i.variant_id).filter(Boolean) as string[]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const variantsMap = new Map<string, any>()
+      if (variantIds.length > 0) {
+        const { data: variantsData } = await supabase
+          .from('product_variants')
+          .select(
+            'id, price, compare_price, stock, sku, name, is_active, products(name, slug, is_active, product_images(url, is_primary))'
           )
+          .in('id', variantIds)
+
+        if (variantsData) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          variantsData.forEach((v: any) => variantsMap.set(v.id, v))
         }
       }
-      toast.success('Pesanan lama dibatalkan & produk berhasil ditambahkan ke keranjang!', { id: 'reorder' })
-      setCartDrawerOpen(true)
+
+      let addedCount = 0
+      const outOfStockNames: string[] = []
+
+      for (const item of order.order_items) {
+        if (!item.variant_id) continue
+        const freshVariant = variantsMap.get(item.variant_id)
+        if (!freshVariant || !freshVariant.is_active || freshVariant.products?.is_active === false) {
+          outOfStockNames.push(item.product_name || 'Produk')
+          continue
+        }
+
+        const freshStock = Number(freshVariant.stock) || 0
+        if (freshStock <= 0) {
+          outOfStockNames.push(item.product_name || 'Produk')
+          continue
+        }
+
+        const images = Array.isArray(freshVariant.products?.product_images)
+          ? freshVariant.products.product_images
+          : []
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const primaryImg = images.find((img: any) => img.is_primary) || images[0]
+
+        const qtyToAdd = Math.min(item.quantity || 1, freshStock)
+
+        await addItem(
+          {
+            variantId: freshVariant.id,
+            productName: freshVariant.products?.name || item.product_name || 'Produk',
+            variantName: freshVariant.name || item.variant_name || 'Default',
+            name: `${freshVariant.products?.name || item.product_name || 'Produk'} - ${freshVariant.name || ''}`,
+            sku: freshVariant.sku || item.sku || '',
+            price: Number(freshVariant.price),
+            comparePrice: freshVariant.compare_price ? Number(freshVariant.compare_price) : null,
+            imageUrl: primaryImg ? primaryImg.url : null,
+            slug: freshVariant.products?.slug || '',
+            stock: freshStock,
+          },
+          qtyToAdd
+        )
+        addedCount++
+      }
+
+      if (outOfStockNames.length > 0) {
+        toast.error(
+          isMY
+            ? `Some items could not be added (out of stock): ${outOfStockNames.join(', ')}`
+            : `Beberapa produk tidak dapat ditambahkan karena stok habis: ${outOfStockNames.join(', ')}`
+        )
+      }
+
+      if (addedCount > 0) {
+        toast.success(
+          isMY
+            ? 'Items added to your bag with updated pricing & stock!'
+            : 'Produk berhasil ditambahkan ke keranjang dengan harga & stok terbaru!',
+          { id: 'reorder' }
+        )
+        setCartDrawerOpen(true)
+      } else {
+        toast.error(
+          isMY
+            ? 'Unable to re-order: all items in this order are out of stock.'
+            : 'Tidak dapat memesan ulang: semua produk dalam pesanan ini sedang habis.',
+          { id: 'reorder' }
+        )
+      }
     } catch {
       toast.error('Gagal memproses pemesanan ulang.', { id: 'reorder' })
     } finally {
@@ -122,6 +180,18 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     refetch,
   } = useOrderDetail(orderNumber, user?.id)
   const order = orderResponse?.data
+
+  // R4 Snapshot: Prioritize exchange rate snapshot stored when the order was created
+  const myrExchangeRate = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const snapRate = (order as any)?.exchange_rate_at_order
+    if (snapRate && Number(snapRate) > 0) {
+      return Number(snapRate)
+    }
+    const s = siteSettingsRes?.data?.find((item) => item.key === 'myr_exchange_rate')
+    const rate = parseFloat(s?.value || '3600')
+    return isNaN(rate) || rate <= 0 ? 3600 : rate
+  }, [order, siteSettingsRes?.data])
 
   // Fetch return request if order exists
   const { data: returnRequest } = useQuery({
@@ -397,16 +467,28 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     if (!order) return
     setIsInvoiceLoading(true)
     try {
-      const { data: invoiceRes, error } = await supabase.functions.invoke('generate-invoice', {
-        body: { order_number: order.order_number },
-      })
+      let htmlContent: string | null = null
+      const isMalaysiaOrder =
+        isMY || order.country_code === 'MY' || order.order_shipping?.country_code === 'MY'
 
-      if (error || !invoiceRes.success) {
-        toast.error('Gagal menghasilkan invoice')
-        return
+      if (!isMalaysiaOrder) {
+        try {
+          const { data: invoiceRes, error } = await supabase.functions.invoke('generate-invoice', {
+            body: { order_number: order.order_number },
+          })
+          if (!error && invoiceRes?.success && invoiceRes?.data?.html) {
+            htmlContent = invoiceRes.data.html
+          }
+        } catch {
+          // Fallback to client generator below
+        }
       }
 
-      const htmlContent = invoiceRes.data?.html
+      if (!htmlContent) {
+        const { generateCustomerInvoiceHtml } = await import('@/lib/utils/invoice-generator')
+        htmlContent = generateCustomerInvoiceHtml(order, { isBilingualMY: isMalaysiaOrder })
+      }
+
       if (htmlContent) {
         const printWindow = window.open('', '_blank')
         if (printWindow) {
@@ -414,23 +496,22 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
           printWindow.document.write(htmlContent)
           printWindow.document.close()
         } else {
-          toast.error('Pop-up terblokir browser. Harap izinkan pop-up.')
+          toast.error(
+            isMY
+              ? 'Pop-up blocked by browser. Please allow pop-ups to print invoice.'
+              : 'Pop-up terblokir browser. Harap izinkan pop-up untuk mencetak invoice.'
+          )
         }
       } else {
-        // Bucket `invoices` is private — use a short-lived signed URL
-        const { data: urlData } = await supabase.storage
-          .from('invoices')
-          .createSignedUrl(`${order.order_number}.html`, 60)
-
-        if (urlData?.signedUrl) {
-          window.open(urlData.signedUrl, '_blank')
-        } else {
-          toast.error('Gagal menemukan tautan unduh invoice')
-        }
+        toast.error(isMY ? 'Failed to generate invoice' : 'Gagal menghasilkan invoice')
       }
     } catch (err) {
       console.error(err)
-      toast.error('Terjadi kesalahan saat mengunduh invoice')
+      toast.error(
+        isMY
+          ? 'An error occurred while generating invoice'
+          : 'Terjadi kesalahan saat mengunduh invoice'
+      )
     } finally {
       setIsInvoiceLoading(false)
     }

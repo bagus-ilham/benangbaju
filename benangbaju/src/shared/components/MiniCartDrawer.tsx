@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
-import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { formatIDR, getMyPrice, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
@@ -16,7 +16,8 @@ import { useProducts } from '@/modules/products/hooks/useProducts'
 
 export function MiniCartDrawer(): React.JSX.Element {
   const market = useMarket()
-  const { myrExchangeRate } = useSiteSettings()
+  const isMY = market === 'MY'
+  const { myPricingConfig, freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
   const items = useCartStore((state) => state.items)
   const isCartDrawerOpen = useCartStore((state) => state.isCartDrawerOpen)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
@@ -26,6 +27,26 @@ export function MiniCartDrawer(): React.JSX.Element {
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
+
+  const totalMyr = isMY
+    ? items.reduce(
+        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity,
+        0
+      )
+    : 0
+  const chargedSubtotal = isMY
+    ? items.reduce(
+        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity,
+        0
+      )
+    : subtotal
+
+  const targetThreshold = isMY ? freeShippingThresholdMyr : freeShippingThresholdIdr
+  const currentProgressAmount = isMY ? totalMyr : subtotal
+  const isFreeShipping = items.length > 0 && currentProgressAmount >= targetThreshold
+  const remainingAmount = Math.max(0, targetThreshold - currentProgressAmount)
+  const progressPercent =
+    items.length === 0 ? 0 : Math.min(100, (currentProgressAmount / targetThreshold) * 100)
 
   // Real Database Cross-Sell recommendations
   const { data: recsData } = useProducts({ sortBy: 'featured', limit: 6 })
@@ -106,19 +127,33 @@ export function MiniCartDrawer(): React.JSX.Element {
             </div>
 
             {/* Free Shipping Progress Bar */}
-            {/* <div className="bg-brand-cream/60 px-6 py-3 border-b border-neutral-100 space-y-1.5">
+            <div className="bg-brand-cream/60 px-6 py-3 border-b border-neutral-100 space-y-1.5">
               <p className="text-[10px] font-heading font-medium uppercase tracking-wider text-brand-plum text-center">
-                {subtotal >= 0 ? (
+                {isFreeShipping ? (
                   <span className="text-emerald-700 font-bold">
-                    🎉 Selamat! Anda Mendapatkan Gratis Ongkir
+                    {isMY
+                      ? '🎉 Congratulations! You Unlocked Free Shipping to Malaysia'
+                      : '🎉 Selamat! Anda Mendapatkan Gratis Ongkir'}
                   </span>
                 ) : (
                   <>
-                    Belanja{' '}
-                    <span className="font-bold text-brand-plum">
-                      {formatIDR(0 - subtotal)}
-                    </span>{' '}
-                    lagi untuk <span className="font-bold">Gratis Ongkir</span>
+                    {isMY ? (
+                      <>
+                        Add{' '}
+                        <span className="font-bold text-brand-plum">
+                          {formatMYR(remainingAmount)}
+                        </span>{' '}
+                        more for <span className="font-bold">Free Shipping to Malaysia</span>
+                      </>
+                    ) : (
+                      <>
+                        Belanja{' '}
+                        <span className="font-bold text-brand-plum">
+                          {formatIDR(remainingAmount)}
+                        </span>{' '}
+                        lagi untuk <span className="font-bold">Gratis Ongkir</span>
+                      </>
+                    )}
                   </>
                 )}
               </p>
@@ -126,11 +161,24 @@ export function MiniCartDrawer(): React.JSX.Element {
                 <motion.div
                   className="h-full bg-gradient-to-r from-brand-gold to-amber-300"
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, (subtotal / 500000) * 100)}%` }}
+                  animate={{ width: `${progressPercent}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
                 />
               </div>
-            </div> */}
+            </div>
+
+            {/* B2-5: De Minimis Customs Notice for Malaysia */}
+            {isMY && totalMyr >= 450 && (
+              <div className="mx-6 mt-3 p-2.5 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 leading-snug flex items-start gap-2">
+                <span className="text-sm shrink-0">ℹ️</span>
+                <div>
+                  <span className="font-semibold">Malaysian Customs Notice (De Minimis):</span>{' '}
+                  {totalMyr >= 500
+                    ? 'Orders exceeding RM 500 may be subject to SST / import duty upon arrival according to Malaysian Royal Customs regulations.'
+                    : 'Your order is approaching the RM 500 De Minimis duty-free threshold. Shipments above RM 500 may incur local customs duties.'}
+                </div>
+              </div>
+            )}
 
             {/* Items List */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
@@ -248,24 +296,32 @@ export function MiniCartDrawer(): React.JSX.Element {
 
                         {/* Price */}
                         <div className="text-right">
-                          <div className="flex items-center justify-end space-x-1.5">
-                            <span className="text-xs font-sans font-semibold text-brand-plum">
-                              {formatIDR(item.price * item.quantity)}
-                            </span>
-                            {item.comparePrice && item.comparePrice > item.price && (
-                              <span className="text-[10px] font-sans text-neutral-400 line-through">
-                                {formatIDR(item.comparePrice * item.quantity)}
-                              </span>
-                            )}
-                          </div>
-                          {market === 'MY' && (
+                          {isMY ? (
+                            <>
+                              <div className="flex items-center justify-end space-x-1.5">
+                                <span className="text-xs font-sans font-bold text-brand-plum">
+                                  {formatMYR(getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity)}
+                                </span>
+                                {item.comparePrice && item.comparePrice > item.price && (
+                                  <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                    {formatMYR(getMyPrice(item.comparePrice, myPricingConfig).priceMyr * item.quantity)}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center justify-end space-x-1.5 mt-0.5">
+                                <span className="block text-[9px] font-sans font-semibold text-neutral-500">
+                                  ≈ {formatIDR(getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity)}
+                                </span>
+                              </div>
+                            </>
+                          ) : (
                             <div className="flex items-center justify-end space-x-1.5">
-                              <span className="block text-[9px] font-sans font-bold text-emerald-800">
-                                {formatApproxMYR(item.price * item.quantity, myrExchangeRate)}
+                              <span className="text-xs font-sans font-semibold text-brand-plum">
+                                {formatIDR(item.price * item.quantity)}
                               </span>
                               {item.comparePrice && item.comparePrice > item.price && (
-                                <span className="text-[9px] font-sans text-neutral-400 line-through">
-                                  {formatApproxMYR(item.comparePrice * item.quantity, myrExchangeRate)}
+                                <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                  {formatIDR(item.comparePrice * item.quantity)}
                                 </span>
                               )}
                             </div>
@@ -316,24 +372,32 @@ export function MiniCartDrawer(): React.JSX.Element {
                                 {p.name}
                               </p>
                               <div className="flex flex-col">
-                                <div className="flex items-center space-x-1.5">
-                                  <span className="text-[10px] font-sans font-bold text-brand-plum">
-                                    {formatIDR(p.minPrice)}
-                                  </span>
-                                  {p.comparePrice && p.comparePrice > p.minPrice && (
-                                    <span className="text-[9px] font-sans text-neutral-400 line-through">
-                                      {formatIDR(p.comparePrice)}
-                                    </span>
-                                  )}
-                                </div>
-                                {market === 'MY' && (
-                                  <div className="flex items-center space-x-1">
-                                    <span className="text-[9px] font-sans font-semibold text-emerald-800">
-                                      {formatApproxMYR(p.minPrice, myrExchangeRate)}
+                                {isMY ? (
+                                  <>
+                                    <div className="flex items-center space-x-1.5">
+                                      <span className="text-[10px] font-sans font-bold text-brand-plum">
+                                        {getMyPrice(p.minPrice, myPricingConfig).formattedMyr}
+                                      </span>
+                                      {p.comparePrice && p.comparePrice > p.minPrice && (
+                                        <span className="text-[9px] font-sans text-neutral-400 line-through">
+                                          {getMyPrice(p.comparePrice, myPricingConfig).formattedMyr}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <span className="text-[8px] font-sans font-semibold text-neutral-500">
+                                        ≈ {formatIDR(getMyPrice(p.minPrice, myPricingConfig).chargedIdr)}
+                                      </span>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div className="flex items-center space-x-1.5">
+                                    <span className="text-[10px] font-sans font-bold text-brand-plum">
+                                      {formatIDR(p.minPrice)}
                                     </span>
                                     {p.comparePrice && p.comparePrice > p.minPrice && (
-                                      <span className="text-[8px] font-sans text-neutral-400 line-through">
-                                        {formatApproxMYR(p.comparePrice, myrExchangeRate)}
+                                      <span className="text-[9px] font-sans text-neutral-400 line-through">
+                                        {formatIDR(p.comparePrice)}
                                       </span>
                                     )}
                                   </div>
@@ -384,12 +448,18 @@ export function MiniCartDrawer(): React.JSX.Element {
                     Subtotal
                   </span>
                   <div className="text-right">
-                    <span className="text-base font-sans font-bold text-brand-plum">
-                      {formatIDR(subtotal)}
-                    </span>
-                    {market === 'MY' && (
-                      <span className="block text-xs font-sans font-bold text-emerald-800">
-                        {formatApproxMYR(subtotal, myrExchangeRate)}
+                    {isMY ? (
+                      <>
+                        <span className="text-base font-sans font-bold text-brand-plum">
+                          {formatMYR(totalMyr)}
+                        </span>
+                        <span className="block text-xs font-sans font-semibold text-neutral-500">
+                          ≈ {formatIDR(chargedSubtotal)}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-base font-sans font-bold text-brand-plum">
+                        {formatIDR(subtotal)}
                       </span>
                     )}
                   </div>

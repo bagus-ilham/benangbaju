@@ -9,9 +9,12 @@ export function useAdminDashboardStats() {
   })
 }
 
-export function useAdminAnalytics(days: number = 30) {
+export function useAdminAnalytics(
+  days: number = 30,
+  marketFilter: 'ALL' | 'ID' | 'MY' = 'ALL'
+) {
   return useQuery({
-    queryKey: ['admin', 'analytics', days],
-    queryFn: () => getAdminAnalyticsAction(days),
+    queryKey: ['admin', 'analytics', days, marketFilter],
+    queryFn: () => getAdminAnalyticsAction(days, marketFilter),
   })
 }

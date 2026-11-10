@@ -4,14 +4,18 @@ import React, { useState } from 'react'
 import { useAdminAnalytics } from '@/app/admin/hooks/useAdmin'
 import { AdminPageHeader } from '@/shared/components'
 import dynamic from 'next/dynamic'
-import { formatIDR, formatApproxMYR } from '@/lib/utils/format'
+import { formatIDR, formatApproxMYR, formatMYR } from '@/lib/utils/format'
 import { HandDrawnIcon, Button } from '@/shared/components'
 
 const RevenueTrendChart = dynamic(
   () => import('./components/AnalyticsCharts').then((m) => m.RevenueTrendChart),
   {
     ssr: false,
-    loading: () => <div className="h-full flex items-center justify-center text-xs text-neutral-400">Memuat grafik...</div>,
+    loading: () => (
+      <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+        Memuat grafik...
+      </div>
+    ),
   }
 )
 
@@ -19,19 +23,25 @@ const TopProductsChart = dynamic(
   () => import('./components/AnalyticsCharts').then((m) => m.TopProductsChart),
   {
     ssr: false,
-    loading: () => <div className="h-full flex items-center justify-center text-xs text-neutral-400">Memuat grafik...</div>,
+    loading: () => (
+      <div className="h-full flex items-center justify-center text-xs text-neutral-400">
+        Memuat grafik...
+      </div>
+    ),
   }
 )
 
 export default function AdminAnalyticsPage() {
   const [days, setDays] = useState(30)
-  const { data: analytics, isLoading, isError } = useAdminAnalytics(days)
+  const [marketFilter, setMarketFilter] = useState<'ALL' | 'ID' | 'MY'>('ALL')
+  const { data: analytics, isLoading, isError } = useAdminAnalytics(days, marketFilter)
 
   const handleExportCSV = () => {
     if (!analytics) return
     const rows = [
       ['--- RINGKASAN ANALITIK ---'],
-      ['Total Pendapatan', analytics.totalRevenue],
+      ['Filter Pasar', marketFilter === 'ALL' ? 'Semua Pasar' : marketFilter],
+      ['Total Pendapatan (IDR)', analytics.totalRevenue],
       ['Total Pesanan Sukses', analytics.totalOrders],
       ['Keranjang Ditinggalkan', analytics.abandonedCartsCount],
       [],
@@ -48,11 +58,12 @@ export default function AdminAnalyticsPage() {
       ...analytics.voucherUsage.map((v) => [v.code, v.count, v.totalDiscount]),
       [],
       ['--- PERFORMA PASAR (NEGARA) ---'],
-      ['Negara', 'Jumlah Pesanan Sukses', 'Total Pendapatan (IDR)'],
+      ['Negara', 'Jumlah Pesanan Sukses', 'Total Pendapatan (IDR)', 'Total Pendapatan (MYR)'],
       ...(analytics.countryBreakdown || []).map((c) => [
         c.countryCode === 'MY' ? 'Malaysia (MY)' : 'Indonesia (ID)',
         c.ordersCount,
         c.revenue,
+        c.revenueMyr != null ? c.revenueMyr : '',
       ]),
     ]
 
@@ -62,7 +73,7 @@ export default function AdminAnalyticsPage() {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
-    link.setAttribute('download', `laporan-analitik-${days}hari.csv`)
+    link.setAttribute('download', `laporan-analitik-${marketFilter.toLowerCase()}-${days}hari.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -94,7 +105,44 @@ export default function AdminAnalyticsPage() {
           title="Analisis Penjualan & Performa"
           subtitle="Tinjauan mendalam performa bisnis berdasarkan data transaksi yang valid."
         />
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Segmented Filter Pasar (ALL / ID / MY) */}
+          <div className="flex items-center rounded-xl bg-neutral-100 p-1 border border-neutral-200">
+            <button
+              type="button"
+              onClick={() => setMarketFilter('ALL')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                marketFilter === 'ALL'
+                  ? 'bg-brand-plum text-white shadow-xs'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              Semua Pasar
+            </button>
+            <button
+              type="button"
+              onClick={() => setMarketFilter('ID')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                marketFilter === 'ID'
+                  ? 'bg-brand-plum text-white shadow-xs'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              🇮🇩 Indonesia
+            </button>
+            <button
+              type="button"
+              onClick={() => setMarketFilter('MY')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                marketFilter === 'MY'
+                  ? 'bg-brand-plum text-white shadow-xs'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              🇲🇾 Malaysia
+            </button>
+          </div>
+
           <Button
             onClick={handleExportCSV}
             variant="outline"
@@ -121,7 +169,9 @@ export default function AdminAnalyticsPage() {
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pendapatan</h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">{formatIDR(analytics.totalRevenue)}</p>
-          <p className="text-[10px] text-neutral-400 mt-1">Dalam {days} hari terakhir</p>
+          <p className="text-[10px] text-neutral-400 mt-1">
+            Dalam {days} hari ({marketFilter === 'ALL' ? 'Semua Pasar' : `Pasar ${marketFilter}`})
+          </p>
         </div>
 
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
@@ -130,7 +180,9 @@ export default function AdminAnalyticsPage() {
             <h3 className="text-[10px] font-bold uppercase tracking-wider">Total Pesanan Sukses</h3>
           </div>
           <p className="text-2xl font-bold text-neutral-900">{analytics.totalOrders}</p>
-          <p className="text-[10px] text-neutral-400 mt-1">Dalam {days} hari terakhir</p>
+          <p className="text-[10px] text-neutral-400 mt-1">
+            Dalam {days} hari ({marketFilter === 'ALL' ? 'Semua Pasar' : `Pasar ${marketFilter}`})
+          </p>
         </div>
 
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl">
@@ -161,10 +213,12 @@ export default function AdminAnalyticsPage() {
         const idData = analytics.countryBreakdown?.find((c) => c.countryCode === 'ID') || {
           ordersCount: 0,
           revenue: 0,
+          revenueMyr: 0,
         }
         const myData = analytics.countryBreakdown?.find((c) => c.countryCode === 'MY') || {
           ordersCount: 0,
           revenue: 0,
+          revenueMyr: 0,
         }
         const totalMarketRev = idData.revenue + myData.revenue || 1
         const idRevPercent = Math.round((idData.revenue / totalMarketRev) * 100)
@@ -209,7 +263,7 @@ export default function AdminAnalyticsPage() {
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
                     <span>🇲🇾</span>
-                    <span>Malaysia (Semenanjung)</span>
+                    <span>Malaysia (Semenanjung, Sabah & Sarawak)</span>
                   </span>
                   <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                     {myRevPercent}% Pendapatan
@@ -218,7 +272,7 @@ export default function AdminAnalyticsPage() {
                 <div className="flex items-baseline gap-2">
                   <p className="text-xl font-bold text-emerald-900">{formatIDR(myData.revenue)}</p>
                   <span className="text-xs font-semibold text-emerald-700">
-                    ({formatApproxMYR(myData.revenue)})
+                    ({myData.revenueMyr ? formatMYR(myData.revenueMyr) : formatApproxMYR(myData.revenue)})
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-neutral-600 pt-1 border-t border-neutral-100 font-sans">
@@ -235,7 +289,7 @@ export default function AdminAnalyticsPage() {
         {/* Grafik Penjualan */}
         <div className="bg-brand-cream border border-neutral-200 p-6 rounded-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">
-            Tren Pendapatan
+            Tren Pendapatan {marketFilter !== 'ALL' ? `(${marketFilter})` : ''}
           </h3>
           <div className="h-[300px] w-full">
             <RevenueTrendChart revenueTrends={analytics.revenueTrends} />
@@ -245,7 +299,7 @@ export default function AdminAnalyticsPage() {
         {/* Top Products */}
         <div className="bg-brand-cream border border-neutral-200 p-6 rounded-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-6">
-            Produk Terlaris
+            Produk Terlaris {marketFilter !== 'ALL' ? `(${marketFilter})` : ''}
           </h3>
           <div className="h-[300px] w-full">
             {analytics.topProducts.length === 0 ? (

@@ -11,6 +11,8 @@ export interface OrderItem {
   subtotal: number
   weight_gram?: number | null
   hs_code?: string | null
+  country_code?: string | null
+  unit_price_myr?: number | null
   product_reviews?: {
     id: string
     rating: number
@@ -96,6 +98,10 @@ export interface Order {
   payment_fee: number
   payment_channel: string | null
   total_amount: number
+  country_code?: string | null
+  exchange_rate_at_order?: number | null
+  markup_percent_at_order?: number | null
+  total_myr?: number | null
   notes: string | null
   cancel_reason: string | null
   created_at: string
@@ -150,6 +156,10 @@ export interface AdminOrderListItem {
   payment_fee: number
   payment_channel: string | null
   total_amount: number
+  country_code?: string | null
+  exchange_rate_at_order?: number | null
+  markup_percent_at_order?: number | null
+  total_myr?: number | null
   notes: string | null
   cancel_reason: string | null
   created_at: string
