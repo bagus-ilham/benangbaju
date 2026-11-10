@@ -182,16 +182,16 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const order = orderResponse?.data
 
   // R4 Snapshot: Prioritize exchange rate snapshot stored when the order was created
+  const snapRate = order?.exchange_rate_at_order
+  const settingsData = siteSettingsRes?.data
   const myrExchangeRate = React.useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const snapRate = (order as any)?.exchange_rate_at_order
     if (snapRate && Number(snapRate) > 0) {
       return Number(snapRate)
     }
-    const s = siteSettingsRes?.data?.find((item) => item.key === 'myr_exchange_rate')
+    const s = settingsData?.find((item) => item.key === 'myr_exchange_rate')
     const rate = parseFloat(s?.value || '3600')
     return isNaN(rate) || rate <= 0 ? 3600 : rate
-  }, [order, siteSettingsRes?.data])
+  }, [snapRate, settingsData])
 
   // Fetch return request if order exists
   const { data: returnRequest } = useQuery({
