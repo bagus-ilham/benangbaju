@@ -66,34 +66,52 @@ Do not wrap in markdown quotes or code fences outside the JSON. Return only the 
       careGuide: care,
     })
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`
+    const candidateModels = ['gemini-3.8-flash', 'gemini-3.1-flash-lite']
+    let response: Response | null = null
+    let lastErrText = ''
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: `${systemInstruction}\n\nTranslate the following Indonesian apparel data into English:\n${userPrompt}` }],
+    for (const modelName of candidateModels) {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          responseMimeType: 'application/json',
-        },
-      }),
-      cache: 'no-store',
-    })
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: `${systemInstruction}\n\nTranslate the following Indonesian apparel data into English:\n${userPrompt}` }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.2,
+              responseMimeType: 'application/json',
+            },
+          }),
+          cache: 'no-store',
+        })
 
-    if (!response.ok) {
-      const errText = await response.text()
-      console.error('Gemini API translation error:', response.status, errText)
+        if (res.ok) {
+          response = res
+          break
+        } else {
+          lastErrText = await res.text()
+          console.warn(`Gemini API translation model ${modelName} returned status ${res.status}: ${lastErrText}`)
+          // If 503 or 404, loop to try next model
+        }
+      } catch (networkErr: unknown) {
+        console.warn(`Network error with model ${modelName}:`, networkErr)
+      }
+    }
+
+    if (!response || !response.ok) {
+      console.error('All Gemini API candidate models failed. Last error:', lastErrText)
       return {
         success: false,
-        error: `Gagal menghubungi layanan terjemahan (Gemini API HTTP ${response.status}).`,
+        error: `Gagal menghubungi layanan terjemahan Gemini AI. Silakan coba beberapa saat lagi.`,
       }
     }
 
