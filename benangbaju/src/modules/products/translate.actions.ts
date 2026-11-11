@@ -66,7 +66,7 @@ Do not wrap in markdown quotes or code fences outside the JSON. Return only the 
       careGuide: care,
     })
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`
 
     const response = await fetch(endpoint, {
       method: 'POST',
