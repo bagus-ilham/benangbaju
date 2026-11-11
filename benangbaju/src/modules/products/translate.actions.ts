@@ -66,7 +66,7 @@ Do not wrap in markdown quotes or code fences outside the JSON. Return only the 
       careGuide: care,
     })
 
-    const candidateModels = ['gemini-3.8-flash', 'gemini-3.1-flash-lite']
+    const candidateModels = ['gemini-3.1-flash-lite', 'gemini-3.8-flash']
     let response: Response | null = null
     let lastErrText = ''
 
