@@ -87,7 +87,7 @@ export function MegaMenuNavItem({
       <Link
         href={href}
         className={cn(
-          'text-[10px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center gap-1 nav-link-underline h-16',
+          'text-[10px] xl:text-[11px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center gap-1 nav-link-underline h-16 md:h-[72px] whitespace-nowrap',
           isActive
             ? 'text-brand-plum font-bold'
             : isTransparentHome

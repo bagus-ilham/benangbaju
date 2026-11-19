@@ -50,19 +50,19 @@ export function DesktopNavbar({
   const market = useMarket()
   const isMY = market === 'MY'
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const isTransparentHome = pathname === '/' && !isScrolled
+  const isTransparentHome = false
 
   return (
     <header
       className={cn(
         'sticky top-0 z-40 w-full transition-all duration-300 border-b',
         isScrolled
-          ? 'bg-brand-cream/90 backdrop-blur-md border-neutral-200/80 shadow-xs'
-          : 'bg-transparent border-transparent'
+          ? 'bg-brand-cream/95 backdrop-blur-md border-neutral-200/80 shadow-xs'
+          : 'bg-brand-cream border-neutral-200/60'
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 gap-2 sm:gap-4">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 md:h-[72px] gap-2 sm:gap-4">
           {/* Left Column: Navigation Links / Hamburger */}
           <div className="flex items-center justify-start min-w-0">
             <button
@@ -101,7 +101,7 @@ export function DesktopNavbar({
                     key={link.name}
                     href={link.href}
                     className={cn(
-                      'text-[10px] xl:text-[11px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16 whitespace-nowrap',
+                      'text-[10px] xl:text-[11px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16 md:h-[72px] whitespace-nowrap',
                       pathname === link.href
                         ? 'text-brand-plum font-bold'
                         : isTransparentHome
