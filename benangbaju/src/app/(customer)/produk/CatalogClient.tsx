@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ProductListItem } from '@/modules/products/types'
+import { useProducts } from '@/modules/products/hooks/useProducts'
 import { Category } from '@/modules/categories/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import {
@@ -54,6 +55,27 @@ export function CatalogClient({
   const router = useRouter()
 
   const { categorySlug, sortBy = 'newest', searchQuery, page = 1, limit = 12 } = filters
+
+  // Fetch Malaysia-filtered & Malaysia-price-sorted catalog directly from DB when in MY mode
+  const { data: myProductsRes, isLoading: isMyLoading } = useProducts(
+    {
+      categorySlug,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sortBy: sortBy as any,
+      searchQuery,
+      page,
+      limit,
+      market: 'MY',
+    },
+    { enabled: isMY }
+  )
+
+  const activeProducts = isMY
+    ? myProductsRes?.data ?? initialProducts.filter((p) => p.isAvailableInMY)
+    : initialProducts
+  const activeTotalCount = isMY
+    ? myProductsRes?.pagination?.total_count ?? activeProducts.length
+    : totalCount
 
   // Local filter UI states
   const [showMobileFilters, setShowMobileFilters] = useState(false)
@@ -106,7 +128,7 @@ export function CatalogClient({
     router.push('/produk')
   }
 
-  const totalPages = Math.ceil(totalCount / limit)
+  const totalPages = Math.ceil(activeTotalCount / limit)
 
   return (
     <div className="bg-brand-cream min-h-screen">
@@ -118,14 +140,14 @@ export function CatalogClient({
       <PageContainer
         className={cn(
           'py-10 page-content transition-opacity duration-300',
-          isPending && 'opacity-50 pointer-events-none'
+          (isPending || (isMY && isMyLoading)) && 'opacity-50 pointer-events-none'
         )}
       >
         {searchQuery && (
           <p className="text-xs text-neutral-500 font-sans -mt-6 mb-8">
             {isMY ? 'Search results for:' : 'Hasil pencarian untuk:'}{' '}
-            <strong className="text-brand-plum">&quot;{searchQuery}&quot;</strong> ({totalCount}{' '}
-            produk)
+            <strong className="text-brand-plum">&quot;{searchQuery}&quot;</strong> ({activeTotalCount}{' '}
+            {isMY ? 'items' : 'produk'})
           </p>
         )}
 
@@ -275,8 +297,8 @@ export function CatalogClient({
           <div className="flex-1">
             {(() => {
               const visibleProducts = isMY
-                ? initialProducts.filter((p) => p.isAvailableInMY)
-                : initialProducts
+                ? activeProducts.filter((p) => p.isAvailableInMY)
+                : activeProducts
               return visibleProducts.length === 0 ? (
                 <EmptyState
                   handDrawnIcon="package"

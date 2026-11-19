@@ -6,10 +6,11 @@ import {
 } from '@/modules/products/actions'
 import { ProductFilters } from '@/modules/products/types'
 
-export function useProducts(filters: ProductFilters = {}) {
+export function useProducts(filters: ProductFilters = {}, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['products', filters],
     queryFn: () => getProductsAction(filters),
+    enabled: options?.enabled ?? true,
   })
 }
 

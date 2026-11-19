@@ -216,12 +216,19 @@ export default function AdminDashboardPage(): React.JSX.Element {
                     className="flex justify-between items-center border-b border-neutral-100 last:border-0 pb-3 last:pb-0 text-xs font-sans"
                   >
                     <div>
-                      <Link
-                        href="/admin/pesanan"
-                        className="font-semibold text-brand-plum hover:underline"
-                      >
-                        {order.order_number}
-                      </Link>
+                      <div className="flex items-center gap-1.5">
+                        <Link
+                          href={`/admin/pesanan/${order.order_number}`}
+                          className="font-semibold text-brand-plum hover:underline"
+                        >
+                          {order.order_number}
+                        </Link>
+                        {order.order_number?.startsWith('ORD-MY-') && (
+                          <span className="px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300 rounded">
+                            🇲🇾 MY
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[10px] text-neutral-400 mt-0.5">
                         {order.order_shipping?.recipient_name || 'Pelanggan'} |{' '}
                         {new Date(order.created_at).toLocaleDateString('id-ID', {

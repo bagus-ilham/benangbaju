@@ -1,6 +1,6 @@
 import React from 'react'
 import { AdminPanel, Input, HandDrawnIcon } from '@/shared/components'
-import { buildWhatsAppUrl, formatApproxMYR, formatIDR } from '@/lib/utils/format'
+import { buildWhatsAppUrl, formatApproxMYR, formatIDR, formatMYR } from '@/lib/utils/format'
 import { getCourierTrackingUrl, parseTrackingNumbers } from '@/lib/utils/shipping'
 import { DEFAULT_WEIGHT_GRAM } from '@/lib/constants'
 import type { OrderItem } from '@/modules/orders/types'
@@ -247,12 +247,37 @@ export function AdminOrderShippingPanel({
 
               <div className="p-2.5 bg-white rounded border border-amber-200/80">
                 <p className="text-[10px] text-neutral-400 uppercase font-semibold">Nilai Barang (Declared Value)</p>
-                <p className="text-sm font-bold text-neutral-900 mt-0.5">
-                  {formatIDR(declaredValueIdr)}
-                </p>
-                <p className="text-[10px] text-amber-800 font-semibold mt-0.5">
-                  {formatApproxMYR(declaredValueIdr)}
-                </p>
+                {(() => {
+                  const itemsMyrSum = orderItems.reduce(
+                    (acc, it) => acc + (Number(it.unit_price_myr) || 0) * (it.quantity || 1),
+                    0
+                  )
+                  const declaredMyr =
+                    order?.subtotal_myr != null
+                      ? Math.max(
+                          0,
+                          Number(
+                            (
+                              Number(order.subtotal_myr) - Number(order.discount_amount_myr || 0)
+                            ).toFixed(2)
+                          )
+                        )
+                      : itemsMyrSum > 0
+                        ? Number(itemsMyrSum.toFixed(2))
+                        : null
+                  return (
+                    <>
+                      <p className="text-sm font-bold text-neutral-900 mt-0.5">
+                        {declaredMyr != null ? formatMYR(declaredMyr) : formatIDR(declaredValueIdr)}
+                      </p>
+                      <p className="text-[10px] text-amber-800 font-semibold mt-0.5">
+                        {declaredMyr != null
+                          ? `Settlement: ${formatIDR(declaredValueIdr)}`
+                          : formatApproxMYR(declaredValueIdr, order?.exchange_rate_at_order || 3600)}
+                      </p>
+                    </>
+                  )
+                })()}
               </div>
             </div>
 

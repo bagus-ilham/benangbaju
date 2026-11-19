@@ -6,9 +6,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/shared/components'
-import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { safeLogError } from '@/lib/logger'
 import { getProductsAction } from '@/modules/products/actions'
 import { type ProductListItem } from '@/modules/products/types'
@@ -25,7 +24,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const router = useRouter()
   const [supabase] = useState(() => createBrowserClient())
   const market = useMarket()
-  const { myrExchangeRate } = useSiteSettings()
 
   const [searchQuery, setSearchQuery] = useState('')
   const [instantResults, setInstantResults] = useState<ProductListItem[]>([])
@@ -79,8 +77,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const startTimer = setTimeout(() => setIsSearchingInstant(true), 0)
     const delayDebounceFn = setTimeout(async () => {
       try {
-        const res = await getProductsAction({ searchQuery: searchQuery.trim(), limit: 4 })
-        setInstantResults(res.data || [])
+        const res = await getProductsAction({ searchQuery: searchQuery.trim(), limit: 4, market })
+        const items = (res.data || []).filter((p) => (market === 'MY' ? p.isAvailableInMY : true))
+        setInstantResults(items)
       } catch (err) {
         safeLogError('Instant search error:', err)
       } finally {
@@ -92,7 +91,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       clearTimeout(startTimer)
       clearTimeout(delayDebounceFn)
     }
-  }, [searchQuery, isOpen, supabase])
+  }, [searchQuery, isOpen, supabase, market])
 
   const saveRecentSearch = (query: string) => {
     try {
@@ -278,12 +277,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                 {product.name}
                               </h4>
                               <div className="mt-0.5">
-                                <span className="text-[10px] font-sans font-medium text-neutral-600">
-                                  {formatIDR(minPrice)}
-                                </span>
-                                {market === 'MY' && (
-                                  <span className="text-[9px] font-sans font-bold text-emerald-800 ml-1.5">
-                                    {formatApproxMYR(minPrice, myrExchangeRate)}
+                                {market === 'MY' && product.minPriceMyr != null ? (
+                                  <span className="text-[10px] font-sans font-bold text-brand-plum">
+                                    {formatMYR(product.minPriceMyr)}
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-sans font-medium text-neutral-600">
+                                    {formatIDR(minPrice)}
                                   </span>
                                 )}
                               </div>
