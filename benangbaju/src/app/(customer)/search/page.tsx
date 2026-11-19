@@ -40,6 +40,7 @@ function SearchResultsContent() {
   } = useProducts({
     searchQuery: query || undefined,
     limit: 40,
+    market,
   })
 
   const products = dataRes?.data || []

@@ -89,7 +89,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         const { data: variantsData } = await supabase
           .from('product_variants')
           .select(
-            'id, price, compare_price, stock, sku, name, is_active, products(name, slug, is_active, product_images(url, is_primary))'
+            'id, price, compare_price, price_myr, compare_price_myr, stock, stock_my, sku, name, is_active, products(name, slug, is_active, product_images(url, is_primary))'
           )
           .in('id', variantIds)
 
@@ -101,6 +101,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
 
       let addedCount = 0
       const outOfStockNames: string[] = []
+      const isMalaysiaOrder =
+        isMY || order.country_code === 'MY' || order.order_shipping?.country_code === 'MY'
 
       for (const item of order.order_items) {
         if (!item.variant_id) continue
@@ -110,8 +112,13 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
           continue
         }
 
-        const freshStock = Number(freshVariant.stock) || 0
-        if (freshStock <= 0) {
+        const freshStock = isMalaysiaOrder
+          ? Number(freshVariant.stock_my) || 0
+          : Number(freshVariant.stock) || 0
+        if (
+          freshStock <= 0 ||
+          (isMalaysiaOrder && (!freshVariant.price_myr || Number(freshVariant.price_myr) <= 0))
+        ) {
           outOfStockNames.push(item.product_name || 'Produk')
           continue
         }
@@ -133,9 +140,15 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
             sku: freshVariant.sku || item.sku || '',
             price: Number(freshVariant.price),
             comparePrice: freshVariant.compare_price ? Number(freshVariant.compare_price) : null,
+            priceMyr: freshVariant.price_myr != null ? Number(freshVariant.price_myr) : null,
+            comparePriceMyr:
+              freshVariant.compare_price_myr != null
+                ? Number(freshVariant.compare_price_myr)
+                : null,
             imageUrl: primaryImg ? primaryImg.url : null,
             slug: freshVariant.products?.slug || '',
-            stock: freshStock,
+            stock: Number(freshVariant.stock) || 0,
+            stockMy: Number(freshVariant.stock_my) || 0,
           },
           qtyToAdd
         )

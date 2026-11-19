@@ -3,7 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, Textarea, HandDrawnIcon } from '@/shared/components'
-import { formatIDR, formatApproxMYR } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 
@@ -76,7 +76,7 @@ export function CheckoutAddressForm({
                   </p>
                   {isMalaysia && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      🇲🇾 Malaysia (Semenanjung)
+                      🇲🇾 Malaysia
                     </span>
                   )}
                 </div>
@@ -233,12 +233,19 @@ export function CheckoutAddressForm({
                     {option.courier_name}
                   </span>
                   <div className="text-right">
-                    <span className="font-sans font-bold text-xs text-brand-plum block">
-                      {formatIDR(option.price)}
-                    </span>
-                    {isMalaysia && (
-                      <span className="text-[10px] font-bold text-emerald-800 block">
-                        {formatApproxMYR(option.price, myrExchangeRate)}
+                    {isMalaysia ? (
+                      <>
+                        <span className="font-sans font-bold text-xs text-brand-plum block">
+                          {formatMYR(
+                            option.price_myr != null
+                              ? option.price_myr
+                              : Number((option.price / myrExchangeRate).toFixed(2))
+                          )}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-sans font-bold text-xs text-brand-plum block">
+                        {formatIDR(option.price)}
                       </span>
                     )}
                   </div>

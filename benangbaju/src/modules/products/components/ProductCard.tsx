@@ -8,9 +8,8 @@ import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { ProductListItem } from '@/modules/products/types'
-import { cn, formatIDR, getMyPrice } from '@/lib/utils'
+import { cn, formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { Badge } from '@/shared/components/Badge'
 import toast from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -23,7 +22,7 @@ interface ProductCardProps {
 export const ProductCard = React.memo(function ProductCard({
   product,
   className,
-}: ProductCardProps): React.JSX.Element {
+}: ProductCardProps): React.JSX.Element | null {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const isLiked = useWishlistStore((state) => state.productIds.includes(product.id))
@@ -33,7 +32,6 @@ export const ProductCard = React.memo(function ProductCard({
   const [imageLoaded, setImageLoaded] = useState(false)
   const market = useMarket()
   const isMY = market === 'MY'
-  const { myPricingConfig } = useSiteSettings()
 
   const liked = isLiked
 
@@ -42,9 +40,30 @@ export const ProductCard = React.memo(function ProductCard({
     maxPrice,
     comparePrice,
     discountPercent,
+    minPriceMyr,
+    maxPriceMyr,
+    comparePriceMyr,
+    discountPercentMyr,
+    isAvailableInMY,
     primaryImage,
     hoverImage,
   } = product
+
+  const hasMYPrice =
+    isAvailableInMY ??
+    product.product_variants.some((v) => v.is_active && v.price_myr != null && Number(v.price_myr) > 0)
+
+  // Rule: Hide products without manual RM price when browsing Malaysia market
+  if (isMY && !hasMYPrice) {
+    return null
+  }
+
+  const activeDiscountPercent = isMY ? discountPercentMyr : discountPercent
+  const isOutOfStock = isMY
+    ? product.product_variants
+        .filter((v) => v.is_active && v.price_myr != null && Number(v.price_myr) > 0)
+        .every((v) => (v.stock_my ?? 0) <= 0)
+    : product.product_variants.every((v) => v.stock <= 0)
 
   const displayAltImage = isHovered || showAltImage
 
@@ -117,16 +136,16 @@ export const ProductCard = React.memo(function ProductCard({
         </Link>
 
         {/* Discount badge */}
-        {typeof discountPercent === 'number' && discountPercent > 0 && (
+        {typeof activeDiscountPercent === 'number' && activeDiscountPercent > 0 && (
           <div className="absolute top-3 left-3 z-10">
             <Badge variant="sale" size="sm">
-              -{discountPercent}%
+              -{activeDiscountPercent}%
             </Badge>
           </div>
         )}
 
         {/* Featured badge */}
-        {product.is_featured && !discountPercent && (
+        {product.is_featured && !activeDiscountPercent && (
           <div className="absolute top-3 left-3 z-10">
             <Badge variant="gold" size="sm">
               {market === 'MY' ? 'Featured' : 'Pilihan'}
@@ -168,7 +187,7 @@ export const ProductCard = React.memo(function ProductCard({
         </button>
 
         {/* Special Out of Stock overlay */}
-        {product.product_variants.every((v) => v.stock === 0) && (
+        {isOutOfStock && (
           <div className="absolute inset-0 bg-brand-cream/60 flex items-center justify-center pointer-events-none">
             <Badge variant="brand" size="md">
               {market === 'MY' ? 'Sold Out' : 'Habis Terjual'}
@@ -195,28 +214,19 @@ export const ProductCard = React.memo(function ProductCard({
 
         {/* Price Tag */}
         <div className="flex flex-col pt-0.5">
-          {isMY ? (
-            <>
-              <div className="flex items-center space-x-2">
-                <span className="text-[13px] font-sans font-bold text-brand-plum">
-                  {minPrice !== maxPrice
-                    ? `${getMyPrice(minPrice, myPricingConfig).formattedMyr} - ${getMyPrice(maxPrice, myPricingConfig).formattedMyr}`
-                    : getMyPrice(minPrice, myPricingConfig).formattedMyr}
+          {isMY && minPriceMyr != null ? (
+            <div className="flex items-center space-x-2">
+              <span className="text-[13px] font-sans font-bold text-brand-plum">
+                {maxPriceMyr != null && minPriceMyr !== maxPriceMyr
+                  ? `${formatMYR(minPriceMyr)} - ${formatMYR(maxPriceMyr)}`
+                  : formatMYR(minPriceMyr)}
+              </span>
+              {comparePriceMyr && comparePriceMyr > minPriceMyr && (
+                <span className="text-xs font-sans text-neutral-500 line-through">
+                  {formatMYR(comparePriceMyr)}
                 </span>
-                {comparePrice && comparePrice > minPrice && (
-                  <span className="text-xs font-sans text-neutral-500 line-through">
-                    {getMyPrice(comparePrice, myPricingConfig).formattedMyr}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center space-x-1.5 mt-0.5">
-                <span className="text-[10px] font-sans font-semibold text-neutral-500">
-                  {minPrice !== maxPrice
-                    ? `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)} - ${formatIDR(getMyPrice(maxPrice, myPricingConfig).chargedIdr)}`
-                    : `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)}`}
-                </span>
-              </div>
-            </>
+              )}
+            </div>
           ) : (
             <div className="flex items-center space-x-2">
               <span className="text-[13px] font-sans font-bold text-brand-plum">

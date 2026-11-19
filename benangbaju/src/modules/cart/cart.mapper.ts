@@ -1,7 +1,11 @@
 import { LocalCartItem } from './cart.types'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function mapDbCartItemToLocal(item: any, flashPrice?: number): LocalCartItem {
+export function mapDbCartItemToLocal(
+  item: any,
+  flashPrice?: number,
+  flashPriceMyr?: number
+): LocalCartItem {
   const pv = item.product_variants
   let prod = null
   let imagesList: Array<{ url: string; is_primary: boolean }> = []
@@ -17,10 +21,19 @@ export function mapDbCartItemToLocal(item: any, flashPrice?: number): LocalCartI
     imagesList.find((img) => img.is_primary) || (imagesList.length > 0 ? imagesList[0] : null)
 
   const pvStock = pv && !Array.isArray(pv) && pv.stock != null ? Number(pv.stock) : 0
+  const pvStockMy = pv && !Array.isArray(pv) && pv.stock_my != null ? Number(pv.stock_my) : 0
   const pvSku = pv && !Array.isArray(pv) && typeof pv.sku === 'string' ? pv.sku : ''
   const pvPrice = pv && !Array.isArray(pv) && pv.price != null ? Number(pv.price) : 0
   const pvComparePrice =
     pv && !Array.isArray(pv) && pv.compare_price != null ? Number(pv.compare_price) : null
+  const pvPriceMyr =
+    pv && !Array.isArray(pv) && pv.price_myr != null && Number(pv.price_myr) > 0
+      ? Number(pv.price_myr)
+      : null
+  const pvComparePriceMyr =
+    pv && !Array.isArray(pv) && pv.compare_price_myr != null && Number(pv.compare_price_myr) > 0
+      ? Number(pv.compare_price_myr)
+      : null
   const pvName = pv && !Array.isArray(pv) && typeof pv.name === 'string' ? pv.name : ''
 
   const effectivePrice = flashPrice != null ? flashPrice : pvPrice
@@ -31,8 +44,17 @@ export function mapDbCartItemToLocal(item: any, flashPrice?: number): LocalCartI
         : pvPrice
       : pvComparePrice
 
+  const effectivePriceMyr = flashPriceMyr != null && flashPriceMyr > 0 ? flashPriceMyr : pvPriceMyr
+  const effectiveComparePriceMyr =
+    flashPriceMyr != null && flashPriceMyr > 0
+      ? pvComparePriceMyr && pvPriceMyr != null && pvComparePriceMyr > pvPriceMyr
+        ? pvComparePriceMyr
+        : pvPriceMyr
+      : pvComparePriceMyr
+
   const prodName = prod && typeof prod.name === 'string' ? prod.name : ''
   const prodSlug = prod && typeof prod.slug === 'string' ? prod.slug : ''
+  const maxStockAcrossMarkets = Math.max(pvStock, pvStockMy)
 
   return {
     id: item.id,
@@ -43,9 +65,12 @@ export function mapDbCartItemToLocal(item: any, flashPrice?: number): LocalCartI
     sku: pvSku,
     price: effectivePrice,
     comparePrice: effectiveComparePrice,
-    quantity: Math.min(item.quantity, pvStock), // Cap to max stock available
+    priceMyr: effectivePriceMyr,
+    comparePriceMyr: effectiveComparePriceMyr,
+    quantity: maxStockAcrossMarkets > 0 ? Math.min(item.quantity, maxStockAcrossMarkets) : item.quantity,
     imageUrl: primaryImg ? primaryImg.url : null,
     slug: prodSlug,
     stock: pvStock,
+    stockMy: pvStockMy,
   }
 }

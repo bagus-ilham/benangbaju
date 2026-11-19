@@ -10,16 +10,23 @@ export interface StockUpdate {
 export async function checkAndDispatchStockNotifications(
   supabase: SupabaseClient<Database>,
   variantId: string,
-  newStock: number
+  newStock: number,
+  market?: 'ID' | 'MY'
 ) {
   if (newStock <= 0) return
 
   try {
-    const { data: pending } = await supabase
+    let query = supabase
       .from('stock_notifications')
       .select('id, user_id, market, product_variants(name, products(name, slug))')
       .eq('variant_id', variantId)
       .eq('is_notified', false)
+
+    if (market) {
+      query = query.eq('market', market)
+    }
+
+    const { data: pending } = await query
 
     if (!pending || pending.length === 0) return
 
@@ -89,7 +96,7 @@ export async function bulkUpdateStock(supabase: SupabaseClient<Database>, update
       await Promise.all(
         restockedUpdates.map((u) => {
           const vId = variantMap.get(u.sku)
-          return vId ? checkAndDispatchStockNotifications(supabase, vId, u.stock) : Promise.resolve()
+          return vId ? checkAndDispatchStockNotifications(supabase, vId, u.stock, 'ID') : Promise.resolve()
         })
       )
     }

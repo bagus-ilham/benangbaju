@@ -159,6 +159,8 @@ export class ShippingService {
               id: typeof opt['id'] === 'string' ? opt['id'] : '',
               courier_name: typeof opt['courier_name'] === 'string' ? opt['courier_name'] : '',
               price: typeof opt['price'] === 'number' ? opt['price'] : 0,
+              price_myr: typeof opt['price_myr'] === 'number' ? opt['price_myr'] : null,
+              currency: opt['currency'] === 'MYR' ? 'MYR' : 'IDR',
               etd_min: typeof opt['etd_min'] === 'number' ? opt['etd_min'] : 0,
               etd_max: typeof opt['etd_max'] === 'number' ? opt['etd_max'] : 0,
               weight_used_gram:

@@ -7,6 +7,8 @@ export interface RecentlyViewedProduct {
   slug: string
   price: number
   comparePrice?: number | null
+  priceMyr?: number | null
+  comparePriceMyr?: number | null
   imageUrl: string | null
 }
 

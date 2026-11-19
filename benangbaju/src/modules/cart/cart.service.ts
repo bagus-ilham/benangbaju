@@ -53,7 +53,7 @@ export class CartService {
       if (finalDbItems) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         synchronizedItems = finalDbItems.map((item: any) =>
-          mapDbCartItemToLocal(item, item.flash_sale_price)
+          mapDbCartItemToLocal(item, item.flash_sale_price, item.flash_sale_price_myr)
         )
       }
 

@@ -14,6 +14,10 @@ export interface InvoiceOrderData {
   country_code?: string | null
   exchange_rate_at_order?: number | null
   markup_percent_at_order?: number | null
+  subtotal_myr?: number | null
+  shipping_cost_myr?: number | null
+  discount_amount_myr?: number | null
+  payment_fee_myr?: number | null
   total_myr?: number | null
   payment_channel?: string | null
   notes?: string | null
@@ -102,11 +106,13 @@ export function generateCustomerInvoiceHtml(
     })
     .join('')
 
-  // Subtotal, shipping, discount, total (order.subtotal/shipping_cost/discount_amount are already charged_idr)
+  // Subtotal, shipping, discount, total (prefer native MYR columns when present for MY orders)
   const mySubtotalValue = isMY
-    ? items.length > 0 && items.every((i) => i.unit_price_myr != null)
-      ? items.reduce((acc, i) => acc + Number(i.unit_price_myr || 0) * i.quantity, 0)
-      : (order.subtotal || 0) / rate
+    ? order.subtotal_myr != null
+      ? Number(order.subtotal_myr)
+      : items.length > 0 && items.every((i) => i.unit_price_myr != null)
+        ? items.reduce((acc, i) => acc + Number(i.unit_price_myr || 0) * i.quantity, 0)
+        : (order.subtotal || 0) / rate
     : 0
 
   const subtotalStr = isMY
@@ -114,18 +120,35 @@ export function generateCustomerInvoiceHtml(
     : formatIDR(order.subtotal || 0)
 
   const shippingStr = isMY
-    ? order.shipping_cost
-      ? formatMYR(order.shipping_cost / rate)
-      : 'Free'
+    ? order.shipping_cost_myr != null
+      ? Number(order.shipping_cost_myr) > 0
+        ? formatMYR(Number(order.shipping_cost_myr))
+        : 'Free'
+      : order.shipping_cost
+        ? formatMYR(order.shipping_cost / rate)
+        : 'Free'
     : order.shipping_cost
       ? formatIDR(order.shipping_cost)
       : 'Rp 0'
 
-  const discountStr =
-    order.discount_amount && order.discount_amount > 0
-      ? isMY
+  const discountStr = isMY
+    ? order.discount_amount_myr != null && Number(order.discount_amount_myr) > 0
+      ? `-${formatMYR(Number(order.discount_amount_myr))}`
+      : order.discount_amount && order.discount_amount > 0
         ? `-${formatMYR(order.discount_amount / rate)}`
-        : `-${formatIDR(order.discount_amount)}`
+        : null
+    : order.discount_amount && order.discount_amount > 0
+      ? `-${formatIDR(order.discount_amount)}`
+      : null
+
+  const paymentFeeStr = isMY
+    ? order.payment_fee_myr != null && Number(order.payment_fee_myr) > 0
+      ? formatMYR(Number(order.payment_fee_myr))
+      : order.payment_fee && order.payment_fee > 0
+        ? formatMYR(order.payment_fee / rate)
+        : null
+    : order.payment_fee && order.payment_fee > 0
+      ? formatIDR(order.payment_fee)
       : null
 
   const grandTotalStr = isMY
@@ -244,6 +267,14 @@ export function generateCustomerInvoiceHtml(
           <td>${isMY ? 'Shipping Cost' : 'Ongkos Kirim'}</td>
           <td style="text-align: right;">${shippingStr}</td>
         </tr>
+        ${
+          paymentFeeStr
+            ? `<tr>
+                 <td>${isMY ? 'Payment Service Fee' : 'Biaya Layanan'}</td>
+                 <td style="text-align: right;">${paymentFeeStr}</td>
+               </tr>`
+            : ''
+        }
         ${
           discountStr
             ? `<tr>

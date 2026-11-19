@@ -2,7 +2,7 @@
 
 import { SmartLink as Link, Button, TableSkeleton, HandDrawnIcon, OrderStatusBadge } from '@/shared/components'
 import type { AdminOrderListItem } from '@/modules/orders/types'
-import { formatDate, formatIDR } from '@/lib/utils'
+import { formatDate, formatIDR, formatMYR } from '@/lib/utils'
 
 interface AdminOrdersTableProps {
   orders: AdminOrderListItem[]
@@ -93,11 +93,22 @@ export function AdminOrdersTable({
                   </p>
                 </td>
                 <td className="py-4 px-4 text-center font-bold text-neutral-900">
-                  <div>{formatIDR(o.total_amount)}</div>
-                  {o.total_myr && (
-                    <div className="text-[10px] text-emerald-800 font-semibold mt-0.5">
-                      RM {Number(o.total_myr).toFixed(2)}
-                    </div>
+                  {isMalaysia && o.total_myr != null ? (
+                    <>
+                      <div className="text-emerald-900">{formatMYR(Number(o.total_myr))}</div>
+                      <div className="text-[10px] text-neutral-400 font-medium mt-0.5">
+                        Settlement: {formatIDR(o.total_amount)}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>{formatIDR(o.total_amount)}</div>
+                      {o.total_myr && (
+                        <div className="text-[10px] text-emerald-800 font-semibold mt-0.5">
+                          {formatMYR(Number(o.total_myr))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </td>
                 <td className="py-4 px-4 text-center">

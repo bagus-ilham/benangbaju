@@ -47,7 +47,7 @@ export function VariantPicker({
   const [selectedValues, setSelectedValues] = React.useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {}
     const defaultVariant =
-      variants.find((v) => v.is_active && v.stock > 0) ||
+      variants.find((v) => v.is_active && (isMY ? (v.stock_my ?? 0) > 0 : v.stock > 0)) ||
       variants.find((v) => v.is_active) ||
       variants[0]
 
@@ -138,13 +138,13 @@ export function VariantPicker({
           })
         })
 
-        const totalStock = matchingVariants.reduce((sum, v) => sum + v.stock, 0)
+        const totalStock = matchingVariants.reduce((sum, v) => sum + (isMY ? (v.stock_my ?? 0) : v.stock), 0)
         disabledMap[attrName][value] = totalStock <= 0
       })
     })
 
     return disabledMap
-  }, [attributeKeys, attributeGroups, visibleOptionsMap, variants, selectedValues])
+  }, [attributeKeys, attributeGroups, visibleOptionsMap, variants, selectedValues, isMY])
 
   // Run matching reactive validation whenever selected values change
   React.useEffect(() => {

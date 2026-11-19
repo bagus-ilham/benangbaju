@@ -22,8 +22,11 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
           sku: '',
           name: '',
           price: p.price,
-          compare_price: null,
+          compare_price: p.comparePrice ?? null,
+          price_myr: p.priceMyr ?? null,
+          compare_price_myr: p.comparePriceMyr ?? null,
           stock: 99,
+          stock_my: 99,
           weight_gram: null,
           is_active: true,
         },
@@ -55,21 +58,27 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
         maxPrice: p.price,
         comparePrice: null,
         discountPercent: null,
+        minPriceMyr: p.priceMyr ?? null,
+        maxPriceMyr: p.priceMyr ?? null,
+        comparePriceMyr: p.comparePriceMyr ?? null,
+        discountPercentMyr: null,
+        isAvailableInMY: p.priceMyr != null && p.priceMyr > 0,
         primaryImage: p.imageUrl || null,
         hoverImage: p.imageUrl || null,
         hasMultipleColors: false,
         sizeVariants: variantList,
       }
     })
-    return mappedProducts.slice(0, 4)
-  }, [products])
+    const visible = isMY ? mappedProducts.filter((p) => p.isAvailableInMY) : mappedProducts
+    return visible.slice(0, 4)
+  }, [products, isMY])
 
   useEffect(() => {
     const t = setTimeout(() => setIsMounted(true), 0)
     return () => clearTimeout(t)
   }, [])
 
-  if (!isMounted || products.length === 0) return null
+  if (!isMounted || displayProducts.length === 0) return null
 
   return (
     <section className="bg-brand-cream py-16 font-sans border-t border-neutral-200/60">

@@ -4,13 +4,14 @@ import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, HandDrawnIcon } from '@/shared/components'
-import { formatIDR, getMyPrice, formatMYR, type MyPricingConfig } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 interface AppliedVoucher {
   code: string
+  currency?: 'IDR' | 'MYR'
   discount_amount: number
   discount_type?: string | null
   value: number
@@ -24,6 +25,11 @@ interface CheckoutSummaryCardProps {
   paymentFee?: number
   discountAmount: number
   totalAmount: number
+  subtotalMyr?: number
+  shippingCostMyr?: number
+  paymentFeeMyr?: number
+  discountAmountMyr?: number
+  totalMyr?: number
   voucherCodeInput: string
   onVoucherInputChange: (val: string) => void
   appliedVoucher: AppliedVoucher | null
@@ -40,7 +46,6 @@ interface CheckoutSummaryCardProps {
   selectedChannelCode?: string | null
   isMalaysia?: boolean
   myrExchangeRate?: number
-  myPricingConfig?: MyPricingConfig
 }
 
 export function CheckoutSummaryCard({
@@ -50,6 +55,11 @@ export function CheckoutSummaryCard({
   paymentFee = 0,
   discountAmount,
   totalAmount,
+  subtotalMyr = 0,
+  shippingCostMyr = 0,
+  paymentFeeMyr = 0,
+  discountAmountMyr = 0,
+  totalMyr = 0,
   voucherCodeInput,
   onVoucherInputChange,
   appliedVoucher,
@@ -65,18 +75,10 @@ export function CheckoutSummaryCard({
   selectedChannelCode = null,
   isMalaysia = false,
   myrExchangeRate = 3600,
-  myPricingConfig,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   const isQris = selectedChannelCode?.toUpperCase() === 'QRIS' || isMalaysia
   const isQrisLimitExceeded = isQris && totalAmount > QRIS_MAX_AMOUNT_IDR
-
-  const itemSubtotalMyr = React.useMemo(() => {
-    if (!isMalaysia) return 0
-    return displayItems.reduce((acc, item) => {
-      const my = getMyPrice(item.price, myPricingConfig)
-      return acc + my.priceMyr * item.quantity
-    }, 0)
-  }, [displayItems, isMalaysia, myPricingConfig])
+  const itemSubtotalMyr = subtotalMyr
 
   return (
     <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
@@ -115,23 +117,22 @@ export function CheckoutSummaryCard({
             </div>
             <div className="text-right">
               {isMalaysia ? (
-                <>
+                item.priceMyr != null && item.priceMyr > 0 ? (
                   <div className="flex items-center justify-end space-x-1.5">
                     <span className="font-sans font-bold text-brand-plum">
-                      {formatMYR(getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity)}
+                      {formatMYR(item.priceMyr * item.quantity)}
                     </span>
-                    {item.comparePrice && item.comparePrice > item.price && (
+                    {item.comparePriceMyr && item.comparePriceMyr > item.priceMyr && (
                       <span className="text-[10px] text-neutral-400 line-through font-sans">
-                        {formatMYR(getMyPrice(item.comparePrice, myPricingConfig).priceMyr * item.quantity)}
+                        {formatMYR(item.comparePriceMyr * item.quantity)}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center justify-end space-x-1 mt-0.5">
-                    <span className="text-[9px] font-sans font-semibold text-neutral-500">
-                      ≈ {formatIDR(getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity)}
-                    </span>
-                  </div>
-                </>
+                ) : (
+                  <span className="text-[10px] font-semibold text-red-600">
+                    Unavailable for MY
+                  </span>
+                )
               ) : (
                 <div className="flex items-center justify-end space-x-1.5">
                   <span className="font-sans font-bold text-brand-plum">
@@ -206,7 +207,27 @@ export function CheckoutSummaryCard({
                   </span>
                   <div className="flex space-x-2 overflow-x-auto pb-1 scrollbar-none">
                     {availableVouchers.map((voucher) => {
-                      const isSpendMet = subtotal >= voucher.min_purchase
+                      const isVoucherMYR = voucher.currency === 'MYR'
+                      const effMinSpend = isMalaysia
+                        ? isVoucherMYR
+                          ? Number(voucher.min_purchase || 0)
+                          : Number((Number(voucher.min_purchase || 0) / myrExchangeRate).toFixed(2))
+                        : Number(voucher.min_purchase || 0)
+                      const effVal = isMalaysia
+                        ? isVoucherMYR
+                          ? Number(voucher.value || 0)
+                          : Number((Number(voucher.value || 0) / myrExchangeRate).toFixed(2))
+                        : Number(voucher.value || 0)
+                      const effMaxDisc = voucher.max_discount
+                        ? isMalaysia
+                          ? isVoucherMYR
+                            ? Number(voucher.max_discount)
+                            : Number((Number(voucher.max_discount) / myrExchangeRate).toFixed(2))
+                          : Number(voucher.max_discount)
+                        : null
+                      const isSpendMet = isMalaysia
+                        ? itemSubtotalMyr >= effMinSpend
+                        : subtotal >= effMinSpend
                       return (
                         <button
                           key={voucher.id}
@@ -230,20 +251,20 @@ export function CheckoutSummaryCard({
                           <div className="text-[9px] font-heading font-bold text-neutral-700">
                             {voucher.discount_type === 'percentage'
                               ? `${voucher.value}% OFF${
-                                  voucher.max_discount
+                                  effMaxDisc
                                     ? isMalaysia
-                                      ? ` (Max ${formatMYR(Math.round((voucher.max_discount / myrExchangeRate) * 100) / 100)})`
-                                      : ` (Maks ${formatIDR(voucher.max_discount)})`
+                                      ? ` (Max ${formatMYR(effMaxDisc)})`
+                                      : ` (Maks ${formatIDR(effMaxDisc)})`
                                     : ''
                                 }`
                               : isMalaysia
-                                ? `${formatMYR(Math.round((voucher.value / myrExchangeRate) * 100) / 100)} OFF`
-                                : `${formatIDR(voucher.value)} OFF`}
+                                ? `${formatMYR(effVal)} OFF`
+                                : `${formatIDR(effVal)} OFF`}
                           </div>
                           <div className="text-[8px] text-neutral-400 font-sans">
                             {isMalaysia
-                              ? `Min. Spend: ${formatMYR(Math.round((voucher.min_purchase / myrExchangeRate) * 100) / 100)}`
-                              : `Min. Belanja: ${formatIDR(voucher.min_purchase)}`}
+                              ? `Min. Spend: ${formatMYR(effMinSpend)}`
+                              : `Min. Belanja: ${formatIDR(effMinSpend)}`}
                           </div>
                         </button>
                       )
@@ -264,11 +285,6 @@ export function CheckoutSummaryCard({
             <span className="font-semibold text-brand-plum">
               {isMalaysia ? formatMYR(itemSubtotalMyr) : formatIDR(subtotal)}
             </span>
-            {isMalaysia && (
-              <span className="block text-[10px] text-neutral-400">
-                ≈ {formatIDR(subtotal)}
-              </span>
-            )}
           </div>
         </div>
 
@@ -276,36 +292,24 @@ export function CheckoutSummaryCard({
           <span>{isMalaysia ? 'Shipping Fee' : 'Ongkos Kirim'}</span>
           <div className="text-right">
             <span className="font-semibold text-brand-plum">
-              {shippingCost > 0
-                ? isMalaysia
-                  ? formatMYR(Math.round((shippingCost / myrExchangeRate) * 100) / 100)
-                  : formatIDR(shippingCost)
-                : isMalaysia
-                  ? 'Select courier...'
+              {isMalaysia
+                ? shippingCostMyr > 0
+                  ? formatMYR(shippingCostMyr)
+                  : 'Select courier...'
+                : shippingCost > 0
+                  ? formatIDR(shippingCost)
                   : 'Pilih kurir...'}
             </span>
-            {isMalaysia && shippingCost > 0 && (
-              <span className="block text-[10px] text-neutral-400">
-                ≈ {formatIDR(shippingCost)}
-              </span>
-            )}
           </div>
         </div>
 
-        {paymentFee > 0 && (
+        {(isMalaysia ? paymentFeeMyr > 0 : paymentFee > 0) && (
           <div className="flex justify-between items-baseline">
             <span>{isMalaysia ? 'Payment Service Fee' : 'Biaya Layanan Pembayaran'}</span>
             <div className="text-right">
               <span className="font-semibold text-brand-plum">
-                {isMalaysia
-                  ? formatMYR(Math.round((paymentFee / myrExchangeRate) * 100) / 100)
-                  : formatIDR(paymentFee)}
+                {isMalaysia ? formatMYR(paymentFeeMyr) : formatIDR(paymentFee)}
               </span>
-              {isMalaysia && (
-                <span className="block text-[10px] text-neutral-400">
-                  ≈ {formatIDR(paymentFee)}
-                </span>
-              )}
             </div>
           </div>
         )}
@@ -315,16 +319,8 @@ export function CheckoutSummaryCard({
             <span>{isMalaysia ? 'Voucher Discount' : 'Diskon Voucher'}</span>
             <div className="text-right text-red-600">
               <span>
-                -{' '}
-                {isMalaysia
-                  ? formatMYR(Math.round((discountAmount / myrExchangeRate) * 100) / 100)
-                  : formatIDR(discountAmount)}
+                - {isMalaysia ? formatMYR(discountAmountMyr) : formatIDR(discountAmount)}
               </span>
-              {isMalaysia && (
-                <span className="block text-[10px] text-neutral-400 font-normal">
-                  ≈ -{formatIDR(discountAmount)}
-                </span>
-              )}
             </div>
           </div>
         )}
@@ -337,9 +333,7 @@ export function CheckoutSummaryCard({
             {isMalaysia ? 'Grand Total' : 'Total Pembayaran'}
           </span>
           <span className="text-lg font-bold">
-            {isMalaysia
-              ? formatMYR(Math.round((totalAmount / myrExchangeRate) * 100) / 100)
-              : formatIDR(totalAmount)}
+            {isMalaysia ? formatMYR(totalMyr) : formatIDR(totalAmount)}
           </span>
         </div>
         {isMalaysia && (

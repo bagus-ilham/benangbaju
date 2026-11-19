@@ -137,6 +137,22 @@ export function mapOrder(
       row.markup_percent_at_order != null && !isNaN(Number(row.markup_percent_at_order))
         ? Number(row.markup_percent_at_order)
         : null,
+    subtotal_myr:
+      row.subtotal_myr != null && !isNaN(Number(row.subtotal_myr))
+        ? Number(row.subtotal_myr)
+        : null,
+    shipping_cost_myr:
+      row.shipping_cost_myr != null && !isNaN(Number(row.shipping_cost_myr))
+        ? Number(row.shipping_cost_myr)
+        : null,
+    discount_amount_myr:
+      row.discount_amount_myr != null && !isNaN(Number(row.discount_amount_myr))
+        ? Number(row.discount_amount_myr)
+        : null,
+    payment_fee_myr:
+      row.payment_fee_myr != null && !isNaN(Number(row.payment_fee_myr))
+        ? Number(row.payment_fee_myr)
+        : null,
     total_myr:
       row.total_myr != null && !isNaN(Number(row.total_myr)) ? Number(row.total_myr) : null,
     notes: row.notes,

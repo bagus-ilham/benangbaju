@@ -237,7 +237,10 @@ export class AdminProductService {
           name: v.name,
           price: Number(v.price),
           compare_price: v.compare_price ? Number(v.compare_price) : null,
+          price_myr: v.price_myr != null ? Number(v.price_myr) : null,
+          compare_price_myr: v.compare_price_myr != null ? Number(v.compare_price_myr) : null,
           stock: v.stock,
+          stock_my: v.stock_my ?? 0,
           is_active: v.is_active,
           product_name: prod?.name || 'Produk Tidak Ditemukan',
           product_slug: prod?.slug || '',
@@ -260,7 +263,10 @@ export class AdminProductService {
       await productRepository.adminUpdateVariant(variantId, {
         price: data.price,
         compare_price: data.compare_price,
+        price_myr: data.price_myr,
+        compare_price_myr: data.compare_price_myr,
         stock: data.stock,
+        stock_my: data.stock_my,
         is_active: data.is_active,
       })
 
@@ -270,7 +276,7 @@ export class AdminProductService {
         'update',
         'product_variant',
         variantId,
-        `Updated variant ${variantId} price=${data.price} stock=${data.stock}`
+        `Updated variant ${variantId} price=${data.price} stock=${data.stock} price_myr=${data.price_myr ?? 'null'} stock_my=${data.stock_my ?? 'unchanged'}`
       )
 
       return ok(null)

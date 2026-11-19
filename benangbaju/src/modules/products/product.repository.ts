@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
-import type { Json } from '@/shared/types/database'
+import type { Database, Json } from '@/shared/types/database'
 import { ProductFilters, ProductPayload } from './types'
 import { scoreProduct, type SearchCandidateProduct } from './product-search'
 
@@ -20,6 +20,7 @@ export class ProductRepository {
       sortBy = 'newest',
       page = 1,
       limit = 20,
+      market,
     } = filters
 
     const offset = (page - 1) * limit
@@ -30,10 +31,10 @@ export class ProductRepository {
         .from('products')
         .select(
           `
-          id, category_id, name, slug, is_featured, created_at, min_price, max_price,
+          id, category_id, name, slug, is_featured, created_at, min_price, max_price, min_price_myr, max_price_myr,
           description, short_description, description_en, short_description_en, care_guide_en, meta_title, meta_description,
           categories (id, name, slug),
-          product_variants (id, sku, name, price, compare_price, stock, is_active, product_variant_attrs(id, attr_name, attr_value)),
+          product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
           product_images (id, url, alt_text, sort_order, is_primary)
         `
         )
@@ -70,6 +71,10 @@ export class ProductRepository {
 
       if (productIds && productIds.length > 0) {
         baseSearchQuery = baseSearchQuery.in('id', productIds)
+      }
+
+      if (market === 'MY') {
+        baseSearchQuery = baseSearchQuery.gt('min_price_myr', 0)
       }
 
       if (minPrice !== undefined) {
@@ -120,9 +125,9 @@ export class ProductRepository {
       .from('products')
       .select(
         `
-        id, category_id, name, slug, is_featured, created_at, min_price, max_price,
+        id, category_id, name, slug, is_featured, created_at, min_price, max_price, min_price_myr, max_price_myr,
         categories (name, slug),
-        product_variants (id, sku, name, price, compare_price, stock, is_active, product_variant_attrs(id, attr_name, attr_value)),
+        product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
         product_images (id, url, alt_text, sort_order, is_primary)
       `,
         { count: 'exact' }
@@ -162,6 +167,10 @@ export class ProductRepository {
       query = query.in('id', productIds)
     }
 
+    if (market === 'MY') {
+      query = query.gt('min_price_myr', 0)
+    }
+
     if (minPrice !== undefined) {
       query = query.gte('min_price', minPrice)
     }
@@ -169,6 +178,7 @@ export class ProductRepository {
       query = query.lte('max_price', maxPrice)
     }
 
+    const priceCol = market === 'MY' ? 'min_price_myr' : 'min_price'
     if (sortBy === 'newest') {
       query = query.order('created_at', { ascending: false })
     } else if (sortBy === 'featured') {
@@ -176,9 +186,9 @@ export class ProductRepository {
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false })
     } else if (sortBy === 'price-low') {
-      query = query.order('min_price', { ascending: true })
+      query = query.order(priceCol, { ascending: true })
     } else if (sortBy === 'price-high') {
-      query = query.order('min_price', { ascending: false })
+      query = query.order(priceCol, { ascending: false })
     } else if (sortBy === 'popular') {
       query = query.order('is_featured', { ascending: false })
     }
@@ -225,9 +235,9 @@ export class ProductRepository {
       .from('products')
       .select(
         `
-        id, category_id, name, slug, is_featured, created_at,
+        id, category_id, name, slug, is_featured, created_at, min_price_myr, max_price_myr,
         categories (name, slug),
-        product_variants (id, sku, name, price, compare_price, stock, is_active, product_variant_attrs(id, attr_name, attr_value)),
+        product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
         product_images (id, url, alt_text, sort_order, is_primary)
       `
       )
@@ -254,7 +264,7 @@ export class ProductRepository {
         `
           id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, is_active, created_at,
           categories (name, slug),
-          product_variants (id, sku, name, price, compare_price, stock, is_active)
+          product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active)
         `
       )
 
@@ -281,7 +291,7 @@ export class ProductRepository {
       `
         id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, is_active, created_at,
         categories (name, slug),
-        product_variants (id, sku, name, price, compare_price, stock, is_active)
+        product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active)
       `,
       { count: 'exact' }
     )
@@ -461,7 +471,7 @@ export class ProductRepository {
 
     let query = supabase.from('product_variants').select(
       `
-        id, product_id, sku, name, price, compare_price, stock, is_active,
+        id, product_id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active,
         products!inner (
           id, name, slug, is_active,
           categories (name)
@@ -528,14 +538,17 @@ export class ProductRepository {
   }
 
   /**
-   * ADMIN: Update single variant price & stock
+   * ADMIN: Update single variant price & stock (ID & MY)
    */
   async adminUpdateVariant(
     variantId: string,
     data: {
       price: number
       compare_price: number | null
+      price_myr?: number | null
+      compare_price_myr?: number | null
       stock: number
+      stock_my?: number
       is_active: boolean
     }
   ) {
@@ -543,41 +556,53 @@ export class ProductRepository {
 
     const { data: currentVar } = await supabase
       .from('product_variants')
-      .select('stock')
+      .select('stock, stock_my')
       .eq('id', variantId)
       .single()
 
     const oldStock = currentVar?.stock ?? 0
+    const oldStockMy = currentVar?.stock_my ?? 0
+
+    const updatePayload: Database['public']['Tables']['product_variants']['Update'] = {
+      price: data.price,
+      compare_price: data.compare_price,
+      stock: data.stock,
+      is_active: data.is_active,
+    }
+    if (data.price_myr !== undefined) updatePayload.price_myr = data.price_myr
+    if (data.compare_price_myr !== undefined) updatePayload.compare_price_myr = data.compare_price_myr
+    if (data.stock_my !== undefined) updatePayload.stock_my = data.stock_my
 
     const { error } = await supabase
       .from('product_variants')
-      .update({
-        price: data.price,
-        compare_price: data.compare_price,
-        stock: data.stock,
-        is_active: data.is_active,
-      })
+      .update(updatePayload)
       .eq('id', variantId)
 
     if (error) throw error
 
+    const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
     if (oldStock <= 0 && data.stock > 0) {
-      const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
-      await checkAndDispatchStockNotifications(supabase, variantId, data.stock)
+      await checkAndDispatchStockNotifications(supabase, variantId, data.stock, 'ID')
+    }
+    if (data.stock_my !== undefined && oldStockMy <= 0 && data.stock_my > 0) {
+      await checkAndDispatchStockNotifications(supabase, variantId, data.stock_my, 'MY')
     }
 
     return true
   }
 
   /**
-   * ADMIN: Batch update variant price & stock
+   * ADMIN: Batch update variant price & stock (ID & MY)
    */
   async adminBatchUpdateVariants(
     updates: Array<{
       variantId: string
       price: number
       compare_price: number | null
+      price_myr?: number | null
+      compare_price_myr?: number | null
       stock: number
+      stock_my?: number
       is_active: boolean
     }>
   ) {
@@ -587,26 +612,35 @@ export class ProductRepository {
     for (const item of updates) {
       const { data: currentVar } = await supabase
         .from('product_variants')
-        .select('stock')
+        .select('stock, stock_my')
         .eq('id', item.variantId)
         .single()
 
       const oldStock = currentVar?.stock ?? 0
+      const oldStockMy = currentVar?.stock_my ?? 0
+
+      const updatePayload: Database['public']['Tables']['product_variants']['Update'] = {
+        price: item.price,
+        compare_price: item.compare_price,
+        stock: item.stock,
+        is_active: item.is_active,
+      }
+      if (item.price_myr !== undefined) updatePayload.price_myr = item.price_myr
+      if (item.compare_price_myr !== undefined) updatePayload.compare_price_myr = item.compare_price_myr
+      if (item.stock_my !== undefined) updatePayload.stock_my = item.stock_my
 
       const { error } = await supabase
         .from('product_variants')
-        .update({
-          price: item.price,
-          compare_price: item.compare_price,
-          stock: item.stock,
-          is_active: item.is_active,
-        })
+        .update(updatePayload)
         .eq('id', item.variantId)
 
       if (error) throw error
 
       if (oldStock <= 0 && item.stock > 0) {
-        await checkAndDispatchStockNotifications(supabase, item.variantId, item.stock)
+        await checkAndDispatchStockNotifications(supabase, item.variantId, item.stock, 'ID')
+      }
+      if (item.stock_my !== undefined && oldStockMy <= 0 && item.stock_my > 0) {
+        await checkAndDispatchStockNotifications(supabase, item.variantId, item.stock_my, 'MY')
       }
     }
 

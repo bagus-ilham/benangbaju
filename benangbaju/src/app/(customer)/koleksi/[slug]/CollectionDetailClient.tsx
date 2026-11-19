@@ -63,24 +63,27 @@ export function CollectionDetailClient({
       )}
 
       <PageContainer className="py-12 md:py-16 page-content">
-        {products.length === 0 ? (
-          <EmptyState
-            handDrawnIcon="package"
-            title={isMY ? 'No Products Yet' : 'Belum Ada Produk'}
-            description={
-              isMY
-                ? 'There are no products in this collection yet. Explore other collections.'
-                : 'Belum ada produk dalam koleksi ini. Coba jelajahi koleksi lain.'
-            }
-            action={{ label: isMY ? 'View All Collections' : 'Lihat Semua Koleksi', href: '/koleksi' }}
-          />
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+        {(() => {
+          const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
+          return visibleProducts.length === 0 ? (
+            <EmptyState
+              handDrawnIcon="package"
+              title={isMY ? 'No Products Yet' : 'Belum Ada Produk'}
+              description={
+                isMY
+                  ? 'There are no Malaysia-available products in this collection yet. Explore other collections.'
+                  : 'Belum ada produk dalam koleksi ini. Coba jelajahi koleksi lain.'
+              }
+              action={{ label: isMY ? 'View All Collections' : 'Lihat Semua Koleksi', href: '/koleksi' }}
+            />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
+              {visibleProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )
+        })()}
       </PageContainer>
     </div>
   )

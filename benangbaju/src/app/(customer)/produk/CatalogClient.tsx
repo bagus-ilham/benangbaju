@@ -273,32 +273,41 @@ export function CatalogClient({
 
           {/* 3. Product Grid */}
           <div className="flex-1">
-            {initialProducts.length === 0 ? (
-              <EmptyState
-                handDrawnIcon="package"
-                title={isMY ? 'No Products Found' : 'Produk Tidak Ditemukan'}
-                description={isMY ? 'Sorry, we could not find any products matching your filters. Try resetting your filters to explore other pieces.' : 'Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya.'}
-                action={
-                  categorySlug || searchQuery
-                    ? { label: isMY ? 'Show All Products' : 'Tampilkan Semua Produk', onClick: handleClearAll }
-                    : undefined
-                }
-                className="py-12 md:py-20"
-              />
-            ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 lg:gap-y-12">
-                {initialProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <ProductCard product={product} />
-                  </motion.div>
-                ))}
-              </div>
-            )}
+            {(() => {
+              const visibleProducts = isMY
+                ? initialProducts.filter((p) => p.isAvailableInMY)
+                : initialProducts
+              return visibleProducts.length === 0 ? (
+                <EmptyState
+                  handDrawnIcon="package"
+                  title={isMY ? 'No Products Found' : 'Produk Tidak Ditemukan'}
+                  description={
+                    isMY
+                      ? 'No products are currently available for Malaysia matching your selection. Check back soon or adjust your filters.'
+                      : 'Maaf, belum ada produk yang sesuai dengan filter atau pencarian Anda. Coba atur ulang filter untuk melihat koleksi lainnya.'
+                  }
+                  action={
+                    categorySlug || searchQuery
+                      ? { label: isMY ? 'Show All Products' : 'Tampilkan Semua Produk', onClick: handleClearAll }
+                      : undefined
+                  }
+                  className="py-12 md:py-20"
+                />
+              ) : (
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 lg:gap-y-12">
+                  {visibleProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <ProductCard product={product} />
+                    </motion.div>
+                  ))}
+                </div>
+              )
+            })()}
 
             {/* Pagination Controls */}
             {totalPages > 1 && (

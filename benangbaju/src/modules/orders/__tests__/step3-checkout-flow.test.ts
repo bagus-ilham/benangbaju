@@ -1,7 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { calculateCartWeight } from '@/modules/shipping/shipping.utils'
 import { formatApproxMYR, getCourierTrackingUrl, parseTrackingNumbers } from '@/lib/utils'
-import { calculateChannelFee } from '@/app/(customer)/checkout/components/PaymentMethodSelector'
+import {
+  calculateChannelFee,
+  calculateChannelFeeMyr,
+} from '@/app/(customer)/checkout/components/PaymentMethodSelector'
 import { DEFAULT_WEIGHT_GRAM, QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 import type { PaymentFeeConfig } from '@/modules/orders/types'
 
@@ -96,6 +99,27 @@ describe('Step 3: Malaysia Shipping & Checkout Flow', () => {
 
       const fee = calculateChannelFee(vaConfig, 500000)
       expect(fee).toBe(4000)
+    })
+
+    it('calculates native RM percentage fee for Malaysia QRIS orders', () => {
+      const qrisConfig: PaymentFeeConfig = {
+        id: '1',
+        channel_code: 'QRIS',
+        channel_name: 'QRIS Cross-Border',
+        category: 'qris',
+        fee_type: 'percentage',
+        fee_flat: 0,
+        fee_percentage: 0.777,
+        logo_url: null,
+        sort_order: 1,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+
+      // Base RM 100.00 -> 0.777% = RM 0.78
+      const feeMyr = calculateChannelFeeMyr(qrisConfig, 100, 3600)
+      expect(feeMyr).toBe(0.78)
     })
   })
 

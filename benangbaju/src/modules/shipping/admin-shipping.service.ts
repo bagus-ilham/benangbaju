@@ -126,16 +126,25 @@ export class AdminShippingService {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = data.map((row: any) => {
-        let shipping_zones = null
+        let shipping_zones: { name: string; country_code?: 'ID' | 'MY' } | null = null
         if (row.shipping_zones && !Array.isArray(row.shipping_zones)) {
-          shipping_zones = { name: row.shipping_zones.name }
+          const coverage = Array.isArray(row.shipping_zones.shipping_zone_coverage)
+            ? row.shipping_zones.shipping_zone_coverage
+            : []
+          const isMy = coverage.some((c: { country_code?: string }) => c.country_code === 'MY')
+          shipping_zones = {
+            name: row.shipping_zones.name,
+            country_code: isMy ? 'MY' : 'ID',
+          }
         }
         return {
           id: row.id,
           zone_id: row.zone_id,
           courier_name: row.courier_name,
           base_price: row.base_price,
+          base_price_myr: row.base_price_myr != null ? Number(row.base_price_myr) : null,
           price_per_kg: row.price_per_kg,
+          price_per_kg_myr: row.price_per_kg_myr != null ? Number(row.price_per_kg_myr) : null,
           min_weight_gram: row.min_weight_gram,
           max_weight_gram: row.max_weight_gram ?? null,
           etd_days_min: row.etd_days_min || row.estimated_days_min || 0,

@@ -12,7 +12,6 @@ import {
 } from '@/modules/shipping/shipping.utils'
 import { fail, type ApiResponse } from '@/lib/api-response'
 import { validateMalaysiaStatePostalCodeMatch, hasPoBoxAddress } from '@/lib/utils/validation'
-import { getMyPrice, type MyPriceRounding } from '@/lib/utils/pricing'
 import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 
 const ERROR_CODES = {
@@ -24,6 +23,8 @@ const ERROR_CODES = {
   CART_CHANGED: 'CART_CHANGED',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   QRIS_LIMIT_EXCEEDED: 'QRIS_LIMIT_EXCEEDED',
+  PRODUCT_UNAVAILABLE_MY: 'PRODUCT_UNAVAILABLE_MY',
+  STOCK_INSUFFICIENT: 'STOCK_INSUFFICIENT',
 } as const
 
 export async function adminUpdateOrderStatusAction(
@@ -210,7 +211,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       supabase
         .from('carts')
         .select(
-          'id, cart_items(variant_id, quantity, product_variants(price, weight_gram, products(weight_gram)))'
+          'id, cart_items(variant_id, quantity, product_variants(price, price_myr, stock, stock_my, weight_gram, products(weight_gram)))'
         )
         .eq('user_id', user.id)
         .maybeSingle(),
@@ -219,12 +220,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       supabase
         .from('site_settings')
         .select('key, value')
-        .in('key', [
-          'enable_malaysia_shipping',
-          'myr_exchange_rate',
-          'my_price_markup_percent',
-          'my_price_rounding',
-        ]),
+        .in('key', ['enable_malaysia_shipping', 'myr_exchange_rate']),
     ])
 
     const address = addressRes.data
@@ -288,7 +284,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     const cartResCheck = await supabase
       .from('carts')
       .select(
-        'id, cart_items(variant_id, quantity, product_variants(price, weight_gram, products(weight_gram)))'
+        'id, cart_items(variant_id, quantity, product_variants(price, price_myr, stock, stock_my, weight_gram, products(weight_gram)))'
       )
       .eq('user_id', user.id)
       .maybeSingle()
@@ -321,6 +317,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     interface ActiveFlashItem {
       variant_id: string
       sale_price: number | string | null
+      sale_price_myr?: number | string | null
       quota: number | null
       sold_count: number | null
       flash_sales?: {
@@ -331,7 +328,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     if (variantIds.length > 0) {
       const { data: fData } = await supabase
         .from('flash_sale_items')
-        .select('variant_id, sale_price, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at, target_market)')
+        .select(
+          'variant_id, sale_price, sale_price_myr, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at, target_market)'
+        )
         .in('variant_id', variantIds)
         .eq('flash_sales.is_active', true)
         .lte('flash_sales.starts_at', nowIso)
@@ -341,12 +340,120 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
 
     const exchangeRate =
       Number(settingsRes.data?.find((s) => s.key === 'myr_exchange_rate')?.value) || 3600
-    const markupPercent =
-      Number(settingsRes.data?.find((s) => s.key === 'my_price_markup_percent')?.value) || 0
-    const rounding = (settingsRes.data?.find((s) => s.key === 'my_price_rounding')?.value ||
-      'none') as MyPriceRounding
 
     const orderCountry = isMalaysia ? 'MY' : 'ID'
+
+    if (isMalaysia) {
+      let serverSubtotalMyr = 0
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const ci of newCartItems as any[]) {
+        const pv = ci.product_variants
+        const regularPriceMyr = pv?.price_myr != null ? Number(pv.price_myr) : null
+        if (regularPriceMyr == null || regularPriceMyr <= 0) {
+          return fail(
+            ERROR_CODES.PRODUCT_UNAVAILABLE_MY,
+            'Salah satu produk di keranjang belum tersedia untuk pengiriman Malaysia.'
+          )
+        }
+        if (typeof pv?.stock_my === 'number' && pv.stock_my < (ci.quantity || 1)) {
+          return fail(
+            ERROR_CODES.STOCK_INSUFFICIENT,
+            'Stok Malaysia untuk salah satu produk tidak mencukupi.'
+          )
+        }
+
+        const flash = activeFlashItems.find(
+          (f) =>
+            f.variant_id === ci.variant_id &&
+            (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota)) &&
+            (!f.flash_sales?.target_market ||
+              f.flash_sales.target_market === 'ALL' ||
+              f.flash_sales.target_market === 'MY') &&
+            f.sale_price_myr != null &&
+            Number(f.sale_price_myr) > 0
+        )
+
+        const unitPriceMyr =
+          flash?.sale_price_myr != null && Number(flash.sale_price_myr) > 0
+            ? Number(flash.sale_price_myr)
+            : regularPriceMyr
+        serverSubtotalMyr = Number(
+          (serverSubtotalMyr + unitPriceMyr * (ci.quantity || 1)).toFixed(2)
+        )
+      }
+
+      let serverDiscountMyr = 0
+      if (params.voucherCode && params.voucherCode.trim()) {
+        try {
+          const { data: vData } = await supabase.rpc('validate_voucher', {
+            p_code: params.voucherCode.trim(),
+            p_subtotal: serverSubtotalMyr,
+            p_user_id: user.id,
+            p_country_code: 'MY',
+          })
+          const vObj = vData as Record<string, unknown> | null
+          if (vObj && typeof vObj === 'object' && vObj.valid) {
+            serverDiscountMyr = Number(vObj.discount_amount) || 0
+          }
+        } catch {
+          // Fallback: discount remains 0 if voucher validation fails
+        }
+      }
+
+      const shippingCostMyr =
+        selectedRate.price_myr != null && Number(selectedRate.price_myr) >= 0
+          ? Number(selectedRate.price_myr)
+          : Number((selectedRate.price / exchangeRate).toFixed(2))
+
+      let serverPaymentFeeMyr = 0
+      const baseAmountMyr = Math.max(0, serverSubtotalMyr - serverDiscountMyr + shippingCostMyr)
+      if (params.paymentChannel && feeConfigsRes.data) {
+        const channelConfig = (feeConfigsRes.data as Array<Record<string, unknown>>).find(
+          (c) => String(c.channel_code || '').toUpperCase() === params.paymentChannel?.toUpperCase()
+        )
+        if (channelConfig) {
+          let feeMyr = 0
+          if (channelConfig.fee_type === 'flat') {
+            feeMyr = Number(((Number(channelConfig.fee_flat) || 0) / exchangeRate).toFixed(2))
+          } else if (channelConfig.fee_type === 'percentage') {
+            feeMyr = Number(
+              (baseAmountMyr * ((Number(channelConfig.fee_percentage) || 0) / 100)).toFixed(2)
+            )
+          } else if (channelConfig.fee_type === 'flat_and_percentage') {
+            feeMyr = Number(
+              (
+                (Number(channelConfig.fee_flat) || 0) / exchangeRate +
+                baseAmountMyr * ((Number(channelConfig.fee_percentage) || 0) / 100)
+              ).toFixed(2)
+            )
+          }
+          serverPaymentFeeMyr = Math.max(0, feeMyr)
+        }
+      }
+
+      const totalMyr = Math.max(0, Number((baseAmountMyr + serverPaymentFeeMyr).toFixed(2)))
+      const calculatedTotalAmount = Math.round(totalMyr * exchangeRate)
+
+      if (calculatedTotalAmount > QRIS_MAX_AMOUNT_IDR) {
+        return fail(
+          ERROR_CODES.QRIS_LIMIT_EXCEEDED,
+          'Total transaksi melebihi batas regulasi QRIS Antarnegara (Rp 10.000.000). Silakan bagi menjadi 2 pesanan.'
+        )
+      }
+
+      const secureParams = {
+        ...params,
+        shippingCost: Math.round(shippingCostMyr * exchangeRate),
+        shippingCostMyr,
+        paymentFee: Math.round(serverPaymentFeeMyr * exchangeRate),
+        paymentFeeMyr: serverPaymentFeeMyr,
+        paymentChannel: params.paymentChannel,
+      }
+
+      return await orderService.createOrder(secureParams)
+    }
+
+    // Indonesia (IDR) flow
     let serverSubtotal = 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const ci of newCartItems as any[]) {
@@ -355,12 +462,11 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
         (f) =>
           f.variant_id === ci.variant_id &&
           (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota)) &&
-          (!f.flash_sales?.target_market || f.flash_sales.target_market === 'ALL' || f.flash_sales.target_market === orderCountry)
+          (!f.flash_sales?.target_market ||
+            f.flash_sales.target_market === 'ALL' ||
+            f.flash_sales.target_market === orderCountry)
       )
-      let unitPrice = flash?.sale_price != null ? Number(flash.sale_price) : Number(pv?.price) || 0
-      if (isMalaysia) {
-        unitPrice = getMyPrice(unitPrice, { exchangeRate, markupPercent, rounding }).chargedIdr
-      }
+      const unitPrice = flash?.sale_price != null ? Number(flash.sale_price) : Number(pv?.price) || 0
       serverSubtotal += unitPrice * (ci.quantity || 1)
     }
 
@@ -371,7 +477,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
           p_code: params.voucherCode.trim(),
           p_subtotal: serverSubtotal,
           p_user_id: user.id,
-          p_country_code: address.country_code || 'ID',
+          p_country_code: 'ID',
         })
         const vObj = vData as Record<string, unknown> | null
         if (vObj && typeof vObj === 'object' && vObj.valid) {
@@ -409,10 +515,7 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
     )
 
     // Check QRIS transaction limit
-    if (
-      (isMalaysia || params.paymentChannel?.toUpperCase() === 'QRIS') &&
-      calculatedTotalAmount > QRIS_MAX_AMOUNT_IDR
-    ) {
+    if (params.paymentChannel?.toUpperCase() === 'QRIS' && calculatedTotalAmount > QRIS_MAX_AMOUNT_IDR) {
       return fail(
         ERROR_CODES.QRIS_LIMIT_EXCEEDED,
         'Total transaksi melebihi batas regulasi QRIS Antarnegara (Rp 10.000.000). Silakan bagi menjadi 2 pesanan.'

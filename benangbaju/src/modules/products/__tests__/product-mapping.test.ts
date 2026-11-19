@@ -117,4 +117,62 @@ describe('Product Repository - mapProductListItem', () => {
     const result = mapProductListItem(product)
     expect(result.hasMultipleColors).toBe(false)
   })
+
+  it('marks product as unavailable in MY when no active variant has price_myr > 0', () => {
+    const product = {
+      ...baseProduct,
+      product_variants: [
+        { id: 'v-1', price: 250000, price_myr: null, stock: 10, stock_my: 5, is_active: true },
+        { id: 'v-2', price: 260000, price_myr: 0, stock: 5, stock_my: 2, is_active: true },
+      ],
+    }
+
+    const result = mapProductListItem(product)
+    expect(result.isAvailableInMY).toBe(false)
+    expect(result.minPriceMyr).toBeNull()
+    expect(result.maxPriceMyr).toBeNull()
+  })
+
+  it('computes manual MYR min/max prices, discountPercentMyr, and preserves isolated stock_my', () => {
+    const product = {
+      ...baseProduct,
+      product_variants: [
+        {
+          id: 'v-1',
+          price: 250000,
+          price_myr: 89.9,
+          compare_price_myr: 119.9,
+          stock: 20,
+          stock_my: 4,
+          is_active: true,
+        },
+        {
+          id: 'v-2',
+          price: 280000,
+          price_myr: 99.9,
+          compare_price_myr: null,
+          stock: 15,
+          stock_my: 0,
+          is_active: true,
+        },
+        {
+          id: 'v-3',
+          price: 150000,
+          price_myr: 49.0,
+          stock: 5,
+          stock_my: 3,
+          is_active: false, // inactive should be ignored
+        },
+      ],
+    }
+
+    const result = mapProductListItem(product)
+    expect(result.isAvailableInMY).toBe(true)
+    expect(result.minPriceMyr).toBe(89.9)
+    expect(result.maxPriceMyr).toBe(99.9)
+    expect(result.comparePriceMyr).toBe(119.9)
+    expect(result.discountPercentMyr).toBe(25)
+    expect(result.product_variants[0].stock).toBe(20)
+    expect(result.product_variants[0].stock_my).toBe(4)
+  })
 })

@@ -66,28 +66,32 @@ export function ProductDetailClient({
   const [showStickyBar, setShowStickyBar] = useState(false)
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false)
 
-  // B3-2: Filter flash sale price overlay based on active market
+  // B3-2 & Manual MY pricing: Filter flash sale overlay and hide variants without manual MYR price in MY market
   const effectiveProduct = React.useMemo<ProductDetailItem>(() => {
-    const resolvedVariants = (product.product_variants || []).map((v) => {
-      if (
-        v.flash_sale_target_market &&
-        v.flash_sale_target_market !== 'ALL' &&
-        v.flash_sale_target_market !== market &&
-        v.regular_price !== undefined
-      ) {
-        return {
-          ...v,
-          price: v.regular_price,
-          compare_price: v.regular_compare_price ?? null,
+    const resolvedVariants = (product.product_variants || [])
+      .map((v) => {
+        if (
+          v.flash_sale_target_market &&
+          v.flash_sale_target_market !== 'ALL' &&
+          v.flash_sale_target_market !== market &&
+          v.regular_price !== undefined
+        ) {
+          return {
+            ...v,
+            price: v.regular_price,
+            compare_price: v.regular_compare_price ?? null,
+            price_myr: v.regular_price_myr ?? v.price_myr ?? null,
+            compare_price_myr: v.regular_compare_price_myr ?? v.compare_price_myr ?? null,
+          }
         }
-      }
-      return v
-    })
+        return v
+      })
+      .filter((v) => (!isMY ? true : v.price_myr != null && Number(v.price_myr) > 0))
     return {
       ...product,
       product_variants: resolvedVariants,
     }
-  }, [product, market])
+  }, [product, market, isMY])
 
   const effectiveSelectedVariant = React.useMemo<ProductVariant | null>(() => {
     if (!selectedVariant) return null
@@ -143,6 +147,13 @@ export function ProductDetailClient({
     const firstVariant = effectiveProduct.product_variants[0]
     const basePrice = firstVariant?.price ? Number(firstVariant.price) : 0
     const baseComparePrice = firstVariant?.compare_price ? Number(firstVariant.compare_price) : null
+    const firstMyVariant = effectiveProduct.product_variants.find(
+      (v) => v.price_myr != null && Number(v.price_myr) > 0
+    )
+    const basePriceMyr =
+      firstMyVariant?.price_myr != null ? Number(firstMyVariant.price_myr) : null
+    const baseComparePriceMyr =
+      firstMyVariant?.compare_price_myr != null ? Number(firstMyVariant.compare_price_myr) : null
 
     addProductToRecentlyViewed({
       id: effectiveProduct.id,
@@ -150,6 +161,8 @@ export function ProductDetailClient({
       slug: effectiveProduct.slug,
       price: basePrice,
       comparePrice: baseComparePrice,
+      priceMyr: basePriceMyr,
+      comparePriceMyr: baseComparePriceMyr,
       imageUrl: effectiveProduct.product_images[0]?.url || null,
     })
 
@@ -169,8 +182,14 @@ export function ProductDetailClient({
       return
     }
 
-    if (effectiveSelectedVariant.stock <= 0) {
+    const activeStock = isMY ? (effectiveSelectedVariant.stock_my ?? 0) : effectiveSelectedVariant.stock
+    if (activeStock <= 0) {
       toast.error(isMY ? 'This variant is out of stock.' : 'Stok untuk varian ini habis.')
+      return
+    }
+
+    if (isMY && (!effectiveSelectedVariant.price_myr || Number(effectiveSelectedVariant.price_myr) <= 0)) {
+      toast.error('This variant is not available for Malaysia.')
       return
     }
 
@@ -184,9 +203,15 @@ export function ProductDetailClient({
         sku: effectiveSelectedVariant.sku,
         price: Number(effectiveSelectedVariant.price),
         comparePrice: effectiveSelectedVariant.compare_price ? Number(effectiveSelectedVariant.compare_price) : null,
+        priceMyr: effectiveSelectedVariant.price_myr != null ? Number(effectiveSelectedVariant.price_myr) : null,
+        comparePriceMyr:
+          effectiveSelectedVariant.compare_price_myr != null
+            ? Number(effectiveSelectedVariant.compare_price_myr)
+            : null,
         imageUrl: effectiveProduct.product_images[0]?.url || null,
         slug: effectiveProduct.slug,
         stock: effectiveSelectedVariant.stock,
+        stockMy: effectiveSelectedVariant.stock_my ?? 0,
       }
 
       await addItem(cartItem, quantity)
@@ -227,8 +252,14 @@ export function ProductDetailClient({
       return
     }
 
-    if (effectiveSelectedVariant.stock <= 0) {
+    const activeStock = isMY ? (effectiveSelectedVariant.stock_my ?? 0) : effectiveSelectedVariant.stock
+    if (activeStock <= 0) {
       toast.error(isMY ? 'This variant is out of stock.' : 'Stok untuk varian ini habis.')
+      return
+    }
+
+    if (isMY && (!effectiveSelectedVariant.price_myr || Number(effectiveSelectedVariant.price_myr) <= 0)) {
+      toast.error('This variant is not available for Malaysia.')
       return
     }
 
@@ -242,9 +273,15 @@ export function ProductDetailClient({
         sku: effectiveSelectedVariant.sku,
         price: Number(effectiveSelectedVariant.price),
         comparePrice: effectiveSelectedVariant.compare_price ? Number(effectiveSelectedVariant.compare_price) : null,
+        priceMyr: effectiveSelectedVariant.price_myr != null ? Number(effectiveSelectedVariant.price_myr) : null,
+        comparePriceMyr:
+          effectiveSelectedVariant.compare_price_myr != null
+            ? Number(effectiveSelectedVariant.compare_price_myr)
+            : null,
         imageUrl: effectiveProduct.product_images[0]?.url || null,
         slug: effectiveProduct.slug,
         stock: effectiveSelectedVariant.stock,
+        stockMy: effectiveSelectedVariant.stock_my ?? 0,
       }
 
       await addItem(cartItem, quantity)
@@ -270,7 +307,8 @@ export function ProductDetailClient({
 
   const handleIncrement = () => {
     if (!effectiveSelectedVariant) return
-    setQuantity((prev) => Math.min(prev + 1, effectiveSelectedVariant.stock))
+    const maxStock = isMY ? (effectiveSelectedVariant.stock_my ?? 0) : effectiveSelectedVariant.stock
+    setQuantity((prev) => Math.min(prev + 1, Math.max(1, maxStock)))
   }
 
   const handleDecrement = () => {
@@ -281,6 +319,7 @@ export function ProductDetailClient({
   const variants = effectiveProduct.product_variants || []
   const minPrice = variants.length > 0 ? Math.min(...variants.map((v: ProductVariant) => Number(v.price))) : 0
   const maxPrice = variants.length > 0 ? Math.max(...variants.map((v: ProductVariant) => Number(v.price))) : 0
+  const isUnavailableInMY = isMY && variants.length === 0
 
   return (
     <div className="bg-brand-cream min-h-screen pb-24 md:pb-10 font-sans">
@@ -313,6 +352,25 @@ export function ProductDetailClient({
           )}
           <span className="text-brand-plum font-bold truncate max-w-xs">{product.name}</span>
         </motion.nav>
+
+        {isUnavailableInMY && (
+          <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="font-bold text-amber-950 text-sm">
+                This item is currently only available for Indonesia delivery 🇮🇩
+              </p>
+              <p className="text-xs text-amber-800 mt-1">
+                Explore our Malaysia-ready catalog for items available to ship directly to Malaysia.
+              </p>
+            </div>
+            <Link
+              href="/produk"
+              className="inline-flex items-center justify-center px-4 py-2 bg-brand-plum text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-brand-plum/90 transition shrink-0"
+            >
+              Browse Malaysia Catalog
+            </Link>
+          </div>
+        )}
 
         {/* Main Grid: Left Gallery, Right Details */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">

@@ -4,6 +4,8 @@ export interface FlashSaleItemDetail {
   variant_id: string
   original_price: number
   sale_price: number
+  original_price_myr?: number | null
+  sale_price_myr?: number | null
   discount_percent: number
   quota: number
   sold_count: number
@@ -12,7 +14,9 @@ export interface FlashSaleItemDetail {
     sku: string
     name: string
     price: number
+    price_myr?: number | null
     stock: number
+    stock_my?: number
     products: {
       id: string
       name: string
@@ -52,10 +56,13 @@ export interface AdminFlashSaleListItem {
     variant_id: string
     original_price: number
     sale_price: number
+    original_price_myr?: number | null
+    sale_price_myr?: number | null
     quota: number
     sold_count: number
     product_variants: {
       name: string
+      price_myr?: number | null
       products: {
         name: string
       } | null

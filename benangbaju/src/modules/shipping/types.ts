@@ -28,6 +28,8 @@ export interface ShippingOption {
   id: string
   courier_name: string
   price: number
+  price_myr?: number | null
+  currency?: 'IDR' | 'MYR'
   etd_min: number
   etd_max: number
   weight_used_gram: number
@@ -53,11 +55,13 @@ export interface ShippingRate {
   zone_id: string
   courier_name: string
   price_per_kg: number
+  price_per_kg_myr?: number | null
   min_weight_gram: number
   base_price: number
+  base_price_myr?: number | null
   etd_days_min: number
   etd_days_max: number
   max_weight_gram?: number | null
   is_active: boolean
-  shipping_zones?: { name: string } | null
+  shipping_zones?: { name: string; country_code?: 'ID' | 'MY' } | null
 }

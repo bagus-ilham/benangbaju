@@ -368,8 +368,10 @@ export type Database = {
           flash_sale_id: string
           id: string
           original_price: number
+          original_price_myr: number | null
           quota: number
           sale_price: number
+          sale_price_myr: number | null
           sold_count: number
           variant_id: string
         }
@@ -378,8 +380,10 @@ export type Database = {
           flash_sale_id: string
           id?: string
           original_price: number
+          original_price_myr?: number | null
           quota?: number
           sale_price: number
+          sale_price_myr?: number | null
           sold_count?: number
           variant_id: string
         }
@@ -388,8 +392,10 @@ export type Database = {
           flash_sale_id?: string
           id?: string
           original_price?: number
+          original_price_myr?: number | null
           quota?: number
           sale_price?: number
+          sale_price_myr?: number | null
           sold_count?: number
           variant_id?: string
         }
@@ -692,6 +698,7 @@ export type Database = {
           country_code: string
           created_at: string
           discount_amount: number
+          discount_amount_myr: number | null
           exchange_rate_at_order: number | null
           id: string
           markup_percent_at_order: number | null
@@ -699,9 +706,12 @@ export type Database = {
           order_number: string
           payment_channel: string | null
           payment_fee: number | null
+          payment_fee_myr: number | null
           shipping_cost: number
+          shipping_cost_myr: number | null
           status: string
           subtotal: number
+          subtotal_myr: number | null
           total_amount: number
           total_myr: number | null
           updated_at: string
@@ -714,6 +724,7 @@ export type Database = {
           country_code?: string
           created_at?: string
           discount_amount?: number
+          discount_amount_myr?: number | null
           exchange_rate_at_order?: number | null
           id?: string
           markup_percent_at_order?: number | null
@@ -721,9 +732,12 @@ export type Database = {
           order_number: string
           payment_channel?: string | null
           payment_fee?: number | null
+          payment_fee_myr?: number | null
           shipping_cost: number
+          shipping_cost_myr?: number | null
           status?: string
           subtotal: number
+          subtotal_myr?: number | null
           total_amount: number
           total_myr?: number | null
           updated_at?: string
@@ -736,6 +750,7 @@ export type Database = {
           country_code?: string
           created_at?: string
           discount_amount?: number
+          discount_amount_myr?: number | null
           exchange_rate_at_order?: number | null
           id?: string
           markup_percent_at_order?: number | null
@@ -743,9 +758,12 @@ export type Database = {
           order_number?: string
           payment_channel?: string | null
           payment_fee?: number | null
+          payment_fee_myr?: number | null
           shipping_cost?: number
+          shipping_cost_myr?: number | null
           status?: string
           subtotal?: number
+          subtotal_myr?: number | null
           total_amount?: number
           total_myr?: number | null
           updated_at?: string
@@ -1174,35 +1192,44 @@ export type Database = {
       product_variants: {
         Row: {
           compare_price: number | null
+          compare_price_myr: number | null
           id: string
           is_active: boolean
           name: string
           price: number
+          price_myr: number | null
           product_id: string
           sku: string
           stock: number
+          stock_my: number
           weight_gram: number | null
         }
         Insert: {
           compare_price?: number | null
+          compare_price_myr?: number | null
           id?: string
           is_active?: boolean
           name: string
           price: number
+          price_myr?: number | null
           product_id: string
           sku: string
           stock?: number
+          stock_my?: number
           weight_gram?: number | null
         }
         Update: {
           compare_price?: number | null
+          compare_price_myr?: number | null
           id?: string
           is_active?: boolean
           name?: string
           price?: number
+          price_myr?: number | null
           product_id?: string
           sku?: string
           stock?: number
+          stock_my?: number
           weight_gram?: number | null
         }
         Relationships: [
@@ -1228,9 +1255,11 @@ export type Database = {
           is_active: boolean
           is_featured: boolean
           max_price: number | null
+          max_price_myr: number | null
           meta_description: string | null
           meta_title: string | null
           min_price: number | null
+          min_price_myr: number | null
           name: string
           search_vector: unknown
           short_description: string | null
@@ -1253,9 +1282,11 @@ export type Database = {
           is_active?: boolean
           is_featured?: boolean
           max_price?: number | null
+          max_price_myr?: number | null
           meta_description?: string | null
           meta_title?: string | null
           min_price?: number | null
+          min_price_myr?: number | null
           name: string
           search_vector?: unknown
           short_description?: string | null
@@ -1278,9 +1309,11 @@ export type Database = {
           is_active?: boolean
           is_featured?: boolean
           max_price?: number | null
+          max_price_myr?: number | null
           meta_description?: string | null
           meta_title?: string | null
           min_price?: number | null
+          min_price_myr?: number | null
           name?: string
           search_vector?: unknown
           short_description?: string | null
@@ -1641,6 +1674,7 @@ export type Database = {
       shipping_rates: {
         Row: {
           base_price: number
+          base_price_myr: number | null
           courier_name: string
           created_at: string
           etd_days_max: number
@@ -1650,10 +1684,12 @@ export type Database = {
           max_weight_gram: number | null
           min_weight_gram: number
           price_per_kg: number
+          price_per_kg_myr: number | null
           zone_id: string
         }
         Insert: {
           base_price: number
+          base_price_myr?: number | null
           courier_name: string
           created_at?: string
           etd_days_max: number
@@ -1663,10 +1699,12 @@ export type Database = {
           max_weight_gram?: number | null
           min_weight_gram?: number
           price_per_kg: number
+          price_per_kg_myr?: number | null
           zone_id: string
         }
         Update: {
           base_price?: number
+          base_price_myr?: number | null
           courier_name?: string
           created_at?: string
           etd_days_max?: number
@@ -1676,6 +1714,7 @@ export type Database = {
           max_weight_gram?: number | null
           min_weight_gram?: number
           price_per_kg?: number
+          price_per_kg_myr?: number | null
           zone_id?: string
         }
         Relationships: [
@@ -1776,6 +1815,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          market: string
           note: string | null
           order_item_id: string | null
           qty: number
@@ -1788,6 +1828,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          market?: string
           note?: string | null
           order_item_id?: string | null
           qty: number
@@ -1800,6 +1841,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          market?: string
           note?: string | null
           order_item_id?: string | null
           qty?: number
@@ -2032,6 +2074,7 @@ export type Database = {
           applicable_countries: string[]
           code: string
           created_at: string
+          currency: string
           discount_type: string
           expires_at: string
           id: string
@@ -2051,6 +2094,7 @@ export type Database = {
           applicable_countries?: string[]
           code: string
           created_at?: string
+          currency?: string
           discount_type: string
           expires_at: string
           id?: string
@@ -2070,6 +2114,7 @@ export type Database = {
           applicable_countries?: string[]
           code?: string
           created_at?: string
+          currency?: string
           discount_type?: string
           expires_at?: string
           id?: string
@@ -2250,7 +2295,9 @@ export type Database = {
           p_notes?: string
           p_payment_channel?: string
           p_payment_fee?: number
+          p_payment_fee_myr?: number
           p_shipping_cost?: number
+          p_shipping_cost_myr?: number
           p_user_id: string
           p_voucher_code?: string
         }

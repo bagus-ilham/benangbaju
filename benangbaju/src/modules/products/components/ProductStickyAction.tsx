@@ -4,9 +4,8 @@ import React from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/shared/components'
-import { formatIDR, getMyPrice } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -33,7 +32,6 @@ export function ProductStickyAction({
 }: ProductStickyActionProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
-  const { myPricingConfig } = useSiteSettings()
 
   const currentPrice = selectedVariant ? Number(selectedVariant.price) : minPrice
   const comparePrice = selectedVariant?.compare_price
@@ -41,6 +39,28 @@ export function ProductStickyAction({
     : product.product_variants[0]?.compare_price
       ? Number(product.product_variants[0].compare_price)
       : null
+
+  const currentPriceMyr =
+    selectedVariant?.price_myr != null
+      ? Number(selectedVariant.price_myr)
+      : product.product_variants[0]?.price_myr != null
+        ? Number(product.product_variants[0].price_myr)
+        : null
+  const comparePriceMyr =
+    selectedVariant?.compare_price_myr != null
+      ? Number(selectedVariant.compare_price_myr)
+      : product.product_variants[0]?.compare_price_myr != null
+        ? Number(product.product_variants[0].compare_price_myr)
+        : null
+  const activeStock = selectedVariant
+    ? isMY
+      ? (selectedVariant.stock_my ?? 0)
+      : selectedVariant.stock
+    : 0
+
+  if (isMY && currentPriceMyr == null) {
+    return <></>
+  }
 
   return (
     <AnimatePresence>
@@ -73,19 +93,16 @@ export function ProductStickyAction({
                   {product.name}
                 </div>
                 <div className="flex items-baseline gap-1.5 mt-0.5">
-                  {isMY ? (
+                  {isMY && currentPriceMyr != null ? (
                     <>
                       <span className="text-xs font-sans font-bold text-brand-plum">
-                        {getMyPrice(currentPrice, myPricingConfig).formattedMyr}
+                        {formatMYR(currentPriceMyr)}
                       </span>
-                      {comparePrice && comparePrice > currentPrice && (
+                      {comparePriceMyr && comparePriceMyr > currentPriceMyr && (
                         <span className="text-[10px] text-neutral-500 line-through font-sans">
-                          {getMyPrice(comparePrice, myPricingConfig).formattedMyr}
+                          {formatMYR(comparePriceMyr)}
                         </span>
                       )}
-                      <span className="text-[10px] font-sans font-semibold text-neutral-500">
-                        (≈ {formatIDR(getMyPrice(currentPrice, myPricingConfig).chargedIdr)})
-                      </span>
                     </>
                   ) : (
                     <>
@@ -127,7 +144,7 @@ export function ProductStickyAction({
                   size="sm"
                   className="py-2.5 px-4 text-[10px]"
                   isLoading={isAdding}
-                  disabled={!selectedVariant || selectedVariant.stock === 0}
+                  disabled={!selectedVariant || activeStock <= 0}
                 >
                   {market === 'MY' ? 'Bag' : 'Keranjang'}
                 </Button>
@@ -137,7 +154,7 @@ export function ProductStickyAction({
                   size="sm"
                   className="py-2.5 px-4 text-[10px] font-bold"
                   isLoading={isBuying}
-                  disabled={!selectedVariant || selectedVariant.stock === 0}
+                  disabled={!selectedVariant || activeStock <= 0}
                 >
                   {market === 'MY' ? 'Buy Now' : 'Beli'}
                 </Button>

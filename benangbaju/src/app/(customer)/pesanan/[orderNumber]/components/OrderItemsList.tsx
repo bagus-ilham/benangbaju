@@ -40,11 +40,17 @@ export function OrderItemsList({
                 {isMalaysia ? 'Variant:' : 'Varian:'} {item.variant_name} | SKU: {item.sku}
               </p>
               <p className="text-xs text-neutral-400 mt-0.5">
-                {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
-                {isMalaysia && item.unit_price_myr && (
-                  <span className="ml-1.5 text-emerald-800 font-semibold">
-                    ({formatMYR(Number(item.unit_price_myr))})
-                  </span>
+                {isMalaysia ? (
+                  <>
+                    {item.quantity} x{' '}
+                    {item.unit_price_myr
+                      ? formatMYR(Number(item.unit_price_myr))
+                      : formatApproxMYR(item.price, effectiveExchangeRate)}
+                  </>
+                ) : (
+                  <>
+                    {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
+                  </>
                 )}
               </p>
               {order.status === 'completed' && (
@@ -66,14 +72,15 @@ export function OrderItemsList({
               )}
             </div>
             <div className="text-left sm:text-right whitespace-nowrap">
-              <p className="font-bold text-brand-plum">
-                Rp {item.subtotal.toLocaleString('id-ID')}
-              </p>
-              {isMalaysia && (
-                <p className="text-xs font-bold text-emerald-800">
+              {isMalaysia ? (
+                <p className="font-bold text-brand-plum">
                   {item.unit_price_myr
                     ? formatMYR(Number(item.unit_price_myr) * item.quantity)
                     : formatApproxMYR(item.subtotal, effectiveExchangeRate)}
+                </p>
+              ) : (
+                <p className="font-bold text-brand-plum">
+                  Rp {item.subtotal.toLocaleString('id-ID')}
                 </p>
               )}
             </div>

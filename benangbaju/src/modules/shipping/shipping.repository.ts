@@ -204,7 +204,7 @@ export class ShippingRepository {
     const to = from + limit - 1
     const { data, error, count } = await supabase
       .from('shipping_rates')
-      .select('*, shipping_zones(name)', { count: 'exact' })
+      .select('*, shipping_zones(name, shipping_zone_coverage(country_code))', { count: 'exact' })
       .order('courier_name', { ascending: true })
       .range(from, to)
 

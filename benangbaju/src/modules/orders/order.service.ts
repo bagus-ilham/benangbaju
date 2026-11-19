@@ -81,12 +81,19 @@ export class OrderService {
       const parsedData: OrderRpcResponse['data'] = {
         order_id: String(inner.order_id || ''),
         order_number: String(inner.order_number || ''),
+        country_code: inner.country_code ? String(inner.country_code) : undefined,
         subtotal: Number(inner.subtotal || 0),
         shipping_cost: Number(inner.shipping_cost || 0),
         discount_amount: Number(inner.discount_amount || 0),
         payment_fee: Number(inner.payment_fee || 0),
         payment_channel: inner.payment_channel ? String(inner.payment_channel) : null,
         total_amount: Number(inner.total_amount || 0),
+        subtotal_myr: inner.subtotal_myr != null ? Number(inner.subtotal_myr) : null,
+        shipping_cost_myr: inner.shipping_cost_myr != null ? Number(inner.shipping_cost_myr) : null,
+        discount_amount_myr:
+          inner.discount_amount_myr != null ? Number(inner.discount_amount_myr) : null,
+        payment_fee_myr: inner.payment_fee_myr != null ? Number(inner.payment_fee_myr) : null,
+        total_myr: inner.total_myr != null ? Number(inner.total_myr) : null,
         status: String(inner.status || ''),
       }
 

@@ -19,16 +19,16 @@ import { createBrowserClient } from '@/lib/supabase/client'
 import { AddressModal } from '@/modules/users/components/AddressModal'
 import { AuthLoading, PageContainer, PageHero, HandDrawnIcon } from '@/shared/components'
 import { CheckoutAddressForm, CheckoutSummaryCard, CheckoutProgressBar, PaymentMethodSelector } from './components'
-import { calculateChannelFee } from './components/PaymentMethodSelector'
+import { calculateChannelFee, calculateChannelFeeMyr } from './components/PaymentMethodSelector'
 import { DEFAULT_WEIGHT_GRAM, QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
 import { trackInitiateCheckout } from '@/lib/analytics'
-import { getMyPrice, type MyPriceRounding } from '@/lib/utils'
 
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 
 interface AppliedVoucher {
   code: string
+  currency?: 'IDR' | 'MYR'
   discount_amount: number
   discount_type?: string | null
   value: number
@@ -73,18 +73,10 @@ export default function CheckoutPage(): React.JSX.Element {
     return map
   }, [siteSettingsRes?.data])
 
-  const myPricingConfig = useMemo(() => {
+  const myrExchangeRate = useMemo(() => {
     const rate = parseFloat(siteSettings['myr_exchange_rate'] || '3600')
-    const markup = parseFloat(siteSettings['my_price_markup_percent'] || '0')
-    const rounding = (siteSettings['my_price_rounding'] || 'none') as MyPriceRounding
-    return {
-      exchangeRate: isNaN(rate) || rate <= 0 ? 3600 : rate,
-      markupPercent: isNaN(markup) ? 0 : markup,
-      rounding,
-    }
+    return isNaN(rate) || rate <= 0 ? 3600 : rate
   }, [siteSettings])
-
-  const myrExchangeRate = myPricingConfig.exchangeRate || 3600
 
   const isMalaysiaShippingEnabled = useMemo(() => {
     return siteSettings['enable_malaysia_shipping'] !== 'false'
@@ -169,7 +161,7 @@ export default function CheckoutPage(): React.JSX.Element {
       const { data, error } = await supabase
         .from('vouchers')
         .select(
-          'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, applicable_countries, created_at'
+          'id, code, name, currency, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, applicable_countries, created_at'
         )
         .eq('is_active', true)
         .eq('is_hidden', false)
@@ -274,38 +266,86 @@ export default function CheckoutPage(): React.JSX.Element {
     setSelectedCourier(null)
   }, [selectedAddress])
 
-  // Calculate Prices (using marked-up charged IDR for Malaysia)
-  const subtotal = useMemo(() => {
-    return displayItems.reduce((acc, item) => {
-      const unitPrice = isMalaysia
-        ? getMyPrice(item.price, myPricingConfig).chargedIdr
-        : item.price
-      return acc + unitPrice * item.quantity
-    }, 0)
-  }, [displayItems, isMalaysia, myPricingConfig])
-  const shippingCost = selectedCourier ? selectedCourier.price : 0
+  // Check unavailable or insufficient-stock items when shipping to Malaysia
+  const unavailableMyItems = useMemo(() => {
+    if (!isMalaysia) return []
+    return displayItems.filter((item) => item.priceMyr == null || item.priceMyr <= 0)
+  }, [displayItems, isMalaysia])
 
-  // Calculate Discount Amount
-  let discountAmount = 0
-  if (appliedVoucher) {
+  const outOfStockMyItems = useMemo(() => {
+    if (!isMalaysia) return []
+    return displayItems.filter(
+      (item) => typeof item.stockMy === 'number' && item.stockMy < item.quantity
+    )
+  }, [displayItems, isMalaysia])
+
+  const hasMyCartIssue = unavailableMyItems.length > 0 || outOfStockMyItems.length > 0
+
+  // Calculate Prices (native RM for Malaysia, native IDR for Indonesia)
+  const subtotalMyr = useMemo(() => {
+    if (!isMalaysia) return 0
+    return Number(
+      displayItems
+        .reduce((acc, item) => acc + (item.priceMyr && item.priceMyr > 0 ? item.priceMyr : 0) * item.quantity, 0)
+        .toFixed(2)
+    )
+  }, [displayItems, isMalaysia])
+
+  const subtotalIdr = useMemo(() => {
+    return displayItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  }, [displayItems])
+
+  const shippingCostMyr = useMemo(() => {
+    if (!isMalaysia || !selectedCourier) return 0
+    return selectedCourier.price_myr != null
+      ? Number(selectedCourier.price_myr)
+      : Number((selectedCourier.price / myrExchangeRate).toFixed(2))
+  }, [isMalaysia, selectedCourier, myrExchangeRate])
+
+  const shippingCostIdr = selectedCourier ? selectedCourier.price : 0
+
+  const discountAmountMyr = isMalaysia ? Number(appliedVoucher?.discount_amount || 0) : 0
+  let discountAmountIdr = 0
+  if (!isMalaysia && appliedVoucher) {
     if (appliedVoucher.discount_type === 'fixed') {
-      discountAmount = Math.min(appliedVoucher.value, subtotal)
+      discountAmountIdr = Math.min(appliedVoucher.value, subtotalIdr)
     } else if (appliedVoucher.discount_type === 'percentage') {
-      discountAmount = subtotal * (appliedVoucher.value / 100)
+      discountAmountIdr = Math.round(subtotalIdr * (appliedVoucher.value / 100))
       if (appliedVoucher.max_discount) {
-        discountAmount = Math.min(discountAmount, appliedVoucher.max_discount)
+        discountAmountIdr = Math.min(discountAmountIdr, appliedVoucher.max_discount)
       }
+    } else {
+      discountAmountIdr = appliedVoucher.discount_amount || 0
     }
   }
 
-  // Reactively calculate paymentFee based on current baseAmount
+  const baseAmountMyr = Math.max(
+    0,
+    Number((subtotalMyr + shippingCostMyr - discountAmountMyr).toFixed(2))
+  )
+  const paymentFeeMyr = useMemo(() => {
+    if (!isMalaysia || !selectedChannel) return 0
+    return calculateChannelFeeMyr(selectedChannel, baseAmountMyr, myrExchangeRate)
+  }, [isMalaysia, selectedChannel, baseAmountMyr, myrExchangeRate])
+
+  const totalMyr = Math.max(0, Number((baseAmountMyr + paymentFeeMyr).toFixed(2)))
+
+  // IDR amounts (for Indonesia checkout OR DOKU QRIS IDR settlement estimate for Malaysia)
+  const subtotal = isMalaysia ? Math.round(subtotalMyr * myrExchangeRate) : subtotalIdr
+  const shippingCost = isMalaysia ? Math.round(shippingCostMyr * myrExchangeRate) : shippingCostIdr
+  const discountAmount = isMalaysia ? Math.round(discountAmountMyr * myrExchangeRate) : discountAmountIdr
   const baseAmount = Math.max(0, subtotal + shippingCost - discountAmount)
   const paymentFee = useMemo(() => {
     if (!selectedChannel) return 0
+    if (isMalaysia) return Math.round(paymentFeeMyr * myrExchangeRate)
     return calculateChannelFee(selectedChannel, baseAmount)
-  }, [selectedChannel, baseAmount])
+  }, [selectedChannel, isMalaysia, paymentFeeMyr, myrExchangeRate, baseAmount])
 
-  const totalAmount = Math.max(0, subtotal - discountAmount + shippingCost + paymentFee)
+  const totalAmount = isMalaysia
+    ? Math.round(totalMyr * myrExchangeRate)
+    : Math.max(0, subtotal - discountAmount + shippingCost + paymentFee)
+
+  const voucherValidationSubtotal = isMalaysia ? subtotalMyr : subtotalIdr
 
   // Track InitiateCheckout event with strictly locked IDR currency
   const hasTrackedCheckout = useRef(false)
@@ -327,7 +367,7 @@ export default function CheckoutPage(): React.JSX.Element {
   // Re-verify applied voucher if destination country or subtotal changes
   useEffect(() => {
     if (appliedVoucher && currentCountryCode) {
-      validateVoucherAction(appliedVoucher.code, subtotal, currentCountryCode)
+      validateVoucherAction(appliedVoucher.code, voucherValidationSubtotal, currentCountryCode)
         .then((res) => {
           if (!res.success) {
             toast.error(
@@ -337,6 +377,16 @@ export default function CheckoutPage(): React.JSX.Element {
                   : `Voucher ${appliedVoucher.code} tidak berlaku untuk pengiriman ke Indonesia`)
             )
             setAppliedVoucher(null)
+          } else if (res.data) {
+            setAppliedVoucher((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    currency: res.data.currency,
+                    discount_amount: res.data.discount_amount || 0,
+                  }
+                : null
+            )
           }
         })
         .catch(() => {
@@ -344,7 +394,7 @@ export default function CheckoutPage(): React.JSX.Element {
         })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCountryCode, subtotal])
+  }, [currentCountryCode, voucherValidationSubtotal])
 
   const handleSelectPaymentChannel = (channel: PaymentFeeConfig) => {
     setSelectedChannel(channel)
@@ -354,18 +404,19 @@ export default function CheckoutPage(): React.JSX.Element {
     if (!user) return
     setVoucherLoading(true)
     try {
-      const result = await validateVoucherAction(code, subtotal, currentCountryCode)
+      const result = await validateVoucherAction(code, voucherValidationSubtotal, currentCountryCode)
       if (result.success) {
         const validVoucher = result.data
         // Fetch full details of the voucher to know constraints
         const { data: voucherInfo } = await supabase
           .from('vouchers')
-          .select('value, discount_type, max_discount')
+          .select('value, discount_type, max_discount, currency')
           .eq('code', code.toUpperCase())
           .single()
 
         setAppliedVoucher({
           code: validVoucher.code || code.toUpperCase(),
+          currency: validVoucher.currency || (voucherInfo?.currency as 'IDR' | 'MYR') || 'IDR',
           discount_amount: validVoucher.discount_amount || 0,
           discount_type: voucherInfo?.discount_type,
           value: voucherInfo?.value || 0,
@@ -409,6 +460,14 @@ export default function CheckoutPage(): React.JSX.Element {
       toast.error('Pengiriman ke Malaysia sedang dinonaktifkan sementara.')
       return
     }
+    if (isMalaysia && unavailableMyItems.length > 0) {
+      toast.error('Some items in your bag are not available for Malaysia shipping. Please remove them first.')
+      return
+    }
+    if (isMalaysia && outOfStockMyItems.length > 0) {
+      toast.error('Malaysia stock is insufficient for some items in your bag. Please adjust quantities in your bag.')
+      return
+    }
     const isQrisChannel = selectedChannel?.channel_code?.toUpperCase() === 'QRIS'
     if ((isMalaysia || isQrisChannel) && totalAmount > QRIS_MAX_AMOUNT_IDR) {
       toast.error(
@@ -439,9 +498,11 @@ export default function CheckoutPage(): React.JSX.Element {
         voucherCode: appliedVoucher?.code || undefined,
         courierName: `${selectedCourier.courier_name} (${selectedCourier.etd_min}-${selectedCourier.etd_max} hari)`,
         shippingRateId: selectedCourier.id,
-        shippingCost: selectedCourier.price,
+        shippingCost,
+        shippingCostMyr: isMalaysia ? shippingCostMyr : undefined,
         notes: notes.trim() || undefined,
         paymentFee,
+        paymentFeeMyr: isMalaysia ? paymentFeeMyr : undefined,
         paymentChannel: selectedChannel.channel_code,
       })
 
@@ -497,6 +558,27 @@ export default function CheckoutPage(): React.JSX.Element {
           </div>
         )}
 
+        {isMalaysia && hasMyCartIssue && (
+          <div className="mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-start gap-3">
+            <HandDrawnIcon name="alert-triangle" className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-semibold text-amber-950">
+                Action Required for Malaysia Shipping
+              </p>
+              {unavailableMyItems.length > 0 && (
+                <p className="mt-0.5 text-xs">
+                  {unavailableMyItems.length} item(s) in your bag are not available for Malaysia shipping. Please remove them in your shopping bag first.
+                </p>
+              )}
+              {outOfStockMyItems.length > 0 && (
+                <p className="mt-0.5 text-xs">
+                  {outOfStockMyItems.length} item(s) exceed available Malaysia stock. Please reduce quantity in your shopping bag.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT: SHIPPING & PAYMENT DETAILS */}
           <motion.div
@@ -530,6 +612,8 @@ export default function CheckoutPage(): React.JSX.Element {
                 subtotal={subtotal}
                 shippingCost={shippingCost}
                 discountAmount={discountAmount}
+                baseAmountMyr={baseAmountMyr}
+                myrExchangeRate={myrExchangeRate}
                 loading={feeConfigsLoading}
                 countryCode={currentCountryCode}
               />
@@ -550,6 +634,11 @@ export default function CheckoutPage(): React.JSX.Element {
               paymentFee={paymentFee}
               discountAmount={discountAmount}
               totalAmount={totalAmount}
+              subtotalMyr={subtotalMyr}
+              shippingCostMyr={shippingCostMyr}
+              paymentFeeMyr={paymentFeeMyr}
+              discountAmountMyr={discountAmountMyr}
+              totalMyr={totalMyr}
               voucherCodeInput={voucherCodeInput}
               onVoucherInputChange={setVoucherCodeInput}
               appliedVoucher={appliedVoucher}
@@ -563,12 +652,11 @@ export default function CheckoutPage(): React.JSX.Element {
               isPaymentTokenLoading={generatePaymentTokenMutation.isPending}
               canSubmit={
                 !!(selectedAddress && selectedCourier && selectedChannel) &&
-                (!isMalaysia || isMalaysiaShippingEnabled)
+                (!isMalaysia || (isMalaysiaShippingEnabled && !hasMyCartIssue))
               }
               selectedChannelCode={selectedChannel?.channel_code || null}
               isMalaysia={isMalaysia}
               myrExchangeRate={myrExchangeRate}
-              myPricingConfig={myPricingConfig}
             />
           </motion.div>
         </div>

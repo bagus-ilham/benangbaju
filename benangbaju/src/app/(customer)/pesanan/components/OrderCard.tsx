@@ -51,7 +51,8 @@ export function OrderCard({
     ? order.order_shipping[0]
     : order.order_shipping
   const countryCode = order.country_code || shipping?.country_code
-  const isMY = market === 'MY' || countryCode === 'MY'
+  const isMalaysiaOrder = countryCode === 'MY'
+  const isMY = market === 'MY' || isMalaysiaOrder
   const { myrExchangeRate: siteSettingsRate } = useSiteSettings()
   const effectiveExchangeRate = order.exchange_rate_at_order
     ? Number(order.exchange_rate_at_order)
@@ -93,23 +94,30 @@ export function OrderCard({
                 {item.product_name} - {item.variant_name}
               </p>
               <p className="text-xs text-neutral-600 font-sans mt-0.5">
-                {item.quantity} x {formatIDR(item.price)}
-                {isMY && item.unit_price_myr && (
-                  <span className="ml-1.5 text-emerald-800 font-semibold">
-                    ({formatMYR(Number(item.unit_price_myr))})
-                  </span>
+                {isMalaysiaOrder ? (
+                  <>
+                    {item.quantity} x{' '}
+                    {item.unit_price_myr
+                      ? formatMYR(Number(item.unit_price_myr))
+                      : formatApproxMYR(item.price, effectiveExchangeRate)}
+                  </>
+                ) : (
+                  <>
+                    {item.quantity} x {formatIDR(item.price)}
+                  </>
                 )}
               </p>
             </div>
             <div className="text-right whitespace-nowrap">
-              <span className="font-bold text-brand-plum block">
-                {formatIDR(item.subtotal)}
-              </span>
-              {isMY && (
-                <span className="text-[10px] font-semibold text-emerald-800 block">
+              {isMalaysiaOrder ? (
+                <span className="font-bold text-brand-plum block">
                   {item.unit_price_myr
                     ? formatMYR(Number(item.unit_price_myr) * item.quantity)
                     : formatApproxMYR(item.subtotal, effectiveExchangeRate)}
+                </span>
+              ) : (
+                <span className="font-bold text-brand-plum block">
+                  {formatIDR(item.subtotal)}
                 </span>
               )}
             </div>
@@ -121,14 +129,20 @@ export function OrderCard({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-neutral-200/60 gap-4 font-sans">
         <div className="text-sm">
           <span className="text-neutral-600">{isMY ? 'Total Amount:' : 'Total Pembayaran:'}</span>{' '}
-          <span className="font-bold text-brand-plum text-base">
-            {formatIDR(order.total_amount)}
-          </span>
-          {isMY && (
-            <span className="text-xs font-bold text-emerald-800 ml-2">
-              ({order.total_myr
-                ? formatMYR(Number(order.total_myr))
-                : formatApproxMYR(order.total_amount, effectiveExchangeRate)})
+          {isMalaysiaOrder ? (
+            <>
+              <span className="font-bold text-brand-plum text-base">
+                {order.total_myr
+                  ? formatMYR(Number(order.total_myr))
+                  : formatApproxMYR(order.total_amount, effectiveExchangeRate)}
+              </span>
+              <span className="text-xs text-neutral-500 ml-2">
+                (≈ {formatIDR(order.total_amount)})
+              </span>
+            </>
+          ) : (
+            <span className="font-bold text-brand-plum text-base">
+              {formatIDR(order.total_amount)}
             </span>
           )}
         </div>

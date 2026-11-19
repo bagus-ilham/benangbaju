@@ -1,10 +1,8 @@
-
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, Suspense } from 'react'
 import { SmartLink as Link, SmartImage as Image } from '@/shared/components'
-import { usePathname, useRouter } from 'next/navigation'
-import NextImage from 'next/image'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -20,14 +18,31 @@ interface AdminLayoutProps {
   children: React.ReactNode
 }
 
-const menuItems: Array<{
+interface AdminMenuItem {
   name: string
   href: string
+  matchPath?: string
+  matchMarket?: 'ID' | 'MY'
   handDrawnName: HandDrawnIconName
-}> = [
+}
+
+const menuItems: AdminMenuItem[] = [
   { name: 'Dashboard', href: '/admin', handDrawnName: 'home' },
   { name: 'Analitik Penjualan', href: '/admin/analytics', handDrawnName: 'clipboard-list' },
-  { name: 'Pesanan', href: '/admin/pesanan', handDrawnName: 'shopping-bag' },
+  {
+    name: 'Pesanan Indonesia',
+    href: '/admin/pesanan?market=ID',
+    matchPath: '/admin/pesanan',
+    matchMarket: 'ID',
+    handDrawnName: 'shopping-bag',
+  },
+  {
+    name: 'Pesanan Malaysia',
+    href: '/admin/pesanan?market=MY',
+    matchPath: '/admin/pesanan',
+    matchMarket: 'MY',
+    handDrawnName: 'globe',
+  },
   { name: 'Kategori', href: '/admin/kategori', handDrawnName: 'grid' },
   { name: 'Koleksi', href: '/admin/koleksi', handDrawnName: 'grid' },
   { name: 'Produk', href: '/admin/produk', handDrawnName: 'kancing' },
@@ -41,6 +56,67 @@ const menuItems: Array<{
   { name: 'Konten & SEO', href: '/admin/cms', handDrawnName: 'globe' },
   { name: 'Pengaturan Toko', href: '/admin/pengaturan', handDrawnName: 'kancing' },
 ]
+
+function isMenuItemActive(
+  item: AdminMenuItem,
+  pathname: string,
+  marketParam: string | null
+): boolean {
+  if (item.matchPath && item.matchMarket) {
+    if (pathname !== item.matchPath) return false
+    const activeMarket = (marketParam || 'ID').toUpperCase()
+    return activeMarket === item.matchMarket
+  }
+  return pathname === item.href
+}
+
+function AdminNavLinks({ onNavigate }: { onNavigate?: () => void }) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const marketParam = searchParams.get('market')
+
+  return (
+    <>
+      {menuItems.map((item) => {
+        const isActive = isMenuItemActive(item, pathname, marketParam)
+        return (
+          <Link
+            key={item.name}
+            href={item.href}
+            onClick={onNavigate}
+            className={cn(
+              'group flex items-center px-3 py-2.5 text-xs font-heading font-medium rounded-2xl transition-all duration-200',
+              isActive
+                ? 'bg-brand-gold text-brand-plum font-semibold shadow-sm'
+                : 'text-neutral-600 hover:bg-neutral-100 hover:text-brand-plum'
+            )}
+          >
+            <HandDrawnIcon name={item.handDrawnName} className="mr-3 h-4 w-4 flex-shrink-0" />
+            {item.name}
+            {isActive && (
+              <span
+                className="ml-auto w-1 h-1 bg-brand-accent-light rounded-full"
+                aria-hidden="true"
+              />
+            )}
+          </Link>
+        )
+      })}
+    </>
+  )
+}
+
+function AdminHeaderTitle() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const marketParam = searchParams.get('market')
+  const activeItem = menuItems.find((item) => isMenuItemActive(item, pathname, marketParam))
+  return (
+    <h1 className="text-sm font-heading font-semibold uppercase tracking-wider text-neutral-700">
+      {activeItem?.name || 'CMS Admin'}
+    </h1>
+  )
+}
 
 const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?: boolean }) => {
   const activeLogoUrl = getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')
@@ -116,7 +192,6 @@ const SidebarFooter = ({
 }
 
 export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
-  const pathname = usePathname()
   const router = useRouter()
   const supabase = createBrowserClient()
   const { user, profile, clearAuth } = useAuthStore()
@@ -145,32 +220,6 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
     condition: () => window.innerWidth < 1024,
   })
 
-  const renderNavLink = (item: (typeof menuItems)[0], onNavigate?: () => void) => {
-    const isActive = pathname === item.href
-    return (
-      <Link
-        key={item.name}
-        href={item.href}
-        onClick={onNavigate}
-        className={cn(
-          'group flex items-center px-3 py-2.5 text-xs font-heading font-medium rounded-2xl transition-all duration-200',
-          isActive
-            ? 'bg-brand-gold text-brand-plum font-semibold shadow-sm'
-            : 'text-neutral-600 hover:bg-neutral-100 hover:text-brand-plum'
-        )}
-      >
-        <HandDrawnIcon
-          name={item.handDrawnName}
-          className="mr-3 h-4 w-4 flex-shrink-0"
-        />
-        {item.name}
-        {isActive && (
-          <span className="ml-auto w-1 h-1 bg-brand-accent-light rounded-full" aria-hidden="true" />
-        )}
-      </Link>
-    )
-  }
-
   return (
     <div className="flex h-screen bg-neutral-50 overflow-hidden font-sans">
       {/* Sidebar for Desktop */}
@@ -181,7 +230,9 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
 
         <div className="flex flex-col flex-1 overflow-y-auto pt-5 pb-4">
           <nav className="flex-1 px-4 space-y-0.5">
-            {menuItems.map((item) => renderNavLink(item))}
+            <Suspense fallback={null}>
+              <AdminNavLinks />
+            </Suspense>
           </nav>
         </div>
 
@@ -225,7 +276,9 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
 
               <div className="flex-1 overflow-y-auto pt-5 pb-4 px-4">
                 <nav className="space-y-0.5">
-                  {menuItems.map((item) => renderNavLink(item, () => setIsSidebarOpen(false)))}
+                  <Suspense fallback={null}>
+                    <AdminNavLinks onNavigate={() => setIsSidebarOpen(false)} />
+                  </Suspense>
                 </nav>
               </div>
 
@@ -249,9 +302,15 @@ export function AdminLayout({ children }: AdminLayoutProps): React.JSX.Element {
 
           <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center">
-              <h1 className="text-sm font-heading font-semibold uppercase tracking-wider text-neutral-700">
-                {menuItems.find((item) => pathname === item.href)?.name || 'CMS Admin'}
-              </h1>
+              <Suspense
+                fallback={
+                  <h1 className="text-sm font-heading font-semibold uppercase tracking-wider text-neutral-700">
+                    CMS Admin
+                  </h1>
+                }
+              >
+                <AdminHeaderTitle />
+              </Suspense>
             </div>
 
             <div className="ml-4 flex items-center space-x-4">

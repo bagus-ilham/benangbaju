@@ -14,6 +14,8 @@ export interface FlashSaleFormItem {
   variant_id: string
   original_price: number
   sale_price: number
+  original_price_myr?: number | null
+  sale_price_myr?: number | null
   quota: number
   name: string
   prodName: string
@@ -23,7 +25,9 @@ export interface VariantSimple {
   id: string
   name: string
   price: number
+  price_myr?: number | null
   stock: number
+  stock_my?: number
   sku: string
   products: {
     name: string
@@ -89,12 +93,15 @@ export function FlashSaleFormModal({
       return
     }
 
+    const priceMyr = v.price_myr != null && Number(v.price_myr) > 0 ? Number(v.price_myr) : null
     setItems((prev) => [
       ...prev,
       {
         variant_id: v.id,
         original_price: Number(v.price) || 0,
         sale_price: Math.floor(Number(v.price) * 0.9),
+        original_price_myr: priceMyr,
+        sale_price_myr: priceMyr ? Number((priceMyr * 0.9).toFixed(2)) : null,
         quota: 5,
         name: v.name,
         prodName: v.products?.name || '',
@@ -107,7 +114,7 @@ export function FlashSaleFormModal({
   const handleUpdateItemField = (
     idx: number,
     field: keyof FlashSaleFormItem,
-    value: number | string
+    value: number | string | null
   ) => {
     setItems((prev) => prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item)))
   }
@@ -134,9 +141,30 @@ export function FlashSaleFormModal({
     }
 
     for (const item of items) {
-      if (item.sale_price <= 0 || item.sale_price >= item.original_price) {
-        toast.error('Harga flash sale harus lebih dari 0 dan kurang dari harga asli')
-        return
+      if (target_market !== 'MY') {
+        if (item.sale_price <= 0 || item.sale_price >= item.original_price) {
+          toast.error('Harga flash sale Indonesia (Rp) harus lebih dari 0 dan kurang dari harga asli')
+          return
+        }
+      }
+      if (target_market === 'MY') {
+        if (!item.original_price_myr || item.original_price_myr <= 0) {
+          toast.error(`Varian "${item.prodName} - ${item.name}" belum memiliki Harga Malaysia (RM)`)
+          return
+        }
+        if (
+          !item.sale_price_myr ||
+          item.sale_price_myr <= 0 ||
+          item.sale_price_myr >= item.original_price_myr
+        ) {
+          toast.error('Harga flash sale Malaysia (RM) harus lebih dari 0 dan kurang dari harga asli RM')
+          return
+        }
+      } else if (target_market === 'ALL' && item.sale_price_myr != null && item.sale_price_myr > 0) {
+        if (!item.original_price_myr || item.sale_price_myr >= item.original_price_myr) {
+          toast.error('Harga flash sale Malaysia (RM) harus kurang dari harga asli RM')
+          return
+        }
       }
     }
 
@@ -329,7 +357,7 @@ export function FlashSaleFormModal({
             items={items}
             handleUpdateItemField={handleUpdateItemField}
             handleRemoveItem={handleRemoveItem}
-            showMalaysiaPreview={target_market === 'ALL' || target_market === 'MY'}
+            targetMarket={target_market}
           />
         </div>
 

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button, Card, PageContainer, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
-import { formatIDR, getMyPrice, formatMYR } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import toast from 'react-hot-toast'
@@ -18,7 +18,7 @@ export default function CartPage(): React.JSX.Element {
   const removeItem = useCartStore((state) => state.removeItem)
   const market = useMarket()
   const isMY = market === 'MY'
-  const { myPricingConfig, freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
+  const { freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
@@ -30,31 +30,17 @@ export default function CartPage(): React.JSX.Element {
   const totalDiscount = originalSubtotal - subtotal
 
   const totalMyr = isMY
-    ? items.reduce(
-        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity,
-        0
-      )
+    ? items.reduce((acc, item) => acc + (Number(item.priceMyr) || 0) * item.quantity, 0)
     : 0
-  const chargedSubtotal = isMY
-    ? items.reduce(
-        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity,
-        0
-      )
-    : subtotal
   const originalMyr = isMY
-    ? items.reduce(
-        (acc, item) =>
-          acc + getMyPrice(item.comparePrice || item.price, myPricingConfig).priceMyr * item.quantity,
-        0
-      )
+    ? items.reduce((acc, item) => {
+        const baseMyr = Number(item.comparePriceMyr || item.priceMyr) || 0
+        return acc + baseMyr * item.quantity
+      }, 0)
     : 0
-  const originalChargedSubtotal = isMY
-    ? items.reduce(
-        (acc, item) =>
-          acc + getMyPrice(item.comparePrice || item.price, myPricingConfig).chargedIdr * item.quantity,
-        0
-      )
-    : originalSubtotal
+  const totalDiscountMyr = Math.max(0, originalMyr - totalMyr)
+  const hasUnavailableMYItems =
+    isMY && items.some((item) => !item.priceMyr || Number(item.priceMyr) <= 0)
 
   const targetThreshold = isMY ? freeShippingThresholdMyr : freeShippingThresholdIdr
   const currentProgressAmount = isMY ? totalMyr : subtotal
@@ -220,23 +206,23 @@ export default function CartPage(): React.JSX.Element {
                           )}
                           <div className="flex flex-col pt-1">
                             {isMY ? (
-                              <>
+                              item.priceMyr && Number(item.priceMyr) > 0 ? (
                                 <div className="flex items-baseline space-x-2">
                                   <span className="text-xs font-sans font-bold text-brand-plum">
-                                    {formatMYR(getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity)}
+                                    {formatMYR(Number(item.priceMyr) * item.quantity)}
                                   </span>
-                                  {item.comparePrice && item.comparePrice > item.price && (
-                                    <span className="text-[10px] font-sans text-neutral-400 line-through">
-                                      {formatMYR(getMyPrice(item.comparePrice, myPricingConfig).priceMyr * item.quantity)}
-                                    </span>
-                                  )}
+                                  {item.comparePriceMyr &&
+                                    Number(item.comparePriceMyr) > Number(item.priceMyr) && (
+                                      <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                        {formatMYR(Number(item.comparePriceMyr) * item.quantity)}
+                                      </span>
+                                    )}
                                 </div>
-                                <div className="flex items-baseline space-x-1 mt-0.5">
-                                  <span className="text-[10px] font-sans font-semibold text-neutral-500">
-                                    ≈ {formatIDR(getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity)}
-                                  </span>
-                                </div>
-                              </>
+                              ) : (
+                                <span className="text-[11px] font-bold text-red-600">
+                                  Not available for Malaysia delivery (please remove)
+                                </span>
+                              )
                             ) : (
                               <div className="flex items-baseline space-x-2">
                                 <span className="text-xs font-sans font-bold text-brand-plum">
@@ -258,7 +244,14 @@ export default function CartPage(): React.JSX.Element {
                         <div className="flex items-center border border-neutral-200 rounded-xl overflow-hidden bg-neutral-50">
                           <button
                             type="button"
-                            onClick={() => handleQtyChange(item.variantId, item.quantity, -1, item.stock)}
+                            onClick={() =>
+                              handleQtyChange(
+                                item.variantId,
+                                item.quantity,
+                                -1,
+                                isMY ? (item.stockMy ?? 0) : item.stock
+                              )
+                            }
                             className="p-2 text-neutral-600 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label={market === 'MY' ? 'Reduce quantity' : 'Kurangi jumlah'}
                           >
@@ -269,7 +262,14 @@ export default function CartPage(): React.JSX.Element {
                           </span>
                           <button
                             type="button"
-                            onClick={() => handleQtyChange(item.variantId, item.quantity, 1, item.stock)}
+                            onClick={() =>
+                              handleQtyChange(
+                                item.variantId,
+                                item.quantity,
+                                1,
+                                isMY ? (item.stockMy ?? 0) : item.stock
+                              )
+                            }
                             className="p-2 text-neutral-600 hover:text-brand-plum hover:bg-neutral-100 transition-colors cursor-pointer"
                             aria-label={market === 'MY' ? 'Increase quantity' : 'Tambah jumlah'}
                           >
@@ -322,25 +322,20 @@ export default function CartPage(): React.JSX.Element {
                       <span>
                         {isMY ? formatMYR(originalMyr) : formatIDR(originalSubtotal)}
                       </span>
-                      {isMY && (
-                        <span className="block text-[10px] text-neutral-400">
-                          ≈ {formatIDR(originalChargedSubtotal)}
-                        </span>
-                      )}
                     </div>
                   </div>
-                  {totalDiscount > 0 && (
+                  {(isMY ? totalDiscountMyr > 0 : totalDiscount > 0) && (
                     <div className="flex justify-between text-red-600 font-semibold">
                       <span>{market === 'MY' ? 'Total Discount' : 'Total Diskon Produk'}</span>
                       <span>
-                        -{isMY ? formatMYR(originalMyr - totalMyr) : formatIDR(totalDiscount)}
+                        -{isMY ? formatMYR(totalDiscountMyr) : formatIDR(totalDiscount)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between text-xs text-neutral-400 italic pt-1">
                     <span>
                       {market === 'MY'
-                        ? '* Charged in IDR via QRIS. Shipping fees calculated at checkout.'
+                        ? '* Shipping fees (in RM) calculated at checkout.'
                         : '* Ongkos kirim dihitung saat checkout'}
                     </span>
                   </div>
@@ -352,15 +347,14 @@ export default function CartPage(): React.JSX.Element {
                         {isMY ? formatMYR(totalMyr) : formatIDR(subtotal)}
                       </span>
                     </div>
-                    {isMY && (
-                      <div className="flex justify-end mt-1">
-                        <span className="text-xs font-sans font-semibold text-neutral-500">
-                          ≈ {formatIDR(chargedSubtotal)}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
+
+                {hasUnavailableMYItems && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-800">
+                    Some items in your bag are not available for Malaysia shipping. Please remove them before proceeding to checkout.
+                  </div>
+                )}
 
                 {isMY && totalMyr >= 450 && (
                   <div className="p-3 bg-amber-50 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 leading-snug flex items-start gap-2">
@@ -374,10 +368,11 @@ export default function CartPage(): React.JSX.Element {
                   </div>
                 )}
 
-                <Link href="/checkout" className="block w-full pt-2">
+                <Link href={hasUnavailableMYItems ? '/cart' : '/checkout'} className="block w-full pt-2">
                   <Button
                     variant="accent"
                     size="lg"
+                    disabled={hasUnavailableMYItems}
                     className="w-full flex items-center justify-center space-x-2 font-bold"
                   >
                     <span>{market === 'MY' ? 'Proceed to Checkout' : 'Lanjut Ke Checkout'}</span>

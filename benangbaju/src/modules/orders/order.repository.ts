@@ -10,7 +10,7 @@ export class OrderRepository {
     let query = supabase
       .from('orders')
       .select(
-        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, country_code, exchange_rate_at_order, markup_percent_at_order, total_myr, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal, unit_price_myr), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at, country_code)',
+        'id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, country_code, exchange_rate_at_order, markup_percent_at_order, subtotal_myr, shipping_cost_myr, discount_amount_myr, payment_fee_myr, total_myr, order_items(id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal, unit_price_myr), order_shipping(id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at, country_code)',
         { count: 'exact' }
       )
       .eq('user_id', userId)
@@ -79,6 +79,8 @@ export class OrderRepository {
       p_notes: params.notes ?? undefined,
       p_payment_fee: params.paymentFee || 0,
       p_payment_channel: params.paymentChannel ?? undefined,
+      p_shipping_cost_myr: params.shippingCostMyr ?? undefined,
+      p_payment_fee_myr: params.paymentFeeMyr ?? undefined,
     })
 
     if (error) throw error
@@ -212,7 +214,7 @@ export class OrderRepository {
 
     let query = supabase.from('orders').select(
       `
-        id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, country_code, exchange_rate_at_order, markup_percent_at_order, total_myr,
+        id, order_number, user_id, voucher_id, status, subtotal, shipping_cost, discount_amount, payment_fee, payment_channel, total_amount, notes, cancel_reason, created_at, updated_at, country_code, exchange_rate_at_order, markup_percent_at_order, subtotal_myr, shipping_cost_myr, discount_amount_myr, payment_fee_myr, total_myr,
         order_items (id, order_id, variant_id, flash_sale_item_id, product_name, variant_name, sku, price, quantity, subtotal, unit_price_myr),
         ${shippingRelation} (id, order_id, recipient_name, phone, full_address, province_name, city_name, district_name, postal_code, courier_name, tracking_number, shipped_at, delivered_at, country_code),
         profiles!left (name, email)

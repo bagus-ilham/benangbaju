@@ -63,24 +63,27 @@ export function CategoryDetailClient({
       )}
 
       <PageContainer className="py-12 md:py-16 page-content">
-        {products.length === 0 ? (
-          <EmptyState
-            handDrawnIcon="package"
-            title={isMY ? 'No Products Yet' : 'Belum Ada Produk'}
-            description={
-              isMY
-                ? 'There are no products in this category yet. Explore other categories.'
-                : 'Belum ada produk dalam kategori ini. Coba jelajahi kategori lain.'
-            }
-            action={{ label: isMY ? 'View All Products' : 'Lihat Semua Produk', href: '/produk' }}
-          />
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+        {(() => {
+          const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
+          return visibleProducts.length === 0 ? (
+            <EmptyState
+              handDrawnIcon="package"
+              title={isMY ? 'No Products Yet' : 'Belum Ada Produk'}
+              description={
+                isMY
+                  ? 'There are no Malaysia-available products in this category yet. Explore other categories.'
+                  : 'Belum ada produk dalam kategori ini. Coba jelajahi kategori lain.'
+              }
+              action={{ label: isMY ? 'View All Products' : 'Lihat Semua Produk', href: '/produk' }}
+            />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 animate-fade-in">
+              {visibleProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )
+        })()}
       </PageContainer>
     </div>
   )

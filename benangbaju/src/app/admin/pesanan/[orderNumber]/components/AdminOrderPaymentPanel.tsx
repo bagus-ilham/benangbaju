@@ -85,10 +85,15 @@ export function AdminOrderPaymentPanel({
         {order.total_myr && (
           <div className="flex justify-between items-center p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
             <div>
-              <span className="font-semibold text-emerald-950 block">Snapshot Malaysia (MYR)</span>
+              <span className="font-semibold text-emerald-950 block">
+                Total Pesanan Malaysia (MYR)
+              </span>
               <span className="text-[10px] text-emerald-700">
-                Kurs: Rp {order.exchange_rate_at_order?.toLocaleString('id-ID') || '3.600'}
-                {order.markup_percent_at_order ? ` (Markup +${order.markup_percent_at_order}%)` : ''}
+                Kurs Settlement DOKU: 1 RM = Rp{' '}
+                {order.exchange_rate_at_order?.toLocaleString('id-ID') || '3.600'}
+                {order.markup_percent_at_order && Number(order.markup_percent_at_order) > 0
+                  ? ` (Legacy Markup +${order.markup_percent_at_order}%)`
+                  : ''}
               </span>
             </div>
             <span className="font-bold text-emerald-900">{formatMYR(Number(order.total_myr))}</span>

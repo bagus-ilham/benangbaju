@@ -29,6 +29,7 @@ export class VoucherRepository {
         valid = false,
         voucher_id,
         code: rpcCode,
+        currency,
         discount_type,
         discount_amount,
         final_total,
@@ -43,10 +44,11 @@ export class VoucherRepository {
       return {
         voucher_id,
         code: rpcCode,
+        currency: currency === 'MYR' ? 'MYR' : 'IDR',
         discount_type:
           discount_type === 'fixed' || discount_type === 'percentage' ? discount_type : 'fixed',
-        discount_amount,
-        final_total,
+        discount_amount: Number(discount_amount) || 0,
+        final_total: Number(final_total) || 0,
       }
     }
 
@@ -60,7 +62,7 @@ export class VoucherRepository {
     const { data, error, count } = await supabase
       .from('vouchers')
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at',
+        'id, code, name, currency, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at',
         { count: 'exact' }
       )
       .order('created_at', { ascending: false })
@@ -77,6 +79,7 @@ export class VoucherRepository {
   async adminCreateVoucher(voucherData: {
     code: string
     name: string
+    currency?: 'IDR' | 'MYR'
     discount_type: 'percentage' | 'fixed'
     value: number
     min_purchase: number
@@ -90,20 +93,24 @@ export class VoucherRepository {
     applicable_countries?: string[] | null
   }): Promise<Voucher> {
     const supabase = await createServerClient()
+    const countries =
+      voucherData.applicable_countries && voucherData.applicable_countries.length > 0
+        ? voucherData.applicable_countries
+        : ['ID', 'MY']
+    const resolvedCurrency: 'IDR' | 'MYR' =
+      voucherData.currency || (countries.length === 1 && countries[0] === 'MY' ? 'MYR' : 'IDR')
     const sanitizedData = {
       ...voucherData,
       code: voucherData.code.trim().toUpperCase(),
-      applicable_countries:
-        voucherData.applicable_countries && voucherData.applicable_countries.length > 0
-          ? voucherData.applicable_countries
-          : ['ID', 'MY'],
+      applicable_countries: countries,
+      currency: resolvedCurrency,
     }
 
     const { data, error } = await supabase
       .from('vouchers')
       .insert(sanitizedData)
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at'
+        'id, code, name, currency, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at'
       )
       .single()
 
@@ -131,6 +138,7 @@ export class VoucherRepository {
     voucherData: {
       code: string
       name: string
+      currency?: 'IDR' | 'MYR'
       discount_type: 'percentage' | 'fixed'
       value: number
       min_purchase: number
@@ -145,13 +153,17 @@ export class VoucherRepository {
     }
   ): Promise<Voucher> {
     const supabase = await createServerClient()
+    const countries =
+      voucherData.applicable_countries && voucherData.applicable_countries.length > 0
+        ? voucherData.applicable_countries
+        : ['ID', 'MY']
+    const resolvedCurrency: 'IDR' | 'MYR' =
+      voucherData.currency || (countries.length === 1 && countries[0] === 'MY' ? 'MYR' : 'IDR')
     const sanitizedData = {
       ...voucherData,
       code: voucherData.code.trim().toUpperCase(),
-      applicable_countries:
-        voucherData.applicable_countries && voucherData.applicable_countries.length > 0
-          ? voucherData.applicable_countries
-          : ['ID', 'MY'],
+      applicable_countries: countries,
+      currency: resolvedCurrency,
     }
 
     const { data, error } = await supabase
@@ -159,7 +171,7 @@ export class VoucherRepository {
       .update(sanitizedData)
       .eq('id', voucherId)
       .select(
-        'id, code, name, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at'
+        'id, code, name, currency, discount_type, value, max_discount, min_purchase, starts_at, expires_at, usage_limit, usage_per_user, used_count, is_active, is_hidden, applicable_countries, created_at'
       )
       .single()
 

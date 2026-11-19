@@ -18,7 +18,8 @@ export function FeaturedProductsSection({
 }: FeaturedProductsSectionProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
-  if (products.length === 0) return null
+  const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
+  if (visibleProducts.length === 0) return null
 
   return (
     <section className="relative bg-brand-cream py-16 md:py-20 border-b border-neutral-200/80 overflow-hidden font-sans">
@@ -35,7 +36,7 @@ export function FeaturedProductsSection({
           viewport={{ once: true, amount: 0.1 }}
           className="flex md:grid md:grid-cols-4 gap-x-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory w-full"
         >
-          {products.slice(0, 4).map((product) => (
+          {visibleProducts.slice(0, 4).map((product) => (
             <motion.div
               key={product.id}
               variants={fadeUpItem}

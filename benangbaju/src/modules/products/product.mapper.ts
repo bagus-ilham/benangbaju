@@ -16,9 +16,12 @@ export function mapVariants(rawVariants: any, includeAttrs = true): ProductVaria
     id: v.id,
     sku: v.sku,
     name: v.name,
-    price: v.price,
-    compare_price: v.compare_price,
-    stock: v.stock,
+    price: Number(v.price) || 0,
+    compare_price: v.compare_price != null ? Number(v.compare_price) : null,
+    price_myr: v.price_myr != null ? Number(v.price_myr) : null,
+    compare_price_myr: v.compare_price_myr != null ? Number(v.compare_price_myr) : null,
+    stock: Number(v.stock) || 0,
+    stock_my: v.stock_my != null ? Number(v.stock_my) : 0,
     weight_gram: v.weight_gram || null,
     is_active: v.is_active,
     ...(includeAttrs && {
@@ -105,6 +108,33 @@ export function mapProductListItem(p: any): ProductListItem {
       ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
       : null
 
+  // Compute manual MYR price range & availability for Malaysia market
+  let minPriceMyr: number | null = null
+  let maxPriceMyr: number | null = null
+  let minMyrVariant: ProductVariant | null = null
+
+  for (let i = 0; i < product_variants.length; i++) {
+    const v = product_variants[i]
+    if (v.is_active && v.price_myr != null && Number(v.price_myr) > 0) {
+      const pMyr = Number(v.price_myr)
+      if (minPriceMyr === null || pMyr < minPriceMyr) {
+        minPriceMyr = pMyr
+        minMyrVariant = v
+      }
+      if (maxPriceMyr === null || pMyr > maxPriceMyr) {
+        maxPriceMyr = pMyr
+      }
+    }
+  }
+
+  const comparePriceMyr =
+    minMyrVariant?.compare_price_myr != null ? Number(minMyrVariant.compare_price_myr) : null
+  const discountPercentMyr =
+    comparePriceMyr && minPriceMyr != null && comparePriceMyr > minPriceMyr
+      ? Math.round(((comparePriceMyr - minPriceMyr) / comparePriceMyr) * 100)
+      : null
+  const isAvailableInMY = minPriceMyr !== null && minPriceMyr > 0
+
   let primaryImage = null
   let hoverImage = null
   let foundPrimary = false
@@ -167,6 +197,11 @@ export function mapProductListItem(p: any): ProductListItem {
     maxPrice,
     comparePrice,
     discountPercent,
+    minPriceMyr,
+    maxPriceMyr,
+    comparePriceMyr,
+    discountPercentMyr,
+    isAvailableInMY,
     primaryImage,
     hoverImage,
     hasMultipleColors,

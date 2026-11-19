@@ -22,9 +22,9 @@ export class FlashSaleRepository {
         `
           id, name, description, banner_url, starts_at, ends_at, is_active, target_market,
           flash_sale_items (
-            id, flash_sale_id, variant_id, original_price, sale_price, discount_percent, quota, sold_count,
+            id, flash_sale_id, variant_id, original_price, sale_price, original_price_myr, sale_price_myr, discount_percent, quota, sold_count,
             product_variants (
-              id, sku, name, price, stock,
+              id, sku, name, price, price_myr, stock, stock_my,
               products (
                 id, name, slug,
                 product_images (url, alt_text, is_primary)
@@ -73,6 +73,10 @@ export class FlashSaleRepository {
         variant_id: item.variant_id,
         original_price: item.original_price,
         sale_price: item.sale_price,
+        original_price_myr:
+          (item as any).original_price_myr != null ? Number((item as any).original_price_myr) : null,
+        sale_price_myr:
+          (item as any).sale_price_myr != null ? Number((item as any).sale_price_myr) : null,
         discount_percent: item.discount_percent || 0,
         quota: item.quota,
         sold_count: item.sold_count,
@@ -81,7 +85,9 @@ export class FlashSaleRepository {
           sku: pv.sku,
           name: pv.name,
           price: pv.price,
+          price_myr: pv.price_myr != null ? Number(pv.price_myr) : null,
           stock: pv.stock,
+          stock_my: pv.stock_my != null ? Number(pv.stock_my) : 0,
           products: {
             id: prod.id,
             name: prod.name,
@@ -115,9 +121,10 @@ export class FlashSaleRepository {
         `
         id, name, description, banner_url, starts_at, ends_at, is_active, target_market,
         flash_sale_items (
-          id, variant_id, original_price, sale_price, quota, sold_count,
+          id, variant_id, original_price, sale_price, original_price_myr, sale_price_myr, quota, sold_count,
           product_variants (
             name,
+            price_myr,
             products (name)
           )
         )
@@ -145,11 +152,18 @@ export class FlashSaleRepository {
           variant_id: item.variant_id,
           original_price: item.original_price,
           sale_price: item.sale_price,
+          original_price_myr:
+            (item as any).original_price_myr != null
+              ? Number((item as any).original_price_myr)
+              : null,
+          sale_price_myr:
+            (item as any).sale_price_myr != null ? Number((item as any).sale_price_myr) : null,
           quota: item.quota,
           sold_count: item.sold_count,
           product_variants: pv
             ? {
                 name: pv.name,
+                price_myr: pv.price_myr != null ? Number(pv.price_myr) : null,
                 products: prod ? { name: prod.name } : null,
               }
             : null,
@@ -186,6 +200,8 @@ export class FlashSaleRepository {
       variant_id: string
       original_price: number
       sale_price: number
+      original_price_myr?: number | null
+      sale_price_myr?: number | null
       quota: number
     }[]
   ): Promise<ApiResponse<{ id: string }>> {
@@ -237,6 +253,8 @@ export class FlashSaleRepository {
       variant_id: string
       original_price: number
       sale_price: number
+      original_price_myr?: number | null
+      sale_price_myr?: number | null
       quota: number
     }[]
   ): Promise<ApiResponse<{ id: string }>> {

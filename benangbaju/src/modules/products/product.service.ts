@@ -51,13 +51,28 @@ export class ProductService {
           product_variants = product_variants.map((v) => {
             const fsItem = fsMap.get(v.id)
             if (fsItem) {
+              const salePriceMyr =
+                fsItem.sale_price_myr != null && Number(fsItem.sale_price_myr) > 0
+                  ? Number(fsItem.sale_price_myr)
+                  : null
+              const origPriceMyr =
+                fsItem.original_price_myr != null && Number(fsItem.original_price_myr) > 0
+                  ? Number(fsItem.original_price_myr)
+                  : v.price_myr ?? null
+
               return {
                 ...v,
                 regular_price: Number(v.price),
                 regular_compare_price: v.compare_price ? Number(v.compare_price) : null,
+                regular_price_myr: v.price_myr ?? null,
+                regular_compare_price_myr: v.compare_price_myr ?? null,
                 flash_sale_target_market: activeSale.target_market || 'ALL',
                 price: Number(fsItem.sale_price),
                 compare_price: Number(fsItem.original_price) || Number(v.price),
+                ...(salePriceMyr != null && {
+                  price_myr: salePriceMyr,
+                  compare_price_myr: origPriceMyr,
+                }),
               }
             }
             return v

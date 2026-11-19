@@ -18,6 +18,7 @@ export async function getAdminVouchersAction(page = 1, limit = 20) {
 export async function createAdminVoucherAction(voucherData: {
   code: string
   name: string
+  currency?: 'IDR' | 'MYR'
   discount_type: 'percentage' | 'fixed'
   value: number
   min_purchase: number
@@ -39,6 +40,7 @@ export async function updateAdminVoucherAction(
   voucherData: {
     code: string
     name: string
+    currency?: 'IDR' | 'MYR'
     discount_type: 'percentage' | 'fixed'
     value: number
     min_purchase: number

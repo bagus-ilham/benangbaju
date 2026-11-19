@@ -1,7 +1,6 @@
 import React from 'react'
 import { Select, Input, Button } from '@/shared/components'
 import type { SiteSetting } from '@/modules/settings/types'
-import { getMyPrice, type MyPriceRounding } from '@/lib/utils/pricing'
 
 interface Collection {
   slug: string
@@ -29,13 +28,6 @@ export function SettingsForm({
   handleSaveSettings,
 }: SettingsFormProps): React.JSX.Element {
   const currentRate = Number(fields['myr_exchange_rate']) || 3600
-  const currentMarkup = Number(fields['my_price_markup_percent']) || 0
-  const currentRounding = (fields['my_price_rounding'] || 'none') as MyPriceRounding
-  const simulation = getMyPrice(250000, {
-    exchangeRate: currentRate,
-    markupPercent: currentMarkup,
-    rounding: currentRounding,
-  })
 
   return (
     <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl font-sans text-xs">
@@ -100,41 +92,14 @@ export function SettingsForm({
                 ) : setting.key === 'myr_exchange_rate' ? (
                   <div>
                     <Input
-                      label={setting.label || setting.key}
+                      label={setting.label || 'Kurs Settlement DOKU QRIS (1 RM ke Rupiah)'}
                       type="number"
                       value={fields[setting.key] || ''}
                       onChange={(e) => handleFieldChange(setting.key, e.target.value)}
                       placeholder="cth: 3600"
-                      helperText={`Simulasi Kurs: 1 MYR ≈ Rp ${currentRate.toLocaleString('id-ID')} (Rp 100.000 ≈ RM ${(100000 / currentRate).toFixed(2)})`}
+                      helperText={`Digunakan khusus untuk menghitung nilai tagihan QRIS Cross-Border (IDR) ke DOKU saat checkout Malaysia. Harga jual Malaysia diatur manual di tiap produk/varian. (Contoh: Total RM 100.00 → Tagihan QRIS Rp ${(100 * currentRate).toLocaleString('id-ID')})`}
                     />
                   </div>
-                ) : setting.key === 'my_price_markup_percent' ? (
-                  <div>
-                    <Input
-                      label={setting.label || 'Mark-up Harga Malaysia (%)'}
-                      type="number"
-                      value={fields[setting.key] ?? '0'}
-                      onChange={(e) => handleFieldChange(setting.key, e.target.value)}
-                      placeholder="cth: 15"
-                      helperText={`Persentase kenaikan harga untuk pesanan Malaysia. Nilai 0 berarti harga sama dengan Indonesia.`}
-                    />
-                    <div className="mt-2 p-2.5 bg-neutral-100/70 border border-neutral-200 rounded-xl text-[11px] text-neutral-600">
-                      <strong>💡 Simulasi Harga Malaysia:</strong> Produk <strong>Rp 250.000</strong> → Tampil{' '}
-                      <span className="font-bold text-emerald-800">{simulation.formattedMyr}</span> → Tagihan QRIS:{' '}
-                      <span className="font-bold text-brand-plum">{simulation.formattedChargedIdr}</span>
-                    </div>
-                  </div>
-                ) : setting.key === 'my_price_rounding' ? (
-                  <Select
-                    label={setting.label || 'Pembulatan Harga RM Malaysia'}
-                    value={fields[setting.key] || 'none'}
-                    onChange={(val) => handleFieldChange(setting.key, val)}
-                    options={[
-                      { label: 'none — Tanpa Pembulatan Khusus (Konversi Murni)', value: 'none' },
-                      { label: 'x.90 — Harga Cantik Ritel (Contoh: RM 79.90)', value: 'x.90' },
-                      { label: 'whole — Bulatkan ke Ringgit Penuh (Contoh: RM 80.00)', value: 'whole' },
-                    ]}
-                  />
                 ) : setting.key === 'shopee_my_url' ? (
                   <Input
                     label={setting.label || 'URL Toko Shopee Malaysia'}

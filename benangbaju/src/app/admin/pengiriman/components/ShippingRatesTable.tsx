@@ -3,6 +3,7 @@
 import React from 'react'
 import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatIDR } from '@/lib/utils/format'
+import { formatMYR } from '@/lib/utils'
 import type { ShippingRate } from '@/modules/shipping/types'
 
 interface ShippingRatesTableProps {
@@ -65,18 +66,29 @@ export function ShippingRatesTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
-          {rates.map((rate) => (
-            <tr key={rate.id} className="hover:bg-neutral-50/30">
-              <td className="py-4 px-6 font-bold text-neutral-900 uppercase">
-                {rate.courier_name}
-              </td>
-              <td className="py-4 px-6">{rate.shipping_zones?.name || 'Zona Tidak Diketahui'}</td>
-              <td className="py-4 px-6 text-right font-bold text-neutral-800">
-                {formatIDR(rate.base_price)}
-              </td>
-              <td className="py-4 px-6 text-right text-neutral-600">
-                {formatIDR(rate.price_per_kg)}
-              </td>
+          {rates.map((rate) => {
+            const isMY =
+              rate.shipping_zones?.country_code === 'MY' ||
+              (rate.base_price_myr != null && rate.price_per_kg_myr != null)
+            return (
+              <tr key={rate.id} className="hover:bg-neutral-50/30">
+                <td className="py-4 px-6 font-bold text-neutral-900 uppercase">
+                  {rate.courier_name}
+                </td>
+                <td className="py-4 px-6">
+                  <span className="mr-1.5">{isMY ? '🇲🇾' : '🇮🇩'}</span>
+                  {rate.shipping_zones?.name || 'Zona Tidak Diketahui'}
+                </td>
+                <td className="py-4 px-6 text-right font-bold text-neutral-800">
+                  {isMY && rate.base_price_myr != null
+                    ? formatMYR(rate.base_price_myr)
+                    : formatIDR(rate.base_price)}
+                </td>
+                <td className="py-4 px-6 text-right text-neutral-600">
+                  {isMY && rate.price_per_kg_myr != null
+                    ? formatMYR(rate.price_per_kg_myr)
+                    : formatIDR(rate.price_per_kg)}
+                </td>
               <td className="py-4 px-6 text-center text-neutral-600">
                 {rate.max_weight_gram ? (
                   <span className="font-semibold text-neutral-800">
@@ -100,24 +112,25 @@ export function ShippingRatesTable({
                   {rate.is_active ? 'Aktif' : 'Nonaktif'}
                 </span>
               </td>
-              <td className="py-4 px-6 text-right space-x-1.5">
-                <button
-                  onClick={() => onEdit(rate)}
-                  className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200 rounded"
-                  title="Edit Tarif"
-                >
-                  <HandDrawnIcon name="edit" className="h-3 w-3" />
-                </button>
-                <button
-                  onClick={() => onDelete(rate.id, rate.courier_name)}
-                  className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50 rounded"
-                  title="Hapus Tarif"
-                >
-                  <HandDrawnIcon name="trash" className="h-3 w-3" />
-                </button>
-              </td>
-            </tr>
-          ))}
+                <td className="py-4 px-6 text-right space-x-1.5">
+                  <button
+                    onClick={() => onEdit(rate)}
+                    className="text-neutral-500 hover:text-neutral-800 p-1.5 inline-block border border-neutral-200 rounded"
+                    title="Edit Tarif"
+                  >
+                    <HandDrawnIcon name="edit" className="h-3 w-3" />
+                  </button>
+                  <button
+                    onClick={() => onDelete(rate.id, rate.courier_name)}
+                    className="text-red-500 hover:text-red-700 p-1.5 inline-block border border-red-100 hover:bg-red-50 rounded"
+                    title="Hapus Tarif"
+                  >
+                    <HandDrawnIcon name="trash" className="h-3 w-3" />
+                  </button>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

@@ -1,6 +1,7 @@
 export interface VoucherValidationResult {
   voucher_id: string
   code: string
+  currency?: 'IDR' | 'MYR'
   discount_type: 'fixed' | 'percentage'
   discount_amount: number
   final_total: number
@@ -10,6 +11,7 @@ export interface Voucher {
   id: string
   code: string
   name: string
+  currency?: 'IDR' | 'MYR'
   discount_type: 'fixed' | 'percentage'
   value: number
   max_discount: number | null

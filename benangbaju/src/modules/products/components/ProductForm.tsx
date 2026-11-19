@@ -32,7 +32,10 @@ export interface InitialProductVariant {
   name: string | null
   price: number | string
   compare_price: number | string | null
+  price_myr?: number | string | null
+  compare_price_myr?: number | string | null
   stock: number
+  stock_my?: number
   weight_gram: number | null
   is_active: boolean
   product_variant_attrs?: InitialProductVariantAttr[]
@@ -154,7 +157,10 @@ export function ProductForm({
         name: '',
         price: 0,
         compare_price: null,
+        price_myr: null,
+        compare_price_myr: null,
         stock: 0,
+        stock_my: 0,
         weight_gram: null,
         is_active: true,
         attrs: [],
@@ -357,6 +363,12 @@ export function ProductForm({
     const cleanedVariants = data.variants.map((v) => ({
       ...v,
       compare_price: v.compare_price ?? null,
+      price_myr: v.price_myr != null && Number(v.price_myr) > 0 ? Number(v.price_myr) : null,
+      compare_price_myr:
+        v.compare_price_myr != null && Number(v.compare_price_myr) > 0
+          ? Number(v.compare_price_myr)
+          : null,
+      stock_my: Math.max(0, Number(v.stock_my) || 0),
       weight_gram: v.weight_gram ?? null,
       attrs: v.attrs.filter((a) => a.attr_name.trim() !== '' && a.attr_value.trim() !== ''),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

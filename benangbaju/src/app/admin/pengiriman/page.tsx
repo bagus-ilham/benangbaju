@@ -13,6 +13,7 @@ import {
 } from '@/app/admin/hooks/useAdmin'
 import type { ShippingZone, ShippingRate } from '@/modules/shipping/types'
 import { Button, AdminPageHeader, HandDrawnIcon } from '@/shared/components'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -24,6 +25,7 @@ import {
 
 export default function AdminShippingPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'zones' | 'rates'>('zones')
+  const { myrExchangeRate } = useSiteSettings()
 
   // Queries
   const {
@@ -164,16 +166,34 @@ export default function AdminShippingPage(): React.JSX.Element {
     }
   }
 
+  const isZoneMalaysia = (zoneId: string) => {
+    const z = zones.find((item) => item.id === zoneId)
+    return !!z?.shipping_zone_coverage?.some((c) => c.country_code === 'MY')
+  }
+
   // --- Rate Handlers ---
   const handleOpenRateModal = (rate: ShippingRate | null = null) => {
     if (rate) {
+      const isMY = rate.shipping_zones?.country_code === 'MY' || isZoneMalaysia(rate.zone_id)
       setEditingRate(rate)
       setRateZoneId(rate.zone_id)
       setRateCourier(rate.courier_name)
-      setRatePricePerKg(Number(rate.price_per_kg))
+      setRatePricePerKg(
+        isMY
+          ? rate.price_per_kg_myr != null
+            ? Number(rate.price_per_kg_myr)
+            : Number((Number(rate.price_per_kg) / myrExchangeRate).toFixed(2))
+          : Number(rate.price_per_kg)
+      )
       setRateMinWeight(rate.min_weight_gram)
       setRateMaxWeight(rate.max_weight_gram ?? null)
-      setRateBasePrice(Number(rate.base_price))
+      setRateBasePrice(
+        isMY
+          ? rate.base_price_myr != null
+            ? Number(rate.base_price_myr)
+            : Number((Number(rate.base_price) / myrExchangeRate).toFixed(2))
+          : Number(rate.base_price)
+      )
       setRateEtdMin(rate.etd_days_min)
       setRateEtdMax(rate.etd_days_max)
       setRateActive(rate.is_active)
@@ -199,17 +219,34 @@ export default function AdminShippingPage(): React.JSX.Element {
       return
     }
 
-    const ratePayload = {
-      zone_id: rateZoneId,
-      courier_name: rateCourier.trim(),
-      price_per_kg: ratePricePerKg,
-      min_weight_gram: rateMinWeight,
-      max_weight_gram: rateMaxWeight || null,
-      base_price: rateBasePrice,
-      etd_days_min: rateEtdMin,
-      etd_days_max: rateEtdMax,
-      is_active: rateActive,
-    }
+    const isMY = isZoneMalaysia(rateZoneId)
+    const ratePayload = isMY
+      ? {
+          zone_id: rateZoneId,
+          courier_name: rateCourier.trim(),
+          base_price_myr: Number(rateBasePrice),
+          price_per_kg_myr: Number(ratePricePerKg),
+          base_price: Math.round(Number(rateBasePrice) * myrExchangeRate),
+          price_per_kg: Math.round(Number(ratePricePerKg) * myrExchangeRate),
+          min_weight_gram: rateMinWeight,
+          max_weight_gram: rateMaxWeight || null,
+          etd_days_min: rateEtdMin,
+          etd_days_max: rateEtdMax,
+          is_active: rateActive,
+        }
+      : {
+          zone_id: rateZoneId,
+          courier_name: rateCourier.trim(),
+          base_price_myr: null,
+          price_per_kg_myr: null,
+          price_per_kg: Math.round(ratePricePerKg),
+          min_weight_gram: rateMinWeight,
+          max_weight_gram: rateMaxWeight || null,
+          base_price: Math.round(rateBasePrice),
+          etd_days_min: rateEtdMin,
+          etd_days_max: rateEtdMax,
+          is_active: rateActive,
+        }
 
     try {
       if (editingRate) {

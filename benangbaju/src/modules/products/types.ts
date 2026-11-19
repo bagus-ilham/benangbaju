@@ -8,6 +8,7 @@ export interface ProductFilters {
   sortBy?: 'newest' | 'price-low' | 'price-high' | 'popular' | 'featured'
   page?: number
   limit?: number
+  market?: 'ID' | 'MY'
 }
 
 export interface ProductVariant {
@@ -16,10 +17,15 @@ export interface ProductVariant {
   name: string
   price: number
   compare_price: number | null
+  price_myr?: number | null
+  compare_price_myr?: number | null
   regular_price?: number
   regular_compare_price?: number | null
+  regular_price_myr?: number | null
+  regular_compare_price_myr?: number | null
   flash_sale_target_market?: 'ALL' | 'ID' | 'MY'
   stock: number
+  stock_my?: number
   weight_gram: number | null
   is_active: boolean
   product_variant_attrs?: {
@@ -69,6 +75,11 @@ export interface ProductListItem {
   maxPrice: number
   comparePrice: number | null
   discountPercent: number | null
+  minPriceMyr?: number | null
+  maxPriceMyr?: number | null
+  comparePriceMyr?: number | null
+  discountPercentMyr?: number | null
+  isAvailableInMY?: boolean
   primaryImage: string | null
   hoverImage: string | null
   hasMultipleColors: boolean
@@ -81,6 +92,11 @@ export interface ProductDetailItem extends Omit<
   | 'maxPrice'
   | 'comparePrice'
   | 'discountPercent'
+  | 'minPriceMyr'
+  | 'maxPriceMyr'
+  | 'comparePriceMyr'
+  | 'discountPercentMyr'
+  | 'isAvailableInMY'
   | 'primaryImage'
   | 'hoverImage'
   | 'hasMultipleColors'
@@ -127,7 +143,10 @@ export interface AdminProductListItem {
     name: string
     price: number
     compare_price: number | null
+    price_myr?: number | null
+    compare_price_myr?: number | null
     stock: number
+    stock_my?: number
     is_active: boolean
   }>
 }
@@ -139,7 +158,10 @@ export interface AdminVariantListItem {
   name: string
   price: number
   compare_price: number | null
+  price_myr: number | null
+  compare_price_myr: number | null
   stock: number
+  stock_my: number
   is_active: boolean
   product_name: string
   product_slug: string
@@ -151,7 +173,10 @@ export interface UpdateVariantInput {
   variantId: string
   price: number
   compare_price: number | null
+  price_myr?: number | null
+  compare_price_myr?: number | null
   stock: number
+  stock_my?: number
   is_active: boolean
 }
 
@@ -165,7 +190,10 @@ export interface ProductVariantPayload {
   name: string
   price: number
   compare_price: number | null
+  price_myr?: number | null
+  compare_price_myr?: number | null
   stock: number
+  stock_my?: number
   weight_gram: number | null
   is_active: boolean
   attrs: Array<{ attr_name: string; attr_value: string }>

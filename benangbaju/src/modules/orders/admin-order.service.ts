@@ -106,6 +106,11 @@ export class AdminOrderService {
             row.exchange_rate_at_order != null ? Number(row.exchange_rate_at_order) : null,
           markup_percent_at_order:
             row.markup_percent_at_order != null ? Number(row.markup_percent_at_order) : null,
+          subtotal_myr: row.subtotal_myr != null ? Number(row.subtotal_myr) : null,
+          shipping_cost_myr: row.shipping_cost_myr != null ? Number(row.shipping_cost_myr) : null,
+          discount_amount_myr:
+            row.discount_amount_myr != null ? Number(row.discount_amount_myr) : null,
+          payment_fee_myr: row.payment_fee_myr != null ? Number(row.payment_fee_myr) : null,
           total_myr: row.total_myr != null ? Number(row.total_myr) : null,
           order_items,
           order_shipping,

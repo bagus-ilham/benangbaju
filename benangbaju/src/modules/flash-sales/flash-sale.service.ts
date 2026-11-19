@@ -29,6 +29,8 @@ export class FlashSaleService {
       variant_id: string
       original_price: number
       sale_price: number
+      original_price_myr?: number | null
+      sale_price_myr?: number | null
       quota: number
     }[]
   ): Promise<ApiResponse<{ id: string }>> {
@@ -50,6 +52,8 @@ export class FlashSaleService {
       variant_id: string
       original_price: number
       sale_price: number
+      original_price_myr?: number | null
+      sale_price_myr?: number | null
       quota: number
     }[]
   ): Promise<ApiResponse<{ id: string }>> {

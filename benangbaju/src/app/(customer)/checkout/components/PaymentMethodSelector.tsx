@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { HandDrawnIcon } from '@/shared/components'
-import { formatIDR } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import type { PaymentFeeConfig } from '@/modules/orders/types'
 
@@ -14,6 +14,8 @@ interface PaymentMethodSelectorProps {
   subtotal: number
   shippingCost: number
   discountAmount: number
+  baseAmountMyr?: number
+  myrExchangeRate?: number
   loading?: boolean
   countryCode?: string
 }
@@ -34,6 +36,25 @@ export function calculateChannelFee(
   return Math.max(0, fee)
 }
 
+export function calculateChannelFeeMyr(
+  config: PaymentFeeConfig,
+  baseAmountMyr: number,
+  exchangeRate = 3600
+): number {
+  if (!config) return 0
+  let feeMyr = 0
+  if (config.fee_type === 'flat') {
+    feeMyr = Number((config.fee_flat / exchangeRate).toFixed(2))
+  } else if (config.fee_type === 'percentage') {
+    feeMyr = Number((baseAmountMyr * (config.fee_percentage / 100)).toFixed(2))
+  } else if (config.fee_type === 'flat_and_percentage') {
+    feeMyr = Number(
+      (config.fee_flat / exchangeRate + baseAmountMyr * (config.fee_percentage / 100)).toFixed(2)
+    )
+  }
+  return Math.max(0, feeMyr)
+}
+
 import type { HandDrawnIconName } from '@/shared/components'
 
 const CATEGORY_LABELS: Record<string, { label: string; iconName: HandDrawnIconName }> = {
@@ -50,6 +71,8 @@ export function PaymentMethodSelector({
   subtotal,
   shippingCost,
   discountAmount,
+  baseAmountMyr,
+  myrExchangeRate = 3600,
   loading = false,
   countryCode = 'ID',
 }: PaymentMethodSelectorProps): React.JSX.Element {
@@ -57,6 +80,8 @@ export function PaymentMethodSelector({
   const isMY = countryCode === 'MY' || market === 'MY'
   const isMalaysia = countryCode === 'MY'
   const baseAmount = Math.max(0, subtotal + shippingCost - discountAmount)
+  const effectiveBaseMyr =
+    baseAmountMyr != null ? baseAmountMyr : Number((baseAmount / myrExchangeRate).toFixed(2))
 
   const activeConfigs = useMemo(() => {
     const list = (feeConfigs || []).filter((c) => c.is_active)
@@ -208,6 +233,7 @@ export function PaymentMethodSelector({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {items.map((item) => {
                   const fee = calculateChannelFee(item, baseAmount)
+                  const feeMyr = calculateChannelFeeMyr(item, effectiveBaseMyr, myrExchangeRate)
                   const isSelected = selectedChannelCode === item.channel_code
 
                   return (
@@ -229,11 +255,15 @@ export function PaymentMethodSelector({
                             {isMalaysia ? 'QRIS / DuitNow Malaysia' : item.channel_name}
                           </span>
                           <span className="text-[10px] font-sans text-neutral-400 mt-0.5 block">
-                            {item.fee_type === 'flat'
-                              ? `Biaya: +${formatIDR(item.fee_flat)}`
-                              : item.fee_type === 'percentage'
-                              ? `Biaya: +${item.fee_percentage}% (${formatIDR(fee)})`
-                              : `Biaya: +${formatIDR(item.fee_flat)} + ${item.fee_percentage}%`}
+                            {isMalaysia
+                              ? item.fee_type === 'percentage'
+                                ? `Fee: +${item.fee_percentage}% (${formatMYR(feeMyr)})`
+                                : `Fee: +${formatMYR(feeMyr)}`
+                              : item.fee_type === 'flat'
+                                ? `Biaya: +${formatIDR(item.fee_flat)}`
+                                : item.fee_type === 'percentage'
+                                  ? `Biaya: +${item.fee_percentage}% (${formatIDR(fee)})`
+                                  : `Biaya: +${formatIDR(item.fee_flat)} + ${item.fee_percentage}%`}
                           </span>
                         </div>
                         <div

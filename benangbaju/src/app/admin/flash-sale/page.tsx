@@ -21,7 +21,9 @@ export interface VariantSimple {
   id: string
   name: string
   price: number
+  price_myr?: number | null
   stock: number
+  stock_my?: number
   sku: string
   products: {
     name: string
@@ -42,7 +44,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('product_variants')
-        .select('id, name, price, stock, sku, products(name)')
+        .select('id, name, price, price_myr, stock, stock_my, sku, products(name)')
         .eq('is_active', true)
         .order('sku')
       if (error) throw error
@@ -95,6 +97,13 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
           variant_id: i.variant_id,
           original_price: Number(i.original_price) || 0,
           sale_price: Number(i.sale_price) || 0,
+          original_price_myr:
+            i.original_price_myr != null
+              ? Number(i.original_price_myr)
+              : i.product_variants?.price_myr != null
+                ? Number(i.product_variants.price_myr)
+                : null,
+          sale_price_myr: i.sale_price_myr != null ? Number(i.sale_price_myr) : null,
           quota: i.quota || 0,
           name: i.product_variants?.name || '',
           prodName: i.product_variants?.products?.name || '',
@@ -122,6 +131,13 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
           variant_id: i.variant_id,
           original_price: Number(i.original_price) || 0,
           sale_price: Number(i.sale_price) || 0,
+          original_price_myr:
+            i.original_price_myr != null
+              ? Number(i.original_price_myr)
+              : i.product_variants?.price_myr != null
+                ? Number(i.product_variants.price_myr)
+                : null,
+          sale_price_myr: i.sale_price_myr != null ? Number(i.sale_price_myr) : null,
           quota: i.quota || 0,
           name: i.product_variants?.name || '',
           prodName: i.product_variants?.products?.name || '',

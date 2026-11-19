@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Button, SmartLink as Link, HandDrawnIcon } from '@/shared/components'
-import { formatApproxMYR, buildWhatsAppUrl, formatMYR } from '@/lib/utils'
+import { buildWhatsAppUrl, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
@@ -109,62 +109,104 @@ export function OrderPaymentSection({
 
       {/* Cost Breakdown */}
       <div className="space-y-3 text-sm text-neutral-600">
-        <div className="flex justify-between">
-          <span>{isMY ? 'Product Subtotal' : 'Subtotal Produk'}</span>
-          <span className="font-bold text-brand-plum">
-            Rp {order.subtotal?.toLocaleString('id-ID')}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span>{isMY ? 'Shipping Cost' : 'Ongkos Kirim'}</span>
-          <span className="font-bold text-brand-plum">
-            Rp {order.shipping_cost?.toLocaleString('id-ID')}
-          </span>
-        </div>
-        {Number(order.payment_fee) > 0 && (
-          <div className="flex justify-between">
-            <span>{isMY ? 'Payment Processing Fee' : 'Biaya Layanan Pembayaran'}</span>
-            <span className="font-bold text-brand-plum">
-              Rp {Number(order.payment_fee).toLocaleString('id-ID')}
-            </span>
-          </div>
-        )}
-        {Number(order.discount_amount) > 0 && (
-          <div className="flex justify-between text-neutral-800 font-bold">
-            <span>{isMY ? 'Voucher Discount' : 'Diskon Voucher'}</span>
-            <span className="text-red-600">
-              - Rp {order.discount_amount.toLocaleString('id-ID')}
-            </span>
-          </div>
-        )}
-        {order.payment_channel && (
-          <div className="flex justify-between text-xs text-neutral-500 pt-1">
-            <span>{isMY ? 'Payment Method' : 'Metode Bayar'}</span>
-            <span className="font-semibold text-brand-plum uppercase">
-              {order.payment_channel.replace(/_/g, ' ')}
-            </span>
-          </div>
-        )}
-        <div className="border-t border-neutral-200/60 pt-4 mt-2">
-          <div className="flex justify-between items-center text-brand-plum font-sans">
-            <span className="text-sm font-bold">{isMY ? 'Total Amount' : 'Total Pembayaran'}</span>
-            <span className="text-lg font-bold text-brand-plum">
-              Rp {order.total_amount?.toLocaleString('id-ID')}
-            </span>
-          </div>
-          {isMalaysia && (
-            <div className="text-right mt-1">
-              <span className="text-xs font-bold text-emerald-800">
-                {order.total_myr
-                  ? formatMYR(Number(order.total_myr))
-                  : formatApproxMYR(order.total_amount, myrExchangeRate)}
-              </span>
-              <p className="text-[10px] text-neutral-400 mt-0.5">
-                {isMY ? '*Approximate in Ringgit Malaysia (settlement in IDR)' : '*Estimasi Ringgit Malaysia (pembayaran tetap dalam IDR)'}
-              </p>
-            </div>
-          )}
-        </div>
+        {(() => {
+          const effRate =
+            order.exchange_rate_at_order && Number(order.exchange_rate_at_order) > 0
+              ? Number(order.exchange_rate_at_order)
+              : myrExchangeRate
+          const subMyr =
+            order.subtotal_myr != null
+              ? Number(order.subtotal_myr)
+              : Number(((Number(order.subtotal) || 0) / effRate).toFixed(2))
+          const shipMyr =
+            order.shipping_cost_myr != null
+              ? Number(order.shipping_cost_myr)
+              : Number(((Number(order.shipping_cost) || 0) / effRate).toFixed(2))
+          const feeMyr =
+            order.payment_fee_myr != null
+              ? Number(order.payment_fee_myr)
+              : Number(((Number(order.payment_fee) || 0) / effRate).toFixed(2))
+          const discMyr =
+            order.discount_amount_myr != null
+              ? Number(order.discount_amount_myr)
+              : Number(((Number(order.discount_amount) || 0) / effRate).toFixed(2))
+          const totMyr =
+            order.total_myr != null
+              ? Number(order.total_myr)
+              : Number(((Number(order.total_amount) || 0) / effRate).toFixed(2))
+
+          return (
+            <>
+              <div className="flex justify-between">
+                <span>{isMY ? 'Product Subtotal' : 'Subtotal Produk'}</span>
+                <span className="font-bold text-brand-plum">
+                  {isMalaysia ? formatMYR(subMyr) : `Rp ${order.subtotal?.toLocaleString('id-ID')}`}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>{isMY ? 'Shipping Cost' : 'Ongkos Kirim'}</span>
+                <span className="font-bold text-brand-plum">
+                  {isMalaysia
+                    ? formatMYR(shipMyr)
+                    : `Rp ${order.shipping_cost?.toLocaleString('id-ID')}`}
+                </span>
+              </div>
+              {(isMalaysia ? feeMyr > 0 : Number(order.payment_fee) > 0) && (
+                <div className="flex justify-between">
+                  <span>{isMY ? 'Payment Processing Fee' : 'Biaya Layanan Pembayaran'}</span>
+                  <span className="font-bold text-brand-plum">
+                    {isMalaysia
+                      ? formatMYR(feeMyr)
+                      : `Rp ${Number(order.payment_fee).toLocaleString('id-ID')}`}
+                  </span>
+                </div>
+              )}
+              {(isMalaysia ? discMyr > 0 : Number(order.discount_amount) > 0) && (
+                <div className="flex justify-between text-neutral-800 font-bold">
+                  <span>{isMY ? 'Voucher Discount' : 'Diskon Voucher'}</span>
+                  <span className="text-red-600">
+                    -{' '}
+                    {isMalaysia
+                      ? formatMYR(discMyr)
+                      : `Rp ${order.discount_amount.toLocaleString('id-ID')}`}
+                  </span>
+                </div>
+              )}
+              {order.payment_channel && (
+                <div className="flex justify-between text-xs text-neutral-500 pt-1">
+                  <span>{isMY ? 'Payment Method' : 'Metode Bayar'}</span>
+                  <span className="font-semibold text-brand-plum uppercase">
+                    {order.payment_channel.replace(/_/g, ' ')}
+                  </span>
+                </div>
+              )}
+              <div className="border-t border-neutral-200/60 pt-4 mt-2">
+                <div className="flex justify-between items-center text-brand-plum font-sans">
+                  <span className="text-sm font-bold">
+                    {isMY ? 'Total Amount' : 'Total Pembayaran'}
+                  </span>
+                  <span className="text-lg font-bold text-brand-plum">
+                    {isMalaysia
+                      ? formatMYR(totMyr)
+                      : `Rp ${order.total_amount?.toLocaleString('id-ID')}`}
+                  </span>
+                </div>
+                {isMalaysia && (
+                  <div className="text-right mt-1">
+                    <span className="text-xs font-semibold text-neutral-500">
+                      ≈ Rp {order.total_amount?.toLocaleString('id-ID')}
+                    </span>
+                    <p className="text-[10px] text-neutral-400 mt-0.5">
+                      {isMY
+                        ? '*Settlement via DOKU QRIS Cross-Border (DuitNow) in IDR'
+                        : '*Pembayaran via DOKU QRIS Cross-Border (DuitNow) dalam IDR'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )
+        })()}
       </div>
 
       {/* Direct Payment Instructions for Pending Payment */}

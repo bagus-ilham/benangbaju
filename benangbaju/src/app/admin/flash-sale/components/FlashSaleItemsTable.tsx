@@ -1,23 +1,27 @@
 import React from 'react'
 import { HandDrawnIcon } from '@/shared/components'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
-import { getMyPrice } from '@/lib/utils/pricing'
+import { formatMYR } from '@/lib/utils'
 import type { FlashSaleFormItem } from './FlashSaleFormModal'
 
 interface FlashSaleItemsTableProps {
   items: FlashSaleFormItem[]
-  handleUpdateItemField: (idx: number, field: keyof FlashSaleFormItem, value: number) => void
+  handleUpdateItemField: (
+    idx: number,
+    field: keyof FlashSaleFormItem,
+    value: number | null
+  ) => void
   handleRemoveItem: (idx: number) => void
-  showMalaysiaPreview?: boolean
+  targetMarket?: 'ALL' | 'ID' | 'MY'
 }
 
 export function FlashSaleItemsTable({
   items,
   handleUpdateItemField,
   handleRemoveItem,
-  showMalaysiaPreview = true,
+  targetMarket = 'ALL',
 }: FlashSaleItemsTableProps): React.JSX.Element {
-  const { myPricingConfig } = useSiteSettings()
+  const showID = targetMarket === 'ALL' || targetMarket === 'ID'
+  const showMY = targetMarket === 'ALL' || targetMarket === 'MY'
 
   return (
     <div className="border border-neutral-200 bg-neutral-50/50 rounded-xl overflow-hidden">
@@ -26,13 +30,13 @@ export function FlashSaleItemsTable({
           Belum ada produk untuk promo ini
         </p>
       ) : (
-        <div className="overflow-x-auto max-h-60">
+        <div className="overflow-x-auto max-h-64">
           <table className="w-full text-left">
             <thead className="bg-neutral-100 border-b border-neutral-200 text-[9px] uppercase tracking-widest text-neutral-500 font-bold sticky top-0">
               <tr>
                 <th className="py-2 px-3">Produk & Varian</th>
-                <th className="py-2 px-3">Harga Asli</th>
-                <th className="py-2 px-3">Harga Sale</th>
+                {showID && <th className="py-2 px-3">Harga 🇮🇩 (Rp)</th>}
+                {showMY && <th className="py-2 px-3">Harga 🇲🇾 (RM)</th>}
                 <th className="py-2 px-3">Kuota</th>
                 <th className="py-2 px-3">Hapus</th>
               </tr>
@@ -46,29 +50,51 @@ export function FlashSaleItemsTable({
                     </span>
                     <span className="text-[9px] text-neutral-500 uppercase">{it.name}</span>
                   </td>
-                  <td className="py-2 px-3 text-neutral-500">
-                    <div>Rp {it.original_price.toLocaleString('id-ID')}</div>
-                    {showMalaysiaPreview && it.original_price > 0 && (
-                      <div className="text-[9px] text-emerald-700 font-semibold mt-0.5">
-                        🇲🇾 {getMyPrice(it.original_price, myPricingConfig).formattedMyr}
+                  {showID && (
+                    <td className="py-2 px-3">
+                      <div className="text-[9px] text-neutral-400 line-through mb-1">
+                        Rp {it.original_price.toLocaleString('id-ID')}
                       </div>
-                    )}
-                  </td>
-                  <td className="py-2 px-3">
-                    <input
-                      type="number"
-                      className="w-24 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px] rounded-lg"
-                      value={it.sale_price}
-                      onChange={(e) =>
-                        handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
-                      }
-                    />
-                    {showMalaysiaPreview && it.sale_price > 0 && (
-                      <div className="text-[9px] text-emerald-700 font-semibold mt-0.5">
-                        🇲🇾 {getMyPrice(it.sale_price, myPricingConfig).formattedMyr}
-                      </div>
-                    )}
-                  </td>
+                      <input
+                        type="number"
+                        className="w-24 border border-neutral-200 p-1 outline-none focus:border-brand-accent text-[10px] rounded-lg"
+                        value={it.sale_price}
+                        onChange={(e) =>
+                          handleUpdateItemField(idx, 'sale_price', Number(e.target.value))
+                        }
+                      />
+                    </td>
+                  )}
+                  {showMY && (
+                    <td className="py-2 px-3">
+                      {it.original_price_myr && it.original_price_myr > 0 ? (
+                        <>
+                          <div className="text-[9px] text-emerald-700/70 line-through mb-1">
+                            {formatMYR(it.original_price_myr)}
+                          </div>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min={0}
+                            placeholder="RM"
+                            className="w-20 border border-emerald-200 bg-white p-1 outline-none focus:border-emerald-600 text-[10px] rounded-lg"
+                            value={it.sale_price_myr ?? ''}
+                            onChange={(e) =>
+                              handleUpdateItemField(
+                                idx,
+                                'sale_price_myr',
+                                e.target.value === '' ? null : Number(e.target.value)
+                              )
+                            }
+                          />
+                        </>
+                      ) : (
+                        <span className="text-[9px] text-amber-700 italic">
+                          Belum ada harga RM
+                        </span>
+                      )}
+                    </td>
+                  )}
                   <td className="py-2 px-3">
                     <input
                       type="number"

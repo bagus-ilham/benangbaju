@@ -24,9 +24,13 @@ export function CollectionShowcase({
   products,
   index = 0,
   decorativeSvg,
-}: CollectionShowcaseProps): React.JSX.Element {
+}: CollectionShowcaseProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
+  const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  if (isMY && visibleProducts.length === 0) return null
   const isReversed = index % 2 === 1
   const bgColor = isReversed ? 'bg-brand-gold/60' : 'bg-brand-blue/50'
   const textColor = 'text-brand-plum'
@@ -40,8 +44,6 @@ export function CollectionShowcase({
 
   const col1LogoMark = decorativeSvg || '/image/svg/decorative/logo-mark.svg'
   const col2Pattern = decorativeSvg || '/image/svg/decorative/pattern-stitch-card.svg'
-
-  const sliderRef = useRef<HTMLDivElement>(null)
 
   const scrollRight = () => {
     if (sliderRef.current) {
@@ -177,7 +179,7 @@ export function CollectionShowcase({
               className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              {products.map((product) => (
+              {visibleProducts.map((product) => (
                 <div
                   key={product.id}
                   className={cn('w-[200px] md:w-[260px] shrink-0 snap-start', cardContainerClass)}
@@ -187,7 +189,7 @@ export function CollectionShowcase({
               ))}
 
               {/* Optional "View More" card at the end */}
-              {products.length > 0 && (
+              {visibleProducts.length > 0 && (
                 <div className="w-[200px] md:w-[260px] shrink-0 snap-start flex items-center justify-center group transition-colors">
                   <Link
                     href={`/koleksi/${collection.slug}`}

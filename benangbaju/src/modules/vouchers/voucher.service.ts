@@ -33,6 +33,7 @@ export class VoucherService {
   async adminCreateVoucher(voucherData: {
     code: string
     name: string
+    currency?: 'IDR' | 'MYR'
     discount_type: 'percentage' | 'fixed'
     value: number
     min_purchase: number
@@ -63,6 +64,7 @@ export class VoucherService {
     voucherData: {
       code: string
       name: string
+      currency?: 'IDR' | 'MYR'
       discount_type: 'percentage' | 'fixed'
       value: number
       min_purchase: number

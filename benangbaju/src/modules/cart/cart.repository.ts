@@ -64,7 +64,7 @@ export class CartRepository {
         `
           id, variant_id, quantity,
           product_variants (
-            id, sku, name, price, compare_price, stock,
+            id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my,
             products (name, slug, product_images (url, is_primary))
           )
         `
@@ -78,6 +78,7 @@ export class CartRepository {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const variantIds = data.map((ci: any) => ci.variant_id).filter(Boolean)
     const flashMap = new Map<string, number>()
+    const flashMyrMap = new Map<string, number>()
 
     if (variantIds.length > 0) {
       let activeMarket = 'ID'
@@ -95,7 +96,7 @@ export class CartRepository {
       const nowIso = new Date().toISOString()
       const { data: flashItems } = await supabase
         .from('flash_sale_items')
-        .select('variant_id, sale_price, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at, target_market)')
+        .select('variant_id, sale_price, sale_price_myr, quota, sold_count, flash_sales!inner(is_active, starts_at, ends_at, target_market)')
         .in('variant_id', variantIds)
         .eq('flash_sales.is_active', true)
         .lte('flash_sales.starts_at', nowIso)
@@ -111,6 +112,9 @@ export class CartRepository {
             (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota))
           ) {
             flashMap.set(f.variant_id, Number(f.sale_price))
+            if (f.sale_price_myr != null && Number(f.sale_price_myr) > 0) {
+              flashMyrMap.set(f.variant_id, Number(f.sale_price_myr))
+            }
           }
         }
       }
@@ -120,6 +124,7 @@ export class CartRepository {
     return data.map((item: any) => ({
       ...item,
       flash_sale_price: flashMap.get(item.variant_id),
+      flash_sale_price_myr: flashMyrMap.get(item.variant_id),
     }))
   }
 

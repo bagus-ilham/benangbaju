@@ -22,6 +22,7 @@ import toast from 'react-hot-toast'
 import type { Column } from '@/shared/components/DataTable'
 
 export default function AdminVariantStockPricePage(): React.JSX.Element {
+  const [marketMode, setMarketMode] = useState<'ID' | 'MY'>('ID')
   const [search, setSearch] = useState('')
   const [stockFilter, setStockFilter] = useState<'all' | 'in_stock' | 'low_stock' | 'out_of_stock'>('all')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
@@ -29,8 +30,21 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(50)
 
-  // Draft edits map: variantId -> { price, compare_price, stock, is_active }
-  const [drafts, setDrafts] = useState<Record<string, { price: number; compare_price: number | null; stock: number; is_active: boolean }>>({})
+  // Draft edits map: variantId -> { price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active }
+  const [drafts, setDrafts] = useState<
+    Record<
+      string,
+      {
+        price: number
+        compare_price: number | null
+        price_myr: number | null
+        compare_price_myr: number | null
+        stock: number
+        stock_my: number
+        is_active: boolean
+      }
+    >
+  >({})
 
   const { data: dataRes, isLoading, isError, refetch } = useAdminVariants({
     page,
@@ -57,7 +71,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
       return {
         price: v.price,
         compare_price: v.compare_price,
+        price_myr: v.price_myr ?? null,
+        compare_price_myr: v.compare_price_myr ?? null,
         stock: v.stock,
+        stock_my: v.stock_my ?? 0,
         is_active: v.is_active,
       }
     },
@@ -72,7 +89,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
       return (
         draft.price !== v.price ||
         draft.compare_price !== v.compare_price ||
+        draft.price_myr !== (v.price_myr ?? null) ||
+        draft.compare_price_myr !== (v.compare_price_myr ?? null) ||
         draft.stock !== v.stock ||
+        draft.stock_my !== (v.stock_my ?? 0) ||
         draft.is_active !== v.is_active
       )
     },
@@ -86,7 +106,11 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
 
   // Update a single field in draft
   const handleDraftChange = useCallback(
-    (variantId: string, field: 'price' | 'compare_price' | 'stock' | 'is_active', value: number | boolean | null) => {
+    (
+      variantId: string,
+      field: 'price' | 'compare_price' | 'price_myr' | 'compare_price_myr' | 'stock' | 'stock_my' | 'is_active',
+      value: number | boolean | null
+    ) => {
       setDrafts((prev) => {
         const original = variants.find((item) => item.id === variantId)
         if (!original) return prev
@@ -94,7 +118,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
         const currentDraft = prev[variantId] || {
           price: original.price,
           compare_price: original.compare_price,
+          price_myr: original.price_myr ?? null,
+          compare_price_myr: original.compare_price_myr ?? null,
           stock: original.stock,
+          stock_my: original.stock_my ?? 0,
           is_active: original.is_active,
         }
 
@@ -107,7 +134,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
         if (
           updated.price === original.price &&
           updated.compare_price === original.compare_price &&
+          updated.price_myr === (original.price_myr ?? null) &&
+          updated.compare_price_myr === (original.compare_price_myr ?? null) &&
           updated.stock === original.stock &&
+          updated.stock_my === (original.stock_my ?? 0) &&
           updated.is_active === original.is_active
         ) {
           const newDrafts = { ...prev }
@@ -135,7 +165,13 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
           variantId: variant.id,
           price: Number(draft.price) || 0,
           compare_price: draft.compare_price ? Number(draft.compare_price) : null,
+          price_myr: draft.price_myr != null && Number(draft.price_myr) > 0 ? Number(draft.price_myr) : null,
+          compare_price_myr:
+            draft.compare_price_myr != null && Number(draft.compare_price_myr) > 0
+              ? Number(draft.compare_price_myr)
+              : null,
           stock: Math.max(0, Number(draft.stock) || 0),
+          stock_my: Math.max(0, Number(draft.stock_my) || 0),
           is_active: draft.is_active,
         }
 
@@ -176,7 +212,13 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
         variantId: id,
         price: Number(draft.price) || 0,
         compare_price: draft.compare_price ? Number(draft.compare_price) : null,
+        price_myr: draft.price_myr != null && Number(draft.price_myr) > 0 ? Number(draft.price_myr) : null,
+        compare_price_myr:
+          draft.compare_price_myr != null && Number(draft.compare_price_myr) > 0
+            ? Number(draft.compare_price_myr)
+            : null,
         stock: Math.max(0, Number(draft.stock) || 0),
+        stock_my: Math.max(0, Number(draft.stock_my) || 0),
         is_active: draft.is_active,
       }
     })
@@ -200,13 +242,17 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
   // Quick stats summary
   const stats = useMemo(() => {
     const totalItems = totalCount
-    const outOfStockCount = variants.filter((v) => (drafts[v.id]?.stock ?? v.stock) <= 0).length
+    const getStockVal = (v: AdminVariantListItem) =>
+      marketMode === 'MY'
+        ? drafts[v.id]?.stock_my ?? v.stock_my ?? 0
+        : drafts[v.id]?.stock ?? v.stock
+    const outOfStockCount = variants.filter((v) => getStockVal(v) <= 0).length
     const lowStockCount = variants.filter((v) => {
-      const st = drafts[v.id]?.stock ?? v.stock
+      const st = getStockVal(v)
       return st > 0 && st <= 5
     }).length
     return { totalItems, outOfStockCount, lowStockCount }
-  }, [totalCount, variants, drafts])
+  }, [totalCount, variants, drafts, marketMode])
 
   const columns: Column<AdminVariantListItem>[] = useMemo(
     () => [
@@ -244,9 +290,61 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
       },
       {
         key: 'price',
-        header: 'Harga (Rp) & Harga Coret',
+        header: marketMode === 'MY' ? 'Harga Malaysia (RM) & Coret' : 'Harga Indonesia (Rp) & Coret',
         render: (v) => {
           const val = getVariantValue(v)
+          if (marketMode === 'MY') {
+            return (
+              <div className="space-y-1.5 min-w-[150px]">
+                <div className="relative">
+                  <span className="absolute left-2.5 top-1.5 text-[10px] text-emerald-700 font-bold select-none">
+                    RM
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.10"
+                    value={val.price_myr ?? ''}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      handleDraftChange(
+                        v.id,
+                        'price_myr',
+                        raw === '' ? null : Math.max(0, parseFloat(raw) || 0)
+                      )
+                    }}
+                    className="w-full pl-9 pr-2 py-1 text-xs font-medium border border-emerald-200 rounded-lg focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 outline-none bg-white transition"
+                    placeholder="Kosong = Sembunyi"
+                  />
+                </div>
+                <div className="relative">
+                  <span className="absolute left-2.5 top-1 text-[9px] text-neutral-400 select-none">
+                    Coret
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.10"
+                    value={val.compare_price_myr ?? ''}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                      handleDraftChange(
+                        v.id,
+                        'compare_price_myr',
+                        raw === '' ? null : Math.max(0, parseFloat(raw) || 0)
+                      )
+                    }}
+                    className="w-full pl-10 pr-2 py-0.5 text-[11px] text-neutral-500 border border-neutral-200 rounded-md focus:border-emerald-600 outline-none bg-white/80"
+                    placeholder="Opsional (RM)"
+                  />
+                </div>
+                <div className="text-[9px] text-neutral-400">
+                  ID: {formatIDR(val.price)}
+                </div>
+              </div>
+            )
+          }
+
           return (
             <div className="space-y-1.5 min-w-[140px]">
               <div className="relative">
@@ -288,11 +386,11 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
       },
       {
         key: 'stock',
-        header: 'Stok',
+        header: marketMode === 'MY' ? 'Stok Malaysia' : 'Stok Indonesia',
         className: 'text-center',
         render: (v) => {
           const val = getVariantValue(v)
-          const stockNum = Number(val.stock) || 0
+          const stockNum = marketMode === 'MY' ? Number(val.stock_my) || 0 : Number(val.stock) || 0
           const badgeColor =
             stockNum <= 0
               ? 'bg-red-100 text-red-700 border-red-200'
@@ -305,9 +403,13 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
               <input
                 type="number"
                 min={0}
-                value={val.stock}
+                value={stockNum}
                 onChange={(e) =>
-                  handleDraftChange(v.id, 'stock', Math.max(0, parseInt(e.target.value) || 0))
+                  handleDraftChange(
+                    v.id,
+                    marketMode === 'MY' ? 'stock_my' : 'stock',
+                    Math.max(0, parseInt(e.target.value) || 0)
+                  )
                 }
                 className="w-20 text-center py-1 text-xs font-bold border border-neutral-200 rounded-lg focus:border-brand-plum outline-none bg-white transition"
               />
@@ -381,14 +483,14 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
         },
       },
     ],
-    [getVariantValue, handleDraftChange, isRowDirty, handleSaveSingle, handleResetSingle, updateSingleMutation.isPending]
+    [marketMode, getVariantValue, handleDraftChange, isRowDirty, handleSaveSingle, handleResetSingle, updateSingleMutation.isPending]
   )
 
   return (
     <div className="space-y-6 pb-20">
       <AdminPageHeader
         title="Stok & Harga Varian"
-        subtitle="Kelola harga jual, harga coret, dan stok semua varian produk secara efisien dari satu halaman."
+        subtitle="Kelola harga jual, harga coret, dan stok varian secara terpisah untuk pasar Indonesia (Rp) dan Malaysia (RM)."
       >
         <div className="flex items-center space-x-3">
           {dirtyVariantIds.length > 0 && (
@@ -407,6 +509,41 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
           </Link>
         </div>
       </AdminPageHeader>
+
+      {/* Market Mode Switcher (ID vs MY) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-brand-cream border border-neutral-200 p-3 rounded-2xl shadow-xs">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setMarketMode('ID')}
+            className={cn(
+              'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 border',
+              marketMode === 'ID'
+                ? 'bg-neutral-900 text-white border-neutral-900 shadow-xs'
+                : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'
+            )}
+          >
+            <span>🇮🇩</span> Stok &amp; Harga Indonesia (IDR)
+          </button>
+          <button
+            type="button"
+            onClick={() => setMarketMode('MY')}
+            className={cn(
+              'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 border',
+              marketMode === 'MY'
+                ? 'bg-emerald-900 text-white border-emerald-900 shadow-xs'
+                : 'bg-white text-neutral-600 border-neutral-200 hover:border-emerald-300'
+            )}
+          >
+            <span>🇲🇾</span> Stok &amp; Harga Malaysia (MYR)
+          </button>
+        </div>
+        {marketMode === 'MY' && (
+          <p className="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-3 py-1.5 rounded-xl">
+            Varian tanpa Harga RM (kosong) otomatis disembunyikan di katalog Malaysia. Stok MY dikelola manual di sini.
+          </p>
+        )}
+      </div>
 
       {/* Metrics Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

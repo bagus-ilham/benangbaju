@@ -213,6 +213,11 @@ export function ShippingRateModal({
   isPending,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const selectedZone = zones?.find((z: any) => z.id === rateZoneId)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isMYZone = !!selectedZone?.shipping_zone_coverage?.some((c: any) => c.country_code === 'MY')
+
   return (
     <Modal
       isOpen={isOpen}
@@ -227,10 +232,22 @@ export function ShippingRateModal({
             required
             value={rateZoneId}
             onChange={setRateZoneId}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            options={zones?.map((z: any) => ({ label: z.name, value: z.id })) || []}
+            options={
+              zones?.map((z: { id: string; name: string; shipping_zone_coverage?: Array<{ country_code?: string }> }) => {
+                const myFlag = z.shipping_zone_coverage?.some((c) => c.country_code === 'MY')
+                  ? '🇲🇾 '
+                  : '🇮🇩 '
+                return { label: `${myFlag}${z.name}`, value: z.id }
+              }) || []
+            }
           />
         </div>
+
+        {isMYZone && (
+          <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-900 font-medium">
+            🇲🇾 Zona Malaysia — Masukkan tarif langsung dalam <strong>Ringgit Malaysia (RM)</strong>.
+          </div>
+        )}
 
         <div className="flex flex-col space-y-1">
           <Input
@@ -246,22 +263,38 @@ export function ShippingRateModal({
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1">
             <Input
-              label="Biaya Minimum (Rp)*"
+              label={isMYZone ? 'Biaya Minimum (RM)*' : 'Biaya Minimum (Rp)*'}
               type="number"
+              step={isMYZone ? '0.01' : '1'}
               required
               min={0}
               value={rateBasePrice.toString()}
-              onChange={(e) => setRateBasePrice(Math.max(0, parseInt(e.target.value) || 0))}
+              onChange={(e) =>
+                setRateBasePrice(
+                  Math.max(
+                    0,
+                    isMYZone ? parseFloat(e.target.value) || 0 : parseInt(e.target.value) || 0
+                  )
+                )
+              }
             />
           </div>
           <div className="flex flex-col space-y-1">
             <Input
-              label="Tarif Per Kg (Rp)*"
+              label={isMYZone ? 'Tarif Per Kg (RM)*' : 'Tarif Per Kg (Rp)*'}
               type="number"
+              step={isMYZone ? '0.01' : '1'}
               required
               min={0}
               value={ratePricePerKg.toString()}
-              onChange={(e) => setRatePricePerKg(Math.max(0, parseInt(e.target.value) || 0))}
+              onChange={(e) =>
+                setRatePricePerKg(
+                  Math.max(
+                    0,
+                    isMYZone ? parseFloat(e.target.value) || 0 : parseInt(e.target.value) || 0
+                  )
+                )
+              }
             />
           </div>
         </div>

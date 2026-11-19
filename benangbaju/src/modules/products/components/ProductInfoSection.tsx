@@ -6,9 +6,8 @@ import { HandDrawnIcon } from '@/shared/components'
 import { SOCIAL_LINKS } from '@/lib/constants'
 import { Button } from '@/shared/components'
 import { VariantPicker } from '@/modules/products/components'
-import { formatIDR, getMyPrice, cn } from '@/lib/utils'
+import { formatIDR, formatMYR, cn } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import type { ProductDetailItem, ProductVariant } from '@/modules/products/types'
 
 interface ProductInfoSectionProps {
@@ -59,7 +58,17 @@ export function ProductInfoSection({
 }: ProductInfoSectionProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
-  const { myPricingConfig } = useSiteSettings()
+
+  const myPrices = product.product_variants
+    .map((v) => (v.price_myr != null && Number(v.price_myr) > 0 ? Number(v.price_myr) : null))
+    .filter((p): p is number => p !== null)
+  const minPriceMyr = myPrices.length > 0 ? Math.min(...myPrices) : null
+  const maxPriceMyr = myPrices.length > 0 ? Math.max(...myPrices) : null
+  const activeStock = selectedVariant
+    ? isMY
+      ? (selectedVariant.stock_my ?? 0)
+      : selectedVariant.stock
+    : 0
 
   const handleStockNotification = async () => {
     if (!selectedVariant) return
@@ -110,58 +119,49 @@ export function ProductInfoSection({
         {/* Price display */}
         <div className="flex flex-col pt-2">
           {isMY ? (
-            <>
+            minPriceMyr != null ? (
               <div className="flex items-baseline space-x-3">
                 <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
-                  {selectedVariant
-                    ? getMyPrice(Number(selectedVariant.price), myPricingConfig).formattedMyr
-                    : minPrice === maxPrice
-                      ? getMyPrice(minPrice, myPricingConfig).formattedMyr
-                      : `${getMyPrice(minPrice, myPricingConfig).formattedMyr} - ${getMyPrice(maxPrice, myPricingConfig).formattedMyr}`}
+                  {selectedVariant && selectedVariant.price_myr != null
+                    ? formatMYR(Number(selectedVariant.price_myr))
+                    : maxPriceMyr != null && minPriceMyr !== maxPriceMyr
+                      ? `${formatMYR(minPriceMyr)} - ${formatMYR(maxPriceMyr)}`
+                      : formatMYR(minPriceMyr)}
                 </span>
 
                 {/* Compare Price & Sale Badge in MYR */}
                 {selectedVariant ? (
-                  selectedVariant.compare_price &&
-                  Number(selectedVariant.compare_price) > Number(selectedVariant.price) && (
+                  selectedVariant.compare_price_myr &&
+                  selectedVariant.price_myr &&
+                  Number(selectedVariant.compare_price_myr) > Number(selectedVariant.price_myr) && (
                     <>
                       <span className="text-xs text-neutral-500 line-through font-sans">
-                        {getMyPrice(Number(selectedVariant.compare_price), myPricingConfig).formattedMyr}
+                        {formatMYR(Number(selectedVariant.compare_price_myr))}
                       </span>
                       <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
-                        -{Math.round(((Number(selectedVariant.compare_price) - Number(selectedVariant.price)) / Number(selectedVariant.compare_price)) * 100)}%
+                        -{Math.round(((Number(selectedVariant.compare_price_myr) - Number(selectedVariant.price_myr)) / Number(selectedVariant.compare_price_myr)) * 100)}%
                       </span>
                     </>
                   )
                 ) : (
-                  product.product_variants[0]?.compare_price &&
-                  Number(product.product_variants[0].compare_price) > minPrice && (
+                  product.product_variants[0]?.compare_price_myr &&
+                  Number(product.product_variants[0].compare_price_myr) > minPriceMyr && (
                     <>
                       <span className="text-xs text-neutral-500 line-through font-sans">
-                        {getMyPrice(Number(product.product_variants[0].compare_price), myPricingConfig).formattedMyr}
+                        {formatMYR(Number(product.product_variants[0].compare_price_myr))}
                       </span>
                       <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-sans">
-                        -{Math.round(((Number(product.product_variants[0].compare_price) - minPrice) / Number(product.product_variants[0].compare_price)) * 100)}%
+                        -{Math.round(((Number(product.product_variants[0].compare_price_myr) - minPriceMyr) / Number(product.product_variants[0].compare_price_myr)) * 100)}%
                       </span>
                     </>
                   )
                 )}
               </div>
-
-              {/* Secondary IDR and QRIS rate note */}
-              <div className="flex items-center space-x-2 mt-1">
-                <span className="text-xs font-sans font-semibold text-neutral-600">
-                  {selectedVariant
-                    ? `≈ ${formatIDR(getMyPrice(Number(selectedVariant.price), myPricingConfig).chargedIdr)}`
-                    : minPrice === maxPrice
-                      ? `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)}`
-                      : `≈ ${formatIDR(getMyPrice(minPrice, myPricingConfig).chargedIdr)} - ${formatIDR(getMyPrice(maxPrice, myPricingConfig).chargedIdr)}`}
-                </span>
-                <span className="text-[10px] font-sans text-neutral-400">
-                  (Charged in IDR via QRIS)
-                </span>
-              </div>
-            </>
+            ) : (
+              <span className="text-sm font-sans font-semibold text-amber-800">
+                Not available for Malaysia
+              </span>
+            )
           ) : (
             <div className="flex items-baseline space-x-3">
               <span className="text-lg lg:text-xl font-sans font-bold text-brand-plum">
@@ -251,10 +251,10 @@ export function ProductInfoSection({
       {/* Varian Stock indicator */}
       {selectedVariant && (
         <motion.div variants={itemVariants} className="text-[11px] text-neutral-600 font-sans">
-          {selectedVariant.stock > 0 ? (
+          {activeStock > 0 ? (
             <span>
               {market === 'MY' ? 'Stock Available: ' : 'Stok Tersedia: '}
-              <strong className="text-brand-plum">{selectedVariant.stock} pcs</strong>
+              <strong className="text-brand-plum">{activeStock} pcs</strong>
             </span>
           ) : (
             <span className="text-red-500 font-semibold">{market === 'MY' ? 'Out of Stock' : 'Stok Habis'}</span>
@@ -271,7 +271,7 @@ export function ProductInfoSection({
               whileTap={{ scale: 0.9 }}
               onClick={onDecrement}
               className="p-3 text-neutral-600 hover:text-brand-plum transition-colors cursor-pointer"
-              disabled={!selectedVariant || selectedVariant.stock === 0}
+              disabled={!selectedVariant || activeStock <= 0}
             >
               <HandDrawnIcon name="minus" className="h-3 w-3" />
             </motion.button>
@@ -282,7 +282,7 @@ export function ProductInfoSection({
               whileTap={{ scale: 0.9 }}
               onClick={onIncrement}
               className="p-3 text-neutral-600 hover:text-brand-plum transition-colors cursor-pointer"
-              disabled={!selectedVariant || selectedVariant.stock === 0}
+              disabled={!selectedVariant || activeStock <= 0}
             >
               <HandDrawnIcon name="plus" className="h-3 w-3" />
             </motion.button>
@@ -313,11 +313,11 @@ export function ProductInfoSection({
             variant="outline"
             className="flex-1"
             isLoading={isAdding}
-            disabled={!selectedVariant || selectedVariant.stock === 0}
+            disabled={!selectedVariant || activeStock <= 0}
           >
             {!selectedVariant
               ? (market === 'MY' ? 'Choose Variant' : 'Pilih Varian')
-              : selectedVariant.stock === 0
+              : activeStock <= 0
                 ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
                 : (market === 'MY' ? 'Add to Bag' : 'Tambah Ke Keranjang')}
           </Button>
@@ -328,17 +328,17 @@ export function ProductInfoSection({
             variant="accent"
             className="flex-1 font-bold"
             isLoading={isBuying}
-            disabled={!selectedVariant || selectedVariant.stock === 0}
+            disabled={!selectedVariant || activeStock <= 0}
           >
             {!selectedVariant
               ? (market === 'MY' ? 'Choose Variant' : 'Pilih Varian')
-              : selectedVariant.stock === 0
+              : activeStock <= 0
                 ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
                 : (market === 'MY' ? 'Buy Now' : 'Beli Sekarang')}
           </Button>
         </div>
 
-        {selectedVariant && selectedVariant.stock === 0 && (
+        {selectedVariant && activeStock <= 0 && (
           <Button
             onClick={handleStockNotification}
             variant="outline"

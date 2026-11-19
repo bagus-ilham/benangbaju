@@ -46,9 +46,19 @@ export function FlashSaleVariantSearch({
               </div>
               <div className="text-right pl-2 shrink-0">
                 <p className="text-[10px] font-bold text-neutral-800">
-                  Rp {v.price.toLocaleString()}
+                  Rp {v.price.toLocaleString('id-ID')}
+                  {v.price_myr != null && Number(v.price_myr) > 0 && (
+                    <span className="ml-1.5 text-emerald-700">
+                      • RM {Number(v.price_myr).toFixed(2)}
+                    </span>
+                  )}
                 </p>
-                <p className="text-[9px] text-neutral-400">Stok: {v.stock}</p>
+                <p className="text-[9px] text-neutral-400">
+                  Stok ID: {v.stock}
+                  {v.price_myr != null && Number(v.price_myr) > 0 && (
+                    <span className="ml-1.5">• Stok MY: {v.stock_my ?? 0}</span>
+                  )}
+                </p>
               </div>
             </div>
           ))}

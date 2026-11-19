@@ -100,39 +100,6 @@ export function ProductVariantsSection({
                 required
               />
               <Input
-                label="Stok*"
-                type="number"
-                value={v.stock}
-                onChange={(e) =>
-                  onUpdateVariantField(vIdx, 'stock', Math.max(0, parseInt(e.target.value) || 0))
-                }
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Input
-                label="Harga Jual (Rupiah)*"
-                type="number"
-                value={v.price}
-                onChange={(e) =>
-                  onUpdateVariantField(vIdx, 'price', Math.max(0, parseFloat(e.target.value) || 0))
-                }
-                required
-              />
-              <Input
-                label="Harga Coret (Compare Price)"
-                type="number"
-                value={v.compare_price || ''}
-                onChange={(e) =>
-                  onUpdateVariantField(
-                    vIdx,
-                    'compare_price',
-                    e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null
-                  )
-                }
-              />
-              <Input
                 label="Berat Varian (Gram)"
                 type="number"
                 value={v.weight_gram || ''}
@@ -143,7 +110,100 @@ export function ProductVariantsSection({
                     e.target.value ? Math.max(1, parseInt(e.target.value) || 0) : null
                   )
                 }
+                placeholder="Opsional (ikut berat produk)"
               />
+            </div>
+
+            {/* Pasar Indonesia (IDR) */}
+            <div className="p-3 bg-white/80 border border-neutral-200/80 rounded-xl space-y-2.5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 flex items-center gap-1.5">
+                <span>🇮🇩</span> Harga & Stok Indonesia (IDR)
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Input
+                  label="Harga Jual (Rp)*"
+                  type="number"
+                  value={v.price}
+                  onChange={(e) =>
+                    onUpdateVariantField(vIdx, 'price', Math.max(0, parseFloat(e.target.value) || 0))
+                  }
+                  required
+                />
+                <Input
+                  label="Harga Coret (Rp)"
+                  type="number"
+                  value={v.compare_price || ''}
+                  onChange={(e) =>
+                    onUpdateVariantField(
+                      vIdx,
+                      'compare_price',
+                      e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null
+                    )
+                  }
+                />
+                <Input
+                  label="Stok Indonesia*"
+                  type="number"
+                  value={v.stock}
+                  onChange={(e) =>
+                    onUpdateVariantField(vIdx, 'stock', Math.max(0, parseInt(e.target.value) || 0))
+                  }
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Pasar Malaysia (MYR - Manual) */}
+            <div className="p-3 bg-emerald-50/40 border border-emerald-200/70 rounded-xl space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+                  <span>🇲🇾</span> Harga & Stok Malaysia (MYR — Manual)
+                </p>
+                <span className="text-[10px] text-emerald-700/80">
+                  Kosongkan Harga RM jika belum dijual di Malaysia (disembunyikan di katalog MY)
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Input
+                  label="Harga Jual (RM)"
+                  type="number"
+                  step="0.01"
+                  min={0}
+                  value={v.price_myr ?? ''}
+                  placeholder="cth: 59.90"
+                  onChange={(e) =>
+                    onUpdateVariantField(
+                      vIdx,
+                      'price_myr',
+                      e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null
+                    )
+                  }
+                />
+                <Input
+                  label="Harga Coret (RM)"
+                  type="number"
+                  step="0.01"
+                  min={0}
+                  value={v.compare_price_myr ?? ''}
+                  placeholder="Opsional"
+                  onChange={(e) =>
+                    onUpdateVariantField(
+                      vIdx,
+                      'compare_price_myr',
+                      e.target.value ? Math.max(0, parseFloat(e.target.value) || 0) : null
+                    )
+                  }
+                />
+                <Input
+                  label="Stok Malaysia (MY)"
+                  type="number"
+                  min={0}
+                  value={v.stock_my ?? 0}
+                  onChange={(e) =>
+                    onUpdateVariantField(vIdx, 'stock_my', Math.max(0, parseInt(e.target.value) || 0))
+                  }
+                />
+              </div>
             </div>
 
             <Switch

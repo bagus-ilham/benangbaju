@@ -197,7 +197,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
         subtitle={formattedDate ? `Dibuat pada: ${formattedDate}` : 'Dibuat pada: ...'}
       >
         <div className="flex items-center gap-2">
-          <Link href="/admin/pesanan">
+          <Link href={`/admin/pesanan?market=${isMalaysia ? 'MY' : 'ID'}`}>
             <Button
               variant="outline"
               className="p-2 border-neutral-200 text-neutral-500 hover:text-neutral-900 flex items-center justify-center"
@@ -260,21 +260,36 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
                       Varian: {item.variant_name} | SKU: {item.sku}
                     </p>
                     <p className="text-xs text-neutral-500 mt-0.5">
-                      {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
-                      {isMalaysia && item.unit_price_myr && (
-                        <span className="ml-1.5 text-emerald-800 font-semibold">
-                          ({formatMYR(Number(item.unit_price_myr))})
-                        </span>
+                      {isMalaysia && item.unit_price_myr ? (
+                        <>
+                          {item.quantity} x{' '}
+                          <span className="text-emerald-800 font-semibold">
+                            {formatMYR(Number(item.unit_price_myr))}
+                          </span>
+                          <span className="ml-1.5 text-neutral-400">
+                            (Rp {item.price.toLocaleString('id-ID')})
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          {item.quantity} x Rp {item.price.toLocaleString('id-ID')}
+                        </>
                       )}
                     </p>
                   </div>
                   <div className="text-right whitespace-nowrap">
-                    <span className="font-bold text-neutral-900 block">
-                      Rp {item.subtotal.toLocaleString('id-ID')}
-                    </span>
-                    {isMalaysia && item.unit_price_myr && (
-                      <span className="text-[11px] font-bold text-emerald-800 block">
-                        {formatMYR(Number(item.unit_price_myr) * item.quantity)}
+                    {isMalaysia && item.unit_price_myr ? (
+                      <>
+                        <span className="font-bold text-emerald-900 block">
+                          {formatMYR(Number(item.unit_price_myr) * item.quantity)}
+                        </span>
+                        <span className="text-[11px] text-neutral-400 block">
+                          Rp {item.subtotal.toLocaleString('id-ID')}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-bold text-neutral-900 block">
+                        Rp {item.subtotal.toLocaleString('id-ID')}
                       </span>
                     )}
                   </div>
@@ -321,40 +336,89 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
             isSyncing={syncPaymentMutation.isPending}
           />
 
-          <AdminPanel title="Rincian Biaya">
+          <AdminPanel title={isMalaysia ? 'Rincian Biaya (MYR)' : 'Rincian Biaya'}>
             <div className="space-y-3 text-neutral-600 font-medium">
-              <div className="flex justify-between">
-                <span>Subtotal Produk</span>
-                <span className="font-semibold text-neutral-900">
-                  Rp {order.subtotal.toLocaleString('id-ID')}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Ongkos Kirim</span>
-                <span className="font-semibold text-neutral-900">
-                  Rp {order.shipping_cost.toLocaleString('id-ID')}
-                </span>
-              </div>
-              {order.payment_fee > 0 && (
-                <div className="flex justify-between">
-                  <span>Biaya Layanan</span>
-                  <span className="font-semibold text-neutral-900">
-                    Rp {order.payment_fee.toLocaleString('id-ID')}
-                  </span>
-                </div>
-              )}
-              {Number(order.discount_amount) > 0 && (
-                <div className="flex justify-between font-semibold">
-                  <span>Voucher Diskon</span>
-                  <span className="text-red-600">
-                    - Rp {order.discount_amount.toLocaleString('id-ID')}
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between items-center text-neutral-900 border-t border-neutral-100 pt-3 mt-1.5 font-heading font-bold text-sm">
-                <span>Total Bayar</span>
-                <span className="text-base">Rp {order.total_amount.toLocaleString('id-ID')}</span>
-              </div>
+              {(() => {
+                const effRate = order.exchange_rate_at_order || 3600
+                const subMyr =
+                  order.subtotal_myr != null
+                    ? Number(order.subtotal_myr)
+                    : Number((order.subtotal / effRate).toFixed(2))
+                const shipMyr =
+                  order.shipping_cost_myr != null
+                    ? Number(order.shipping_cost_myr)
+                    : Number((order.shipping_cost / effRate).toFixed(2))
+                const feeMyr =
+                  order.payment_fee_myr != null
+                    ? Number(order.payment_fee_myr)
+                    : Number((order.payment_fee / effRate).toFixed(2))
+                const discMyr =
+                  order.discount_amount_myr != null
+                    ? Number(order.discount_amount_myr)
+                    : Number((order.discount_amount / effRate).toFixed(2))
+                const totMyr =
+                  order.total_myr != null
+                    ? Number(order.total_myr)
+                    : Number((order.total_amount / effRate).toFixed(2))
+
+                return (
+                  <>
+                    <div className="flex justify-between">
+                      <span>Subtotal Produk</span>
+                      <span className="font-semibold text-neutral-900">
+                        {isMalaysia
+                          ? formatMYR(subMyr)
+                          : `Rp ${order.subtotal.toLocaleString('id-ID')}`}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Ongkos Kirim</span>
+                      <span className="font-semibold text-neutral-900">
+                        {isMalaysia
+                          ? formatMYR(shipMyr)
+                          : `Rp ${order.shipping_cost.toLocaleString('id-ID')}`}
+                      </span>
+                    </div>
+                    {(isMalaysia ? feeMyr > 0 : order.payment_fee > 0) && (
+                      <div className="flex justify-between">
+                        <span>Biaya Layanan</span>
+                        <span className="font-semibold text-neutral-900">
+                          {isMalaysia
+                            ? formatMYR(feeMyr)
+                            : `Rp ${order.payment_fee.toLocaleString('id-ID')}`}
+                        </span>
+                      </div>
+                    )}
+                    {(isMalaysia ? discMyr > 0 : Number(order.discount_amount) > 0) && (
+                      <div className="flex justify-between font-semibold">
+                        <span>Voucher Diskon</span>
+                        <span className="text-red-600">
+                          -{' '}
+                          {isMalaysia
+                            ? formatMYR(discMyr)
+                            : `Rp ${order.discount_amount.toLocaleString('id-ID')}`}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center text-neutral-900 border-t border-neutral-100 pt-3 mt-1.5 font-heading font-bold text-sm">
+                      <span>Total Bayar</span>
+                      <span className="text-base">
+                        {isMalaysia
+                          ? formatMYR(totMyr)
+                          : `Rp ${order.total_amount.toLocaleString('id-ID')}`}
+                      </span>
+                    </div>
+                    {isMalaysia && (
+                      <div className="flex justify-between items-center text-[11px] text-neutral-500 pt-1 border-t border-dashed border-neutral-200">
+                        <span>Settlement DOKU QRIS (IDR)</span>
+                        <span className="font-semibold text-neutral-700">
+                          Rp {order.total_amount.toLocaleString('id-ID')}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )
+              })()}
             </div>
           </AdminPanel>
         </div>

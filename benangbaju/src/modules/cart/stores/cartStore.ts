@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import { syncCartAction, clearCartAction } from '../actions'
 
+import { useMarketStore } from '@/shared/stores/marketStore'
+
 export interface CartItem {
   id?: string
   variantId: string
@@ -12,10 +14,13 @@ export interface CartItem {
   sku: string
   price: number
   comparePrice: number | null
+  priceMyr?: number | null
+  comparePriceMyr?: number | null
   quantity: number
   imageUrl: string | null
   slug: string
   stock: number
+  stockMy?: number
 }
 
 interface CartState {
@@ -63,16 +68,18 @@ export const useCartStore = create<CartState>()(
       setCartDrawerOpen: (open) => set({ isCartDrawerOpen: open }),
 
       addItem: async (newItem, qty = 1) => {
+        const isMY = useMarketStore.getState().market === 'MY'
+        const maxStock = isMY ? (newItem.stockMy ?? newItem.stock) : newItem.stock
         set((state) => {
           const existingItem = state.items.find((item) => item.variantId === newItem.variantId)
           let updatedItems: CartItem[]
           if (existingItem) {
-            const newQty = Math.min(existingItem.quantity + qty, newItem.stock)
+            const newQty = Math.min(existingItem.quantity + qty, Math.max(1, maxStock))
             updatedItems = state.items.map((item) =>
-              item.variantId === newItem.variantId ? { ...item, quantity: newQty } : item
+              item.variantId === newItem.variantId ? { ...item, ...newItem, quantity: newQty } : item
             )
           } else {
-            updatedItems = [...state.items, { ...newItem, quantity: Math.min(qty, newItem.stock) }]
+            updatedItems = [...state.items, { ...newItem, quantity: Math.min(qty, Math.max(1, maxStock)) }]
           }
           return { items: updatedItems, needsResync: state.isSyncing }
         })
@@ -85,12 +92,13 @@ export const useCartStore = create<CartState>()(
       },
 
       updateQuantity: async (variantId, quantity) => {
+        const isMY = useMarketStore.getState().market === 'MY'
         set((state) => ({
-          items: state.items.map((item) =>
-            item.variantId === variantId
-              ? { ...item, quantity: Math.max(1, Math.min(quantity, item.stock)) }
-              : item
-          ),
+          items: state.items.map((item) => {
+            if (item.variantId !== variantId) return item
+            const maxStock = isMY ? (item.stockMy ?? item.stock) : item.stock
+            return { ...item, quantity: Math.max(1, Math.min(quantity, Math.max(1, maxStock))) }
+          }),
           needsResync: state.isSyncing,
         }))
 

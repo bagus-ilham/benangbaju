@@ -33,6 +33,7 @@ export default function WishlistPage(): React.JSX.Element {
   } = useProducts({
     productIds: productIds.length > 0 ? productIds : ['00000000-0000-0000-0000-000000000000'],
     limit: 40,
+    market,
   })
 
   const products = dataRes?.data || []
@@ -44,8 +45,9 @@ export default function WishlistPage(): React.JSX.Element {
       toast.loading(isMY ? 'Moving items to bag...' : 'Memindahkan produk ke keranjang...', { id: 'move-all' })
       let addedCount = 0
       for (const product of products) {
-        const availableVariant =
-          product.product_variants.find((v) => v.stock > 0) || product.product_variants[0]
+        const availableVariant = isMY
+          ? product.product_variants.find((v) => v.price_myr != null && Number(v.price_myr) > 0 && (v.stock_my ?? 0) > 0)
+          : product.product_variants.find((v) => v.stock > 0) || product.product_variants[0]
         if (availableVariant) {
           const primaryImage =
             product.product_images?.find((img) => img.is_primary)?.url ||
@@ -64,7 +66,10 @@ export default function WishlistPage(): React.JSX.Element {
                 : null,
               imageUrl: primaryImage,
               slug: product.slug,
+              priceMyr: availableVariant.price_myr != null ? Number(availableVariant.price_myr) : null,
+              comparePriceMyr: availableVariant.compare_price_myr != null ? Number(availableVariant.compare_price_myr) : null,
               stock: availableVariant.stock,
+              stockMy: availableVariant.stock_my ?? 0,
             },
             1
           )

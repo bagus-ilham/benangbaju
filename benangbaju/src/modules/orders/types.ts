@@ -101,6 +101,10 @@ export interface Order {
   country_code?: string | null
   exchange_rate_at_order?: number | null
   markup_percent_at_order?: number | null
+  subtotal_myr?: number | null
+  shipping_cost_myr?: number | null
+  discount_amount_myr?: number | null
+  payment_fee_myr?: number | null
   total_myr?: number | null
   notes: string | null
   cancel_reason: string | null
@@ -122,8 +126,10 @@ export interface CreateOrderParams {
   courierName?: string
   shippingRateId?: string
   shippingCost?: number
+  shippingCostMyr?: number
   notes?: string
   paymentFee?: number
+  paymentFeeMyr?: number
   paymentChannel?: string
 }
 
@@ -134,12 +140,18 @@ export interface OrderRpcResponse {
   data?: {
     order_id: string
     order_number: string
+    country_code?: string
     subtotal: number
     shipping_cost: number
     discount_amount: number
     payment_fee: number
     payment_channel: string | null
     total_amount: number
+    subtotal_myr?: number | null
+    shipping_cost_myr?: number | null
+    discount_amount_myr?: number | null
+    payment_fee_myr?: number | null
+    total_myr?: number | null
     status: string
   }
 }
@@ -159,6 +171,10 @@ export interface AdminOrderListItem {
   country_code?: string | null
   exchange_rate_at_order?: number | null
   markup_percent_at_order?: number | null
+  subtotal_myr?: number | null
+  shipping_cost_myr?: number | null
+  discount_amount_myr?: number | null
+  payment_fee_myr?: number | null
   total_myr?: number | null
   notes: string | null
   cancel_reason: string | null

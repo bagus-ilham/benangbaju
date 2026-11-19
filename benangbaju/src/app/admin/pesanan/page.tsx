@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import {
   useAdminOrders,
   useAdminReturnRequests,
@@ -29,12 +30,30 @@ const TABS = [
   { id: 'returns', label: 'Pengajuan Retur' },
 ]
 
-export default function AdminOrdersPage(): React.JSX.Element {
-  const [activeTab, setActiveTab] = useState('all')
-  const [countryFilter, setCountryFilter] = useState<'all' | 'ID' | 'MY'>('all')
+function AdminOrdersPageContent(): React.JSX.Element {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const marketParam = searchParams.get('market')?.toUpperCase()
+  const countryFilter: 'all' | 'ID' | 'MY' =
+    marketParam === 'MY' ? 'MY' : marketParam === 'ALL' ? 'all' : 'ID'
+
+  const [rawActiveTab, setActiveTab] = useState('all')
+  const activeTab = countryFilter === 'MY' && rawActiveTab === 'returns' ? 'all' : rawActiveTab
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const limit = 10
+
+  const handleSelectMarket = (next: 'all' | 'ID' | 'MY') => {
+    setPage(1)
+    if (next === 'MY' && rawActiveTab === 'returns') {
+      setActiveTab('all')
+    }
+    const queryMarket = next === 'all' ? 'ALL' : next
+    router.replace(`/admin/pesanan?market=${queryMarket}`, { scroll: false })
+  }
+
+  const visibleTabs =
+    countryFilter === 'MY' ? TABS.filter((t) => t.id !== 'returns') : TABS
 
   // Queries (now filtered server-side by countryFilter, with total pagination preserved)
   const {
@@ -177,7 +196,8 @@ export default function AdminOrdersPage(): React.JSX.Element {
       'Alamat Lengkap',
       'Kurir',
       'No Resi',
-      'Total Belanja IDR',
+      'Total MYR (RM)',
+      'Total / Settlement IDR',
       'Status Pesanan',
     ]
 
@@ -197,6 +217,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
         `"${(s?.full_address || '').replace(/"/g, '""')}"`,
         `"${(s?.courier_name || '').replace(/"/g, '""')}"`,
         `"${(s?.tracking_number || '').replace(/"/g, '""')}"`,
+        o.total_myr != null ? Number(o.total_myr).toFixed(2) : '',
         o.total_amount,
         `"${o.status}"`,
       ].join(',')
@@ -215,12 +236,22 @@ export default function AdminOrdersPage(): React.JSX.Element {
     toast.success('File CSV pesanan berhasil diunduh!')
   }
 
+  const headerTitle =
+    countryFilter === 'MY'
+      ? 'Pesanan Malaysia 🇲🇾'
+      : countryFilter === 'ID'
+        ? 'Pesanan Indonesia 🇮🇩'
+        : 'Semua Pesanan'
+  const headerSubtitle =
+    countryFilter === 'MY'
+      ? 'Kelola pesanan ekspor Malaysia (mata uang RM, stok Malaysia, QRIS Cross-Border & dokumen bea cukai).'
+      : countryFilter === 'ID'
+        ? 'Kelola pesanan domestik Indonesia (mata uang Rp, stok Indonesia & pengajuan retur).'
+        : 'Pantau seluruh transaksi domestik Indonesia dan ekspor Malaysia.'
+
   return (
     <div className="space-y-6">
-      <AdminPageHeader
-        title="Manajemen Pesanan"
-        subtitle="Pantau status transaksi domestik & ekspor Malaysia, konfirmasi pembayaran, dan kelola retur."
-      >
+      <AdminPageHeader title={headerTitle} subtitle={headerSubtitle}>
         <div className="flex items-center gap-2">
           <Button
             onClick={() => {
@@ -246,7 +277,7 @@ export default function AdminOrdersPage(): React.JSX.Element {
 
       {/* Status Tabs */}
       <div className="flex border-b border-neutral-200 overflow-x-auto space-x-6 text-xs font-sans">
-        {TABS.map((tab) => (
+        {visibleTabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => {
@@ -289,43 +320,34 @@ export default function AdminOrdersPage(): React.JSX.Element {
           {/* Country Filter Toggle */}
           <div className="flex items-center gap-1.5 bg-neutral-100 p-1 rounded-xl text-xs font-semibold">
             <button
-              onClick={() => {
-                setCountryFilter('all')
-                setPage(1)
-              }}
-              className={`px-3 py-1.5 rounded-lg transition ${
-                countryFilter === 'all'
-                  ? 'bg-white text-neutral-900 shadow-xs'
-                  : 'text-neutral-500 hover:text-neutral-800'
-              }`}
-            >
-              Semua Negara
-            </button>
-            <button
-              onClick={() => {
-                setCountryFilter('ID')
-                setPage(1)
-              }}
+              onClick={() => handleSelectMarket('ID')}
               className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
                 countryFilter === 'ID'
                   ? 'bg-white text-neutral-900 shadow-xs'
                   : 'text-neutral-500 hover:text-neutral-800'
               }`}
             >
-              <span>🇮🇩</span> Domestik (ID)
+              <span>🇮🇩</span> Indonesia (ID)
             </button>
             <button
-              onClick={() => {
-                setCountryFilter('MY')
-                setPage(1)
-              }}
+              onClick={() => handleSelectMarket('MY')}
               className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
                 countryFilter === 'MY'
                   ? 'bg-white text-neutral-900 shadow-xs'
                   : 'text-neutral-500 hover:text-neutral-800'
               }`}
             >
-              <span>🇲🇾</span> Ekspor (MY)
+              <span>🇲🇾</span> Malaysia (MY)
+            </button>
+            <button
+              onClick={() => handleSelectMarket('all')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                countryFilter === 'all'
+                  ? 'bg-white text-neutral-900 shadow-xs'
+                  : 'text-neutral-500 hover:text-neutral-800'
+              }`}
+            >
+              Semua
             </button>
           </div>
         </div>
@@ -386,5 +408,17 @@ export default function AdminOrdersPage(): React.JSX.Element {
         isSubmitting={updateOrderStatusMutation.isPending}
       />
     </div>
+  )
+}
+
+export default function AdminOrdersPage(): React.JSX.Element {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-8 text-center text-xs text-neutral-400">Memuat manajemen pesanan...</div>
+      }
+    >
+      <AdminOrdersPageContent />
+    </Suspense>
   )
 }

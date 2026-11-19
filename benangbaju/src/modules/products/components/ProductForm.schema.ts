@@ -12,7 +12,10 @@ export const productVariantSchema = z.object({
   name: z.string().min(1, 'Nama varian wajib diisi'),
   price: z.number().min(1, 'Harga harus lebih dari 0'),
   compare_price: z.number().nullable().optional(),
+  price_myr: z.number().min(0, 'Harga RM tidak boleh negatif').nullable().optional(),
+  compare_price_myr: z.number().min(0, 'Harga coret RM tidak boleh negatif').nullable().optional(),
   stock: z.number().min(0, 'Stok tidak boleh negatif'),
+  stock_my: z.number().min(0, 'Stok Malaysia tidak boleh negatif'),
   weight_gram: z.number().nullable().optional(),
   is_active: z.boolean(),
   attrs: z.array(productVariantAttrSchema),
@@ -92,7 +95,13 @@ export function mapInitialDataToForm(initialData?: InitialProductData): ProductF
           name: v.name || '',
           price: Number(v.price) || 0,
           compare_price: v.compare_price ? Number(v.compare_price) : null,
+          price_myr: v.price_myr != null && Number(v.price_myr) > 0 ? Number(v.price_myr) : null,
+          compare_price_myr:
+            v.compare_price_myr != null && Number(v.compare_price_myr) > 0
+              ? Number(v.compare_price_myr)
+              : null,
           stock: v.stock || 0,
+          stock_my: v.stock_my ?? 0,
           weight_gram: v.weight_gram || null,
           is_active: v.is_active !== false,
           attrs:
@@ -149,7 +158,10 @@ export function mapInitialDataToForm(initialData?: InitialProductData): ProductF
         name: 'Default',
         price: 0,
         compare_price: null,
+        price_myr: null,
+        compare_price_myr: null,
         stock: 10,
+        stock_my: 0,
         weight_gram: null,
         is_active: true,
         attrs: [],

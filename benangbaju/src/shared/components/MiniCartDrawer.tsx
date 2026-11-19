@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
-import { formatIDR, getMyPrice, formatMYR } from '@/lib/utils'
+import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
@@ -17,7 +17,7 @@ import { useProducts } from '@/modules/products/hooks/useProducts'
 export function MiniCartDrawer(): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
-  const { myPricingConfig, freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
+  const { freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
   const items = useCartStore((state) => state.items)
   const isCartDrawerOpen = useCartStore((state) => state.isCartDrawerOpen)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
@@ -29,17 +29,10 @@ export function MiniCartDrawer(): React.JSX.Element {
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
 
   const totalMyr = isMY
-    ? items.reduce(
-        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity,
-        0
-      )
+    ? items.reduce((acc, item) => acc + (Number(item.priceMyr) || 0) * item.quantity, 0)
     : 0
-  const chargedSubtotal = isMY
-    ? items.reduce(
-        (acc, item) => acc + getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity,
-        0
-      )
-    : subtotal
+  const hasUnavailableMYItems =
+    isMY && items.some((item) => !item.priceMyr || Number(item.priceMyr) <= 0)
 
   const targetThreshold = isMY ? freeShippingThresholdMyr : freeShippingThresholdIdr
   const currentProgressAmount = isMY ? totalMyr : subtotal
@@ -51,6 +44,7 @@ export function MiniCartDrawer(): React.JSX.Element {
   // Real Database Cross-Sell recommendations
   const { data: recsData } = useProducts({ sortBy: 'featured', limit: 6 })
   const recProducts = (recsData?.data || [])
+    .filter((p) => (!isMY ? true : p.isAvailableInMY))
     .filter((p) => !items.some((item) => p.product_variants.some((v) => v.id === item.variantId)))
     .slice(0, 2)
 
@@ -270,7 +264,12 @@ export function MiniCartDrawer(): React.JSX.Element {
                         <div className="flex items-center border border-neutral-200 bg-brand-cream scale-90 origin-left">
                           <button
                             onClick={() =>
-                              handleQtyChange(item.variantId, item.quantity, -1, item.stock)
+                              handleQtyChange(
+                                item.variantId,
+                                item.quantity,
+                                -1,
+                                isMY ? (item.stockMy ?? 0) : item.stock
+                              )
                             }
                             className="p-1.5 text-neutral-500 hover:text-brand-plum transition-colors cursor-pointer"
                             aria-label="Kurangi jumlah"
@@ -285,7 +284,12 @@ export function MiniCartDrawer(): React.JSX.Element {
                           </span>
                           <button
                             onClick={() =>
-                              handleQtyChange(item.variantId, item.quantity, 1, item.stock)
+                              handleQtyChange(
+                                item.variantId,
+                                item.quantity,
+                                1,
+                                isMY ? (item.stockMy ?? 0) : item.stock
+                              )
                             }
                             className="p-1.5 text-neutral-500 hover:text-brand-plum transition-colors cursor-pointer"
                             aria-label="Tambah jumlah"
@@ -297,23 +301,23 @@ export function MiniCartDrawer(): React.JSX.Element {
                         {/* Price */}
                         <div className="text-right">
                           {isMY ? (
-                            <>
+                            item.priceMyr && Number(item.priceMyr) > 0 ? (
                               <div className="flex items-center justify-end space-x-1.5">
                                 <span className="text-xs font-sans font-bold text-brand-plum">
-                                  {formatMYR(getMyPrice(item.price, myPricingConfig).priceMyr * item.quantity)}
+                                  {formatMYR(Number(item.priceMyr) * item.quantity)}
                                 </span>
-                                {item.comparePrice && item.comparePrice > item.price && (
-                                  <span className="text-[10px] font-sans text-neutral-400 line-through">
-                                    {formatMYR(getMyPrice(item.comparePrice, myPricingConfig).priceMyr * item.quantity)}
-                                  </span>
-                                )}
+                                {item.comparePriceMyr &&
+                                  Number(item.comparePriceMyr) > Number(item.priceMyr) && (
+                                    <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                      {formatMYR(Number(item.comparePriceMyr) * item.quantity)}
+                                    </span>
+                                  )}
                               </div>
-                              <div className="flex items-center justify-end space-x-1.5 mt-0.5">
-                                <span className="block text-[9px] font-sans font-semibold text-neutral-500">
-                                  ≈ {formatIDR(getMyPrice(item.price, myPricingConfig).chargedIdr * item.quantity)}
-                                </span>
-                              </div>
-                            </>
+                            ) : (
+                              <span className="text-[10px] font-bold text-red-600">
+                                Unavailable in MY
+                              </span>
+                            )
                           ) : (
                             <div className="flex items-center justify-end space-x-1.5">
                               <span className="text-xs font-sans font-semibold text-brand-plum">
@@ -344,7 +348,11 @@ export function MiniCartDrawer(): React.JSX.Element {
                   </div>
                   <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
                     {recProducts.slice(0, 2).map((p) => {
-                      const availableVariant = p.product_variants.find((v) => v.stock > 0)
+                      const availableVariant = isMY
+                        ? p.product_variants.find(
+                            (v) => v.is_active && v.price_myr != null && v.price_myr > 0 && (v.stock_my ?? 0) > 0
+                          )
+                        : p.product_variants.find((v) => v.is_active && v.stock > 0)
                       const primaryImage =
                         p.product_images?.find((img) => img.is_primary)?.url ||
                         p.product_images?.[0]?.url ||
@@ -372,24 +380,17 @@ export function MiniCartDrawer(): React.JSX.Element {
                                 {p.name}
                               </p>
                               <div className="flex flex-col">
-                                {isMY ? (
-                                  <>
-                                    <div className="flex items-center space-x-1.5">
-                                      <span className="text-[10px] font-sans font-bold text-brand-plum">
-                                        {getMyPrice(p.minPrice, myPricingConfig).formattedMyr}
+                                {isMY && p.minPriceMyr != null ? (
+                                  <div className="flex items-center space-x-1.5">
+                                    <span className="text-[10px] font-sans font-bold text-brand-plum">
+                                      {formatMYR(p.minPriceMyr)}
+                                    </span>
+                                    {p.comparePriceMyr && p.comparePriceMyr > p.minPriceMyr && (
+                                      <span className="text-[9px] font-sans text-neutral-400 line-through">
+                                        {formatMYR(p.comparePriceMyr)}
                                       </span>
-                                      {p.comparePrice && p.comparePrice > p.minPrice && (
-                                        <span className="text-[9px] font-sans text-neutral-400 line-through">
-                                          {getMyPrice(p.comparePrice, myPricingConfig).formattedMyr}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div className="flex items-center space-x-1">
-                                      <span className="text-[8px] font-sans font-semibold text-neutral-500">
-                                        ≈ {formatIDR(getMyPrice(p.minPrice, myPricingConfig).chargedIdr)}
-                                      </span>
-                                    </div>
-                                  </>
+                                    )}
+                                  </div>
                                 ) : (
                                   <div className="flex items-center space-x-1.5">
                                     <span className="text-[10px] font-sans font-bold text-brand-plum">
@@ -407,6 +408,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                           </div>
                           <Button
                             size="sm"
+                            disabled={!availableVariant}
                             onClick={async () => {
                               if (availableVariant) {
                                 await addItem(
@@ -420,9 +422,18 @@ export function MiniCartDrawer(): React.JSX.Element {
                                     comparePrice: availableVariant.compare_price
                                       ? Number(availableVariant.compare_price)
                                       : null,
+                                    priceMyr:
+                                      availableVariant.price_myr != null
+                                        ? Number(availableVariant.price_myr)
+                                        : null,
+                                    comparePriceMyr:
+                                      availableVariant.compare_price_myr != null
+                                        ? Number(availableVariant.compare_price_myr)
+                                        : null,
                                     imageUrl: primaryImage,
                                     slug: p.slug,
                                     stock: availableVariant.stock,
+                                    stockMy: availableVariant.stock_my ?? 0,
                                   },
                                   1
                                 )
@@ -449,14 +460,9 @@ export function MiniCartDrawer(): React.JSX.Element {
                   </span>
                   <div className="text-right">
                     {isMY ? (
-                      <>
-                        <span className="text-base font-sans font-bold text-brand-plum">
-                          {formatMYR(totalMyr)}
-                        </span>
-                        <span className="block text-xs font-sans font-semibold text-neutral-500">
-                          ≈ {formatIDR(chargedSubtotal)}
-                        </span>
-                      </>
+                      <span className="text-base font-sans font-bold text-brand-plum">
+                        {formatMYR(totalMyr)}
+                      </span>
                     ) : (
                       <span className="text-base font-sans font-bold text-brand-plum">
                         {formatIDR(subtotal)}
@@ -464,6 +470,12 @@ export function MiniCartDrawer(): React.JSX.Element {
                     )}
                   </div>
                 </div>
+
+                {hasUnavailableMYItems && (
+                  <p className="text-[10px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1.5">
+                    Some items in your bag are not available for Malaysia shipping. Please remove them before checkout.
+                  </p>
+                )}
 
                 <div className="grid grid-cols-2 gap-2">
                   <Link href="/cart" onClick={() => setCartDrawerOpen(false)} className="w-full">
@@ -475,12 +487,13 @@ export function MiniCartDrawer(): React.JSX.Element {
                     </Button>
                   </Link>
                   <Link
-                    href="/checkout"
+                    href={hasUnavailableMYItems ? '/cart' : '/checkout'}
                     onClick={() => setCartDrawerOpen(false)}
                     className="w-full"
                   >
                     <Button
                       variant="accent"
+                      disabled={hasUnavailableMYItems}
                       className="w-full text-[10px] uppercase font-bold py-3.5 flex items-center justify-center space-x-1.5"
                     >
                       <span>Checkout</span>

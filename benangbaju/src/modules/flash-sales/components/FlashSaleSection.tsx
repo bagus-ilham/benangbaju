@@ -65,16 +65,33 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
         images[1]?.url ||
         primaryImage
 
-      const variantList = items.map((item) => ({
-        id: item.product_variants?.id || '',
-        sku: item.product_variants?.sku || '',
-        name: item.product_variants?.name || '',
-        price: Number(item.sale_price),
-        compare_price: Number(item.original_price),
-        stock: item.product_variants?.stock || 0,
-        weight_gram: null,
-        is_active: true,
-      }))
+      const variantList = items.map((item) => {
+        const saleMyr =
+          item.sale_price_myr != null && Number(item.sale_price_myr) > 0
+            ? Number(item.sale_price_myr)
+            : item.product_variants?.price_myr != null && Number(item.product_variants.price_myr) > 0
+              ? Number(item.product_variants.price_myr)
+              : null
+        const origMyr =
+          item.original_price_myr != null && Number(item.original_price_myr) > 0
+            ? Number(item.original_price_myr)
+            : item.product_variants?.price_myr != null && Number(item.product_variants.price_myr) > 0
+              ? Number(item.product_variants.price_myr)
+              : null
+        return {
+          id: item.product_variants?.id || '',
+          sku: item.product_variants?.sku || '',
+          name: item.product_variants?.name || '',
+          price: Number(item.sale_price),
+          compare_price: Number(item.original_price),
+          price_myr: saleMyr,
+          compare_price_myr: origMyr,
+          stock: item.product_variants?.stock || 0,
+          stock_my: item.product_variants?.stock_my ?? 0,
+          weight_gram: null,
+          is_active: true,
+        }
+      })
 
       const prices = items.map((i) => Number(i.sale_price))
       const comparePrices = items.map((i) => Number(i.original_price)).filter(Boolean)
@@ -86,6 +103,20 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
       const discountPercent =
         comparePrice && comparePrice > minPrice
           ? Math.round(((comparePrice - minPrice) / comparePrice) * 100)
+          : null
+
+      const myrSalePrices = variantList
+        .map((v) => v.price_myr)
+        .filter((p): p is number => typeof p === 'number' && p > 0)
+      const myrOrigPrices = variantList
+        .map((v) => v.compare_price_myr)
+        .filter((p): p is number => typeof p === 'number' && p > 0)
+      const minPriceMyr = myrSalePrices.length > 0 ? Math.min(...myrSalePrices) : null
+      const maxPriceMyr = myrSalePrices.length > 0 ? Math.max(...myrSalePrices) : null
+      const comparePriceMyr = myrOrigPrices.length > 0 ? Math.max(...myrOrigPrices) : null
+      const discountPercentMyr =
+        comparePriceMyr && minPriceMyr && comparePriceMyr > minPriceMyr
+          ? Math.round(((comparePriceMyr - minPriceMyr) / comparePriceMyr) * 100)
           : null
 
       result.push({
@@ -102,6 +133,11 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
         maxPrice,
         comparePrice,
         discountPercent,
+        minPriceMyr,
+        maxPriceMyr,
+        comparePriceMyr,
+        discountPercentMyr,
+        isAvailableInMY: minPriceMyr != null && minPriceMyr > 0,
         primaryImage,
         hoverImage,
         hasMultipleColors: false,
@@ -136,14 +172,19 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
     return () => clearInterval(timer)
   }, [flashSale])
 
+  const visibleProducts = isMY
+    ? mappedProducts.filter((p) => p.isAvailableInMY)
+    : mappedProducts
+
   if (!flashSale || !timeLeft) return null
   if (flashSale.target_market && flashSale.target_market !== 'ALL' && flashSale.target_market !== market) {
     return null
   }
+  if (visibleProducts.length === 0) return null
 
   const formatNumber = (num: number) => String(num).padStart(2, '0')
 
-  const displayProducts = isFullPage ? mappedProducts : mappedProducts.slice(0, 4)
+  const displayProducts = isFullPage ? visibleProducts : visibleProducts.slice(0, 4)
 
   return (
     <section className="relative bg-brand-gold py-16 md:py-20 border-b border-brand-gold/80 overflow-hidden text-brand-plum">
@@ -198,7 +239,7 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
           ))}
         </div>
 
-        {!isFullPage && mappedProducts.length > 4 && (
+        {!isFullPage && visibleProducts.length > 4 && (
           <div className="flex justify-center mt-12">
             <Link href="/flash-sale">
               <Button

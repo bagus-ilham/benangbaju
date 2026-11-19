@@ -12,7 +12,6 @@ import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { formatLocalISO, formatDate, formatIDR } from '@/lib/utils/format'
 import { formatMYR } from '@/lib/utils'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { Voucher } from '@/modules/vouchers/types'
 import { VoucherFormModal } from './components/VoucherFormModal'
 
@@ -21,7 +20,6 @@ const supabase = createBrowserClient()
 export default function AdminVouchersPage(): React.JSX.Element {
   const { data: vouchersRes, isLoading, isError, refetch } = useAdminVouchers()
   const vouchers = vouchersRes?.data || []
-  const { myrExchangeRate } = useSiteSettings()
 
   const createMutation = useAdminCreateVoucher()
   const updateMutation = useAdminUpdateVoucher()
@@ -165,9 +163,12 @@ export default function AdminVouchersPage(): React.JSX.Element {
       return
     }
 
+    const isMyOnly =
+      applicable_countries.length === 1 && applicable_countries[0] === 'MY'
     const payload = {
       code: code.trim().toUpperCase(),
       name: name.trim(),
+      currency: (isMyOnly ? 'MYR' : 'IDR') as 'IDR' | 'MYR',
       discount_type,
       value: Number(value) || 0,
       min_purchase: Number(min_purchase) || 0,
@@ -338,24 +339,33 @@ export default function AdminVouchersPage(): React.JSX.Element {
                       </div>
                     </td>
                     <td className="py-4 px-4 text-neutral-600">
-                      <p className="font-bold text-neutral-900 text-sm">
-                        {v.discount_type === 'percentage'
-                          ? `${v.value}%`
-                          : formatIDR(v.value)}
-                      </p>
-                      {v.applicable_countries?.includes('MY') && v.discount_type === 'fixed' && (
-                        <p className="text-[10px] text-amber-900 font-semibold">
-                          ≈ {formatMYR(Math.round((v.value / myrExchangeRate) * 100) / 100)}
-                        </p>
-                      )}
-                      <p className="text-[10px] text-neutral-450 font-normal">
-                        Min Belanja: {formatIDR(v.min_purchase)}
-                        {v.applicable_countries?.includes('MY') && v.min_purchase > 0 && (
-                          <span className="text-amber-900 font-medium ml-1">
-                            (≈ {formatMYR(Math.round((v.min_purchase / myrExchangeRate) * 100) / 100)})
-                          </span>
-                        )}
-                      </p>
+                      {(() => {
+                        const isMYR =
+                          v.currency === 'MYR' ||
+                          (v.applicable_countries?.includes('MY') &&
+                            !v.applicable_countries?.includes('ID'))
+                        return (
+                          <>
+                            <p className="font-bold text-neutral-900 text-sm">
+                              {v.discount_type === 'percentage'
+                                ? `${v.value}%`
+                                : isMYR
+                                  ? formatMYR(v.value)
+                                  : formatIDR(v.value)}
+                            </p>
+                            <p className="text-[10px] text-neutral-450 font-normal">
+                              Min Belanja:{' '}
+                              {isMYR ? formatMYR(v.min_purchase) : formatIDR(v.min_purchase)}
+                            </p>
+                            {v.max_discount ? (
+                              <p className="text-[10px] text-neutral-400 font-normal">
+                                Maks Diskon:{' '}
+                                {isMYR ? formatMYR(v.max_discount) : formatIDR(v.max_discount)}
+                              </p>
+                            ) : null}
+                          </>
+                        )
+                      })()}
                     </td>
                     <td className="py-4 px-4 text-center">
                       <p className="font-semibold">

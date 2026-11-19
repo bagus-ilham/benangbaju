@@ -22,6 +22,8 @@ export async function adminCreateFlashSaleAction(
     variant_id: string
     original_price: number
     sale_price: number
+    original_price_myr?: number | null
+    sale_price_myr?: number | null
     quota: number
   }[]
 ) {
@@ -44,6 +46,8 @@ export async function adminUpdateFlashSaleAction(
     variant_id: string
     original_price: number
     sale_price: number
+    original_price_myr?: number | null
+    sale_price_myr?: number | null
     quota: number
   }[]
 ) {
