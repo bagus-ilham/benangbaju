@@ -91,7 +91,7 @@ export default function WishlistPage(): React.JSX.Element {
           title={isMY ? 'Wishlist' : 'Daftar Keinginan'}
           subtitle={isMY ? 'Save your favorite pieces and shop anytime.' : 'Simpan produk favorit Anda dan belanja kapan saja.'}
         />
-        <PageContainer className="py-10 page-content">
+        <PageContainer className="pt-10 pb-20 md:pb-24 page-content">
           <EmptyState
             title={isMY ? 'Failed to Load Wishlist' : 'Gagal Memuat Wishlist'}
             description={isMY ? 'An error occurred while loading your wishlist. Please try again.' : 'Terjadi kesalahan saat memuat daftar keinginan Anda. Silakan coba kembali.'}
@@ -108,9 +108,9 @@ export default function WishlistPage(): React.JSX.Element {
   return (
     <div className="bg-brand-cream min-h-screen">
       <PageHero
-        eyebrow="Koleksi Disukai"
-        title="Daftar Keinginan"
-        subtitle="Simpan produk favorit Anda dan belanja kapan saja."
+        eyebrow={isMY ? 'Saved Collection' : 'Koleksi Disukai'}
+        title={isMY ? 'Wishlist' : 'Daftar Keinginan'}
+        subtitle={isMY ? 'Save your favorite pieces and shop anytime.' : 'Simpan produk favorit Anda dan belanja kapan saja.'}
       />
       <PageContainer className="py-10 page-content">
         {isLoading ? (
@@ -124,7 +124,7 @@ export default function WishlistPage(): React.JSX.Element {
         ) : (
           <div className="space-y-6">
             {/* Toolbar Action Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-blush/45 border border-brand-blush-stroke/60 rounded-2xl shadow-xs">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="heart" className="w-4 h-4" />
                 <span className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum">

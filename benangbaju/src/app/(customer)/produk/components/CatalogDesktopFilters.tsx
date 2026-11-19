@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
 import { useMarket } from '@/shared/stores/marketStore'
@@ -21,57 +20,67 @@ export function CatalogDesktopFilters({
 }: CatalogDesktopFiltersProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
-  return (
-    <aside className="hidden md:block w-48 flex-shrink-0 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum">
-          Kategori
-        </h2>
-        {(categorySlug || searchQuery) && (
-          <button
-            onClick={handleClearAll}
-            className="text-[9px] font-sans font-bold uppercase tracking-widest text-neutral-600 hover:text-brand-plum"
-          >
-            Reset
-          </button>
-        )}
-      </div>
 
-      <ul className="space-y-2 border-b border-neutral-200/60 pb-6">
-        <li>
-          <button
-            onClick={() => handleCategorySelect(null)}
-            className={cn(
-              'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors flex items-center gap-2',
-              !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-600'
-            )}
-          >
-            {!categorySlug && (
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-plum shrink-0" />
-            )}
-            <span>{isMY ? 'All Categories' : 'Semua Kategori'}</span>
-          </button>
-        </li>
-        {categories.map((cat) => {
-          const isActive = categorySlug === cat.slug
-          return (
-            <li key={cat.id}>
-              <button
-                onClick={() => handleCategorySelect(cat.slug)}
-                className={cn(
-                  'text-xs font-sans tracking-wide hover:text-brand-blue text-left w-full py-1 transition-colors flex items-center gap-2',
-                  isActive ? 'text-brand-plum font-bold' : 'text-neutral-600'
-                )}
-              >
-                {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-plum shrink-0" />
-                )}
-                <span>{cat.name}</span>
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+  return (
+    <aside className="hidden md:block w-52 flex-shrink-0">
+      <div className="bg-brand-gold-soft/35 border border-brand-plum/10 rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-brand-plum/10 pb-3">
+          <h2 className="text-base font-serif font-medium text-brand-plum tracking-tight">
+            {isMY ? 'Categories' : 'Kategori'}
+          </h2>
+          {(categorySlug || searchQuery) && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              className="text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum/65 hover:text-brand-plum transition-colors cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+
+        <ul className="space-y-1.5">
+          <li>
+            <button
+              type="button"
+              onClick={() => handleCategorySelect(null)}
+              className={cn(
+                'text-xs font-sans tracking-wide text-left w-full px-3 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer',
+                !categorySlug
+                  ? 'bg-brand-blush/85 text-brand-plum font-bold shadow-2xs'
+                  : 'text-neutral-600 hover:bg-brand-cream/80 hover:text-brand-plum'
+              )}
+            >
+              {!categorySlug && (
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-plum shrink-0" />
+              )}
+              <span>{isMY ? 'All Categories' : 'Semua Kategori'}</span>
+            </button>
+          </li>
+          {categories.map((cat) => {
+            const isActive = categorySlug === cat.slug
+            return (
+              <li key={cat.id}>
+                <button
+                  type="button"
+                  onClick={() => handleCategorySelect(cat.slug)}
+                  className={cn(
+                    'text-xs font-sans tracking-wide text-left w-full px-3 py-2 rounded-xl transition-all flex items-center gap-2 cursor-pointer',
+                    isActive
+                      ? 'bg-brand-blush/85 text-brand-plum font-bold shadow-2xs'
+                      : 'text-neutral-600 hover:bg-brand-cream/80 hover:text-brand-plum'
+                  )}
+                >
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-plum shrink-0" />
+                  )}
+                  <span>{cat.name}</span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
     </aside>
   )
 }

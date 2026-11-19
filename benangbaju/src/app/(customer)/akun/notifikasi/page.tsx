@@ -81,7 +81,7 @@ export default function NotifikasiPage(): React.JSX.Element {
         title="Notifikasi"
         subtitle="Lihat pembaruan pesanan, promo, dan informasi akun Anda."
       />
-      <PageContainer size="lg" className="py-10 page-content">
+      <PageContainer size="lg" className="pt-10 pb-20 md:pb-24 page-content">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Quick Navigation Menu */}
           <div className="space-y-2 md:col-span-1">

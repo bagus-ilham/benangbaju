@@ -166,7 +166,7 @@ export default function PesananPage(): React.JSX.Element {
         title="Riwayat Pesanan"
         subtitle="Lacak pengiriman dan riwayat pembelian produk Anda."
       />
-      <PageContainer size="lg" className="py-10 page-content">
+      <PageContainer size="lg" className="pt-10 pb-20 md:pb-24 page-content">
         {/* Navigation Breadcrumb */}
         <div className="mb-8 flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-600">
           <Link href="/akun" className="hover:text-brand-plum transition font-sans font-bold">

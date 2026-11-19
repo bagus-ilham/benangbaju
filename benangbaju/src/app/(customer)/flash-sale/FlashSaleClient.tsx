@@ -30,7 +30,7 @@ export function FlashSaleClient({ flashSale }: FlashSaleClientProps): React.JSX.
       {flashSale ? (
         <FlashSaleSection flashSale={flashSale} isFullPage={true} />
       ) : (
-        <PageContainer>
+        <PageContainer className="pt-10 pb-20 md:pb-24">
           <EmptyState
             handDrawnIcon="sparkles"
             title={isMY ? 'No Active Flash Sale' : 'Tidak Ada Flash Sale Aktif'}

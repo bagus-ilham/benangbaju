@@ -92,11 +92,11 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
 
           <div className="space-y-6 max-w-md">
             <div className="stitch-divider border-white/30">
-              <span className="text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-gold">
+              <span className="text-xl font-accent font-bold text-brand-gold leading-none">
                 {routeInfo.subtitle}
               </span>
             </div>
-            <h1 className="text-3xl xl:text-4xl font-sans font-bold uppercase tracking-wider text-white leading-tight drop-shadow-sm">
+            <h1 className="text-3xl xl:text-4xl font-serif font-medium tracking-tight text-white leading-tight drop-shadow-sm">
               {routeInfo.title}
             </h1>
             <p className="text-sm text-white/85 font-sans leading-relaxed drop-shadow-xs">
@@ -112,8 +112,16 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
       </div>
 
       {/* Form panel */}
-      <main className="flex-1 flex flex-col items-center lg:overflow-y-auto lg:h-full bg-brand-cream py-12 px-4 sm:px-6 lg:px-8 section-texture">
-        <div className="w-full max-w-md my-auto flex flex-col items-center">
+      <main className="relative flex-1 flex flex-col items-center lg:overflow-y-auto lg:h-full bg-brand-cream py-12 px-4 sm:px-6 lg:px-8 section-texture overflow-x-hidden">
+        <div
+          className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-blush/65 blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-brand-gold/35 blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+        <div className="relative z-10 w-full max-w-md my-auto flex flex-col items-center">
           <Link href="/" className="mb-8 lg:hidden inline-block hover:opacity-80 transition-opacity">
             <div className="relative h-9 w-40">
               <Image

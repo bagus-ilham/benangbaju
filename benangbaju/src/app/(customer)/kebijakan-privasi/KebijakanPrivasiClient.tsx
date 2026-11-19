@@ -126,7 +126,7 @@ export function KebijakanPrivasiClient(): React.JSX.Element {
         }
       />
 
-      <PageContainer size="md" className="py-12 page-content">
+      <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
         <div className="max-w-3xl mx-auto space-y-10">
           <div className="text-xs leading-relaxed text-neutral-600 font-sans">
             <p className="text-neutral-400 text-[10px] uppercase tracking-widest mb-3">
@@ -143,12 +143,12 @@ export function KebijakanPrivasiClient(): React.JSX.Element {
             {sections.map((section, idx) => (
               <div
                 key={idx}
-                className="border border-neutral-200/80 p-6 md:p-8 bg-brand-cream space-y-3 rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
+                className="border border-brand-plum/10 p-6 md:p-8 bg-brand-cream space-y-3 rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
               >
-                <h2 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wide">
+                <h2 className="font-serif text-base md:text-lg font-medium text-brand-plum tracking-tight">
                   {section.title}
                 </h2>
-                <p className="text-xs text-neutral-600 leading-relaxed font-sans">
+                <p className="text-xs md:text-sm text-neutral-600 leading-relaxed font-sans">
                   {section.content}
                 </p>
               </div>

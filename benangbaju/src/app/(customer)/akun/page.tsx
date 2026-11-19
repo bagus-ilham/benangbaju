@@ -175,7 +175,7 @@ export default function AkunPage(): React.JSX.Element {
             : 'Kelola informasi pribadi Anda dan akses riwayat pesanan Anda.'
         }
       />
-      <PageContainer size="lg" className="py-10 page-content">
+      <PageContainer size="lg" className="pt-10 pb-20 md:pb-24 page-content">
         <motion.div initial="hidden" animate="visible" variants={containerVariants}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Quick Navigation Menu */}

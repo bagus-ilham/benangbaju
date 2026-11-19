@@ -21,9 +21,9 @@ export function TentangClient(): React.JSX.Element {
         }
       />
 
-      <PageContainer size="md" className="py-12 md:py-16 page-content">
-        <div className="max-w-3xl mx-auto space-y-12">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs animate-slide-up">
+      <PageContainer size="md" className="pt-12 pb-20 md:pt-16 md:pb-24 page-content">
+        <div className="max-w-3xl mx-auto space-y-10">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-brand-gold-soft/40 border border-brand-gold-stroke/45 rounded-3xl shadow-xs animate-slide-up">
             <div className="relative w-16 h-16 shrink-0 opacity-90">
               <Image
                 src="/image/svg/logo/logo-jarum-benang.svg"
@@ -62,29 +62,29 @@ export function TentangClient(): React.JSX.Element {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-            <div className="border border-neutral-200/80 p-6 md:p-8 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-plum">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+            <div className="border border-brand-blush-stroke/60 p-6 md:p-8 space-y-3 bg-brand-blush/55 rounded-3xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-slide-up">
+              <span className="inline-block text-base font-accent font-bold text-brand-plum/80 leading-none">
                 {isMY ? 'Value 01' : 'Nilai 01'}
               </span>
-              <h2 className="text-base font-heading font-bold text-brand-plum">
+              <h2 className="text-xl font-serif font-medium tracking-tight text-brand-plum">
                 {isMY ? 'Thoughtful Simplicity' : 'Kesederhanaan yang Bermakna'}
               </h2>
-              <p className="text-xs text-neutral-600 leading-relaxed font-sans">
+              <p className="text-xs md:text-sm text-brand-plum/80 leading-relaxed font-sans">
                 {isMY
                   ? 'Apparel should complement your daily flow effortlessly without overcomplicating comfort.'
                   : 'Pakaian seharusnya melengkapi keseharianmu tanpa harus berlebihan, mengutamakan kenyamanan di setiap helai benang.'}
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 md:p-8 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold text-brand-plum">
+            <div className="border border-brand-blue-stroke/60 p-6 md:p-8 space-y-3 bg-brand-blue-soft/75 rounded-3xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-slide-up">
+              <span className="inline-block text-base font-accent font-bold text-brand-plum/80 leading-none">
                 {isMY ? 'Value 02' : 'Nilai 02'}
               </span>
-              <h2 className="text-base font-heading font-bold text-brand-plum">
+              <h2 className="text-xl font-serif font-medium tracking-tight text-brand-plum">
                 {isMY ? 'Bandung Craftsmanship' : 'Karakter Khas Bandung'}
               </h2>
-              <p className="text-xs text-neutral-600 leading-relaxed font-sans">
+              <p className="text-xs md:text-sm text-brand-plum/80 leading-relaxed font-sans">
                 {isMY
                   ? 'Lovingly crafted in Bandung with curated fabrics and meticulous stitching to bring timeless wardrobe essentials.'
                   : 'Dibuat dengan cermat di Bandung, memadukan bahan pilihan dan detail jahitan rapi yang awet untuk dikenakan kapan pun.'}

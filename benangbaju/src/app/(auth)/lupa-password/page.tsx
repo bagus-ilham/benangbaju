@@ -60,7 +60,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
               priority
             />
           </div>
-          <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
+          <h2 className="text-2xl md:text-[26px] font-serif font-medium tracking-tight text-brand-plum">
             {isMY ? 'Forgot Password' : 'Lupa Kata Sandi'}
           </h2>
           <p className="text-[11px] md:text-xs text-neutral-400 font-sans">
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
         </div>
 
         {isSent ? (
-          <div className="bg-neutral-50/50 border border-neutral-200 p-6 rounded-none text-center space-y-4">
+          <div className="bg-brand-gold-soft/45 border border-brand-gold-stroke/45 p-6 rounded-2xl text-center space-y-4">
             <p className="text-xs text-neutral-600 leading-relaxed font-sans">
               Kami telah mengirimkan instruksi pemulihan kata sandi ke{' '}
               <strong className="text-brand-plum">{email}</strong>. Silakan periksa kotak masuk

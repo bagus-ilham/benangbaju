@@ -51,13 +51,13 @@ export default async function DynamicLandingPage({ params }: DynamicPageProps) {
   return (
     <div className="min-h-screen bg-brand-cream font-sans">
       <PageHero title={page.title} subtitle={content?.subtitle || ''} />
-      <PageContainer size="md" className="py-12 page-content space-y-8">
+      <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content space-y-8">
         {content?.sections && Array.isArray(content.sections) ? (
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           content.sections.map((sec: any, idx: number) => (
             <section key={idx} className="space-y-4">
               {sec.heading && (
-                <h2 className="text-xl font-heading font-semibold text-brand-plum">
+                <h2 className="text-xl md:text-2xl font-serif font-medium tracking-tight text-brand-plum">
                   {sec.heading}
                 </h2>
               )}

@@ -102,13 +102,13 @@ export default function CartPage(): React.JSX.Element {
   return (
     <div className="bg-brand-cream min-h-screen">
       <PageHero
-        eyebrow="Pembelian Anda"
-        title="Keranjang Belanja"
+        eyebrow={market === 'MY' ? 'Your Shopping Bag' : 'Pembelian Anda'}
+        title={market === 'MY' ? 'Shopping Bag' : 'Keranjang Belanja'}
         subtitle={
           market === 'MY' ? (items.length > 0 ? `${totalQuantity} items in bag` : 'Your shopping bag') : (items.length > 0 ? `${totalQuantity} item dalam keranjang` : 'Keranjang belanja Anda')
         }
       />
-      <PageContainer className="py-10 page-content">
+      <PageContainer className="pt-10 pb-20 md:pb-24 page-content">
         {items.length === 0 ? (
           <EmptyState
             title={market === 'MY' ? 'Your Bag is Empty' : 'Keranjang Anda Kosong'}
@@ -121,7 +121,7 @@ export default function CartPage(): React.JSX.Element {
             {/* Left: Cart Items List (8 cols) */}
             <div className="lg:col-span-8 space-y-4">
               {/* Free Shipping Progress Bar */}
-              <div className="bg-white/80 border border-neutral-200/80 rounded-2xl p-4 md:p-5 shadow-xs space-y-2">
+              <div className="bg-brand-gold-soft/45 border border-brand-gold-stroke/45 rounded-2xl p-4 md:p-5 shadow-xs space-y-2">
                 <div className="flex items-center justify-between text-xs font-heading font-medium tracking-wide text-brand-plum">
                   <span>
                     {isFreeShipping ? (
@@ -176,11 +176,11 @@ export default function CartPage(): React.JSX.Element {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-brand-cream border border-neutral-200/80 rounded-2xl shadow-xs gap-4 mb-4"
+                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-brand-cream border border-brand-plum/10 rounded-2xl shadow-xs gap-4 mb-4"
                     >
                       <div className="flex items-center space-x-4 flex-1 min-w-0">
                         {item.imageUrl && (
-                          <div className="relative w-16 h-20 md:w-20 md:h-24 border border-neutral-100 rounded-xl overflow-hidden shrink-0 bg-neutral-50">
+                          <div className="relative w-16 h-20 md:w-20 md:h-24 border border-brand-plum/10 rounded-xl overflow-hidden shrink-0 bg-brand-rose-soft/65">
                             <Image
                               src={getProxiedImageUrl(item.imageUrl)}
                               alt={item.productName || item.name}
@@ -192,7 +192,7 @@ export default function CartPage(): React.JSX.Element {
                         )}
                         <div className="min-w-0 flex-1 space-y-1">
                           <Link href={`/produk/${item.slug}`} className="block group">
-                            <div className="text-sm font-sans font-bold text-brand-plum group-hover:text-brand-blue truncate transition-colors">
+                            <div className="text-[15px] font-serif font-medium text-brand-plum group-hover:text-brand-blue truncate transition-colors">
                               {item.productName || item.name}
                             </div>
                           </Link>
@@ -304,10 +304,10 @@ export default function CartPage(): React.JSX.Element {
             >
               <Card
                 bordered={true}
-                className="bg-brand-cream border-neutral-200 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
+                className="bg-brand-cream border-brand-plum/10 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
-                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-                <h2 className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum border-b border-neutral-200 pb-4">
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+                <h2 className="text-lg font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-4">
                   {market === 'MY' ? 'Order Summary' : 'Ringkasan Belanja'}
                 </h2>
 
@@ -380,7 +380,7 @@ export default function CartPage(): React.JSX.Element {
                   </Button>
                 </Link>
 
-                <div className="bg-neutral-50/50 border border-neutral-200 border-l-2 border-l-brand-blue p-4 rounded-xl text-[10px] text-neutral-600 leading-relaxed font-sans">
+                <div className="bg-brand-blue-soft/50 border border-brand-blue-stroke/55 border-l-2 border-l-brand-blue p-4 rounded-xl text-[10px] text-brand-plum/80 leading-relaxed font-sans">
                   {market === 'MY'
                     ? 'Complete your order securely. We support Cross-Border DuitNow / Touch \'n Go QR via DOKU.'
                     : 'Selesaikan pemesanan Anda dengan aman. Kami mendukung pembayaran Transfer Bank otomatis, QRIS, e-Wallet via DOKU.'}

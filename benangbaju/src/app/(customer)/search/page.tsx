@@ -54,7 +54,7 @@ function SearchResultsContent() {
           title={query ? `"${query}"` : (isMY ? 'Product Search' : 'Pencarian Produk')}
           subtitle={isMY ? 'Failed to load search results' : 'Gagal memuat hasil pencarian'}
         />
-        <PageContainer className="py-10 page-content">
+        <PageContainer className="pt-10 pb-20 md:pb-24 page-content">
           <EmptyState
             title={isMY ? 'Failed to Load Search Results' : 'Gagal Memuat Hasil Pencarian'}
             description={isMY ? 'Connection error occurred while searching products. Please try again.' : 'Terjadi kesalahan koneksi saat mencari produk. Silakan coba kembali.'}
@@ -71,8 +71,8 @@ function SearchResultsContent() {
   return (
     <div className="bg-brand-cream min-h-screen">
       <PageHero
-        eyebrow="Hasil Pencarian"
-        title={query ? `"${query}"` : 'Pencarian Produk'}
+        eyebrow={isMY ? 'Search Results' : 'Hasil Pencarian'}
+        title={query ? `"${query}"` : (isMY ? 'Product Search' : 'Pencarian Produk')}
         subtitle={isMY ? `Found ${totalCount} matching products.` : `Ditemukan ${totalCount} produk yang cocok.`}
       />
       <PageContainer className="py-10 page-content">

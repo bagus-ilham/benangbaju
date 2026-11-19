@@ -27,12 +27,12 @@ export function KontakClient(): React.JSX.Element {
             : 'Tim customer service kami siap membantu informasi produk, panduan ukuran (CM/INCH), pengiriman domestik & Malaysia, serta kendala pesanan.'
         }
       />
-      <PageContainer size="md" className="py-12 space-y-12 page-content">
+      <PageContainer size="md" className="pt-12 pb-20 md:pb-24 space-y-12 page-content">
         {/* Contact Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
           {/* Contact Details Card */}
-          <div className="border border-neutral-200/80 p-8 space-y-6 bg-brand-cream rounded-2xl shadow-xs animate-slide-up">
-            <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
+          <div className="border border-brand-gold-stroke/45 p-8 space-y-6 bg-brand-gold-soft/35 rounded-3xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
+            <h2 className="font-serif text-brand-plum font-medium text-lg tracking-tight border-b border-brand-plum/10 pb-3">
               {isMY ? 'Customer Care & Operating Hours' : 'Layanan Pelanggan & Jam Operasional'}
             </h2>
             <div className="space-y-4 text-xs font-medium text-neutral-600">
@@ -86,9 +86,9 @@ export function KontakClient(): React.JSX.Element {
           </div>
 
           {/* WhatsApp Direct Help Card */}
-          <div className="border border-neutral-200/80 p-8 space-y-6 bg-brand-cream rounded-2xl shadow-xs animate-slide-up flex flex-col justify-between">
+          <div className="border border-brand-blue-stroke/55 p-8 space-y-6 bg-brand-blue-soft/55 rounded-3xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up flex flex-col justify-between">
             <div className="space-y-4">
-              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-100 pb-3">
+              <h2 className="font-serif text-brand-plum font-medium text-lg tracking-tight border-b border-brand-plum/10 pb-3">
                 {isMY ? 'Instant WhatsApp Consultation' : 'Konsultasi Instan WhatsApp'}
               </h2>
               <p className="text-xs text-neutral-600 leading-relaxed font-sans">

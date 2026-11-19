@@ -80,33 +80,44 @@ export function CaraBelanjaClient(): React.JSX.Element {
         }
       />
 
-      <PageContainer size="md" className="py-12 md:py-16 page-content">
-        <div className="space-y-6">
-          {steps.map((step, index) => (
-            <div
-              key={index}
-              className="bg-brand-cream border border-neutral-200/80 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start shadow-xs hover:shadow-md transition-shadow duration-300"
-            >
-              <div className="w-12 h-12 rounded-xl bg-brand-gold/30 border border-amber-200/80 text-brand-plum flex items-center justify-center shrink-0">
-                <HandDrawnIcon name={step.handDrawnName} className="h-6 w-6" />
+      <PageContainer size="md" className="pt-12 pb-20 md:pt-16 md:pb-24 page-content">
+        <div className="space-y-5">
+          {steps.map((step, index) => {
+            const badgeTints = [
+              'bg-brand-gold/65 border-brand-gold-stroke/50',
+              'bg-brand-blush border-brand-blush-stroke/60',
+              'bg-brand-blue-soft border-brand-blue-stroke/60',
+            ]
+            const badgeTint = badgeTints[index % badgeTints.length]
+
+            return (
+              <div
+                key={index}
+                className="bg-brand-cream border border-brand-plum/10 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <div
+                  className={`w-12 h-12 rounded-2xl border text-brand-plum flex items-center justify-center shrink-0 ${badgeTint}`}
+                >
+                  <HandDrawnIcon name={step.handDrawnName} className="h-6 w-6" />
+                </div>
+                <div className="space-y-2 flex-1">
+                  <h2 className="font-serif font-medium text-lg sm:text-xl tracking-tight text-brand-plum">
+                    {step.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
+                    {step.desc}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-2 flex-1">
-                <h2 className="font-heading font-bold text-base sm:text-lg text-brand-plum">
-                  {step.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
-                  {step.desc}
-                </p>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* Action Button */}
         <div className="mt-12 text-center">
           <Link
             href="/produk"
-            className="inline-flex items-center justify-center py-3.5 px-8 bg-brand-plum hover:bg-neutral-800 text-brand-gold rounded-xl text-xs font-bold uppercase tracking-widest transition-colors shadow-xs gap-2"
+            className="inline-flex items-center justify-center py-3.5 px-8 bg-brand-plum hover:bg-brand-plum/90 hover:-translate-y-0.5 text-brand-gold rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-sm gap-2"
           >
             <span>{isMY ? 'Start Shopping Now' : 'Mulai Belanja Sekarang'}</span>
             <HandDrawnIcon name="arrow-right" className="h-4 w-4" />

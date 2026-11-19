@@ -24,9 +24,9 @@ export function PageHero({
   children,
 }: PageHeroProps): React.JSX.Element {
   const variantClasses = {
-    light: 'bg-brand-cream border-neutral-200/80',
-    cream: 'bg-brand-cream border-neutral-200/80',
-    dark: 'bg-brand-gold/60 border-brand-gold/80',
+    light: 'bg-brand-cream border-brand-plum/10',
+    cream: 'bg-brand-cream border-brand-plum/10',
+    dark: 'bg-brand-blush/55 border-brand-blush-stroke/50',
   }
 
   const textClasses = {

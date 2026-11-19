@@ -29,13 +29,13 @@ export function CollectionsClient({ collections }: CollectionsClientProps): Reac
         variant="dark"
       />
 
-      <PageContainer className="py-12 md:py-16 page-content">
+      <PageContainer className="pt-12 pb-20 md:pt-16 md:pb-24 page-content">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {collections.map((col) => (
             <Link
               key={col.id}
               href={`/koleksi/${col.slug}`}
-              className="group relative h-80 md:h-[28rem] w-full overflow-hidden bg-neutral-200 border border-neutral-200/80 block rounded-2xl shadow-xs hover:shadow-md transition-all duration-300"
+              className="group relative h-80 md:h-[28rem] w-full overflow-hidden bg-brand-rose-soft/70 border border-brand-plum/10 block rounded-2xl shadow-xs hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.16)] transition-all duration-500"
             >
               {col.image_url ? (
                 <Image
@@ -46,24 +46,24 @@ export function CollectionsClient({ collections }: CollectionsClientProps): Reac
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               ) : (
-                <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
-                  <span className="text-[10px] uppercase tracking-widest text-neutral-400">
+                <div className="absolute inset-0 bg-brand-rose-soft/60 flex items-center justify-center">
+                  <span className="text-xs font-serif text-brand-plum/60">
                     {col.name}
                   </span>
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-15" />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/85 via-brand-plum/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-500 z-15" />
 
-              <div className="absolute inset-0 flex flex-col items-center justify-end p-6 md:p-8 text-white text-center space-y-2 z-10">
-                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-brand-gold">
+              <div className="absolute inset-0 flex flex-col items-center justify-end p-6 md:p-8 text-white text-center space-y-2.5 z-20">
+                <span className="px-2.5 py-0.5 bg-brand-gold/95 text-brand-plum rounded-full text-[9px] font-sans font-bold uppercase tracking-widest shadow-xs">
                   {isMY ? 'Curated Collection' : 'Koleksi Terpilih'}
                 </span>
-                <h2 className="text-xl md:text-2xl font-heading font-light uppercase tracking-widest leading-none">
+                <h2 className="text-2xl md:text-[28px] font-serif font-medium tracking-tight leading-tight drop-shadow-xs">
                   {col.name}
                 </h2>
-                <div className="w-8 h-px bg-brand-accent-light group-hover:w-16 transition-all duration-500" />
+                <div className="w-8 h-0.5 bg-brand-gold rounded-full group-hover:w-16 transition-all duration-500" />
                 {col.description && (
-                  <p className="text-[10px] text-neutral-300 font-sans line-clamp-2 max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <p className="text-[11px] text-brand-cream/90 font-sans line-clamp-2 max-w-xs opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     {col.description}
                   </p>
                 )}

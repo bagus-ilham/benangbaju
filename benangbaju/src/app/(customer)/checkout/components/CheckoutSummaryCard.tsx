@@ -81,11 +81,11 @@ export function CheckoutSummaryCard({
   const itemSubtotalMyr = subtotalMyr
 
   return (
-    <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-      <h2 className="text-xs uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center justify-between border-b border-neutral-100 pb-3">
+    <div className="border border-brand-plum/10 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+      <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum mb-6 flex items-center justify-between border-b border-brand-plum/10 pb-3">
         <span className="flex items-center">
-          <HandDrawnIcon name="shopping-bag" className="h-3.5 w-3.5 mr-2" /> {isMalaysia ? 'Order Summary' : 'Ringkasan Pesanan'}
+          <HandDrawnIcon name="shopping-bag" className="h-4 w-4 mr-2" /> {isMalaysia ? 'Order Summary' : 'Ringkasan Pesanan'}
         </span>
       </h2>
 
@@ -94,7 +94,7 @@ export function CheckoutSummaryCard({
         {displayItems.map((item) => (
           <div key={item.variantId} className="py-3 flex space-x-3 text-xs">
             {item.imageUrl && (
-              <div className="relative w-10 h-14 border border-neutral-100 rounded-md bg-neutral-50 flex-shrink-0">
+              <div className="relative w-10 h-14 border border-brand-plum/10 rounded-lg overflow-hidden bg-brand-rose-soft/65 flex-shrink-0">
                 <Image
                   src={getProxiedImageUrl(item.imageUrl)}
                   alt={item.productName || item.name}

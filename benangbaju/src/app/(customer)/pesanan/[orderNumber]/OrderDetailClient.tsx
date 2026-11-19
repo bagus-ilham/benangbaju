@@ -542,7 +542,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="Pesanan" title="Detail Pesanan" variant="cream" />
-        <PageContainer size="md" className="py-12 page-content">
+        <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
           <EmptyState
             handDrawnIcon="alert-triangle"
             title="Pesanan Tidak Ditemukan"
@@ -590,7 +590,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
         </div>
       </PageHero>
 
-      <PageContainer size="lg" className="py-10 page-content space-y-8">
+      <PageContainer size="lg" className="pt-10 pb-20 md:pb-24 page-content space-y-8">
         {searchParams.get('return_submitted') === '1' && (
           <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-2xl flex items-center justify-between text-xs font-semibold shadow-xs">
             <div className="flex items-center space-x-2">

@@ -60,46 +60,46 @@ export function PengirimanClient(): React.JSX.Element {
             : 'Kebijakan, jadwal, dan mitra ekspedisi pengiriman domestik Indonesia & internasional Malaysia.'
         }
       />
-      <PageContainer size="md" className="py-12 page-content">
+      <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
         <div className="max-w-3xl mx-auto space-y-12">
           {/* Delivery Terms Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="border border-neutral-200/80 p-6 space-y-3 bg-brand-cream rounded-2xl shadow-xs hover:shadow-md transition-all duration-300">
-              <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 w-max rounded-xl">
+            <div className="border border-brand-blush-stroke/55 p-6 space-y-3 bg-brand-blush/40 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="p-2 bg-brand-cream border border-brand-plum/10 w-max rounded-xl">
                 <HandDrawnIcon name="package" className="h-4 w-4" />
               </div>
-              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+              <h2 className="font-serif text-brand-plum font-medium text-base tracking-tight">
                 {isMY ? 'Weight Calculation' : 'Perhitungan Berat'}
               </h2>
-              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
+              <p className="text-xs text-brand-plum/80 leading-relaxed font-medium">
                 {isMY
                   ? 'Product weight is calculated in grams. Total parcel weight is rounded up to the nearest 1,000 grams (1 kg) in accordance with domestic and export courier regulations.'
                   : 'Berat produk dihitung dalam satuan gram. Total berat pesanan akan dibulatkan ke atas per 1.000 gram (1 kg) sesuai regulasi ekspedisi rekanan domestik maupun ekspor.'}
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
-              <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
+            <div className="border border-brand-gold-stroke/45 p-6 rounded-2xl space-y-3 bg-brand-gold-soft/50 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="p-2 bg-brand-cream border border-brand-plum/10 rounded-xl w-max">
                 <HandDrawnIcon name="hanger" className="h-4 w-4" />
               </div>
-              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+              <h2 className="font-serif text-brand-plum font-medium text-base tracking-tight">
                 {isMY ? 'Dispatch Schedule' : 'Jadwal Kirim'}
               </h2>
-              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
+              <p className="text-xs text-brand-plum/80 leading-relaxed font-medium">
                 {isMY
                   ? 'Orders with verified payment before 16:00 MYT (15:00 WIB) are dispatched on the same business day. Orders placed after this cutoff are handed over to couriers on the next working day.'
                   : 'Pesanan dengan pembayaran terverifikasi sebelum pukul 15:00 WIB (16:00 MYT) diproses pada hari kerja yang sama. Setelah jam tersebut, paket diserahkan ke kurir pada hari kerja berikutnya.'}
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
-              <div className="p-2 bg-brand-blue/20 border border-brand-blue/30 rounded-xl w-max">
+            <div className="border border-brand-blue-stroke/55 p-6 rounded-2xl space-y-3 bg-brand-blue-soft/60 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+              <div className="p-2 bg-brand-cream border border-brand-plum/10 rounded-xl w-max">
                 <HandDrawnIcon name="clothes" className="h-4 w-4" />
               </div>
-              <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+              <h2 className="font-serif text-brand-plum font-medium text-base tracking-tight">
                 {isMY ? 'Transit Guarantee' : 'Garansi Asuransi'}
               </h2>
-              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
+              <p className="text-xs text-brand-plum/80 leading-relaxed font-medium">
                 {isMY
                   ? 'Every parcel is covered by courier delivery guarantees. In the unlikely event of parcel loss in transit, a replacement or full resolution will be provided.'
                   : 'Setiap pengiriman paket dilindungi jaminan ekspedisi. Apabila paket terbukti hilang dalam perjalanan, kami akan mengirimkan paket pengganti atau memberikan solusi terbaik.'}
@@ -109,20 +109,20 @@ export function PengirimanClient(): React.JSX.Element {
 
           {/* Domestic Courier Section */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <h2 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-serif text-lg font-medium tracking-tight text-brand-plum flex items-center gap-2">
                 <span>🇮🇩</span>
                 <span>{isMY ? 'Domestic Delivery Partners (Indonesia)' : 'Mitra Ekspedisi Domestik (Indonesia)'}</span>
               </h2>
-              <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-brand-plum/70 bg-brand-gold-soft/60 px-2.5 py-1 rounded-full uppercase tracking-wider">
                 {isMY ? 'Bandung Warehouse (40164)' : 'Gudang Bandung (40164)'}
               </span>
             </div>
 
-            <div className="border border-neutral-200/80 overflow-hidden rounded-2xl bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-brand-plum/10 overflow-hidden rounded-2xl bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <table className="w-full text-left border-collapse text-xs font-sans">
                 <thead>
-                  <tr className="bg-neutral-200/40 border-b border-neutral-200 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
+                  <tr className="bg-brand-gold-soft/55 border-b border-brand-plum/10 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
                     <th className="p-4">{isMY ? 'Courier' : 'Ekspedisi'}</th>
                     <th className="p-4">{isMY ? 'Coverage Area' : 'Cakupan Wilayah'}</th>
                     <th className="p-4">{isMY ? 'Estimated Delivery Time (ETD)' : 'Estimasi Pengiriman (ETD)'}</th>
@@ -142,9 +142,9 @@ export function PengirimanClient(): React.JSX.Element {
           </div>
 
           {/* International Courier Section */}
-          <div className="space-y-4 pt-4 border-t border-neutral-200/60">
-            <div className="flex items-center justify-between">
-              <h2 className="font-sans text-sm font-bold text-emerald-950 uppercase tracking-wider flex items-center gap-2">
+          <div className="space-y-4 pt-4 border-t border-brand-plum/10">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-serif text-lg font-medium tracking-tight text-emerald-950 flex items-center gap-2">
                 <span>🇲🇾</span>
                 <span>
                   {isMY
@@ -246,7 +246,7 @@ export function PengirimanClient(): React.JSX.Element {
           </div>
 
           {/* Philosophy Footer quote */}
-          <div className="border-t border-neutral-100 pt-8 text-center text-xs text-neutral-600 uppercase tracking-widest font-bold font-sans">
+          <div className="border-t border-brand-plum/10 pt-8 text-center text-xl text-brand-plum/80 font-accent">
             &ldquo;From Bandung to Malaysia — crafted with care, delivered with love.&rdquo;
           </div>
         </div>

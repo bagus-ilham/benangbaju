@@ -231,7 +231,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
-        <PageContainer size="md" className="py-12 page-content">
+        <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
           <EmptyState
             handDrawnIcon="alert-triangle"
             title="Akses Ditolak"
@@ -248,7 +248,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="International Orders" title="Final Sale Policy" variant="cream" />
-        <PageContainer size="md" className="py-12 page-content">
+        <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
           <div className="bg-white border border-neutral-200/80 rounded-2xl p-6 sm:p-8 text-center space-y-4 max-w-lg mx-auto shadow-xs">
             <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto">
               <HandDrawnIcon name="sparkles" className="h-6 w-6 text-amber-700" />
@@ -292,7 +292,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     return (
       <div className="bg-brand-cream min-h-screen">
         <PageHero eyebrow="Retur" title="Pengajuan Retur" variant="cream" />
-        <PageContainer size="md" className="py-12 page-content">
+        <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
           <EmptyState
             handDrawnIcon="check-circle"
             title="Pengajuan Retur Sudah Ada"
@@ -319,7 +319,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         </Link>
       </PageHero>
 
-      <PageContainer size="md" className="py-10 page-content">
+      <PageContainer size="md" className="pt-10 pb-20 md:pb-24 page-content">
         <form onSubmit={handleSubmitReturn} className="space-y-8">
           <ReturnItemSelection
             orderItems={order.order_items}

@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import { HandDrawnIcon } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import type { Category } from '@/modules/categories/types'
@@ -24,6 +23,7 @@ export function CatalogMobileFilters({
 }: CatalogMobileFiltersProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
+
   return (
     <>
       <div
@@ -39,32 +39,37 @@ export function CatalogMobileFilters({
           showMobileFilters ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between p-5 border-b border-neutral-200/80">
-          <h2 className="text-xs font-sans font-bold uppercase tracking-widest text-brand-plum">
+        <div className="flex items-center justify-between p-5 border-b border-brand-plum/10 bg-brand-gold-soft/40">
+          <h2 className="text-lg font-serif font-medium text-brand-plum tracking-tight">
             Filter
           </h2>
           <button
+            type="button"
             onClick={() => setShowMobileFilters(false)}
-            className="p-2 -mr-2 text-neutral-400 hover:text-brand-plum transition-colors"
+            className="p-2 -mr-2 text-brand-plum/70 hover:text-brand-plum transition-colors"
+            aria-label={isMY ? 'Close filter' : 'Tutup filter'}
           >
             <HandDrawnIcon name="close" className="h-5 w-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-5 space-y-8">
+        <div className="flex-1 overflow-y-auto p-5 space-y-6">
           <div>
-            <h3 className="text-[10px] font-sans font-bold uppercase tracking-widest text-neutral-600 mb-4">
-              Kategori
+            <h3 className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum/70 mb-3">
+              {isMY ? 'Categories' : 'Kategori'}
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-1.5">
               <li>
                 <button
+                  type="button"
                   onClick={() => {
                     handleCategorySelect(null)
                     setShowMobileFilters(false)
                   }}
                   className={cn(
-                    'text-sm font-sans tracking-wide text-left w-full transition-colors flex items-center gap-2',
-                    !categorySlug ? 'text-brand-plum font-bold' : 'text-neutral-600'
+                    'text-sm font-sans tracking-wide text-left w-full px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2',
+                    !categorySlug
+                      ? 'bg-brand-blush/85 text-brand-plum font-bold shadow-2xs'
+                      : 'text-neutral-600 hover:bg-brand-gold-soft/40'
                   )}
                 >
                   {!categorySlug && (
@@ -78,13 +83,16 @@ export function CatalogMobileFilters({
                 return (
                   <li key={cat.id}>
                     <button
+                      type="button"
                       onClick={() => {
                         handleCategorySelect(cat.slug)
                         setShowMobileFilters(false)
                       }}
                       className={cn(
-                        'text-sm font-sans tracking-wide text-left w-full transition-colors flex items-center gap-2',
-                        isActive ? 'text-brand-plum font-bold' : 'text-neutral-600'
+                        'text-sm font-sans tracking-wide text-left w-full px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2',
+                        isActive
+                          ? 'bg-brand-blush/85 text-brand-plum font-bold shadow-2xs'
+                          : 'text-neutral-600 hover:bg-brand-gold-soft/40'
                       )}
                     >
                       {isActive && (
@@ -98,21 +106,23 @@ export function CatalogMobileFilters({
             </ul>
           </div>
         </div>
-        <div className="p-5 border-t border-neutral-200/80 flex gap-3">
+        <div className="p-5 border-t border-brand-plum/10 flex gap-3">
           <button
+            type="button"
             onClick={() => {
               handleClearAll()
               setShowMobileFilters(false)
             }}
-            className="flex-1 py-3 text-xs font-sans font-bold uppercase tracking-widest border border-neutral-200 text-neutral-600 hover:bg-neutral-100/50 rounded-xl"
+            className="flex-1 py-3 text-xs font-sans font-bold uppercase tracking-widest border border-brand-plum/20 text-brand-plum hover:bg-brand-gold-soft/40 rounded-xl"
           >
             Reset
           </button>
           <button
+            type="button"
             onClick={() => setShowMobileFilters(false)}
             className="flex-1 py-3 bg-brand-blue text-brand-plum text-xs font-sans font-bold uppercase tracking-widest hover:opacity-90 rounded-xl"
           >
-            Terapkan
+            {isMY ? 'Apply' : 'Terapkan'}
           </button>
         </div>
       </div>

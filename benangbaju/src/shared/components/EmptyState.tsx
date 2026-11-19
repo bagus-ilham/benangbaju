@@ -60,22 +60,16 @@ export function EmptyState({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE_PREMIUM }}
       className={cn(
-        'relative flex flex-col items-center justify-center py-20 text-center space-y-6 overflow-hidden rounded-3xl border border-dashed border-amber-200/60 bg-brand-cream/40 p-8',
+        'relative flex flex-col items-center justify-center py-20 text-center space-y-6 overflow-hidden rounded-3xl border border-dashed border-brand-plum/15 bg-brand-gold-soft/35 p-8',
         className
       )}
     >
-      {/* Decorative Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none select-none bg-center bg-repeat"
-        style={{ backgroundImage: 'url(/image/svg/decorative/pattern-stitch-card.svg)', backgroundSize: '300px' }}
-        aria-hidden="true"
-      />
       <div className="relative">
         <div
-          className="absolute inset-0 bg-brand-gold/30 blur-xl rounded-full scale-150"
+          className="absolute inset-0 bg-brand-blush/70 blur-xl rounded-full scale-150"
           aria-hidden
         />
-        <div className="relative p-4 bg-brand-cream border border-neutral-200/80 animate-gentle-float rounded-2xl shadow-xs">
+        <div className="relative p-4 bg-brand-cream border border-brand-plum/10 animate-gentle-float rounded-2xl shadow-xs">
           {handDrawnIcon ? (
             <HandDrawnIcon name={handDrawnIcon} className="h-8 w-8" />
           ) : CustomIcon ? (
@@ -95,12 +89,12 @@ export function EmptyState({
         </div>
       </div>
       <div className="space-y-2">
-        <h2 className="text-sm md:text-base font-heading font-semibold uppercase tracking-wider text-brand-plum">
+        <h2 className="text-lg md:text-xl font-serif font-medium tracking-tight text-brand-plum">
           {title}
         </h2>
         <div className="stitch-divider stitch-divider-center" />
         {description && (
-          <p className="text-xs text-neutral-400 font-sans max-w-sm leading-relaxed pt-2">
+          <p className="text-xs md:text-sm text-neutral-600 font-sans max-w-sm leading-relaxed pt-2">
             {description}
           </p>
         )}

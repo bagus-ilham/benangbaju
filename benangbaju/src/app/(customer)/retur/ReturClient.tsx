@@ -63,32 +63,32 @@ export function ReturClient(): React.JSX.Element {
             : 'Syarat dan panduan pengajuan retur, tukar ukuran domestik, dan kebijakan pesanan internasional Malaysia.'
         }
       />
-      <PageContainer size="md" className="py-12 page-content">
+      <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Highlight Values Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+            <div className="border border-brand-blush-stroke/55 p-6 rounded-2xl space-y-3 bg-brand-blush/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="clock" className="h-4 w-4" />
-                <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+                <h2 className="font-serif text-brand-plum font-medium text-base tracking-tight">
                   {isMY ? '7-Day Return Window (Domestic)' : 'Batas Waktu 7 Hari (Domestik)'}
                 </h2>
               </div>
-              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
+              <p className="text-xs text-brand-plum/80 leading-relaxed font-medium">
                 {isMY
                   ? 'For orders within Indonesia, return requests must be submitted within 7 calendar days after delivery.'
                   : 'Untuk pesanan wilayah Indonesia, pengajuan pengembalian barang wajib dilakukan selambat-lambatnya 7 hari kalender sejak status pesanan dinyatakan diterima oleh kurir.'}
               </p>
             </div>
 
-            <div className="border border-neutral-200/80 p-6 rounded-2xl space-y-3 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="border border-brand-blue-stroke/55 p-6 rounded-2xl space-y-3 bg-brand-blue-soft/55 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="alert-triangle" className="h-4 w-4" />
-                <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs">
+                <h2 className="font-serif text-brand-plum font-medium text-base tracking-tight">
                   {isMY ? 'Product Physical Condition' : 'Syarat Fisik Barang'}
                 </h2>
               </div>
-              <p className="text-xs text-neutral-600 leading-relaxed font-medium">
+              <p className="text-xs text-brand-plum/80 leading-relaxed font-medium">
                 {isMY
                   ? 'Products must be in their original condition: unworn, unwashed, scent-free, unaltered, and with original hangtags intact.'
                   : 'Produk harus dalam kondisi asli seperti saat diterima: belum pernah dicuci, tidak berbau parfum/keringat, tidak dimodifikasi/dijahit ulang, serta hangtag label produk masih utuh terpasang.'}
@@ -155,8 +155,8 @@ export function ReturClient(): React.JSX.Element {
           </div>
 
           {/* Acceptable Reasons Section (Domestic) */}
-          <div className="border border-neutral-200/80 p-8 rounded-2xl space-y-6 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
-            <h2 className="font-sans text-brand-plum font-bold uppercase tracking-wider text-xs border-b border-neutral-200/60 pb-3">
+          <div className="border border-brand-plum/10 p-6 sm:p-8 rounded-2xl space-y-6 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
+            <h2 className="font-serif text-brand-plum font-medium text-lg tracking-tight border-b border-brand-plum/10 pb-3">
               {isMY
                 ? 'Eligible Return Categories (Indonesia Domestic Orders)'
                 : 'Kategori Retur Yang Diterima (Pesanan Domestik Indonesia)'}
@@ -207,7 +207,7 @@ export function ReturClient(): React.JSX.Element {
 
           {/* Step-by-step procedure (Domestic) */}
           <div className="space-y-4 pt-4">
-            <h2 className="font-sans text-sm font-bold text-brand-plum uppercase tracking-wider">
+            <h2 className="font-serif text-lg font-medium tracking-tight text-brand-plum">
               {isMY
                 ? 'Self-Service Return Workflow (Domestic Indonesia)'
                 : 'Alur Pengajuan Retur Mandiri (Domestik Indonesia)'}
@@ -216,9 +216,9 @@ export function ReturClient(): React.JSX.Element {
               {steps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="border border-neutral-200/80 p-6 rounded-xl space-y-2 bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300"
+                  className="border border-brand-plum/10 p-6 rounded-2xl space-y-2 bg-brand-gold-soft/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <h3 className="font-sans text-xs font-bold text-brand-plum uppercase tracking-wide">
+                  <h3 className="font-serif text-sm font-medium text-brand-plum">
                     {step.title}
                   </h3>
                   <p className="text-[11px] text-neutral-600 leading-relaxed font-medium">

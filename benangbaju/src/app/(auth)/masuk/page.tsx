@@ -116,7 +116,7 @@ function LoginContent() {
                 priority
               />
             </div>
-            <h2 className="text-xl md:text-2xl font-heading font-semibold uppercase tracking-wider text-brand-plum">
+            <h2 className="text-2xl md:text-[26px] font-serif font-medium tracking-tight text-brand-plum">
               {isMY ? 'Sign In' : 'Masuk Akun'}
             </h2>
             <p className="text-[11px] md:text-xs text-neutral-600 font-sans">

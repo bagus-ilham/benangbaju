@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Collection } from '@/modules/collections/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { PageHero, PageContainer, EmptyState } from '@/shared/components'
+import { PageHero, PageContainer, EmptyState, ScallopEdge } from '@/shared/components'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 import { useMarket } from '@/shared/stores/marketStore'
 
@@ -24,7 +24,7 @@ export function CollectionDetailClient({
   return (
     <div className="bg-brand-cream min-h-screen">
       {collection.image_url ? (
-        <div className="relative h-[35vh] md:h-[50vh] w-full bg-neutral-100 overflow-hidden border-b border-neutral-200">
+        <div className="relative h-[38vh] md:h-[52vh] w-full bg-brand-rose-soft/60 overflow-hidden">
           <Image
             src={getProxiedImageUrl(collection.image_url)}
             alt={collection.name}
@@ -38,21 +38,26 @@ export function CollectionDetailClient({
             aria-hidden
           />
           <div className="absolute inset-0 flex items-end">
-            <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-10 md:pb-14">
-              <span className="inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-gold">
+            <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pb-14 md:pb-20">
+              <span className="inline-block text-lg md:text-xl font-accent font-bold text-brand-gold leading-none">
                 {isMY ? 'Special Collection' : 'Koleksi Khusus'}
               </span>
-              <h1 className="text-2xl md:text-5xl font-sans font-bold uppercase tracking-wider text-brand-cream mt-2 leading-tight">
+              <h1 className="text-3xl md:text-5xl font-serif font-medium tracking-tight text-brand-cream mt-2 leading-tight">
                 {collection.name}
               </h1>
-              <div className="w-12 h-0.5 bg-brand-gold mt-3" />
+              <div className="w-12 h-0.5 bg-brand-gold rounded-full mt-3" />
               {collection.description && (
-                <p className="text-xs text-neutral-300 font-sans max-w-lg leading-relaxed mt-3">
+                <p className="text-xs md:text-sm text-brand-cream/90 font-sans max-w-lg leading-relaxed mt-3">
                   {collection.description}
                 </p>
               )}
             </div>
           </div>
+          <ScallopEdge
+            direction="up"
+            fill="var(--color-brand-cream)"
+            className="absolute left-0 right-0 bottom-0 -mb-px z-20 pointer-events-none"
+          />
         </div>
       ) : (
         <PageHero
@@ -62,7 +67,7 @@ export function CollectionDetailClient({
         />
       )}
 
-      <PageContainer className="py-12 md:py-16 page-content">
+      <PageContainer className="pt-10 pb-20 md:pt-14 md:pb-24 page-content">
         {(() => {
           const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
           return visibleProducts.length === 0 ? (

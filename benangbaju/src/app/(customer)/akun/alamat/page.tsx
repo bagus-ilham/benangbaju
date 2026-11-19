@@ -75,7 +75,7 @@ export default function AlamatPage(): React.JSX.Element {
         title={isMY ? "Saved Addresses" : "Daftar Alamat"}
         subtitle={isMY ? "Manage your delivery addresses for seamless checkout." : "Kelola alamat pengiriman Anda untuk memudahkan proses checkout."}
       />
-      <PageContainer size="lg" className="py-10 page-content">
+      <PageContainer size="lg" className="pt-10 pb-20 md:pb-24 page-content">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-xs uppercase tracking-wider text-neutral-500">
             <Link href="/akun" className="hover:text-brand-plum transition font-sans font-bold">
@@ -114,7 +114,7 @@ export default function AlamatPage(): React.JSX.Element {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 border border-dashed border-neutral-200 bg-neutral-50/50">
+          <div className="text-center py-16 border border-dashed border-brand-plum/15 bg-brand-gold-soft/35 rounded-3xl">
             <p className="text-sm text-neutral-500 mb-4">{isMY ? "You have no saved shipping addresses." : "Anda belum memiliki alamat pengiriman."}</p>
             <Button
               onClick={() => {

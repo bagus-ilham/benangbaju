@@ -545,7 +545,7 @@ export default function CheckoutPage(): React.JSX.Element {
         title="Checkout"
         subtitle={market === "MY" || isMalaysia ? "Complete your delivery address and choose a payment method." : "Lengkapi alamat pengiriman dan pilih metode pembayaran."}
       />
-      <PageContainer size="lg" className="py-10 page-content">
+      <PageContainer size="lg" className="pt-10 pb-20 md:pb-24 page-content">
         <CheckoutProgressBar checkoutStep={checkoutStep} />
 
         {isMalaysia && !isMalaysiaShippingEnabled && (

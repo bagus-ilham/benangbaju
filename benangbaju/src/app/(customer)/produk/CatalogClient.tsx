@@ -139,7 +139,7 @@ export function CatalogClient({
       />
       <PageContainer
         className={cn(
-          'py-10 page-content transition-opacity duration-300',
+          'pt-10 pb-20 md:pb-24 page-content transition-opacity duration-300',
           (isPending || (isMY && isMyLoading)) && 'opacity-50 pointer-events-none'
         )}
       >
@@ -152,10 +152,10 @@ export function CatalogClient({
         )}
 
         {/* Toolbar (Mobile Filter Trigger & Desktop Sort) */}
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-200/60">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-brand-plum/10">
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum md:hidden py-2 cursor-pointer"
+            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum bg-brand-gold-soft/60 border border-brand-gold-stroke/40 px-3.5 py-2 rounded-full md:hidden cursor-pointer"
           >
             <HandDrawnIcon name="sliders" className="h-4 w-4" />
             <span>{isMY ? 'Filter' : 'Filter'}</span>
@@ -166,11 +166,11 @@ export function CatalogClient({
           {/* Sort Selector */}
           <div className="flex items-center space-x-2">
             <span className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-600">
-              Urutkan:
+              {isMY ? 'Sort:' : 'Urutkan:'}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-1 bg-transparent text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors p-1 cursor-pointer">
+                <button className="flex items-center space-x-1.5 bg-white/80 hover:bg-brand-gold-soft/50 border border-brand-plum/15 text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum transition-colors px-3 py-1.5 rounded-full cursor-pointer shadow-2xs">
                   <span>
                     {
                     (() => {
@@ -218,13 +218,13 @@ export function CatalogClient({
 
         {/* Active Filter Chips / Pills Bar */}
         {(categorySlug || searchQuery || (sortBy && sortBy !== 'newest')) && (
-          <div className="flex flex-wrap items-center gap-2 mb-8 p-3 bg-brand-cream border border-neutral-200/80 rounded-xl">
-            <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-neutral-600">
+          <div className="flex flex-wrap items-center gap-2 mb-8 p-3.5 bg-brand-gold-soft/55 border border-brand-gold-stroke/40 rounded-2xl">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum/75">
               {isMY ? 'Active Filters:' : 'Filter Aktif:'}
             </span>
 
             {categorySlug && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-brand-plum/15 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>
                   {isMY ? 'Category: ' : 'Kategori: '}{categories.find((c) => c.slug === categorySlug)?.name || categorySlug}
                 </span>
@@ -239,7 +239,7 @@ export function CatalogClient({
             )}
 
             {searchQuery && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-brand-plum/15 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>{isMY ? 'Search: ' : 'Cari: '}&quot;{searchQuery}&quot;</span>
                 <button
                   onClick={() => updateFilters({ q: null })}
@@ -252,7 +252,7 @@ export function CatalogClient({
             )}
 
             {sortBy && sortBy !== 'newest' && (
-              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-neutral-200 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
+              <span className="inline-flex items-center space-x-1 text-[10px] font-sans bg-brand-cream border border-brand-plum/15 text-brand-plum px-2.5 py-1 rounded-full shadow-2xs">
                 <span>{isMY ? 'Sort: ' : 'Urutan: '}{SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}</span>
                 <button
                   onClick={() => handleSortSelect('newest')}
@@ -266,7 +266,7 @@ export function CatalogClient({
 
             <button
               onClick={handleClearAll}
-              className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-600 hover:text-brand-plum underline underline-offset-2 transition-colors ml-auto"
+              className="text-[10px] font-heading font-semibold uppercase tracking-wider text-brand-plum/70 hover:text-brand-plum underline underline-offset-2 transition-colors ml-auto"
             >
               {isMY ? 'Clear All' : 'Hapus Semua'}
             </button>
