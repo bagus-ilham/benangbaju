@@ -87,7 +87,7 @@ export function MegaMenuNavItem({
       <Link
         href={href}
         className={cn(
-          'text-[11px] font-heading font-semibold uppercase tracking-[0.16em] transition-colors duration-200 flex items-center gap-1 nav-link-underline h-10 whitespace-nowrap',
+          'text-[11px] font-heading font-semibold uppercase tracking-[0.14em] transition-colors duration-200 flex items-center gap-1 nav-link-underline h-14 md:h-[64px] whitespace-nowrap',
           isActive
             ? 'text-brand-plum font-bold'
             : isTransparentHome
@@ -111,7 +111,7 @@ export function MegaMenuNavItem({
             transition={{ duration: 0.2 }}
             className="absolute left-0 top-full w-full bg-brand-cream shadow-xl border-t border-brand-plum/10 z-10 overflow-hidden"
           >
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-8">
               <div className="grid grid-cols-12 gap-8 items-start">
                 {/* Left Column: Link List */}
                 <div className="col-span-3 flex flex-col space-y-4 pr-4 border-r border-neutral-100">

@@ -163,7 +163,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       />
 
       {/* Free Shipping Announcement Bar — positioned below the scalloped header & scrolls away on scroll */}
-      <div className="relative z-20 bg-brand-gold-soft/80 border-b border-brand-plum/10 text-brand-plum text-center pt-5 pb-2 px-4">
+      <div className="relative z-20 bg-brand-gold-soft/80 border-b border-brand-plum/10 text-brand-plum text-center pt-[34px] pb-2.5 px-4">
         <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.15em] leading-snug">
           {market === 'MY' ? (
             <>

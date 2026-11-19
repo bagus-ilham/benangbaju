@@ -64,11 +64,11 @@ export function DesktopNavbar({
         isScrolled && 'shadow-[0_6px_24px_-12px_rgba(45,38,64,0.18)]'
       )}
     >
-      {/* Tier 1: Search / Hamburger (Left) · Sleek Logo (Center) · Utilities (Right) */}
+      {/* Single-Row Header: Logo + Market Switcher (Left) · Nav Links (Center) · Utility Icons (Right) */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 md:h-[58px] gap-2 sm:gap-4">
-          {/* Left Column: Mobile Hamburger + Desktop Search Trigger */}
-          <div className="flex items-center justify-start min-w-0">
+        <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between h-14 md:h-[64px] gap-2 sm:gap-4">
+          {/* Left Column: Mobile Hamburger + Logo + Market Switcher */}
+          <div className="flex items-center justify-start gap-2 sm:gap-3 lg:gap-4 min-w-0">
             <button
               type="button"
               onClick={onOpenMobileMenu}
@@ -78,28 +78,11 @@ export function DesktopNavbar({
               <HandDrawnIcon name="menu" className="h-5 w-5" />
             </button>
 
-            <button
-              type="button"
-              onClick={onToggleSearch}
-              className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 -ml-2 rounded-full text-xs font-sans font-semibold text-brand-plum/80 hover:text-brand-plum hover:bg-brand-plum/5 transition-all duration-200 cursor-pointer group"
-              aria-label={isMY ? 'Search products' : 'Cari produk'}
-              aria-expanded={isSearchOpen}
-            >
-              <HandDrawnIcon
-                name="search"
-                className="h-4 w-4 transition-transform duration-200 group-hover:scale-110"
-              />
-              <span className="tracking-wide">{isMY ? 'Search...' : 'Cari...'}</span>
-            </button>
-          </div>
-
-          {/* Center Column: Sleek Proportional Logo */}
-          <div className="flex items-center justify-center shrink-0 px-2">
             <Link
               href="/"
-              className="select-none transition-opacity duration-200 flex items-center justify-center whitespace-nowrap py-1 text-brand-plum hover:opacity-85"
+              className="select-none transition-opacity duration-200 flex items-center justify-start whitespace-nowrap py-1 text-brand-plum hover:opacity-85 shrink-0"
             >
-              <div className="relative h-7 sm:h-8 md:h-9 w-[96px] sm:w-[116px] md:w-[138px] min-w-[88px] max-w-[38vw]">
+              <div className="relative h-7 sm:h-8 md:h-9 w-[96px] sm:w-[116px] md:w-[128px] min-w-[88px]">
                 <Image
                   src={getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')}
                   fallbackSrc="/image/svg/logo/logo-benangbaju.svg"
@@ -107,22 +90,62 @@ export function DesktopNavbar({
                   fill
                   priority
                   unoptimized
-                  sizes="(max-width: 768px) 116px, 140px"
-                  className="object-contain transition-all duration-300"
+                  sizes="(max-width: 768px) 116px, 130px"
+                  className="object-contain object-left transition-all duration-300"
                 />
               </div>
             </Link>
+
+            <MarketSwitcher variant="compact" isTransparentHome={false} className="shrink-0" />
           </div>
 
-          {/* Right Column: Market Switcher + Action Icons */}
-          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-3">
-            <MarketSwitcher variant="compact" isTransparentHome={false} />
+          {/* Center Column: Desktop Navigation Links */}
+          <nav
+            className="hidden lg:flex items-center justify-center space-x-5 xl:space-x-8"
+            aria-label={isMY ? 'Main navigation' : 'Navigasi utama'}
+          >
+            {navLinks.map((link) => {
+              const isMegaMenu =
+                link.href === '/kategori' ||
+                link.href === '/koleksi' ||
+                link.name.toUpperCase() === 'KATEGORI' ||
+                link.name.toUpperCase() === 'KOLEKSI'
 
-            {/* Mobile/Tablet Search Icon */}
+              if (isMegaMenu) {
+                return (
+                  <MegaMenuNavItem
+                    key={link.name}
+                    label={link.name}
+                    href={link.href}
+                    isActive={pathname === link.href}
+                    isTransparentHome={false}
+                  />
+                )
+              }
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={cn(
+                    'text-[11px] font-heading font-semibold uppercase tracking-[0.14em] transition-colors duration-200 flex items-center nav-link-underline h-14 md:h-[64px] whitespace-nowrap',
+                    pathname === link.href
+                      ? 'text-brand-plum font-bold'
+                      : 'text-brand-plum/75 hover:text-brand-plum'
+                  )}
+                >
+                  {link.name}
+                </Link>
+              )
+            })}
+          </nav>
+
+          {/* Right Column: Search, Wishlist, Shopping Bag, Account */}
+          <div className="flex items-center justify-end space-x-0.5 sm:space-x-1.5 md:space-x-3 shrink-0">
             <button
               type="button"
               onClick={onToggleSearch}
-              className="lg:hidden p-2 relative group cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
+              className="p-2 relative group cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Search products' : 'Cari produk'}
               aria-expanded={isSearchOpen}
             >
@@ -277,59 +300,12 @@ export function DesktopNavbar({
         </div>
       </div>
 
-      {/* Tier 2: Desktop Centered Navigation Menu (inside full-gold header) */}
-      <div className="hidden lg:block border-t border-brand-plum/10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav
-            className="flex items-center justify-center h-10 space-x-8 xl:space-x-10"
-            aria-label={isMY ? 'Main navigation' : 'Navigasi utama'}
-          >
-            {navLinks.map((link) => {
-              const isMegaMenu =
-                link.href === '/kategori' ||
-                link.href === '/koleksi' ||
-                link.name.toUpperCase() === 'KATEGORI' ||
-                link.name.toUpperCase() === 'KOLEKSI'
-
-              if (isMegaMenu) {
-                return (
-                  <MegaMenuNavItem
-                    key={link.name}
-                    label={link.name}
-                    href={link.href}
-                    isActive={pathname === link.href}
-                    isTransparentHome={false}
-                  />
-                )
-              }
-
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={cn(
-                    'text-[11px] font-heading font-semibold uppercase tracking-[0.16em] transition-colors duration-200 flex items-center nav-link-underline h-10 whitespace-nowrap',
-                    pathname === link.href
-                      ? 'text-brand-plum font-bold'
-                      : 'text-brand-plum/75 hover:text-brand-plum'
-                  )}
-                >
-                  {link.name}
-                </Link>
-              )
-            })}
-          </nav>
-        </div>
-      </div>
-
-      {/* Full-width scalloped bottom edge hanging seamlessly beneath navigation menu */}
+      {/* Full-width bold scalloped bottom edge hanging seamlessly beneath header */}
       <ScallopEdge
         direction="down"
         fill="var(--color-brand-gold)"
         stroke="var(--color-brand-gold-stroke)"
         strokeOpacity={0.85}
-        tileWidth={32}
-        height={12}
         className={cn(
           'absolute left-0 right-0 top-full -mt-px z-20 pointer-events-none transition-[filter] duration-300',
           isScrolled && 'drop-shadow-[0_4px_6px_rgba(45,38,64,0.10)]'

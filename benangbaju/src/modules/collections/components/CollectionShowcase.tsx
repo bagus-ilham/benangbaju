@@ -16,14 +16,12 @@ interface CollectionShowcaseProps {
   collection: Collection
   products: ProductListItem[]
   index?: number
-  decorativeSvg?: string
 }
 
 export function CollectionShowcase({
   collection,
   products,
   index = 0,
-  decorativeSvg,
 }: CollectionShowcaseProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
@@ -44,9 +42,6 @@ export function CollectionShowcase({
   const cardContainerClass =
     'bg-brand-cream p-2 border border-brand-plum/10 rounded-2xl shadow-sm'
 
-  const col1LogoMark = decorativeSvg || '/image/svg/decorative/logo-mark.svg'
-  const col2Pattern = decorativeSvg || '/image/svg/decorative/pattern-stitch-card.svg'
-
   const scrollRight = () => {
     if (sliderRef.current) {
       sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' })
@@ -62,54 +57,9 @@ export function CollectionShowcase({
         fill={scallopFill}
         stroke={scallopStroke}
         strokeOpacity={0.4}
-        tileWidth={32}
-        height={12}
         className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
       />
       <div className="relative w-full overflow-hidden">
-      {/* Background Decorative Accents */}
-      {index % 2 === 0 ? (
-        <>
-          {/* Collection 1: Upright Logo Mark */}
-          <div
-            className="absolute -top-16 -right-6 md:-top-24 md:right-4 w-44 md:w-60 lg:w-72 h-[400px] md:h-[520px] lg:h-[640px] opacity-15 md:opacity-20 pointer-events-none select-none z-0"
-            aria-hidden="true"
-          >
-            <Image
-              src={col1LogoMark}
-              alt=""
-              fill
-              unoptimized
-              className="object-contain object-top"
-            />
-          </div>
-
-          {/* Collection 1: Inverted / Flipped Logo Mark */}
-          <div
-            className="absolute -bottom-16 right-40 md:right-72 lg:right-96 w-44 md:w-60 lg:w-72 h-[400px] md:h-[520px] lg:h-[640px] opacity-15 md:opacity-20 pointer-events-none select-none z-0 rotate-180"
-            aria-hidden="true"
-          >
-            <Image
-              src={col1LogoMark}
-              alt=""
-              fill
-              unoptimized
-              className="object-contain object-bottom"
-            />
-          </div>
-        </>
-      ) : (
-        /* Collection 2: Tiled Pattern Stitch Card Background */
-        <div
-          className="absolute inset-0 pointer-events-none select-none z-0 opacity-10 bg-repeat"
-          style={{
-            backgroundImage: `url('${col2Pattern}')`,
-            backgroundSize: '360px 42px',
-          }}
-          aria-hidden="true"
-        />
-      )}
-
       <div
         className={cn(
           'relative z-10 flex flex-col lg:flex-row min-h-[600px] lg:h-[800px]',

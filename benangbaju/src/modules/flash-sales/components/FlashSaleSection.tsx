@@ -193,8 +193,6 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
         fill="var(--color-brand-gold)"
         stroke="var(--color-brand-gold-stroke)"
         strokeOpacity={0.45}
-        tileWidth={32}
-        height={12}
         className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
       />
 

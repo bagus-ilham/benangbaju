@@ -21,8 +21,8 @@ export function ScallopEdge({
   fill,
   stroke,
   strokeOpacity = 0.65,
-  tileWidth = 32,
-  height = 12,
+  tileWidth = 56,
+  height = 24,
   className,
 }: ScallopEdgeProps): React.JSX.Element {
   const rawId = useId()
