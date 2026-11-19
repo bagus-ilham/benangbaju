@@ -63,7 +63,7 @@ export function TrustStrip(): React.JSX.Element {
   const items = market === 'MY' ? TRUST_ITEMS_MY : TRUST_ITEMS_ID
 
   return (
-    <section className="relative bg-brand-gold border-b border-brand-gold/80 py-3.5 md:py-6 overflow-hidden text-brand-plum">
+    <section className="relative bg-brand-gold-soft/85 border-y border-brand-gold-stroke/35 py-3.5 md:py-6 overflow-hidden text-brand-plum">
       {/* Decorative Background Pattern */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none select-none bg-center bg-repeat"

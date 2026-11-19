@@ -141,65 +141,6 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       >
         Lewati ke konten
       </a>
-      {/* Scalloped Announcement Bar */}
-      <div className="relative z-40 bg-brand-cream">
-        <div className="bg-brand-gold text-brand-plum text-center pt-2.5 pb-1.5 px-4">
-          <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.15em] leading-snug">
-            {market === 'MY' ? (
-              <>
-                🇲🇾 Direct Shipping to Malaysia (West &amp; East) from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
-                <Link
-                  href="/produk"
-                  className="underline underline-offset-2 hover:opacity-80 transition-opacity"
-                >
-                  Shop Now
-                </Link>
-              </>
-            ) : (
-              <>
-                Gratis ongkir tanpa minimum belanja &mdash;{' '}
-                <Link
-                  href="/produk"
-                  className="underline underline-offset-2 hover:opacity-80 transition-opacity"
-                >
-                  Belanja Sekarang
-                </Link>
-              </>
-            )}
-          </p>
-        </div>
-        {/* Seamless vector scallop bottom edge */}
-        <div
-          className="w-full h-[12px] overflow-hidden leading-none -mt-px select-none pointer-events-none"
-          aria-hidden="true"
-        >
-          <svg className="w-full h-full block" preserveAspectRatio="none">
-            <defs>
-              <pattern
-                id="benangbaju-header-scallop"
-                x="0"
-                y="0"
-                width="32"
-                height="12"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M0 0 H32 V1 A16 10.5 0 0 1 0 1 Z"
-                  fill="var(--color-brand-gold)"
-                />
-                <path
-                  d="M0 1 A16 10.5 0 0 0 32 1"
-                  fill="none"
-                  stroke="#DFCA7A"
-                  strokeWidth="1"
-                />
-              </pattern>
-            </defs>
-            <rect width="100%" height="12" fill="url(#benangbaju-header-scallop)" />
-          </svg>
-        </div>
-      </div>
-
       <ScrollProgressBar />
 
       <DesktopNavbar
@@ -220,6 +161,33 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
         user={user}
         onLogout={handleLogout}
       />
+
+      {/* Free Shipping Announcement Bar — positioned below the scalloped header & scrolls away on scroll */}
+      <div className="relative z-20 bg-brand-gold-soft/80 border-b border-brand-plum/10 text-brand-plum text-center pt-5 pb-2 px-4">
+        <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.15em] leading-snug">
+          {market === 'MY' ? (
+            <>
+              🇲🇾 Direct Shipping to Malaysia (West &amp; East) from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
+              <Link
+                href="/produk"
+                className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                Shop Now
+              </Link>
+            </>
+          ) : (
+            <>
+              Gratis ongkir tanpa minimum belanja &mdash;{' '}
+              <Link
+                href="/produk"
+                className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                Belanja Sekarang
+              </Link>
+            </>
+          )}
+        </p>
+      </div>
 
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 

@@ -4,14 +4,22 @@
   --font-sans: var(--font-mulish), sans-serif;
   --font-heading: var(--font-mulish), sans-serif;
   --font-accent: var(--font-caveat), cursive;
+  --font-serif: var(--font-fraunces), Georgia, serif;
 
   --color-brand-plum: #2D2640;
   --color-brand-cream: #FAF8F5;
   --color-brand-blue: #94b2b9;
-  --color-brand-gold: #F3E5AB;
+  --color-brand-gold: #F3DF91;
+  --color-brand-gold-soft: #F9F0C7;
+  --color-brand-gold-stroke: #DEC56A;
+  --color-brand-blue-soft: #E8F1F3;
+  --color-brand-blue-stroke: #C6DCE1;
+  --color-brand-blush: #F2E6F3;
+  --color-brand-blush-stroke: #DFC9E2;
+  --color-brand-rose-soft: #F7ECE9;
 
   --color-brand-primary: #FAF8F5;
-  --color-brand-secondary: #F3E5AB;
+  --color-brand-secondary: #F3DF91;
   --color-brand-tertiary: #94b2b9;
   --color-brand-quaternary: #2D2640;
 
@@ -134,7 +142,7 @@
 :root {
   --color-cream: #FAF8F5;
   /* 1. Cream — Primary background & primary theme color */
-  --color-gold: #F3E5AB;
+  --color-gold: #F3DF91;
   /* 2. Warm Sand / Gold — Secondary highlight & accents */
   --color-blue: #94b2b9;
   /* 3. Dusty Blue — Tertiary accent & badge */
@@ -148,6 +156,7 @@
 
   --font-body: var(--font-mulish), sans-serif;
   --font-accent: var(--font-caveat), cursive;
+  --font-serif: var(--font-fraunces), Georgia, serif;
 
   --background: var(--color-cream);
   --foreground: var(--color-plum);

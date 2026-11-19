@@ -48,13 +48,13 @@ export function PageHero({
   return (
     <div className={cn('border-b', variantClasses[variant], className)}>
       <div className="relative overflow-hidden">
-        {/* Decorative orbs */}
+        {/* Decorative pastel orbs */}
         <div
-          className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-gold/30 blur-3xl pointer-events-none"
+          className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blush/70 blur-3xl pointer-events-none"
           aria-hidden
         />
         <div
-          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-brand-gold/20 blur-2xl pointer-events-none"
+          className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-brand-gold/40 blur-2xl pointer-events-none"
           aria-hidden
         />
 
@@ -78,7 +78,7 @@ export function PageHero({
                 </div>
                 <span
                   className={cn(
-                    'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
+                    'inline-block text-base md:text-lg font-accent font-bold leading-none',
                     colors.eyebrow
                   )}
                 >
@@ -88,7 +88,7 @@ export function PageHero({
             )}
             <h1
               className={cn(
-                'text-2xl md:text-[36px] font-sans font-bold leading-tight',
+                'text-3xl md:text-[42px] font-serif font-medium leading-tight tracking-tight',
                 colors.title
               )}
             >

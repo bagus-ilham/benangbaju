@@ -37,7 +37,7 @@ export function MarketSwitcher({
 
   if (!isHydrated) {
     return (
-      <div className={cn('h-8 w-16 bg-neutral-100/50 rounded-full animate-pulse', className)} />
+      <div className={cn('h-7 w-16 bg-brand-cream/60 rounded-full animate-pulse', className)} />
     )
   }
 
@@ -104,8 +104,8 @@ export function MarketSwitcher({
           isTransparentHome
             ? 'bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xs'
             : market === 'MY'
-              ? 'bg-emerald-50 text-emerald-900 border-emerald-300/80 hover:bg-emerald-100 shadow-2xs'
-              : 'bg-neutral-100/80 hover:bg-neutral-200/80 text-brand-plum border-neutral-200/80'
+              ? 'bg-emerald-50/95 text-emerald-900 border-emerald-400/70 hover:bg-emerald-100 shadow-2xs'
+              : 'bg-brand-cream/90 hover:bg-brand-cream text-brand-plum border-brand-plum/15 shadow-2xs'
         )}
         aria-label="Pilih Wilayah / Switch Country Market"
         aria-expanded={isOpen}

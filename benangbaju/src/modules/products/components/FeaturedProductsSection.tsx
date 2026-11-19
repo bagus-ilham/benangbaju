@@ -22,7 +22,7 @@ export function FeaturedProductsSection({
   if (visibleProducts.length === 0) return null
 
   return (
-    <section className="relative bg-brand-cream py-16 md:py-20 border-b border-neutral-200/80 overflow-hidden font-sans">
+    <section className="relative bg-brand-cream py-16 md:py-20 overflow-hidden font-sans">
       {/* Decorative background */}
       <div className="absolute inset-0 gradient-mesh pointer-events-none" aria-hidden />
 

@@ -81,7 +81,7 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
   if (!isMounted || displayProducts.length === 0) return null
 
   return (
-    <section className="bg-brand-cream py-16 font-sans border-t border-neutral-200/60">
+    <section className="bg-brand-cream pt-16 pb-20 md:pb-24 font-sans border-t border-neutral-200/60">
       <PageContainer>
         <SectionHeader eyebrow={isMY ? "Your History" : "Riwayat Anda"} title={isMY ? "Recently Viewed" : "Terakhir Dilihat"} />
 

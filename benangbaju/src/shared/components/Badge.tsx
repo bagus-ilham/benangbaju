@@ -2,7 +2,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'neutral' | 'success' | 'warning' | 'error' | 'brand' | 'blue' | 'sale' | 'gold'
+  variant?: 'neutral' | 'success' | 'warning' | 'error' | 'brand' | 'blue' | 'sale' | 'gold' | 'blush'
   size?: 'sm' | 'md'
   isPlayful?: boolean
 }
@@ -28,12 +28,15 @@ export function Badge({
           'bg-amber-100/80 text-amber-900 border-amber-200': variant === 'warning',
           'bg-red-100/80 text-red-800 border-red-200': variant === 'error',
           // Brand / Dusty Blue: MUST use Deep Plum text per §4
-          'bg-brand-blue text-brand-plum shadow-sm shadow-brand-blue/30 border border-brand-blue/30':
+          'bg-brand-blue text-brand-plum shadow-xs border border-brand-blue/40':
             variant === 'brand' || variant === 'blue',
-          'bg-red-600 text-white shadow-sm shadow-red-600/20': variant === 'sale',
-          // Gold / Warm Sand: Deep Plum text
-          'bg-brand-gold text-brand-plum border border-amber-300/50 shadow-sm':
+          'bg-[#E85D75] text-white shadow-sm shadow-[#E85D75]/25': variant === 'sale',
+          // Gold / Warm Butter: Deep Plum text
+          'bg-brand-gold text-brand-plum border border-brand-gold-stroke/60 shadow-xs':
             variant === 'gold',
+          // Soft Lilac Blush: Deep Plum text
+          'bg-brand-blush text-brand-plum border border-brand-blush-stroke/60 shadow-xs':
+            variant === 'blush',
 
           // Sizes
           'px-2 py-0.5': size === 'sm',

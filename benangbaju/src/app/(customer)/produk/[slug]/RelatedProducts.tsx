@@ -3,7 +3,7 @@
 import React from 'react'
 import { ProductListItem } from '@/modules/products/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { SectionHeader } from '@/shared/components'
+import { PageContainer, ScallopEdge, SectionHeader } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { useMarket } from '@/shared/stores/marketStore'
 
@@ -33,32 +33,44 @@ export function RelatedProducts({ products }: RelatedProductsProps): React.JSX.E
   }
 
   return (
-    <div className="py-12 border-t border-neutral-100 space-y-8">
-      <SectionHeader
-        eyebrow={isMY ? "Our Recommendations" : "Rekomendasi Kami"}
-        title={isMY ? "Related Products" : "Produk Serupa"}
-        showDivider={true}
-        align="center"
-        className="mb-8"
+    <section className="relative bg-brand-blush pt-14 pb-20 md:pt-16 md:pb-24 mt-4">
+      <ScallopEdge
+        direction="up"
+        fill="var(--color-brand-blush)"
+        stroke="var(--color-brand-blush-stroke)"
+        strokeOpacity={0.45}
+        tileWidth={32}
+        height={12}
+        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-10"
       />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
-        className="flex md:grid md:grid-cols-4 gap-x-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory w-full"
-      >
-        {visibleProducts.slice(0, 4).map((product) => (
-          <motion.div
-            key={product.id}
-            variants={itemVariants}
-            className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start"
-          >
-            <ProductCard product={product} />
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+      <PageContainer className="space-y-8">
+        <SectionHeader
+          eyebrow={isMY ? 'Curated For You' : 'Rekomendasi Kami'}
+          title={isMY ? 'You May Also Like' : 'Produk Serupa'}
+          showDivider={true}
+          align="center"
+          className="mb-8"
+        />
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          className="flex md:grid md:grid-cols-4 gap-x-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory w-full"
+        >
+          {visibleProducts.slice(0, 4).map((product) => (
+            <motion.div
+              key={product.id}
+              variants={itemVariants}
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start"
+            >
+              <ProductCard product={product} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </PageContainer>
+    </section>
   )
 }

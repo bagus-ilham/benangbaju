@@ -45,5 +45,6 @@ export { Pagination } from './Pagination'
 export { StatusBadge, OrderStatusBadge, ReviewStatusBadge } from './StatusBadge'
 export { AdminSearchInput } from './AdminSearchInput'
 export { MarketSwitcher } from './MarketSwitcher'
+export { ScallopEdge, type ScallopEdgeProps } from './ScallopEdge'
 
 

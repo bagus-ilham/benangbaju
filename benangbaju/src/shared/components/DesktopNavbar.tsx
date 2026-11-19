@@ -1,7 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SmartLink as Link, SmartImage as Image, HandDrawnIcon, MarketSwitcher } from '@/shared/components'
+import {
+  SmartLink as Link,
+  SmartImage as Image,
+  HandDrawnIcon,
+  MarketSwitcher,
+  ScallopEdge,
+} from '@/shared/components'
 import { motion } from 'framer-motion'
 import type { User } from '@supabase/supabase-js'
 import { cn } from '@/lib/utils'
@@ -50,84 +56,50 @@ export function DesktopNavbar({
   const market = useMarket()
   const isMY = market === 'MY'
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const isTransparentHome = false
 
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 w-full transition-all duration-300 border-b',
-        isScrolled
-          ? 'bg-brand-cream/95 backdrop-blur-md border-neutral-200/80 shadow-xs'
-          : 'bg-brand-cream border-neutral-200/60'
+        'sticky top-0 z-40 w-full bg-brand-gold transition-shadow duration-300',
+        isScrolled && 'shadow-[0_6px_24px_-12px_rgba(45,38,64,0.18)]'
       )}
     >
+      {/* Tier 1: Search / Hamburger (Left) · Sleek Logo (Center) · Utilities (Right) */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 md:h-[72px] gap-2 sm:gap-4">
-          {/* Left Column: Navigation Links / Hamburger */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-14 md:h-[58px] gap-2 sm:gap-4">
+          {/* Left Column: Mobile Hamburger + Desktop Search Trigger */}
           <div className="flex items-center justify-start min-w-0">
             <button
               type="button"
               onClick={onOpenMobileMenu}
-              className={cn(
-                'lg:hidden p-2 -ml-2 shrink-0 cursor-pointer transition-colors duration-200',
-                isTransparentHome
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-600 hover:text-brand-plum'
-              )}
+              className="lg:hidden p-2 -ml-2 shrink-0 cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Open menu' : 'Buka menu'}
             >
               <HandDrawnIcon name="menu" className="h-5 w-5" />
             </button>
 
-            <nav className="hidden lg:flex items-center space-x-4 xl:space-x-7">
-              {navLinks.map((link) => {
-                const isMegaMenu =
-                  link.href === '/kategori' || link.href === '/koleksi' || link.name.toUpperCase() === 'KATEGORI' || link.name.toUpperCase() === 'KOLEKSI'
-
-                if (isMegaMenu) {
-                  return (
-                    <MegaMenuNavItem
-                      key={link.name}
-                      label={link.name}
-                      href={link.href}
-                      isActive={pathname === link.href}
-                      isTransparentHome={isTransparentHome}
-                    />
-                  )
-                }
-
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={cn(
-                      'text-[10px] xl:text-[11px] font-heading font-medium uppercase tracking-widest transition-colors duration-200 flex items-center nav-link-underline h-16 md:h-[72px] whitespace-nowrap',
-                      pathname === link.href
-                        ? 'text-brand-plum font-bold'
-                        : isTransparentHome
-                          ? 'text-white/90 hover:text-white'
-                          : 'text-neutral-600 hover:text-brand-plum'
-                    )}
-                  >
-                    {link.name}
-                  </Link>
-                )
-              })}
-            </nav>
+            <button
+              type="button"
+              onClick={onToggleSearch}
+              className="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 -ml-2 rounded-full text-xs font-sans font-semibold text-brand-plum/80 hover:text-brand-plum hover:bg-brand-plum/5 transition-all duration-200 cursor-pointer group"
+              aria-label={isMY ? 'Search products' : 'Cari produk'}
+              aria-expanded={isSearchOpen}
+            >
+              <HandDrawnIcon
+                name="search"
+                className="h-4 w-4 transition-transform duration-200 group-hover:scale-110"
+              />
+              <span className="tracking-wide">{isMY ? 'Search...' : 'Cari...'}</span>
+            </button>
           </div>
 
-          {/* Center Column: Logo */}
-          <div className="flex items-center justify-center shrink-0 px-3 py-1">
+          {/* Center Column: Sleek Proportional Logo */}
+          <div className="flex items-center justify-center shrink-0 px-2">
             <Link
               href="/"
-              className={cn(
-                'select-none transition-colors duration-300 flex items-center justify-center whitespace-nowrap p-1',
-                isTransparentHome
-                  ? 'text-white hover:text-neutral-200'
-                  : 'text-brand-plum hover:text-brand-blue'
-              )}
+              className="select-none transition-opacity duration-200 flex items-center justify-center whitespace-nowrap py-1 text-brand-plum hover:opacity-85"
             >
-              <div className="relative h-8 sm:h-9 md:h-11 lg:h-12 w-[104px] sm:w-[130px] md:w-[155px] lg:w-[180px] min-w-[96px] max-w-[40vw]">
+              <div className="relative h-7 sm:h-8 md:h-9 w-[96px] sm:w-[116px] md:w-[138px] min-w-[88px] max-w-[38vw]">
                 <Image
                   src={getProxiedImageUrl(logoUrl || '/image/svg/logo/logo-benangbaju.svg')}
                   fallbackSrc="/image/svg/logo/logo-benangbaju.svg"
@@ -135,51 +107,47 @@ export function DesktopNavbar({
                   fill
                   priority
                   unoptimized
-                  sizes="(max-width: 768px) 130px, 180px"
-                  className={cn(
-                    'object-contain transition-all duration-300',
-                    isTransparentHome && 'brightness-0 invert'
-                  )}
+                  sizes="(max-width: 768px) 116px, 140px"
+                  className="object-contain transition-all duration-300"
                 />
               </div>
             </Link>
           </div>
 
-          {/* Right Column: Action Icons */}
-          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4">
-            <MarketSwitcher variant="compact" isTransparentHome={isTransparentHome} />
+          {/* Right Column: Market Switcher + Action Icons */}
+          <div className="flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-3">
+            <MarketSwitcher variant="compact" isTransparentHome={false} />
+
+            {/* Mobile/Tablet Search Icon */}
             <button
+              type="button"
               onClick={onToggleSearch}
-              className={cn(
-                'p-2 relative group cursor-pointer transition-colors duration-200',
-                isTransparentHome
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-600 hover:text-brand-plum'
-              )}
+              className="lg:hidden p-2 relative group cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Search products' : 'Cari produk'}
               aria-expanded={isSearchOpen}
             >
-              <HandDrawnIcon name="search" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+              <HandDrawnIcon
+                name="search"
+                className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110"
+              />
             </button>
 
             <Link
               href="/wishlist"
-              className={cn(
-                'p-2 relative group hidden sm:inline-flex cursor-pointer transition-colors duration-200',
-                isTransparentHome
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-600 hover:text-brand-plum'
-              )}
+              className="p-2 relative group hidden sm:inline-flex cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
               aria-label="Wishlist"
             >
-              <HandDrawnIcon name={wishlistCount > 0 ? 'heart-filled' : 'heart'} className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+              <HandDrawnIcon
+                name={wishlistCount > 0 ? 'heart-filled' : 'heart'}
+                className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110"
+              />
               {isMounted && wishlistCount > 0 && (
                 <motion.span
                   key={`wishlist-badge-${wishlistCount}`}
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(243,229,171,0.5)]"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-plum text-brand-gold text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
                 >
                   {wishlistCount}
                 </motion.span>
@@ -187,13 +155,9 @@ export function DesktopNavbar({
             </Link>
 
             <button
+              type="button"
               onClick={onOpenCart}
-              className={cn(
-                'p-2 relative group cursor-pointer transition-colors duration-200',
-                isTransparentHome
-                  ? 'text-white/90 hover:text-white'
-                  : 'text-neutral-600 hover:text-brand-plum'
-              )}
+              className="p-2 relative group cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Shopping Bag' : 'Keranjang'}
             >
               <motion.div
@@ -201,7 +165,10 @@ export function DesktopNavbar({
                 transition={{ duration: 0.45 }}
                 className="relative"
               >
-                <HandDrawnIcon name="shopping-bag" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+                <HandDrawnIcon
+                  name="shopping-bag"
+                  className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110"
+                />
               </motion.div>
               {isMounted && totalQuantity > 0 && (
                 <motion.span
@@ -209,29 +176,28 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-sm shadow-[0_0_10px_rgba(243,229,171,0.5)]"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-plum text-brand-gold text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
                 >
                   {totalQuantity}
                 </motion.span>
               )}
             </button>
 
-            <div className="relative">
+            <div className="relative z-30">
               {isMounted && isAuthenticated ? (
                 <div className="hidden sm:block">
                   <button
+                    type="button"
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className={cn(
-                      'p-2 relative group flex items-center cursor-pointer transition-colors duration-200',
-                      isTransparentHome
-                        ? 'text-white/90 hover:text-white'
-                        : 'text-neutral-600 hover:text-brand-plum'
-                    )}
+                    className="p-2 relative group flex items-center cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
                     aria-label={isMY ? 'User menu' : 'Menu pengguna'}
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
                   >
-                    <HandDrawnIcon name="user" className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110" />
+                    <HandDrawnIcon
+                      name="user"
+                      className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-200 group-hover:scale-110"
+                    />
                   </button>
 
                   {isUserMenuOpen && (
@@ -245,7 +211,7 @@ export function DesktopNavbar({
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.98 }}
                         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute right-0 mt-3 w-56 bg-brand-cream border border-neutral-200/80 rounded-xl shadow-[0_10px_40px_-10px_rgba(45,38,64,0.1)] py-1 z-20 overflow-hidden font-sans"
+                        className="absolute right-0 mt-3 w-56 bg-brand-cream border border-neutral-200/80 rounded-xl shadow-[0_10px_40px_-10px_rgba(45,38,64,0.14)] py-1 z-50 overflow-hidden font-sans"
                       >
                         <div className="px-4 py-3 border-b border-neutral-200/60 bg-brand-cream">
                           <p className="text-[10px] text-neutral-400 font-sans font-bold uppercase tracking-wider mb-0.5">
@@ -266,7 +232,8 @@ export function DesktopNavbar({
                             <span>{isMY ? 'My Account' : 'Akun Saya'}</span>
                           </Link>
 
-                          {(profile?.role?.toLowerCase() === 'admin' || profile?.role?.toLowerCase() === 'staff') && (
+                          {(profile?.role?.toLowerCase() === 'admin' ||
+                            profile?.role?.toLowerCase() === 'staff') && (
                             <Link
                               href="/admin"
                               onClick={() => setIsUserMenuOpen(false)}
@@ -282,6 +249,7 @@ export function DesktopNavbar({
 
                         <div className="p-1.5 border-t border-neutral-200/60">
                           <button
+                            type="button"
                             onClick={() => {
                               setIsUserMenuOpen(false)
                               onLogout()
@@ -299,12 +267,7 @@ export function DesktopNavbar({
               ) : (
                 <Link
                   href="/masuk"
-                  className={cn(
-                    'text-[10px] font-heading font-medium uppercase tracking-widest py-2 hidden sm:block cursor-pointer transition-colors duration-200 nav-link-underline',
-                    isTransparentHome
-                      ? 'text-white/90 hover:text-white'
-                      : 'text-neutral-600 hover:text-brand-plum'
-                  )}
+                  className="text-[11px] font-heading font-semibold uppercase tracking-widest py-2 px-1 hidden sm:block cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200 nav-link-underline"
                 >
                   {isMY ? 'Sign In' : 'Masuk'}
                 </Link>
@@ -313,6 +276,65 @@ export function DesktopNavbar({
           </div>
         </div>
       </div>
+
+      {/* Tier 2: Desktop Centered Navigation Menu (inside full-gold header) */}
+      <div className="hidden lg:block border-t border-brand-plum/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <nav
+            className="flex items-center justify-center h-10 space-x-8 xl:space-x-10"
+            aria-label={isMY ? 'Main navigation' : 'Navigasi utama'}
+          >
+            {navLinks.map((link) => {
+              const isMegaMenu =
+                link.href === '/kategori' ||
+                link.href === '/koleksi' ||
+                link.name.toUpperCase() === 'KATEGORI' ||
+                link.name.toUpperCase() === 'KOLEKSI'
+
+              if (isMegaMenu) {
+                return (
+                  <MegaMenuNavItem
+                    key={link.name}
+                    label={link.name}
+                    href={link.href}
+                    isActive={pathname === link.href}
+                    isTransparentHome={false}
+                  />
+                )
+              }
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={cn(
+                    'text-[11px] font-heading font-semibold uppercase tracking-[0.16em] transition-colors duration-200 flex items-center nav-link-underline h-10 whitespace-nowrap',
+                    pathname === link.href
+                      ? 'text-brand-plum font-bold'
+                      : 'text-brand-plum/75 hover:text-brand-plum'
+                  )}
+                >
+                  {link.name}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
+      </div>
+
+      {/* Full-width scalloped bottom edge hanging seamlessly beneath navigation menu */}
+      <ScallopEdge
+        direction="down"
+        fill="var(--color-brand-gold)"
+        stroke="var(--color-brand-gold-stroke)"
+        strokeOpacity={0.85}
+        tileWidth={32}
+        height={12}
+        className={cn(
+          'absolute left-0 right-0 top-full -mt-px z-20 pointer-events-none transition-[filter] duration-300',
+          isScrolled && 'drop-shadow-[0_4px_6px_rgba(45,38,64,0.10)]'
+        )}
+      />
     </header>
   )
 }

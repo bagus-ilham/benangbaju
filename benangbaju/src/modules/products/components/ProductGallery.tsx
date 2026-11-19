@@ -142,7 +142,7 @@ export function ProductGallery({
   return (
     <div className="flex flex-col w-full group">
       {/* Mobile Swipe Gallery (Native Scroll Snap) */}
-      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-neutral-50 border border-neutral-100 rounded-2xl">
+      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-brand-rose-soft/75 border border-brand-plum/10 rounded-2xl">
         <div
           id="mobile-product-gallery"
           className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
@@ -201,7 +201,7 @@ export function ProductGallery({
 
       {/* Desktop Focus Image (Framer Motion + Lightbox Trigger) */}
       <div
-        className="hidden md:block relative aspect-[3/4] w-full bg-neutral-50 overflow-hidden border border-neutral-100 cursor-zoom-in rounded-2xl shadow-sm"
+        className="hidden md:block relative aspect-[3/4] w-full bg-brand-rose-soft/75 overflow-hidden border border-brand-plum/10 cursor-zoom-in rounded-2xl shadow-sm"
         onMouseEnter={() => {
           setIsZoomed(true)
         }}
@@ -387,10 +387,10 @@ export function ProductThumbnails({
             key={img.id}
             onClick={() => setActiveImage(img.url)}
             className={cn(
-              'relative aspect-[3/4] w-20 flex-shrink-0 bg-neutral-50 border transition-all duration-300 rounded-xl overflow-hidden',
+              'relative aspect-[3/4] w-20 flex-shrink-0 bg-brand-rose-soft/60 border transition-all duration-300 rounded-xl overflow-hidden',
               activeImage === img.url
-                ? 'border-amber-300 opacity-100 shadow-xs ring-2 ring-brand-gold/50'
-                : 'border-neutral-200 opacity-60 hover:opacity-100'
+                ? 'border-brand-gold-stroke opacity-100 shadow-xs ring-2 ring-brand-gold/70'
+                : 'border-brand-plum/15 opacity-65 hover:opacity-100'
             )}
           >
             <Image

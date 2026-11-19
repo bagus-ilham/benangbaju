@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/modules/flash-sales/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
-import { Button, PageContainer, SectionHeader } from '@/shared/components'
+import { Button, PageContainer, ScallopEdge, SectionHeader } from '@/shared/components'
 import { useMarket } from '@/shared/stores/marketStore'
 
 interface FlashSaleSectionProps {
@@ -187,7 +187,16 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
   const displayProducts = isFullPage ? visibleProducts : visibleProducts.slice(0, 4)
 
   return (
-    <section className="relative bg-brand-gold py-16 md:py-20 border-b border-brand-gold/80 overflow-hidden text-brand-plum">
+    <section className="relative bg-brand-gold py-16 md:py-20 border-b border-brand-gold-stroke/40 text-brand-plum">
+      <ScallopEdge
+        direction="up"
+        fill="var(--color-brand-gold)"
+        stroke="var(--color-brand-gold-stroke)"
+        strokeOpacity={0.45}
+        tileWidth={32}
+        height={12}
+        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
+      />
 
       <PageContainer className="relative z-20">
         <SectionHeader

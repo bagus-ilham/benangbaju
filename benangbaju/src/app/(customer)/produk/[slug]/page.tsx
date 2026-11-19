@@ -5,7 +5,7 @@ import { createStaticClient } from '@/lib/supabase/static'
 import { productService } from '@/modules/products/product.service'
 import { ProductDetailClient } from './ProductDetailClient'
 import { RelatedProducts } from './RelatedProducts'
-import { ProductGridSkeleton } from '@/shared/components'
+import { PageContainer, ProductGridSkeleton } from '@/shared/components'
 import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/siteUrl'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -122,10 +122,12 @@ export default async function ProductDetailPage({
     <Suspense
       key="related-products-suspense"
       fallback={
-        <div className="py-12 border-t border-neutral-100">
-          <div className="h-8 w-48 bg-neutral-100 mx-auto mb-8 skeleton-shimmer rounded-md" />
-          <ProductGridSkeleton count={4} />
-        </div>
+        <section className="bg-brand-blush py-16">
+          <PageContainer>
+            <div className="h-8 w-48 bg-brand-cream/70 mx-auto mb-8 skeleton-shimmer rounded-md" />
+            <ProductGridSkeleton count={4} />
+          </PageContainer>
+        </section>
       }
     >
       <RelatedProductsServer productId={product.id} categoryId={product.category_id} />

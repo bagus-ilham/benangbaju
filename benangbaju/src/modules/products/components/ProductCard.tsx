@@ -72,14 +72,14 @@ export const ProductCard = React.memo(function ProductCard({
   return (
     <div
       className={cn(
-        'group relative flex flex-col w-full text-left bg-brand-cream transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.08)] rounded-2xl overflow-hidden border border-neutral-200/60 card-stitch-hover',
+        'group relative flex flex-col w-full text-left bg-brand-cream transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.10)] rounded-2xl overflow-hidden border border-brand-plum/10 card-stitch-hover',
         className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Area */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 transition-colors duration-300">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-rose-soft/65 transition-colors duration-300">
         <Link
           href={productUrl}
           prefetch={true}
@@ -94,7 +94,7 @@ export const ProductCard = React.memo(function ProductCard({
             <div
               className={cn(
                 'relative w-full h-full',
-                !imageLoaded && 'animate-pulse bg-neutral-200'
+                !imageLoaded && 'animate-pulse bg-brand-rose-soft'
               )}
             >
               {/* Primary Image */}
@@ -205,9 +205,9 @@ export const ProductCard = React.memo(function ProductCard({
           </span>
         )}
 
-        {/* Product Title (H3 scale: 16px/600 Mulish) */}
+        {/* Product Title (Soft Editorial Serif) */}
         <Link href={productUrl} prefetch={true} className="block">
-          <span className="block text-sm md:text-base font-sans font-semibold text-brand-plum hover:text-brand-blue transition-colors truncate">
+          <span className="block text-[15px] md:text-base font-serif font-medium text-brand-plum hover:text-brand-blue transition-colors truncate">
             {product.name}
           </span>
         </Link>

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Collection } from '@/modules/collections/types'
 import { ProductListItem } from '@/modules/products/types'
-import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon, ScallopEdge } from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -32,15 +32,17 @@ export function CollectionShowcase({
 
   if (isMY && visibleProducts.length === 0) return null
   const isReversed = index % 2 === 1
-  const bgColor = isReversed ? 'bg-brand-gold/60' : 'bg-brand-blue/50'
+  const bgColor = isReversed ? 'bg-brand-blue-soft' : 'bg-brand-blush'
+  const scallopFill = isReversed ? 'var(--color-brand-blue-soft)' : 'var(--color-brand-blush)'
+  const scallopStroke = isReversed ? 'var(--color-brand-blue-stroke)' : 'var(--color-brand-blush-stroke)'
   const textColor = 'text-brand-plum'
   const textMuted = 'text-brand-plum/80'
-  const borderColor = isReversed ? 'border-brand-blue' : 'border-brand-gold'
+  const borderColor = 'border-brand-plum/40'
   const btnBg = isReversed ? 'bg-brand-plum' : 'bg-brand-gold'
   const btnText = isReversed ? 'text-brand-cream font-bold' : 'text-brand-plum font-bold'
-  const btnHover = isReversed ? 'hover:bg-brand-plum/90' : 'hover:bg-amber-200'
+  const btnHover = isReversed ? 'hover:bg-brand-plum/90' : 'hover:bg-brand-gold-soft'
   const cardContainerClass =
-    'bg-brand-cream p-2 border border-neutral-200/80 rounded-2xl shadow-sm'
+    'bg-brand-cream p-2 border border-brand-plum/10 rounded-2xl shadow-sm'
 
   const col1LogoMark = decorativeSvg || '/image/svg/decorative/logo-mark.svg'
   const col2Pattern = decorativeSvg || '/image/svg/decorative/pattern-stitch-card.svg'
@@ -53,8 +55,18 @@ export function CollectionShowcase({
 
   return (
     <section
-      className={cn('relative w-full overflow-hidden transition-colors duration-500', bgColor)}
+      className={cn('relative w-full transition-colors duration-500', bgColor)}
     >
+      <ScallopEdge
+        direction="up"
+        fill={scallopFill}
+        stroke={scallopStroke}
+        strokeOpacity={0.4}
+        tileWidth={32}
+        height={12}
+        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
+      />
+      <div className="relative w-full overflow-hidden">
       {/* Background Decorative Accents */}
       {index % 2 === 0 ? (
         <>
@@ -140,7 +152,7 @@ export function CollectionShowcase({
           >
             <h2
               className={cn(
-                'text-3xl md:text-4xl lg:text-5xl font-sans font-bold mb-6 transition-colors duration-500',
+                'text-3xl md:text-4xl lg:text-5xl font-serif font-medium tracking-tight mb-6 transition-colors duration-500',
                 textColor
               )}
             >
@@ -236,6 +248,7 @@ export function CollectionShowcase({
             )}
           </div>
         </div>
+      </div>
       </div>
     </section>
   )

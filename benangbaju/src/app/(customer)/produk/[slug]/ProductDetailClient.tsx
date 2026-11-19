@@ -322,8 +322,8 @@ export function ProductDetailClient({
   const isUnavailableInMY = isMY && variants.length === 0
 
   return (
-    <div className="bg-brand-cream min-h-screen pb-24 md:pb-10 font-sans">
-      <PageContainer className="py-10 md:py-12 page-content">
+    <div className="bg-brand-cream min-h-screen font-sans">
+      <PageContainer className="pt-10 pb-16 md:pt-12 md:pb-20 page-content">
         {/* Breadcrumbs */}
         <motion.nav
           initial={{ opacity: 0, y: -10 }}
@@ -452,10 +452,10 @@ export function ProductDetailClient({
 
         {/* Reviews Section at the bottom */}
         <ReviewSection productId={effectiveProduct.id} ratingSummary={effectiveProduct.product_rating_summary} />
-
-        {/* Related Products Section (Loaded asynchronously via Server Component) */}
-        {relatedProductsNode}
       </PageContainer>
+
+      {/* Related Products Section — full-bleed pastel scalloped band */}
+      {relatedProductsNode}
 
       <ProductStickyAction
         showStickyBar={showStickyBar}

@@ -34,13 +34,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           'inline-flex items-center justify-center font-sans font-bold tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] active:translate-y-0.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:ring-offset-1 select-none cursor-pointer',
           {
             // Variants — New Palette Hierarchy: 1. Cream, 2. Kuning (Gold), 3. Biru (Accent), 4. Plum
-            'bg-brand-cream text-brand-plum hover:bg-[#eae6df] border border-neutral-300 shadow-sm hover:shadow-md':
+            'bg-brand-cream text-brand-plum hover:bg-[#f2ede4] hover:-translate-y-0.5 border border-brand-plum/20 shadow-sm hover:shadow-md':
               variant === 'primary',
-            'bg-brand-gold text-brand-plum hover:bg-[#e8d693] border border-transparent shadow-[0_4px_14px_rgba(243,229,171,0.4)] hover:shadow-[0_6px_20px_rgba(243,229,171,0.5)]':
+            'bg-brand-gold text-brand-plum hover:bg-[#ebd174] hover:-translate-y-0.5 border border-brand-gold-stroke/40 shadow-[0_4px_14px_rgba(243,223,145,0.45)] hover:shadow-[0_6px_20px_rgba(243,223,145,0.55)]':
               variant === 'secondary',
-            'bg-brand-blue text-brand-plum hover:bg-[#82a4ab] border border-transparent shadow-[0_4px_14px_rgba(148,178,185,0.3)] hover:shadow-[0_6px_20px_rgba(148,178,185,0.4)]':
+            'bg-brand-blue text-brand-plum hover:bg-[#82a4ab] hover:-translate-y-0.5 border border-transparent shadow-[0_4px_14px_rgba(148,178,185,0.3)] hover:shadow-[0_6px_20px_rgba(148,178,185,0.4)]':
               variant === 'accent',
-            'bg-brand-cream text-brand-plum hover:bg-[#eae6df] border border-brand-plum/40 hover:border-brand-plum shadow-sm hover:shadow-md':
+            'bg-brand-cream text-brand-plum hover:bg-[#f2ede4] hover:-translate-y-0.5 border border-brand-plum/40 hover:border-brand-plum shadow-sm hover:shadow-md':
               variant === 'outline',
             'bg-transparent text-brand-plum hover:bg-brand-cream/80 border border-transparent':
               variant === 'ghost',

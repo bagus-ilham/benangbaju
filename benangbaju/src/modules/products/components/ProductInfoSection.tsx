@@ -108,11 +108,11 @@ export function ProductInfoSection({
       {/* Title, Category & Price */}
       <motion.div variants={itemVariants} className="space-y-2 font-sans">
         {product.categories && (
-          <span className="text-[10px] uppercase tracking-[0.25em] font-sans font-bold text-brand-plum">
+          <span className="inline-block text-[11px] uppercase tracking-[0.22em] font-sans font-bold text-brand-plum/70">
             {product.categories.name}
           </span>
         )}
-        <h1 className="text-xl lg:text-3xl font-sans font-bold uppercase tracking-wider text-brand-plum leading-tight">
+        <h1 className="text-2xl lg:text-4xl font-serif font-medium tracking-tight text-brand-plum leading-tight">
           {product.name}
         </h1>
 
@@ -360,7 +360,7 @@ export function ProductInfoSection({
       {/* Info Badges (Shipping / Return / Guarantee) */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-3 gap-2 border border-neutral-100 py-4 px-2 bg-brand-cream/30 rounded-2xl"
+        className="grid grid-cols-3 gap-2 border border-brand-plum/10 py-4 px-2 bg-brand-gold-soft/45 rounded-2xl"
       >
         <motion.div
           whileHover={{ y: -3 }}
