@@ -60,19 +60,33 @@ export function DesktopNavbar({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 w-full bg-brand-gold transition-shadow duration-300',
-        isScrolled && 'shadow-[0_6px_24px_-12px_rgba(45,38,64,0.18)]'
+        'sticky top-0 z-40 w-full bg-brand-cream transition-all duration-300 border-b',
+        isScrolled
+          ? 'bg-brand-cream/95 backdrop-blur-md border-neutral-200/80 shadow-[0_6px_24px_-12px_rgba(45,38,64,0.14)]'
+          : 'border-neutral-200/60'
       )}
     >
-      {/* Single-Row Header: Logo + Market Switcher (Left) · Nav Links (Center) · Utility Icons (Right) */}
+      {/* Top Dusty Blue Scalloped Canopy — stays sticky together with the 1-line navbar */}
+      <div className="w-full select-none pointer-events-none" aria-hidden="true">
+        <div className="w-full h-4 sm:h-5 bg-brand-blue" />
+        <ScallopEdge
+          direction="down"
+          fill="var(--color-brand-blue)"
+          tileWidth={72}
+          height={28}
+          className="-mt-px"
+        />
+      </div>
+
+      {/* Single-Row Navigation Bar: Logo + Market Switcher (Left) · Nav Links (Center) · Utility Icons (Right) */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between h-14 md:h-[64px] gap-2 sm:gap-4">
+        <div className="flex lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between h-14 md:h-[60px] gap-2 sm:gap-4">
           {/* Left Column: Mobile Hamburger + Logo + Market Switcher */}
           <div className="flex items-center justify-start gap-2 sm:gap-3 lg:gap-4 min-w-0">
             <button
               type="button"
               onClick={onOpenMobileMenu}
-              className="lg:hidden p-2 -ml-2 shrink-0 cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
+              className="lg:hidden p-2 -ml-2 shrink-0 cursor-pointer text-neutral-600 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Open menu' : 'Buka menu'}
             >
               <HandDrawnIcon name="menu" className="h-5 w-5" />
@@ -128,10 +142,10 @@ export function DesktopNavbar({
                   key={link.name}
                   href={link.href}
                   className={cn(
-                    'text-[11px] font-heading font-semibold uppercase tracking-[0.14em] transition-colors duration-200 flex items-center nav-link-underline h-14 md:h-[64px] whitespace-nowrap',
+                    'text-[11px] font-heading font-semibold uppercase tracking-[0.14em] transition-colors duration-200 flex items-center nav-link-underline h-14 md:h-[60px] whitespace-nowrap',
                     pathname === link.href
                       ? 'text-brand-plum font-bold'
-                      : 'text-brand-plum/75 hover:text-brand-plum'
+                      : 'text-neutral-600 hover:text-brand-plum'
                   )}
                 >
                   {link.name}
@@ -145,7 +159,7 @@ export function DesktopNavbar({
             <button
               type="button"
               onClick={onToggleSearch}
-              className="p-2 relative group cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
+              className="p-2 relative group cursor-pointer text-neutral-600 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Search products' : 'Cari produk'}
               aria-expanded={isSearchOpen}
             >
@@ -157,7 +171,7 @@ export function DesktopNavbar({
 
             <Link
               href="/wishlist"
-              className="p-2 relative group hidden sm:inline-flex cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
+              className="p-2 relative group hidden sm:inline-flex cursor-pointer text-neutral-600 hover:text-brand-plum transition-colors duration-200"
               aria-label="Wishlist"
             >
               <HandDrawnIcon
@@ -170,7 +184,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-plum text-brand-gold text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
                 >
                   {wishlistCount}
                 </motion.span>
@@ -180,7 +194,7 @@ export function DesktopNavbar({
             <button
               type="button"
               onClick={onOpenCart}
-              className="p-2 relative group cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
+              className="p-2 relative group cursor-pointer text-neutral-600 hover:text-brand-plum transition-colors duration-200"
               aria-label={isMY ? 'Shopping Bag' : 'Keranjang'}
             >
               <motion.div
@@ -199,7 +213,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-plum text-brand-gold text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
                 >
                   {totalQuantity}
                 </motion.span>
@@ -212,7 +226,7 @@ export function DesktopNavbar({
                   <button
                     type="button"
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="p-2 relative group flex items-center cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200"
+                    className="p-2 relative group flex items-center cursor-pointer text-neutral-600 hover:text-brand-plum transition-colors duration-200"
                     aria-label={isMY ? 'User menu' : 'Menu pengguna'}
                     aria-expanded={isUserMenuOpen}
                     aria-haspopup="menu"
@@ -290,7 +304,7 @@ export function DesktopNavbar({
               ) : (
                 <Link
                   href="/masuk"
-                  className="text-[11px] font-heading font-semibold uppercase tracking-widest py-2 px-1 hidden sm:block cursor-pointer text-brand-plum/85 hover:text-brand-plum transition-colors duration-200 nav-link-underline"
+                  className="text-[11px] font-heading font-semibold uppercase tracking-widest py-2 px-1 hidden sm:block cursor-pointer text-neutral-600 hover:text-brand-plum transition-colors duration-200 nav-link-underline"
                 >
                   {isMY ? 'Sign In' : 'Masuk'}
                 </Link>
@@ -299,18 +313,6 @@ export function DesktopNavbar({
           </div>
         </div>
       </div>
-
-      {/* Full-width bold scalloped bottom edge hanging seamlessly beneath header */}
-      <ScallopEdge
-        direction="down"
-        fill="var(--color-brand-gold)"
-        stroke="var(--color-brand-gold-stroke)"
-        strokeOpacity={0.85}
-        className={cn(
-          'absolute left-0 right-0 top-full -mt-px z-20 pointer-events-none transition-[filter] duration-300',
-          isScrolled && 'drop-shadow-[0_4px_6px_rgba(45,38,64,0.10)]'
-        )}
-      />
     </header>
   )
 }

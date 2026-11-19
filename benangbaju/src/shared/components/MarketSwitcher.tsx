@@ -104,8 +104,8 @@ export function MarketSwitcher({
           isTransparentHome
             ? 'bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-xs'
             : market === 'MY'
-              ? 'bg-emerald-50/95 text-emerald-900 border-emerald-400/70 hover:bg-emerald-100 shadow-2xs'
-              : 'bg-brand-cream/90 hover:bg-brand-cream text-brand-plum border-brand-plum/15 shadow-2xs'
+              ? 'bg-emerald-50 text-emerald-900 border-emerald-300/80 hover:bg-emerald-100 shadow-2xs'
+              : 'bg-white/90 hover:bg-neutral-100 text-brand-plum border-neutral-200/80 shadow-2xs'
         )}
         aria-label="Pilih Wilayah / Switch Country Market"
         aria-expanded={isOpen}

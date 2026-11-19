@@ -162,8 +162,8 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
         onLogout={handleLogout}
       />
 
-      {/* Free Shipping Announcement Bar — positioned below the scalloped header & scrolls away on scroll */}
-      <div className="relative z-20 bg-brand-gold-soft/80 border-b border-brand-plum/10 text-brand-plum text-center pt-[34px] pb-2.5 px-4">
+      {/* Free Shipping Announcement Bar — sits below the sticky header & disappears on scroll */}
+      <div className="relative z-20 bg-brand-gold border-b border-brand-gold-stroke/40 text-brand-plum text-center py-2 px-4">
         <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.15em] leading-snug">
           {market === 'MY' ? (
             <>
