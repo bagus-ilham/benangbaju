@@ -35,15 +35,15 @@ export function OrderReturnTrackingSection({
   const currentStepIndex = isRejected ? 0 : statusIndexMap[status] ?? 0
 
   return (
-    <div className="border border-brand-gold/80 p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-300 to-brand-gold" />
+    <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
         <div className="flex items-center space-x-2">
           <HandDrawnIcon name="refresh" className="h-4 w-4 text-brand-plum" />
-          <p className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
+          <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum">
             Status Pengajuan Retur Barang
-          </p>
+          </h2>
         </div>
 
         <div className="flex items-center space-x-2">

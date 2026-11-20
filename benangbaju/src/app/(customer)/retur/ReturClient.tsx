@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { PageHero, PageContainer, HandDrawnIcon } from '@/shared/components'
+import { PageHero, PageContainer, HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { useMarket } from '@/shared/stores/marketStore'
 
 export function ReturClient(): React.JSX.Element {
@@ -99,9 +99,9 @@ export function ReturClient(): React.JSX.Element {
           {/* International Orders Policy Card (Final Sale Malaysia) */}
           <div className="border border-amber-300 bg-amber-50/70 p-6 sm:p-8 rounded-2xl space-y-5 shadow-xs">
             <div className="flex items-center justify-between border-b border-amber-200 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🇲🇾</span>
-                <h2 className="font-sans text-xs font-bold text-amber-950 uppercase tracking-wider">
+              <div className="flex items-center gap-2.5">
+                <MarketFlagIcon market="MY" className="w-5 h-5" />
+                <h2 className="font-serif text-base font-medium tracking-tight text-amber-950">
                   {isMY
                     ? 'International Orders Policy: Malaysia (Final Sale)'
                     : 'Kebijakan Pesanan Internasional: Malaysia (Final Sale)'}

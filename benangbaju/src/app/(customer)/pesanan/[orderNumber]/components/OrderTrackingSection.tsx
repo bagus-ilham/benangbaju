@@ -25,12 +25,12 @@ export function OrderTrackingSection({
 
   if (status === 'cancelled') {
     return (
-      <div className="border border-error-border p-5 bg-error-bg card-hover-lift rounded-2xl">
-        <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-error mb-4">
+      <div className="border border-error-border p-5 sm:p-6 bg-error-bg rounded-2xl shadow-xs">
+        <p className="text-base font-serif font-medium tracking-tight text-error mb-3">
           {isMY ? 'Order Status' : 'Status Pesanan'}
         </p>
         <div className="flex items-center space-x-3 text-error text-xs font-semibold">
-          <HandDrawnIcon name="close" className="h-5 w-5" />
+          <HandDrawnIcon name="close" className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-bold uppercase tracking-wider text-xs">{isMY ? 'Order Cancelled' : 'Pesanan Dibatalkan'}</p>
             {cancelReason && (
@@ -43,13 +43,14 @@ export function OrderTrackingSection({
   }
 
   return (
-    <div className="border border-neutral-200/80 p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans">
-      <div className="flex items-center justify-between">
-        <p className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
+    <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
+        <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum">
           {isMY ? 'Live Order Tracking' : 'Pelacakan Pesanan Live'}
-        </p>
+        </h2>
         {statusIndex >= 0 && (
-          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-brand-blue/20 border border-brand-blue/40 rounded-full text-[10px] font-sans font-bold text-brand-plum uppercase tracking-wider">
+          <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-brand-blue-soft/80 border border-brand-blue-stroke/50 rounded-full text-[10px] font-sans font-bold text-brand-plum uppercase tracking-wider">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-plum animate-ping" />
             <span>{steps[statusIndex]?.label}</span>
           </span>
@@ -67,10 +68,11 @@ export function OrderTrackingSection({
               className="flex md:flex-col items-center flex-1 w-full relative z-10"
             >
               <div
-                className={`relative flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-300 ${isCompleted
+                className={`relative flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-300 ${
+                  isCompleted
                     ? 'bg-brand-blue border-brand-blue text-brand-plum font-bold shadow-xs'
-                    : 'bg-brand-cream border-neutral-200 text-neutral-400'
-                  } ${isActive ? 'ring-4 ring-brand-blue/40 scale-110' : ''}`}
+                    : 'bg-brand-cream border-brand-plum/15 text-neutral-400'
+                } ${isActive ? 'ring-4 ring-brand-blue/40 scale-110' : ''}`}
               >
                 {step.icon}
                 {isActive && (
@@ -83,19 +85,16 @@ export function OrderTrackingSection({
               </div>
 
               <span
-                className={`ml-4 md:ml-0 md:mt-3 text-xs font-sans uppercase tracking-wider whitespace-nowrap text-center ${isActive
-                    ? 'text-brand-plum font-bold'
-                    : isCompleted
-                      ? 'text-brand-plum font-bold'
-                      : 'text-neutral-400'
-                  }`}
+                className={`ml-4 md:ml-0 md:mt-3 text-xs font-sans uppercase tracking-wider whitespace-nowrap text-center ${
+                  isActive || isCompleted ? 'text-brand-plum font-bold' : 'text-neutral-400'
+                }`}
               >
                 {step.label}
               </span>
 
               {idx < steps.length - 1 && (
                 <div className="hidden md:block absolute top-4 left-[50%] right-[-50%] -z-10">
-                  <div className="w-full border-t-2 border-dashed border-neutral-300 relative">
+                  <div className="w-full border-t-2 border-dashed border-brand-plum/15 relative">
                     <motion.div
                       className="border-t-2 border-dashed border-brand-blue absolute top-[-2px] left-0 h-0"
                       initial={{ width: idx < statusIndex ? '100%' : '0%' }}

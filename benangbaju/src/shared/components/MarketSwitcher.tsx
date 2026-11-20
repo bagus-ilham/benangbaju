@@ -13,12 +13,18 @@ interface MarketSwitcherProps {
   className?: string
 }
 
-function MarketFlagIcon({ market }: { market: Market }): React.JSX.Element {
+export function MarketFlagIcon({
+  market,
+  className,
+}: {
+  market: Market
+  className?: string
+}): React.JSX.Element {
   if (market === 'MY') {
     return (
       <svg
         viewBox="0 0 20 20"
-        className="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-black/10"
+        className={cn('w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-black/10', className)}
         aria-hidden="true"
       >
         <rect width="20" height="20" fill="#FFFFFF" />
@@ -38,7 +44,7 @@ function MarketFlagIcon({ market }: { market: Market }): React.JSX.Element {
   return (
     <svg
       viewBox="0 0 20 20"
-      className="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-black/10"
+      className={cn('w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-black/10', className)}
       aria-hidden="true"
     >
       <rect width="20" height="10" fill="#CE1126" />

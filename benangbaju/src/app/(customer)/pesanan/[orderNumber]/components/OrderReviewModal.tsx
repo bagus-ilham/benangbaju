@@ -137,10 +137,10 @@ export function OrderReviewModal({
       {selectedReviewItem && (
         <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-brand-blue font-sans font-bold mb-1">
+            <p className="text-[10px] uppercase tracking-widest text-brand-blue-stroke font-sans font-bold mb-1">
               {isMY ? 'Product Name' : 'Nama Produk'}
             </p>
-            <h3 className="text-sm font-bold text-brand-plum font-sans">
+            <h3 className="text-base font-serif font-medium text-brand-plum">
               {selectedReviewItem.product_name}
             </h3>
             {selectedReviewItem.variant_name && (
@@ -214,16 +214,16 @@ export function OrderReviewModal({
 
             <div className="flex flex-wrap gap-3">
               {reviewFiles.map((file, idx) => (
-                <div key={idx} className="relative w-20 h-20 border border-neutral-200">
+                <div key={idx} className="relative w-20 h-20 border border-brand-plum/15 rounded-xl">
                   <img
                     src={URL.createObjectURL(file)}
                     alt={`Preview ${idx}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-xl"
                   />
                   <button
                     type="button"
                     onClick={() => removeFile(idx)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 shadow-sm"
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 shadow-sm cursor-pointer"
                   >
                     <HandDrawnIcon name="close" className="h-3 w-3" />
                   </button>
@@ -231,7 +231,7 @@ export function OrderReviewModal({
               ))}
 
               {reviewFiles.length < 2 && (
-                <label className="w-20 h-20 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-400 hover:text-brand-accent hover:border-brand-accent cursor-pointer transition-colors">
+                <label className="w-20 h-20 border-2 border-dashed border-brand-plum/20 bg-brand-gold-soft/25 rounded-xl flex flex-col items-center justify-center text-neutral-500 hover:text-brand-plum hover:border-brand-blue cursor-pointer transition-colors">
                   <HandDrawnIcon name="image" className="h-5 w-5 mb-1" />
                   <span className="text-[9px] uppercase tracking-wider font-semibold">{isMY ? 'Add' : 'Tambah'}</span>
                   <input

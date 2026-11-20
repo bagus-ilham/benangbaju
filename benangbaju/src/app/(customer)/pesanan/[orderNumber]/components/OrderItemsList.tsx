@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, react/no-unescaped-entities */
 import React from 'react'
-import { Button } from '@/shared/components'
+import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatApproxMYR, formatMYR } from '@/lib/utils'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 
@@ -23,19 +23,22 @@ export function OrderItemsList({
     : myrExchangeRate
 
   return (
-    <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
-        {isMalaysia ? 'Order Items' : 'Item Pesanan'}
+    <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+      <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-3 flex items-center gap-2">
+        <HandDrawnIcon name="shopping-bag" className="h-4 w-4 text-brand-plum" />
+        <span>{isMalaysia ? 'Order Items' : 'Item Pesanan'}</span>
       </h2>
-      <div className="divide-y divide-neutral-200/60">
+      <div className="divide-y divide-brand-plum/10">
         {order.order_items?.map((item: any) => (
           <div
             key={item.id}
             className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-4"
           >
             <div className="min-w-0">
-              <p className="font-bold text-brand-plum truncate">{item.product_name}</p>
+              <p className="font-serif font-medium text-base text-brand-plum truncate">
+                {item.product_name}
+              </p>
               <p className="text-xs text-neutral-500 mt-1">
                 {isMalaysia ? 'Variant:' : 'Varian:'} {item.variant_name} | SKU: {item.sku}
               </p>
@@ -54,16 +57,16 @@ export function OrderItemsList({
                 )}
               </p>
               {order.status === 'completed' && (
-                <div className="mt-2">
+                <div className="mt-2.5">
                   {item.product_reviews ? (
-                    <div className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 border border-emerald-200 rounded-lg inline-block">
-                      {isMalaysia ? 'Your Review' : 'Ulasan Anda'} ({item.product_reviews.rating}⭐): "{item.product_reviews.body}"
+                    <div className="text-xs font-semibold text-emerald-800 bg-emerald-50/90 px-3 py-1.5 border border-emerald-200 rounded-xl inline-block">
+                      {isMalaysia ? 'Your Review' : 'Ulasan Anda'} ({item.product_reviews.rating}★): "{item.product_reviews.body}"
                     </div>
                   ) : (
                     <Button
                       onClick={() => onOpenReviewModal(item)}
                       variant="outline"
-                      className="text-[10px] py-1 px-3 h-fit uppercase tracking-wider font-bold border-neutral-300 hover:bg-brand-blue/10"
+                      className="text-[10px] py-1.5 px-3.5 h-fit uppercase tracking-wider font-bold border-brand-plum/20 hover:bg-brand-blue-soft/50"
                     >
                       {isMalaysia ? 'Write Review' : 'Tulis Ulasan'}
                     </Button>

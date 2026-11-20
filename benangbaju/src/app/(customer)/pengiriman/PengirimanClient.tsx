@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { PageHero, PageContainer, HandDrawnIcon } from '@/shared/components'
+import { PageHero, PageContainer, HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { useMarket } from '@/shared/stores/marketStore'
 
 export function PengirimanClient(): React.JSX.Element {
@@ -111,7 +111,7 @@ export function PengirimanClient(): React.JSX.Element {
           <div className="space-y-4 pt-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-serif text-lg font-medium tracking-tight text-brand-plum flex items-center gap-2">
-                <span>🇮🇩</span>
+                <MarketFlagIcon market="ID" className="w-5 h-5" />
                 <span>{isMY ? 'Domestic Delivery Partners (Indonesia)' : 'Mitra Ekspedisi Domestik (Indonesia)'}</span>
               </h2>
               <span className="text-[10px] font-bold text-brand-plum/70 bg-brand-gold-soft/60 px-2.5 py-1 rounded-full uppercase tracking-wider">
@@ -145,7 +145,7 @@ export function PengirimanClient(): React.JSX.Element {
           <div className="space-y-4 pt-4 border-t border-brand-plum/10">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-serif text-lg font-medium tracking-tight text-emerald-950 flex items-center gap-2">
-                <span>🇲🇾</span>
+                <MarketFlagIcon market="MY" className="w-5 h-5" />
                 <span>
                   {isMY
                     ? 'International Shipping: Peninsular & East Malaysia'

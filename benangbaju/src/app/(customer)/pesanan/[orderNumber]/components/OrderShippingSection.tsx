@@ -1,5 +1,5 @@
 import React from 'react'
-import { HandDrawnIcon } from '@/shared/components'
+import { HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { parseTrackingNumbers, getCourierTrackingUrl } from '@/lib/utils'
 
 interface OrderShippingProps {
@@ -27,15 +27,17 @@ export function OrderShippingSection({
 
   return (
     <div className="space-y-6">
-      <div className="border border-neutral-200/80 p-5 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-        <div className="flex items-center justify-between border-b border-neutral-200/60 pb-2">
-          <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum">
-            {isMalaysia ? 'Shipping Information' : 'Informasi Pengiriman'}
+      <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
+          <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum flex items-center gap-2">
+            <HandDrawnIcon name="truck" className="h-4 w-4 text-brand-plum" />
+            <span>{isMalaysia ? 'Shipping Information' : 'Informasi Pengiriman'}</span>
           </h2>
           {isMalaysia && (
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-full uppercase tracking-wider">
-              🇲🇾 Malaysia (Semenanjung)
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              <MarketFlagIcon market="MY" className="w-3.5 h-3.5" />
+              <span>Malaysia (Semenanjung)</span>
             </span>
           )}
         </div>
@@ -44,8 +46,8 @@ export function OrderShippingSection({
             <p className="font-bold text-brand-plum">
               {orderShipping.recipient_name} ({orderShipping.phone})
             </p>
-            <p>{orderShipping.full_address}</p>
-            <p className="text-xs text-neutral-600 font-medium font-sans">
+            <p className="leading-relaxed">{orderShipping.full_address}</p>
+            <p className="text-xs text-neutral-500 font-medium font-sans">
               {[
                 orderShipping.district_name,
                 orderShipping.city_name,
@@ -55,10 +57,10 @@ export function OrderShippingSection({
                 .filter(Boolean)
                 .join(', ')}
             </p>
-            <div className="pt-2 text-xs border-t border-neutral-100 mt-2 space-y-2 text-neutral-600">
+            <div className="pt-3 text-xs border-t border-brand-plum/10 mt-3 space-y-2 text-neutral-600">
               <p>
                 {isMalaysia ? 'Courier:' : 'Kurir:'}{' '}
-                <span className="font-semibold text-neutral-700 uppercase">
+                <span className="font-semibold text-brand-plum uppercase">
                   {orderShipping.courier_name}
                 </span>
               </p>
@@ -79,19 +81,19 @@ export function OrderShippingSection({
                           href={trackingUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-neutral-50 text-brand-plum font-mono text-xs font-bold rounded-lg border border-neutral-300 shadow-2xs hover:border-brand-plum transition-all duration-200"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-brand-blue-soft/40 text-brand-plum font-mono text-xs font-bold rounded-xl border border-brand-plum/15 shadow-2xs hover:border-brand-blue transition-all duration-200"
                         >
                           <span>{trackingNo}</span>
-                          <HandDrawnIcon name="external-link" className="h-3 w-3 text-neutral-400" />
+                          <HandDrawnIcon name="external-link" className="h-3 w-3 text-brand-plum/60" />
                         </a>
                       )
                     })}
                   </div>
                 </div>
               ) : orderShipping.tracking_number ? (
-                <p>
-                  {isMalaysia ? 'Tracking Number:' : 'No. Resi:'}{' '}
-                  <span className="font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 select-all">
+                <p className="flex items-center gap-1.5 flex-wrap">
+                  <span>{isMalaysia ? 'Tracking Number:' : 'No. Resi:'}</span>
+                  <span className="font-mono font-bold text-brand-plum bg-brand-gold-soft/50 border border-brand-plum/10 px-2.5 py-0.5 rounded-lg select-all">
                     {orderShipping.tracking_number}
                   </span>
                 </p>
@@ -99,16 +101,18 @@ export function OrderShippingSection({
             </div>
           </div>
         ) : (
-          <p className="text-sm text-neutral-600 italic">{isMalaysia ? 'Shipping data not found.' : 'Data pengiriman tidak ditemukan.'}</p>
+          <p className="text-sm text-neutral-500 italic">
+            {isMalaysia ? 'Shipping data not found.' : 'Data pengiriman tidak ditemukan.'}
+          </p>
         )}
       </div>
 
       {notes && (
-        <div className="border border-neutral-200 p-5 card-hover-lift gold-border-hover bg-brand-cream/30 space-y-2 rounded-2xl">
-          <h2 className="text-[10px] uppercase tracking-widest font-heading font-medium text-brand-accent">
+        <div className="border border-brand-plum/10 p-5 bg-brand-gold-soft/35 space-y-2 rounded-2xl shadow-xs">
+          <h2 className="text-sm font-serif font-medium tracking-tight text-brand-plum">
             {isMalaysia ? 'Order Notes' : 'Catatan dari Anda'}
           </h2>
-          <p className="text-sm text-neutral-700 whitespace-pre-wrap">{notes}</p>
+          <p className="text-sm text-neutral-700 whitespace-pre-wrap leading-relaxed">{notes}</p>
         </div>
       )}
     </div>

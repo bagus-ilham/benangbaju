@@ -90,7 +90,7 @@ export function CheckoutSummaryCard({
       </h2>
 
       {/* Items List */}
-      <div className="divide-y divide-neutral-100 max-h-60 overflow-y-auto pr-1 mb-6">
+      <div className="divide-y divide-brand-plum/10 max-h-60 overflow-y-auto pr-1 mb-6">
         {displayItems.map((item) => (
           <div key={item.variantId} className="py-3 flex space-x-3 text-xs">
             {item.imageUrl && (
@@ -105,11 +105,11 @@ export function CheckoutSummaryCard({
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="font-sans font-bold text-brand-plum uppercase tracking-wide truncate text-[11px]">
+              <p className="font-serif font-medium text-brand-plum truncate text-[13px] leading-snug">
                 {item.productName || item.name}
               </p>
               {item.variantName && (
-                <p className="text-[9px] text-neutral-500 uppercase tracking-wider font-sans font-semibold">
+                <p className="text-[10px] text-neutral-500 font-sans font-medium mt-0.5">
                   {item.variantName}
                 </p>
               )}

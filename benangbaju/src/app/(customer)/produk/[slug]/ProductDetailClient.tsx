@@ -16,7 +16,7 @@ import {
   ProductStickyAction,
   ProductSizeGuideModal,
 } from '@/modules/products/components'
-import { PageContainer, CustomToast } from '@/shared/components'
+import { PageContainer, CustomToast, MarketFlagIcon } from '@/shared/components'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useWishlistStore } from '@/modules/products/stores/wishlistStore'
 import { useMarket } from '@/shared/stores/marketStore'
@@ -356,8 +356,9 @@ export function ProductDetailClient({
         {isUnavailableInMY && (
           <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <p className="font-bold text-amber-950 text-sm">
-                This item is currently only available for Indonesia delivery 🇮🇩
+              <p className="font-bold text-amber-950 text-sm flex items-center gap-1.5 flex-wrap">
+                <span>This item is currently only available for Indonesia delivery</span>
+                <MarketFlagIcon market="ID" className="w-4 h-4" />
               </p>
               <p className="text-xs text-amber-800 mt-1">
                 Explore our Malaysia-ready catalog for items available to ship directly to Malaysia.

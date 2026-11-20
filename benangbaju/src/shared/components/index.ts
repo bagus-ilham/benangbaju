@@ -44,7 +44,7 @@ export { HandDrawnIcon, type HandDrawnIconName, type HandDrawnIconProps } from '
 export { Pagination } from './Pagination'
 export { StatusBadge, OrderStatusBadge, ReviewStatusBadge } from './StatusBadge'
 export { AdminSearchInput } from './AdminSearchInput'
-export { MarketSwitcher } from './MarketSwitcher'
+export { MarketSwitcher, MarketFlagIcon } from './MarketSwitcher'
 export { ScallopEdge, type ScallopEdgeProps } from './ScallopEdge'
 
 

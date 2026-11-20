@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
-import { SmartLink as Link } from '@/shared/components'
+import { SmartLink as Link, MarketFlagIcon } from '@/shared/components'
 import { usePathname, useRouter } from 'next/navigation'
 import { DesktopNavbar } from './DesktopNavbar'
 import { MobileMenuDrawer } from './MobileMenuDrawer'
@@ -166,15 +166,18 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       <div className="relative z-20 bg-brand-gold border-b border-brand-gold-stroke/40 text-brand-plum text-center py-2 px-4">
         <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.15em] leading-snug">
           {market === 'MY' ? (
-            <>
-              🇲🇾 Direct Shipping to Malaysia (West &amp; East) from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
-              <Link
-                href="/produk"
-                className="underline underline-offset-2 hover:opacity-80 transition-opacity"
-              >
-                Shop Now
-              </Link>
-            </>
+            <span className="inline-flex items-center justify-center flex-wrap gap-x-1.5">
+              <MarketFlagIcon market="MY" className="w-3.5 h-3.5" />
+              <span>
+                Direct Shipping to Malaysia (West &amp; East) from Bandung &bull; Pay with DuitNow / TNG QR &mdash;{' '}
+                <Link
+                  href="/produk"
+                  className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+                >
+                  Shop Now
+                </Link>
+              </span>
+            </span>
           ) : (
             <>
               Gratis ongkir tanpa minimum belanja &mdash;{' '}

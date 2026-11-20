@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Button, SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { Button, SmartLink as Link, HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { buildWhatsAppUrl, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
@@ -101,10 +101,11 @@ export function OrderPaymentSection({
   }
 
   return (
-    <div className="border border-neutral-200/80 p-5 bg-brand-cream h-fit space-y-5 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-      <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
-        {isMY ? 'Payment Summary & Methods' : 'Rincian & Metode Pembayaran'}
+    <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream h-fit space-y-5 relative overflow-hidden rounded-2xl shadow-xs font-sans">
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+      <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-3 flex items-center gap-2">
+        <HandDrawnIcon name="tag" className="h-4 w-4 text-brand-plum" />
+        <span>{isMY ? 'Payment Summary & Methods' : 'Rincian & Metode Pembayaran'}</span>
       </h2>
 
       {/* Cost Breakdown */}
@@ -180,7 +181,7 @@ export function OrderPaymentSection({
                   </span>
                 </div>
               )}
-              <div className="border-t border-neutral-200/60 pt-4 mt-2">
+              <div className="border-t border-brand-plum/10 pt-4 mt-2">
                 <div className="flex justify-between items-center text-brand-plum font-sans">
                   <span className="text-sm font-bold">
                     {isMY ? 'Total Amount' : 'Total Pembayaran'}
@@ -211,14 +212,14 @@ export function OrderPaymentSection({
 
       {/* Direct Payment Instructions for Pending Payment */}
       {order.status === 'pending_payment' && (
-        <div className="space-y-4 pt-2 border-t border-neutral-200/60">
+        <div className="space-y-4 pt-2 border-t border-brand-plum/10">
           {/* VA Instructions */}
           {vaNumber && (
-            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 space-y-2">
+            <div className="bg-white p-4 rounded-xl border border-brand-plum/15 space-y-2">
               <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
                 {isMY ? 'Virtual Account Number' : 'Nomor Virtual Account'}
               </span>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-mono text-lg font-bold text-brand-plum tracking-wider">
                   {vaNumber}
                 </span>
@@ -239,11 +240,11 @@ export function OrderPaymentSection({
 
           {/* Minimarket Payment Code */}
           {paymentCode && !vaNumber && (
-            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 space-y-2">
+            <div className="bg-white p-4 rounded-xl border border-brand-plum/15 space-y-2">
               <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
                 {isMY ? 'Convenience Store Payment Code' : 'Kode Pembayaran Minimarket'}
               </span>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-mono text-lg font-bold text-brand-plum tracking-wider">
                   {paymentCode}
                 </span>
@@ -264,7 +265,7 @@ export function OrderPaymentSection({
 
           {/* QRIS Display */}
           {qrUrl && (
-            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-3">
+            <div className="bg-white p-4 rounded-xl border border-brand-plum/15 text-center space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] uppercase font-bold text-neutral-400 block tracking-widest">
                   {isMY ? 'Scan Cross-Border QRIS (DuitNow)' : 'Scan QRIS Cross-Border'}
@@ -282,7 +283,7 @@ export function OrderPaymentSection({
                 </Button>
               </div>
 
-              <div className="relative w-48 h-48 mx-auto bg-neutral-50 border p-2 rounded-lg flex items-center justify-center">
+              <div className="relative w-48 h-48 mx-auto bg-neutral-50 border border-brand-plum/10 p-2 rounded-xl flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={qrUrl} alt="Scan QRIS" className="w-full h-full object-contain" />
               </div>
@@ -290,8 +291,8 @@ export function OrderPaymentSection({
               {isMalaysia ? (
                 <div className="p-3.5 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-2 text-xs text-emerald-950 font-sans">
                   <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1.5 border-b border-emerald-200/60 pb-1.5">
-                    <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
-                    <span>{isMY ? '🇲🇾 How to Pay with Malaysian Banking / E-Wallet' : '🇲🇾 Panduan Bayar via Bank / E-Wallet Malaysia'}</span>
+                    <MarketFlagIcon market="MY" className="w-3.5 h-3.5" />
+                    <span>{isMY ? 'How to Pay with Malaysian Banking / E-Wallet' : 'Panduan Bayar via Bank / E-Wallet Malaysia'}</span>
                   </p>
                   <div className="grid grid-cols-1 gap-2 text-[11px] text-emerald-950/90 leading-relaxed">
                     <div className="flex items-start gap-2">
@@ -322,7 +323,7 @@ export function OrderPaymentSection({
 
           {/* Online Payment / E-Wallet Notice */}
           {checkoutUrl && !qrUrl && !vaNumber && !paymentCode && (
-            <div className="bg-white p-4 rounded-xl border border-brand-plum/20 text-center space-y-2">
+            <div className="bg-white p-4 rounded-xl border border-brand-plum/15 text-center space-y-2">
               <span className="text-[10px] uppercase font-bold text-neutral-500 block tracking-widest">
                 {isMalaysia ? 'Sesi Pembayaran QRIS Cross-Border' : 'Sesi Pembayaran Online / E-Wallet'}
               </span>
@@ -334,8 +335,8 @@ export function OrderPaymentSection({
               {isMalaysia && (
                 <div className="p-3.5 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-left space-y-2 text-xs text-emerald-950 font-sans mt-2">
                   <p className="font-bold text-[11px] uppercase tracking-wide text-emerald-900 flex items-center gap-1.5 border-b border-emerald-200/60 pb-1.5">
-                    <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-emerald-700" />
-                    <span>{isMY ? '🇲🇾 How to Pay with Malaysian Banking / E-Wallet' : '🇲🇾 Panduan Bayar via Bank / E-Wallet Malaysia'}</span>
+                    <MarketFlagIcon market="MY" className="w-3.5 h-3.5" />
+                    <span>{isMY ? 'How to Pay with Malaysian Banking / E-Wallet' : 'Panduan Bayar via Bank / E-Wallet Malaysia'}</span>
                   </p>
                   <div className="grid grid-cols-1 gap-2 text-[11px] text-emerald-950/90 leading-relaxed">
                     <div className="flex items-start gap-2">
@@ -367,7 +368,7 @@ export function OrderPaymentSection({
         {order.status === 'pending_payment' && (
           <>
             {isVerifyingPayment ? (
-              <div className="flex items-center justify-center gap-2 py-3 px-4 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold uppercase tracking-wider rounded-xl">
+              <div className="flex items-center justify-center gap-2 py-3 px-4 bg-brand-gold-soft/70 border border-brand-gold-stroke/60 text-brand-plum text-xs font-semibold uppercase tracking-wider rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/image/svg/logo/logo-jarum-benang.svg"
@@ -405,7 +406,7 @@ export function OrderPaymentSection({
                   isLoading={isCheckingPayment}
                   disabled={isCheckingPayment}
                   variant="outline"
-                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-300 text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-brand-plum/20 text-brand-plum hover:bg-brand-blue-soft/40 cursor-pointer"
                 >
                   {isMY ? 'Check Payment Status' : 'Cek Status Pembayaran'}
                 </Button>
@@ -425,7 +426,7 @@ export function OrderPaymentSection({
                 disabled={isReordering || isVerifyingPayment}
                 isLoading={isReordering}
                 variant="ghost"
-                className="w-full py-2 text-[10px] font-sans font-semibold text-neutral-500 hover:text-brand-blue flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
+                className="w-full py-2 text-[10px] font-sans font-semibold text-neutral-500 hover:text-brand-plum flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
               >
                 <HandDrawnIcon name="refresh" className="h-3 w-3" />
                 <span>{isMY ? 'Session Expired? Cancel & Re-order' : 'Sesi Expired? Batalkan & Pesan Ulang'}</span>
@@ -466,13 +467,13 @@ export function OrderPaymentSection({
 
         {order.status === 'completed' && (
           <div className="flex flex-col gap-3">
-            <div className="flex items-center text-xs text-green-700 bg-green-50 p-3 border border-green-200 rounded-xl">
+            <div className="flex items-center text-xs text-emerald-800 bg-emerald-50/90 p-3 border border-emerald-200 rounded-xl">
               <HandDrawnIcon name="check-circle" className="h-4 w-4 mr-2 shrink-0" />
               <span>{isMY ? 'Order completed. Thank you for shopping with Benangbaju!' : 'Pesanan selesai. Terima kasih telah berbelanja di Benangbaju!'}</span>
             </div>
 
             {isMalaysia ? (
-              <div className="p-4 bg-amber-50/80 border border-amber-200/90 rounded-xl space-y-2.5 text-xs text-amber-950 font-sans">
+              <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-xl space-y-2.5 text-xs text-amber-950 font-sans">
                 <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
                   <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
                   <span>{isMY ? 'International Order (Final Sale)' : 'Pesanan Internasional (Final Sale)'}</span>
@@ -487,14 +488,14 @@ export function OrderPaymentSection({
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
+                  className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-[#2FA866] hover:bg-[#269357] text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
                 >
                   <HandDrawnIcon name="sparkles" className="h-4 w-4" />
                   <span>{isMY ? 'Contact Support via WhatsApp' : 'Hubungi CS via WhatsApp'}</span>
                 </a>
               </div>
             ) : returnRequest ? (
-              <div className="p-3.5 bg-brand-cream/90 border border-brand-gold/80 rounded-xl flex items-center justify-between shadow-2xs">
+              <div className="p-3.5 bg-brand-gold-soft/45 border border-brand-gold-stroke/60 rounded-xl flex items-center justify-between shadow-2xs">
                 <span className="text-[11px] font-bold text-brand-plum uppercase tracking-wider flex items-center gap-1.5">
                   <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 text-brand-plum" />
                   {returnRequest.status === 'pending'
@@ -516,7 +517,7 @@ export function OrderPaymentSection({
               <Link href={`/pesanan/${order.order_number}/retur`} className="w-full">
                 <Button
                   variant="outline"
-                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-neutral-800 text-neutral-800 hover:bg-neutral-50"
+                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-brand-plum/30 text-brand-plum hover:bg-brand-blush/30"
                 >
                   {isMY ? 'Request Return' : 'Ajukan Retur Barang'}
                 </Button>
