@@ -13,6 +13,40 @@ interface MarketSwitcherProps {
   className?: string
 }
 
+function MarketFlagIcon({ market }: { market: Market }): React.JSX.Element {
+  if (market === 'MY') {
+    return (
+      <svg
+        viewBox="0 0 20 20"
+        className="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-black/10"
+        aria-hidden="true"
+      >
+        <rect width="20" height="20" fill="#FFFFFF" />
+        <rect y="0" width="20" height="2.2" fill="#CC0001" />
+        <rect y="4.4" width="20" height="2.2" fill="#CC0001" />
+        <rect y="8.8" width="20" height="2.2" fill="#CC0001" />
+        <rect y="13.2" width="20" height="2.2" fill="#CC0001" />
+        <rect y="17.6" width="20" height="2.4" fill="#CC0001" />
+        <rect width="11" height="11" fill="#010066" />
+        <circle cx="5.4" cy="5.5" r="2.7" fill="#FFCC00" />
+        <circle cx="6.3" cy="5.5" r="2.2" fill="#010066" />
+        <circle cx="8.1" cy="5.5" r="1.1" fill="#FFCC00" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      className="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-black/10"
+      aria-hidden="true"
+    >
+      <rect width="20" height="10" fill="#CE1126" />
+      <rect y="10" width="20" height="10" fill="#FFFFFF" />
+    </svg>
+  )
+}
+
 export function MarketSwitcher({
   variant = 'compact',
   isTransparentHome = false,
@@ -48,7 +82,7 @@ export function MarketSwitcher({
 
   if (variant === 'full') {
     return (
-      <div className={cn('space-y-2 p-3 bg-brand-cream/80 border border-neutral-200/80 rounded-2xl', className)}>
+      <div className={cn('space-y-2 p-3 bg-brand-cream/80 border border-brand-plum/10 rounded-2xl', className)}>
         <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-brand-plum">
           <span className="flex items-center gap-1.5">
             <HandDrawnIcon name="sparkles" className="h-3 w-3 text-brand-accent" /> Wilayah / Market
@@ -68,7 +102,7 @@ export function MarketSwitcher({
                 : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300'
             )}
           >
-            <span>🇮🇩</span>
+            <MarketFlagIcon market="ID" />
             <span>Indonesia (Rp)</span>
           </button>
           <button
@@ -81,13 +115,13 @@ export function MarketSwitcher({
                 : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300'
             )}
           >
-            <span>🇲🇾</span>
+            <MarketFlagIcon market="MY" />
             <span>Malaysia (RM)</span>
           </button>
         </div>
         {market === 'MY' && (
           <p className="text-[9px] text-emerald-800 bg-emerald-50/80 border border-emerald-200 p-2 rounded-xl leading-relaxed font-sans">
-            🇲🇾 <strong>International Mode:</strong> Direct shipping from Bandung to West Malaysia. Estimasi harga ditampilkan dalam <strong>≈ RM</strong> dengan pembayaran QRIS / DuitNow.
+            <strong>International Mode:</strong> Direct shipping from Bandung to Malaysia (West &amp; East). Harga ditampilkan dalam <strong>RM</strong> dengan pembayaran QRIS / DuitNow.
           </p>
         )}
       </div>
@@ -110,7 +144,7 @@ export function MarketSwitcher({
         aria-label="Pilih Wilayah / Switch Country Market"
         aria-expanded={isOpen}
       >
-        <span>{market === 'MY' ? '🇲🇾' : '🇮🇩'}</span>
+        <MarketFlagIcon market={market} />
         <span className="uppercase tracking-wider">{market === 'MY' ? 'MY · RM' : 'ID'}</span>
         <HandDrawnIcon
           name="chevron-down"
@@ -128,23 +162,23 @@ export function MarketSwitcher({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute right-0 mt-2 w-48 bg-brand-cream border border-neutral-200/80 rounded-xl shadow-lg p-1.5 z-50 font-sans"
+            className="absolute left-0 mt-2 w-48 bg-brand-cream border border-brand-plum/10 rounded-2xl shadow-lg p-1.5 z-50 font-sans"
           >
-            <div className="px-2.5 py-1.5 text-[9px] uppercase font-bold tracking-wider text-neutral-400 border-b border-neutral-100 mb-1">
+            <div className="px-2.5 py-1.5 text-[9px] uppercase font-bold tracking-wider text-neutral-400 border-b border-brand-plum/10 mb-1">
               Pilih Wilayah / Region
             </div>
             <button
               type="button"
               onClick={() => handleSelect('ID')}
               className={cn(
-                'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium text-left transition-colors cursor-pointer',
+                'w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-left transition-colors cursor-pointer',
                 market === 'ID'
-                  ? 'bg-brand-plum/10 text-brand-plum font-bold'
-                  : 'text-neutral-700 hover:bg-neutral-100'
+                  ? 'bg-brand-blush/70 text-brand-plum font-bold'
+                  : 'text-neutral-700 hover:bg-brand-gold-soft/50'
               )}
             >
               <div className="flex items-center gap-2">
-                <span>🇮🇩</span>
+                <MarketFlagIcon market="ID" />
                 <span>Indonesia (Rp)</span>
               </div>
               {market === 'ID' && (
@@ -155,15 +189,15 @@ export function MarketSwitcher({
               type="button"
               onClick={() => handleSelect('MY')}
               className={cn(
-                'w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium text-left transition-colors cursor-pointer',
+                'w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-left transition-colors cursor-pointer',
                 market === 'MY'
                   ? 'bg-emerald-100 text-emerald-950 font-bold'
-                  : 'text-neutral-700 hover:bg-neutral-100'
+                  : 'text-neutral-700 hover:bg-brand-gold-soft/50'
               )}
             >
               <div className="flex items-center gap-2">
-                <span>🇲🇾</span>
-                <span>Malaysia (≈ RM)</span>
+                <MarketFlagIcon market="MY" />
+                <span>Malaysia (RM)</span>
               </div>
               {market === 'MY' && (
                 <HandDrawnIcon name="check" className="h-3 w-3 text-emerald-800" />

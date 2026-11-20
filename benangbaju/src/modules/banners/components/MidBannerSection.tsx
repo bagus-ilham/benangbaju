@@ -71,15 +71,15 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
 
       {/* Optional Overlay if there is text, but for mid banners often the image contains the text itself. */}
       {(bannerTitle || bannerSubtitle) && (
-        <div className="absolute inset-0 bg-black/20 flex items-center justify-center text-center">
-          <div className="p-6 bg-brand-cream/90 backdrop-blur-sm shadow-xl max-w-lg">
+        <div className="absolute inset-0 bg-brand-plum/20 flex items-center justify-center text-center p-4">
+          <div className="p-6 md:p-8 bg-brand-cream/92 backdrop-blur-sm border border-brand-plum/10 rounded-2xl shadow-xl max-w-lg">
             {bannerSubtitle && (
-              <p className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-500 mb-2">
+              <p className="text-base font-accent font-bold text-brand-blue leading-none mb-2">
                 {bannerSubtitle}
               </p>
             )}
             {bannerTitle && (
-              <h3 className="text-2xl md:text-3xl font-heading uppercase tracking-wider text-brand-plum">
+              <h3 className="text-2xl md:text-3xl font-serif font-medium tracking-tight text-brand-plum">
                 {bannerTitle}
               </h3>
             )}
