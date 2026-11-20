@@ -33,8 +33,14 @@ export function MobileMenuAccordionItem({
   const [isLoading, setIsLoading] = useState(false)
   const [hasFetched, setHasFetched] = useState(false)
 
-  const isKategori = href === '/kategori' || label.toUpperCase() === 'KATEGORI' || label.toUpperCase() === 'CATEGORIES'
-  const isKoleksi = href === '/koleksi' || label.toUpperCase() === 'KOLEKSI' || label.toUpperCase() === 'COLLECTIONS'
+  const isKategori =
+    href === '/kategori' ||
+    label.toUpperCase() === 'KATEGORI' ||
+    label.toUpperCase() === 'CATEGORIES'
+  const isKoleksi =
+    href === '/koleksi' ||
+    label.toUpperCase() === 'KOLEKSI' ||
+    label.toUpperCase() === 'COLLECTIONS'
   const isAccordion = isKategori || isKoleksi
   const isActive = pathname === href || pathname.startsWith(href + '/')
 
@@ -74,7 +80,7 @@ export function MobileMenuAccordionItem({
         onClick={onClose}
         className={cn(
           'flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200',
-          isActive && 'text-brand-plum font-semibold'
+          isActive && 'text-brand-plum font-bold'
         )}
       >
         <span>{label}</span>
@@ -90,7 +96,7 @@ export function MobileMenuAccordionItem({
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
           'flex items-center justify-between py-2 text-xs font-heading font-medium uppercase tracking-widest text-neutral-600 hover:text-brand-plum transition-colors duration-200 w-full text-left',
-          isActive && 'text-brand-plum font-semibold'
+          isActive && 'text-brand-plum font-bold'
         )}
       >
         <span>{label}</span>
@@ -108,33 +114,37 @@ export function MobileMenuAccordionItem({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pl-4 pr-2 py-2 flex flex-col space-y-3 border-l-2 border-neutral-100 ml-1 mt-1 mb-2">
+            <div className="pl-3 pr-2 py-2 flex flex-col space-y-1 border-l-2 border-brand-blush-stroke ml-1 mt-1 mb-2">
               {isLoading ? (
                 <div className="space-y-3 py-2">
-                  <div className="h-3 bg-neutral-100 animate-pulse w-3/4 rounded" />
-                  <div className="h-3 bg-neutral-100 animate-pulse w-1/2 rounded" />
-                  <div className="h-3 bg-neutral-100 animate-pulse w-2/3 rounded" />
+                  <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-3/4 rounded" />
+                  <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-1/2 rounded" />
+                  <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-2/3 rounded" />
                 </div>
               ) : (
                 <>
-                  {items.map((item) => (
-                    <Link
-                      key={item.slug}
-                      href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
-                      onClick={onClose}
-                      className={cn(
-                        'text-xs font-sans text-neutral-500 hover:text-brand-plum transition-colors duration-200 block py-1',
-                        pathname === `/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}` &&
-                          'text-brand-plum font-semibold'
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {items.map((item) => {
+                    const isSubActive = pathname === `/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`
+                    return (
+                      <Link
+                        key={item.slug}
+                        href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
+                        onClick={onClose}
+                        className={cn(
+                          'text-xs font-sans transition-all duration-200 block px-2.5 py-1.5 rounded-xl',
+                          isSubActive
+                            ? 'bg-brand-blush/80 text-brand-plum font-bold'
+                            : 'text-neutral-600 hover:bg-brand-blush/50 hover:text-brand-plum'
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    )
+                  })}
                   <Link
                     href={href}
                     onClick={onClose}
-                    className="text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 transition-opacity duration-200 pt-2 block"
+                    className="inline-flex items-center gap-1 w-max mt-2 px-3 py-1.5 rounded-full bg-brand-gold-soft/80 hover:bg-brand-gold text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum border border-brand-gold-stroke/45 transition-all"
                   >
                     {isMY ? `View All ${label} →` : `Lihat Semua ${label} →`}
                   </Link>

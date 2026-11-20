@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon, ScallopEdge } from '@/shared/components'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
@@ -36,8 +36,14 @@ export function MegaMenuNavItem({
   const [isLoading, setIsLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const isKategori = href === '/kategori' || label.toUpperCase() === 'KATEGORI' || label.toUpperCase() === 'CATEGORIES'
-  const isKoleksi = href === '/koleksi' || label.toUpperCase() === 'KOLEKSI' || label.toUpperCase() === 'COLLECTIONS'
+  const isKategori =
+    href === '/kategori' ||
+    label.toUpperCase() === 'KATEGORI' ||
+    label.toUpperCase() === 'CATEGORIES'
+  const isKoleksi =
+    href === '/koleksi' ||
+    label.toUpperCase() === 'KOLEKSI' ||
+    label.toUpperCase() === 'COLLECTIONS'
 
   useEffect(() => {
     if ((isKategori || isKoleksi) && items.length === 0) {
@@ -109,29 +115,41 @@ export function MegaMenuNavItem({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-0 top-full w-full bg-brand-cream shadow-xl border-t border-neutral-200/80 z-50 overflow-hidden"
+            className="absolute left-0 top-full w-full bg-brand-cream shadow-[0_18px_40px_-15px_rgba(45,38,64,0.16)] border-t border-brand-plum/10 z-50"
           >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
               <div className="grid grid-cols-12 gap-8 items-start">
                 {/* Left Column: Link List */}
-                <div className="col-span-3 flex flex-col space-y-4 pr-4 border-r border-neutral-100">
-                  <h3 className="text-xs font-heading font-semibold uppercase tracking-widest text-brand-plum">
-                    {isMY ? (isKategori ? 'Product Categories' : 'Curated Collections') : (isKategori ? 'Kategori Produk' : 'Koleksi Terbatas')}
-                  </h3>
+                <div className="col-span-3 flex flex-col space-y-4 pr-5 border-r border-brand-plum/10">
+                  <div className="space-y-0.5">
+                    <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+                      {isMY ? 'Explore' : 'Jelajahi'}
+                    </span>
+                    <h3 className="text-lg font-serif font-medium tracking-tight text-brand-plum">
+                      {isMY
+                        ? isKategori
+                          ? 'Product Categories'
+                          : 'Curated Collections'
+                        : isKategori
+                          ? 'Kategori Produk'
+                          : 'Koleksi Terbatas'}
+                    </h3>
+                  </div>
 
                   {isLoading ? (
                     <div className="space-y-3 py-2">
-                      <div className="h-4 bg-neutral-100 animate-pulse w-3/4 rounded" />
-                      <div className="h-4 bg-neutral-100 animate-pulse w-1/2 rounded" />
-                      <div className="h-4 bg-neutral-100 animate-pulse w-2/3 rounded" />
+                      <div className="h-4 bg-brand-rose-soft/60 animate-pulse w-3/4 rounded-lg" />
+                      <div className="h-4 bg-brand-rose-soft/60 animate-pulse w-1/2 rounded-lg" />
+                      <div className="h-4 bg-brand-rose-soft/60 animate-pulse w-2/3 rounded-lg" />
                     </div>
                   ) : (
-                    <ul className="space-y-3 max-h-[280px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-neutral-200">
+                    <ul className="space-y-1 max-h-[260px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-neutral-200">
                       {items.map((item) => (
                         <li key={item.slug}>
                           <Link
                             href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
-                            className="text-xs font-sans text-neutral-600 hover:text-brand-plum font-medium transition-colors block py-0.5"
+                            onClick={() => setIsHovered(false)}
+                            className="text-xs font-sans text-neutral-600 hover:bg-brand-blush/65 hover:text-brand-plum font-medium hover:font-semibold transition-all block px-2.5 py-1.5 -mx-2.5 rounded-xl"
                           >
                             {item.name}
                           </Link>
@@ -140,12 +158,13 @@ export function MegaMenuNavItem({
                     </ul>
                   )}
 
-                  <div className="pt-2">
+                  <div className="pt-1">
                     <Link
                       href={href}
-                      className="text-[11px] font-sans font-bold uppercase tracking-widest text-brand-plum hover:opacity-75 transition-opacity flex items-center gap-1.5"
+                      onClick={() => setIsHovered(false)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-brand-gold-soft/80 hover:bg-brand-gold text-brand-plum border border-brand-gold-stroke/45 text-[10px] font-sans font-bold uppercase tracking-widest transition-all shadow-2xs"
                     >
-                      {isMY ? 'VIEW ALL →' : 'JELAJAHI SEMUA →'}
+                      {isMY ? 'View All →' : 'Jelajahi Semua →'}
                     </Link>
                   </div>
                 </div>
@@ -157,7 +176,7 @@ export function MegaMenuNavItem({
                       <button
                         type="button"
                         onClick={() => handleScroll('left')}
-                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
+                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-brand-cream/95 shadow-md border border-brand-plum/15 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:border-brand-gold-stroke hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
                         aria-label="Scroll left"
                       >
                         <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
@@ -165,7 +184,7 @@ export function MegaMenuNavItem({
                       <button
                         type="button"
                         onClick={() => handleScroll('right')}
-                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-brand-cream/90 shadow-md border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-brand-cream hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-brand-cream/95 shadow-md border border-brand-plum/15 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:border-brand-gold-stroke hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100 cursor-pointer"
                         aria-label="Scroll right"
                       >
                         <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
@@ -179,38 +198,53 @@ export function MegaMenuNavItem({
                   >
                     {isLoading
                       ? Array.from({ length: 4 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="flex-none w-[240px] aspect-[4/3] rounded-xl bg-neutral-100 animate-pulse"
-                        />
-                      ))
+                          <div
+                            key={i}
+                            className="flex-none w-[240px] aspect-[4/3] rounded-2xl bg-brand-rose-soft/60 animate-pulse"
+                          />
+                        ))
                       : items.map((item) => (
-                        <Link
-                          key={item.slug}
-                          href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
-                          className="flex-none w-[240px] aspect-[4/3] snap-start rounded-xl overflow-hidden relative group/card bg-neutral-100 flex items-center justify-center cursor-pointer shadow-sm hover:shadow-md transition-all"
-                        >
-                          {item.image_url ? (
-                            <Image
-                              src={getProxiedImageUrl(item.image_url)}
-                              alt={item.name}
-                              fill
-                              sizes="240px"
-                              className="object-cover transition-transform duration-700 group-hover/card:scale-105"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center" />
-                          )}
-                          <div className="absolute inset-0 bg-black/25 group-hover/card:bg-black/40 transition-colors duration-300" />
-                          <h4 className="absolute z-10 text-white font-heading text-sm md:text-base uppercase tracking-wider text-center px-3 font-semibold drop-shadow-md">
-                            {item.name}
-                          </h4>
-                        </Link>
-                      ))}
+                          <Link
+                            key={item.slug}
+                            href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
+                            onClick={() => setIsHovered(false)}
+                            className="flex-none w-[240px] aspect-[4/3] snap-start rounded-2xl overflow-hidden relative group/card bg-brand-rose-soft/65 border border-brand-plum/10 cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                          >
+                            {item.image_url ? (
+                              <Image
+                                src={getProxiedImageUrl(item.image_url)}
+                                alt={item.name}
+                                fill
+                                sizes="240px"
+                                className="object-cover transition-transform duration-700 group-hover/card:scale-105"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-brand-rose-soft/75 flex items-center justify-center" />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/85 via-brand-plum/20 to-transparent transition-opacity duration-300 group-hover/card:from-brand-plum/90" />
+                            <div className="absolute bottom-0 left-0 right-0 p-4 z-10 text-left">
+                              <h4 className="text-brand-cream font-serif text-base md:text-lg font-medium tracking-tight leading-snug drop-shadow-sm">
+                                {item.name}
+                              </h4>
+                              <div className="w-0 group-hover/card:w-12 h-0.5 bg-brand-gold rounded-full transition-all duration-300 mt-1.5" />
+                            </div>
+                          </Link>
+                        ))}
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Subtle scalloped bottom hem on open mega menu tray */}
+            <ScallopEdge
+              direction="down"
+              fill="var(--color-brand-cream)"
+              stroke="rgba(45,38,64,0.12)"
+              strokeOpacity={0.65}
+              tileWidth={56}
+              height={18}
+              className="absolute left-0 right-0 top-full -mt-px pointer-events-none drop-shadow-[0_6px_8px_rgba(45,38,64,0.08)]"
+            />
           </motion.div>
         )}
       </AnimatePresence>
