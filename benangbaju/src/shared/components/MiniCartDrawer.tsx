@@ -91,24 +91,24 @@ export function MiniCartDrawer(): React.JSX.Element {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="relative w-full max-w-md bg-brand-cream/98 backdrop-blur-md shadow-2xl h-full flex flex-col z-10 border-l border-neutral-200/80 outline-none"
+            className="relative w-full max-w-md bg-brand-cream/98 backdrop-blur-md shadow-2xl h-full flex flex-col z-10 border-l border-brand-plum/10 outline-none"
             role="dialog"
             aria-modal="true"
             aria-label="Keranjang Belanja"
             tabIndex={-1}
           >
-            {/* Top gold accent line */}
+            {/* Top pastel accent line */}
             <div
-              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold"
+              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
               aria-hidden="true"
             />
 
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-neutral-100 mt-[3px]">
-              <div className="flex items-center space-x-2">
-                <HandDrawnIcon name="shopping-bag" className="h-4 w-4" aria-hidden="true" />
-                <span className="font-sans text-sm font-bold tracking-[0.15em] text-brand-plum uppercase">
-                  {market === 'MY' ? `SHOPPING BAG (${totalQuantity})` : `KERANJANG (${totalQuantity})`}
+            <div className="flex items-center justify-between p-6 border-b border-brand-plum/10 mt-[3px]">
+              <div className="flex items-center space-x-2.5">
+                <HandDrawnIcon name="shopping-bag" className="h-4 w-4 text-brand-plum" aria-hidden="true" />
+                <span className="font-serif text-lg font-medium tracking-tight text-brand-plum">
+                  {market === 'MY' ? `Shopping Bag (${totalQuantity})` : `Keranjang (${totalQuantity})`}
                 </span>
               </div>
               <button
@@ -121,7 +121,7 @@ export function MiniCartDrawer(): React.JSX.Element {
             </div>
 
             {/* Free Shipping Progress Bar */}
-            <div className="bg-brand-cream/60 px-6 py-3 border-b border-neutral-100 space-y-1.5">
+            <div className="bg-brand-gold-soft/55 px-6 py-3 border-b border-brand-gold-stroke/35 space-y-1.5">
               <p className="text-[10px] font-heading font-medium uppercase tracking-wider text-brand-plum text-center">
                 {isFreeShipping ? (
                   <span className="text-emerald-700 font-bold">
@@ -179,16 +179,16 @@ export function MiniCartDrawer(): React.JSX.Element {
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div
-                    className="relative p-4 bg-brand-cream border border-brand-accent/10 rounded-2xl animate-gentle-float flex items-center justify-center"
+                    className="relative p-4 bg-brand-blush/50 border border-brand-blush-stroke/60 rounded-2xl animate-gentle-float flex items-center justify-center"
                     aria-hidden="true"
                   >
                     <HandDrawnIcon name="shopping-bag" className="h-8 w-8" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs font-heading font-semibold uppercase tracking-wider text-brand-plum">
+                    <p className="text-base font-serif font-medium tracking-tight text-brand-plum">
                       {market === 'MY' ? 'Your Bag is Empty' : 'Keranjang Anda Kosong'}
                     </p>
-                    <p className="text-[10px] text-neutral-400 font-sans max-w-[200px]">
+                    <p className="text-xs text-neutral-500 font-sans max-w-[220px]">
                       {market === 'MY' ? 'Add your favorite pieces to proceed to checkout.' : 'Simpan produk impian Anda untuk memproses checkout.'}
                     </p>
                   </div>
@@ -209,7 +209,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                   >
                     {/* Item Image */}
                     <div
-                      className="relative aspect-[3/4] w-16 bg-neutral-100 border border-neutral-100 overflow-hidden flex-shrink-0"
+                      className="relative aspect-[3/4] w-16 bg-brand-rose-soft/65 border border-brand-plum/10 rounded-xl overflow-hidden flex-shrink-0"
                       aria-hidden="true"
                     >
                       {item.imageUrl ? (
@@ -234,7 +234,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                           href={`/produk/${item.slug}`}
                           onClick={() => setCartDrawerOpen(false)}
                         >
-                          <h4 className="text-xs font-heading font-medium uppercase tracking-wider text-brand-plum hover:text-brand-blue transition-colors line-clamp-2">
+                          <h4 className="text-sm font-serif font-medium text-brand-plum hover:text-brand-blue transition-colors line-clamp-2 leading-snug">
                             {item.productName || item.name}
                           </h4>
                         </Link>
@@ -261,7 +261,7 @@ export function MiniCartDrawer(): React.JSX.Element {
 
                       <div className="flex justify-between items-end pt-1">
                         {/* Qty adjustments */}
-                        <div className="flex items-center border border-neutral-200 bg-brand-cream scale-90 origin-left">
+                        <div className="flex items-center border border-brand-plum/15 rounded-xl overflow-hidden bg-brand-cream scale-95 origin-left">
                           <button
                             onClick={() =>
                               handleQtyChange(
@@ -339,14 +339,14 @@ export function MiniCartDrawer(): React.JSX.Element {
 
               {/* Smart Cross-sell Recommendations */}
               {items.length > 0 && recProducts.length > 0 && (
-                <div className="px-6 py-3 border-t border-neutral-100 bg-brand-cream/40 space-y-2">
+                <div className="pt-4 border-t border-brand-plum/10 space-y-2.5">
                   <div className="flex items-center space-x-1.5 text-brand-plum">
                     <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
-                    <span className="text-[10px] font-sans font-bold uppercase tracking-wider">
+                    <span className="text-sm font-accent font-bold text-brand-blue leading-none">
                       {market === 'MY' ? 'Complete Your Look' : 'Lengkapi Penampilan Anda'}
                     </span>
                   </div>
-                  <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                     {recProducts.slice(0, 2).map((p) => {
                       const availableVariant = isMY
                         ? p.product_variants.find(
@@ -361,22 +361,22 @@ export function MiniCartDrawer(): React.JSX.Element {
                       return (
                         <div
                           key={p.id}
-                          className="bg-brand-gold/30 p-2.5 rounded-xl border border-amber-200/60 flex items-center justify-between gap-3"
+                          className="bg-brand-blush/45 p-2.5 rounded-2xl border border-brand-blush-stroke/55 flex items-center justify-between gap-3"
                         >
                           <div className="flex items-center space-x-2.5 min-w-0">
                             {primaryImage && (
-                              <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 border border-neutral-200">
+                              <div className="relative w-10 h-12 rounded-xl overflow-hidden shrink-0 border border-brand-plum/10 bg-brand-rose-soft/65">
                                 <Image
                                   src={getProxiedImageUrl(primaryImage)}
                                   alt={p.name}
                                   fill
-                                  sizes="36px"
+                                  sizes="40px"
                                   className="object-cover"
                                 />
                               </div>
                             )}
                             <div className="space-y-0.5 min-w-0">
-                              <p className="text-[11px] font-sans font-bold uppercase text-brand-plum truncate">
+                              <p className="text-xs font-serif font-medium text-brand-plum truncate">
                                 {p.name}
                               </p>
                               <div className="flex flex-col">
@@ -453,7 +453,7 @@ export function MiniCartDrawer(): React.JSX.Element {
 
             {/* Bottom Panel */}
             {items.length > 0 && (
-              <div className="p-6 border-t border-neutral-100 bg-neutral-50/50 space-y-4">
+              <div className="p-6 border-t border-brand-plum/10 bg-brand-gold-soft/35 space-y-4">
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs font-heading font-semibold uppercase tracking-wider text-neutral-500">
                     Subtotal

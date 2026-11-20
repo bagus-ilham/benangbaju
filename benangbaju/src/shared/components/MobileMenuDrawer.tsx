@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link, HandDrawnIcon, MarketSwitcher } from '@/shared/components'
+import { SmartLink as Link, HandDrawnIcon, MarketSwitcher, ScallopEdge } from '@/shared/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { MobileMenuAccordionItem } from './MobileMenuAccordionItem'
@@ -52,13 +52,25 @@ export function MobileMenuDrawer({
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-            className="relative flex w-full max-w-xs flex-col bg-brand-cream py-4 shadow-xl border-r border-neutral-200 outline-none"
+            className="relative flex w-full max-w-xs flex-col bg-brand-cream pb-4 shadow-xl border-r border-brand-plum/10 outline-none overflow-hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Menu navigasi utama"
             tabIndex={-1}
           >
-            <div className="flex items-center justify-between px-6 pb-4 border-b border-neutral-200">
+            {/* Matching Dusty Blue Scalloped Top Accent */}
+            <div className="w-full select-none pointer-events-none shrink-0" aria-hidden="true">
+              <div className="w-full h-3 bg-brand-blue" />
+              <ScallopEdge
+                direction="down"
+                fill="var(--color-brand-blue)"
+                tileWidth={48}
+                height={16}
+                className="-mt-px"
+              />
+            </div>
+
+            <div className="flex items-center justify-between px-6 pt-3 pb-4 border-b border-brand-plum/10">
               <div className="relative h-8 w-32 min-w-[96px]">
                 <Image
                   src="/image/svg/logo/logo-benangbaju.svg"
@@ -90,14 +102,14 @@ export function MobileMenuDrawer({
                 ))}
 
                 {isMounted && (
-                  <div className="border-t border-neutral-100 pt-6 mt-6 space-y-4">
+                  <div className="border-t border-brand-plum/10 pt-6 mt-6 space-y-4">
                     {isAuthenticated ? (
                       <>
-                        <div className="px-2 mb-4 bg-brand-gold/20 border border-amber-200/60 rounded-xl p-3">
-                          <p className="text-[10px] text-neutral-400 font-heading uppercase tracking-wider mb-1">
+                        <div className="mb-4 bg-brand-gold-soft/55 border border-brand-gold-stroke/45 rounded-2xl p-3.5">
+                          <p className="text-sm text-brand-plum/80 font-accent font-bold leading-none mb-1">
                             {isMY ? 'Hello,' : 'Halo,'}
                           </p>
-                          <p className="text-sm font-sans font-bold text-brand-plum truncate">
+                          <p className="text-sm font-serif font-medium text-brand-plum truncate">
                             {profile?.name || user?.email}
                           </p>
                         </div>
@@ -109,7 +121,8 @@ export function MobileMenuDrawer({
                           <span>{isMY ? 'My Account' : 'Akun Saya'}</span>
                           <HandDrawnIcon name="chevron-right" className="h-3 w-3 text-neutral-400" />
                         </Link>
-                        {(profile?.role?.toLowerCase() === 'admin' || profile?.role?.toLowerCase() === 'staff') && (
+                        {(profile?.role?.toLowerCase() === 'admin' ||
+                          profile?.role?.toLowerCase() === 'staff') && (
                           <Link
                             href="/admin"
                             onClick={onClose}

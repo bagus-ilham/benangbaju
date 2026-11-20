@@ -144,27 +144,31 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             animate={{ y: 0, scale: 1 }}
             exit={{ y: -30, scale: 0.95 }}
             transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
-            className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-t-2 border-t-brand-gold border-neutral-200/80 rounded-2xl"
+            className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-brand-plum/10 rounded-3xl overflow-hidden"
           >
+            <div
+              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+              aria-hidden="true"
+            />
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-plum transition-colors cursor-pointer p-1"
+              className="absolute top-5 right-5 text-neutral-400 hover:text-brand-plum transition-colors cursor-pointer p-1"
               aria-label={market === 'MY' ? 'Close search' : 'Tutup pencarian'}
             >
               <HandDrawnIcon name="close" className="h-5 w-5" />
             </button>
 
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between pr-8">
                 <div className="space-y-1">
-                  <span className="text-[10px] uppercase tracking-widest font-heading font-medium text-neutral-400">
+                  <span className="inline-block text-base font-accent font-bold text-brand-blue leading-none">
                     {market === 'MY' ? 'Explore Collection' : 'Cari Koleksi'}
                   </span>
-                  <h3 className="text-sm font-heading font-semibold uppercase tracking-wider text-brand-plum">
+                  <h3 className="text-xl font-serif font-medium tracking-tight text-brand-plum">
                     {market === 'MY' ? 'Product Search' : 'Pencarian Produk'}
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-2 py-1 rounded hidden sm:inline-block">
+                <span className="text-[10px] font-mono text-brand-plum/70 bg-brand-gold-soft/65 border border-brand-gold-stroke/40 px-2.5 py-1 rounded-full hidden sm:inline-block">
                   ⌘K / Ctrl+K
                 </span>
               </div>
@@ -208,7 +212,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <button
                           key={item}
                           onClick={() => handleSelectTag(item)}
-                          className="text-[11px] font-sans bg-neutral-100 hover:bg-brand-gold/40 hover:text-brand-plum text-neutral-700 px-3 py-1 rounded-full transition-colors"
+                          className="text-[11px] font-sans bg-brand-gold-soft/55 hover:bg-brand-blush/75 border border-brand-plum/10 text-brand-plum px-3 py-1 rounded-full transition-colors"
                         >
                           {item}
                         </button>
@@ -219,7 +223,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               )}
 
               {searchQuery.trim().length >= 2 && (
-                <div className="border border-neutral-100 bg-neutral-50/50 p-4 -mt-2 space-y-3 rounded-xl">
+                <div className="border border-brand-plum/10 bg-brand-gold-soft/25 p-4 -mt-2 space-y-3 rounded-2xl">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-neutral-400">
                       {market === 'MY' ? 'Instant Results' : 'Hasil Pencarian Instan'}
@@ -255,9 +259,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             key={product.id}
                             href={`/produk/${product.slug}`}
                             onClick={onClose}
-                            className="flex items-center space-x-3 p-2 bg-brand-cream border border-neutral-100 hover:border-amber-300 transition-all duration-200 group rounded-xl"
+                            className="flex items-center space-x-3 p-2.5 bg-brand-cream border border-brand-plum/10 hover:border-brand-gold-stroke transition-all duration-200 group rounded-2xl"
                           >
-                            <div className="relative aspect-[3/4] w-10 bg-neutral-50 border border-neutral-100 overflow-hidden flex-shrink-0 rounded-lg">
+                            <div className="relative aspect-[3/4] w-10 bg-brand-rose-soft/65 border border-brand-plum/10 overflow-hidden flex-shrink-0 rounded-xl">
                               {primaryImg ? (
                                 <Image
                                   src={getProxiedImageUrl(primaryImg)}
@@ -273,7 +277,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-[11px] font-sans font-bold uppercase tracking-wider text-brand-plum truncate group-hover:text-brand-plum transition-colors">
+                              <h4 className="text-sm font-serif font-medium text-brand-plum truncate group-hover:text-brand-blue transition-colors">
                                 {product.name}
                               </h4>
                               <div className="mt-0.5">

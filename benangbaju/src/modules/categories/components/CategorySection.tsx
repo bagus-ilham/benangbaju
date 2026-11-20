@@ -30,18 +30,21 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
   }
 
   return (
-    <section className="bg-brand-cream py-16 md:py-20 border-b border-neutral-200/60">
+    <section className="bg-brand-cream py-16 md:py-20 border-b border-brand-plum/10">
       <PageContainer>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <SectionHeader eyebrow={isMY ? "Featured Categories" : "Kategori Pilihan"} title={isMY ? "Shop by Category" : "Kategori Belanja"} />
+            <SectionHeader
+              eyebrow={isMY ? 'Featured Categories' : 'Kategori Pilihan'}
+              title={isMY ? 'Shop by Category' : 'Kategori Belanja'}
+            />
           </div>
           {mainCategories.length > 4 && (
             <div className="flex items-center space-x-2 pb-6">
               <button
                 type="button"
                 onClick={() => handleScroll('left')}
-                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:text-brand-plum transition-all"
+                className="w-9 h-9 rounded-full border border-brand-plum/15 bg-brand-cream flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:border-brand-gold-stroke transition-all shadow-2xs"
                 aria-label="Scroll left"
               >
                 <HandDrawnIcon name="chevron-left" className="h-4 w-4" />
@@ -49,7 +52,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               <button
                 type="button"
                 onClick={() => handleScroll('right')}
-                className="w-9 h-9 rounded-full border border-neutral-300 flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:text-brand-plum transition-all"
+                className="w-9 h-9 rounded-full border border-brand-plum/15 bg-brand-cream flex items-center justify-center text-brand-plum hover:bg-brand-gold hover:border-brand-gold-stroke transition-all shadow-2xs"
                 aria-label="Scroll right"
               >
                 <HandDrawnIcon name="chevron-right" className="h-4 w-4" />
@@ -76,9 +79,8 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               >
                 <Link
                   href={`/kategori/${cat.slug}`}
-                  className="group relative aspect-[3/4] w-full overflow-hidden bg-brand-cream border border-neutral-200/80 block rounded-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.15)] transition-all duration-500"
+                  className="group relative aspect-[3/4] w-full overflow-hidden bg-brand-rose-soft/65 border border-brand-plum/10 block rounded-2xl hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.16)] transition-all duration-500"
                 >
-
                   {cat.image_url ? (
                     <Image
                       src={getProxiedImageUrl(cat.image_url)}
@@ -88,22 +90,22 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     />
                   ) : (
-                    <div className="flex items-center justify-center w-full h-full text-xs text-neutral-500 font-sans font-bold uppercase">
+                    <div className="flex items-center justify-center w-full h-full text-xs text-brand-plum/60 font-serif">
                       {cat.name}
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/80 via-brand-plum/20 to-transparent transition-opacity duration-500 group-hover:from-brand-plum/90 z-15" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/85 via-brand-plum/20 to-transparent transition-opacity duration-500 group-hover:from-brand-plum/90 z-15" />
 
                   <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 z-20">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs md:text-sm font-sans font-bold uppercase tracking-widest text-brand-cream drop-shadow-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-lg md:text-xl font-serif font-medium tracking-tight text-brand-cream drop-shadow-sm leading-tight">
                         {cat.name}
                       </span>
-                      <span className="text-[10px] font-sans font-bold text-brand-gold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="text-[10px] font-sans font-bold text-brand-gold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300 shrink-0">
                         {index < 9 ? `0${index + 1}` : index + 1}
                       </span>
                     </div>
-                    <div className="w-0 group-hover:w-full h-px bg-brand-gold transition-all duration-500 mt-2" />
+                    <div className="w-0 group-hover:w-full h-0.5 bg-brand-gold rounded-full transition-all duration-500 mt-2" />
                   </div>
                 </Link>
               </motion.div>
@@ -112,7 +114,10 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
         </motion.div>
 
         {/* Decorative Stitch Line Divider */}
-        <div className="mt-12 pt-2 flex justify-center opacity-30 select-none pointer-events-none" aria-hidden="true">
+        <div
+          className="mt-12 pt-2 flex justify-center opacity-30 select-none pointer-events-none"
+          aria-hidden="true"
+        >
           <Image
             src="/image/svg/decorative/divider-stitch-line.svg"
             alt=""
