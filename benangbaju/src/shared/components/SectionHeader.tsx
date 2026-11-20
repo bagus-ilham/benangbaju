@@ -38,14 +38,14 @@ export function SectionHeader({
       )}
     >
       {eyebrow && (
-        <span className="inline-flex items-center gap-2 text-base md:text-lg font-accent font-bold text-brand-blue-text leading-none">
+        <span className="inline-flex items-center gap-2 text-[11px] md:text-xs font-heading font-semibold uppercase tracking-[0.18em] text-brand-blue-text leading-none">
           <div className="relative w-4 h-2 opacity-35 shrink-0 pointer-events-none select-none" aria-hidden="true">
             <Image src="/image/svg/decorative/accent-cross-stitch-alt.svg" alt="" fill unoptimized className="object-contain" />
           </div>
           {eyebrow}
         </span>
       )}
-      <h2 className="text-2xl md:text-[30px] font-serif font-medium text-brand-plum tracking-tight leading-snug">
+      <h2 className="text-2xl md:text-[32px] font-display font-semibold text-brand-plum tracking-tight leading-snug">
         {title}
       </h2>
       {showDivider && (

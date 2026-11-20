@@ -4,28 +4,22 @@ import { Providers } from '@/shared/providers'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
-import { Mulish, Caveat, Fraunces } from 'next/font/google'
+import { Poppins, Playpen_Sans } from 'next/font/google'
 import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/siteUrl'
 import './globals.css'
 
-const mulish = Mulish({
-  variable: '--font-mulish',
+const poppins = Poppins({
+  variable: '--font-poppins',
   display: 'swap',
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
 })
 
-const caveat = Caveat({
-  variable: '--font-caveat',
+const playpenSans = Playpen_Sans({
+  variable: '--font-handwriting',
   display: 'swap',
   subsets: ['latin'],
-  weight: ['500', '700'],
-})
-
-const fraunces = Fraunces({
-  variable: '--font-fraunces',
-  display: 'swap',
-  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -61,7 +55,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>): React.JSX.Element {
   return (
-    <html lang="id" className={`${mulish.variable} ${caveat.variable} ${fraunces.variable} h-full antialiased`} suppressHydrationWarning>
+    <html
+      lang="id"
+      className={`${poppins.variable} ${playpenSans.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body
         className="min-h-full flex flex-col font-sans bg-brand-cream text-brand-plum selection:bg-brand-gold selection:text-brand-plum"
         suppressHydrationWarning

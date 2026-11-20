@@ -74,12 +74,12 @@ export function MidBannerSection({ banners }: MidBannerSectionProps): React.JSX.
         <div className="absolute inset-0 bg-brand-plum/20 flex items-center justify-center text-center p-4">
           <div className="p-6 md:p-8 bg-brand-cream/92 backdrop-blur-sm border border-brand-plum/10 rounded-2xl shadow-xl max-w-lg">
             {bannerSubtitle && (
-              <p className="text-base font-accent font-bold text-brand-blue-text leading-none mb-2">
+              <p className="text-xs font-heading font-semibold uppercase tracking-[0.18em] text-brand-blue-text leading-none mb-2">
                 {bannerSubtitle}
               </p>
             )}
             {bannerTitle && (
-              <h3 className="text-2xl md:text-3xl font-serif font-medium tracking-tight text-brand-plum">
+              <h3 className="text-2xl md:text-3xl font-display font-semibold tracking-tight text-brand-plum">
                 {bannerTitle}
               </h3>
             )}

@@ -30,7 +30,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-disabled={disabled || isLoading}
         aria-busy={isLoading}
         className={cn(
-          // Base styles — Modern premium rounded design with Mulish font
+          // Base styles — Modern premium rounded design with Poppins font
           'inline-flex items-center justify-center font-sans font-bold tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] active:translate-y-0.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:ring-offset-1 select-none cursor-pointer',
           {
             // Variants — Single Source of Truth tokens from globals.css

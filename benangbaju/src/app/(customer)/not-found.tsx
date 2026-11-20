@@ -55,7 +55,7 @@ export default function CustomerNotFound(): React.JSX.Element {
               />
             </div>
           </div>
-          <h1 className="text-2xl md:text-3xl font-serif font-medium tracking-tight text-brand-plum">
+          <h1 className="text-2xl md:text-3xl font-display font-semibold tracking-tight text-brand-plum">
             Halaman Tidak Ditemukan
           </h1>
           <p className="text-xs md:text-sm text-neutral-600 leading-relaxed max-w-xs mx-auto pt-1">

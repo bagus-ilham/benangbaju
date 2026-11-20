@@ -92,11 +92,11 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
 
           <div className="space-y-6 max-w-md">
             <div className="stitch-divider border-white/30">
-              <span className="text-xl font-accent font-bold text-brand-gold leading-none">
+              <span className="text-xs font-heading font-semibold uppercase tracking-[0.18em] text-brand-gold leading-none">
                 {routeInfo.subtitle}
               </span>
             </div>
-            <h1 className="text-3xl xl:text-4xl font-serif font-medium tracking-tight text-white leading-tight drop-shadow-sm">
+            <h1 className="text-3xl xl:text-4xl font-display font-semibold tracking-tight text-white leading-tight drop-shadow-sm">
               {routeInfo.title}
             </h1>
             <p className="text-sm text-white/85 font-sans leading-relaxed drop-shadow-xs">

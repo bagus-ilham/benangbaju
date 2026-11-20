@@ -5,11 +5,12 @@
  * Ubah warna palet utama cukup di blok @theme ini saja.
  * ============================================================================ */
 @theme {
-  /* Typography */
-  --font-sans: var(--font-mulish), sans-serif;
-  --font-heading: var(--font-mulish), sans-serif;
-  --font-accent: var(--font-caveat), cursive;
-  --font-serif: var(--font-fraunces), Georgia, serif;
+  /* Typography — 2 Fonts Only (Poppins + Playpen Sans OFL) */
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-heading: var(--font-poppins), sans-serif;
+  --font-serif: var(--font-poppins), sans-serif;
+  --font-display: var(--font-handwriting), cursive;
+  --font-accent: var(--font-handwriting), cursive;
 
   /* Base Neutral Canvas & Ink */
   --color-brand-cream: #FAF8F5;

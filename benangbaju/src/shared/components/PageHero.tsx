@@ -31,16 +31,16 @@ export function PageHero({
 
   const textClasses = {
     light: {
-      eyebrow: 'text-brand-plum font-bold',
-      title: 'text-brand-plum font-bold',
+      eyebrow: 'text-brand-blue-text',
+      title: 'text-brand-plum',
       subtitle: 'text-neutral-600',
     },
     cream: {
-      eyebrow: 'text-brand-plum font-bold',
-      title: 'text-brand-plum font-bold',
+      eyebrow: 'text-brand-blue-text',
+      title: 'text-brand-plum',
       subtitle: 'text-neutral-600',
     },
-    dark: { eyebrow: 'text-brand-plum font-bold', title: 'text-brand-plum font-bold', subtitle: 'text-neutral-700' },
+    dark: { eyebrow: 'text-brand-plum/80', title: 'text-brand-plum', subtitle: 'text-neutral-700' },
   }
 
   const colors = textClasses[variant]
@@ -78,7 +78,7 @@ export function PageHero({
                 </div>
                 <span
                   className={cn(
-                    'inline-block text-base md:text-lg font-accent font-bold leading-none',
+                    'inline-block text-[11px] md:text-xs font-heading font-semibold uppercase tracking-[0.18em] leading-none',
                     colors.eyebrow
                   )}
                 >
@@ -88,7 +88,7 @@ export function PageHero({
             )}
             <h1
               className={cn(
-                'text-3xl md:text-[42px] font-serif font-medium leading-tight tracking-tight',
+                'text-3xl md:text-[42px] font-display font-semibold leading-tight tracking-tight',
                 colors.title
               )}
             >
