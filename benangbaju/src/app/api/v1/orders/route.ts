@@ -9,7 +9,15 @@ export async function POST(req: Request) {
     const { user } = await requireAuth()
 
     const body = await req.json()
-    const { addressId, courierName, shippingCost, notes, voucherCode, shippingRateId } = body
+    const {
+      addressId,
+      courierName,
+      shippingCost,
+      notes,
+      voucherCode,
+      shippingRateId,
+      paymentChannel,
+    } = body
 
     if (!addressId || !courierName || shippingCost === undefined) {
       return NextResponse.json(
@@ -29,6 +37,7 @@ export async function POST(req: Request) {
       shippingCost,
       notes,
       voucherCode,
+      paymentChannel,
     })
 
     if (!result.success) {

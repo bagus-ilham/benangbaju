@@ -101,7 +101,15 @@ export function AdminReturnsTable({
               </td>
               <td className="py-4 px-4 text-center">
                 <p className="font-bold">
-                  Rp {(ret.refund_amount || ret.orders?.total_amount || 0).toLocaleString('id-ID')}
+                  Rp{' '}
+                  {(
+                    ret.refund_amount ??
+                    (ret.return_items || []).reduce(
+                      (sum, item) =>
+                        sum + Number(item.quantity || 0) * Number(item.order_items?.price || 0),
+                      0
+                    )
+                  ).toLocaleString('id-ID')}
                 </p>
                 <p className="text-[10px] text-neutral-500 font-normal">
                   {ret.refund_bank_name} - {ret.refund_account_number}

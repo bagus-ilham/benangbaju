@@ -118,7 +118,7 @@ export function CheckoutAddressForm({
                     .filter((a) => a.id !== selectedAddress?.id)
                     .map((address) => (
                       <motion.div
-                        whileHover={{ y: -1, borderColor: '#94b2b9' }}
+                        whileHover={{ y: -1, borderColor: '#C0D8DD' }}
                         whileTap={{ scale: 0.98 }}
                         key={address.id}
                         role="button"
@@ -173,12 +173,12 @@ export function CheckoutAddressForm({
 
       {/* International Terms Notice for Malaysia Orders */}
       {isMalaysia && (
-        <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-2xl space-y-1.5 text-xs text-amber-950 font-sans">
-          <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
-            <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
+        <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-2xl space-y-1.5 text-xs text-brand-plum font-sans">
+          <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-brand-plum">
+            <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-brand-plum/80" />
             <span>{isMY ? 'International Shipping Terms (DDU & Final Sale)' : 'Ketentuan Pengiriman Internasional (DDU & Final Sale)'}</span>
           </div>
-          <ul className="list-disc list-inside text-[11px] text-amber-900/90 space-y-1 leading-relaxed">
+          <ul className="list-disc list-inside text-[11px] text-brand-plum/85 space-y-1 leading-relaxed">
             <li>
               {isMY ? <><strong>DDU (Delivered Duty Unpaid):</strong> Malaysian SST & import duties (if order CIF value exceeds De Minimis RM 500) are borne by the recipient upon parcel arrival.</> : <><strong>DDU (Delivered Duty Unpaid):</strong> Pajak SST & bea cukai Malaysia (apabila nilai pesanan melebihi De Minimis RM 500) ditanggung oleh penerima saat paket tiba.</>}
             </li>
@@ -221,7 +221,7 @@ export function CheckoutAddressForm({
                 <motion.div
                   whileHover={{
                     y: -2,
-                    borderColor: '#94b2b9',
+                    borderColor: '#C0D8DD',
                   }}
                   whileTap={{ scale: 0.99 }}
                   key={option.id}

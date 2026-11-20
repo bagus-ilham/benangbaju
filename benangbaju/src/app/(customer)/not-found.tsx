@@ -12,7 +12,7 @@ export default function CustomerNotFound(): React.JSX.Element {
     <PageContainer className="relative flex-1 min-h-[60vh] flex flex-col items-center justify-center text-center px-6 pt-12 pb-24 bg-brand-cream font-sans overflow-hidden">
       {/* Soft pastel ambient orbs */}
       <div
-        className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blush/65 blur-3xl pointer-events-none"
+        className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blue-soft/65 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
       <div
@@ -39,7 +39,7 @@ export default function CustomerNotFound(): React.JSX.Element {
                 className="object-contain"
               />
             </div>
-            <span className="text-base font-accent font-bold text-brand-blue leading-none">
+            <span className="text-base font-accent font-bold text-brand-blue-text leading-none">
               Benangbaju · 404
             </span>
             <div

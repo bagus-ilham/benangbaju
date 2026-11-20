@@ -26,8 +26,10 @@ export class CartService {
         if (localItems.length > 0) {
           const upsertData = localItems.map((localItem) => {
             const dbQty = dbItemsMap.get(localItem.variantId)
+            const maxMarketStock = Math.max(localItem.stock ?? 0, localItem.stockMy ?? 0)
+            const stockCap = maxMarketStock > 0 ? maxMarketStock : 9999
             const combinedQty = dbQty
-              ? Math.min(Math.max(dbQty, localItem.quantity), localItem.stock ?? 9999)
+              ? Math.min(Math.max(dbQty, localItem.quantity), stockCap)
               : localItem.quantity
 
             return {

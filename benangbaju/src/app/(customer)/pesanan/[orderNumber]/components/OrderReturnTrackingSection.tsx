@@ -36,7 +36,7 @@ export function OrderReturnTrackingSection({
 
   return (
     <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
 
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
         <div className="flex items-center space-x-2">
@@ -54,8 +54,8 @@ export function OrderReturnTrackingSection({
                 : status === 'completed'
                   ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                   : status === 'approved'
-                    ? 'bg-blue-100 text-blue-800 border border-blue-300'
-                    : 'bg-amber-100 text-amber-800 border border-amber-300'
+                    ? 'bg-brand-blue-soft text-brand-plum border border-brand-blue-stroke'
+                    : 'bg-brand-gold text-brand-plum/85 border border-brand-gold-stroke'
             }`}
           >
             <span>
@@ -71,7 +71,7 @@ export function OrderReturnTrackingSection({
 
           <Link
             href={`/pesanan/${orderNumber}/retur`}
-            className="text-[10px] uppercase tracking-wider font-bold text-brand-plum hover:text-brand-blue underline underline-offset-2 transition"
+            className="text-[10px] uppercase tracking-wider font-bold text-brand-plum hover:text-brand-blue-text underline underline-offset-2 transition"
           >
             Detail Retur
           </Link>

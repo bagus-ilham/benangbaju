@@ -69,7 +69,12 @@ export class OrderRepository {
   }
 
   async create(params: CreateOrderParams) {
-    const supabase = await createServerClient()
+    // Use service-role client so create_order RPC can stay revoked from direct PostgREST anon/authenticated access
+    let supabase = await createServerClient()
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const { createAdminClient } = await import('@/lib/supabase/admin')
+      supabase = createAdminClient()
+    }
     const { data, error } = await supabase.rpc('create_order', {
       p_user_id: params.userId,
       p_address_id: params.addressId,
@@ -274,11 +279,111 @@ export class OrderRepository {
       try {
         await this.cancel(orderId, 'Dibatalkan oleh Admin')
       } catch {
-        // Fallback for orders in processing/shipped state where cancel_order RPC fails
-        await supabase
+        // Fallback for orders in processing/shipped state where cancel_order RPC rejects non-pending status
+        const now = new Date().toISOString()
+        const { data: orderDetail, error: detailErr } = await supabase
           .from('orders')
-          .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+          .select(
+            'id, voucher_id, country_code, order_shipping(country_code), order_items(id, variant_id, quantity, flash_sale_item_id)'
+          )
           .eq('id', orderId)
+          .single()
+
+        if (detailErr || !orderDetail) throw detailErr || new Error('Pesanan tidak ditemukan')
+
+        const { error: cancelUpdateErr } = await supabase
+          .from('orders')
+          .update({
+            status: 'cancelled',
+            cancel_reason: 'Dibatalkan oleh Admin',
+            cancelled_at: now,
+            updated_at: now,
+          })
+          .eq('id', orderId)
+
+        if (cancelUpdateErr) throw cancelUpdateErr
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const shippingRaw = (orderDetail as any).order_shipping
+        const shipping = Array.isArray(shippingRaw) ? shippingRaw[0] : shippingRaw
+        const market: 'ID' | 'MY' =
+          orderDetail.country_code === 'MY' || shipping?.country_code === 'MY' ? 'MY' : 'ID'
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const items = Array.isArray((orderDetail as any).order_items)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ((orderDetail as any).order_items as any[])
+          : []
+
+        for (const item of items) {
+          const qty = Number(item.quantity || 0)
+          if (item.variant_id && qty > 0) {
+            const { data: variant } = await supabase
+              .from('product_variants')
+              .select('stock, stock_my')
+              .eq('id', item.variant_id)
+              .single()
+
+            if (variant) {
+              const qtyBefore = market === 'MY' ? Number(variant.stock_my ?? 0) : Number(variant.stock ?? 0)
+              const qtyAfter = qtyBefore + qty
+              const stockUpdate = market === 'MY' ? { stock_my: qtyAfter } : { stock: qtyAfter }
+              await supabase.from('product_variants').update(stockUpdate).eq('id', item.variant_id)
+
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              await (supabase.from as any)('stock_mutations').insert({
+                variant_id: item.variant_id,
+                order_item_id: item.id,
+                type: 'released',
+                qty,
+                qty_before: qtyBefore,
+                qty_after: qtyAfter,
+                note: 'Pembatalan pesanan oleh Admin',
+                market,
+              })
+            }
+          }
+
+          if (item.flash_sale_item_id && qty > 0) {
+            const { data: fsItem } = await supabase
+              .from('flash_sale_items')
+              .select('sold_count')
+              .eq('id', item.flash_sale_item_id)
+              .maybeSingle()
+
+            if (fsItem) {
+              await supabase
+                .from('flash_sale_items')
+                .update({ sold_count: Math.max(0, Number(fsItem.sold_count || 0) - qty) })
+                .eq('id', item.flash_sale_item_id)
+            }
+          }
+        }
+
+        if (orderDetail.voucher_id) {
+          const { data: deletedUsages } = await supabase
+            .from('voucher_usages')
+            .delete()
+            .eq('order_id', orderId)
+            .select('id')
+
+          if (deletedUsages && deletedUsages.length > 0) {
+            const { data: voucher } = await supabase
+              .from('vouchers')
+              .select('used_count')
+              .eq('id', orderDetail.voucher_id)
+              .maybeSingle()
+
+            if (voucher) {
+              await supabase
+                .from('vouchers')
+                .update({
+                  used_count: Math.max(0, Number(voucher.used_count || 0) - deletedUsages.length),
+                })
+                .eq('id', orderDetail.voucher_id)
+            }
+          }
+        }
       }
       return
     }
@@ -356,6 +461,25 @@ export class OrderRepository {
     const { status, adminNotes, refundAmount } = params
     const now = new Date().toISOString()
 
+    // Fetch existing return request BEFORE updating to prevent double stock restoration
+    // and to read accurate return_items.quantity + order market (ID vs MY)
+    const { data: existingReturn, error: fetchErr } = await supabase
+      .from('return_requests')
+      .select(
+        'id, status, order_id, orders(country_code, order_shipping(country_code)), return_items(quantity, order_item_id, order_items(variant_id))'
+      )
+      .eq('id', requestId)
+      .single()
+
+    if (fetchErr || !existingReturn) {
+      throw fetchErr || new Error('Pengajuan retur tidak ditemukan')
+    }
+
+    const alreadyRestored =
+      existingReturn.status === 'approved' || existingReturn.status === 'completed'
+    const shouldRestoreStock =
+      !alreadyRestored && (status === 'approved' || status === 'completed')
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = {
       status,
@@ -364,7 +488,7 @@ export class OrderRepository {
       updated_at: now,
     }
 
-    if (status === 'approved') {
+    if (status === 'approved' && existingReturn.status !== 'approved') {
       updateData.approved_at = now
     } else if (status === 'rejected') {
       updateData.rejected_at = now
@@ -376,36 +500,54 @@ export class OrderRepository {
     const { error } = await supabase.from('return_requests').update(updateData).eq('id', requestId)
     if (error) throw error
 
-    // Restore variant stock when return is approved or completed
-    if (status === 'approved' || status === 'completed') {
+    // Restore variant stock ONCE when transitioning from pending/rejected -> approved/completed
+    if (shouldRestoreStock && existingReturn.return_items) {
       try {
-        const { data: returnReq } = await supabase
-          .from('return_requests')
-          .select('return_items(order_items(variant_id, quantity))')
-          .eq('id', requestId)
-          .maybeSingle()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const orderObj = Array.isArray((existingReturn as any).orders)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (existingReturn as any).orders[0]
+          : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (existingReturn as any).orders
+        const shippingRaw = orderObj?.order_shipping
+        const shipping = Array.isArray(shippingRaw) ? shippingRaw[0] : shippingRaw
+        const market: 'ID' | 'MY' =
+          orderObj?.country_code === 'MY' || shipping?.country_code === 'MY' ? 'MY' : 'ID'
 
-        if (returnReq?.return_items) {
-          for (const item of returnReq.return_items as any[]) {
-            const vId = item.order_items?.variant_id
-            const qty = item.order_items?.quantity
-            if (vId && qty > 0) {
-              const { data: v } = await supabase
-                .from('product_variants')
-                .select('stock')
-                .eq('id', vId)
-                .single()
-              if (v) {
-                await supabase
-                  .from('product_variants')
-                  .update({ stock: v.stock + qty })
-                  .eq('id', vId)
-              }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const item of existingReturn.return_items as any[]) {
+          const orderItem = Array.isArray(item.order_items) ? item.order_items[0] : item.order_items
+          const vId = orderItem?.variant_id
+          // Use returned quantity from return_items, NOT full purchased quantity from order_items
+          const qty = Number(item.quantity || 0)
+          if (vId && qty > 0) {
+            const { data: v } = await supabase
+              .from('product_variants')
+              .select('stock, stock_my')
+              .eq('id', vId)
+              .single()
+            if (v) {
+              const qtyBefore = market === 'MY' ? Number(v.stock_my ?? 0) : Number(v.stock ?? 0)
+              const qtyAfter = qtyBefore + qty
+              const stockUpdate = market === 'MY' ? { stock_my: qtyAfter } : { stock: qtyAfter }
+              await supabase.from('product_variants').update(stockUpdate).eq('id', vId)
+
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              await (supabase.from as any)('stock_mutations').insert({
+                variant_id: vId,
+                order_item_id: item.order_item_id || null,
+                type: 'released',
+                qty,
+                qty_before: qtyBefore,
+                qty_after: qtyAfter,
+                note: `Restorasi stok retur (${requestId})`,
+                market,
+              })
             }
           }
         }
       } catch (stockErr) {
-        console.error('Error restoring stock on return approval:', stockErr)
+        safeLogError('Error restoring stock on return approval:', stockErr)
       }
     }
   }

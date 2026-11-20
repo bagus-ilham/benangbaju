@@ -12,19 +12,19 @@ export function OrderStatusBadge({ status, className }: { status: string; classN
   switch (status) {
     case 'pending_payment':
       return (
-        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-amber-800 bg-amber-50 border border-amber-200 rounded-full animate-pulse-glow", className)}>
+        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-brand-plum bg-brand-gold border border-brand-gold-stroke rounded-full animate-pulse-glow", className)}>
           <HandDrawnIcon name="clock" className="h-3 w-3 mr-1" /> Belum Bayar
         </span>
       )
     case 'processing':
       return (
-        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-blue-800 bg-blue-50 border border-blue-200 rounded-full", className)}>
+        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-brand-plum bg-brand-blue-soft border border-brand-blue-stroke rounded-full", className)}>
           <HandDrawnIcon name="package" className="h-3 w-3 mr-1" /> Diproses
         </span>
       )
     case 'shipped':
       return (
-        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-indigo-800 bg-indigo-50 border border-indigo-200 rounded-full", className)}>
+        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-brand-plum bg-brand-blue border border-brand-blue-stroke rounded-full", className)}>
           <HandDrawnIcon name="truck" className="h-3 w-3 mr-1" /> Dikirim
         </span>
       )
@@ -66,7 +66,7 @@ export function ReviewStatusBadge({ status, className }: { status: string; class
       )
     default:
       return (
-        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-amber-700 bg-amber-50 border border-amber-200 rounded-full", className)}>
+        <span className={cn("inline-flex items-center text-[10px] font-sans font-bold uppercase tracking-wider px-2.5 py-1 text-brand-plum bg-brand-gold border border-brand-gold-stroke rounded-full", className)}>
           Menunggu
         </span>
       )

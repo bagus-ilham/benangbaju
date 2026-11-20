@@ -69,17 +69,19 @@ export const useCartStore = create<CartState>()(
 
       addItem: async (newItem, qty = 1) => {
         const isMY = useMarketStore.getState().market === 'MY'
-        const maxStock = isMY ? (newItem.stockMy ?? newItem.stock) : newItem.stock
+        const maxStock = isMY ? (newItem.stockMy ?? 0) : newItem.stock
+        if (maxStock <= 0 || qty <= 0) return
+
         set((state) => {
           const existingItem = state.items.find((item) => item.variantId === newItem.variantId)
           let updatedItems: CartItem[]
           if (existingItem) {
-            const newQty = Math.min(existingItem.quantity + qty, Math.max(1, maxStock))
+            const newQty = Math.min(existingItem.quantity + qty, maxStock)
             updatedItems = state.items.map((item) =>
               item.variantId === newItem.variantId ? { ...item, ...newItem, quantity: newQty } : item
             )
           } else {
-            updatedItems = [...state.items, { ...newItem, quantity: Math.min(qty, Math.max(1, maxStock)) }]
+            updatedItems = [...state.items, { ...newItem, quantity: Math.min(qty, maxStock) }]
           }
           return { items: updatedItems, needsResync: state.isSyncing }
         })
@@ -96,8 +98,9 @@ export const useCartStore = create<CartState>()(
         set((state) => ({
           items: state.items.map((item) => {
             if (item.variantId !== variantId) return item
-            const maxStock = isMY ? (item.stockMy ?? item.stock) : item.stock
-            return { ...item, quantity: Math.max(1, Math.min(quantity, Math.max(1, maxStock))) }
+            const maxStock = isMY ? (item.stockMy ?? 0) : item.stock
+            if (maxStock <= 0) return item
+            return { ...item, quantity: Math.max(1, Math.min(quantity, maxStock)) }
           }),
           needsResync: state.isSyncing,
         }))
@@ -123,8 +126,11 @@ export const useCartStore = create<CartState>()(
       },
 
       clearCart: async () => {
+        const { syncTimeoutId } = get()
+        if (syncTimeoutId) clearTimeout(syncTimeoutId)
         set((state) => ({
           items: [],
+          syncTimeoutId: null,
           needsResync: state.isSyncing,
         }))
 
@@ -140,10 +146,24 @@ export const useCartStore = create<CartState>()(
       },
 
       resetCart: () => {
-        set({ items: [], isSyncing: false, hasSynced: false, needsResync: false })
+        const { syncTimeoutId } = get()
+        if (syncTimeoutId) clearTimeout(syncTimeoutId)
+        set({
+          items: [],
+          syncTimeoutId: null,
+          isSyncing: false,
+          hasSynced: false,
+          needsResync: false,
+        })
       },
 
       syncCart: async (userId, merge = false) => {
+        const { syncTimeoutId } = get()
+        if (syncTimeoutId) {
+          clearTimeout(syncTimeoutId)
+          set({ syncTimeoutId: null })
+        }
+
         if (!userId) {
           set({ isSyncing: false, hasSynced: false, needsResync: false })
           return

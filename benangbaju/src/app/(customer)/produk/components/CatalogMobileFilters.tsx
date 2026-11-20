@@ -68,7 +68,7 @@ export function CatalogMobileFilters({
                   className={cn(
                     'text-sm font-sans tracking-wide text-left w-full px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2',
                     !categorySlug
-                      ? 'bg-brand-blush/85 text-brand-plum font-bold shadow-2xs'
+                      ? 'bg-brand-blue-soft/85 text-brand-plum font-bold shadow-2xs'
                       : 'text-neutral-600 hover:bg-brand-gold-soft/40'
                   )}
                 >
@@ -91,7 +91,7 @@ export function CatalogMobileFilters({
                       className={cn(
                         'text-sm font-sans tracking-wide text-left w-full px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2',
                         isActive
-                          ? 'bg-brand-blush/85 text-brand-plum font-bold shadow-2xs'
+                          ? 'bg-brand-blue-soft/85 text-brand-plum font-bold shadow-2xs'
                           : 'text-neutral-600 hover:bg-brand-gold-soft/40'
                       )}
                     >

@@ -62,7 +62,7 @@ export function Pagination({
           type="button"
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage <= 1}
-          className="h-9 w-9 flex items-center justify-center border border-brand-plum/15 rounded-full text-brand-plum bg-brand-cream hover:bg-brand-blush/70 hover:border-brand-blush-stroke disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-2xs cursor-pointer"
+          className="h-9 w-9 flex items-center justify-center border border-brand-plum/15 rounded-full text-brand-plum bg-brand-cream hover:bg-brand-blue-soft/70 hover:border-brand-blue-stroke disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-2xs cursor-pointer"
           aria-label="Halaman sebelumnya"
           title="Halaman sebelumnya"
         >
@@ -75,7 +75,7 @@ export function Pagination({
             <button
               type="button"
               onClick={() => onPageChange(1)}
-              className="h-9 min-w-[36px] px-2.5 border border-brand-plum/15 rounded-full text-xs font-bold bg-brand-cream text-brand-plum hover:bg-brand-blush/70 hover:border-brand-blush-stroke transition-all duration-200 shadow-2xs cursor-pointer"
+              className="h-9 min-w-[36px] px-2.5 border border-brand-plum/15 rounded-full text-xs font-bold bg-brand-cream text-brand-plum hover:bg-brand-blue-soft/70 hover:border-brand-blue-stroke transition-all duration-200 shadow-2xs cursor-pointer"
             >
               1
             </button>
@@ -97,7 +97,7 @@ export function Pagination({
                 'h-9 min-w-[36px] px-2.5 border rounded-full text-xs font-bold transition-all duration-200 cursor-pointer',
                 isActive
                   ? 'bg-brand-plum text-brand-gold border-brand-plum shadow-sm scale-105'
-                  : 'bg-brand-cream text-brand-plum border-brand-plum/15 hover:bg-brand-blush/70 hover:border-brand-blush-stroke shadow-2xs'
+                  : 'bg-brand-cream text-brand-plum border-brand-plum/15 hover:bg-brand-blue-soft/70 hover:border-brand-blue-stroke shadow-2xs'
               )}
               aria-current={isActive ? 'page' : undefined}
             >
@@ -115,7 +115,7 @@ export function Pagination({
             <button
               type="button"
               onClick={() => onPageChange(totalPages)}
-              className="h-9 min-w-[36px] px-2.5 border border-brand-plum/15 rounded-full text-xs font-bold bg-brand-cream text-brand-plum hover:bg-brand-blush/70 hover:border-brand-blush-stroke transition-all duration-200 shadow-2xs cursor-pointer"
+              className="h-9 min-w-[36px] px-2.5 border border-brand-plum/15 rounded-full text-xs font-bold bg-brand-cream text-brand-plum hover:bg-brand-blue-soft/70 hover:border-brand-blue-stroke transition-all duration-200 shadow-2xs cursor-pointer"
             >
               {totalPages}
             </button>
@@ -127,7 +127,7 @@ export function Pagination({
           type="button"
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage >= totalPages}
-          className="h-9 w-9 flex items-center justify-center border border-brand-plum/15 rounded-full text-brand-plum bg-brand-cream hover:bg-brand-blush/70 hover:border-brand-blush-stroke disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-2xs cursor-pointer"
+          className="h-9 w-9 flex items-center justify-center border border-brand-plum/15 rounded-full text-brand-plum bg-brand-cream hover:bg-brand-blue-soft/70 hover:border-brand-blue-stroke disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-2xs cursor-pointer"
           aria-label="Halaman berikutnya"
           title="Halaman berikutnya"
         >

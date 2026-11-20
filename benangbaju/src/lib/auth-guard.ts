@@ -24,6 +24,15 @@ export async function requireAdmin() {
   return { user, supabase, profile }
 }
 
+export async function requireSuperAdmin() {
+  const { user, supabase, profile } = await requireAdmin()
+  const role = profile?.role?.toLowerCase()
+  if (role !== 'admin') {
+    throw new ForbiddenError('Super admin access required')
+  }
+  return { user, supabase, profile }
+}
+
 export async function requireAuth() {
   const supabase = await createServerClient()
   const {

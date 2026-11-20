@@ -38,7 +38,7 @@ export function SectionHeader({
       )}
     >
       {eyebrow && (
-        <span className="inline-flex items-center gap-2 text-base md:text-lg font-accent font-bold text-brand-blue leading-none">
+        <span className="inline-flex items-center gap-2 text-base md:text-lg font-accent font-bold text-brand-blue-text leading-none">
           <div className="relative w-4 h-2 opacity-35 shrink-0 pointer-events-none select-none" aria-hidden="true">
             <Image src="/image/svg/decorative/accent-cross-stitch-alt.svg" alt="" fill unoptimized className="object-contain" />
           </div>

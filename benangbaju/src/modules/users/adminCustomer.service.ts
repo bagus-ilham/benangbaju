@@ -5,8 +5,8 @@ export class AdminCustomerService {
     return adminCustomerRepository.adminGetCustomers(page, limit)
   }
 
-  async adminToggleCustomerStatus(customerId: string, isActive: boolean) {
-    return adminCustomerRepository.adminToggleCustomerStatus(customerId, isActive)
+  async adminToggleCustomerStatus(customerId: string, isActive: boolean, adminId?: string) {
+    return adminCustomerRepository.adminToggleCustomerStatus(customerId, isActive, adminId)
   }
 
   async adminGetCustomerDetail(customerId: string) {

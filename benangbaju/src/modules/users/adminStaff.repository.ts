@@ -34,12 +34,15 @@ export class AdminStaffRepository {
     }))
   }
 
-  async adminCreateStaff(staffData: {
-    name: string
-    email: string
-    password?: string
-    role: 'admin' | 'staff'
-  }): Promise<{ success: boolean; data?: StaffProfile; error?: string }> {
+  async adminCreateStaff(
+    staffData: {
+      name: string
+      email: string
+      password?: string
+      role: 'admin' | 'staff'
+    },
+    adminId?: string
+  ): Promise<{ success: boolean; data?: StaffProfile; error?: string }> {
     try {
       const supabaseAdmin = createAdminClient()
 
@@ -91,7 +94,8 @@ export class AdminStaffRepository {
         'create',
         'staff',
         newUserId,
-        `Created staff account: ${staffData.name}`
+        `Created staff account: ${staffData.name}`,
+        adminId
       )
 
       return { success: true, data: profileData }
@@ -108,7 +112,8 @@ export class AdminStaffRepository {
       name: string
       role: 'admin' | 'staff'
       is_active: boolean
-    }>
+    }>,
+    adminId?: string
   ): Promise<{ success: boolean; data?: StaffProfile; error?: Error }> {
     const supabase = createAdminClient()
     const { data, error } = await supabase
@@ -139,13 +144,17 @@ export class AdminStaffRepository {
       'update',
       'staff',
       staffId,
-      `Updated staff profile ${data.name}`
+      `Updated staff profile ${data.name}`,
+      adminId
     )
 
     return { success: true, data }
   }
 
-  async adminDeleteStaff(staffId: string): Promise<{ success: boolean; error?: Error }> {
+  async adminDeleteStaff(
+    staffId: string,
+    adminId?: string
+  ): Promise<{ success: boolean; error?: Error }> {
     const supabase = createAdminClient()
     // We use soft delete to preserve activity logs and relations
     const { error } = await supabase
@@ -172,7 +181,8 @@ export class AdminStaffRepository {
       'delete',
       'staff',
       staffId,
-      `Soft-deleted (disabled) staff ${staffId}`
+      `Soft-deleted (disabled) staff ${staffId}`,
+      adminId
     )
 
     return { success: true }

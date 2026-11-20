@@ -15,7 +15,7 @@ import { z } from 'zod'
 import { useForm, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
-import { useMarketStore } from '@/shared/stores/marketStore'
+import { useMarket } from '@/shared/stores/marketStore'
 import {
   INDONESIA_PROVINCES,
   MALAYSIA_STATES,
@@ -117,7 +117,7 @@ export function AddressModal({
   addressToEdit,
 }: AddressModalProps): React.JSX.Element {
   const isEdit = !!addressToEdit
-  const market = useMarketStore((state) => state.market)
+  const market = useMarket()
   
 
   const {
@@ -248,6 +248,7 @@ export function AddressModal({
           .select('zone_id')
           .eq('country_code', countryCode)
           .ilike('province_name', provinceName.trim())
+          .limit(1)
           .maybeSingle()
 
         if (data?.zone_id) {
@@ -273,6 +274,7 @@ export function AddressModal({
           .select('zone_id')
           .eq('country_code', data.country_code)
           .ilike('province_name', data.province_name.trim())
+          .limit(1)
           .maybeSingle()
         if (zoneRow?.zone_id) {
           resolvedZoneId = zoneRow.zone_id
@@ -318,7 +320,10 @@ export function AddressModal({
 
   const handleSelectDistrict = useCallback(
     (district: (typeof searchResults)[0]) => {
-      skipProvinceFetchRef.current = true
+      // Only skip the next province-change effect if countryCode or provinceName will actually change
+      if (countryCode !== 'ID' || provinceName !== district.province_name) {
+        skipProvinceFetchRef.current = true
+      }
       setValue('country_code', 'ID')
       setValue('province_name', district.province_name, {
         shouldValidate: true,
@@ -349,7 +354,7 @@ export function AddressModal({
       setShowSuggestions(false)
       setFocusedIndex(-1)
     },
-    [setValue]
+    [setValue, countryCode, provinceName]
   )
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -682,7 +687,7 @@ export function AddressModal({
 
         <div className="flex justify-end space-x-3 pt-3 border-t border-neutral-100">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
-            Batal
+            {isMY ? 'Cancel' : 'Batal'}
           </Button>
           <Button type="submit" disabled={isSaving}>
             {isSaving ? (isMY ? 'Saving...' : 'Menyimpan...') : (isMY ? 'Save Address' : 'Simpan Alamat')}

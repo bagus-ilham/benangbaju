@@ -16,6 +16,7 @@ import { formatLocalISO } from '@/lib/utils/format'
 import { CollectionListTable, CollectionFormModal } from './components'
 
 import { generateSlug, getErrorMessage } from '@/lib/utils'
+import { revalidateCacheTag } from '@/shared/actions/revalidate'
 
 const supabase = createBrowserClient()
 
@@ -132,6 +133,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
         .eq('id', col.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('collections'), revalidateCacheTag('homepage-data')])
       toast.success('Status aktif berhasil diubah')
       refetch()
     } catch (err) {
@@ -147,6 +149,7 @@ export default function AdminCollectionPage(): React.JSX.Element {
         .eq('id', col.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('collections'), revalidateCacheTag('homepage-data')])
       toast.success('No. urut koleksi berhasil diperbarui')
       refetch()
     } catch (err) {

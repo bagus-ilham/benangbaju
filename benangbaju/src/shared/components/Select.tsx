@@ -200,7 +200,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               // Input styles matching Input.tsx
               'w-full flex items-center justify-between bg-brand-cream text-xs px-4 py-3.5 border border-neutral-200/80 rounded-xl text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-gold/40 focus:shadow-xs disabled:opacity-50 disabled:cursor-not-allowed font-sans cursor-pointer',
               {
-                'border-amber-300 bg-brand-cream ring-4 ring-brand-gold/40 shadow-xs':
+                'border-brand-gold-stroke bg-brand-cream ring-4 ring-brand-gold/40 shadow-xs':
                   isOpen,
                 'border-red-500 focus:border-red-500 focus:ring-red-500/10': error,
                 'text-neutral-400': !selectedOption,

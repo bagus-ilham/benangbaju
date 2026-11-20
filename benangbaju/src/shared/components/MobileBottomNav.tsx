@@ -39,10 +39,10 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
       isActive: pathname === '/',
     },
     {
-      name: 'Custom Size',
-      href: '/produk/customize-size',
-      handDrawnName: 'measuring-tape',
-      isActive: pathname === '/produk/customize-size',
+      name: isMY ? 'Catalog' : 'Katalog',
+      href: '/produk',
+      handDrawnName: 'grid',
+      isActive: pathname.startsWith('/produk'),
     },
     {
       name: 'Wishlist',
@@ -55,15 +55,15 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
       name: isMY
         ? isAuthenticated
           ? 'Orders'
-          : 'Catalog'
+          : 'Collections'
         : isAuthenticated
           ? 'Pesanan'
-          : 'Katalog',
-      href: isAuthenticated ? '/pesanan' : '/produk',
-      handDrawnName: isAuthenticated ? 'box' : 'grid',
+          : 'Koleksi',
+      href: isAuthenticated ? '/pesanan' : '/koleksi',
+      handDrawnName: isAuthenticated ? 'box' : 'sparkles',
       isActive: isAuthenticated
         ? pathname.startsWith('/pesanan')
-        : pathname.startsWith('/produk') && pathname !== '/produk/customize-size',
+        : pathname.startsWith('/koleksi'),
     },
     {
       name: isMY
@@ -90,7 +90,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
                 {item.isActive && (
                   <motion.div
                     layoutId="bottom-nav-active-pill"
-                    className="absolute inset-0 bg-brand-blush/80 border border-brand-blush-stroke/60 rounded-full -z-10"
+                    className="absolute inset-0 bg-brand-blue-soft border border-brand-blue-stroke/70 rounded-full -z-10"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}
@@ -115,7 +115,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-0.5 right-1 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
+                    className="absolute -top-0.5 right-1 bg-brand-gold border border-brand-gold-stroke text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
                   >
                     {item.badge}
                   </motion.span>

@@ -8,6 +8,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -68,11 +77,35 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Check ownership if not service role
+    // Check ownership or admin/staff role if not service role
     if (!isServiceRole && user && order.user_id !== user.id) {
+      const { data: callerProfile } = await supabase
+        .from("profiles")
+        .select("role, is_active")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const callerRole = callerProfile?.role?.toLowerCase();
+      const isAdminOrStaff =
+        callerProfile?.is_active !== false &&
+        (callerRole === "admin" || callerRole === "staff");
+
+      if (!isAdminOrStaff) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Akses ditolak: Anda bukan pemilik pesanan ini" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Only generate paid invoices for paid/fulfilled orders
+    if (order.status === "pending_payment" || order.status === "cancelled") {
       return new Response(
-        JSON.stringify({ success: false, message: "Akses ditolak: Anda bukan pemilik pesanan ini" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          success: false,
+          message: "Invoice hanya dapat dibuat untuk pesanan yang sudah dibayar",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -124,9 +157,18 @@ Deno.serve(async (req: Request) => {
       settingsMap[s.key] = s.value;
     });
 
-    const isMalaysia = orderShipping?.country_code === "MY";
-    const rateMyr = parseFloat(settingsMap.myr_exchange_rate || "3600") || 3600;
-    const toMYR = (idr: number) => (idr / rateMyr).toFixed(2);
+    const isMalaysia = orderShipping?.country_code === "MY" || order.country_code === "MY";
+    const snapshotRate = Number(order.exchange_rate_at_order);
+    const rateMyr =
+      !isNaN(snapshotRate) && snapshotRate > 0
+        ? snapshotRate
+        : parseFloat(settingsMap.myr_exchange_rate || "3600") || 3600;
+    const toMYR = (idr: number, snapshotMyr?: number | null) => {
+      if (snapshotMyr != null && !isNaN(Number(snapshotMyr))) {
+        return Number(snapshotMyr).toFixed(2);
+      }
+      return (idr / rateMyr).toFixed(2);
+    };
 
     let totalWeightGram = 0;
     const itemsWithDetails = (orderItems || []).map((item: any) => {
@@ -156,15 +198,27 @@ Deno.serve(async (req: Request) => {
 
     const shipping = orderShipping;
     const documentTitle = isMalaysia ? "COMMERCIAL INVOICE (EXPORT)" : "INVOICE";
+    const safeStoreName = escapeHtml(settingsMap.store_name || "Benangbaju");
+    const safeStoreAddress = escapeHtml(settingsMap.store_address || "Bandung, West Java, Indonesia");
+    const safeStorePhone = escapeHtml(settingsMap.store_phone || "+62 851-7974-7449");
+    const safeStoreEmail = escapeHtml(settingsMap.store_email || "cs@benangbaju.com");
+    const safeOrderNumber = escapeHtml(order.order_number);
+    const formattedDate = escapeHtml(
+      new Date(order.created_at).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    );
 
-    // Build invoice HTML
+    // Build invoice HTML (all interpolated fields strictly HTML-escaped)
     const invoiceHtml = `
 <!DOCTYPE html>
 <html lang="${isMalaysia ? "en" : "id"}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${documentTitle} #${order.order_number} - ${settingsMap.store_name || "Benangbaju"}</title>
+  <title>${documentTitle} #${safeOrderNumber} - ${safeStoreName}</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; color: #2D2640; max-width: 860px; margin: 0 auto; padding: 24px 16px; background-color: #FAF8F5; line-height: 1.5; }
@@ -203,7 +257,7 @@ Deno.serve(async (req: Request) => {
 </head>
 <body>
   <div class="no-print">
-    <span style="font-weight: 600; font-size: 12px;">Invoice #${order.order_number} - Tanggal ${new Date(order.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+    <span style="font-weight: 600; font-size: 12px;">Invoice #${safeOrderNumber} - Tanggal ${formattedDate}</span>
     <button onclick="window.print()" class="print-btn">🖨️ Cetak / Simpan PDF</button>
   </div>
 
@@ -211,16 +265,16 @@ Deno.serve(async (req: Request) => {
     <div class="top-accent-bar"></div>
     <div class="header">
       <div class="header-left">
-        <h3 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 800; color: #2D2640;">${settingsMap.store_name || "Benangbaju"}</h3>
-        <p><strong>Shipper / Origin:</strong> ${settingsMap.store_address || "Bandung, West Java, Indonesia"}</p>
+        <h3 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 800; color: #2D2640;">${safeStoreName}</h3>
+        <p><strong>Shipper / Origin:</strong> ${safeStoreAddress}</p>
         <p><strong>Country of Origin:</strong> Indonesia (ID — Postal Code 40164)</p>
-        <p>${settingsMap.store_phone || "+62 851-7974-7449"} | ${settingsMap.store_email || "cs@benangbaju.com"}</p>
+        <p>${safeStorePhone} | ${safeStoreEmail}</p>
         ${isMalaysia ? `<p style="color: #065f46; font-weight: 700; margin-top: 4px;">Incoterms: DDU (Delivered Duty Unpaid) | Destination: Malaysia (MY)</p>` : ''}
       </div>
       <div class="header-right">
         <h2>${documentTitle}</h2>
-        <p class="order-num">#${order.order_number}</p>
-        <p style="font-size: 11px; color: #6b637a; margin-bottom: 6px;">Date: ${new Date(order.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>
+        <p class="order-num">#${safeOrderNumber}</p>
+        <p style="font-size: 11px; color: #6b637a; margin-bottom: 6px;">Date: ${formattedDate}</p>
         <span class="status-badge">✓ PAID / LUNAS</span>
       </div>
     </div>
@@ -228,17 +282,17 @@ Deno.serve(async (req: Request) => {
     <div class="info-grid">
       <div class="info-box">
         <h3>${isMalaysia ? "Consignee / Customer Details" : "Informasi Pelanggan"}</h3>
-        <p><strong>${profile?.name || "Customer"}</strong></p>
-        <p>${profile?.phone || "-"}</p>
-        <p>${profile?.email || "-"}</p>
+        <p><strong>${escapeHtml(profile?.name || "Customer")}</strong></p>
+        <p>${escapeHtml(profile?.phone || "-")}</p>
+        <p>${escapeHtml(profile?.email || "-")}</p>
       </div>
       <div class="info-box">
         <h3>${isMalaysia ? "Delivery Address / Destination" : "Alamat Pengiriman"}</h3>
-        <p><strong>${shipping?.recipient_name || "-"}</strong> (${shipping?.phone || "-"})</p>
-        <p>${shipping?.full_address || "-"}</p>
-        <p>${[shipping?.district_name, shipping?.city_name].filter(Boolean).join(", ")}</p>
-        <p>${shipping?.province_name || ""} ${shipping?.postal_code || ""} ${isMalaysia ? ", Malaysia" : ""}</p>
-        <p style="margin-top: 6px; font-weight: 600;">Courier: ${shipping?.courier_name || "-"} ${shipping?.tracking_number ? `(AWB: ${shipping.tracking_number})` : ""}</p>
+        <p><strong>${escapeHtml(shipping?.recipient_name || "-")}</strong> (${escapeHtml(shipping?.phone || "-")})</p>
+        <p>${escapeHtml(shipping?.full_address || "-")}</p>
+        <p>${escapeHtml([shipping?.district_name, shipping?.city_name].filter(Boolean).join(", "))}</p>
+        <p>${escapeHtml(shipping?.province_name || "")} ${escapeHtml(shipping?.postal_code || "")} ${isMalaysia ? ", Malaysia" : ""}</p>
+        <p style="margin-top: 6px; font-weight: 600;">Courier: ${escapeHtml(shipping?.courier_name || "-")} ${shipping?.tracking_number ? `(AWB: ${escapeHtml(shipping.tracking_number)})` : ""}</p>
       </div>
     </div>
 
@@ -255,22 +309,24 @@ Deno.serve(async (req: Request) => {
       </thead>
       <tbody>
         ${(itemsWithDetails || []).map((item: Record<string, any>) => {
+          const itemUnitMyr = item.unit_price_myr != null ? Number(item.unit_price_myr) : null;
+          const itemSubtotalMyr = itemUnitMyr != null ? itemUnitMyr * Number(item.quantity || 1) : null;
           return `
           <tr>
             <td>
-              <strong>${item.product_name}</strong> ${item.variant_name ? `- ${item.variant_name}` : ''}
+              <strong>${escapeHtml(item.product_name)}</strong> ${item.variant_name ? `- ${escapeHtml(item.variant_name)}` : ''}
               ${isMalaysia ? `<div style="font-size: 10px; color: #6b637a;">100% Textile Apparel (Muslim Fashion)</div>` : ''}
             </td>
-            <td style="color: #6b637a; font-family: monospace; font-size: 11px;">${isMalaysia ? item.hs_code : (item.sku || '-')}</td>
-            <td style="text-align:center; font-weight: 700;">${item.quantity}</td>
-            ${isMalaysia ? `<td style="text-align:center; font-size: 11px;">${item.weight_gram * item.quantity}g</td>` : ''}
+            <td style="color: #6b637a; font-family: monospace; font-size: 11px;">${escapeHtml(isMalaysia ? item.hs_code : (item.sku || '-'))}</td>
+            <td style="text-align:center; font-weight: 700;">${Number(item.quantity || 0)}</td>
+            ${isMalaysia ? `<td style="text-align:center; font-size: 11px;">${Number(item.weight_gram) * Number(item.quantity || 1)}g</td>` : ''}
             <td style="text-align:right;">
               Rp ${Number(item.price).toLocaleString("id-ID")}
-              ${isMalaysia ? `<br><span style="font-size: 10px; color: #6b637a;">≈ RM ${toMYR(Number(item.price))}</span>` : ''}
+              ${isMalaysia ? `<br><span style="font-size: 10px; color: #6b637a;">≈ RM ${toMYR(Number(item.price), itemUnitMyr)}</span>` : ''}
             </td>
             <td style="text-align:right; font-weight: 700;">
               Rp ${Number(item.subtotal).toLocaleString("id-ID")}
-              ${isMalaysia ? `<br><span style="font-size: 10px; color: #065f46; font-weight: 600;">≈ RM ${toMYR(Number(item.subtotal))}</span>` : ''}
+              ${isMalaysia ? `<br><span style="font-size: 10px; color: #065f46; font-weight: 600;">≈ RM ${toMYR(Number(item.subtotal), itemSubtotalMyr)}</span>` : ''}
             </td>
           </tr>`;
         }).join("")}
@@ -284,17 +340,23 @@ Deno.serve(async (req: Request) => {
           <td>${isMalaysia ? "Declared Customs Value (FOB)" : "Subtotal Produk"}</td>
           <td style="text-align:right;">
             Rp ${Number(order.subtotal).toLocaleString("id-ID")}
-            ${isMalaysia ? ` <span style="color: #6b637a; font-size: 11px;">(≈ RM ${toMYR(Number(order.subtotal))})</span>` : ''}
+            ${isMalaysia ? ` <span style="color: #6b637a; font-size: 11px;">(≈ RM ${toMYR(Number(order.subtotal), order.subtotal_myr)})</span>` : ''}
           </td>
         </tr>
-        <tr><td>Ongkos Kirim (Freight)</td><td style="text-align:right;">Rp ${Number(order.shipping_cost).toLocaleString("id-ID")}</td></tr>
-        ${Number(order.payment_fee) > 0 ? `<tr><td>Biaya Layanan Pembayaran</td><td style="text-align:right;">Rp ${Number(order.payment_fee).toLocaleString("id-ID")}</td></tr>` : ""}
-        ${Number(order.discount_amount) > 0 ? `<tr><td>Diskon Voucher</td><td style="text-align:right; color: #9f1239;">-Rp ${Number(order.discount_amount).toLocaleString("id-ID")}</td></tr>` : ""}
+        <tr>
+          <td>Ongkos Kirim (Freight)</td>
+          <td style="text-align:right;">
+            Rp ${Number(order.shipping_cost).toLocaleString("id-ID")}
+            ${isMalaysia ? ` <span style="color: #6b637a; font-size: 11px;">(≈ RM ${toMYR(Number(order.shipping_cost), order.shipping_cost_myr)})</span>` : ''}
+          </td>
+        </tr>
+        ${Number(order.payment_fee) > 0 ? `<tr><td>Biaya Layanan Pembayaran</td><td style="text-align:right;">Rp ${Number(order.payment_fee).toLocaleString("id-ID")}${isMalaysia ? ` <span style="color: #6b637a; font-size: 11px;">(≈ RM ${toMYR(Number(order.payment_fee), order.payment_fee_myr)})</span>` : ''}</td></tr>` : ""}
+        ${Number(order.discount_amount) > 0 ? `<tr><td>Diskon Voucher</td><td style="text-align:right; color: #9f1239;">-Rp ${Number(order.discount_amount).toLocaleString("id-ID")}${isMalaysia ? ` <span style="font-size: 11px;">(-RM ${toMYR(Number(order.discount_amount), order.discount_amount_myr)})</span>` : ''}</td></tr>` : ""}
         <tr class="total">
           <td>Total Pembayaran</td>
           <td style="text-align:right;">
             Rp ${Number(order.total_amount).toLocaleString("id-ID")}
-            ${isMalaysia ? `<div style="font-size: 12px; color: #065f46; font-weight: 700; margin-top: 2px;">≈ RM ${toMYR(Number(order.total_amount))}</div>` : ''}
+            ${isMalaysia ? `<div style="font-size: 12px; color: #065f46; font-weight: 700; margin-top: 2px;">≈ RM ${toMYR(Number(order.total_amount), order.total_myr)}</div>` : ''}
           </td>
         </tr>
       </table>
@@ -308,7 +370,7 @@ Deno.serve(async (req: Request) => {
     ` : ''}
 
     <div class="footer">
-      <p style="font-weight: 700; color: #2D2640; margin-bottom: 4px;">Terima kasih telah berbelanja di ${settingsMap.store_name || "Benangbaju"}!</p>
+      <p style="font-weight: 700; color: #2D2640; margin-bottom: 4px;">Terima kasih telah berbelanja di ${safeStoreName}!</p>
       <p>${isMalaysia ? "Pesanan lintas batas Malaysia bersifat Final Sale. Bantuan & klaim kendala: WhatsApp Customer Care." : "Kebijakan retur berlaku 7 hari setelah pesanan diterima."}</p>
     </div>
   </div>

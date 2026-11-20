@@ -62,7 +62,7 @@ export class SettingsRepository {
       return {
         key,
         value,
-        type: existing?.type || 'string',
+        type: existing?.type || 'text',
         group: existing?.group || 'general',
         label: existing?.label || key,
       }

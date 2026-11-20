@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useAdminDashboardStats } from '@/app/admin/hooks/useAdmin'
 import type { LowStockVariant, RecentOrder, RecentActivityLog } from '@/modules/analytics/actions'
-import { createBrowserClient } from '@/lib/supabase/client'
+import { adminQuickUpdateVariantStockAction } from '@/modules/products/actions'
 import {
   Button,
   AdminPageHeader,
@@ -14,8 +14,6 @@ import {
   SmartLink as Link,
 } from '@/shared/components'
 import toast from 'react-hot-toast'
-
-const supabase = createBrowserClient()
 
 export default function AdminDashboardPage(): React.JSX.Element {
   const { data: stats, isLoading, isError, refetch } = useAdminDashboardStats()
@@ -29,24 +27,7 @@ export default function AdminDashboardPage(): React.JSX.Element {
 
   const handleSaveStock = async (variantId: string) => {
     try {
-      const { error } = await supabase
-        .from('product_variants')
-        .update({ stock: newStockVal })
-        .eq('id', variantId)
-
-      if (error) throw error
-
-      if (newStockVal > 0) {
-        import('@/modules/products/inventory.repository').then(
-          ({ checkAndDispatchStockNotifications }) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            checkAndDispatchStockNotifications(supabase as any, variantId, newStockVal).catch(
-              () => {}
-            )
-          }
-        )
-      }
-
+      await adminQuickUpdateVariantStockAction(variantId, newStockVal)
       toast.success('Stok berhasil diperbarui')
       refetch()
     } catch (err) {

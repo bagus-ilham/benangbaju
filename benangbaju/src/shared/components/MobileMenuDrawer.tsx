@@ -58,12 +58,14 @@ export function MobileMenuDrawer({
             aria-label="Menu navigasi utama"
             tabIndex={-1}
           >
-            {/* Matching Dusty Blue Scalloped Top Accent */}
+            {/* Matching Soft Pastel Blue Scalloped Top Accent */}
             <div className="w-full select-none pointer-events-none shrink-0" aria-hidden="true">
-              <div className="w-full h-3 bg-brand-blue" />
+              <div className="w-full h-3 bg-brand-blue-soft" />
               <ScallopEdge
                 direction="down"
-                fill="var(--color-brand-blue)"
+                fill="var(--color-brand-blue-soft)"
+                stroke="var(--color-brand-blue-stroke)"
+                strokeOpacity={0.7}
                 tileWidth={48}
                 height={16}
                 className="-mt-px"

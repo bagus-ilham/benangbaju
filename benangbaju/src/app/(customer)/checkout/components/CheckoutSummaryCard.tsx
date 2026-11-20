@@ -82,7 +82,7 @@ export function CheckoutSummaryCard({
 
   return (
     <div className="border border-brand-plum/10 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
       <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum mb-6 flex items-center justify-between border-b border-brand-plum/10 pb-3">
         <span className="flex items-center">
           <HandDrawnIcon name="shopping-bag" className="h-4 w-4 mr-2" /> {isMalaysia ? 'Order Summary' : 'Ringkasan Pesanan'}
@@ -212,18 +212,24 @@ export function CheckoutSummaryCard({
                         ? isVoucherMYR
                           ? Number(voucher.min_purchase || 0)
                           : Number((Number(voucher.min_purchase || 0) / myrExchangeRate).toFixed(2))
-                        : Number(voucher.min_purchase || 0)
+                        : isVoucherMYR
+                          ? Math.round(Number(voucher.min_purchase || 0) * myrExchangeRate)
+                          : Number(voucher.min_purchase || 0)
                       const effVal = isMalaysia
                         ? isVoucherMYR
                           ? Number(voucher.value || 0)
                           : Number((Number(voucher.value || 0) / myrExchangeRate).toFixed(2))
-                        : Number(voucher.value || 0)
+                        : isVoucherMYR
+                          ? Math.round(Number(voucher.value || 0) * myrExchangeRate)
+                          : Number(voucher.value || 0)
                       const effMaxDisc = voucher.max_discount
                         ? isMalaysia
                           ? isVoucherMYR
                             ? Number(voucher.max_discount)
                             : Number((Number(voucher.max_discount) / myrExchangeRate).toFixed(2))
-                          : Number(voucher.max_discount)
+                          : isVoucherMYR
+                            ? Math.round(Number(voucher.max_discount) * myrExchangeRate)
+                            : Number(voucher.max_discount)
                         : null
                       const isSpendMet = isMalaysia
                         ? itemSubtotalMyr >= effMinSpend

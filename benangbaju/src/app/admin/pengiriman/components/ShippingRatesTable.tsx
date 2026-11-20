@@ -67,8 +67,12 @@ export function ShippingRatesTable({
         </thead>
         <tbody className="divide-y divide-neutral-100 text-neutral-700 font-medium">
           {rates.map((rate) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const zoneCov = (rate.shipping_zones as any)?.shipping_zone_coverage
             const isMY =
               rate.shipping_zones?.country_code === 'MY' ||
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (Array.isArray(zoneCov) && zoneCov.some((c: any) => c.country_code === 'MY')) ||
               (rate.base_price_myr != null && rate.price_per_kg_myr != null)
             return (
               <tr key={rate.id} className="hover:bg-neutral-50/30">

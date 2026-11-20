@@ -64,7 +64,7 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
 
   return (
     <div className="space-y-2.5 py-4">
-      <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+      <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
         {isMY ? 'Also Available on Marketplace' : 'Tersedia juga di Marketplace'}
       </span>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

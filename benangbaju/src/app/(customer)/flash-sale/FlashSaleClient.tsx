@@ -8,11 +8,30 @@ import type { FlashSaleDetail } from '@/modules/flash-sales/types'
 
 interface FlashSaleClientProps {
   flashSale: FlashSaleDetail | null
+  flashSales?: FlashSaleDetail[]
 }
 
-export function FlashSaleClient({ flashSale }: FlashSaleClientProps): React.JSX.Element {
+export function FlashSaleClient({
+  flashSale,
+  flashSales,
+}: FlashSaleClientProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
+
+  const activeFlashSale = React.useMemo(() => {
+    if (flashSales && flashSales.length > 0) {
+      return (
+        flashSales.find(
+          (s) => !s.target_market || s.target_market === 'ALL' || s.target_market === market
+        ) || null
+      )
+    }
+    if (!flashSale) return null
+    if (flashSale.target_market && flashSale.target_market !== 'ALL' && flashSale.target_market !== market) {
+      return null
+    }
+    return flashSale
+  }, [flashSale, flashSales, market])
 
   return (
     <div className="bg-brand-cream min-h-screen">
@@ -27,8 +46,8 @@ export function FlashSaleClient({ flashSale }: FlashSaleClientProps): React.JSX.
         variant="dark"
       />
 
-      {flashSale ? (
-        <FlashSaleSection flashSale={flashSale} isFullPage={true} />
+      {activeFlashSale ? (
+        <FlashSaleSection flashSale={activeFlashSale} flashSales={flashSales} isFullPage={true} />
       ) : (
         <PageContainer className="pt-10 pb-20 md:pb-24">
           <EmptyState

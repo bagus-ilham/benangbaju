@@ -43,6 +43,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
     categories,
     collections,
     flashSale,
+    flashSales,
     featuredProducts,
     newestProducts,
     col1,
@@ -123,7 +124,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
 
         {/* Additional sections wrapped in Suspense */}
         <Suspense fallback={<div className="py-8"><ProductGridSkeleton count={4} /></div>}>
-          <FlashSaleSection flashSale={flashSale} />
+          <FlashSaleSection flashSale={flashSale} flashSales={flashSales} />
         </Suspense>
 
         <CategorySection categories={categories} />

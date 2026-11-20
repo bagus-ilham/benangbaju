@@ -67,7 +67,7 @@ export default function AdminCmsPage(): React.JSX.Element {
   const [metaTitle, setMetaTitle] = useState('')
   const [metaDesc, setMetaDesc] = useState('')
   const [jsonContent, setJsonContent] = useState(
-    '{\n  "heading": "Selamat Datang",\n  "subheading": "Promo Terbatas Minggu Ini"\n}'
+    '{\n  "subtitle": "Promo Terbatas Minggu Ini",\n  "sections": [\n    {\n      "heading": "Selamat Datang",\n      "body": "<p>Tulis konten halaman Anda di sini.</p>"\n    }\n  ]\n}'
   )
   const [pageActive, setPageActive] = useState(true)
 
@@ -149,7 +149,7 @@ export default function AdminCmsPage(): React.JSX.Element {
       setMetaTitle('')
       setMetaDesc('')
       setJsonContent(
-        '{\n  "heading": "Selamat Datang",\n  "subheading": "Promo Terbatas Minggu Ini"\n}'
+        '{\n  "subtitle": "Promo Terbatas Minggu Ini",\n  "sections": [\n    {\n      "heading": "Selamat Datang",\n      "body": "<p>Tulis konten halaman Anda di sini.</p>"\n    }\n  ]\n}'
       )
       setPageActive(true)
     }

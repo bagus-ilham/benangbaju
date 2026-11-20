@@ -112,9 +112,9 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
       <div className="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0">
         {/* Left: Ratings Summary */}
         <div className="flex flex-col space-y-3.5 md:w-1/3 bg-brand-gold-soft/40 border border-brand-gold-stroke/45 p-6 md:p-8 rounded-3xl shadow-xs relative overflow-hidden h-max">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+          <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
           <div className="space-y-0.5">
-            <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+            <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
               {isMY ? 'Customer Love' : 'Kata Mereka'}
             </span>
             <h2 className="text-xl font-serif font-medium tracking-tight text-brand-plum">

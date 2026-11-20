@@ -5,10 +5,17 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/shared/types/database'
 
 export class FlashSaleService {
-  async getActiveFlashSale(
+  async getActiveFlashSales(
     client?: SupabaseClient<Database>
+  ): Promise<ApiResponse<FlashSaleDetail[]>> {
+    return flashSaleRepository.getActiveFlashSales(client)
+  }
+
+  async getActiveFlashSale(
+    client?: SupabaseClient<Database>,
+    market?: 'ID' | 'MY'
   ): Promise<ApiResponse<FlashSaleDetail | null>> {
-    return flashSaleRepository.getActiveFlashSale(client)
+    return flashSaleRepository.getActiveFlashSale(client, market)
   }
 
   async adminGetFlashSales(page = 1, limit = 20): Promise<ApiListResponse<AdminFlashSaleListItem>> {

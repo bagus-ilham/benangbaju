@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect, useMemo } from 'react'
-import Image from 'next/image'
 import { SmartLink as Link } from '@/shared/components'
 import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/modules/flash-sales/types'
@@ -12,10 +11,15 @@ import { useMarket } from '@/shared/stores/marketStore'
 
 interface FlashSaleSectionProps {
   flashSale: FlashSaleDetail | null
+  flashSales?: FlashSaleDetail[]
   isFullPage?: boolean
 }
 
-export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSectionProps): React.JSX.Element | null {
+export function FlashSaleSection({
+  flashSale,
+  flashSales,
+  isFullPage = false,
+}: FlashSaleSectionProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
   const [timeLeft, setTimeLeft] = useState<{
@@ -24,13 +28,25 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
     seconds: number
   } | null>(null)
 
+  const activeFlashSale = useMemo(() => {
+    if (flashSales && flashSales.length > 0) {
+      return (
+        flashSales.find(
+          (s) => !s.target_market || s.target_market === 'ALL' || s.target_market === market
+        ) || null
+      )
+    }
+    return flashSale
+  }, [flashSale, flashSales, market])
+
   const mappedProducts: ProductListItem[] = useMemo(() => {
-    if (!flashSale || !flashSale.flash_sale_items) return []
+    if (!activeFlashSale || !activeFlashSale.flash_sale_items) return []
 
     // Group flash_sale_items by product ID to avoid duplicate cards for variants
-    const productGroupMap = new Map<string, typeof flashSale.flash_sale_items>()
+    const productGroupMap = new Map<string, typeof activeFlashSale.flash_sale_items>()
 
-    for (const item of flashSale.flash_sale_items) {
+    for (const item of activeFlashSale.flash_sale_items) {
+      if (item.quota > 0 && item.sold_count >= item.quota) continue
       const prodId = item.product_variants?.products?.id
       if (!prodId) continue
       const existing = productGroupMap.get(prodId) || []
@@ -146,13 +162,13 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
     }
 
     return result
-  }, [flashSale])
+  }, [activeFlashSale])
 
   useEffect(() => {
-    if (!flashSale) return
+    if (!activeFlashSale) return
 
     const calculateTimeLeft = () => {
-      const difference = +new Date(flashSale.ends_at) - +new Date()
+      const difference = +new Date(activeFlashSale.ends_at) - +new Date()
 
       if (difference <= 0) {
         setTimeLeft(null)
@@ -170,14 +186,18 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
     const timer = setInterval(calculateTimeLeft, 1000)
 
     return () => clearInterval(timer)
-  }, [flashSale])
+  }, [activeFlashSale])
 
   const visibleProducts = isMY
     ? mappedProducts.filter((p) => p.isAvailableInMY)
     : mappedProducts
 
-  if (!flashSale || !timeLeft) return null
-  if (flashSale.target_market && flashSale.target_market !== 'ALL' && flashSale.target_market !== market) {
+  if (!activeFlashSale || !timeLeft) return null
+  if (
+    activeFlashSale.target_market &&
+    activeFlashSale.target_market !== 'ALL' &&
+    activeFlashSale.target_market !== market
+  ) {
     return null
   }
   if (visibleProducts.length === 0) return null
@@ -201,7 +221,7 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
           align="left"
           showDivider={false}
           eyebrow={isMY ? 'Limited Time Offer' : 'Penawaran Terbatas'}
-          title={flashSale.name || 'Flash Sale'}
+          title={activeFlashSale.name || 'Flash Sale'}
           className="md:flex-row md:items-end md:justify-between md:mb-8 [&>span:first-child]:text-brand-plum [&_h2]:text-brand-plum"
         >
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
@@ -209,16 +229,15 @@ export function FlashSaleSection({ flashSale, isFullPage = false }: FlashSaleSec
               {isMY ? 'Ends In:' : 'Berakhir Dalam:'}
             </span>
             <div className="flex items-center space-x-1.5 font-sans text-xs font-bold">
-              {/* Dusty Blue background MUST use Deep Plum text per §4 */}
-              <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
+              <span className="bg-brand-blue border border-brand-blue-stroke/70 text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.hours)}
               </span>
               <span className="text-brand-plum/60 font-bold">:</span>
-              <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
+              <span className="bg-brand-blue border border-brand-blue-stroke/70 text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.minutes)}
               </span>
               <span className="text-brand-plum/60 font-bold">:</span>
-              <span className="bg-brand-blue text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
+              <span className="bg-brand-blue border border-brand-blue-stroke/70 text-brand-plum px-3 py-2 rounded-xl animate-pulse-glow min-w-[2.5rem] text-center font-bold">
                 {formatNumber(timeLeft.seconds)}
               </span>
             </div>

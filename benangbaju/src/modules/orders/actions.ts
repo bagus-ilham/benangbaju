@@ -365,7 +365,10 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
         const flash = activeFlashItems.find(
           (f) =>
             f.variant_id === ci.variant_id &&
-            (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota)) &&
+            (f.quota === 0 ||
+              (f.quota != null &&
+                f.sold_count != null &&
+                f.sold_count + (ci.quantity || 1) <= f.quota)) &&
             (!f.flash_sales?.target_market ||
               f.flash_sales.target_market === 'ALL' ||
               f.flash_sales.target_market === 'MY') &&
@@ -461,7 +464,10 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       const flash = activeFlashItems.find(
         (f) =>
           f.variant_id === ci.variant_id &&
-          (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota)) &&
+          (f.quota === 0 ||
+            (f.quota != null &&
+              f.sold_count != null &&
+              f.sold_count + (ci.quantity || 1) <= f.quota)) &&
           (!f.flash_sales?.target_market ||
             f.flash_sales.target_market === 'ALL' ||
             f.flash_sales.target_market === orderCountry)

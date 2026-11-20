@@ -64,7 +64,7 @@ export function PengirimanClient(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-12">
           {/* Delivery Terms Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="border border-brand-blush-stroke/55 p-6 space-y-3 bg-brand-blush/40 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className="border border-brand-blue-stroke/55 p-6 space-y-3 bg-brand-blue-soft/40 rounded-2xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <div className="p-2 bg-brand-cream border border-brand-plum/10 w-max rounded-xl">
                 <HandDrawnIcon name="package" className="h-4 w-4" />
               </div>

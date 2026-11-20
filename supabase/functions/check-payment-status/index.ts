@@ -49,7 +49,16 @@ serve(async (req: Request) => {
     }
 
     if (order.user_id !== user.id) {
-      throw new Error('Unauthorized');
+      const { data: callerProfile } = await supabaseClient
+        .from('profiles')
+        .select('role, is_active')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const callerRole = callerProfile?.role?.toLowerCase();
+      if (callerProfile?.is_active === false || (callerRole !== 'admin' && callerRole !== 'staff')) {
+        throw new Error('Unauthorized');
+      }
     }
 
     // Fetch existing payment record to preserve gateway instructions/URL
@@ -90,16 +99,29 @@ serve(async (req: Request) => {
       }
     });
 
-    const dokuData = await dokuResponse.json();
+    const dokuData = await dokuResponse.json().catch(() => ({}));
 
+    if (!dokuResponse.ok) {
+      throw new Error(
+        dokuData?.error?.message ||
+          dokuData?.message ||
+          `DOKU status check failed (${dokuResponse.status})`
+      );
+    }
+
+    const isTerminalState = ['cancelled', 'completed', 'processing', 'shipped'].includes(order.status);
     let newStatus = order.status;
-    let paymentStatus = 'pending';
+    let paymentStatus = existingPayment?.status || 'pending';
 
     const transactionStatus = dokuData.transaction?.status?.toUpperCase();
     const dokuOrderStatus = dokuData.order?.status?.toUpperCase();
 
     // Map DOKU status to our status
-    if (dokuResponse.ok && transactionStatus === 'SUCCESS') {
+    if (transactionStatus === 'SUCCESS') {
+      const dokuAmount = dokuData.order?.amount != null ? Number(dokuData.order.amount) : null;
+      if (dokuAmount !== null && !isNaN(dokuAmount) && Math.abs(dokuAmount - Number(order.total_amount)) > 1) {
+        throw new Error('Nominal pembayaran DOKU tidak sesuai dengan total pesanan');
+      }
       newStatus = 'processing';
       paymentStatus = 'success';
     } else if (
@@ -111,14 +133,16 @@ serve(async (req: Request) => {
       paymentStatus = transactionStatus === 'FAILED' ? 'failed' : 'expired';
     }
 
+    let finalOrderStatus = order.status;
+
     // Update status pesanan jika status berubah, tapi jangan ubah order yang sudah di terminal state
-    const isTerminalState = ['cancelled', 'completed', 'processing', 'shipped'].includes(order.status);
     if (newStatus !== order.status && !isTerminalState) {
       if (newStatus === 'processing' && order.status === 'pending_payment') {
         await supabaseClient
           .from('orders')
           .update({ status: 'processing' })
           .eq('id', order.id);
+        finalOrderStatus = 'processing';
 
         // Create notification for customer (bilingual EN for MY, ID for domestic)
         const rawShipping = order.order_shipping;
@@ -153,11 +177,13 @@ serve(async (req: Request) => {
           p_order_id: order.id,
           p_cancel_reason: `Sesi pembayaran ${paymentStatus} dari payment gateway (DOKU)`,
         });
+        finalOrderStatus = 'cancelled';
       } else {
         await supabaseClient
           .from('orders')
           .update({ status: newStatus })
           .eq('id', order.id);
+        finalOrderStatus = newStatus;
       }
     }
 
@@ -166,23 +192,38 @@ serve(async (req: Request) => {
       ? { ...existingPayment.gateway_response, status_check: dokuData }
       : dokuData;
 
+    // Protect terminal/already-paid payment records from being downgraded back to pending/null paid_at
+    const shouldPreservePaymentState =
+      existingPayment?.status === 'success' || isTerminalState;
+    const finalPaymentStatus = shouldPreservePaymentState
+      ? existingPayment?.status || paymentStatus
+      : paymentStatus;
+
+    const paymentUpdatePayload: Record<string, any> = {
+      gateway_response: updatedGatewayResponse,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (!shouldPreservePaymentState) {
+      paymentUpdatePayload.status = finalPaymentStatus;
+      paymentUpdatePayload.paid_at =
+        finalPaymentStatus === 'success'
+          ? existingPayment?.paid_at || new Date().toISOString()
+          : existingPayment?.paid_at || null;
+    }
+
     // Update payments table if it exists
     await supabaseClient
       .from('payments')
-      .update({
-        status: paymentStatus,
-        gateway_response: updatedGatewayResponse,
-        paid_at: paymentStatus === 'success' ? (existingPayment?.paid_at || new Date().toISOString()) : null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(paymentUpdatePayload)
       .eq('order_id', order.id);
 
     return new Response(
       JSON.stringify({
         success: true,
         data: {
-          order_status: newStatus,
-          payment_status: paymentStatus,
+          order_status: finalOrderStatus,
+          payment_status: finalPaymentStatus,
           transaction_status: dokuData.transaction?.status || 'UNKNOWN'
         }
       }),

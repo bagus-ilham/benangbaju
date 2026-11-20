@@ -19,7 +19,7 @@ export class AdminCustomerRepository {
           count: 'exact',
         }
       )
-      .neq('role', 'admin')
+      .eq('role', 'customer')
       .order('created_at', { ascending: false })
       .range(from, to)
 
@@ -55,14 +55,15 @@ export class AdminCustomerRepository {
 
   async adminToggleCustomerStatus(
     customerId: string,
-    isActive: boolean
+    isActive: boolean,
+    adminId?: string
   ): Promise<ApiResponse<null>> {
     const supabase = createAdminClient()
     const { error } = await supabase
       .from('profiles')
       .update({ is_active: isActive, updated_at: new Date().toISOString() })
       .eq('id', customerId)
-      .neq('role', 'admin') // Security guard: only toggle non-admin role profiles
+      .eq('role', 'customer') // Security guard: only toggle customer role profiles
 
     if (error) {
       safeLogError('Error toggling customer status:', error)
@@ -84,7 +85,8 @@ export class AdminCustomerRepository {
       'update',
       'customer',
       customerId,
-      `Toggled customer ${customerId} status to ${isActive}`
+      `Toggled customer ${customerId} status to ${isActive}`,
+      adminId
     )
 
     return ok(null)

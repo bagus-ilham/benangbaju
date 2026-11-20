@@ -25,20 +25,20 @@ export function CollectionShowcase({
 }: CollectionShowcaseProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
-  const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
+  const visibleProducts = (isMY ? products.filter((p) => p.isAvailableInMY) : products).slice(0, 4)
   const sliderRef = useRef<HTMLDivElement>(null)
 
   if (isMY && visibleProducts.length === 0) return null
   const isReversed = index % 2 === 1
-  const bgColor = isReversed ? 'bg-brand-blue-soft' : 'bg-brand-blush'
-  const scallopFill = isReversed ? 'var(--color-brand-blue-soft)' : 'var(--color-brand-blush)'
-  const scallopStroke = isReversed ? 'var(--color-brand-blue-stroke)' : 'var(--color-brand-blush-stroke)'
+  const bgColor = isReversed ? 'bg-brand-blue-soft' : 'bg-brand-gold'
+  const scallopFill = isReversed ? 'var(--color-brand-blue-soft)' : 'var(--color-brand-gold)'
+  const scallopStroke = isReversed ? 'var(--color-brand-blue-stroke)' : 'var(--color-brand-gold-stroke)'
   const textColor = 'text-brand-plum'
   const textMuted = 'text-brand-plum/80'
   const borderColor = 'border-brand-plum/40'
-  const btnBg = isReversed ? 'bg-brand-plum' : 'bg-brand-gold'
-  const btnText = isReversed ? 'text-brand-cream font-bold' : 'text-brand-plum font-bold'
-  const btnHover = isReversed ? 'hover:bg-brand-plum/90' : 'hover:bg-brand-gold-soft'
+  const btnBg = isReversed ? 'bg-brand-gold border border-brand-gold-stroke/80' : 'bg-brand-blue border border-brand-blue-stroke/80'
+  const btnText = 'text-brand-plum font-bold'
+  const btnHover = isReversed ? 'hover:bg-[#F2E5AE]' : 'hover:bg-[#BED7DC]'
   const cardContainerClass =
     'bg-brand-cream p-2 border border-brand-plum/10 rounded-2xl shadow-sm'
 
@@ -125,9 +125,7 @@ export function CollectionShowcase({
                 'inline-block font-heading font-bold uppercase tracking-wider text-[10px] border-b pb-1 transition-all',
                 textColor,
                 borderColor,
-                isReversed
-                  ? 'hover:text-brand-accent-light hover:border-brand-accent-light'
-                  : 'hover:text-brand-accent hover:border-brand-accent'
+                'hover:text-brand-blue-text hover:border-brand-blue-text'
               )}
             >
               Explore the {collection.name}
@@ -176,7 +174,7 @@ export function CollectionShowcase({
             </div>
 
             {/* Navigation Button */}
-            {products.length > 2 && (
+            {visibleProducts.length > 2 && (
               <div
                 className={cn(
                   'absolute top-1/2 -translate-y-1/2 z-10 hidden lg:block right-0 translate-x-1/2'

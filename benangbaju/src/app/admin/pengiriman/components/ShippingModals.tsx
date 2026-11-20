@@ -268,15 +268,8 @@ export function ShippingRateModal({
               step={isMYZone ? '0.01' : '1'}
               required
               min={0}
-              value={rateBasePrice.toString()}
-              onChange={(e) =>
-                setRateBasePrice(
-                  Math.max(
-                    0,
-                    isMYZone ? parseFloat(e.target.value) || 0 : parseInt(e.target.value) || 0
-                  )
-                )
-              }
+              value={String(rateBasePrice ?? '')}
+              onChange={(e) => setRateBasePrice(e.target.value)}
             />
           </div>
           <div className="flex flex-col space-y-1">
@@ -286,15 +279,8 @@ export function ShippingRateModal({
               step={isMYZone ? '0.01' : '1'}
               required
               min={0}
-              value={ratePricePerKg.toString()}
-              onChange={(e) =>
-                setRatePricePerKg(
-                  Math.max(
-                    0,
-                    isMYZone ? parseFloat(e.target.value) || 0 : parseInt(e.target.value) || 0
-                  )
-                )
-              }
+              value={String(ratePricePerKg ?? '')}
+              onChange={(e) => setRatePricePerKg(e.target.value)}
             />
           </div>
         </div>

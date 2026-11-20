@@ -89,7 +89,11 @@ export class NotificationRepository {
     message: string
     data?: Record<string, unknown>
   }): Promise<void> {
-    const supabase = await createServerClient()
+    let supabase = await createServerClient()
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const { createAdminClient } = await import('@/lib/supabase/admin')
+      supabase = createAdminClient()
+    }
     const { error } = await supabase.from('notifications').insert({
       user_id: params.userId,
       type: params.type,

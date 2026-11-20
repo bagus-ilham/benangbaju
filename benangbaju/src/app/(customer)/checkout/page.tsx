@@ -6,7 +6,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/modules/users/stores/authStore'
-import { useMarketStore } from '@/shared/stores/marketStore'
+import { useMarket, useMarketStore } from '@/shared/stores/marketStore'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { useUserAddresses, useShippingRates } from '@/modules/shipping/hooks/useShipping'
@@ -36,7 +36,8 @@ interface AppliedVoucher {
 }
 
 export default function CheckoutPage(): React.JSX.Element {
-  const { market, setMarket } = useMarketStore()
+  const market = useMarket()
+  const setMarket = useMarketStore((state) => state.setMarket)
   const [supabase] = useState(() => createBrowserClient())
   const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
@@ -185,14 +186,23 @@ export default function CheckoutPage(): React.JSX.Element {
     })
   }, [availableVouchers, currentCountryCode])
 
-  // Set default address initially
+  // Set default address initially without overriding user's manual selection on refetch;
+  // prioritize an address that matches the active market.
   useEffect(() => {
-    if (addresses && addresses.length > 0) {
-      const defaultAddr = addresses.find((a) => a.is_default) || addresses[0]
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedAddress(defaultAddr)
-    }
-  }, [addresses])
+    if (!addresses || addresses.length === 0) return
+
+    setSelectedAddress((prev) => {
+      if (prev && addresses.some((a) => a.id === prev.id)) {
+        return addresses.find((a) => a.id === prev.id) || prev
+      }
+      return (
+        addresses.find((a) => a.country_code === market && a.is_default) ||
+        addresses.find((a) => a.country_code === market) ||
+        addresses.find((a) => a.is_default) ||
+        addresses[0]
+      )
+    })
+  }, [addresses, market])
 
   // When switching to Malaysia address, automatically lock/select QRIS channel
   useEffect(() => {
@@ -307,15 +317,23 @@ export default function CheckoutPage(): React.JSX.Element {
   const discountAmountMyr = isMalaysia ? Number(appliedVoucher?.discount_amount || 0) : 0
   let discountAmountIdr = 0
   if (!isMalaysia && appliedVoucher) {
-    if (appliedVoucher.discount_type === 'fixed') {
-      discountAmountIdr = Math.min(appliedVoucher.value, subtotalIdr)
+    if (appliedVoucher.discount_amount > 0) {
+      discountAmountIdr = Math.min(appliedVoucher.discount_amount, subtotalIdr)
+    } else if (appliedVoucher.discount_type === 'fixed') {
+      const rawVal =
+        appliedVoucher.currency === 'MYR'
+          ? Math.round(appliedVoucher.value * myrExchangeRate)
+          : appliedVoucher.value
+      discountAmountIdr = Math.min(rawVal, subtotalIdr)
     } else if (appliedVoucher.discount_type === 'percentage') {
       discountAmountIdr = Math.round(subtotalIdr * (appliedVoucher.value / 100))
       if (appliedVoucher.max_discount) {
-        discountAmountIdr = Math.min(discountAmountIdr, appliedVoucher.max_discount)
+        const rawMax =
+          appliedVoucher.currency === 'MYR'
+            ? Math.round(appliedVoucher.max_discount * myrExchangeRate)
+            : appliedVoucher.max_discount
+        discountAmountIdr = Math.min(discountAmountIdr, rawMax)
       }
-    } else {
-      discountAmountIdr = appliedVoucher.discount_amount || 0
     }
   }
 
@@ -402,20 +420,26 @@ export default function CheckoutPage(): React.JSX.Element {
 
   const handleApplyVoucherDirectly = async (code: string) => {
     if (!user) return
+    const normalizedCode = code.trim().toUpperCase()
+    if (!normalizedCode) return
     setVoucherLoading(true)
     try {
-      const result = await validateVoucherAction(code, voucherValidationSubtotal, currentCountryCode)
+      const result = await validateVoucherAction(
+        normalizedCode,
+        voucherValidationSubtotal,
+        currentCountryCode
+      )
       if (result.success) {
         const validVoucher = result.data
         // Fetch full details of the voucher to know constraints
         const { data: voucherInfo } = await supabase
           .from('vouchers')
           .select('value, discount_type, max_discount, currency')
-          .eq('code', code.toUpperCase())
-          .single()
+          .eq('code', normalizedCode)
+          .maybeSingle()
 
         setAppliedVoucher({
-          code: validVoucher.code || code.toUpperCase(),
+          code: validVoucher.code || normalizedCode,
           currency: validVoucher.currency || (voucherInfo?.currency as 'IDR' | 'MYR') || 'IDR',
           discount_amount: validVoucher.discount_amount || 0,
           discount_type: voucherInfo?.discount_type,
@@ -559,10 +583,10 @@ export default function CheckoutPage(): React.JSX.Element {
         )}
 
         {isMalaysia && hasMyCartIssue && (
-          <div className="mb-6 p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-start gap-3">
-            <HandDrawnIcon name="alert-triangle" className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-xl border border-brand-gold-stroke/80 bg-brand-gold/70 text-brand-plum flex items-start gap-3">
+            <HandDrawnIcon name="alert-triangle" className="h-5 w-5 text-brand-plum/80 shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-semibold text-amber-950">
+              <p className="font-semibold text-brand-plum">
                 Action Required for Malaysia Shipping
               </p>
               {unavailableMyItems.length > 0 && (

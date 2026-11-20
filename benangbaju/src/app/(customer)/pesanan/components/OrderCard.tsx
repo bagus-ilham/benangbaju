@@ -71,7 +71,7 @@ export function OrderCard({
             {isMY ? 'Order No.:' : 'No. Pesanan:'}{' '}
             <Link
               href={`/pesanan/${order.order_number}`}
-              className="underline hover:text-brand-blue"
+              className="underline hover:text-brand-blue-text"
             >
               {order.order_number}
             </Link>

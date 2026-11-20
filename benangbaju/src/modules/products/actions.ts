@@ -44,6 +44,7 @@ export async function adminGetVariantsAction(
     stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
     statusFilter?: 'all' | 'active' | 'inactive'
     sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+    market?: 'ID' | 'MY'
   } = {}
 ) {
   await requireAdmin()
@@ -60,6 +61,35 @@ export async function adminBatchUpdateVariantsAction(updates: import('./types').
   await requireAdmin()
   const res = await adminProductService.batchUpdateVariants(updates)
   if (!res.success) throw new Error(res.error?.message)
+}
+
+export async function adminQuickUpdateVariantStockAction(variantId: string, stock: number) {
+  const { supabase } = await requireAdmin()
+  const safeStock = Math.max(0, Math.floor(Number(stock) || 0))
+
+  const { data: currentVar } = await supabase
+    .from('product_variants')
+    .select('stock')
+    .eq('id', variantId)
+    .single()
+
+  const oldStock = currentVar?.stock ?? 0
+
+  const { error } = await supabase
+    .from('product_variants')
+    .update({ stock: safeStock })
+    .eq('id', variantId)
+
+  if (error) throw new Error(error.message)
+
+  if (oldStock <= 0 && safeStock > 0) {
+    const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
+    await checkAndDispatchStockNotifications(supabase, variantId, safeStock, 'ID')
+  }
+
+  const { revalidateTag } = await import('next/cache')
+  revalidateTag('products', 'weeks')
+  revalidateTag('homepage-data', 'hours')
 }
 
 
@@ -135,12 +165,23 @@ export async function toggleStockNotificationAction(variantId: string, marketPar
 
   const { data: existing } = await supabase
     .from('stock_notifications')
-    .select('id')
+    .select('id, is_notified')
     .eq('user_id', user.id)
     .eq('variant_id', variantId)
+    .eq('market', userMarket)
     .maybeSingle()
 
   if (existing) {
+    if (existing.is_notified) {
+      // Previously notified when restocked earlier; re-subscribe cleanly
+      const { error } = await supabase
+        .from('stock_notifications')
+        .update({ is_notified: false, notified_at: null })
+        .eq('id', existing.id)
+      if (error) return { success: false, isSubscribed: false, error: error.message }
+      return { success: true, isSubscribed: true }
+    }
+
     const { error } = await supabase.from('stock_notifications').delete().eq('id', existing.id)
     if (error) return { success: false, isSubscribed: true, error: error.message }
     return { success: true, isSubscribed: false }

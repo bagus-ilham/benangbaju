@@ -15,6 +15,7 @@ import { formatLocalISO } from '@/lib/utils/format'
 import { BannerListTable, BannerFormModal } from './components'
 
 import { getErrorMessage } from '@/lib/utils/format'
+import { revalidateCacheTag } from '@/shared/actions/revalidate'
 
 const supabase = createBrowserClient()
 
@@ -109,6 +110,7 @@ export default function AdminBannersPage(): React.JSX.Element {
         .eq('id', b.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('banners'), revalidateCacheTag('homepage-data')])
       toast.success('Status aktif berhasil diubah')
       refetch()
     } catch (err) {
@@ -124,6 +126,7 @@ export default function AdminBannersPage(): React.JSX.Element {
         .eq('id', b.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('banners'), revalidateCacheTag('homepage-data')])
       toast.success('No. urut banner berhasil diperbarui')
       refetch()
     } catch (err) {

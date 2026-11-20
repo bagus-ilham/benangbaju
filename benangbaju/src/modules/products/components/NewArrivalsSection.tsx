@@ -41,7 +41,7 @@ export function NewArrivalsSection({
             <motion.div
               key={product.id}
               variants={fadeUpItem}
-              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start bg-brand-gold-soft/65 border border-brand-gold-stroke/40 rounded-2xl p-2"
+              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start bg-brand-gold/75 border border-brand-gold-stroke/65 rounded-2xl p-2"
             >
               <ProductCard product={product} />
             </motion.div>

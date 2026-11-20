@@ -3,42 +3,51 @@
 
 BEGIN;
 
--- 1. Update parameterless is_admin() in-place with SECURITY DEFINER
+-- 1. Update parameterless is_admin() in-place with SECURITY DEFINER (checks is_active)
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.profiles
-        WHERE id = auth.uid() AND LOWER(role) IN ('admin', 'staff')
+        WHERE id = auth.uid()
+          AND LOWER(role) IN ('admin', 'staff')
+          AND COALESCE(is_active, true) = true
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
--- 2. Update parameter-accepting is_admin(UUID) in-place with SECURITY DEFINER
+-- 2. Update parameter-accepting is_admin(UUID) in-place with SECURITY DEFINER (checks is_active)
 CREATE OR REPLACE FUNCTION public.is_admin(p_user_id UUID)
 RETURNS BOOLEAN AS $$ 
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.profiles
-        WHERE id = COALESCE(p_user_id, auth.uid()) AND LOWER(role) IN ('admin', 'staff')
+        WHERE id = COALESCE(p_user_id, auth.uid())
+          AND LOWER(role) IN ('admin', 'staff')
+          AND COALESCE(is_active, true) = true
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
--- 3. Base user policies on profiles table (allows authenticated users to read profiles without RLS failure)
+-- 3. Secure user policies on profiles table (prevent PII exposure and role/is_active escalation)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Allow authenticated read profiles" ON public.profiles;
-CREATE POLICY "Allow authenticated read profiles" ON public.profiles
-    FOR SELECT TO authenticated USING (true);
-
 DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
-CREATE POLICY "Users can read own profile" ON public.profiles
-    FOR SELECT USING (true);
+DROP POLICY IF EXISTS "select_profiles_own" ON public.profiles;
+CREATE POLICY "select_profiles_own" ON public.profiles
+    FOR SELECT USING (auth.uid() = id OR public.is_admin());
 
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
-CREATE POLICY "Users can update own profile" ON public.profiles
-    FOR UPDATE USING (auth.uid() = id);
+DROP POLICY IF EXISTS "update_profiles_own" ON public.profiles;
+CREATE POLICY "update_profiles_own" ON public.profiles
+    FOR UPDATE
+    USING (auth.uid() = id)
+    WITH CHECK (
+        auth.uid() = id
+        AND role = (SELECT p.role FROM public.profiles p WHERE p.id = auth.uid())
+        AND is_active = (SELECT p.is_active FROM public.profiles p WHERE p.id = auth.uid())
+    );
 
 -- 4. Apply Admin All policies for orders and related tables
 DO $$

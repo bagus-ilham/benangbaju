@@ -138,29 +138,29 @@ export function PaymentMethodSelector({
       </div>
 
       {isMalaysia && (
-        <div className="p-4 bg-gradient-to-br from-brand-gold-soft/75 via-amber-50/50 to-brand-cream border border-brand-gold-stroke/60 text-xs rounded-2xl space-y-3 font-sans shadow-xs">
-          <div className="flex items-center justify-between border-b border-brand-gold-stroke/40 pb-2.5">
+        <div className="p-4 bg-brand-gold/75 border border-brand-gold-stroke/70 text-xs rounded-2xl space-y-3 font-sans shadow-xs">
+          <div className="flex items-center justify-between border-b border-brand-gold-stroke/60 pb-2.5">
             <div className="flex items-center gap-2.5">
               <MarketFlagIcon market="MY" className="w-5 h-5" />
               <div>
-                <span className="font-serif font-medium text-amber-950 text-sm block leading-tight">
+                <span className="font-serif font-medium text-brand-plum text-sm block leading-tight">
                   DuitNow QR / Cross-Border QRIS
                 </span>
-                <span className="text-[10px] text-amber-800">
+                <span className="text-[10px] text-brand-plum/75">
                   {isMY
                     ? 'Official Bank Negara Malaysia & Bank Indonesia payment link'
                     : 'Kerjasama resmi Bank Indonesia & Bank Negara Malaysia'}
                 </span>
               </div>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full border border-amber-300/60">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-brand-cream text-brand-plum px-2.5 py-0.5 rounded-full border border-brand-gold-stroke/80">
               Instant
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-200/60">
-              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-2.5 p-2.5 bg-brand-cream/90 rounded-xl border border-brand-gold-stroke/60">
+              <div className="w-5 h-5 rounded-full bg-brand-blue text-brand-plum font-bold text-[10px] flex items-center justify-center shrink-0">
                 1
               </div>
               <div className="text-[11px] leading-snug">
@@ -173,8 +173,8 @@ export function PaymentMethodSelector({
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-200/60">
-              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-2.5 p-2.5 bg-brand-cream/90 rounded-xl border border-brand-gold-stroke/60">
+              <div className="w-5 h-5 rounded-full bg-brand-blue text-brand-plum font-bold text-[10px] flex items-center justify-center shrink-0">
                 2
               </div>
               <div className="text-[11px] leading-snug">
@@ -189,8 +189,8 @@ export function PaymentMethodSelector({
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-200/60">
-              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-2.5 p-2.5 bg-brand-cream/90 rounded-xl border border-brand-gold-stroke/60">
+              <div className="w-5 h-5 rounded-full bg-brand-blue text-brand-plum font-bold text-[10px] flex items-center justify-center shrink-0">
                 3
               </div>
               <div className="text-[11px] leading-snug">
@@ -205,8 +205,8 @@ export function PaymentMethodSelector({
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5 p-2.5 bg-white/80 rounded-xl border border-amber-200/60">
-              <div className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px] flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-2.5 p-2.5 bg-brand-cream/90 rounded-xl border border-brand-gold-stroke/60">
+              <div className="w-5 h-5 rounded-full bg-brand-blue text-brand-plum font-bold text-[10px] flex items-center justify-center shrink-0">
                 4
               </div>
               <div className="text-[11px] leading-snug">
@@ -251,8 +251,8 @@ export function PaymentMethodSelector({
                       onClick={() => onSelectChannel(item, fee)}
                       className={`relative p-3.5 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between select-none cursor-pointer ${
                         isSelected
-                          ? 'border-brand-plum bg-brand-blush/30 shadow-xs ring-1 ring-brand-plum/70'
-                          : 'border-brand-plum/10 bg-white/85 hover:border-brand-blue hover:bg-brand-cream'
+                          ? 'border-brand-plum bg-brand-blue-soft/60 shadow-xs ring-1 ring-brand-plum/70'
+                          : 'border-brand-plum/10 bg-white/85 hover:border-brand-blue-stroke hover:bg-brand-cream'
                       }`}
                     >
                       <div className="flex items-start justify-between space-x-2">

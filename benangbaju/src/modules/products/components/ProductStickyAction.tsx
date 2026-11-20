@@ -33,25 +33,33 @@ export function ProductStickyAction({
   const market = useMarket()
   const isMY = market === 'MY'
 
+  const fallbackMyVariant = product.product_variants.find(
+    (v) => v.price_myr != null && Number(v.price_myr) > 0
+  )
+
   const currentPrice = selectedVariant ? Number(selectedVariant.price) : minPrice
-  const comparePrice = selectedVariant?.compare_price
-    ? Number(selectedVariant.compare_price)
+  const comparePrice = selectedVariant
+    ? selectedVariant.compare_price
+      ? Number(selectedVariant.compare_price)
+      : null
     : product.product_variants[0]?.compare_price
       ? Number(product.product_variants[0].compare_price)
       : null
 
-  const currentPriceMyr =
-    selectedVariant?.price_myr != null
+  const currentPriceMyr = selectedVariant
+    ? selectedVariant.price_myr != null && Number(selectedVariant.price_myr) > 0
       ? Number(selectedVariant.price_myr)
-      : product.product_variants[0]?.price_myr != null
-        ? Number(product.product_variants[0].price_myr)
-        : null
-  const comparePriceMyr =
-    selectedVariant?.compare_price_myr != null
+      : null
+    : fallbackMyVariant?.price_myr != null
+      ? Number(fallbackMyVariant.price_myr)
+      : null
+  const comparePriceMyr = selectedVariant
+    ? selectedVariant.compare_price_myr != null
       ? Number(selectedVariant.compare_price_myr)
-      : product.product_variants[0]?.compare_price_myr != null
-        ? Number(product.product_variants[0].compare_price_myr)
-        : null
+      : null
+    : fallbackMyVariant?.compare_price_myr != null
+      ? Number(fallbackMyVariant.compare_price_myr)
+      : null
   const activeStock = selectedVariant
     ? isMY
       ? (selectedVariant.stock_my ?? 0)
@@ -73,7 +81,7 @@ export function ProductStickyAction({
           className="fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-md border-t border-brand-plum/10 shadow-[0_-10px_30px_-10px_rgba(45,38,64,0.14)] py-3 px-4 md:py-4 md:px-8 rounded-t-3xl font-sans overflow-hidden"
         >
           <div
-            className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+            className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
             aria-hidden="true"
           />
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">

@@ -67,7 +67,7 @@ export function ReturClient(): React.JSX.Element {
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Highlight Values Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-            <div className="border border-brand-blush-stroke/55 p-6 rounded-2xl space-y-3 bg-brand-blush/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className="border border-brand-blue-stroke/55 p-6 rounded-2xl space-y-3 bg-brand-blue-soft/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="clock" className="h-4 w-4" />
                 <h2 className="font-serif text-brand-plum font-medium text-base tracking-tight">
@@ -97,22 +97,22 @@ export function ReturClient(): React.JSX.Element {
           </div>
 
           {/* International Orders Policy Card (Final Sale Malaysia) */}
-          <div className="border border-amber-300 bg-amber-50/70 p-6 sm:p-8 rounded-2xl space-y-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-amber-200 pb-3">
+          <div className="border border-brand-gold-stroke bg-brand-gold/65 p-6 sm:p-8 rounded-2xl space-y-5 shadow-xs">
+            <div className="flex items-center justify-between border-b border-brand-gold-stroke/80 pb-3">
               <div className="flex items-center gap-2.5">
                 <MarketFlagIcon market="MY" className="w-5 h-5" />
-                <h2 className="font-serif text-base font-medium tracking-tight text-amber-950">
+                <h2 className="font-serif text-base font-medium tracking-tight text-brand-plum">
                   {isMY
                     ? 'International Orders Policy: Malaysia (Final Sale)'
                     : 'Kebijakan Pesanan Internasional: Malaysia (Final Sale)'}
                 </h2>
               </div>
-              <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-brand-plum/85 bg-brand-gold px-2.5 py-1 rounded-full uppercase tracking-wider">
                 Final Sale
               </span>
             </div>
 
-            <div className="space-y-3 text-xs text-amber-900 leading-relaxed font-medium">
+            <div className="space-y-3 text-xs text-brand-plum leading-relaxed font-medium">
               <p>
                 {isMY
                   ? 'All orders shipped to Malaysia are strictly Final Sale. Self-service returns on the website are available exclusively for domestic Indonesian orders due to cross-border logistics costs, customs re-import procedures, and international tariffs.'
@@ -126,7 +126,7 @@ export function ReturClient(): React.JSX.Element {
             </div>
 
             {/* Defect Claim Protection for Malaysia */}
-            <div className="p-4 bg-white/90 border border-amber-200 rounded-xl space-y-3">
+            <div className="p-4 bg-white/90 border border-brand-gold-stroke/80 rounded-xl space-y-3">
               <div className="flex items-center gap-2 text-emerald-900 font-bold text-xs">
                 <HandDrawnIcon name="check-circle" className="h-4 w-4 text-emerald-600 shrink-0" />
                 <span>

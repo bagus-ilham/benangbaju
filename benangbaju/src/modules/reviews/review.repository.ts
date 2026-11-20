@@ -47,7 +47,7 @@ export class ReviewRepository {
     const result = data.map((item) => {
       const rawProfile = item.profiles
       let profiles: { name: string; avatar_url: string | null } | null = null
-      if (rawProfile && !Array.isArray(rawProfile)) {
+      if (!item.is_anonymous && rawProfile && !Array.isArray(rawProfile)) {
         profiles = {
           name: (rawProfile as any).name,
           avatar_url: (rawProfile as any).avatar_url,
@@ -258,6 +258,44 @@ export class ReviewRepository {
 
   async customerSubmitReview(params: SubmitReviewParams): Promise<ApiResponse<ProductReview>> {
     const supabase = await createServerClient()
+
+    // Verify order ownership, completed status, and matching product when orderItemId is provided
+    let isVerifiedPurchase = false
+    if (params.orderItemId) {
+      const { data: orderItem, error: verifyErr } = await supabase
+        .from('order_items')
+        .select('id, variant_id, orders!inner(user_id, status), product_variants(product_id)')
+        .eq('id', params.orderItemId)
+        .maybeSingle()
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const orderInfo = Array.isArray((orderItem as any)?.orders)
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (orderItem as any).orders[0]
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (orderItem as any)?.orders
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const variantInfo = Array.isArray((orderItem as any)?.product_variants)
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (orderItem as any).product_variants[0]
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (orderItem as any)?.product_variants
+
+      if (
+        verifyErr ||
+        !orderItem ||
+        orderInfo?.user_id !== params.userId ||
+        orderInfo?.status !== 'completed' ||
+        (variantInfo?.product_id && variantInfo.product_id !== params.productId)
+      ) {
+        return fail(
+          ApiErrorCode.VALIDATION_ERROR,
+          'Item pesanan tidak valid atau pesanan belum berstatus selesai'
+        )
+      }
+      isVerifiedPurchase = true
+    }
+
     // 1. Insert review into product_reviews
     const { data: review, error: reviewErr } = await supabase
       .from('product_reviews')
@@ -271,7 +309,7 @@ export class ReviewRepository {
         body: params.body,
         is_anonymous: params.isAnonymous || false,
         status: 'pending',
-        is_verified_purchase: Boolean(params.orderItemId),
+        is_verified_purchase: isVerifiedPurchase,
       })
       .select(
         'id, order_item_id, product_id, variant_id, user_id, rating, title, body, is_anonymous, is_verified_purchase, is_pinned, status, helpful_count, created_at'

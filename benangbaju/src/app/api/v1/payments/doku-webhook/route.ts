@@ -7,8 +7,10 @@ import { safeLogError } from '@/lib/logger'
  * Constant-time comparison to prevent timing attacks
  */
 function constantTimeCompare(a: string, b: string): boolean {
-  if (a.length !== b.length) return false
-  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
+  const aBuf = Buffer.from(a, 'utf8')
+  const bBuf = Buffer.from(b, 'utf8')
+  if (aBuf.length !== bBuf.length) return false
+  return crypto.timingSafeEqual(aBuf, bBuf)
 }
 
 export async function POST(req: NextRequest) {
@@ -26,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const rawBody = await req.text()
-    let payload: any = {}
+    let payload: { order?: { invoice_number?: string } } = {}
     try {
       payload = JSON.parse(rawBody)
     } catch {
@@ -36,32 +38,41 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verify DOKU signature
+    // Verify DOKU signature (mandatory)
     const clientId = req.headers.get('Client-Id') || ''
     const requestId = req.headers.get('Request-Id') || ''
     const requestTimestamp = req.headers.get('Request-Timestamp') || ''
     const incomingSignature = req.headers.get('Signature') || ''
-    const requestTarget = req.headers.get('Request-Target') || req.nextUrl.pathname
+    const requestTarget = req.nextUrl.pathname
 
-    if (incomingSignature && clientId && requestId && requestTimestamp) {
-      // Digest = base64(sha256(rawBody))
-      const digest = crypto.createHash('sha256').update(rawBody).digest('base64')
-      const component = `Client-Id:${clientId}\nRequest-Id:${requestId}\nRequest-Timestamp:${requestTimestamp}\nRequest-Target:${requestTarget}\nDigest:${digest}`
-      const calculatedSignature = `HMACSHA256=${crypto
-        .createHmac('sha256', secretKey)
-        .update(component)
-        .digest('base64')}`
+    if (!incomingSignature || !clientId || !requestId || !requestTimestamp) {
+      safeLogError(
+        'DOKU_WEBHOOK_SIGNATURE',
+        new Error('Missing required DOKU webhook signature headers')
+      )
+      return NextResponse.json(
+        { success: false, message: 'Missing signature headers' },
+        { status: 401 }
+      )
+    }
 
-      if (!constantTimeCompare(calculatedSignature, incomingSignature)) {
-        safeLogError(
-          'DOKU_WEBHOOK_SIGNATURE',
-          new Error('Invalid DOKU webhook signature received')
-        )
-        return NextResponse.json(
-          { success: false, message: 'Invalid signature' },
-          { status: 401 }
-        )
-      }
+    // Digest = base64(sha256(rawBody))
+    const digest = crypto.createHash('sha256').update(rawBody).digest('base64')
+    const component = `Client-Id:${clientId}\nRequest-Id:${requestId}\nRequest-Timestamp:${requestTimestamp}\nRequest-Target:${requestTarget}\nDigest:${digest}`
+    const calculatedSignature = `HMACSHA256=${crypto
+      .createHmac('sha256', secretKey)
+      .update(component)
+      .digest('base64')}`
+
+    if (!constantTimeCompare(calculatedSignature, incomingSignature)) {
+      safeLogError(
+        'DOKU_WEBHOOK_SIGNATURE',
+        new Error('Invalid DOKU webhook signature received')
+      )
+      return NextResponse.json(
+        { success: false, message: 'Invalid signature' },
+        { status: 401 }
+      )
     }
 
     const invoiceNumber = payload.order?.invoice_number
@@ -79,10 +90,13 @@ export async function POST(req: NextRequest) {
       { success: result.success, data: result.data },
       { status: result.success ? 200 : 400 }
     )
-  } catch (error: any) {
+  } catch (error: unknown) {
     safeLogError('Unhandled error in doku-webhook route:', error)
     return NextResponse.json(
-      { success: false, message: error.message || 'Internal server error' },
+      {
+        success: false,
+        message: error instanceof Error ? error.message : 'Internal server error',
+      },
       { status: 500 }
     )
   }

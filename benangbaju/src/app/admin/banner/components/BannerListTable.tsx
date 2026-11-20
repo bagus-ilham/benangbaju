@@ -1,11 +1,9 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import Image from 'next/image'
-import { Button, HandDrawnIcon, DataTable } from '@/shared/components'
+import { Button, HandDrawnIcon, DataTable, SmartImage } from '@/shared/components'
 import type { Column } from '@/shared/components/DataTable'
 import type { Database } from '@/shared/types/database'
-import { getProxiedImageUrl } from '@/lib/getImageUrl'
 import { formatDate } from '@/lib/utils'
 
 type BannerRow = Database['public']['Tables']['banners']['Row']
@@ -41,15 +39,13 @@ export function BannerListTable({
         render: (b) => (
           <div className="flex items-center space-x-3.5">
             <div className="w-24 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0 relative overflow-hidden select-none rounded-md">
-              <Image
-                src={getProxiedImageUrl(b.image_url || '')}
+              <SmartImage
+                src={b.image_url || ''}
                 alt={b.title || ''}
                 fill
                 sizes="96px"
                 className="object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = 'https://placehold.co/600x300?text=No+Image'
-                }}
+                unoptimized
               />
             </div>
             <div>

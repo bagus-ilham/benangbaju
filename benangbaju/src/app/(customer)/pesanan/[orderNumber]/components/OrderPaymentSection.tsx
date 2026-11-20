@@ -102,7 +102,7 @@ export function OrderPaymentSection({
 
   return (
     <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream h-fit space-y-5 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
       <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-3 flex items-center gap-2">
         <HandDrawnIcon name="tag" className="h-4 w-4 text-brand-plum" />
         <span>{isMY ? 'Payment Summary & Methods' : 'Rincian & Metode Pembayaran'}</span>
@@ -473,12 +473,12 @@ export function OrderPaymentSection({
             </div>
 
             {isMalaysia ? (
-              <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-xl space-y-2.5 text-xs text-amber-950 font-sans">
-                <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-amber-900">
-                  <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700" />
+              <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-xl space-y-2.5 text-xs text-brand-plum font-sans">
+                <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-brand-plum">
+                  <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-brand-plum/80" />
                   <span>{isMY ? 'International Order (Final Sale)' : 'Pesanan Internasional (Final Sale)'}</span>
                 </div>
-                <p className="text-[11px] text-amber-900/90 leading-relaxed">
+                <p className="text-[11px] text-brand-plum/85 leading-relaxed">
                   {isMY ? 'Orders delivered to Malaysia are final sale and not eligible for self-service returns. If you received a defective item or wrong order, please contact Customer Care via WhatsApp.' : 'Pesanan pengiriman ke Malaysia bersifat final dan tidak dapat mengajukan retur mandiri. Jika Anda menerima barang yang cacat produksi atau pesanan tidak sesuai, hubungi Customer Care melalui WhatsApp.'}
                 </p>
                 <a
@@ -508,7 +508,7 @@ export function OrderPaymentSection({
                 </span>
                 <Link
                   href={`/pesanan/${order.order_number}/retur`}
-                  className="text-[10px] font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue underline underline-offset-2 transition"
+                  className="text-[10px] font-bold uppercase tracking-wider text-brand-plum hover:text-brand-blue-text underline underline-offset-2 transition"
                 >
                   Detail Retur
                 </Link>
@@ -517,7 +517,7 @@ export function OrderPaymentSection({
               <Link href={`/pesanan/${order.order_number}/retur`} className="w-full">
                 <Button
                   variant="outline"
-                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-brand-plum/30 text-brand-plum hover:bg-brand-blush/30"
+                  className="w-full py-3 text-xs uppercase tracking-widest font-semibold border-brand-plum/30 text-brand-plum hover:bg-brand-blue-soft/30"
                 >
                   {isMY ? 'Request Return' : 'Ajukan Retur Barang'}
                 </Button>

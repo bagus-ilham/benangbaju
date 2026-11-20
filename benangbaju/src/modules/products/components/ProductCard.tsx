@@ -207,7 +207,7 @@ export const ProductCard = React.memo(function ProductCard({
 
         {/* Product Title (Soft Editorial Serif) */}
         <Link href={productUrl} prefetch={true} className="block">
-          <span className="block text-[15px] md:text-base font-serif font-medium text-brand-plum hover:text-brand-blue transition-colors truncate">
+          <span className="block text-[15px] md:text-base font-serif font-medium text-brand-plum hover:text-brand-blue-text transition-colors truncate">
             {product.name}
           </span>
         </Link>

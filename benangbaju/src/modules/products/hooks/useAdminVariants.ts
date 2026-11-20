@@ -21,6 +21,7 @@ export interface GetVariantsQueryParams {
   stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
   statusFilter?: 'all' | 'active' | 'inactive'
   sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+  market?: 'ID' | 'MY'
 }
 
 export function useAdminVariants(
@@ -33,11 +34,13 @@ export function useAdminVariants(
     stockFilter = 'all',
     statusFilter = 'all',
     sortBy = 'newest',
+    market = 'ID',
   } = params
 
   return useQuery({
-    queryKey: ['admin', 'variants', page, limit, search, stockFilter, statusFilter, sortBy],
-    queryFn: () => adminGetVariantsAction({ page, limit, search, stockFilter, statusFilter, sortBy }),
+    queryKey: ['admin', 'variants', page, limit, search, stockFilter, statusFilter, sortBy, market],
+    queryFn: () =>
+      adminGetVariantsAction({ page, limit, search, stockFilter, statusFilter, sortBy, market }),
   })
 }
 

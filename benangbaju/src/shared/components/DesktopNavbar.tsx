@@ -66,12 +66,14 @@ export function DesktopNavbar({
           : 'border-neutral-200/60'
       )}
     >
-      {/* Top Dusty Blue Scalloped Canopy — stays sticky together with the 1-line navbar */}
+      {/* Top Soft Pastel Blue Scalloped Canopy — stays sticky together with the 1-line navbar */}
       <div className="w-full select-none pointer-events-none" aria-hidden="true">
-        <div className="w-full h-4 sm:h-5 bg-brand-blue" />
+        <div className="w-full h-4 sm:h-5 bg-brand-blue-soft" />
         <ScallopEdge
           direction="down"
-          fill="var(--color-brand-blue)"
+          fill="var(--color-brand-blue-soft)"
+          stroke="var(--color-brand-blue-stroke)"
+          strokeOpacity={0.7}
           tileWidth={72}
           height={28}
           className="-mt-px"
@@ -184,7 +186,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-gold border border-brand-gold-stroke text-brand-plum text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
                 >
                   {wishlistCount}
                 </motion.span>
@@ -213,7 +215,7 @@ export function DesktopNavbar({
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring' as const, stiffness: 500, damping: 15 }}
-                  className="absolute -top-0.5 -right-0.5 bg-brand-gold text-brand-plum text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
+                  className="absolute -top-0.5 -right-0.5 bg-brand-gold border border-brand-gold-stroke text-brand-plum text-[9px] font-sans font-bold h-4 w-4 flex items-center justify-center rounded-full leading-none shadow-xs"
                 >
                   {totalQuantity}
                 </motion.span>

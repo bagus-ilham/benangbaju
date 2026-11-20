@@ -81,16 +81,12 @@ export class CartRepository {
     const flashMyrMap = new Map<string, number>()
 
     if (variantIds.length > 0) {
-      let activeMarket = 'ID'
-      try {
-        const { cookies } = await import('next/headers')
-        const cookieStore = await cookies()
-        const marketCookie = cookieStore.get('bb_market')?.value
-        if (marketCookie === 'MY' || marketCookie === 'ID') {
-          activeMarket = marketCookie
+      const qtyByVariant = new Map<string, number>()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const ci of data as any[]) {
+        if (ci.variant_id) {
+          qtyByVariant.set(ci.variant_id, Number(ci.quantity) || 1)
         }
-      } catch {
-        // Fallback to ID in non-request contexts
       }
 
       const nowIso = new Date().toISOString()
@@ -106,15 +102,22 @@ export class CartRepository {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         for (const f of flashItems as any[]) {
           const targetMarket = f.flash_sales?.target_market || 'ALL'
-          const isMarketMatch = targetMarket === 'ALL' || targetMarket === activeMarket
-          if (
-            isMarketMatch &&
-            (f.quota === 0 || (f.quota != null && f.sold_count != null && f.sold_count < f.quota))
-          ) {
+          const itemQty = qtyByVariant.get(f.variant_id) || 1
+          const hasQuota =
+            f.quota === 0 ||
+            (f.quota != null && f.sold_count != null && f.sold_count + itemQty <= f.quota)
+
+          if (!hasQuota) continue
+
+          if (targetMarket === 'ALL' || targetMarket === 'ID') {
             flashMap.set(f.variant_id, Number(f.sale_price))
-            if (f.sale_price_myr != null && Number(f.sale_price_myr) > 0) {
-              flashMyrMap.set(f.variant_id, Number(f.sale_price_myr))
-            }
+          }
+          if (
+            (targetMarket === 'ALL' || targetMarket === 'MY') &&
+            f.sale_price_myr != null &&
+            Number(f.sale_price_myr) > 0
+          ) {
+            flashMyrMap.set(f.variant_id, Number(f.sale_price_myr))
           }
         }
       }

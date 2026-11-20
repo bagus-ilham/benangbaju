@@ -147,7 +147,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-brand-plum/10 rounded-3xl overflow-hidden"
           >
             <div
-              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
               aria-hidden="true"
             />
             <button
@@ -161,7 +161,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between pr-8">
                 <div className="space-y-1">
-                  <span className="inline-block text-base font-accent font-bold text-brand-blue leading-none">
+                  <span className="inline-block text-base font-accent font-bold text-brand-blue-text leading-none">
                     {market === 'MY' ? 'Explore Collection' : 'Cari Koleksi'}
                   </span>
                   <h3 className="text-xl font-serif font-medium tracking-tight text-brand-plum">
@@ -212,7 +212,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <button
                           key={item}
                           onClick={() => handleSelectTag(item)}
-                          className="text-[11px] font-sans bg-brand-gold-soft/55 hover:bg-brand-blush/75 border border-brand-plum/10 text-brand-plum px-3 py-1 rounded-full transition-colors"
+                          className="text-[11px] font-sans bg-brand-gold-soft/55 hover:bg-brand-blue-soft/75 border border-brand-plum/10 text-brand-plum px-3 py-1 rounded-full transition-colors"
                         >
                           {item}
                         </button>
@@ -277,7 +277,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-sm font-serif font-medium text-brand-plum truncate group-hover:text-brand-blue transition-colors">
+                              <h4 className="text-sm font-serif font-medium text-brand-plum truncate group-hover:text-brand-blue-text transition-colors">
                                 {product.name}
                               </h4>
                               <div className="mt-0.5">

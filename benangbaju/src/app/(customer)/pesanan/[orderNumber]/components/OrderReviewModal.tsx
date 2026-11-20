@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
-import React, { useState } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Modal, Button, Input, Textarea, Checkbox, HandDrawnIcon } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
@@ -14,22 +14,40 @@ interface OrderReviewModalProps {
   refetch: () => void
 }
 
-export function OrderReviewModal({
+function OrderReviewForm({
   selectedReviewItem,
   onClose,
   user,
   submitReviewMutation,
   refetch,
-}: OrderReviewModalProps): React.JSX.Element {
-  const market = useMarket()
-  const isMY = market === 'MY'
+  isMY,
+}: {
+  selectedReviewItem: any
+  onClose: () => void
+  user: any
+  submitReviewMutation: any
+  refetch: () => void
+  isMY: boolean
+}): React.JSX.Element {
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewBody, setReviewBody] = useState('')
   const [reviewTitle, setReviewTitle] = useState('')
   const [reviewAnonymous, setReviewAnonymous] = useState(false)
   const [reviewFiles, setReviewFiles] = useState<File[]>([])
   const [isUploading, setIsUploading] = useState(false)
-  const supabase = createBrowserClient()
+  const [supabase] = useState(() => createBrowserClient())
+
+  // Create and revoke object URLs cleanly to prevent memory leaks
+  const previewUrls = useMemo(
+    () => reviewFiles.map((file) => URL.createObjectURL(file)),
+    [reviewFiles]
+  )
+
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [previewUrls])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -90,7 +108,7 @@ export function OrderReviewModal({
 
       try {
         for (const file of reviewFiles) {
-          const url = await uploadImage(file, 'products')
+          const url = await uploadImage(file, 'reviews')
           mediaUrls.push(url)
         }
       } catch (uploadErr: any) {
@@ -128,16 +146,9 @@ export function OrderReviewModal({
   }
 
   return (
-    <Modal
-      isOpen={selectedReviewItem !== null}
-      onClose={onClose}
-      title={isMY ? 'Write Product Review' : 'Tulis Ulasan Produk'}
-      size="md"
-    >
-      {selectedReviewItem && (
-        <form onSubmit={handleSubmitReview} className="space-y-6">
+    <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-brand-blue-stroke font-sans font-bold mb-1">
+            <p className="text-[10px] uppercase tracking-widest text-brand-blue-text font-sans font-bold mb-1">
               {isMY ? 'Product Name' : 'Nama Produk'}
             </p>
             <h3 className="text-base font-serif font-medium text-brand-plum">
@@ -213,10 +224,10 @@ export function OrderReviewModal({
             </label>
 
             <div className="flex flex-wrap gap-3">
-              {reviewFiles.map((file, idx) => (
-                <div key={idx} className="relative w-20 h-20 border border-brand-plum/15 rounded-xl">
+              {previewUrls.map((previewUrl, idx) => (
+                <div key={previewUrl} className="relative w-20 h-20 border border-brand-plum/15 rounded-xl">
                   <img
-                    src={URL.createObjectURL(file)}
+                    src={previewUrl}
                     alt={`Preview ${idx}`}
                     className="w-full h-full object-cover rounded-xl"
                   />
@@ -266,6 +277,36 @@ export function OrderReviewModal({
             </Button>
           </div>
         </form>
+  )
+}
+
+export function OrderReviewModal({
+  selectedReviewItem,
+  onClose,
+  user,
+  submitReviewMutation,
+  refetch,
+}: OrderReviewModalProps): React.JSX.Element {
+  const market = useMarket()
+  const isMY = market === 'MY'
+
+  return (
+    <Modal
+      isOpen={selectedReviewItem !== null}
+      onClose={onClose}
+      title={isMY ? 'Write Product Review' : 'Tulis Ulasan Produk'}
+      size="md"
+    >
+      {selectedReviewItem && (
+        <OrderReviewForm
+          key={selectedReviewItem.id}
+          selectedReviewItem={selectedReviewItem}
+          onClose={onClose}
+          user={user}
+          submitReviewMutation={submitReviewMutation}
+          refetch={refetch}
+          isMY={isMY}
+        />
       )}
     </Modal>
   )

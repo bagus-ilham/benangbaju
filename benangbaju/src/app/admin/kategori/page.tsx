@@ -42,6 +42,7 @@ import { CategoryFormModal } from './components/CategoryFormModal'
 import type { } from '@/shared/components/DataTable'
 
 import { generateSlug, getErrorMessage } from '@/lib/utils'
+import { revalidateCacheTag } from '@/shared/actions/revalidate'
 
 const supabase = createBrowserClient()
 
@@ -119,6 +120,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
         .eq('id', cat.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('categories'), revalidateCacheTag('homepage-data')])
       toast.success('Status aktif berhasil diubah')
       refetch()
     } catch (err) {
@@ -134,6 +136,7 @@ export default function AdminCategoryPage(): React.JSX.Element {
         .eq('id', cat.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('categories'), revalidateCacheTag('homepage-data')])
       toast.success('No. urut kategori berhasil diperbarui')
       refetch()
     } catch (err) {

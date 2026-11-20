@@ -11,7 +11,7 @@ import { staggerContainer, fadeUpItem } from '@/lib/motion'
 import toast from 'react-hot-toast'
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google'
 
-function LoginContent() {
+function LoginContent({ hasGoogleAuth }: { hasGoogleAuth: boolean }) {
   const market = useMarket()
   const isMY = market === 'MY'
   const router = useRouter()
@@ -146,7 +146,7 @@ function LoginContent() {
                   href="/lupa-password"
                   className="text-[10px] uppercase tracking-wider font-sans font-bold text-neutral-600 hover:text-brand-plum transition-colors inline-block p-2 -m-2"
                 >
-                  Lupa sandi?
+                  {isMY ? 'Forgot password?' : 'Lupa sandi?'}
                 </Link>
               </div>
               <Input
@@ -163,32 +163,38 @@ function LoginContent() {
 
             <motion.div variants={fadeUpItem}>
               <Button type="submit" variant="accent" className="w-full mt-2 font-bold" isLoading={isLoading}>
-                Masuk
+                {isMY ? 'Sign In' : 'Masuk'}
               </Button>
             </motion.div>
           </form>
 
-          {/* Divider */}
-          <motion.div variants={fadeUpItem} className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200/80"></div>
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
-              <span className="bg-brand-cream px-3 text-neutral-600">{isMY ? 'Or sign in with' : 'Atau masuk dengan'}</span>
-            </div>
-          </motion.div>
+          {hasGoogleAuth && (
+            <>
+              {/* Divider */}
+              <motion.div variants={fadeUpItem} className="relative my-8">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-neutral-200/80"></div>
+                </div>
+                <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
+                  <span className="bg-brand-cream px-3 text-neutral-600">
+                    {isMY ? 'Or sign in with' : 'Atau masuk dengan'}
+                  </span>
+                </div>
+              </motion.div>
 
-          {/* Google Sign In */}
-          <motion.div variants={fadeUpItem} className="flex justify-center w-full">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="outline"
-              size="large"
-              text="signin_with"
-              shape="rectangular"
-            />
-          </motion.div>
+              {/* Google Sign In */}
+              <motion.div variants={fadeUpItem} className="flex justify-center w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"
+                  text="signin_with"
+                  shape="rectangular"
+                />
+              </motion.div>
+            </>
+          )}
 
           {/* Footer Link */}
           <motion.div
@@ -198,7 +204,7 @@ function LoginContent() {
             <p className="text-xs text-neutral-600 font-sans">
               {isMY ? "Don't have an account? " : "Belum punya akun? "}
               <Link href="/daftar" className="text-brand-plum font-semibold hover:underline">
-                Daftar sekarang
+                {isMY ? 'Sign up now' : 'Daftar sekarang'}
               </Link>
             </p>
           </motion.div>
@@ -215,10 +221,10 @@ export default function LoginPage(): React.JSX.Element {
     <Suspense fallback={<AuthLoading message="Memuat halaman masuk..." />}>
       {clientId ? (
         <GoogleOAuthProvider clientId={clientId}>
-          <LoginContent />
+          <LoginContent hasGoogleAuth={true} />
         </GoogleOAuthProvider>
       ) : (
-        <LoginContent />
+        <LoginContent hasGoogleAuth={false} />
       )}
     </Suspense>
   )

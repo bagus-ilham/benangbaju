@@ -56,5 +56,31 @@ describe('shipping.utils', () => {
       } as any)
       expect(res).toEqual(mockRates[1])
     })
+
+    it('prefers exact courier_name match over shorter prefix substring match', async () => {
+      const mockRates = [
+        { id: 'rate-jne', courier_name: 'JNE', price: 12000 },
+        { id: 'rate-jne-yes', courier_name: 'JNE YES', price: 28000 },
+      ]
+      vi.mocked(shippingService.calculateShippingRates).mockResolvedValue({
+        success: true,
+        data: mockRates,
+      } as any)
+
+      const yesRes = await validateAndGetShippingRate('zone1', 1000, {
+        courierName: 'JNE YES',
+      } as any)
+      expect(yesRes?.id).toBe('rate-jne-yes')
+
+      const regRes = await validateAndGetShippingRate('zone1', 1000, {
+        courierName: 'JNE',
+      } as any)
+      expect(regRes?.id).toBe('rate-jne')
+
+      const longerSubstringRes = await validateAndGetShippingRate('zone1', 1000, {
+        courierName: 'JNE YES - Express',
+      } as any)
+      expect(longerSubstringRes?.id).toBe('rate-jne-yes')
+    })
   })
 })

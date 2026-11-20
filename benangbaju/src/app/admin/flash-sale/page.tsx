@@ -14,6 +14,7 @@ import toast from 'react-hot-toast'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { useQuery } from '@tanstack/react-query'
 import { formatLocalISO } from '@/lib/utils/format'
+import { revalidateCacheTag } from '@/shared/actions/revalidate'
 
 const supabase = createBrowserClient()
 
@@ -157,6 +158,7 @@ export default function AdminFlashSalesPage(): React.JSX.Element {
         .eq('id', camp.id)
 
       if (error) throw error
+      await Promise.all([revalidateCacheTag('flash-sales'), revalidateCacheTag('homepage-data')])
       toast.success('Status aktif berhasil diubah')
       refetch()
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

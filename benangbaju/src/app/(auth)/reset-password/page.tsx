@@ -48,17 +48,17 @@ export default function ResetPasswordPage(): React.JSX.Element {
     e.preventDefault()
 
     if (!password || !confirmPassword) {
-      toast.error('Semua kolom wajib diisi.')
+      toast.error(isMY ? 'All fields are required.' : 'Semua kolom wajib diisi.')
       return
     }
 
     if (password !== confirmPassword) {
-      toast.error('Konfirmasi kata sandi tidak cocok.')
+      toast.error(isMY ? 'Password confirmation does not match.' : 'Konfirmasi kata sandi tidak cocok.')
       return
     }
 
-    if (password.length < 6) {
-      toast.error('Kata sandi harus minimal 6 karakter.')
+    if (password.length < 8) {
+      toast.error(isMY ? 'Password must be at least 8 characters.' : 'Kata sandi harus minimal 8 karakter.')
       return
     }
 
@@ -103,10 +103,10 @@ export default function ResetPasswordPage(): React.JSX.Element {
             />
           </div>
           <h2 className="text-2xl md:text-[26px] font-serif font-medium tracking-tight text-brand-plum">
-            Reset Kata Sandi
+            {isMY ? 'Reset Password' : 'Reset Kata Sandi'}
           </h2>
           <p className="text-[11px] md:text-xs text-neutral-600 font-sans">
-            Masukkan kata sandi baru Anda di bawah ini.
+            {isMY ? 'Enter your new password below.' : 'Masukkan kata sandi baru Anda di bawah ini.'}
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function ResetPasswordPage(): React.JSX.Element {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder={isMY ? "Min. 6 characters" : "Minimal 6 karakter"}
+            placeholder={isMY ? "Min. 8 characters" : "Minimal 8 karakter"}
             required
           />
 
@@ -130,7 +130,7 @@ export default function ResetPasswordPage(): React.JSX.Element {
           />
 
           <Button type="submit" variant="primary" className="w-full mt-4" isLoading={isLoading}>
-            Perbarui Kata Sandi
+            {isMY ? 'Update Password' : 'Perbarui Kata Sandi'}
           </Button>
         </form>
       </Card>

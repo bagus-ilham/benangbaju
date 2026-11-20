@@ -78,6 +78,7 @@ export function useAdminUpdateSettings(): import('@tanstack/react-query').UseMut
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['settings'], ['settings', 'homepage-data'])
+      queryClient.invalidateQueries({ queryKey: ['site-settings'] })
     },
   })
 }
@@ -97,6 +98,7 @@ export function useAdminUpsertSettings(): import('@tanstack/react-query').UseMut
     },
     onSuccess: () => {
       invalidateAdminQueries(queryClient, ['settings'], ['settings', 'homepage-data'])
+      queryClient.invalidateQueries({ queryKey: ['site-settings'] })
     },
   })
 }

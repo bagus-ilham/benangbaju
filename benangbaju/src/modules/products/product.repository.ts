@@ -77,11 +77,13 @@ export class ProductRepository {
         baseSearchQuery = baseSearchQuery.gt('min_price_myr', 0)
       }
 
+      const searchMinCol = market === 'MY' ? 'min_price_myr' : 'min_price'
+      const searchMaxCol = market === 'MY' ? 'max_price_myr' : 'max_price'
       if (minPrice !== undefined) {
-        baseSearchQuery = baseSearchQuery.gte('min_price', minPrice)
+        baseSearchQuery = baseSearchQuery.gte(searchMinCol, minPrice)
       }
       if (maxPrice !== undefined) {
-        baseSearchQuery = baseSearchQuery.lte('max_price', maxPrice)
+        baseSearchQuery = baseSearchQuery.lte(searchMaxCol, maxPrice)
       }
 
       const { data: searchCandidates, error } = await baseSearchQuery
@@ -102,10 +104,14 @@ export class ProductRepository {
       // Pengurutan berdasarkan skor relevansi atau kriteria sortBy
       scoredItems.sort((a, b) => {
         if (sortBy === 'price-low') {
-          return (Number(a.product.min_price) || 0) - (Number(b.product.min_price) || 0)
+          const aPrice = Number(market === 'MY' ? a.product.min_price_myr : a.product.min_price) || 0
+          const bPrice = Number(market === 'MY' ? b.product.min_price_myr : b.product.min_price) || 0
+          return aPrice - bPrice
         }
         if (sortBy === 'price-high') {
-          return (Number(b.product.min_price) || 0) - (Number(a.product.min_price) || 0)
+          const aPrice = Number(market === 'MY' ? a.product.min_price_myr : a.product.min_price) || 0
+          const bPrice = Number(market === 'MY' ? b.product.min_price_myr : b.product.min_price) || 0
+          return bPrice - aPrice
         }
         if (sortBy === 'popular' || sortBy === 'featured') {
           if (a.score !== b.score) return b.score - a.score
@@ -171,14 +177,14 @@ export class ProductRepository {
       query = query.gt('min_price_myr', 0)
     }
 
+    const priceCol = market === 'MY' ? 'min_price_myr' : 'min_price'
+    const maxPriceCol = market === 'MY' ? 'max_price_myr' : 'max_price'
     if (minPrice !== undefined) {
-      query = query.gte('min_price', minPrice)
+      query = query.gte(priceCol, minPrice)
     }
     if (maxPrice !== undefined) {
-      query = query.lte('max_price', maxPrice)
+      query = query.lte(maxPriceCol, maxPrice)
     }
-
-    const priceCol = market === 'MY' ? 'min_price_myr' : 'min_price'
     if (sortBy === 'newest') {
       query = query.order('created_at', { ascending: false })
     } else if (sortBy === 'featured') {
@@ -457,6 +463,7 @@ export class ProductRepository {
     stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
     statusFilter?: 'all' | 'active' | 'inactive'
     sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+    market?: 'ID' | 'MY'
   } = {}) {
     const supabase = await createServerClient()
     const {
@@ -466,8 +473,11 @@ export class ProductRepository {
       stockFilter = 'all',
       statusFilter = 'all',
       sortBy = 'newest',
+      market = 'ID',
     } = params
     const offset = (page - 1) * limit
+    const stockCol = market === 'MY' ? 'stock_my' : 'stock'
+    const priceCol = market === 'MY' ? 'price_myr' : 'price'
 
     let query = supabase.from('product_variants').select(
       `
@@ -504,11 +514,11 @@ export class ProductRepository {
     }
 
     if (stockFilter === 'out_of_stock') {
-      query = query.lte('stock', 0)
+      query = query.lte(stockCol, 0)
     } else if (stockFilter === 'low_stock') {
-      query = query.gt('stock', 0).lte('stock', 5)
+      query = query.gt(stockCol, 0).lte(stockCol, 5)
     } else if (stockFilter === 'in_stock') {
-      query = query.gt('stock', 0)
+      query = query.gt(stockCol, 0)
     }
 
     if (statusFilter === 'active') {
@@ -520,13 +530,13 @@ export class ProductRepository {
     if (sortBy === 'name_asc') {
       query = query.order('name', { ascending: true })
     } else if (sortBy === 'price_asc') {
-      query = query.order('price', { ascending: true })
+      query = query.order(priceCol, { ascending: true, nullsFirst: false })
     } else if (sortBy === 'price_desc') {
-      query = query.order('price', { ascending: false })
+      query = query.order(priceCol, { ascending: false, nullsFirst: false })
     } else if (sortBy === 'stock_asc') {
-      query = query.order('stock', { ascending: true })
+      query = query.order(stockCol, { ascending: true })
     } else if (sortBy === 'stock_desc') {
-      query = query.order('stock', { ascending: false })
+      query = query.order(stockCol, { ascending: false })
     } else {
       query = query.order('id', { ascending: false })
     }

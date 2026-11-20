@@ -122,7 +122,7 @@ export default async function ProductDetailPage({
     <Suspense
       key="related-products-suspense"
       fallback={
-        <section className="bg-brand-blush py-16">
+        <section className="bg-brand-blue-soft py-16">
           <PageContainer>
             <div className="h-8 w-48 bg-brand-cream/70 mx-auto mb-8 skeleton-shimmer rounded-md" />
             <ProductGridSkeleton count={4} />

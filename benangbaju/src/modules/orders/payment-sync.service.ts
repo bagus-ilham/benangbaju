@@ -107,8 +107,37 @@ export class PaymentSyncService {
       const transactionStatus = dokuData.transaction?.status || 'UNKNOWN'
       const dokuOrderStatus = dokuData.order?.status || 'UNKNOWN'
 
+      // Verify payment amount matches order total before approving payment
+      if (transactionStatus === 'SUCCESS') {
+        const dokuAmount = dokuData.order?.amount != null ? Number(dokuData.order.amount) : null
+        if (
+          dokuAmount !== null &&
+          !isNaN(dokuAmount) &&
+          Math.abs(dokuAmount - Number(order.total_amount)) > 1
+        ) {
+          safeLogError(
+            'DOKU_AMOUNT_MISMATCH',
+            new Error(
+              `Order ${cleanOrderNumber} expected ${order.total_amount}, got ${dokuAmount}`
+            )
+          )
+          return fail(
+            ApiErrorCode.VALIDATION_ERROR,
+            'Nominal pembayaran dari DOKU tidak sesuai dengan total pesanan'
+          )
+        }
+      }
+
+      // Fetch or verify existing payment record first so we never downgrade a paid/terminal payment
+      const { data: paymentRecord } = await (supabase.from as any)('payments')
+        .select('id, status, gateway_response, paid_at')
+        .eq('order_id', order.id)
+        .maybeSingle()
+
+      const isTerminal = ['completed', 'shipped', 'processing', 'cancelled'].includes(order.status)
+
       let newOrderStatus = order.status
-      let paymentStatus = 'pending'
+      let paymentStatus = paymentRecord?.status || 'pending'
       let message = 'Status pembayaran: Belum dibayar'
 
       if (transactionStatus === 'SUCCESS') {
@@ -131,29 +160,33 @@ export class PaymentSyncService {
         dokuData.virtual_account_payment?.date ||
         new Date().toISOString()
 
-      // 5. Update Database if status changed
-      const isTerminal = ['completed', 'shipped'].includes(order.status)
-
-      // Fetch or verify existing payment record
-      const { data: paymentRecord } = await (supabase.from as any)('payments')
-        .select('id, gateway_response, paid_at')
-        .eq('order_id', order.id)
-        .maybeSingle()
-
       const updatedGatewayResponse = paymentRecord?.gateway_response
         ? { ...paymentRecord.gateway_response, status_check: dokuData }
         : dokuData
 
+      const shouldPreservePayment = isTerminal || paymentRecord?.status === 'success'
+      const finalPaymentStatus = shouldPreservePayment
+        ? paymentRecord?.status || paymentStatus
+        : paymentStatus
+      const finalPaidAt =
+        finalPaymentStatus === 'success'
+          ? paymentRecord?.paid_at || paidDate
+          : paymentRecord?.paid_at || null
+
       if (paymentRecord) {
-        await (supabase.from as any)('payments')
-          .update({
-            status: paymentStatus,
-            gateway_response: updatedGatewayResponse,
-            paid_at: paymentStatus === 'success' ? (paymentRecord.paid_at || paidDate) : null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', paymentRecord.id)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const paymentUpdate: Record<string, any> = {
+          gateway_response: updatedGatewayResponse,
+          updated_at: new Date().toISOString(),
+        }
+        if (!shouldPreservePayment) {
+          paymentUpdate.status = finalPaymentStatus
+          paymentUpdate.paid_at = finalPaidAt
+        }
+        await (supabase.from as any)('payments').update(paymentUpdate).eq('id', paymentRecord.id)
       }
+
+      let finalOrderStatus = order.status
 
       // Update orders table
       if (newOrderStatus !== order.status && !isTerminal) {
@@ -162,6 +195,7 @@ export class PaymentSyncService {
             .from('orders')
             .update({ status: 'processing', updated_at: new Date().toISOString() })
             .eq('id', order.id)
+          finalOrderStatus = 'processing'
 
           // Insert Notification for Customer (bilingual EN for MY, ID for domestic)
           try {
@@ -202,6 +236,7 @@ export class PaymentSyncService {
                 ? 'Pembayaran kedaluwarsa (Sync DOKU)'
                 : 'Pembayaran gagal (Sync DOKU)',
           })
+          finalOrderStatus = 'cancelled'
         }
       }
 
@@ -219,10 +254,10 @@ export class PaymentSyncService {
 
       return ok({
         order_number: cleanOrderNumber,
-        order_status: newOrderStatus,
-        payment_status: paymentStatus,
+        order_status: finalOrderStatus,
+        payment_status: finalPaymentStatus,
         transaction_status: transactionStatus,
-        paid_at: paymentStatus === 'success' ? paidDate : null,
+        paid_at: finalPaidAt,
         message,
       })
     } catch (err: any) {

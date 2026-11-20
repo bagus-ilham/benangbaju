@@ -63,8 +63,8 @@ export async function getAdminAnalyticsAction(
     }),
     supabase
       .from('carts')
-      .select('*', { count: 'exact', head: true })
-      .lte('created_at', yesterdayStr),
+      .select('id, cart_items!inner(id)', { count: 'exact', head: true })
+      .lte('updated_at', yesterdayStr),
     voucherQuery,
   ])
 

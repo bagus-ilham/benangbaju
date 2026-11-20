@@ -46,8 +46,14 @@ export default function WishlistPage(): React.JSX.Element {
       let addedCount = 0
       for (const product of products) {
         const availableVariant = isMY
-          ? product.product_variants.find((v) => v.price_myr != null && Number(v.price_myr) > 0 && (v.stock_my ?? 0) > 0)
-          : product.product_variants.find((v) => v.stock > 0) || product.product_variants[0]
+          ? product.product_variants.find(
+              (v) =>
+                v.is_active &&
+                v.price_myr != null &&
+                Number(v.price_myr) > 0 &&
+                (v.stock_my ?? 0) > 0
+            )
+          : product.product_variants.find((v) => v.is_active && v.stock > 0)
         if (availableVariant) {
           const primaryImage =
             product.product_images?.find((img) => img.is_primary)?.url ||
@@ -75,6 +81,15 @@ export default function WishlistPage(): React.JSX.Element {
           )
           addedCount++
         }
+      }
+      if (addedCount === 0) {
+        toast.error(
+          isMY
+            ? 'No saved items are currently in stock for Malaysia.'
+            : 'Tidak ada produk di wishlist yang sedang tersedia stoknya.',
+          { id: 'move-all' }
+        )
+        return
       }
       toast.success(isMY ? `${addedCount} items moved to bag!` : `${addedCount} produk dipindahkan ke keranjang!`, { id: 'move-all' })
       setCartDrawerOpen(true)
@@ -124,7 +139,7 @@ export default function WishlistPage(): React.JSX.Element {
         ) : (
           <div className="space-y-6">
             {/* Toolbar Action Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-blush/45 border border-brand-blush-stroke/60 rounded-2xl shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-brand-blue-soft/45 border border-brand-blue-stroke/60 rounded-2xl shadow-xs">
               <div className="flex items-center space-x-2">
                 <HandDrawnIcon name="heart" className="w-4 h-4" />
                 <span className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum">

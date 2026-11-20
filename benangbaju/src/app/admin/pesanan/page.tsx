@@ -69,6 +69,9 @@ function AdminOrdersPageContent(): React.JSX.Element {
     refetch: refetchReturns,
   } = useAdminReturnRequests()
   const returnsData = returnsDataResponse?.success ? returnsDataResponse.data || [] : []
+  const pendingReturnsCount = returnsData.filter(
+    (r: AdminReturnRequestListItem) => r.status === 'pending'
+  ).length
 
   const updateReturnMutation = useAdminUpdateReturnRequest()
   const updateOrderStatusMutation = useAdminUpdateOrderStatus()
@@ -148,7 +151,11 @@ function AdminOrdersPageContent(): React.JSX.Element {
   const handleOpenReturnModal = (ret: AdminReturnRequestListItem) => {
     setSelectedReturn(ret)
     setAdminNotes(ret.admin_notes || '')
-    setRefundAmount(ret.refund_amount || ret.orders?.total_amount || 0)
+    const computedReturnItemsTotal = (ret.return_items || []).reduce(
+      (sum, item) => sum + Number(item.quantity || 0) * Number(item.order_items?.price || 0),
+      0
+    )
+    setRefundAmount(ret.refund_amount ?? computedReturnItemsTotal)
   }
 
   const handleUpdateReturnStatus = async (status: 'approved' | 'rejected' | 'completed') => {
@@ -291,12 +298,9 @@ function AdminOrdersPageContent(): React.JSX.Element {
             }`}
           >
             {tab.label}
-            {tab.id === 'returns' && returnsData.length > 0 && (
+            {tab.id === 'returns' && pendingReturnsCount > 0 && (
               <span className="ml-1.5 bg-red-500 text-white font-bold px-1.5 py-0.5 text-[9px] rounded-full">
-                {
-                  returnsData.filter((r: AdminReturnRequestListItem) => r.status === 'pending')
-                    .length
-                }
+                {pendingReturnsCount}
               </span>
             )}
           </button>

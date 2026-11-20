@@ -20,11 +20,19 @@ export async function validateAndGetShippingRate(
   if (!shippingRes.success || !shippingRes.data) return undefined
   const validRates = shippingRes.data
 
-  return params.shippingRateId
-    ? validRates.find((r) => r.id === params.shippingRateId)
-    : validRates.find(
-        (r) => r.courier_name === params.courierName || params.courierName?.includes(r.courier_name)
-      )
+  if (params.shippingRateId) {
+    return validRates.find((r) => r.id === params.shippingRateId)
+  }
+
+  // Prefer exact courier name match first; fallback to longest matching substring
+  // so specific names like "JNE REG" win over shorter prefixes like "JNE".
+  const exactMatch = validRates.find((r) => r.courier_name === params.courierName)
+  if (exactMatch) return exactMatch
+
+  const sortedByLengthDesc = [...validRates].sort(
+    (a, b) => b.courier_name.length - a.courier_name.length
+  )
+  return sortedByLengthDesc.find((r) => params.courierName?.includes(r.courier_name))
 }
 
 export function calculateCartWeight(cartItems: CartItemWithWeight[]): number {

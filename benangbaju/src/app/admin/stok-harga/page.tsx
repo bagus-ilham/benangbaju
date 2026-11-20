@@ -53,12 +53,13 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
     stockFilter,
     statusFilter,
     sortBy,
+    market: marketMode,
   })
 
   const updateSingleMutation = useAdminUpdateVariant()
   const batchUpdateMutation = useAdminBatchUpdateVariants()
 
-  const variants = dataRes?.data || []
+  const variants = useMemo(() => dataRes?.data || [], [dataRes?.data])
   const totalCount = dataRes?.pagination?.total_count || 0
   const totalPages = Math.ceil(totalCount / limit)
 
@@ -99,10 +100,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
     [drafts]
   )
 
-  // Calculate dirty rows count
+  // Calculate all modified draft IDs across pagination pages so drafts on other pages are never silently dropped
   const dirtyVariantIds = useMemo(() => {
-    return variants.filter((v) => isRowDirty(v)).map((v) => v.id)
-  }, [variants, isRowDirty])
+    return Object.keys(drafts)
+  }, [drafts])
 
   // Update a single field in draft
   const handleDraftChange = useCallback(
@@ -515,7 +516,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setMarketMode('ID')}
+            onClick={() => {
+              setMarketMode('ID')
+              setPage(1)
+            }}
             className={cn(
               'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 border',
               marketMode === 'ID'
@@ -527,7 +531,10 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
           </button>
           <button
             type="button"
-            onClick={() => setMarketMode('MY')}
+            onClick={() => {
+              setMarketMode('MY')
+              setPage(1)
+            }}
             className={cn(
               'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-2 border',
               marketMode === 'MY'
@@ -555,13 +562,13 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
         </div>
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl shadow-xs">
           <p className="text-[11px] font-heading uppercase tracking-wider text-amber-700 font-semibold">
-            Stok Menipis (1-5)
+            Stok Menipis 1-5 (Hal. ini)
           </p>
           <p className="text-2xl font-bold text-amber-600 mt-1">{stats.lowStockCount}</p>
         </div>
         <div className="bg-brand-cream border border-neutral-200 p-4 rounded-2xl shadow-xs">
           <p className="text-[11px] font-heading uppercase tracking-wider text-red-700 font-semibold">
-            Stok Habis (0)
+            Stok Habis 0 (Hal. ini)
           </p>
           <p className="text-2xl font-bold text-red-600 mt-1">{stats.outOfStockCount}</p>
         </div>
@@ -659,7 +666,7 @@ export default function AdminVariantStockPricePage(): React.JSX.Element {
           <div className="flex items-center space-x-2 text-amber-900">
             <HandDrawnIcon name="edit" className="w-5 h-5 text-amber-600 flex-shrink-0" />
             <span className="text-xs font-semibold">
-              Terdapat <strong>{dirtyVariantIds.length}</strong> varian yang belum disimpan di halaman ini.
+              Terdapat <strong>{dirtyVariantIds.length}</strong> varian yang belum disimpan.
             </span>
           </div>
           <div className="flex items-center space-x-2">

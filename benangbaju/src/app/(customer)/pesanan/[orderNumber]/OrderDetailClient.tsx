@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/modules/users/stores/authStore'
 import {
   useOrderDetail,
@@ -40,10 +40,17 @@ interface OrderDetailPageProps {
 
 function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element | null {
   const { orderNumber } = params
+  const router = useRouter()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
   const market = useMarket()
   const isMY = market === 'MY'
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push(`/masuk?redirect=${encodeURIComponent(`/pesanan/${orderNumber}`)}`)
+    }
+  }, [authLoading, isAuthenticated, orderNumber, router])
   const [isInvoiceLoading, setIsInvoiceLoading] = useState(false)
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false)
   const [receiptConfirmOpen, setReceiptConfirmOpen] = useState(false)
@@ -391,7 +398,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => toast.dismiss(t.id)}
-                        className="px-3 py-1.5 bg-brand-gold text-brand-plum text-xs font-bold rounded-lg text-center shadow-xs hover:bg-amber-400"
+                        className="px-3 py-1.5 bg-brand-gold text-brand-plum text-xs font-bold rounded-lg text-center shadow-xs hover:bg-[#F2E5AE]"
                       >
                         Buka Halaman Pembayaran
                       </a>

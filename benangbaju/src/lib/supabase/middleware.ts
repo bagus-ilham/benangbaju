@@ -37,21 +37,26 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
   const pathname = request.nextUrl.pathname
 
   // Skip database checks for static assets and API routes
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.') // like favicon.ico, images, etc
-  ) {
+  const isStaticAsset =
+    /\.(?:ico|png|jpg|jpeg|gif|webp|avif|svg|css|js|woff|woff2|ttf|eot|map|txt|xml|json)$/i.test(
+      pathname
+    )
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || isStaticAsset) {
     return supabaseResponse
+  }
+
+  const buildRedirectTarget = (target: string): URL => {
+    if (target.startsWith('http://') || target.startsWith('https://')) {
+      return new URL(target)
+    }
+    return new URL(target.startsWith('/') ? target : `/${target}`, request.nextUrl.origin)
   }
 
   // Database-driven redirects check with cache
   const cached = redirectCache.get(pathname)
   if (cached && cached.expiresAt > Date.now()) {
     if (cached.to_path) {
-      const url = request.nextUrl.clone()
-      url.pathname = cached.to_path
-      return NextResponse.redirect(url, cached.status_code)
+      return NextResponse.redirect(buildRedirectTarget(cached.to_path), cached.status_code)
     }
   } else {
     try {
@@ -76,14 +81,13 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
       }
 
       if (redirectData) {
+        const statusCode = redirectData.status_code || 301
         redirectCache.set(pathname, {
           to_path: redirectData.to_path,
-          status_code: redirectData.status_code || 301,
+          status_code: statusCode,
           expiresAt: Date.now() + CACHE_TTL,
         })
-        const url = request.nextUrl.clone()
-        url.pathname = redirectData.to_path
-        return NextResponse.redirect(url, redirectData.status_code || 301)
+        return NextResponse.redirect(buildRedirectTarget(redirectData.to_path), statusCode)
       } else {
         // Cache negative lookup (no redirect found)
         redirectCache.set(pathname, {
@@ -109,7 +113,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
   if (isProtected && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/masuk'
-    url.searchParams.set('redirect', request.nextUrl.pathname)
+    url.searchParams.set('redirect', `${request.nextUrl.pathname}${request.nextUrl.search}`)
     return NextResponse.redirect(url)
   }
 
@@ -122,10 +126,10 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
       return NextResponse.redirect(url)
     }
 
-    // Check admin role (fetched from profiles)
+    // Check admin role & active status (fetched from profiles)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, is_active')
       .eq('id', user.id)
       .single()
 
@@ -134,8 +138,15 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
     }
 
     const role = profile?.role?.trim()?.toLowerCase()
-    if (role !== 'admin' && role !== 'staff') {
-      console.warn('[Middleware] Admin access denied. User:', user.id, 'Role:', profile?.role ?? 'NULL (no profile found)')
+    if (profile?.is_active === false || (role !== 'admin' && role !== 'staff')) {
+      console.warn(
+        '[Middleware] Admin access denied. User:',
+        user.id,
+        'Role:',
+        profile?.role ?? 'NULL (no profile found)',
+        'Active:',
+        profile?.is_active
+      )
       const url = request.nextUrl.clone()
       url.pathname = '/'
       return NextResponse.redirect(url)
@@ -152,10 +163,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse<
     if (!redirect.startsWith('/') || redirect.startsWith('//')) {
       redirect = '/'
     }
-    const url = request.nextUrl.clone()
-    url.pathname = redirect
-    url.search = ''
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(new URL(redirect, request.nextUrl.origin))
   }
 
   return supabaseResponse

@@ -39,6 +39,15 @@ export default function CartPage(): React.JSX.Element {
   const totalDiscountMyr = Math.max(0, originalMyr - totalMyr)
   const hasUnavailableMYItems =
     isMY && items.some((item) => !item.priceMyr || Number(item.priceMyr) <= 0)
+  const hasOutOfStockMYItems =
+    isMY &&
+    items.some(
+      (item) =>
+        item.priceMyr != null &&
+        Number(item.priceMyr) > 0 &&
+        ((item.stockMy ?? 0) <= 0 || item.quantity > (item.stockMy ?? 0))
+    )
+  const hasMYCartBlockingIssue = hasUnavailableMYItems || hasOutOfStockMYItems
 
   const [isMounted, setIsMounted] = useState(false)
 
@@ -136,7 +145,7 @@ export default function CartPage(): React.JSX.Element {
                         )}
                         <div className="min-w-0 flex-1 space-y-1">
                           <Link href={`/produk/${item.slug}`} className="block group">
-                            <div className="text-[15px] font-serif font-medium text-brand-plum group-hover:text-brand-blue truncate transition-colors">
+                            <div className="text-[15px] font-serif font-medium text-brand-plum group-hover:text-brand-blue-text truncate transition-colors">
                               {item.productName || item.name}
                             </div>
                           </Link>
@@ -151,16 +160,27 @@ export default function CartPage(): React.JSX.Element {
                           <div className="flex flex-col pt-1">
                             {isMY ? (
                               item.priceMyr && Number(item.priceMyr) > 0 ? (
-                                <div className="flex items-baseline space-x-2">
-                                  <span className="text-xs font-sans font-bold text-brand-plum">
-                                    {formatMYR(Number(item.priceMyr) * item.quantity)}
-                                  </span>
-                                  {item.comparePriceMyr &&
-                                    Number(item.comparePriceMyr) > Number(item.priceMyr) && (
-                                      <span className="text-[10px] font-sans text-neutral-400 line-through">
-                                        {formatMYR(Number(item.comparePriceMyr) * item.quantity)}
-                                      </span>
-                                    )}
+                                <div className="space-y-1">
+                                  <div className="flex items-baseline space-x-2">
+                                    <span className="text-xs font-sans font-bold text-brand-plum">
+                                      {formatMYR(Number(item.priceMyr) * item.quantity)}
+                                    </span>
+                                    {item.comparePriceMyr &&
+                                      Number(item.comparePriceMyr) > Number(item.priceMyr) && (
+                                        <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                          {formatMYR(Number(item.comparePriceMyr) * item.quantity)}
+                                        </span>
+                                      )}
+                                  </div>
+                                  {(item.stockMy ?? 0) <= 0 ? (
+                                    <span className="block text-[11px] font-bold text-red-600">
+                                      Out of stock for Malaysia (please remove)
+                                    </span>
+                                  ) : item.quantity > (item.stockMy ?? 0) ? (
+                                    <span className="block text-[11px] font-bold text-brand-plum/80">
+                                      Only {item.stockMy} pcs left for Malaysia stock
+                                    </span>
+                                  ) : null}
                                 </div>
                               ) : (
                                 <span className="text-[11px] font-bold text-red-600">
@@ -250,7 +270,7 @@ export default function CartPage(): React.JSX.Element {
                 bordered={true}
                 className="bg-brand-cream border-brand-plum/10 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
-                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
                 <h2 className="text-lg font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-4">
                   {market === 'MY' ? 'Order Summary' : 'Ringkasan Belanja'}
                 </h2>
@@ -294,14 +314,23 @@ export default function CartPage(): React.JSX.Element {
                   </div>
                 </div>
 
-                {hasUnavailableMYItems && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-800">
-                    Some items in your bag are not available for Malaysia shipping. Please remove them before proceeding to checkout.
+                {hasMYCartBlockingIssue && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-[11px] text-red-800 space-y-1">
+                    {hasUnavailableMYItems && (
+                      <p>
+                        Some items in your bag are not available for Malaysia shipping. Please remove them before proceeding to checkout.
+                      </p>
+                    )}
+                    {hasOutOfStockMYItems && (
+                      <p>
+                        Some items exceed available Malaysia stock or are out of stock. Please adjust quantities or remove them before checkout.
+                      </p>
+                    )}
                   </div>
                 )}
 
                 {isMY && totalMyr >= 450 && (
-                  <div className="p-3 bg-amber-50 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 leading-snug flex items-start gap-2">
+                  <div className="p-3 bg-brand-gold/70 border border-brand-gold-stroke/75 rounded-xl text-[11px] text-brand-plum leading-snug flex items-start gap-2">
                     <span className="text-base shrink-0">ℹ️</span>
                     <div>
                       <span className="font-semibold">Malaysian Customs Notice:</span>{' '}
@@ -312,11 +341,11 @@ export default function CartPage(): React.JSX.Element {
                   </div>
                 )}
 
-                <Link href={hasUnavailableMYItems ? '/cart' : '/checkout'} className="block w-full pt-2">
+                <Link href={hasMYCartBlockingIssue ? '/cart' : '/checkout'} className="block w-full pt-2">
                   <Button
                     variant="accent"
                     size="lg"
-                    disabled={hasUnavailableMYItems}
+                    disabled={hasMYCartBlockingIssue}
                     className="w-full flex items-center justify-center space-x-2 font-bold"
                   >
                     <span>{market === 'MY' ? 'Proceed to Checkout' : 'Lanjut Ke Checkout'}</span>

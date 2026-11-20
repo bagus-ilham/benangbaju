@@ -188,7 +188,7 @@ export default function PesananPage(): React.JSX.Element {
               className={`py-3.5 px-4 text-xs font-sans uppercase tracking-wider whitespace-nowrap border-b-2 transition duration-200 -mb-[2px] cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-brand-plum text-brand-plum font-bold'
-                  : 'border-transparent text-neutral-500 hover:text-brand-blue hover:border-brand-blue/40'
+                  : 'border-transparent text-neutral-500 hover:text-brand-blue-text hover:border-brand-blue/40'
               }`}
             >
               {tab.id === 'all' ? (isMY ? 'All' : 'Semua') : getOrderStatusLabel(tab.id, isMY)}
@@ -238,7 +238,7 @@ export default function PesananPage(): React.JSX.Element {
         <div className="mt-12 pt-6 border-t border-neutral-100">
           <Link
             href="/akun"
-            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-blue transition-colors duration-200"
+            className="inline-flex items-center text-xs uppercase tracking-wider font-semibold text-neutral-600 hover:text-brand-blue-text transition-colors duration-200"
           >
             <HandDrawnIcon name="arrow-left" className="w-3.5 h-3.5 mr-2" /> {isMY ? 'Back to Account' : 'Kembali ke Akun'}
           </Link>

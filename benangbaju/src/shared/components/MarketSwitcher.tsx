@@ -179,7 +179,7 @@ export function MarketSwitcher({
               className={cn(
                 'w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-left transition-colors cursor-pointer',
                 market === 'ID'
-                  ? 'bg-brand-blush/70 text-brand-plum font-bold'
+                  ? 'bg-brand-blue-soft/70 text-brand-plum font-bold'
                   : 'text-neutral-700 hover:bg-brand-gold-soft/50'
               )}
             >

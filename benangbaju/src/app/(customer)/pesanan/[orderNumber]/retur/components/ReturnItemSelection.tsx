@@ -24,7 +24,7 @@ export function ReturnItemSelection({
 }: ReturnItemSelectionProps): React.JSX.Element {
   return (
     <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-gold" />
       <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
         Pilih Produk yang Ingin Dikembalikan*
       </h2>
@@ -63,7 +63,9 @@ export function ReturnItemSelection({
                   min="1"
                   max={item.quantity}
                   value={quantities[item.id] || 1}
-                  onChange={(e) => onQtyChange(item.id, item.quantity, parseInt(e.target.value))}
+                  onChange={(e) =>
+                    onQtyChange(item.id, item.quantity, parseInt(e.target.value, 10) || 1)
+                  }
                   className="w-16 px-2 py-1.5 border border-neutral-200 text-center text-sm outline-none focus:border-neutral-900 rounded-xl font-semibold"
                 />
               </div>

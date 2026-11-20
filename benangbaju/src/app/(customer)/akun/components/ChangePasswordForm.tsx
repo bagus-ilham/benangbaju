@@ -31,7 +31,7 @@ export function ChangePasswordForm({
       variants={itemVariants}
       className="border border-brand-plum/10 p-6 sm:p-8 rounded-3xl bg-brand-cream shadow-xs relative overflow-hidden group"
     >
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blush to-brand-blue" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-brand-plum/10">
         <motion.div
           whileHover={{ y: [0, -2, 2, -2, 0] }}
@@ -40,7 +40,7 @@ export function ChangePasswordForm({
           <HandDrawnIcon name="lock" className="w-4 h-4" />
         </motion.div>
         <div>
-          <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+          <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
             {isMY ? 'Account Security' : 'Keamanan Akun'}
           </span>
           <h2 className="text-lg sm:text-xl font-serif font-medium tracking-tight text-brand-plum">

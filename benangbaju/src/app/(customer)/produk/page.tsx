@@ -13,6 +13,7 @@ interface CatalogPageProps {
 async function getCachedCatalogData(
   categorySlug?: string,
   sortBy?: 'newest' | 'featured' | 'price-low' | 'price-high' | 'popular',
+  searchQuery?: string,
   page?: number,
   limit?: number
 ) {
@@ -24,6 +25,7 @@ async function getCachedCatalogData(
     getProductsAction({
       categorySlug,
       sortBy,
+      searchQuery,
       page,
       limit,
     }),
@@ -61,7 +63,7 @@ async function CatalogContent({
   let isError = false
 
   try {
-    data = await getCachedCatalogData(categorySlug, sortBy, page, limit)
+    data = await getCachedCatalogData(categorySlug, sortBy, searchQuery, page, limit)
   } catch (error) {
     console.error('Error fetching catalog data:', error)
     isError = true

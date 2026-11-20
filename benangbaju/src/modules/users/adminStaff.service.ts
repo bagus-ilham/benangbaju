@@ -6,13 +6,16 @@ export class AdminStaffService {
     return adminStaffRepository.adminGetStaffs()
   }
 
-  async adminCreateStaff(staffData: {
-    name: string
-    email: string
-    password?: string
-    role: 'admin' | 'staff'
-  }): Promise<{ success: boolean; data?: StaffProfile; error?: string }> {
-    return adminStaffRepository.adminCreateStaff(staffData)
+  async adminCreateStaff(
+    staffData: {
+      name: string
+      email: string
+      password?: string
+      role: 'admin' | 'staff'
+    },
+    adminId?: string
+  ): Promise<{ success: boolean; data?: StaffProfile; error?: string }> {
+    return adminStaffRepository.adminCreateStaff(staffData, adminId)
   }
 
   async adminUpdateStaff(
@@ -21,13 +24,17 @@ export class AdminStaffService {
       name: string
       role: 'admin' | 'staff'
       is_active: boolean
-    }>
+    }>,
+    adminId?: string
   ): Promise<{ success: boolean; data?: StaffProfile; error?: Error }> {
-    return adminStaffRepository.adminUpdateStaff(staffId, staffData)
+    return adminStaffRepository.adminUpdateStaff(staffId, staffData, adminId)
   }
 
-  async adminDeleteStaff(staffId: string): Promise<{ success: boolean; error?: Error }> {
-    return adminStaffRepository.adminDeleteStaff(staffId)
+  async adminDeleteStaff(
+    staffId: string,
+    adminId?: string
+  ): Promise<{ success: boolean; error?: Error }> {
+    return adminStaffRepository.adminDeleteStaff(staffId, adminId)
   }
 }
 

@@ -122,7 +122,7 @@ export function MegaMenuNavItem({
                 {/* Left Column: Link List */}
                 <div className="col-span-3 flex flex-col space-y-4 pr-5 border-r border-brand-plum/10">
                   <div className="space-y-0.5">
-                    <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+                    <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
                       {isMY ? 'Explore' : 'Jelajahi'}
                     </span>
                     <h3 className="text-lg font-serif font-medium tracking-tight text-brand-plum">
@@ -149,7 +149,7 @@ export function MegaMenuNavItem({
                           <Link
                             href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
                             onClick={() => setIsHovered(false)}
-                            className="text-xs font-sans text-neutral-600 hover:bg-brand-blush/65 hover:text-brand-plum font-medium hover:font-semibold transition-all block px-2.5 py-1.5 -mx-2.5 rounded-xl"
+                            className="text-xs font-sans text-neutral-600 hover:bg-brand-blue-soft/65 hover:text-brand-plum font-medium hover:font-semibold transition-all block px-2.5 py-1.5 -mx-2.5 rounded-xl"
                           >
                             {item.name}
                           </Link>

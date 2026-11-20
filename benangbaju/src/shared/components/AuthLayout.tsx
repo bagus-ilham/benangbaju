@@ -114,7 +114,7 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
       {/* Form panel */}
       <main className="relative flex-1 flex flex-col items-center lg:overflow-y-auto lg:h-full bg-brand-cream py-12 px-4 sm:px-6 lg:px-8 section-texture overflow-x-hidden">
         <div
-          className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-blush/65 blur-3xl pointer-events-none"
+          className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-blue-soft/65 blur-3xl pointer-events-none"
           aria-hidden="true"
         />
         <div

@@ -63,7 +63,7 @@ export function TentangClient(): React.JSX.Element {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-            <div className="border border-brand-blush-stroke/60 p-6 md:p-8 space-y-3 bg-brand-blush/55 rounded-3xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-slide-up">
+            <div className="border border-brand-blue-stroke/60 p-6 md:p-8 space-y-3 bg-brand-blue-soft/55 rounded-3xl shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 animate-slide-up">
               <span className="inline-block text-base font-accent font-bold text-brand-plum/80 leading-none">
                 {isMY ? 'Value 01' : 'Nilai 01'}
               </span>

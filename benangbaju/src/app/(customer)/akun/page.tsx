@@ -97,7 +97,7 @@ export default function AkunPage(): React.JSX.Element {
       if (error) throw error
 
       if (data) {
-        const role = data.role === 'admin' ? 'admin' : 'customer'
+        const role = data.role === 'admin' || data.role === 'staff' ? data.role : 'customer'
         setProfile({
           ...data,
           role,

@@ -33,8 +33,8 @@ async function getCachedHomepageData() {
     getActiveBannersAction(),
     getActiveCategoriesAction(),
     getActiveCollectionsAction(),
-    getProductsAction({ sortBy: 'featured', limit: 4 }),
-    getProductsAction({ sortBy: 'newest', limit: 4 }),
+    getProductsAction({ sortBy: 'featured', limit: 12 }),
+    getProductsAction({ sortBy: 'newest', limit: 12 }),
     settingsService.getSiteSettings(),
   ])
 
@@ -57,10 +57,10 @@ async function getCachedHomepageData() {
 
   const [collection1Products, collection2Products] = await Promise.all([
     col1
-      ? getProductsAction({ collectionSlug: col1.slug, limit: 4 })
+      ? getProductsAction({ collectionSlug: col1.slug, limit: 12 })
       : Promise.resolve({ data: [], success: true }),
     col2
-      ? getProductsAction({ collectionSlug: col2.slug, limit: 4 })
+      ? getProductsAction({ collectionSlug: col2.slug, limit: 12 })
       : Promise.resolve({ data: [], success: true }),
   ])
 
@@ -77,27 +77,30 @@ async function getCachedHomepageData() {
   }
 }
 
-async function getCachedFlashSale() {
+async function getCachedFlashSales() {
   'use cache'
   cacheLife('minutes')
   cacheTag('flash-sales')
 
   const supabase = createStaticClient()
-  return flashSaleService.getActiveFlashSale(supabase)
+  return flashSaleService.getActiveFlashSales(supabase)
 }
 
 export class HomeService {
   getCachedHomepageData = getCachedHomepageData
 
   async getHomepageData() {
-    const [cachedData, flashSaleRes] = await Promise.all([
+    const [cachedData, flashSalesRes] = await Promise.all([
       getCachedHomepageData(),
-      getCachedFlashSale(),
+      getCachedFlashSales(),
     ])
+
+    const flashSales = flashSalesRes.data || []
 
     return {
       ...cachedData,
-      flashSale: flashSaleRes.data || null,
+      flashSale: flashSales[0] || null,
+      flashSales,
     }
   }
 }

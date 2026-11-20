@@ -70,7 +70,7 @@ export function AccountNavMenu({
             {initial}
           </div>
           <div className="min-w-0">
-            <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+            <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
               {isMY ? 'Hello,' : 'Halo,'}
             </span>
             <p className="text-base font-serif font-medium text-brand-plum truncate leading-snug">
@@ -96,7 +96,7 @@ export function AccountNavMenu({
               className={cn(
                 'flex items-center justify-between px-4 py-3 border font-sans font-bold tracking-wide uppercase transition-all duration-200 rounded-2xl text-xs cursor-pointer shadow-2xs',
                 item.isActive
-                  ? 'bg-brand-blush/85 border-brand-blush-stroke text-brand-plum shadow-xs'
+                  ? 'bg-brand-blue-soft/85 border-brand-blue-stroke text-brand-plum shadow-xs'
                   : 'bg-brand-cream border-brand-plum/10 text-brand-plum/85 hover:bg-brand-blue-soft/55 hover:border-brand-blue-stroke hover:text-brand-plum'
               )}
             >

@@ -16,7 +16,14 @@ export async function checkAndDispatchStockNotifications(
   if (newStock <= 0) return
 
   try {
-    let query = supabase
+    // Use service-role client on server so RLS on stock_notifications and notifications doesn't block dispatch
+    let dbClient = supabase
+    if (typeof window === 'undefined' && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const { createAdminClient } = await import('@/lib/supabase/admin')
+      dbClient = createAdminClient()
+    }
+
+    let query = dbClient
       .from('stock_notifications')
       .select('id, user_id, market, product_variants(name, products(name, slug))')
       .eq('variant_id', variantId)
@@ -56,8 +63,8 @@ export async function checkAndDispatchStockNotifications(
 
     // Batch insert notifications and batch update stock_notifications
     await Promise.all([
-      supabase.from('notifications').insert(notificationInserts),
-      supabase
+      dbClient.from('notifications').insert(notificationInserts),
+      dbClient
         .from('stock_notifications')
         .update({ is_notified: true, notified_at: nowIso })
         .in('id', pendingIds),

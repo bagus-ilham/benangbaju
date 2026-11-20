@@ -163,7 +163,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps): React.JSX.Ele
       />
 
       {/* Free Shipping Announcement Bar — sits below the sticky header & disappears on scroll */}
-      <div className="relative z-20 bg-brand-gold border-b border-brand-gold-stroke/40 text-brand-plum text-center py-2 px-4">
+      <div className="relative z-20 bg-brand-gold border-b border-brand-gold-stroke/70 text-brand-plum text-center py-2 px-4">
         <p className="text-[10px] sm:text-[11px] font-sans font-bold uppercase tracking-[0.15em] leading-snug">
           {market === 'MY' ? (
             <span className="inline-flex items-center justify-center flex-wrap gap-x-1.5">

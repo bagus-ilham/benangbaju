@@ -71,7 +71,11 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
   // Rate limiting for authentication routes
   const authPaths = ['/masuk', '/daftar', '/lupa-password', '/reset-password']
-  if (authPaths.some((p) => pathname.startsWith(p) || pathname === `/api/auth/callback`)) {
+  if (
+    authPaths.some((p) => pathname.startsWith(p)) ||
+    pathname === '/auth/callback' ||
+    pathname === '/api/auth/callback'
+  ) {
     // Skip rate limiting in local development
     if (process.env.NODE_ENV !== 'development') {
       const ip = getClientIp(request)

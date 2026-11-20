@@ -65,6 +65,45 @@ export function VariantPicker({
     onVariantSelectRef.current = onVariantSelect
   }, [onVariantSelect])
 
+  // Re-select a valid in-stock variant when market changes or variant list updates
+  React.useEffect(() => {
+    const isCurrentValidAndInStock = variants.some((v) => {
+      if (!v.is_active || !v.product_variant_attrs || v.product_variant_attrs.length === 0) {
+        return false
+      }
+      const stock = isMY
+        ? v.price_myr != null && Number(v.price_myr) > 0
+          ? (v.stock_my ?? 0)
+          : 0
+        : v.stock
+      if (stock <= 0) return false
+      return v.product_variant_attrs.every((attr) => selectedValues[attr.attr_name] === attr.attr_value)
+    })
+
+    if (!isCurrentValidAndInStock) {
+      const nextDefault =
+        variants.find((v) => {
+          if (!v.is_active) return false
+          return isMY
+            ? v.price_myr != null && Number(v.price_myr) > 0 && (v.stock_my ?? 0) > 0
+            : v.stock > 0
+        }) ||
+        variants.find((v) => v.is_active) ||
+        variants[0]
+
+      if (nextDefault?.product_variant_attrs) {
+        const vals: Record<string, string> = {}
+        nextDefault.product_variant_attrs.forEach((attr) => {
+          vals[attr.attr_name] = attr.attr_value
+        })
+        setSelectedValues(vals)
+      } else if (variants.length === 0) {
+        setSelectedValues({})
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMY, variants])
+
   // Initialize selected values if a selectedVariantId is given by the parent
   React.useEffect(() => {
     if (selectedVariantId) {
@@ -138,7 +177,14 @@ export function VariantPicker({
           })
         })
 
-        const totalStock = matchingVariants.reduce((sum, v) => sum + (isMY ? (v.stock_my ?? 0) : v.stock), 0)
+        const totalStock = matchingVariants.reduce((sum, v) => {
+          const stock = isMY
+            ? v.price_myr != null && Number(v.price_myr) > 0
+              ? (v.stock_my ?? 0)
+              : 0
+            : v.stock
+          return sum + stock
+        }, 0)
         disabledMap[attrName][value] = totalStock <= 0
       })
     })
@@ -252,8 +298,8 @@ export function VariantPicker({
                     className={cn(
                       'relative px-4 py-2 border text-xs font-sans font-bold tracking-wide uppercase transition-all duration-200 disabled:opacity-30 disabled:line-through rounded-xl cursor-pointer select-none',
                       isSelected
-                        ? 'border-amber-300 bg-brand-gold text-brand-plum shadow-xs font-bold'
-                        : 'border-neutral-300 text-brand-plum hover:border-amber-300 hover:bg-brand-gold/30'
+                        ? 'border-brand-gold-stroke bg-brand-gold text-brand-plum shadow-xs font-bold'
+                        : 'border-neutral-300 text-brand-plum hover:border-brand-gold-stroke hover:bg-brand-gold/30'
                     )}
                   >
                     {val}

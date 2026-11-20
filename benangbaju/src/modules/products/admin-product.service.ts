@@ -89,7 +89,14 @@ export class AdminProductService {
     collectionIds: string[] = []
   ): Promise<ApiResponse<{ id: string }>> {
     try {
-      // Variants
+      // Variants: remember temp ID -> index mapping so images linked to new variants stay linked
+      const tempVariantIndexMap = new Map<string, number>()
+      variants.forEach((v, idx) => {
+        if (v.id && v.id.startsWith('temp-')) {
+          tempVariantIndexMap.set(v.id, idx)
+        }
+      })
+
       const variantsToUpsert = variants.map((v) => ({
         ...v,
         id: !v.id || v.id.startsWith('temp-') ? null : v.id,
@@ -99,15 +106,18 @@ export class AdminProductService {
       const incomingVariantIds = variantsToUpsert.map((v) => v.id).filter((id) => id) as string[]
       const variantIdsToDelete = dbVariantIds.filter((id) => !incomingVariantIds.includes(id))
 
-      // Images
-      const imagesToUpsert = images.map((img) => ({
-        ...img,
-        id: !img.id || img.id.startsWith('temp-') ? null : img.id,
-        variant_id:
-          !img.variant_id || img.variant_id === '' || img.variant_id.startsWith('temp-')
-            ? null
-            : img.variant_id,
-      }))
+      // Images: resolve temp-* variant_id to variant_idx for admin_update_product RPC
+      const imagesToUpsert = images.map((img) => {
+        const isTempVariant = Boolean(img.variant_id && img.variant_id.startsWith('temp-'))
+        const variantIdx =
+          isTempVariant && img.variant_id ? tempVariantIndexMap.get(img.variant_id) : undefined
+        return {
+          ...img,
+          id: !img.id || img.id.startsWith('temp-') ? null : img.id,
+          variant_id: !img.variant_id || img.variant_id === '' || isTempVariant ? null : img.variant_id,
+          ...(variantIdx !== undefined ? { variant_idx: variantIdx } : {}),
+        }
+      })
       const dbImages = await productRepository.getProductImages(productId)
       const dbImageIds = (dbImages || []).map((i) => i.id).filter(Boolean) as string[]
       const incomingImageIds = imagesToUpsert.map((i) => i.id).filter((id) => id) as string[]
@@ -140,8 +150,10 @@ export class AdminProductService {
 
       const supabase = await createServerClient()
       if (deletedImageUrls.length > 0) {
-        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-        await Promise.all(deletedImageUrls.map((url) => deleteImageByUrl(supabase, url, 'products')))
+        const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+        await Promise.all(
+          deletedImageUrls.map((url) => deleteImageByUrlServer(supabase, url, 'products'))
+        )
       }
 
       await adminLogRepository.insertAdminActivityLog(
@@ -170,8 +182,10 @@ export class AdminProductService {
       // If DB delete succeeds, clean up images from storage
       if (images && images.length > 0) {
         const supabase = await createServerClient()
-        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-        await Promise.all(images.map((img) => deleteImageByUrl(supabase, img.url, 'products')))
+        const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+        await Promise.all(
+          images.map((img) => deleteImageByUrlServer(supabase, img.url, 'products'))
+        )
       }
 
       const supabase = await createServerClient()
@@ -220,6 +234,7 @@ export class AdminProductService {
     stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
     statusFilter?: 'all' | 'active' | 'inactive'
     sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
+    market?: 'ID' | 'MY'
   } = {}): Promise<ApiListResponse<AdminVariantListItem>> {
     try {
       const { page = 1, limit = 20 } = params

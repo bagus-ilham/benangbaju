@@ -17,15 +17,15 @@ export default function RegisterPage(): React.JSX.Element {
   if (clientId) {
     return (
       <GoogleOAuthProvider clientId={clientId}>
-        <RegisterContent />
+        <RegisterContent hasGoogleAuth={true} />
       </GoogleOAuthProvider>
     )
   }
 
-  return <RegisterContent />
+  return <RegisterContent hasGoogleAuth={false} />
 }
 
-function RegisterContent(): React.JSX.Element {
+function RegisterContent({ hasGoogleAuth }: { hasGoogleAuth: boolean }): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
   const router = useRouter()
@@ -221,25 +221,31 @@ function RegisterContent(): React.JSX.Element {
             </motion.div>
           </form>
 
-          <motion.div variants={fadeUpItem} className="relative my-8 font-sans">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200/80" />
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
-              <span className="bg-brand-cream px-3 text-neutral-600">{isMY ? 'Or register with' : 'Atau daftar dengan'}</span>
-            </div>
-          </motion.div>
+          {hasGoogleAuth && (
+            <>
+              <motion.div variants={fadeUpItem} className="relative my-8 font-sans">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-neutral-200/80" />
+                </div>
+                <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-sans font-bold">
+                  <span className="bg-brand-cream px-3 text-neutral-600">
+                    {isMY ? 'Or register with' : 'Atau daftar dengan'}
+                  </span>
+                </div>
+              </motion.div>
 
-          <motion.div variants={fadeUpItem} className="flex justify-center w-full">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="outline"
-              size="large"
-              text="signup_with"
-              shape="rectangular"
-            />
-          </motion.div>
+              <motion.div variants={fadeUpItem} className="flex justify-center w-full">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"
+                  text="signup_with"
+                  shape="rectangular"
+                />
+              </motion.div>
+            </>
+          )}
 
           {/* Footer Link */}
           <motion.div

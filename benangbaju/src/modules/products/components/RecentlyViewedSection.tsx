@@ -44,6 +44,18 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
           ]
         : []
 
+      const comparePrice = p.comparePrice ?? null
+      const discountPercent =
+        comparePrice && comparePrice > p.price
+          ? Math.round(((comparePrice - p.price) / comparePrice) * 100)
+          : null
+      const minPriceMyr = p.priceMyr ?? null
+      const comparePriceMyr = p.comparePriceMyr ?? null
+      const discountPercentMyr =
+        comparePriceMyr && minPriceMyr && comparePriceMyr > minPriceMyr
+          ? Math.round(((comparePriceMyr - minPriceMyr) / comparePriceMyr) * 100)
+          : null
+
       return {
         id: p.id,
         category_id: '',
@@ -56,12 +68,12 @@ export function RecentlyViewedSection(): React.JSX.Element | null {
         product_images: imagesList,
         minPrice: p.price,
         maxPrice: p.price,
-        comparePrice: null,
-        discountPercent: null,
-        minPriceMyr: p.priceMyr ?? null,
-        maxPriceMyr: p.priceMyr ?? null,
-        comparePriceMyr: p.comparePriceMyr ?? null,
-        discountPercentMyr: null,
+        comparePrice,
+        discountPercent,
+        minPriceMyr,
+        maxPriceMyr: minPriceMyr,
+        comparePriceMyr,
+        discountPercentMyr,
         isAvailableInMY: p.priceMyr != null && p.priceMyr > 0,
         primaryImage: p.imageUrl || null,
         hoverImage: p.imageUrl || null,

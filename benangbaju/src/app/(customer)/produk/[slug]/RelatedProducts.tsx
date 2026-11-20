@@ -33,12 +33,12 @@ export function RelatedProducts({ products }: RelatedProductsProps): React.JSX.E
   }
 
   return (
-    <section className="relative bg-brand-blush pt-14 pb-20 md:pt-16 md:pb-24 mt-4">
+    <section className="relative bg-brand-blue-soft pt-14 pb-20 md:pt-16 md:pb-24 mt-4">
       <ScallopEdge
         direction="up"
-        fill="var(--color-brand-blush)"
-        stroke="var(--color-brand-blush-stroke)"
-        strokeOpacity={0.45}
+        fill="var(--color-brand-blue-soft)"
+        stroke="var(--color-brand-blue-stroke)"
+        strokeOpacity={0.55}
         className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-10"
       />
 

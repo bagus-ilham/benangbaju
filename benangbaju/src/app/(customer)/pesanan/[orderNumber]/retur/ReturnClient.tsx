@@ -15,7 +15,7 @@ import {
 import { SmartLink as Link, HandDrawnIcon } from '@/shared/components'
 import { buildWhatsAppUrl } from '@/lib/utils'
 import toast from 'react-hot-toast'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { uploadImage } from '@/lib/supabase/storage'
 import { RefundBankForm } from './components/RefundBankForm'
 import { ReturnItemSelection } from './components/ReturnItemSelection'
@@ -32,6 +32,7 @@ interface ReturnPageProps {
 export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX.Element | null {
   const { orderNumber } = params
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore()
 
   // Form states
@@ -98,7 +99,8 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
   }
 
   const handleQtyChange = (itemId: string, maxQty: number, val: number) => {
-    const qty = Math.max(1, Math.min(val, maxQty))
+    const safeVal = Number.isNaN(val) ? 1 : val
+    const qty = Math.max(1, Math.min(safeVal, maxQty))
     setQuantities((prev) => ({
       ...prev,
       [itemId]: qty,
@@ -112,6 +114,13 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     // Validate max 2 files total
     if (returnFiles.length + newFiles.length > 2) {
       toast.error('Maksimal 2 foto retur diperbolehkan')
+      return
+    }
+
+    // Validate image MIME type
+    const nonImageFile = newFiles.find((f) => !f.type.startsWith('image/'))
+    if (nonImageFile) {
+      toast.error(`File ${nonImageFile.name} bukan gambar yang valid`)
       return
     }
 
@@ -154,7 +163,15 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
     }
 
     setIsSubmitting(true)
+    let createdReturnId: string | null = null
     try {
+      // Calculate accurate refund amount strictly from the selected returned items & quantities
+      const calculatedRefundAmount = itemsToReturn.reduce((sum, itemId) => {
+        const orderItem = order.order_items.find((i) => i.id === itemId)
+        const qty = Math.max(1, Number(quantities[itemId]) || 1)
+        return sum + Number(orderItem?.price || 0) * qty
+      }, 0)
+
       // 1. Insert return request row
       const { data: returnReq, error: reqError } = await supabase
         .from('return_requests')
@@ -163,6 +180,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
           user_id: user.id,
           reason: reason,
           customer_notes: customerNotes.trim() || null,
+          refund_amount: calculatedRefundAmount,
           refund_bank_name: bankName.trim(),
           refund_account_number: accountNumber.trim(),
           refund_account_name: accountName.trim(),
@@ -172,17 +190,21 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         .single()
 
       if (reqError) throw reqError
+      createdReturnId = returnReq.id
 
       // 2. Insert return items rows
       const returnItemsData = itemsToReturn.map((itemId) => ({
         return_request_id: returnReq.id,
         order_item_id: itemId,
-        quantity: quantities[itemId],
+        quantity: Math.max(1, Number(quantities[itemId]) || 1),
       }))
 
       const { error: itemsError } = await supabase.from('return_items').insert(returnItemsData)
 
-      if (itemsError) throw itemsError
+      if (itemsError) {
+        await supabase.from('return_requests').delete().eq('id', returnReq.id)
+        throw itemsError
+      }
 
       // 3. Upload and insert return media
       if (returnFiles.length > 0) {
@@ -190,7 +212,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         const mediaUrls: string[] = []
         for (const file of returnFiles) {
           try {
-            const url = await uploadImage(file, 'products')
+            const url = await uploadImage(file, 'returns')
             if (url) mediaUrls.push(url)
           } catch (uploadErr) {
             console.error('Failed to upload a return file:', uploadErr)
@@ -209,11 +231,17 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         toast.dismiss('return-media')
       }
 
+      await queryClient.invalidateQueries({ queryKey: ['order-return-request', order.id] })
       toast.success('Pengajuan retur berhasil dikirim!')
-      router.push(`/pesanan/${order.order_number}`)
+      router.push(`/pesanan/${order.order_number}?return_submitted=1`)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.error(err)
+      if (createdReturnId) {
+        console.error('Return submission error after creating return_request:', createdReturnId, err)
+      } else {
+        console.error(err)
+      }
+      toast.dismiss('return-media')
       toast.error(err.message || 'Gagal mengajukan retur')
     } finally {
       setIsSubmitting(false)
@@ -250,8 +278,8 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
         <PageHero eyebrow="International Orders" title="Final Sale Policy" variant="cream" />
         <PageContainer size="md" className="pt-12 pb-20 md:pb-24 page-content">
           <div className="bg-white border border-neutral-200/80 rounded-2xl p-6 sm:p-8 text-center space-y-4 max-w-lg mx-auto shadow-xs">
-            <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto">
-              <HandDrawnIcon name="sparkles" className="h-6 w-6 text-amber-700" />
+            <div className="w-12 h-12 rounded-full bg-brand-gold text-brand-plum/85 flex items-center justify-center mx-auto">
+              <HandDrawnIcon name="sparkles" className="h-6 w-6 text-brand-plum/80" />
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-plum">
               International Order (Final Sale)
@@ -313,7 +341,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
       >
         <Link
           href={`/pesanan/${order.order_number}`}
-          className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue transition mt-2"
+          className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue-text transition mt-2"
         >
           <HandDrawnIcon name="arrow-left" className="h-3 w-3 mr-1" /> Kembali ke Detail Pesanan
         </Link>
@@ -354,7 +382,7 @@ export default function ReturnPageClient({ params }: ReturnPageProps): React.JSX
           <div className="flex justify-between items-center pt-4 border-t border-neutral-200/80">
             <Link
               href={`/pesanan/${order.order_number}`}
-              className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue transition"
+              className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-neutral-500 hover:text-brand-blue-text transition"
             >
               <HandDrawnIcon name="arrow-left" className="h-3 w-3 mr-1" /> Batal
             </Link>

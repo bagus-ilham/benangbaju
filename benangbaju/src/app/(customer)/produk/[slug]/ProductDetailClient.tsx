@@ -95,9 +95,7 @@ export function ProductDetailClient({
 
   const effectiveSelectedVariant = React.useMemo<ProductVariant | null>(() => {
     if (!selectedVariant) return null
-    return (
-      effectiveProduct.product_variants.find((v) => v.id === selectedVariant.id) || selectedVariant
-    )
+    return effectiveProduct.product_variants.find((v) => v.id === selectedVariant.id) || null
   }, [selectedVariant, effectiveProduct.product_variants])
 
   const [activeImage, setActiveImage] = useState<string | null>(
@@ -354,13 +352,13 @@ export function ProductDetailClient({
         </motion.nav>
 
         {isUnavailableInMY && (
-          <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="mb-8 p-5 bg-brand-gold/70 border border-brand-gold-stroke/80 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <p className="font-bold text-amber-950 text-sm flex items-center gap-1.5 flex-wrap">
+              <p className="font-bold text-brand-plum text-sm flex items-center gap-1.5 flex-wrap">
                 <span>This item is currently only available for Indonesia delivery</span>
                 <MarketFlagIcon market="ID" className="w-4 h-4" />
               </p>
-              <p className="text-xs text-amber-800 mt-1">
+              <p className="text-xs text-brand-plum/85 mt-1">
                 Explore our Malaysia-ready catalog for items available to ship directly to Malaysia.
               </p>
             </div>

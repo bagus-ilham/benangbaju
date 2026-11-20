@@ -85,7 +85,7 @@ export function CaraBelanjaClient(): React.JSX.Element {
           {steps.map((step, index) => {
             const badgeTints = [
               'bg-brand-gold/65 border-brand-gold-stroke/50',
-              'bg-brand-blush border-brand-blush-stroke/60',
+              'bg-brand-blue-soft border-brand-blue-stroke/60',
               'bg-brand-blue-soft border-brand-blue-stroke/60',
             ]
             const badgeTint = badgeTints[index % badgeTints.length]

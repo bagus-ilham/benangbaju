@@ -8,19 +8,20 @@
 
   --color-brand-plum: #2D2640;
   --color-brand-cream: #FAF8F5;
-  --color-brand-blue: #94b2b9;
-  --color-brand-gold: #F3DF91;
-  --color-brand-gold-soft: #F9F0C7;
-  --color-brand-gold-stroke: #DEC56A;
+  --color-brand-blue: #CFE2E6;
   --color-brand-blue-soft: #E8F1F3;
-  --color-brand-blue-stroke: #C6DCE1;
-  --color-brand-blush: #F2E6F3;
-  --color-brand-blush-stroke: #DFC9E2;
-  --color-brand-rose-soft: #F7ECE9;
+  --color-brand-blue-stroke: #C0D8DD;
+  --color-brand-blue-text: #567A83;
+  --color-brand-gold: #F9F0C7;
+  --color-brand-gold-soft: #F9F0C7;
+  --color-brand-gold-stroke: #E8DCAA;
+  --color-brand-blush: #E8F1F3;
+  --color-brand-blush-stroke: #C0D8DD;
+  --color-brand-rose-soft: #F3EFE8;
 
   --color-brand-primary: #FAF8F5;
-  --color-brand-secondary: #F3DF91;
-  --color-brand-tertiary: #94b2b9;
+  --color-brand-secondary: #F9F0C7;
+  --color-brand-tertiary: #CFE2E6;
   --color-brand-quaternary: #2D2640;
 
   --color-brand-black: #2D2640;
@@ -28,16 +29,16 @@
   --color-brand-gray: #6b637a;
   --color-brand-light: #FAF8F5;
   --color-brand-beige: #FAF8F5;
-  --color-brand-accent: #94b2b9;
-  --color-brand-accent-light: #b5cbcf;
-  --color-brand-accent-muted: #e9f1f3;
+  --color-brand-accent: #CFE2E6;
+  --color-brand-accent-light: #DCEAEF;
+  --color-brand-accent-muted: #E8F1F3;
 
   --color-success: #065f46;
   --color-success-bg: #ecfdf5;
   --color-success-border: #a7f3d0;
-  --color-warning: #92400e;
-  --color-warning-bg: #fffbeb;
-  --color-warning-border: #fde68a;
+  --color-warning: #5c4b1a;
+  --color-warning-bg: #F9F0C7;
+  --color-warning-border: #E8DCAA;
   --color-error: #9f1239;
   --color-error-bg: #fff1f2;
   --color-error-border: #fecdd3;
@@ -142,12 +143,12 @@
 :root {
   --color-cream: #FAF8F5;
   /* 1. Cream — Primary background & primary theme color */
-  --color-gold: #F3DF91;
-  /* 2. Warm Sand / Gold — Secondary highlight & accents */
-  --color-blue: #94b2b9;
-  /* 3. Dusty Blue — Tertiary accent & badge */
+  --color-gold: #F9F0C7;
+  /* 2. Soft Butter Yellow — Unified warm pastel accent */
+  --color-blue: #CFE2E6;
+  /* 3. Soft Pastel Blue — Cohesive mist blue accent */
   --color-plum: #2D2640;
-  /* 4. Deep Plum / Charcoal — Quaternary text/contrast */
+  /* 4. Deep Plum / Charcoal — Primary text & contrast */
 
   --color-primary: var(--color-cream);
   --color-secondary: var(--color-gold);
@@ -381,7 +382,7 @@ select:focus {
   display: block;
   width: 48px;
   height: 0;
-  border-top: 1px dashed var(--color-brand-blue);
+  border-top: 1.5px dashed var(--color-brand-blue-stroke);
   margin-top: 0.75rem;
 }
 
@@ -406,9 +407,9 @@ select:focus {
 .text-shimmer {
   background: linear-gradient(90deg,
       #2D2640 0%,
-      #94b2b9 25%,
+      #567A83 25%,
       #2D2640 50%,
-      #94b2b9 75%,
+      #567A83 75%,
       #2D2640 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -498,18 +499,18 @@ select:focus {
 
 .card-stitch-hover:hover {
   border-style: dashed;
-  border-color: rgba(148, 178, 185, 0.5);
+  border-color: rgba(192, 216, 221, 0.85);
 }
 
 /* Super Grafis: Thread line dashed — progress bar bergaya jahitan */
 .thread-line {
   background: none;
-  border-top: 2px dashed var(--color-brand-blue);
+  border-top: 2px dashed var(--color-brand-blue-stroke);
   height: 0;
 }
 
 .thread-line-completed {
-  border-top-color: var(--color-brand-blue);
+  border-top-color: var(--color-brand-blue-stroke);
 }
 
 .thread-line-pending {
@@ -519,9 +520,9 @@ select:focus {
 /* Gradient mesh background for hero sections */
 .gradient-mesh {
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(148, 178, 185, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(243, 229, 171, 0.15) 0%, transparent 40%),
-    radial-gradient(ellipse at 60% 80%, rgba(45, 38, 64, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 50%, rgba(232, 241, 243, 0.45) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(249, 240, 199, 0.35) 0%, transparent 45%),
+    radial-gradient(ellipse at 60% 80%, rgba(45, 38, 64, 0.03) 0%, transparent 50%);
 }
 
 /* Accent shimmer border on hover */

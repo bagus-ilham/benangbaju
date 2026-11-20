@@ -135,15 +135,15 @@ export class BannerRepository {
     }
 
     if (oldBanner) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+      const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
       if (oldBanner.image_url && bannerData.image_url !== oldBanner.image_url) {
-        await deleteImageByUrl(supabase, oldBanner.image_url, 'banners').catch(() => {})
+        await deleteImageByUrlServer(supabase, oldBanner.image_url, 'banners').catch(() => {})
       }
       if (
         oldBanner.image_mobile_url &&
         bannerData.image_mobile_url !== oldBanner.image_mobile_url
       ) {
-        await deleteImageByUrl(supabase, oldBanner.image_mobile_url, 'banners').catch(() => {})
+        await deleteImageByUrlServer(supabase, oldBanner.image_mobile_url, 'banners').catch(() => {})
       }
     }
 
@@ -177,12 +177,12 @@ export class BannerRepository {
 
     // 3. If DB delete succeeds, clean up physical images from Supabase Storage
     if (banner) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
+      const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
       const cleanupPromises = []
       if (banner.image_url)
-        cleanupPromises.push(deleteImageByUrl(supabase, banner.image_url, 'banners').catch(() => {}))
+        cleanupPromises.push(deleteImageByUrlServer(supabase, banner.image_url, 'banners').catch(() => {}))
       if (banner.image_mobile_url)
-        cleanupPromises.push(deleteImageByUrl(supabase, banner.image_mobile_url, 'banners').catch(() => {}))
+        cleanupPromises.push(deleteImageByUrlServer(supabase, banner.image_mobile_url, 'banners').catch(() => {}))
       if (cleanupPromises.length > 0) {
         await Promise.all(cleanupPromises)
       }

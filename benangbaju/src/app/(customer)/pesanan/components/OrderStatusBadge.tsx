@@ -15,7 +15,7 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps): React.JSX.E
   switch (status) {
     case 'pending_payment':
       return (
-        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-amber-900 bg-brand-gold-soft/80 border border-brand-gold-stroke/60 animate-pulse-glow">
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-brand-plum bg-brand-gold-soft/80 border border-brand-gold-stroke/60 animate-pulse-glow">
           <HandDrawnIcon name="clock" className="h-3 w-3 mr-1.5" />{' '}
           {isMY ? 'Pending Payment' : 'Menunggu Pembayaran'}
         </span>
@@ -29,7 +29,7 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps): React.JSX.E
       )
     case 'shipped':
       return (
-        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-brand-plum bg-brand-blush border border-brand-blush-stroke">
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-brand-plum bg-brand-blue-soft border border-brand-blue-stroke">
           <HandDrawnIcon name="truck" className="h-3 w-3 mr-1.5" />{' '}
           {isMY ? 'Shipped' : 'Dikirim'}
         </span>

@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Select, Textarea, HandDrawnIcon } from '@/shared/components'
-import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
 const RETURN_REASONS = [
   { value: 'wrong_item', label: 'Salah Kirim Produk / Varian' },
@@ -31,9 +30,20 @@ export function ReturnReasonForm({
   onFileChange,
   onRemoveFile,
 }: ReturnReasonFormProps): React.JSX.Element {
+  const previewUrls = useMemo(
+    () => returnFiles.map((file) => URL.createObjectURL(file)),
+    [returnFiles]
+  )
+
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [previewUrls])
+
   return (
     <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-gold" />
       <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
         Alasan Pengembalian*
       </h2>
@@ -55,10 +65,10 @@ export function ReturnReasonForm({
         </label>
 
         <div className="flex flex-wrap gap-4">
-          {returnFiles.map((file, idx) => (
-            <div key={idx} className="relative w-24 h-24 border border-neutral-200 group">
+          {previewUrls.map((previewUrl, idx) => (
+            <div key={previewUrl} className="relative w-24 h-24 border border-neutral-200 group">
               <img
-                src={URL.createObjectURL(file)}
+                src={previewUrl}
                 alt={`Preview ${idx}`}
                 className="w-full h-full object-cover"
               />

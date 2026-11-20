@@ -114,7 +114,7 @@ export function MobileMenuAccordionItem({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pl-3 pr-2 py-2 flex flex-col space-y-1 border-l-2 border-brand-blush-stroke ml-1 mt-1 mb-2">
+            <div className="pl-3 pr-2 py-2 flex flex-col space-y-1 border-l-2 border-brand-blue-stroke ml-1 mt-1 mb-2">
               {isLoading ? (
                 <div className="space-y-3 py-2">
                   <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-3/4 rounded" />
@@ -133,8 +133,8 @@ export function MobileMenuAccordionItem({
                         className={cn(
                           'text-xs font-sans transition-all duration-200 block px-2.5 py-1.5 rounded-xl',
                           isSubActive
-                            ? 'bg-brand-blush/80 text-brand-plum font-bold'
-                            : 'text-neutral-600 hover:bg-brand-blush/50 hover:text-brand-plum'
+                            ? 'bg-brand-blue-soft/80 text-brand-plum font-bold'
+                            : 'text-neutral-600 hover:bg-brand-blue-soft/50 hover:text-brand-plum'
                         )}
                       >
                         {item.name}

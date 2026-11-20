@@ -280,10 +280,10 @@ export function ProductGeneralInfoSection({
             variant="outline"
             onClick={handleAutoTranslate}
             isLoading={isTranslating}
-            className="text-[11px] font-bold py-1.5 px-3 border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100/80 flex items-center gap-1.5 w-fit"
+            className="text-[11px] font-bold py-1.5 px-3 border-brand-gold-stroke text-brand-plum bg-brand-gold/70 hover:bg-brand-gold flex items-center gap-1.5 w-fit"
             title="Terjemahkan otomatis teks Bahasa Indonesia ke English menggunakan Gemini AI"
           >
-            <HandDrawnIcon name="sparkles" className="w-3.5 h-3.5 text-amber-700" />
+            <HandDrawnIcon name="sparkles" className="w-3.5 h-3.5 text-brand-plum/80" />
             <span>✨ Auto-Translate via AI</span>
           </Button>
         </div>

@@ -26,7 +26,7 @@ export function PageHero({
   const variantClasses = {
     light: 'bg-brand-cream border-brand-plum/10',
     cream: 'bg-brand-cream border-brand-plum/10',
-    dark: 'bg-brand-blush/55 border-brand-blush-stroke/50',
+    dark: 'bg-brand-blue-soft/80 border-brand-blue-stroke/60',
   }
 
   const textClasses = {
@@ -50,11 +50,11 @@ export function PageHero({
       <div className="relative overflow-hidden">
         {/* Decorative pastel orbs */}
         <div
-          className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blush/70 blur-3xl pointer-events-none"
+          className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blue-soft/80 blur-3xl pointer-events-none"
           aria-hidden
         />
         <div
-          className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-brand-gold/40 blur-2xl pointer-events-none"
+          className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-brand-gold/65 blur-2xl pointer-events-none"
           aria-hidden
         />
 

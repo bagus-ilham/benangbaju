@@ -25,17 +25,17 @@ export function Badge({
           'bg-neutral-200/60 text-brand-plum backdrop-blur-sm border-neutral-300/40':
             variant === 'neutral',
           'bg-green-100/80 text-green-800 border-green-200': variant === 'success',
-          'bg-amber-100/80 text-amber-900 border-amber-200': variant === 'warning',
+          'bg-brand-gold text-brand-plum border-brand-gold-stroke/80': variant === 'warning',
           'bg-red-100/80 text-red-800 border-red-200': variant === 'error',
-          // Brand / Dusty Blue: MUST use Deep Plum text per §4
-          'bg-brand-blue text-brand-plum shadow-xs border border-brand-blue/40':
+          // Brand / Soft Pastel Blue: Deep Plum text
+          'bg-brand-blue text-brand-plum shadow-xs border border-brand-blue-stroke/80':
             variant === 'brand' || variant === 'blue',
           'bg-[#E85D75] text-white shadow-sm shadow-[#E85D75]/25': variant === 'sale',
-          // Gold / Warm Butter: Deep Plum text
-          'bg-brand-gold text-brand-plum border border-brand-gold-stroke/60 shadow-xs':
+          // Soft Butter Yellow: Deep Plum text
+          'bg-brand-gold text-brand-plum border border-brand-gold-stroke/80 shadow-xs':
             variant === 'gold',
-          // Soft Lilac Blush: Deep Plum text
-          'bg-brand-blush text-brand-plum border border-brand-blush-stroke/60 shadow-xs':
+          // Soft Pastel Blue Tint (replaces legacy lilac blush): Deep Plum text
+          'bg-brand-blue-soft text-brand-plum border border-brand-blue-stroke/70 shadow-xs':
             variant === 'blush',
 
           // Sizes

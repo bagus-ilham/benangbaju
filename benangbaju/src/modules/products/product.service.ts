@@ -34,48 +34,75 @@ export class ProductService {
       let product_variants = mapVariants(data.product_variants)
       const sortedImages = mapImages(data.product_images)
 
-      // Overlay active Flash Sale prices if available
+      // Overlay active Flash Sale prices isolated by target_market (ID vs MY)
       try {
         const { flashSaleRepository } = await import('@/modules/flash-sales/flash-sale.repository')
         const { createStaticClient } = await import('@/lib/supabase/static')
-        const flashSaleRes = await flashSaleRepository.getActiveFlashSale(createStaticClient())
-        const activeSale = flashSaleRes.success ? flashSaleRes.data : null
+        const flashSalesRes = await flashSaleRepository.getActiveFlashSales(createStaticClient())
+        const activeSales = flashSalesRes.success ? flashSalesRes.data || [] : []
 
-        if (activeSale && activeSale.flash_sale_items && activeSale.flash_sale_items.length > 0) {
-          const fsMap = new Map(
-            activeSale.flash_sale_items
-              .filter((item) => item.quota === 0 || item.quota > item.sold_count)
-              .map((item) => [item.variant_id, item])
-          )
+        if (activeSales.length > 0) {
+          const idFsMap = new Map<string, (typeof activeSales)[number]['flash_sale_items'][number]>()
+          const myFsMap = new Map<string, (typeof activeSales)[number]['flash_sale_items'][number]>()
 
-          product_variants = product_variants.map((v) => {
-            const fsItem = fsMap.get(v.id)
-            if (fsItem) {
-              const salePriceMyr =
-                fsItem.sale_price_myr != null && Number(fsItem.sale_price_myr) > 0
-                  ? Number(fsItem.sale_price_myr)
-                  : null
-              const origPriceMyr =
-                fsItem.original_price_myr != null && Number(fsItem.original_price_myr) > 0
-                  ? Number(fsItem.original_price_myr)
-                  : v.price_myr ?? null
+          for (const sale of activeSales) {
+            const saleMarket = sale.target_market || 'ALL'
+            for (const item of sale.flash_sale_items || []) {
+              const hasQuota = item.quota === 0 || item.quota > item.sold_count
+              if (!hasQuota) continue
 
-              return {
-                ...v,
-                regular_price: Number(v.price),
-                regular_compare_price: v.compare_price ? Number(v.compare_price) : null,
-                regular_price_myr: v.price_myr ?? null,
-                regular_compare_price_myr: v.compare_price_myr ?? null,
-                flash_sale_target_market: activeSale.target_market || 'ALL',
-                price: Number(fsItem.sale_price),
-                compare_price: Number(fsItem.original_price) || Number(v.price),
-                ...(salePriceMyr != null && {
-                  price_myr: salePriceMyr,
-                  compare_price_myr: origPriceMyr,
-                }),
+              if ((saleMarket === 'ALL' || saleMarket === 'ID') && !idFsMap.has(item.variant_id)) {
+                idFsMap.set(item.variant_id, item)
+              }
+              if (
+                (saleMarket === 'ALL' || saleMarket === 'MY') &&
+                item.sale_price_myr != null &&
+                Number(item.sale_price_myr) > 0 &&
+                !myFsMap.has(item.variant_id)
+              ) {
+                myFsMap.set(item.variant_id, item)
               }
             }
-            return v
+          }
+
+          product_variants = product_variants.map((v) => {
+            const idItem = idFsMap.get(v.id)
+            const myItem = myFsMap.get(v.id)
+            if (!idItem && !myItem) return v
+
+            const regularPrice = Number(v.price)
+            const regularComparePrice = v.compare_price ? Number(v.compare_price) : null
+            const regularPriceMyr = v.price_myr ?? null
+            const regularComparePriceMyr = v.compare_price_myr ?? null
+
+            const targetMarket: 'ALL' | 'ID' | 'MY' =
+              idItem && myItem ? 'ALL' : idItem ? 'ID' : 'MY'
+
+            const origPriceMyr =
+              myItem && myItem.original_price_myr != null && Number(myItem.original_price_myr) > 0
+                ? Number(myItem.original_price_myr)
+                : regularPriceMyr
+
+            return {
+              ...v,
+              regular_price: regularPrice,
+              regular_compare_price: regularComparePrice,
+              regular_price_myr: regularPriceMyr,
+              regular_compare_price_myr: regularComparePriceMyr,
+              flash_sale_target_market: targetMarket,
+              ...(idItem
+                ? {
+                    price: Number(idItem.sale_price),
+                    compare_price: Number(idItem.original_price) || regularPrice,
+                  }
+                : {}),
+              ...(myItem && myItem.sale_price_myr != null
+                ? {
+                    price_myr: Number(myItem.sale_price_myr),
+                    compare_price_myr: origPriceMyr,
+                  }
+                : {}),
+            }
           })
         }
       } catch (err) {

@@ -107,7 +107,7 @@ export async function getAdminDashboardStatsAction(): Promise<AdminDashboardData
         .select('*', { count: 'exact', head: true })
         .in('status', ['processing', 'shipped']),
       supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('role', 'admin'),
+      supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer'),
       supabase
         .from('product_variants')
         .select('id, name, sku, stock, products(name)')

@@ -19,7 +19,7 @@ export default function CustomerError({
   return (
     <div className="relative flex-1 min-h-[60vh] flex flex-col items-center justify-center px-6 pt-12 pb-24 text-center bg-brand-cream font-sans overflow-hidden">
       <div
-        className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blush/60 blur-3xl pointer-events-none"
+        className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-brand-blue-soft/60 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
       <div
@@ -37,13 +37,13 @@ export default function CustomerError({
           initial={{ scale: 0.8, rotate: -10 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="p-4 bg-brand-blush/65 border border-brand-blush-stroke/65 rounded-2xl text-brand-plum shadow-xs"
+          className="p-4 bg-brand-blue-soft/65 border border-brand-blue-stroke/65 rounded-2xl text-brand-plum shadow-xs"
         >
           <HandDrawnIcon name="alert-triangle" className="h-8 w-8" />
         </motion.div>
 
         <div className="space-y-2.5">
-          <span className="inline-block text-base font-accent font-bold text-brand-blue leading-none">
+          <span className="inline-block text-base font-accent font-bold text-brand-blue-text leading-none">
             Oops, sebentar ya
           </span>
           <h1 className="text-2xl md:text-3xl font-serif font-medium tracking-tight text-brand-plum">

@@ -31,6 +31,15 @@ export function MiniCartDrawer(): React.JSX.Element {
     : 0
   const hasUnavailableMYItems =
     isMY && items.some((item) => !item.priceMyr || Number(item.priceMyr) <= 0)
+  const hasOutOfStockMYItems =
+    isMY &&
+    items.some(
+      (item) =>
+        item.priceMyr != null &&
+        Number(item.priceMyr) > 0 &&
+        ((item.stockMy ?? 0) <= 0 || item.quantity > (item.stockMy ?? 0))
+    )
+  const hasMYCartBlockingIssue = hasUnavailableMYItems || hasOutOfStockMYItems
 
   // Real Database Cross-Sell recommendations
   const { data: recsData } = useProducts({ sortBy: 'featured', limit: 6 })
@@ -90,7 +99,7 @@ export function MiniCartDrawer(): React.JSX.Element {
           >
             {/* Top pastel accent line */}
             <div
-              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
               aria-hidden="true"
             />
 
@@ -113,7 +122,7 @@ export function MiniCartDrawer(): React.JSX.Element {
 
             {/* B2-5: De Minimis Customs Notice for Malaysia */}
             {isMY && totalMyr >= 450 && (
-              <div className="mx-6 mt-3 p-2.5 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 leading-snug flex items-start gap-2">
+              <div className="mx-6 mt-3 p-2.5 bg-brand-gold/75 border border-brand-gold-stroke/75 rounded-xl text-[11px] text-brand-plum leading-snug flex items-start gap-2">
                 <span className="text-sm shrink-0">ℹ️</span>
                 <div>
                   <span className="font-semibold">Malaysian Customs Notice (De Minimis):</span>{' '}
@@ -129,7 +138,7 @@ export function MiniCartDrawer(): React.JSX.Element {
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div
-                    className="relative p-4 bg-brand-blush/50 border border-brand-blush-stroke/60 rounded-2xl animate-gentle-float flex items-center justify-center"
+                    className="relative p-4 bg-brand-blue-soft/50 border border-brand-blue-stroke/60 rounded-2xl animate-gentle-float flex items-center justify-center"
                     aria-hidden="true"
                   >
                     <HandDrawnIcon name="shopping-bag" className="h-8 w-8" />
@@ -184,7 +193,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                           href={`/produk/${item.slug}`}
                           onClick={() => setCartDrawerOpen(false)}
                         >
-                          <h4 className="text-sm font-serif font-medium text-brand-plum hover:text-brand-blue transition-colors line-clamp-2 leading-snug">
+                          <h4 className="text-sm font-serif font-medium text-brand-plum hover:text-brand-blue-text transition-colors line-clamp-2 leading-snug">
                             {item.productName || item.name}
                           </h4>
                         </Link>
@@ -252,16 +261,27 @@ export function MiniCartDrawer(): React.JSX.Element {
                         <div className="text-right">
                           {isMY ? (
                             item.priceMyr && Number(item.priceMyr) > 0 ? (
-                              <div className="flex items-center justify-end space-x-1.5">
-                                <span className="text-xs font-sans font-bold text-brand-plum">
-                                  {formatMYR(Number(item.priceMyr) * item.quantity)}
-                                </span>
-                                {item.comparePriceMyr &&
-                                  Number(item.comparePriceMyr) > Number(item.priceMyr) && (
-                                    <span className="text-[10px] font-sans text-neutral-400 line-through">
-                                      {formatMYR(Number(item.comparePriceMyr) * item.quantity)}
-                                    </span>
-                                  )}
+                              <div className="space-y-0.5">
+                                <div className="flex items-center justify-end space-x-1.5">
+                                  <span className="text-xs font-sans font-bold text-brand-plum">
+                                    {formatMYR(Number(item.priceMyr) * item.quantity)}
+                                  </span>
+                                  {item.comparePriceMyr &&
+                                    Number(item.comparePriceMyr) > Number(item.priceMyr) && (
+                                      <span className="text-[10px] font-sans text-neutral-400 line-through">
+                                        {formatMYR(Number(item.comparePriceMyr) * item.quantity)}
+                                      </span>
+                                    )}
+                                </div>
+                                {(item.stockMy ?? 0) <= 0 ? (
+                                  <span className="block text-[9px] font-bold text-red-600">
+                                    Out of stock (MY)
+                                  </span>
+                                ) : item.quantity > (item.stockMy ?? 0) ? (
+                                  <span className="block text-[9px] font-bold text-brand-plum/80">
+                                    Max {item.stockMy} pcs (MY)
+                                  </span>
+                                ) : null}
                               </div>
                             ) : (
                               <span className="text-[10px] font-bold text-red-600">
@@ -292,7 +312,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                 <div className="pt-4 border-t border-brand-plum/10 space-y-2.5">
                   <div className="flex items-center space-x-1.5 text-brand-plum">
                     <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5" />
-                    <span className="text-sm font-accent font-bold text-brand-blue leading-none">
+                    <span className="text-sm font-accent font-bold text-brand-blue-text leading-none">
                       {market === 'MY' ? 'Complete Your Look' : 'Lengkapi Penampilan Anda'}
                     </span>
                   </div>
@@ -311,7 +331,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                       return (
                         <div
                           key={p.id}
-                          className="bg-brand-blush/45 p-2.5 rounded-2xl border border-brand-blush-stroke/55 flex items-center justify-between gap-3"
+                          className="bg-brand-blue-soft/45 p-2.5 rounded-2xl border border-brand-blue-stroke/55 flex items-center justify-between gap-3"
                         >
                           <div className="flex items-center space-x-2.5 min-w-0">
                             {primaryImage && (
@@ -421,9 +441,11 @@ export function MiniCartDrawer(): React.JSX.Element {
                   </div>
                 </div>
 
-                {hasUnavailableMYItems && (
+                {hasMYCartBlockingIssue && (
                   <p className="text-[10px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1.5">
-                    Some items in your bag are not available for Malaysia shipping. Please remove them before checkout.
+                    {hasUnavailableMYItems
+                      ? 'Some items in your bag are not available for Malaysia shipping. Please remove them before checkout.'
+                      : 'Some items exceed available Malaysia stock. Please adjust quantities before checkout.'}
                   </p>
                 )}
 
@@ -437,13 +459,13 @@ export function MiniCartDrawer(): React.JSX.Element {
                     </Button>
                   </Link>
                   <Link
-                    href={hasUnavailableMYItems ? '/cart' : '/checkout'}
+                    href={hasMYCartBlockingIssue ? '/cart' : '/checkout'}
                     onClick={() => setCartDrawerOpen(false)}
                     className="w-full"
                   >
                     <Button
                       variant="accent"
-                      disabled={hasUnavailableMYItems}
+                      disabled={hasMYCartBlockingIssue}
                       className="w-full text-[10px] uppercase font-bold py-3.5 flex items-center justify-center space-x-1.5"
                     >
                       <span>Checkout</span>

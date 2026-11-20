@@ -44,7 +44,7 @@ export function ProductAccordionTabs({
           {activeTab === 'details' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-brand-blush/90 shadow-xs rounded-xl -z-10 border border-brand-blush-stroke/70"
+              className="absolute inset-0 bg-brand-blue-soft/90 shadow-xs rounded-xl -z-10 border border-brand-blue-stroke/70"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -63,7 +63,7 @@ export function ProductAccordionTabs({
           {activeTab === 'shipping' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-brand-blush/90 shadow-xs rounded-xl -z-10 border border-brand-blush-stroke/70"
+              className="absolute inset-0 bg-brand-blue-soft/90 shadow-xs rounded-xl -z-10 border border-brand-blue-stroke/70"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -80,7 +80,7 @@ export function ProductAccordionTabs({
           {activeTab === 'care' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-brand-blush/90 shadow-xs rounded-xl -z-10 border border-brand-blush-stroke/70"
+              className="absolute inset-0 bg-brand-blue-soft/90 shadow-xs rounded-xl -z-10 border border-brand-blue-stroke/70"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -159,7 +159,7 @@ export function ProductAccordionTabs({
                     return (
                       <div className="space-y-2">
                         {unit === 'INCH' && !hasInch && hasCm && (
-                          <p className="text-[10px] text-amber-900 bg-amber-50 border border-amber-200 p-2 rounded-xl">
+                          <p className="text-[10px] text-brand-plum bg-brand-gold/70 border border-brand-gold-stroke/80 p-2 rounded-xl">
                             {market === 'MY' ? <>Note: Sizing chart in CM. Conversion: <strong>1 inch = 2.54 cm</strong>.</> : <>Catatan: Panduan ukuran dalam CM. Konversi: <strong>1 inch = 2.54 cm</strong>.</>}
                           </p>
                         )}

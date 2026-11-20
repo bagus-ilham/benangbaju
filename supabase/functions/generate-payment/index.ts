@@ -52,6 +52,10 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
+    if (order.status !== 'pending_payment') {
+      throw new Error('Pesanan tidak dalam status menunggu pembayaran');
+    }
+
     const shipping = Array.isArray(order.order_shipping) ? order.order_shipping[0] : order.order_shipping;
     const profile = Array.isArray(order.profiles) ? order.profiles[0] : order.profiles;
     const isMalaysia = shipping?.country_code === 'MY';
@@ -127,17 +131,20 @@ serve(async (req: Request) => {
       throw new Error('Total transaksi melebihi batas regulasi pembayaran QRIS (maksimal Rp 10.000.000)');
     }
 
-    // 1. Check if a valid payment URL already exists for this order with matching payment method
+    // 1. Check if a valid, non-expired payment URL already exists for this order with matching payment method
     const { data: existingPayment } = await supabaseClient
       .from('payments')
-      .select('gateway_response')
+      .select('gateway_response, updated_at, status')
       .eq('order_id', order.id)
       .maybeSingle();
 
-    if (existingPayment?.gateway_response?.response?.payment?.url) {
+    if (
+      existingPayment?.status === 'pending' &&
+      existingPayment?.gateway_response?.response?.payment?.url
+    ) {
       const existingMethods: string[] =
         existingPayment.gateway_response.response.payment.payment_method_types || [];
-      
+
       // Check if cached payment method types exactly match the requested methods
       const isMethodMatching =
         !paymentMethods ||
@@ -145,7 +152,18 @@ serve(async (req: Request) => {
           existingMethods.length === paymentMethods.length &&
           paymentMethods.every((m) => existingMethods.includes(m)));
 
-      if (isMethodMatching) {
+      // Verify cached DOKU payment URL has not expired (50-minute safety window / expired_date check)
+      const rawExpired = existingPayment.gateway_response.response.payment.expired_date;
+      let isNotExpired = false;
+      if (typeof rawExpired === 'string' && rawExpired.length === 14 && /^\d{14}$/.test(rawExpired)) {
+        // DOKU format: YYYYMMDDHHmmss (UTC)
+        const iso = `${rawExpired.slice(0, 4)}-${rawExpired.slice(4, 6)}-${rawExpired.slice(6, 8)}T${rawExpired.slice(8, 10)}:${rawExpired.slice(10, 12)}:${rawExpired.slice(12, 14)}Z`;
+        isNotExpired = new Date(iso).getTime() > Date.now() + 2 * 60 * 1000;
+      } else if (existingPayment.updated_at) {
+        isNotExpired = Date.now() - new Date(existingPayment.updated_at).getTime() < 50 * 60 * 1000;
+      }
+
+      if (isMethodMatching && isNotExpired) {
         const existingUrl = existingPayment.gateway_response.response.payment.url;
         const existingToken = existingPayment.gateway_response.response.payment.token_id || '';
         return new Response(

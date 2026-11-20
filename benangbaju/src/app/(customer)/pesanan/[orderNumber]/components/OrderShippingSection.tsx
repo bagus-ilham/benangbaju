@@ -23,12 +23,13 @@ export function OrderShippingSection({
   notes,
 }: OrderShippingProps): React.JSX.Element {
   const isMalaysia = orderShipping?.country_code === 'MY'
+  const isEastMalaysia = /sabah|sarawak|labuan/i.test(orderShipping?.province_name || '')
   const trackingNumbers = parseTrackingNumbers(orderShipping?.tracking_number)
 
   return (
     <div className="space-y-6">
       <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
           <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum flex items-center gap-2">
             <HandDrawnIcon name="truck" className="h-4 w-4 text-brand-plum" />
@@ -37,7 +38,7 @@ export function OrderShippingSection({
           {isMalaysia && (
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 border border-emerald-300 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
               <MarketFlagIcon market="MY" className="w-3.5 h-3.5" />
-              <span>Malaysia (Semenanjung)</span>
+              <span>{isEastMalaysia ? 'Malaysia (Timur)' : 'Malaysia (Semenanjung)'}</span>
             </span>
           )}
         </div>

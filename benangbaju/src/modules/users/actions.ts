@@ -1,6 +1,6 @@
 'use server'
 
-import { requireAdmin } from '@/lib/auth-guard'
+import { requireAdmin, requireSuperAdmin } from '@/lib/auth-guard'
 import { adminCustomerService } from './adminCustomer.service'
 import { adminStaffService } from './adminStaff.service'
 import { CreateStaffPayload } from './types'
@@ -11,8 +11,8 @@ export async function getAdminCustomersAction(page = 1, limit = 20) {
 }
 
 export async function toggleAdminCustomerStatusAction(customerId: string, isActive: boolean) {
-  await requireAdmin()
-  return adminCustomerService.adminToggleCustomerStatus(customerId, isActive)
+  const { user } = await requireAdmin()
+  return adminCustomerService.adminToggleCustomerStatus(customerId, isActive, user.id)
 }
 
 export async function getAdminCustomerDetailAction(customerId: string) {
@@ -27,7 +27,7 @@ export async function getAdminStaffsAction() {
 }
 
 export async function createAdminStaffAction(payload: CreateStaffPayload) {
-  await requireAdmin()
+  const { user } = await requireSuperAdmin()
 
   if (!payload.email || !payload.name || !payload.role || !payload.password) {
     return {
@@ -47,12 +47,15 @@ export async function createAdminStaffAction(payload: CreateStaffPayload) {
     }
   }
 
-  return adminStaffService.adminCreateStaff({
-    name: payload.name,
-    email: payload.email,
-    password: payload.password,
-    role: payload.role as 'admin' | 'staff',
-  })
+  return adminStaffService.adminCreateStaff(
+    {
+      name: payload.name,
+      email: payload.email,
+      password: payload.password,
+      role: payload.role as 'admin' | 'staff',
+    },
+    user.id
+  )
 }
 
 export async function updateAdminStaffAction(
@@ -63,17 +66,17 @@ export async function updateAdminStaffAction(
     is_active: boolean
   }>
 ) {
-  await requireAdmin()
-  return adminStaffService.adminUpdateStaff(staffId, staffData)
+  const { user } = await requireSuperAdmin()
+  return adminStaffService.adminUpdateStaff(staffId, staffData, user.id)
 }
 
 export async function deleteAdminStaffAction(staffId: string) {
-  const { user } = await requireAdmin()
+  const { user } = await requireSuperAdmin()
   if (staffId === user.id) {
     return {
       success: false,
       error: 'Tidak dapat menghapus akun Anda sendiri',
     }
   }
-  return adminStaffService.adminDeleteStaff(staffId)
+  return adminStaffService.adminDeleteStaff(staffId, user.id)
 }

@@ -35,11 +35,14 @@ export class CollectionRepository {
 
   async getCollectionBySlug(slug: string): Promise<ApiResponse<Collection | null>> {
     const supabase = createStaticClient()
+    const now = new Date().toISOString()
     const { data, error } = await supabase
       .from('collections')
       .select('id, name, slug, description, image_url, sort_order, is_active, starts_at, ends_at')
       .eq('slug', slug)
       .eq('is_active', true)
+      .or(`starts_at.is.null,starts_at.lte.${now}`)
+      .or(`ends_at.is.null,ends_at.gte.${now}`)
       .single()
 
     if (error) {
@@ -173,8 +176,8 @@ export class CollectionRepository {
 
     if (oldCol?.image_url && collectionData.image_url !== oldCol.image_url) {
       try {
-        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-        await deleteImageByUrl(supabase, oldCol.image_url, 'collections')
+        const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+        await deleteImageByUrlServer(supabase, oldCol.image_url, 'collections')
       } catch (err) {
         safeLogError('Failed to delete old collection image:', err)
       }
@@ -236,8 +239,8 @@ export class CollectionRepository {
     // 3. If DB delete succeeds, clean up physical image from Supabase Storage
     if (collection && collection.image_url) {
       try {
-        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-        await deleteImageByUrl(supabase, collection.image_url, 'collections')
+        const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+        await deleteImageByUrlServer(supabase, collection.image_url, 'collections')
       } catch (err) {
         safeLogError('Failed to clean up collection image from storage:', err)
       }

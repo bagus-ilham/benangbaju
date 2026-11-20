@@ -69,6 +69,9 @@ export function ProductInfoSection({
       ? (selectedVariant.stock_my ?? 0)
       : selectedVariant.stock
     : 0
+  const isVariantUnavailableInMY =
+    isMY && (!selectedVariant?.price_myr || Number(selectedVariant.price_myr) <= 0)
+  const canPurchase = Boolean(selectedVariant) && activeStock > 0 && !isVariantUnavailableInMY
 
   const handleStockNotification = async () => {
     if (!selectedVariant) return
@@ -158,7 +161,7 @@ export function ProductInfoSection({
                 )}
               </div>
             ) : (
-              <span className="text-sm font-sans font-semibold text-amber-800">
+              <span className="text-sm font-sans font-semibold text-brand-plum/85">
                 Not available for Malaysia
               </span>
             )
@@ -271,7 +274,7 @@ export function ProductInfoSection({
               whileTap={{ scale: 0.9 }}
               onClick={onDecrement}
               className="p-3 text-neutral-600 hover:text-brand-plum transition-colors cursor-pointer"
-              disabled={!selectedVariant || activeStock <= 0}
+              disabled={!canPurchase}
             >
               <HandDrawnIcon name="minus" className="h-3 w-3" />
             </motion.button>
@@ -282,7 +285,7 @@ export function ProductInfoSection({
               whileTap={{ scale: 0.9 }}
               onClick={onIncrement}
               className="p-3 text-neutral-600 hover:text-brand-plum transition-colors cursor-pointer"
-              disabled={!selectedVariant || activeStock <= 0}
+              disabled={!canPurchase}
             >
               <HandDrawnIcon name="plus" className="h-3 w-3" />
             </motion.button>
@@ -313,13 +316,15 @@ export function ProductInfoSection({
             variant="outline"
             className="flex-1"
             isLoading={isAdding}
-            disabled={!selectedVariant || activeStock <= 0}
+            disabled={!canPurchase}
           >
             {!selectedVariant
               ? (market === 'MY' ? 'Choose Variant' : 'Pilih Varian')
-              : activeStock <= 0
-                ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
-                : (market === 'MY' ? 'Add to Bag' : 'Tambah Ke Keranjang')}
+              : isVariantUnavailableInMY
+                ? 'Unavailable in Malaysia'
+                : activeStock <= 0
+                  ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
+                  : (market === 'MY' ? 'Add to Bag' : 'Tambah Ke Keranjang')}
           </Button>
 
           {/* Buy Now Button */}
@@ -328,13 +333,15 @@ export function ProductInfoSection({
             variant="accent"
             className="flex-1 font-bold"
             isLoading={isBuying}
-            disabled={!selectedVariant || activeStock <= 0}
+            disabled={!canPurchase}
           >
             {!selectedVariant
               ? (market === 'MY' ? 'Choose Variant' : 'Pilih Varian')
-              : activeStock <= 0
-                ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
-                : (market === 'MY' ? 'Buy Now' : 'Beli Sekarang')}
+              : isVariantUnavailableInMY
+                ? 'Unavailable in Malaysia'
+                : activeStock <= 0
+                  ? (market === 'MY' ? 'Out of Stock' : 'Stok Habis')
+                  : (market === 'MY' ? 'Buy Now' : 'Beli Sekarang')}
           </Button>
         </div>
 

@@ -95,7 +95,7 @@ export function CollectionSpotlight({
               <span
                 className={cn(
                   'inline-block text-[10px] uppercase tracking-[0.25em] font-sans font-bold',
-                  isDark ? 'text-brand-plum' : 'text-brand-blue'
+                  isDark ? 'text-brand-plum' : 'text-brand-blue-text'
                 )}
               >
                 Koleksi Kurasi
@@ -126,8 +126,8 @@ export function CollectionSpotlight({
               className={cn(
                 'inline-flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.2em] transition-all duration-300 group/link',
                 isDark
-                  ? 'text-brand-plum hover:text-brand-blue'
-                  : 'text-brand-plum hover:text-brand-blue'
+                  ? 'text-brand-plum hover:text-brand-blue-text'
+                  : 'text-brand-plum hover:text-brand-blue-text'
               )}
             >
               <span className="border-b border-current pb-0.5">Jelajahi Koleksi</span>

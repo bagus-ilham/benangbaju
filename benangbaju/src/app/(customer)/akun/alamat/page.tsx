@@ -42,14 +42,12 @@ export default function AlamatPage(): React.JSX.Element {
 
   const handleDelete = async (addressId: string) => {
     if (!user) return
-    if (confirm('Apakah Anda yakin ingin menghapus alamat ini?')) {
-      try {
-        await deleteMutation.mutateAsync({ addressId, userId: user.id })
-        toast.success('Alamat berhasil dihapus')
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {
-        toast.error('Gagal menghapus alamat')
-      }
+    try {
+      await deleteMutation.mutateAsync({ addressId, userId: user.id })
+      toast.success(isMY ? 'Address deleted successfully' : 'Alamat berhasil dihapus')
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      toast.error(isMY ? 'Failed to delete address' : 'Gagal menghapus alamat')
     }
   }
 

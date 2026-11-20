@@ -9,44 +9,8 @@ import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
 
 export class FlashSaleRepository {
-  async getActiveFlashSale(
-    client?: SupabaseClient<Database>
-  ): Promise<ApiResponse<FlashSaleDetail | null>> {
-    const supabase = client || createStaticClient()
-    const now = new Date().toISOString()
-
-    // Fetch active flash sale that is currently running
-    const { data, error } = await supabase
-      .from('flash_sales')
-      .select(
-        `
-          id, name, description, banner_url, starts_at, ends_at, is_active, target_market,
-          flash_sale_items (
-            id, flash_sale_id, variant_id, original_price, sale_price, original_price_myr, sale_price_myr, discount_percent, quota, sold_count,
-            product_variants (
-              id, sku, name, price, price_myr, stock, stock_my,
-              products (
-                id, name, slug,
-                product_images (url, alt_text, is_primary)
-              )
-            )
-          )
-        `
-      )
-      .eq('is_active', true)
-      .lte('starts_at', now)
-      .gte('ends_at', now)
-      .order('starts_at', { ascending: false })
-      .limit(1)
-
-    if (error) {
-      safeLogError('Error fetching active flash sale:', error)
-      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil flash sale aktif')
-    }
-
-    const activeSale = Array.isArray(data) && data.length > 0 ? data[0] : null
-    if (!activeSale) return ok(null)
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapActiveFlashSale(activeSale: any): FlashSaleDetail {
     const rawItems = activeSale.flash_sale_items
     const itemsList = Array.isArray(rawItems) ? rawItems : []
 
@@ -98,7 +62,7 @@ export class FlashSaleRepository {
       })
     }
 
-    return ok({
+    return {
       id: activeSale.id,
       name: activeSale.name,
       description: activeSale.description,
@@ -108,7 +72,63 @@ export class FlashSaleRepository {
       is_active: activeSale.is_active,
       target_market: (activeSale as any).target_market || 'ALL',
       flash_sale_items,
-    })
+    }
+  }
+
+  async getActiveFlashSales(
+    client?: SupabaseClient<Database>
+  ): Promise<ApiResponse<FlashSaleDetail[]>> {
+    const supabase = client || createStaticClient()
+    const now = new Date().toISOString()
+
+    const { data, error } = await supabase
+      .from('flash_sales')
+      .select(
+        `
+          id, name, description, banner_url, starts_at, ends_at, is_active, target_market,
+          flash_sale_items (
+            id, flash_sale_id, variant_id, original_price, sale_price, original_price_myr, sale_price_myr, discount_percent, quota, sold_count,
+            product_variants (
+              id, sku, name, price, price_myr, stock, stock_my,
+              products (
+                id, name, slug,
+                product_images (url, alt_text, is_primary)
+              )
+            )
+          )
+        `
+      )
+      .eq('is_active', true)
+      .lte('starts_at', now)
+      .gte('ends_at', now)
+      .order('starts_at', { ascending: false })
+      .limit(10)
+
+    if (error) {
+      safeLogError('Error fetching active flash sales:', error)
+      return fail(ApiErrorCode.INTERNAL_ERROR, 'Gagal mengambil flash sale aktif')
+    }
+
+    const mapped = (Array.isArray(data) ? data : []).map((sale) => this.mapActiveFlashSale(sale))
+    return ok(mapped)
+  }
+
+  async getActiveFlashSale(
+    client?: SupabaseClient<Database>,
+    market?: 'ID' | 'MY'
+  ): Promise<ApiResponse<FlashSaleDetail | null>> {
+    const res = await this.getActiveFlashSales(client)
+    if (!res.success) return fail(res.error.code, res.error.message)
+
+    const sales = res.data || []
+    if (!market) {
+      return ok(sales[0] || null)
+    }
+
+    const matched = sales.find(
+      (s) => !s.target_market || s.target_market === 'ALL' || s.target_market === market
+    )
+    return ok(matched || null)
   }
 
   async adminGetFlashSales(page = 1, limit = 20): Promise<ApiListResponse<AdminFlashSaleListItem>> {
@@ -259,6 +279,13 @@ export class FlashSaleRepository {
     }[]
   ): Promise<ApiResponse<{ id: string }>> {
     const supabase = await createServerClient()
+    // Fetch old banner_url BEFORE RPC overwrites it so we can clean up replaced banners
+    const { data: oldSale } = await supabase
+      .from('flash_sales')
+      .select('banner_url')
+      .eq('id', saleId)
+      .maybeSingle()
+
     // Fetch current items to determine deletions
     const { data: existingItems, error: fetchErr } = await supabase
       .from('flash_sale_items')
@@ -299,15 +326,9 @@ export class FlashSaleRepository {
     }
 
     // Clean up old banner image if banner_url has changed
-    const { data: oldSale } = await supabase
-      .from('flash_sales')
-      .select('banner_url')
-      .eq('id', saleId)
-      .maybeSingle()
-
     if (oldSale?.banner_url && saleData.banner_url !== oldSale.banner_url) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-      await deleteImageByUrl(supabase, oldSale.banner_url, 'flash-sales').catch(() => {})
+      const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+      await deleteImageByUrlServer(supabase, oldSale.banner_url, 'flash-sales').catch(() => {})
     }
 
     await adminLogRepository.insertAdminActivityLog(
@@ -340,8 +361,8 @@ export class FlashSaleRepository {
 
     // 3. If DB delete succeeds, clean up physical image from Supabase Storage
     if (sale && sale.banner_url) {
-      const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-      await deleteImageByUrl(supabase, sale.banner_url, 'flash-sales').catch(() => {})
+      const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+      await deleteImageByUrlServer(supabase, sale.banner_url, 'flash-sales').catch(() => {})
     }
 
     await adminLogRepository.insertAdminActivityLog(

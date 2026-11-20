@@ -48,7 +48,7 @@ export function ProductSizeGuideModal({
             className="relative w-full max-w-lg bg-brand-cream p-6 pt-7 shadow-2xl z-10 border border-brand-plum/10 rounded-3xl overflow-hidden"
           >
             <div
-              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
               aria-hidden="true"
             />
             {/* Close Button */}
@@ -64,7 +64,7 @@ export function ProductSizeGuideModal({
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-4 pr-8">
                 <div className="space-y-0.5">
-                  <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+                  <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
                     {unit === 'INCH' ? 'Size Guide' : 'Panduan Ukuran'}
                   </span>
                   <h2 className="text-lg font-serif font-medium tracking-tight text-brand-plum">
@@ -111,8 +111,8 @@ export function ProductSizeGuideModal({
 
               {/* Informational Banner if viewing INCH but product only has CM image */}
               {unit === 'INCH' && !hasInchGuide && hasCmGuide && (
-                <div className="p-2.5 bg-amber-50 border border-amber-200/90 text-amber-900 rounded-xl text-[10px] leading-relaxed font-sans flex items-start gap-2">
-                  <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-amber-700 shrink-0 mt-0.5" />
+                <div className="p-2.5 bg-brand-gold/70 border border-brand-gold-stroke/80 text-brand-plum rounded-xl text-[10px] leading-relaxed font-sans flex items-start gap-2">
+                  <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-brand-plum/80 shrink-0 mt-0.5" />
                   <div>
                     <strong>Konversi Inci:</strong> Panduan ukuran produk ini ditampilkan dalam centimeter (CM). Untuk konversi: <strong>1 inch = 2.54 cm</strong> (bagi nilai CM dengan 2.54).
                   </div>

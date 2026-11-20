@@ -127,8 +127,8 @@ export class CategoryRepository {
 
     if (oldCat?.image_url && categoryData.image_url !== oldCat.image_url) {
       try {
-        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-        await deleteImageByUrl(supabase, oldCat.image_url, 'categories')
+        const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+        await deleteImageByUrlServer(supabase, oldCat.image_url, 'categories')
       } catch (err) {
         safeLogError('Failed to clean up old category image:', err)
       }
@@ -202,8 +202,8 @@ export class CategoryRepository {
     // 3. Clean up physical image from Supabase Storage after DB delete succeeds
     if (category && category.image_url) {
       try {
-        const { deleteImageByUrl } = await import('@/lib/supabase/storage')
-        await deleteImageByUrl(supabase, category.image_url, 'categories')
+        const { deleteImageByUrlServer } = await import('@/lib/supabase/storage-server')
+        await deleteImageByUrlServer(supabase, category.image_url, 'categories')
       } catch (err) {
         safeLogError('Failed to delete category image:', err)
       }

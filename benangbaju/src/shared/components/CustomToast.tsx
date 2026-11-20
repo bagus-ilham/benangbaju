@@ -32,7 +32,7 @@ export function CustomToast({
     >
       {/* Top pastel accent bar */}
       <div
-        className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+        className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
         aria-hidden="true"
       />
       <div className="flex-1 w-0 p-4 pt-4.5">
@@ -55,7 +55,7 @@ export function CustomToast({
             )}
           </div>
           <div className="ml-3 flex-1 min-w-0">
-            <p className="text-sm font-accent font-bold text-brand-blue leading-none">
+            <p className="text-sm font-accent font-bold text-brand-blue-text leading-none">
               {title}
             </p>
             <p className="text-sm font-serif font-medium text-brand-plum line-clamp-1 mt-1 leading-snug">

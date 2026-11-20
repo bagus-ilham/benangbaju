@@ -96,14 +96,14 @@ export default function NotifikasiPage(): React.JSX.Element {
 
           {/* Notifications Content */}
           <div className="md:col-span-2 border border-brand-plum/10 p-6 sm:p-8 rounded-3xl bg-brand-cream shadow-xs relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-brand-plum/10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-brand-gold-soft/75 border border-brand-gold-stroke/50 flex items-center justify-center text-brand-plum shrink-0">
                   <HandDrawnIcon name="bell" className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+                  <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
                     {isMY ? 'Inbox Updates' : 'Kotak Masuk'}
                   </span>
                   <h2 className="text-lg sm:text-xl font-serif font-medium tracking-tight text-brand-plum">
@@ -168,7 +168,7 @@ export default function NotifikasiPage(): React.JSX.Element {
               </div>
             ) : (
               <div className="text-center py-14 border border-dashed border-brand-plum/15 bg-brand-gold-soft/35 rounded-2xl">
-                <div className="w-12 h-12 rounded-2xl bg-brand-blush/60 border border-brand-blush-stroke/60 flex items-center justify-center mx-auto mb-3 text-brand-plum">
+                <div className="w-12 h-12 rounded-2xl bg-brand-blue-soft/60 border border-brand-blue-stroke/60 flex items-center justify-center mx-auto mb-3 text-brand-plum">
                   <HandDrawnIcon name="bell" className="h-5 w-5" />
                 </div>
                 <p className="text-base font-serif font-medium text-brand-plum mb-1">
