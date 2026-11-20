@@ -88,7 +88,7 @@ export function PageHero({
             )}
             <h1
               className={cn(
-                'text-3xl md:text-[42px] font-display font-semibold leading-tight tracking-tight',
+                'text-3xl md:text-[42px] font-display font-normal leading-tight tracking-normal',
                 colors.title
               )}
             >

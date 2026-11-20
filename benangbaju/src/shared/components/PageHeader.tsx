@@ -35,7 +35,7 @@ export function PageHeader({
             {eyebrow}
           </span>
         )}
-        <h2 className="text-2xl md:text-[32px] font-display font-semibold tracking-tight text-brand-plum leading-snug">
+        <h2 className="text-2xl md:text-[32px] font-display font-normal tracking-normal text-brand-plum leading-snug">
           {title}
         </h2>
         <div className="stitch-divider pt-1" />

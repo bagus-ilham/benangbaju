@@ -46,7 +46,7 @@ export default function CustomerError({
           <span className="inline-block text-base font-accent font-bold text-brand-blue-text leading-none">
             Oops, sebentar ya
           </span>
-          <h1 className="text-2xl md:text-3xl font-display font-semibold tracking-tight text-brand-plum">
+          <h1 className="text-2xl md:text-3xl font-display font-normal tracking-normal text-brand-plum">
             Terjadi Gangguan pada Halaman
           </h1>
           <p className="text-xs md:text-sm text-neutral-600 leading-relaxed max-w-xs mx-auto">

@@ -45,7 +45,7 @@ export function SectionHeader({
           {eyebrow}
         </span>
       )}
-      <h2 className="text-2xl md:text-[32px] font-display font-semibold text-brand-plum tracking-tight leading-snug">
+      <h2 className="text-2xl md:text-[32px] font-display font-normal text-brand-plum tracking-normal leading-snug">
         {title}
       </h2>
       {showDivider && (

@@ -96,7 +96,7 @@ export function AuthLayout({ children, bgImage }: AuthLayoutProps): React.JSX.El
                 {routeInfo.subtitle}
               </span>
             </div>
-            <h1 className="text-3xl xl:text-4xl font-display font-semibold tracking-tight text-white leading-tight drop-shadow-sm">
+            <h1 className="text-3xl xl:text-4xl font-display font-normal tracking-normal text-white leading-tight drop-shadow-sm">
               {routeInfo.title}
             </h1>
             <p className="text-sm text-white/85 font-sans leading-relaxed drop-shadow-xs">
