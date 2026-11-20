@@ -40,9 +40,9 @@ export function CollectionShowcase({
   if (isMY && visibleProducts.length === 0) return null
   const isReversed = index % 2 === 1
   const resolvedTopEdge: SectionEdgeStyle = topEdge ?? 'flat'
-  const resolvedBottomEdge: SectionEdgeStyle = bottomEdge ?? (isReversed ? 'flat' : 'scallop')
+  const resolvedBottomEdge: SectionEdgeStyle = bottomEdge ?? 'flat'
   const bgColor = isReversed ? 'bg-brand-blue-soft' : 'bg-brand-gold'
-  const flatBorderColor = isReversed ? 'border-brand-blue-stroke/55' : 'border-brand-gold-stroke/65'
+  const flatBorderColor = isReversed ? 'border-brand-blue-stroke/45' : 'border-brand-gold-stroke/55'
   const scallopFill = isReversed ? 'var(--color-brand-blue-soft)' : 'var(--color-brand-gold)'
   const scallopStroke = isReversed ? 'var(--color-brand-blue-stroke)' : 'var(--color-brand-gold-stroke)'
   const textColor = 'text-brand-plum'
@@ -66,7 +66,6 @@ export function CollectionShowcase({
         'relative w-full transition-colors duration-500',
         bgColor,
         resolvedTopEdge === 'flat' && ['border-t', flatBorderColor],
-        resolvedBottomEdge === 'flat' && ['border-b', flatBorderColor],
         resolvedBottomEdge === 'scallop' && 'mb-6'
       )}
     >

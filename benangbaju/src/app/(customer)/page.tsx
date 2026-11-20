@@ -109,21 +109,20 @@ export default async function Homepage(): Promise<React.JSX.Element> {
         {/* 2. Produk Pilihan */}
         <FeaturedProductsSection products={featuredProducts} />
 
-        {/* 3. Collection 1: Atas kotak, bawah rumbai */}
+        {/* 3. Collection 1 & 2: Editorial split 50/50 kotak rapi (tanpa rumbai menempel di foto) */}
         {col1 && (
           <CollectionShowcase
             collection={col1}
             products={collection1Products}
             index={0}
             topEdge="flat"
-            bottomEdge="scallop"
+            bottomEdge="flat"
           />
         )}
 
         {/* Mid Banner */}
         <MidBannerSection banners={midBanners} />
 
-        {/* 5. Collection 2: Atas & bawah kotak (variasi seimbang) */}
         {col2 && (
           <CollectionShowcase
             collection={col2}
