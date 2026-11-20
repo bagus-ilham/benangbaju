@@ -296,7 +296,7 @@ export function ProductInfoSection({
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={onToggleWishlist}
-            className="p-4 border border-neutral-200 hover:border-brand-accent bg-brand-cream transition-all text-neutral-600 hover:text-brand-accent relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
+            className="p-4 border border-neutral-200 hover:border-brand-blue-stroke bg-brand-cream transition-all text-neutral-600 hover:text-brand-blue-text relative rounded-xl shadow-sm hover:-translate-y-1 hover:shadow-md"
             aria-label={liked ? (market === 'MY' ? 'Remove from wishlist' : 'Hapus dari wishlist') : (market === 'MY' ? 'Add to wishlist' : 'Tambah ke wishlist')}
           >
             <HandDrawnIcon
@@ -367,7 +367,7 @@ export function ProductInfoSection({
       {/* Info Badges (Shipping / Return / Guarantee) */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-3 gap-2 border border-brand-plum/10 py-4 px-2 bg-brand-gold-soft/45 rounded-2xl"
+        className="grid grid-cols-3 gap-2 border border-brand-plum/10 py-4 px-2 bg-brand-gold/45 rounded-2xl"
       >
         <motion.div
           whileHover={{ y: -3 }}

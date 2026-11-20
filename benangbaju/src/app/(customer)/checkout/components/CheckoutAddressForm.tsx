@@ -64,7 +64,7 @@ export function CheckoutAddressForm({
         </div>
 
         {addressesLoading ? (
-          <div className="h-24 bg-brand-rose-soft/50 animate-pulse rounded-2xl" />
+          <div className="h-24 bg-brand-surface/50 animate-pulse rounded-2xl" />
         ) : addresses && addresses.length > 0 ? (
           <div className="space-y-3">
             {/* Selected Address Display */}
@@ -118,7 +118,7 @@ export function CheckoutAddressForm({
                     .filter((a) => a.id !== selectedAddress?.id)
                     .map((address) => (
                       <motion.div
-                        whileHover={{ y: -1, borderColor: '#C0D8DD' }}
+                        whileHover={{ y: -1 }}
                         whileTap={{ scale: 0.98 }}
                         key={address.id}
                         role="button"
@@ -130,7 +130,7 @@ export function CheckoutAddressForm({
                             onSelectAddress(address)
                           }
                         }}
-                        className="p-3.5 border border-brand-plum/10 text-xs cursor-pointer bg-brand-cream transition-all duration-200 rounded-xl hover:shadow-xs"
+                        className="p-3.5 border border-brand-plum/10 hover:border-brand-blue-stroke text-xs cursor-pointer bg-brand-cream transition-all duration-200 rounded-xl hover:shadow-xs"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <p className="font-sans font-bold text-[10px] text-brand-plum uppercase tracking-wider">
@@ -156,7 +156,7 @@ export function CheckoutAddressForm({
             )}
           </div>
         ) : (
-          <div className="text-center py-8 px-5 border border-dashed border-brand-plum/20 bg-brand-gold-soft/30 rounded-2xl">
+          <div className="text-center py-8 px-5 border border-dashed border-brand-plum/20 bg-brand-gold/30 rounded-2xl">
             <p className="text-xs text-neutral-500 font-sans mb-4">
               {isMY ? 'You have not added a shipping address yet.' : 'Anda belum menambahkan alamat pengiriman.'}
             </p>
@@ -173,7 +173,7 @@ export function CheckoutAddressForm({
 
       {/* International Terms Notice for Malaysia Orders */}
       {isMalaysia && (
-        <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-2xl space-y-1.5 text-xs text-brand-plum font-sans">
+        <div className="p-4 bg-brand-gold/50 border border-brand-gold-stroke/60 rounded-2xl space-y-1.5 text-xs text-brand-plum font-sans">
           <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-brand-plum">
             <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-brand-plum/80" />
             <span>{isMY ? 'International Shipping Terms (DDU & Final Sale)' : 'Ketentuan Pengiriman Internasional (DDU & Final Sale)'}</span>
@@ -197,7 +197,7 @@ export function CheckoutAddressForm({
             <span>{isMY ? 'Shipping Options' : 'Opsi Pengiriman'}</span>
           </h2>
           {totalWeightGram > 0 && (
-            <span className="text-[11px] text-neutral-500 font-sans font-medium bg-brand-gold-soft/50 px-2.5 py-0.5 rounded-full border border-brand-plum/10">
+            <span className="text-[11px] text-neutral-500 font-sans font-medium bg-brand-gold/50 px-2.5 py-0.5 rounded-full border border-brand-plum/10">
               {isMY ? 'Total Weight: ' : 'Total Berat: '}
               <span className="font-bold text-brand-plum">{(totalWeightGram / 1000).toFixed(2)} kg</span>
             </span>
@@ -210,8 +210,8 @@ export function CheckoutAddressForm({
           </p>
         ) : shippingLoading ? (
           <div className="space-y-2">
-            <div className="h-14 bg-brand-rose-soft/50 animate-pulse rounded-2xl" />
-            <div className="h-14 bg-brand-rose-soft/50 animate-pulse rounded-2xl" />
+            <div className="h-14 bg-brand-surface/50 animate-pulse rounded-2xl" />
+            <div className="h-14 bg-brand-surface/50 animate-pulse rounded-2xl" />
           </div>
         ) : shippingOptions.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -219,10 +219,7 @@ export function CheckoutAddressForm({
               const isSelected = selectedCourier?.id === option.id
               return (
                 <motion.div
-                  whileHover={{
-                    y: -2,
-                    borderColor: '#C0D8DD',
-                  }}
+                  whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.99 }}
                   key={option.id}
                   role="button"

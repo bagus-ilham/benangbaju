@@ -108,12 +108,12 @@ export function PaymentMethodSelector({
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-6 w-48 bg-brand-rose-soft/60 animate-pulse rounded-lg" />
+        <div className="h-6 w-48 bg-brand-surface/60 animate-pulse rounded-lg" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="h-20 bg-brand-rose-soft/45 animate-pulse rounded-2xl" />
-          <div className="h-20 bg-brand-rose-soft/45 animate-pulse rounded-2xl" />
-          <div className="h-20 bg-brand-rose-soft/45 animate-pulse rounded-2xl" />
-          <div className="h-20 bg-brand-rose-soft/45 animate-pulse rounded-2xl" />
+          <div className="h-20 bg-brand-surface/45 animate-pulse rounded-2xl" />
+          <div className="h-20 bg-brand-surface/45 animate-pulse rounded-2xl" />
+          <div className="h-20 bg-brand-surface/45 animate-pulse rounded-2xl" />
+          <div className="h-20 bg-brand-surface/45 animate-pulse rounded-2xl" />
         </div>
       </div>
     )

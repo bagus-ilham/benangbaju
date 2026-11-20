@@ -312,7 +312,7 @@ export function FlashSaleFormModal({
             id="active-campaign"
             checked={is_active}
             onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 text-brand-accent focus:ring-brand-accent border-gray-300 rounded cursor-pointer"
+            className="h-4 w-4 text-brand-blue-text focus:ring-brand-blue border-gray-300 rounded cursor-pointer"
           />
           <label
             htmlFor="active-campaign"

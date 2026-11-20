@@ -82,7 +82,7 @@ export function CheckoutSummaryCard({
 
   return (
     <div className="border border-brand-plum/10 p-6 bg-brand-cream rounded-2xl shadow-xs relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
+      <div className="card-accent-bar" />
       <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum mb-6 flex items-center justify-between border-b border-brand-plum/10 pb-3">
         <span className="flex items-center">
           <HandDrawnIcon name="shopping-bag" className="h-4 w-4 mr-2" /> {isMalaysia ? 'Order Summary' : 'Ringkasan Pesanan'}
@@ -94,7 +94,7 @@ export function CheckoutSummaryCard({
         {displayItems.map((item) => (
           <div key={item.variantId} className="py-3 flex space-x-3 text-xs">
             {item.imageUrl && (
-              <div className="relative w-10 h-14 border border-brand-plum/10 rounded-lg overflow-hidden bg-brand-rose-soft/65 flex-shrink-0">
+              <div className="relative w-10 h-14 border border-brand-plum/10 rounded-lg overflow-hidden bg-brand-surface/65 flex-shrink-0">
                 <Image
                   src={getProxiedImageUrl(item.imageUrl)}
                   alt={item.productName || item.name}
@@ -163,7 +163,7 @@ export function CheckoutSummaryCard({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className="flex items-center justify-between bg-brand-accent-muted/10 border border-brand-accent px-4 py-2.5 rounded-xl text-xs"
+              className="flex items-center justify-between bg-brand-blue-soft/10 border border-brand-blue-stroke px-4 py-2.5 rounded-xl text-xs"
             >
               <div className="flex items-center space-x-2 text-brand-plum font-heading font-medium uppercase tracking-wider text-[10px]">
                 <HandDrawnIcon name="tag" className="h-3 w-3" />
@@ -242,7 +242,7 @@ export function CheckoutSummaryCard({
                           onClick={() => onApplyVoucherDirectly(voucher.code)}
                           className={`flex-shrink-0 text-left p-2.5 border transition-all duration-200 w-36 rounded-xl relative overflow-hidden select-none ${
                             isSpendMet
-                              ? 'border-brand-accent/40 bg-brand-accent-muted/5 hover:bg-brand-accent-muted/10 cursor-pointer animate-pulse-gentle'
+                              ? 'border-brand-blue-stroke/40 bg-brand-blue-soft/5 hover:bg-brand-blue-soft/10 cursor-pointer'
                               : 'border-neutral-200 bg-neutral-50/50 opacity-40 cursor-not-allowed'
                           }`}
                         >

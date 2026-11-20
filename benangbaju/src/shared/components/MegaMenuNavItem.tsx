@@ -138,9 +138,9 @@ export function MegaMenuNavItem({
 
                   {isLoading ? (
                     <div className="space-y-3 py-2">
-                      <div className="h-4 bg-brand-rose-soft/60 animate-pulse w-3/4 rounded-lg" />
-                      <div className="h-4 bg-brand-rose-soft/60 animate-pulse w-1/2 rounded-lg" />
-                      <div className="h-4 bg-brand-rose-soft/60 animate-pulse w-2/3 rounded-lg" />
+                      <div className="h-4 bg-brand-surface/60 animate-pulse w-3/4 rounded-lg" />
+                      <div className="h-4 bg-brand-surface/60 animate-pulse w-1/2 rounded-lg" />
+                      <div className="h-4 bg-brand-surface/60 animate-pulse w-2/3 rounded-lg" />
                     </div>
                   ) : (
                     <ul className="space-y-1 max-h-[260px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-neutral-200">
@@ -162,7 +162,7 @@ export function MegaMenuNavItem({
                     <Link
                       href={href}
                       onClick={() => setIsHovered(false)}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-brand-gold-soft/80 hover:bg-brand-gold text-brand-plum border border-brand-gold-stroke/45 text-[10px] font-sans font-bold uppercase tracking-widest transition-all shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-brand-gold/80 hover:bg-brand-gold text-brand-plum border border-brand-gold-stroke/45 text-[10px] font-sans font-bold uppercase tracking-widest transition-all shadow-2xs"
                     >
                       {isMY ? 'View All →' : 'Jelajahi Semua →'}
                     </Link>
@@ -200,7 +200,7 @@ export function MegaMenuNavItem({
                       ? Array.from({ length: 4 }).map((_, i) => (
                           <div
                             key={i}
-                            className="flex-none w-[240px] aspect-[4/3] rounded-2xl bg-brand-rose-soft/60 animate-pulse"
+                            className="flex-none w-[240px] aspect-[4/3] rounded-2xl bg-brand-surface/60 animate-pulse"
                           />
                         ))
                       : items.map((item) => (
@@ -208,7 +208,7 @@ export function MegaMenuNavItem({
                             key={item.slug}
                             href={`/${isKategori ? 'kategori' : 'koleksi'}/${item.slug}`}
                             onClick={() => setIsHovered(false)}
-                            className="flex-none w-[240px] aspect-[4/3] snap-start rounded-2xl overflow-hidden relative group/card bg-brand-rose-soft/65 border border-brand-plum/10 cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                            className="flex-none w-[240px] aspect-[4/3] snap-start rounded-2xl overflow-hidden relative group/card bg-brand-surface/65 border border-brand-plum/10 cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                           >
                             {item.image_url ? (
                               <Image
@@ -219,7 +219,7 @@ export function MegaMenuNavItem({
                                 className="object-cover transition-transform duration-700 group-hover/card:scale-105"
                               />
                             ) : (
-                              <div className="w-full h-full bg-brand-rose-soft/75 flex items-center justify-center" />
+                              <div className="w-full h-full bg-brand-surface/75 flex items-center justify-center" />
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-brand-plum/85 via-brand-plum/20 to-transparent transition-opacity duration-300 group-hover/card:from-brand-plum/90" />
                             <div className="absolute bottom-0 left-0 right-0 p-4 z-10 text-left">

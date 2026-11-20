@@ -23,7 +23,7 @@ export function CatalogDesktopFilters({
 
   return (
     <aside className="hidden md:block w-52 flex-shrink-0">
-      <div className="bg-brand-gold-soft/35 border border-brand-plum/10 rounded-2xl p-5 space-y-4">
+      <div className="bg-brand-gold/35 border border-brand-plum/10 rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-brand-plum/10 pb-3">
           <h2 className="text-base font-serif font-medium text-brand-plum tracking-tight">
             {isMY ? 'Categories' : 'Kategori'}

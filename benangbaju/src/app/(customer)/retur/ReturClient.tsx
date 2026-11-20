@@ -216,7 +216,7 @@ export function ReturClient(): React.JSX.Element {
               {steps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="border border-brand-plum/10 p-6 rounded-2xl space-y-2 bg-brand-gold-soft/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                  className="border border-brand-plum/10 p-6 rounded-2xl space-y-2 bg-brand-gold/30 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
                 >
                   <h3 className="font-serif text-sm font-medium text-brand-plum">
                     {step.title}

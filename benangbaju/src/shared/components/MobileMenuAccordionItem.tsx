@@ -117,9 +117,9 @@ export function MobileMenuAccordionItem({
             <div className="pl-3 pr-2 py-2 flex flex-col space-y-1 border-l-2 border-brand-blue-stroke ml-1 mt-1 mb-2">
               {isLoading ? (
                 <div className="space-y-3 py-2">
-                  <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-3/4 rounded" />
-                  <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-1/2 rounded" />
-                  <div className="h-3 bg-brand-rose-soft/60 animate-pulse w-2/3 rounded" />
+                  <div className="h-3 bg-brand-surface/60 animate-pulse w-3/4 rounded" />
+                  <div className="h-3 bg-brand-surface/60 animate-pulse w-1/2 rounded" />
+                  <div className="h-3 bg-brand-surface/60 animate-pulse w-2/3 rounded" />
                 </div>
               ) : (
                 <>
@@ -144,7 +144,7 @@ export function MobileMenuAccordionItem({
                   <Link
                     href={href}
                     onClick={onClose}
-                    className="inline-flex items-center gap-1 w-max mt-2 px-3 py-1.5 rounded-full bg-brand-gold-soft/80 hover:bg-brand-gold text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum border border-brand-gold-stroke/45 transition-all"
+                    className="inline-flex items-center gap-1 w-max mt-2 px-3 py-1.5 rounded-full bg-brand-gold/80 hover:bg-brand-gold text-[10px] font-sans font-bold uppercase tracking-widest text-brand-plum border border-brand-gold-stroke/45 transition-all"
                   >
                     {isMY ? `View All ${label} →` : `Lihat Semua ${label} →`}
                   </Link>

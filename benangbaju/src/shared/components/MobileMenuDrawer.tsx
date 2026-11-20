@@ -107,7 +107,7 @@ export function MobileMenuDrawer({
                   <div className="border-t border-brand-plum/10 pt-6 mt-6 space-y-4">
                     {isAuthenticated ? (
                       <>
-                        <div className="mb-4 bg-brand-gold-soft/55 border border-brand-gold-stroke/45 rounded-2xl p-3.5">
+                        <div className="mb-4 bg-brand-gold/55 border border-brand-gold-stroke/45 rounded-2xl p-3.5">
                           <p className="text-sm text-brand-plum/80 font-accent font-bold leading-none mb-1">
                             {isMY ? 'Hello,' : 'Halo,'}
                           </p>

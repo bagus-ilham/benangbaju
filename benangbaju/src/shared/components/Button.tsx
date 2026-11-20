@@ -33,14 +33,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           // Base styles — Modern premium rounded design with Mulish font
           'inline-flex items-center justify-center font-sans font-bold tracking-wide uppercase transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] active:translate-y-0.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/40 focus:ring-offset-1 select-none cursor-pointer',
           {
-            // Variants — Cohesive Pastel Palette: Cream, Soft Butter Yellow (#F9F0C7), Soft Pastel Blue (#CFE2E6), Deep Plum
-            'bg-brand-cream text-brand-plum hover:bg-[#f2ede4] hover:-translate-y-0.5 border border-brand-plum/20 shadow-sm hover:shadow-md':
+            // Variants — Single Source of Truth tokens from globals.css
+            'bg-brand-cream text-brand-plum hover:bg-brand-cream-hover hover:-translate-y-0.5 border border-brand-plum/20 shadow-sm hover:shadow-md':
               variant === 'primary',
-            'bg-brand-gold text-brand-plum hover:bg-[#F2E5AE] hover:-translate-y-0.5 border border-brand-gold-stroke/80 shadow-[0_4px_14px_rgba(232,220,170,0.45)] hover:shadow-[0_6px_20px_rgba(232,220,170,0.6)]':
+            'bg-brand-gold text-brand-plum hover:bg-brand-gold-hover hover:-translate-y-0.5 border border-brand-gold-stroke/80 shadow-sm hover:shadow-md':
               variant === 'secondary',
-            'bg-brand-blue text-brand-plum hover:bg-[#BED7DC] hover:-translate-y-0.5 border border-brand-blue-stroke/80 shadow-[0_4px_14px_rgba(192,216,221,0.45)] hover:shadow-[0_6px_20px_rgba(192,216,221,0.6)]':
+            'bg-brand-blue text-brand-plum hover:bg-brand-blue-hover hover:-translate-y-0.5 border border-brand-blue-stroke/80 shadow-sm hover:shadow-md':
               variant === 'accent',
-            'bg-brand-cream text-brand-plum hover:bg-[#f2ede4] hover:-translate-y-0.5 border border-brand-plum/40 hover:border-brand-plum shadow-sm hover:shadow-md':
+            'bg-brand-cream text-brand-plum hover:bg-brand-cream-hover hover:-translate-y-0.5 border border-brand-plum/40 hover:border-brand-plum shadow-sm hover:shadow-md':
               variant === 'outline',
             'bg-transparent text-brand-plum hover:bg-brand-cream/80 border border-transparent':
               variant === 'ghost',

@@ -142,7 +142,7 @@ export function ProductGallery({
   return (
     <div className="flex flex-col w-full group">
       {/* Mobile Swipe Gallery (Native Scroll Snap) */}
-      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-brand-rose-soft/75 border border-brand-plum/10 rounded-2xl">
+      <div className="md:hidden relative w-full aspect-[3/4] overflow-hidden bg-brand-surface/75 border border-brand-plum/10 rounded-2xl">
         <div
           id="mobile-product-gallery"
           className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
@@ -191,7 +191,7 @@ export function ProductGallery({
                 key={`dot-${img.id}`}
                 className={cn(
                   'h-1 transition-all duration-300 rounded-full',
-                  activeImage === img.url ? 'w-4 bg-brand-dark' : 'w-1.5 bg-neutral-300/80'
+                  activeImage === img.url ? 'w-4 bg-brand-plum' : 'w-1.5 bg-neutral-300/80'
                 )}
               />
             ))}
@@ -201,7 +201,7 @@ export function ProductGallery({
 
       {/* Desktop Focus Image (Framer Motion + Lightbox Trigger) */}
       <div
-        className="hidden md:block relative aspect-[3/4] w-full bg-brand-rose-soft/75 overflow-hidden border border-brand-plum/10 cursor-zoom-in rounded-2xl shadow-sm"
+        className="hidden md:block relative aspect-[3/4] w-full bg-brand-surface/75 overflow-hidden border border-brand-plum/10 cursor-zoom-in rounded-2xl shadow-sm"
         onMouseEnter={() => {
           setIsZoomed(true)
         }}
@@ -387,7 +387,7 @@ export function ProductThumbnails({
             key={img.id}
             onClick={() => setActiveImage(img.url)}
             className={cn(
-              'relative aspect-[3/4] w-20 flex-shrink-0 bg-brand-rose-soft/60 border transition-all duration-300 rounded-xl overflow-hidden',
+              'relative aspect-[3/4] w-20 flex-shrink-0 bg-brand-surface/60 border transition-all duration-300 rounded-xl overflow-hidden',
               activeImage === img.url
                 ? 'border-brand-gold-stroke opacity-100 shadow-xs ring-2 ring-brand-gold/70'
                 : 'border-brand-plum/15 opacity-65 hover:opacity-100'

@@ -74,7 +74,7 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center space-x-2 px-4 py-3 border border-brand-plum/15 hover:border-brand-gold-stroke hover:bg-brand-gold-soft/50 bg-brand-cream text-xs font-heading font-semibold tracking-wide uppercase transition-all duration-200 text-brand-plum rounded-xl hover:-translate-y-0.5 hover:shadow-sm"
+            className="flex items-center justify-center space-x-2 px-4 py-3 border border-brand-plum/15 hover:border-brand-gold-stroke hover:bg-brand-gold/50 bg-brand-cream text-xs font-heading font-semibold tracking-wide uppercase transition-all duration-200 text-brand-plum rounded-xl hover:-translate-y-0.5 hover:shadow-sm"
           >
             <HandDrawnIcon name={getPlatformIconName(link.platform)} className="h-4 w-4" />
             <span>{resolveLinkLabel(link)}</span>

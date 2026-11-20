@@ -398,7 +398,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => toast.dismiss(t.id)}
-                        className="px-3 py-1.5 bg-brand-gold text-brand-plum text-xs font-bold rounded-lg text-center shadow-xs hover:bg-[#F2E5AE]"
+                        className="px-3 py-1.5 bg-brand-gold text-brand-plum text-xs font-bold rounded-lg text-center shadow-xs hover:bg-brand-gold-hover"
                       >
                         Buka Halaman Pembayaran
                       </a>

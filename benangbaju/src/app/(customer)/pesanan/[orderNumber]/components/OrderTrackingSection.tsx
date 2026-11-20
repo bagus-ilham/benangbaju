@@ -44,7 +44,7 @@ export function OrderTrackingSection({
 
   return (
     <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream rounded-2xl space-y-6 shadow-xs font-sans relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
+      <div className="card-accent-bar" />
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
         <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum">
           {isMY ? 'Live Order Tracking' : 'Pelacakan Pesanan Live'}

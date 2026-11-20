@@ -32,14 +32,14 @@ export function CustomToast({
     >
       {/* Top pastel accent bar */}
       <div
-        className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
+        className="card-accent-bar"
         aria-hidden="true"
       />
       <div className="flex-1 w-0 p-4 pt-4.5">
         <div className="flex items-start">
           <div className="flex-shrink-0 pt-0.5">
             {imageUrl ? (
-              <div className="relative aspect-[3/4] w-10 bg-brand-rose-soft/65 border border-brand-plum/10 rounded-xl overflow-hidden">
+              <div className="relative aspect-[3/4] w-10 bg-brand-surface/65 border border-brand-plum/10 rounded-xl overflow-hidden">
                 <Image
                   className="object-cover"
                   src={getProxiedImageUrl(imageUrl)}
@@ -49,7 +49,7 @@ export function CustomToast({
                 />
               </div>
             ) : (
-              <div className="h-10 w-10 bg-brand-rose-soft/65 border border-brand-plum/10 rounded-xl flex items-center justify-center text-[8px] text-brand-plum/50 font-sans">
+              <div className="h-10 w-10 bg-brand-surface/65 border border-brand-plum/10 rounded-xl flex items-center justify-center text-[8px] text-brand-plum/50 font-sans">
                 No Img
               </div>
             )}
@@ -77,7 +77,7 @@ export function CustomToast({
               toast.dismiss(t.id)
               onAction()
             }}
-            className="w-full px-4 flex items-center justify-center text-[11px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:bg-brand-gold-soft/60 transition-colors focus:outline-none cursor-pointer"
+            className="w-full px-4 flex items-center justify-center text-[11px] font-sans font-bold uppercase tracking-wider text-brand-plum hover:bg-brand-gold/60 transition-colors focus:outline-none cursor-pointer"
           >
             {actionLabel}
           </button>

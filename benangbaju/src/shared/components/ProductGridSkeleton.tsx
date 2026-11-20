@@ -17,9 +17,9 @@ export function ProductGridSkeleton({
           key={i}
           className="rounded-2xl overflow-hidden border border-brand-plum/10 bg-brand-cream flex flex-col"
         >
-          <div className="aspect-[3/4] bg-brand-rose-soft/55 skeleton-shimmer" />
+          <div className="aspect-[3/4] bg-brand-surface/55 skeleton-shimmer" />
           <div className="p-3.5 space-y-2.5">
-            <div className="h-2 w-1/3 rounded-full bg-brand-gold-soft/70 skeleton-shimmer" />
+            <div className="h-2 w-1/3 rounded-full bg-brand-gold/70 skeleton-shimmer" />
             <div className="h-3.5 w-4/5 rounded-full skeleton-shimmer" />
             <div className="h-3 w-2/5 rounded-full skeleton-shimmer" />
           </div>

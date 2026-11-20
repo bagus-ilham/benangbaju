@@ -96,10 +96,10 @@ export default function NotifikasiPage(): React.JSX.Element {
 
           {/* Notifications Content */}
           <div className="md:col-span-2 border border-brand-plum/10 p-6 sm:p-8 rounded-3xl bg-brand-cream shadow-xs relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
+            <div className="card-accent-bar" />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-brand-plum/10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-gold-soft/75 border border-brand-gold-stroke/50 flex items-center justify-center text-brand-plum shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-brand-gold/75 border border-brand-gold-stroke/50 flex items-center justify-center text-brand-plum shrink-0">
                   <HandDrawnIcon name="bell" className="h-4 w-4" />
                 </div>
                 <div>
@@ -116,7 +116,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                   type="button"
                   onClick={handleMarkAllRead}
                   disabled={markAllReadMutation.isPending}
-                  className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-brand-gold-soft/70 hover:bg-brand-gold text-[11px] text-brand-plum font-semibold border border-brand-gold-stroke/45 transition-all duration-200 cursor-pointer"
+                  className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-brand-gold/70 hover:bg-brand-gold text-[11px] text-brand-plum font-semibold border border-brand-gold-stroke/45 transition-all duration-200 cursor-pointer"
                 >
                   <HandDrawnIcon name="mail" className="h-3.5 w-3.5 mr-1.5" />
                   {isMY ? 'Mark All as Read' : 'Tandai Semua Dibaca'}
@@ -126,9 +126,9 @@ export default function NotifikasiPage(): React.JSX.Element {
 
             {notificationsLoading ? (
               <div className="space-y-3">
-                <div className="h-16 bg-brand-rose-soft/50 animate-pulse border border-brand-plum/10 rounded-2xl" />
-                <div className="h-16 bg-brand-rose-soft/50 animate-pulse border border-brand-plum/10 rounded-2xl" />
-                <div className="h-16 bg-brand-rose-soft/50 animate-pulse border border-brand-plum/10 rounded-2xl" />
+                <div className="h-16 bg-brand-surface/50 animate-pulse border border-brand-plum/10 rounded-2xl" />
+                <div className="h-16 bg-brand-surface/50 animate-pulse border border-brand-plum/10 rounded-2xl" />
+                <div className="h-16 bg-brand-surface/50 animate-pulse border border-brand-plum/10 rounded-2xl" />
               </div>
             ) : notificationList && notificationList.length > 0 ? (
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
@@ -142,7 +142,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                     whileHover={{ scale: 1.005, transition: { duration: 0.1 } }}
                     className={`p-4 border rounded-2xl text-xs font-sans transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm relative cursor-pointer ${
                       n.is_read
-                        ? 'border-brand-plum/10 bg-brand-cream/60 hover:bg-brand-gold-soft/20 text-neutral-600'
+                        ? 'border-brand-plum/10 bg-brand-cream/60 hover:bg-brand-gold/20 text-neutral-600'
                         : 'border-brand-blue-stroke bg-brand-blue-soft/45 hover:border-brand-blue text-brand-plum'
                     }`}
                   >
@@ -167,7 +167,7 @@ export default function NotifikasiPage(): React.JSX.Element {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-14 border border-dashed border-brand-plum/15 bg-brand-gold-soft/35 rounded-2xl">
+              <div className="text-center py-14 border border-dashed border-brand-plum/15 bg-brand-gold/35 rounded-2xl">
                 <div className="w-12 h-12 rounded-2xl bg-brand-blue-soft/60 border border-brand-blue-stroke/60 flex items-center justify-center mx-auto mb-3 text-brand-plum">
                   <HandDrawnIcon name="bell" className="h-5 w-5" />
                 </div>

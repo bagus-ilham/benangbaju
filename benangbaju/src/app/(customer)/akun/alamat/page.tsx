@@ -112,7 +112,7 @@ export default function AlamatPage(): React.JSX.Element {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 border border-dashed border-brand-plum/15 bg-brand-gold-soft/35 rounded-3xl">
+          <div className="text-center py-16 border border-dashed border-brand-plum/15 bg-brand-gold/35 rounded-3xl">
             <p className="text-sm text-neutral-500 mb-4">{isMY ? "You have no saved shipping addresses." : "Anda belum memiliki alamat pengiriman."}</p>
             <Button
               onClick={() => {

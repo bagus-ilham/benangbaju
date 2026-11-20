@@ -65,7 +65,7 @@ export function AccountNavMenu({
     <motion.div variants={itemVariants} className="space-y-4 md:col-span-1">
       {/* Boutique Member Greeting Card */}
       {(userName || userEmail) && (
-        <div className="p-5 bg-brand-gold-soft/50 border border-brand-gold-stroke/45 rounded-3xl shadow-xs flex items-center gap-3.5">
+        <div className="p-5 bg-brand-gold/50 border border-brand-gold-stroke/45 rounded-3xl shadow-xs flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-2xl bg-brand-gold border border-brand-gold-stroke/50 flex items-center justify-center font-serif text-lg font-medium text-brand-plum shrink-0 shadow-2xs">
             {initial}
           </div>

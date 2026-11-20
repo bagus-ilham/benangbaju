@@ -133,7 +133,7 @@ export default function CartPage(): React.JSX.Element {
                     >
                       <div className="flex items-center space-x-4 flex-1 min-w-0">
                         {item.imageUrl && (
-                          <div className="relative w-16 h-20 md:w-20 md:h-24 border border-brand-plum/10 rounded-xl overflow-hidden shrink-0 bg-brand-rose-soft/65">
+                          <div className="relative w-16 h-20 md:w-20 md:h-24 border border-brand-plum/10 rounded-xl overflow-hidden shrink-0 bg-brand-surface/65">
                             <Image
                               src={getProxiedImageUrl(item.imageUrl)}
                               alt={item.productName || item.name}
@@ -270,7 +270,7 @@ export default function CartPage(): React.JSX.Element {
                 bordered={true}
                 className="bg-brand-cream border-brand-plum/10 p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-shadow duration-300 relative overflow-hidden rounded-2xl"
               >
-                <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
+                <div className="card-accent-bar" />
                 <h2 className="text-lg font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-4">
                   {market === 'MY' ? 'Order Summary' : 'Ringkasan Belanja'}
                 </h2>

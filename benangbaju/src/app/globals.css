@@ -1,178 +1,103 @@
 @import 'tailwindcss';
 
+/* ============================================================================
+ * Benangbaju Design Tokens — Single Source of Truth (DRY)
+ * Ubah warna palet utama cukup di blok @theme ini saja.
+ * ============================================================================ */
 @theme {
+  /* Typography */
   --font-sans: var(--font-mulish), sans-serif;
   --font-heading: var(--font-mulish), sans-serif;
   --font-accent: var(--font-caveat), cursive;
   --font-serif: var(--font-fraunces), Georgia, serif;
 
-  --color-brand-plum: #2D2640;
+  /* Base Neutral Canvas & Ink */
   --color-brand-cream: #FAF8F5;
-  --color-brand-blue: #CFE2E6;
+  --color-brand-cream-hover: #F2EDE4;
+  --color-brand-surface: #F3EFE8;
+  --color-brand-plum: #2D2640;
+
+  /* Soft Butter Yellow (1 tone) */
+  --color-brand-gold: #F9F0C7;
+  --color-brand-gold-hover: #F2E5AE;
+  --color-brand-gold-stroke: #E8DCAA;
+
+  /* Soft Pastel Blue (1 cohesive family) */
   --color-brand-blue-soft: #E8F1F3;
+  --color-brand-blue: #CFE2E6;
+  --color-brand-blue-hover: #BED7DC;
   --color-brand-blue-stroke: #C0D8DD;
   --color-brand-blue-text: #567A83;
-  --color-brand-gold: #F9F0C7;
-  --color-brand-gold-soft: #F9F0C7;
-  --color-brand-gold-stroke: #E8DCAA;
-  --color-brand-blush: #E8F1F3;
-  --color-brand-blush-stroke: #C0D8DD;
-  --color-brand-rose-soft: #F3EFE8;
 
-  --color-brand-primary: #FAF8F5;
-  --color-brand-secondary: #F9F0C7;
-  --color-brand-tertiary: #CFE2E6;
-  --color-brand-quaternary: #2D2640;
+  /* Functional Brand Accents */
+  --color-brand-sale: #E85D75;
+  --color-brand-whatsapp: #2FA866;
+  --color-brand-whatsapp-hover: #269357;
 
-  --color-brand-black: #2D2640;
-  --color-brand-dark: #2D2640;
-  --color-brand-gray: #6b637a;
-  --color-brand-light: #FAF8F5;
-  --color-brand-beige: #FAF8F5;
-  --color-brand-accent: #CFE2E6;
-  --color-brand-accent-light: #DCEAEF;
-  --color-brand-accent-muted: #E8F1F3;
-
+  /* Semantic Status */
   --color-success: #065f46;
   --color-success-bg: #ecfdf5;
-  --color-success-border: #a7f3d0;
   --color-warning: #5c4b1a;
   --color-warning-bg: #F9F0C7;
-  --color-warning-border: #E8DCAA;
   --color-error: #9f1239;
   --color-error-bg: #fff1f2;
   --color-error-border: #fecdd3;
 
+  /* Animations */
   --animate-fade-in: fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* === Core Animations === */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Shimmer sweep for skeleton loading & button shine */
-@keyframes shimmer-sweep {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Gentle floating for empty state icons */
-@keyframes gentle-float {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-/* Pulse glow for countdown timers & attention elements */
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(45, 38, 64, 0.08);
-  }
-
-  50% {
-    box-shadow: 0 0 0 6px rgba(45, 38, 64, 0);
-  }
-}
-
-/* Ken Burns effect for hero images */
-@keyframes ken-burns {
-  0% {
-    transform: scale(1);
-  }
-
-  100% {
-    transform: scale(1.05);
-  }
-}
-
-/* Underline expand for nav links */
-@keyframes underline-expand {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
-  }
-}
-
-/* Branded text shimmer */
-@keyframes text-shimmer {
-  0% {
-    background-position: -200% center;
-  }
-
-  100% {
-    background-position: 200% center;
-  }
-}
-
-:root {
-  --color-cream: #FAF8F5;
-  /* 1. Cream — Primary background & primary theme color */
-  --color-gold: #F9F0C7;
-  /* 2. Soft Butter Yellow — Unified warm pastel accent */
-  --color-blue: #CFE2E6;
-  /* 3. Soft Pastel Blue — Cohesive mist blue accent */
-  --color-plum: #2D2640;
-  /* 4. Deep Plum / Charcoal — Primary text & contrast */
-
-  --color-primary: var(--color-cream);
-  --color-secondary: var(--color-gold);
-  --color-tertiary: var(--color-blue);
-  --color-quaternary: var(--color-plum);
-
-  --font-body: var(--font-mulish), sans-serif;
-  --font-accent: var(--font-caveat), cursive;
-  --font-serif: var(--font-fraunces), Georgia, serif;
-
-  --background: var(--color-cream);
-  --foreground: var(--color-plum);
-}
-
+/* === Base Styles === */
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-brand-cream);
+  color: var(--color-brand-plum);
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom transitions and scrollbar */
+input,
+textarea,
+select {
+  font-size: 0.875rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-brand-plum);
+}
+
+button,
+[role='button'],
+[type='button'],
+[type='reset'],
+[type='submit'],
+summary,
+a {
+  cursor: pointer;
+}
+
+button:disabled,
+[role='button'][aria-disabled='true'],
+[disabled] {
+  cursor: not-allowed;
+}
+
+button {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === Scrollbar === */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -184,150 +109,91 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #d4d4d4;
-  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a3a3a3;
 }
 
-/* Glassmorphism utility */
-.glass-effect {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.dark-glass-effect {
-  background: rgba(23, 23, 23, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
-/* Standard clean inputs and transitions (THENBLANK Style) */
-input,
-textarea,
-select {
-  font-size: 0.875rem;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+/* === Keyframes === */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-button,
-[role="button"],
-[type="button"],
-[type="reset"],
-[type="submit"],
-summary,
-a {
-  cursor: pointer;
+@keyframes slide-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-button:disabled,
-[role="button"][aria-disabled="true"],
-[disabled] {
-  cursor: not-allowed;
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
-button {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+@keyframes gentle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
-/* Focus ring override for premium feel */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--color-brand-black);
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand-plum) 8%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
 }
 
-.font-accent {
-  font-family: var(--font-accent);
-}
-
-.text-h1 {
-  font-family: var(--font-sans);
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.text-h2 {
-  font-family: var(--font-sans);
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.text-h3 {
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.text-body-spec {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.text-caption-price {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.text-heading {
-  font-family: var(--font-heading);
-  letter-spacing: -0.02em;
-}
-
-/* === Premium UI Utility Classes === */
-
-/* Skeleton shimmer overlay — replaces basic animate-pulse */
+/* === Reusable UI Utilities === */
 .skeleton-shimmer {
   position: relative;
   overflow: hidden;
-  background: #f5f5f4;
+  background: var(--color-brand-surface);
 }
 
 .skeleton-shimmer::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.5) 50%,
-      transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
   animation: shimmer-sweep 1.8s ease-in-out infinite;
 }
 
-/* Button shine sweep overlay on hover */
-.btn-shine {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-shine::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.12) 50%,
-      transparent 100%);
-  transition: none;
-}
-
-.btn-shine:hover::after {
-  animation: shimmer-sweep 0.6s ease-out;
-}
-
-/* Nav link animated underline */
 .nav-link-underline {
   position: relative;
 }
@@ -349,25 +215,22 @@ select:focus {
   transform: scaleX(1);
 }
 
-/* Premium focus ring */
 .focus-ring-premium:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px #fafafa,
-    0 0 0 4px #a3a3a3;
+    0 0 0 2px var(--color-brand-cream),
+    0 0 0 4px var(--color-brand-blue-stroke);
 }
 
-/* Gentle float animation utility */
 .animate-gentle-float {
   animation: gentle-float 3s ease-in-out infinite;
 }
 
-/* Pulse glow utility */
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Subtle diagonal texture for editorial sections (Deep Plum pattern) */
+/* Subtle diagonal texture for editorial sections */
 .section-texture {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232D2640' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
@@ -391,56 +254,82 @@ select:focus {
   margin-right: auto;
 }
 
-.stitch-divider-wide::after {
-  width: 80px;
-}
-
-/* Editorial gradient overlay for hero & collection cards (Deep Plum overlay) */
-.gradient-overlay-dark {
-  background: linear-gradient(to top,
-      rgba(45, 38, 64, 0.75) 0%,
-      rgba(45, 38, 64, 0.35) 40%,
-      rgba(45, 38, 64, 0.05) 100%);
-}
-
-/* Branded text shimmer for loading states */
-.text-shimmer {
-  background: linear-gradient(90deg,
-      #2D2640 0%,
-      #567A83 25%,
-      #2D2640 50%,
-      #567A83 75%,
-      #2D2640 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: text-shimmer 3s linear infinite;
-}
-
-/* Screen reader only utility */
-.sr-only {
+/* Reusable 3px top pastel accent bar for cards, modals & drawers */
+.card-accent-bar {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-brand-blue),
+    var(--color-brand-blue-soft),
+    var(--color-brand-gold)
+  );
+  pointer-events: none;
 }
 
-.sr-only:focus,
-.focus\:not-sr-only:focus {
-  position: static;
-  width: auto;
-  height: auto;
-  padding: inherit;
-  margin: inherit;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
+/* Editorial gradient overlay for hero & collection cards */
+.gradient-overlay-dark {
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-brand-plum) 75%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-plum) 35%, transparent) 40%,
+    color-mix(in srgb, var(--color-brand-plum) 5%, transparent) 100%
+  );
+}
+
+/* Soft pastel mesh background for featured section */
+.gradient-mesh {
+  background:
+    radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--color-brand-blue-soft) 50%, transparent) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--color-brand-gold) 40%, transparent) 0%, transparent 45%),
+    radial-gradient(ellipse at 60% 80%, color-mix(in srgb, var(--color-brand-plum) 3%, transparent) 0%, transparent 50%);
+}
+
+/* Editorial card hover lift */
+.card-hover-lift {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--color-brand-plum) 8%, transparent);
+}
+
+/* Stitch border hover — jahitan muncul saat hover */
+.card-stitch-hover {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    border-style 0.01s linear 0.15s;
+}
+
+.card-stitch-hover:hover {
+  border-style: dashed;
+  border-color: var(--color-brand-blue-stroke);
+}
+
+/* Page content wrapper top hairline */
+.page-content {
+  position: relative;
+}
+
+.page-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, var(--color-brand-blue-stroke), transparent);
+  opacity: 0.5;
 }
 
 /* Admin table styling */
@@ -476,126 +365,8 @@ select:focus {
   color: #404040;
 }
 
-/* Editorial card hover lift */
-.card-hover-lift {
-  transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(45, 38, 64, 0.08);
-}
-
-/* Super Grafis: Stitch border hover — jahitan muncul saat hover */
-.card-stitch-hover {
-  transition:
-    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.4s ease,
-    border-style 0.01s linear 0.15s;
-}
-
-.card-stitch-hover:hover {
-  border-style: dashed;
-  border-color: rgba(192, 216, 221, 0.85);
-}
-
-/* Super Grafis: Thread line dashed — progress bar bergaya jahitan */
-.thread-line {
-  background: none;
-  border-top: 2px dashed var(--color-brand-blue-stroke);
-  height: 0;
-}
-
-.thread-line-completed {
-  border-top-color: var(--color-brand-blue-stroke);
-}
-
-.thread-line-pending {
-  border-top-color: #e5e5e5;
-}
-
-/* Gradient mesh background for hero sections */
-.gradient-mesh {
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(232, 241, 243, 0.45) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(249, 240, 199, 0.35) 0%, transparent 45%),
-    radial-gradient(ellipse at 60% 80%, rgba(45, 38, 64, 0.03) 0%, transparent 50%);
-}
-
-/* Accent shimmer border on hover */
-.accent-border-hover {
-  position: relative;
-}
-
-.accent-border-hover::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid transparent;
-  border-radius: inherit;
-  transition: border-color 0.4s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.accent-border-hover:hover::before {
-  border-color: var(--color-brand-blue);
-}
-
-/* Section alternating backgrounds */
-.section-alt {
-  background: linear-gradient(180deg, #FAF8F5 0%, #F5F2EC 100%);
-}
-
-/* Image reveal on scroll */
-@keyframes image-reveal {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-.animate-image-reveal {
-  animation: image-reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Premium page content wrapper */
-.page-content {
-  position: relative;
-}
-
-.page-content::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(180deg, var(--color-brand-accent), transparent);
-  opacity: 0.4;
-}
-
-/* Hide scrollbar utility for mobile swiper carousels */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-none {
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
+/* === Accessibility & View Transitions === */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -606,25 +377,16 @@ select:focus {
   }
 
   .skeleton-shimmer::after,
-  .text-shimmer,
   .animate-gentle-float,
   .animate-pulse-glow {
     animation: none !important;
   }
 }
 
-/* Firefox Scrollbar Support */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #d4d4d4 transparent;
-}
-
-/* === Native View Transitions API === */
 @keyframes vt-fade-out {
   from {
     opacity: 1;
   }
-
   to {
     opacity: 0;
   }
@@ -635,7 +397,6 @@ select:focus {
     opacity: 0;
     transform: translateY(4px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);

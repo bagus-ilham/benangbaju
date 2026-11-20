@@ -99,7 +99,7 @@ export function MiniCartDrawer(): React.JSX.Element {
           >
             {/* Top pastel accent line */}
             <div
-              className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
+              className="card-accent-bar"
               aria-hidden="true"
             />
 
@@ -168,7 +168,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                   >
                     {/* Item Image */}
                     <div
-                      className="relative aspect-[3/4] w-16 bg-brand-rose-soft/65 border border-brand-plum/10 rounded-xl overflow-hidden flex-shrink-0"
+                      className="relative aspect-[3/4] w-16 bg-brand-surface/65 border border-brand-plum/10 rounded-xl overflow-hidden flex-shrink-0"
                       aria-hidden="true"
                     >
                       {item.imageUrl ? (
@@ -335,7 +335,7 @@ export function MiniCartDrawer(): React.JSX.Element {
                         >
                           <div className="flex items-center space-x-2.5 min-w-0">
                             {primaryImage && (
-                              <div className="relative w-10 h-12 rounded-xl overflow-hidden shrink-0 border border-brand-plum/10 bg-brand-rose-soft/65">
+                              <div className="relative w-10 h-12 rounded-xl overflow-hidden shrink-0 border border-brand-plum/10 bg-brand-surface/65">
                                 <Image
                                   src={getProxiedImageUrl(primaryImage)}
                                   alt={p.name}
@@ -423,7 +423,7 @@ export function MiniCartDrawer(): React.JSX.Element {
 
             {/* Bottom Panel */}
             {items.length > 0 && (
-              <div className="p-6 border-t border-brand-plum/10 bg-brand-gold-soft/35 space-y-4">
+              <div className="p-6 border-t border-brand-plum/10 bg-brand-gold/35 space-y-4">
                 <div className="flex justify-between items-baseline">
                   <span className="text-xs font-heading font-semibold uppercase tracking-wider text-neutral-500">
                     Subtotal

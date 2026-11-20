@@ -23,7 +23,7 @@ export function TentangClient(): React.JSX.Element {
 
       <PageContainer size="md" className="pt-12 pb-20 md:pt-16 md:pb-24 page-content">
         <div className="max-w-3xl mx-auto space-y-10">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-brand-gold-soft/40 border border-brand-gold-stroke/45 rounded-3xl shadow-xs animate-slide-up">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 sm:p-8 bg-brand-gold/40 border border-brand-gold-stroke/45 rounded-3xl shadow-xs animate-slide-up">
             <div className="relative w-16 h-16 shrink-0 opacity-90">
               <Image
                 src="/image/svg/logo/logo-jarum-benang.svg"

@@ -60,7 +60,7 @@ export function EmptyState({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE_PREMIUM }}
       className={cn(
-        'relative flex flex-col items-center justify-center py-20 text-center space-y-6 overflow-hidden rounded-3xl border border-dashed border-brand-plum/15 bg-brand-gold-soft/35 p-8',
+        'relative flex flex-col items-center justify-center py-20 text-center space-y-6 overflow-hidden rounded-3xl border border-dashed border-brand-plum/15 bg-brand-gold/35 p-8',
         className
       )}
     >

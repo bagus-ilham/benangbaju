@@ -21,7 +21,7 @@ export default function CustomerNotFound(): React.JSX.Element {
       />
 
       <div className="relative max-w-md space-y-6 flex flex-col items-center py-10 z-10">
-        <div className="relative p-5 bg-brand-gold-soft/60 border border-brand-gold-stroke/40 rounded-2xl shadow-xs">
+        <div className="relative p-5 bg-brand-gold/60 border border-brand-gold-stroke/40 rounded-2xl shadow-xs">
           <HandDrawnIcon name="alert-triangle" className="h-10 w-10 text-brand-plum" />
         </div>
 

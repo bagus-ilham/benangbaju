@@ -102,7 +102,7 @@ export function OrderPaymentSection({
 
   return (
     <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream h-fit space-y-5 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-blue" />
+      <div className="card-accent-bar" />
       <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum border-b border-brand-plum/10 pb-3 flex items-center gap-2">
         <HandDrawnIcon name="tag" className="h-4 w-4 text-brand-plum" />
         <span>{isMY ? 'Payment Summary & Methods' : 'Rincian & Metode Pembayaran'}</span>
@@ -368,7 +368,7 @@ export function OrderPaymentSection({
         {order.status === 'pending_payment' && (
           <>
             {isVerifyingPayment ? (
-              <div className="flex items-center justify-center gap-2 py-3 px-4 bg-brand-gold-soft/70 border border-brand-gold-stroke/60 text-brand-plum text-xs font-semibold uppercase tracking-wider rounded-xl">
+              <div className="flex items-center justify-center gap-2 py-3 px-4 bg-brand-gold/70 border border-brand-gold-stroke/60 text-brand-plum text-xs font-semibold uppercase tracking-wider rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/image/svg/logo/logo-jarum-benang.svg"
@@ -473,7 +473,7 @@ export function OrderPaymentSection({
             </div>
 
             {isMalaysia ? (
-              <div className="p-4 bg-brand-gold-soft/50 border border-brand-gold-stroke/60 rounded-xl space-y-2.5 text-xs text-brand-plum font-sans">
+              <div className="p-4 bg-brand-gold/50 border border-brand-gold-stroke/60 rounded-xl space-y-2.5 text-xs text-brand-plum font-sans">
                 <div className="flex items-center space-x-1.5 font-bold text-[11px] uppercase tracking-wider text-brand-plum">
                   <HandDrawnIcon name="sparkles" className="h-3.5 w-3.5 text-brand-plum/80" />
                   <span>{isMY ? 'International Order (Final Sale)' : 'Pesanan Internasional (Final Sale)'}</span>
@@ -488,14 +488,14 @@ export function OrderPaymentSection({
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-[#2FA866] hover:bg-[#269357] text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
+                  className="inline-flex items-center justify-center w-full py-2.5 px-4 bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors shadow-2xs gap-1.5"
                 >
                   <HandDrawnIcon name="sparkles" className="h-4 w-4" />
                   <span>{isMY ? 'Contact Support via WhatsApp' : 'Hubungi CS via WhatsApp'}</span>
                 </a>
               </div>
             ) : returnRequest ? (
-              <div className="p-3.5 bg-brand-gold-soft/45 border border-brand-gold-stroke/60 rounded-xl flex items-center justify-between shadow-2xs">
+              <div className="p-3.5 bg-brand-gold/45 border border-brand-gold-stroke/60 rounded-xl flex items-center justify-between shadow-2xs">
                 <span className="text-[11px] font-bold text-brand-plum uppercase tracking-wider flex items-center gap-1.5">
                   <HandDrawnIcon name="refresh" className="h-3.5 w-3.5 text-brand-plum" />
                   {returnRequest.status === 'pending'

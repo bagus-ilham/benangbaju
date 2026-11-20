@@ -79,7 +79,7 @@ export const ProductCard = React.memo(function ProductCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Area */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-rose-soft/65 transition-colors duration-300">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-surface/65 transition-colors duration-300">
         <Link
           href={productUrl}
           prefetch={true}
@@ -94,7 +94,7 @@ export const ProductCard = React.memo(function ProductCard({
             <div
               className={cn(
                 'relative w-full h-full',
-                !imageLoaded && 'animate-pulse bg-brand-rose-soft'
+                !imageLoaded && 'animate-pulse bg-brand-surface'
               )}
             >
               {/* Primary Image */}

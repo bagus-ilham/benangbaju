@@ -177,7 +177,7 @@ export function ProductGeneralInfoSection({
             <button
               type="button"
               onClick={() => onHsCodeChange('6206.30')}
-              className="text-brand-accent hover:underline font-mono"
+              className="text-brand-blue-text hover:underline font-mono"
             >
               6206.30 (Blouse)
             </button>
@@ -185,7 +185,7 @@ export function ProductGeneralInfoSection({
             <button
               type="button"
               onClick={() => onHsCodeChange('6204.62')}
-              className="text-brand-accent hover:underline font-mono"
+              className="text-brand-blue-text hover:underline font-mono"
             >
               6204.62 (Celana)
             </button>
@@ -193,7 +193,7 @@ export function ProductGeneralInfoSection({
             <button
               type="button"
               onClick={() => onHsCodeChange('6204.52')}
-              className="text-brand-accent hover:underline font-mono"
+              className="text-brand-blue-text hover:underline font-mono"
             >
               6204.52 (Rok)
             </button>
@@ -201,7 +201,7 @@ export function ProductGeneralInfoSection({
             <button
               type="button"
               onClick={() => onHsCodeChange('6204.43')}
-              className="text-brand-accent hover:underline font-mono"
+              className="text-brand-blue-text hover:underline font-mono"
             >
               6204.43 (Gamis)
             </button>
@@ -209,7 +209,7 @@ export function ProductGeneralInfoSection({
             <button
               type="button"
               onClick={() => onHsCodeChange('6217.10')}
-              className="text-brand-accent hover:underline font-mono"
+              className="text-brand-blue-text hover:underline font-mono"
             >
               6217.10 (Obi Belt)
             </button>

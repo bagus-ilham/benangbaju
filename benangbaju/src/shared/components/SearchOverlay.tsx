@@ -147,7 +147,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             className="w-full max-w-2xl bg-brand-cream p-6 md:p-8 shadow-2xl relative border border-brand-plum/10 rounded-3xl overflow-hidden"
           >
             <div
-              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
+              className="card-accent-bar"
               aria-hidden="true"
             />
             <button
@@ -168,7 +168,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                     {market === 'MY' ? 'Product Search' : 'Pencarian Produk'}
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono text-brand-plum/70 bg-brand-gold-soft/65 border border-brand-gold-stroke/40 px-2.5 py-1 rounded-full hidden sm:inline-block">
+                <span className="text-[10px] font-mono text-brand-plum/70 bg-brand-gold/65 border border-brand-gold-stroke/40 px-2.5 py-1 rounded-full hidden sm:inline-block">
                   ⌘K / Ctrl+K
                 </span>
               </div>
@@ -212,7 +212,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <button
                           key={item}
                           onClick={() => handleSelectTag(item)}
-                          className="text-[11px] font-sans bg-brand-gold-soft/55 hover:bg-brand-blue-soft/75 border border-brand-plum/10 text-brand-plum px-3 py-1 rounded-full transition-colors"
+                          className="text-[11px] font-sans bg-brand-gold/55 hover:bg-brand-blue-soft/75 border border-brand-plum/10 text-brand-plum px-3 py-1 rounded-full transition-colors"
                         >
                           {item}
                         </button>
@@ -223,7 +223,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               )}
 
               {searchQuery.trim().length >= 2 && (
-                <div className="border border-brand-plum/10 bg-brand-gold-soft/25 p-4 -mt-2 space-y-3 rounded-2xl">
+                <div className="border border-brand-plum/10 bg-brand-gold/25 p-4 -mt-2 space-y-3 rounded-2xl">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-neutral-400">
                       {market === 'MY' ? 'Instant Results' : 'Hasil Pencarian Instan'}
@@ -261,7 +261,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             onClick={onClose}
                             className="flex items-center space-x-3 p-2.5 bg-brand-cream border border-brand-plum/10 hover:border-brand-gold-stroke transition-all duration-200 group rounded-2xl"
                           >
-                            <div className="relative aspect-[3/4] w-10 bg-brand-rose-soft/65 border border-brand-plum/10 overflow-hidden flex-shrink-0 rounded-xl">
+                            <div className="relative aspect-[3/4] w-10 bg-brand-surface/65 border border-brand-plum/10 overflow-hidden flex-shrink-0 rounded-xl">
                               {primaryImg ? (
                                 <Image
                                   src={getProxiedImageUrl(primaryImg)}

@@ -24,7 +24,7 @@ export function CategoryDetailClient({
   return (
     <div className="bg-brand-cream min-h-screen">
       {category.image_url ? (
-        <div className="relative h-[38vh] md:h-[48vh] w-full bg-brand-rose-soft/60 overflow-hidden">
+        <div className="relative h-[38vh] md:h-[48vh] w-full bg-brand-surface/60 overflow-hidden">
           <Image
             src={getProxiedImageUrl(category.image_url)}
             alt={category.name}

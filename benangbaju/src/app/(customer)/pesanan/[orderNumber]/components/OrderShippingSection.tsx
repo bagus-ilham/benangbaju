@@ -29,7 +29,7 @@ export function OrderShippingSection({
   return (
     <div className="space-y-6">
       <div className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
+        <div className="card-accent-bar" />
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-plum/10 pb-3">
           <h2 className="text-base font-serif font-medium tracking-tight text-brand-plum flex items-center gap-2">
             <HandDrawnIcon name="truck" className="h-4 w-4 text-brand-plum" />
@@ -94,7 +94,7 @@ export function OrderShippingSection({
               ) : orderShipping.tracking_number ? (
                 <p className="flex items-center gap-1.5 flex-wrap">
                   <span>{isMalaysia ? 'Tracking Number:' : 'No. Resi:'}</span>
-                  <span className="font-mono font-bold text-brand-plum bg-brand-gold-soft/50 border border-brand-plum/10 px-2.5 py-0.5 rounded-lg select-all">
+                  <span className="font-mono font-bold text-brand-plum bg-brand-gold/50 border border-brand-plum/10 px-2.5 py-0.5 rounded-lg select-all">
                     {orderShipping.tracking_number}
                   </span>
                 </p>
@@ -109,7 +109,7 @@ export function OrderShippingSection({
       </div>
 
       {notes && (
-        <div className="border border-brand-plum/10 p-5 bg-brand-gold-soft/35 space-y-2 rounded-2xl shadow-xs">
+        <div className="border border-brand-plum/10 p-5 bg-brand-gold/35 space-y-2 rounded-2xl shadow-xs">
           <h2 className="text-sm font-serif font-medium tracking-tight text-brand-plum">
             {isMalaysia ? 'Order Notes' : 'Catatan dari Anda'}
           </h2>

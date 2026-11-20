@@ -91,7 +91,7 @@ export function MarketSwitcher({
       <div className={cn('space-y-2 p-3 bg-brand-cream/80 border border-brand-plum/10 rounded-2xl', className)}>
         <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-brand-plum">
           <span className="flex items-center gap-1.5">
-            <HandDrawnIcon name="sparkles" className="h-3 w-3 text-brand-accent" /> Wilayah / Market
+            <HandDrawnIcon name="sparkles" className="h-3 w-3 text-brand-blue-text" /> Wilayah / Market
           </span>
           <span className="text-[9px] font-sans text-neutral-400">
             {market === 'MY' ? 'Mode Malaysia (EN)' : 'Mode Indonesia'}
@@ -180,7 +180,7 @@ export function MarketSwitcher({
                 'w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-left transition-colors cursor-pointer',
                 market === 'ID'
                   ? 'bg-brand-blue-soft/70 text-brand-plum font-bold'
-                  : 'text-neutral-700 hover:bg-brand-gold-soft/50'
+                  : 'text-neutral-700 hover:bg-brand-gold/50'
               )}
             >
               <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export function MarketSwitcher({
                 'w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-left transition-colors cursor-pointer',
                 market === 'MY'
                   ? 'bg-emerald-100 text-emerald-950 font-bold'
-                  : 'text-neutral-700 hover:bg-brand-gold-soft/50'
+                  : 'text-neutral-700 hover:bg-brand-gold/50'
               )}
             >
               <div className="flex items-center gap-2">

@@ -84,10 +84,10 @@ export function Modal({
             )}
           >
             <div
-              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
+              className="card-accent-bar"
               aria-hidden="true"
             />
-            <div className="flex items-center justify-between px-6 py-4 pt-5 border-b border-brand-plum/10 bg-brand-gold-soft/40">
+            <div className="flex items-center justify-between px-6 py-4 pt-5 border-b border-brand-plum/10 bg-brand-gold/40">
               {title ? (
                 <h2
                   id={titleId}

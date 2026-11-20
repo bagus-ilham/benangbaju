@@ -18,7 +18,7 @@ export function CheckoutProgressBar({ checkoutStep }: CheckoutProgressBarProps):
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       role="list"
-      className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto px-5 py-3 bg-brand-gold-soft/45 border border-brand-gold-stroke/45 rounded-full shadow-xs"
+      className="flex items-center justify-center space-x-2 md:space-x-4 mb-10 max-w-md mx-auto px-5 py-3 bg-brand-gold/45 border border-brand-gold-stroke/45 rounded-full shadow-xs"
     >
       <Link href="/cart" role="listitem" className="flex items-center space-x-2 group">
         <div className="w-5 h-5 rounded-full bg-brand-gold text-brand-plum flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110">

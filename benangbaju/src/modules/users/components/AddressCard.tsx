@@ -45,7 +45,7 @@ export function AddressCard({
       className={cn(
         'p-5 border text-sm font-sans relative transition-all duration-300 rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-md',
         isSelected
-          ? 'border-brand-gold-stroke bg-brand-gold-soft/45 ring-1 ring-brand-gold shadow-xs'
+          ? 'border-brand-gold-stroke bg-brand-gold/45 ring-1 ring-brand-gold shadow-xs'
           : 'border-brand-plum/10 bg-brand-cream'
       )}
     >
@@ -87,7 +87,7 @@ export function AddressCard({
                   e.stopPropagation()
                   onEdit(address)
                 }}
-                className="flex items-center text-xs text-neutral-600 hover:text-brand-accent transition duration-100"
+                className="flex items-center text-xs text-neutral-600 hover:text-brand-blue-text transition duration-100"
               >
                 <HandDrawnIcon name="edit" className="h-3.5 w-3.5 mr-1" /> {isMY ? 'Edit' : 'Ubah'}
               </button>
@@ -115,7 +115,7 @@ export function AddressCard({
                 e.stopPropagation()
                 onSetDefault(address.id)
               }}
-              className="text-xs text-neutral-600 hover:text-brand-accent hover:underline font-semibold transition duration-100"
+              className="text-xs text-neutral-600 hover:text-brand-blue-text hover:underline font-semibold transition duration-100"
             >
               {isMY ? 'Set as Default' : 'Jadikan Utama'}
             </button>

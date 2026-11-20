@@ -31,7 +31,7 @@ export function ProductAccordionTabs({
 
   return (
     <motion.div variants={itemVariants} className="space-y-2 pt-2">
-      <div className="flex bg-brand-gold-soft/45 p-1.5 rounded-2xl w-full border border-brand-plum/10 font-sans text-[10px] font-bold uppercase tracking-widest relative mb-2">
+      <div className="flex bg-brand-gold/45 p-1.5 rounded-2xl w-full border border-brand-plum/10 font-sans text-[10px] font-bold uppercase tracking-widest relative mb-2">
         <button
           type="button"
           onClick={() => setActiveTab('details')}
@@ -120,7 +120,7 @@ export function ProductAccordionTabs({
                     <span className="text-[10px] uppercase font-bold text-neutral-400">
                       {unit === 'INCH' ? 'Size Guide (Inches)' : 'Panduan Ukuran (CM)'}
                     </span>
-                    <div className="flex items-center bg-brand-gold-soft/60 p-0.5 rounded-full border border-brand-plum/15">
+                    <div className="flex items-center bg-brand-gold/60 p-0.5 rounded-full border border-brand-plum/15">
                       <button
                         type="button"
                         onClick={() => setSelectedUnit('CM')}

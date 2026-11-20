@@ -39,7 +39,7 @@ export function CatalogMobileFilters({
           showMobileFilters ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between p-5 border-b border-brand-plum/10 bg-brand-gold-soft/40">
+        <div className="flex items-center justify-between p-5 border-b border-brand-plum/10 bg-brand-gold/40">
           <h2 className="text-lg font-serif font-medium text-brand-plum tracking-tight">
             Filter
           </h2>
@@ -69,7 +69,7 @@ export function CatalogMobileFilters({
                     'text-sm font-sans tracking-wide text-left w-full px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2',
                     !categorySlug
                       ? 'bg-brand-blue-soft/85 text-brand-plum font-bold shadow-2xs'
-                      : 'text-neutral-600 hover:bg-brand-gold-soft/40'
+                      : 'text-neutral-600 hover:bg-brand-gold/40'
                   )}
                 >
                   {!categorySlug && (
@@ -92,7 +92,7 @@ export function CatalogMobileFilters({
                         'text-sm font-sans tracking-wide text-left w-full px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2',
                         isActive
                           ? 'bg-brand-blue-soft/85 text-brand-plum font-bold shadow-2xs'
-                          : 'text-neutral-600 hover:bg-brand-gold-soft/40'
+                          : 'text-neutral-600 hover:bg-brand-gold/40'
                       )}
                     >
                       {isActive && (
@@ -113,7 +113,7 @@ export function CatalogMobileFilters({
               handleClearAll()
               setShowMobileFilters(false)
             }}
-            className="flex-1 py-3 text-xs font-sans font-bold uppercase tracking-widest border border-brand-plum/20 text-brand-plum hover:bg-brand-gold-soft/40 rounded-xl"
+            className="flex-1 py-3 text-xs font-sans font-bold uppercase tracking-widest border border-brand-plum/20 text-brand-plum hover:bg-brand-gold/40 rounded-xl"
           >
             Reset
           </button>

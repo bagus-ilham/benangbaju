@@ -43,7 +43,7 @@ export function ReturnReasonForm({
 
   return (
     <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-brand-blue-soft to-brand-gold" />
+      <div className="card-accent-bar" />
       <h2 className="text-[10px] uppercase tracking-widest font-sans font-bold text-brand-plum border-b border-neutral-200/60 pb-2">
         Alasan Pengembalian*
       </h2>
@@ -83,7 +83,7 @@ export function ReturnReasonForm({
           ))}
 
           {returnFiles.length < 2 && (
-            <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-accent hover:text-brand-accent transition group">
+            <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-blue-stroke hover:text-brand-blue-text transition group">
               <HandDrawnIcon name="image" className="h-5 w-5 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[10px] uppercase font-bold tracking-wider">Tambah</span>
               <input

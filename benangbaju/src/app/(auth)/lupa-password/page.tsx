@@ -69,7 +69,7 @@ export default function ForgotPasswordPage(): React.JSX.Element {
         </div>
 
         {isSent ? (
-          <div className="bg-brand-gold-soft/45 border border-brand-gold-stroke/45 p-6 rounded-2xl text-center space-y-4">
+          <div className="bg-brand-gold/45 border border-brand-gold-stroke/45 p-6 rounded-2xl text-center space-y-4">
             <p className="text-xs text-neutral-600 leading-relaxed font-sans">
               Kami telah mengirimkan instruksi pemulihan kata sandi ke{' '}
               <strong className="text-brand-plum">{email}</strong>. Silakan periksa kotak masuk

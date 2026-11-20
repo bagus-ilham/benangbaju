@@ -48,7 +48,7 @@ export function ProductSizeGuideModal({
             className="relative w-full max-w-lg bg-brand-cream p-6 pt-7 shadow-2xl z-10 border border-brand-plum/10 rounded-3xl overflow-hidden"
           >
             <div
-              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
+              className="card-accent-bar"
               aria-hidden="true"
             />
             {/* Close Button */}
@@ -75,7 +75,7 @@ export function ProductSizeGuideModal({
                 </div>
 
                 {/* Unit Switcher: CM / INCH */}
-                <div className="flex items-center bg-brand-gold-soft/65 p-0.5 rounded-full border border-brand-plum/15 shrink-0">
+                <div className="flex items-center bg-brand-gold/65 p-0.5 rounded-full border border-brand-plum/15 shrink-0">
                   <button
                     type="button"
                     onClick={() => setSelectedUnit('CM')}

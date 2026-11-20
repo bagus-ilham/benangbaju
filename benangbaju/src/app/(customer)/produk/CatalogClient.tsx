@@ -155,7 +155,7 @@ export function CatalogClient({
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-brand-plum/10">
           <button
             onClick={() => setShowMobileFilters(true)}
-            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum bg-brand-gold-soft/60 border border-brand-gold-stroke/40 px-3.5 py-2 rounded-full md:hidden cursor-pointer"
+            className="flex items-center space-x-2 text-xs font-sans font-bold uppercase tracking-wider text-brand-plum bg-brand-gold/60 border border-brand-gold-stroke/40 px-3.5 py-2 rounded-full md:hidden cursor-pointer"
           >
             <HandDrawnIcon name="sliders" className="h-4 w-4" />
             <span>{isMY ? 'Filter' : 'Filter'}</span>
@@ -170,7 +170,7 @@ export function CatalogClient({
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-1.5 bg-white/80 hover:bg-brand-gold-soft/50 border border-brand-plum/15 text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum transition-colors px-3 py-1.5 rounded-full cursor-pointer shadow-2xs">
+                <button className="flex items-center space-x-1.5 bg-white/80 hover:bg-brand-gold/50 border border-brand-plum/15 text-[10px] font-sans font-bold uppercase tracking-wider text-brand-plum transition-colors px-3 py-1.5 rounded-full cursor-pointer shadow-2xs">
                   <span>
                     {
                     (() => {
@@ -218,7 +218,7 @@ export function CatalogClient({
 
         {/* Active Filter Chips / Pills Bar */}
         {(categorySlug || searchQuery || (sortBy && sortBy !== 'newest')) && (
-          <div className="flex flex-wrap items-center gap-2 mb-8 p-3.5 bg-brand-gold-soft/55 border border-brand-gold-stroke/40 rounded-2xl">
+          <div className="flex flex-wrap items-center gap-2 mb-8 p-3.5 bg-brand-gold/55 border border-brand-gold-stroke/40 rounded-2xl">
             <span className="text-[9px] font-sans font-bold uppercase tracking-wider text-brand-plum/75">
               {isMY ? 'Active Filters:' : 'Filter Aktif:'}
             </span>

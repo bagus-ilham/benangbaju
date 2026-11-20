@@ -78,7 +78,7 @@ export function PengirimanClient(): React.JSX.Element {
               </p>
             </div>
 
-            <div className="border border-brand-gold-stroke/45 p-6 rounded-2xl space-y-3 bg-brand-gold-soft/50 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className="border border-brand-gold-stroke/45 p-6 rounded-2xl space-y-3 bg-brand-gold/50 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
               <div className="p-2 bg-brand-cream border border-brand-plum/10 rounded-xl w-max">
                 <HandDrawnIcon name="hanger" className="h-4 w-4" />
               </div>
@@ -114,7 +114,7 @@ export function PengirimanClient(): React.JSX.Element {
                 <MarketFlagIcon market="ID" className="w-5 h-5" />
                 <span>{isMY ? 'Domestic Delivery Partners (Indonesia)' : 'Mitra Ekspedisi Domestik (Indonesia)'}</span>
               </h2>
-              <span className="text-[10px] font-bold text-brand-plum/70 bg-brand-gold-soft/60 px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-brand-plum/70 bg-brand-gold/60 px-2.5 py-1 rounded-full uppercase tracking-wider">
                 {isMY ? 'Bandung Warehouse (40164)' : 'Gudang Bandung (40164)'}
               </span>
             </div>
@@ -122,7 +122,7 @@ export function PengirimanClient(): React.JSX.Element {
             <div className="border border-brand-plum/10 overflow-hidden rounded-2xl bg-brand-cream shadow-xs hover:shadow-md transition-all duration-300">
               <table className="w-full text-left border-collapse text-xs font-sans">
                 <thead>
-                  <tr className="bg-brand-gold-soft/55 border-b border-brand-plum/10 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
+                  <tr className="bg-brand-gold/55 border-b border-brand-plum/10 text-brand-plum font-bold uppercase tracking-wider text-[10px]">
                     <th className="p-4">{isMY ? 'Courier' : 'Ekspedisi'}</th>
                     <th className="p-4">{isMY ? 'Coverage Area' : 'Cakupan Wilayah'}</th>
                     <th className="p-4">{isMY ? 'Estimated Delivery Time (ETD)' : 'Estimasi Pengiriman (ETD)'}</th>

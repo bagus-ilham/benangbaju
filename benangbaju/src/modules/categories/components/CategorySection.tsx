@@ -79,7 +79,7 @@ export function CategorySection({ categories }: CategorySectionProps): React.JSX
               >
                 <Link
                   href={`/kategori/${cat.slug}`}
-                  className="group relative aspect-[3/4] w-full overflow-hidden bg-brand-rose-soft/65 border border-brand-plum/10 block rounded-2xl hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.16)] transition-all duration-500"
+                  className="group relative aspect-[3/4] w-full overflow-hidden bg-brand-surface/65 border border-brand-plum/10 block rounded-2xl hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.16)] transition-all duration-500"
                 >
                   {cat.image_url ? (
                     <Image

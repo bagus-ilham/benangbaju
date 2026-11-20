@@ -34,7 +34,7 @@ export function CategoriesClient({ parentCategories }: CategoriesClientProps): R
             <Link
               key={cat.id}
               href={`/kategori/${cat.slug}`}
-              className="group relative h-80 md:h-96 w-full overflow-hidden bg-brand-rose-soft/70 border border-brand-plum/10 rounded-2xl block hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.16)] transition-all duration-500"
+              className="group relative h-80 md:h-96 w-full overflow-hidden bg-brand-surface/70 border border-brand-plum/10 rounded-2xl block hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-10px_rgba(45,38,64,0.16)] transition-all duration-500"
             >
               {cat.image_url ? (
                 <Image
@@ -45,7 +45,7 @@ export function CategoriesClient({ parentCategories }: CategoriesClientProps): R
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               ) : (
-                <div className="absolute inset-0 bg-brand-rose-soft/60 flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand-surface/60 flex items-center justify-center">
                   <span className="text-xs font-serif text-brand-plum/60">
                     {cat.name}
                   </span>

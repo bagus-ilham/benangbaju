@@ -81,13 +81,13 @@ export function ProductStickyAction({
           className="fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-md border-t border-brand-plum/10 shadow-[0_-10px_30px_-10px_rgba(45,38,64,0.14)] py-3 px-4 md:py-4 md:px-8 rounded-t-3xl font-sans overflow-hidden"
         >
           <div
-            className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold"
+            className="card-accent-bar"
             aria-hidden="true"
           />
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
             {/* Product Info (Desktop/Tablet) */}
             <div className="hidden sm:flex items-center space-x-3">
-              <div className="relative w-9 h-11 bg-brand-rose-soft/65 border border-brand-plum/10 flex-shrink-0 rounded-xl overflow-hidden">
+              <div className="relative w-9 h-11 bg-brand-surface/65 border border-brand-plum/10 flex-shrink-0 rounded-xl overflow-hidden">
                 <Image
                   src={getProxiedImageUrl(
                     product.product_images.find((img) => img.is_primary)?.url ||

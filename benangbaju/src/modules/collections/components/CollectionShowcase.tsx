@@ -38,7 +38,7 @@ export function CollectionShowcase({
   const borderColor = 'border-brand-plum/40'
   const btnBg = isReversed ? 'bg-brand-gold border border-brand-gold-stroke/80' : 'bg-brand-blue border border-brand-blue-stroke/80'
   const btnText = 'text-brand-plum font-bold'
-  const btnHover = isReversed ? 'hover:bg-[#F2E5AE]' : 'hover:bg-[#BED7DC]'
+  const btnHover = isReversed ? 'hover:bg-brand-gold-hover' : 'hover:bg-brand-blue-hover'
   const cardContainerClass =
     'bg-brand-cream p-2 border border-brand-plum/10 rounded-2xl shadow-sm'
 

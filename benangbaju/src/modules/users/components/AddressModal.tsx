@@ -441,7 +441,7 @@ export function AddressModal({
                   className={cn(
                     'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold transition-all',
                     isSelected
-                      ? 'border-brand-accent bg-brand-accent/5 text-brand-accent shadow-sm'
+                      ? 'border-brand-blue-stroke bg-brand-blue/5 text-brand-blue-text shadow-sm'
                       : 'border-neutral-200 hover:border-neutral-300 text-neutral-600 bg-white'
                   )}
                 >

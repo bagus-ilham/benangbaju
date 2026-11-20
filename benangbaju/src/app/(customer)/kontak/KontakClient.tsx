@@ -31,7 +31,7 @@ export function KontakClient(): React.JSX.Element {
         {/* Contact Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
           {/* Contact Details Card */}
-          <div className="border border-brand-gold-stroke/45 p-8 space-y-6 bg-brand-gold-soft/35 rounded-3xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
+          <div className="border border-brand-gold-stroke/45 p-8 space-y-6 bg-brand-gold/35 rounded-3xl shadow-xs hover:shadow-md transition-all duration-300 animate-slide-up">
             <h2 className="font-serif text-brand-plum font-medium text-lg tracking-tight border-b border-brand-plum/10 pb-3">
               {isMY ? 'Customer Care & Operating Hours' : 'Layanan Pelanggan & Jam Operasional'}
             </h2>

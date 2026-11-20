@@ -50,7 +50,7 @@ export function FloatingWhatsApp({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'fixed z-45 h-11 px-3 md:px-3.5 rounded-full bg-[#2FA866] hover:bg-[#279156] text-white ring-2 ring-brand-cream shadow-[0_10px_28px_-6px_rgba(45,38,64,0.28)] flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group',
+        'fixed z-45 h-11 px-3 md:px-3.5 rounded-full bg-brand-whatsapp hover:bg-brand-whatsapp-hover text-white ring-2 ring-brand-cream shadow-lg flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group',
         pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-20 md:bottom-6'
       )}
       style={{

@@ -52,7 +52,7 @@ function ReviewHelpfulButton({ reviewId, initialCount }: ReviewHelpfulButtonProp
       className={cn(
         'inline-flex items-center text-[10px] space-x-1.5 font-sans px-3 py-1 rounded-full border transition-all',
         hasVoted
-          ? 'bg-brand-gold-soft/70 border-brand-gold-stroke/50 text-brand-plum font-bold cursor-default'
+          ? 'bg-brand-gold/70 border-brand-gold-stroke/50 text-brand-plum font-bold cursor-default'
           : 'bg-brand-cream border-brand-plum/10 text-neutral-500 hover:text-brand-plum hover:border-brand-plum/25 cursor-pointer'
       )}
     >
@@ -97,10 +97,10 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
           {isMY ? 'Customer Reviews' : 'Ulasan Pembeli'} ({total})
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="h-44 bg-brand-gold-soft/35 border border-brand-plum/10 rounded-3xl skeleton-shimmer" />
+          <div className="h-44 bg-brand-gold/35 border border-brand-plum/10 rounded-3xl skeleton-shimmer" />
           <div className="md:col-span-2 space-y-4">
-            <div className="h-20 bg-brand-rose-soft/40 rounded-2xl skeleton-shimmer" />
-            <div className="h-20 bg-brand-rose-soft/40 rounded-2xl skeleton-shimmer" />
+            <div className="h-20 bg-brand-surface/40 rounded-2xl skeleton-shimmer" />
+            <div className="h-20 bg-brand-surface/40 rounded-2xl skeleton-shimmer" />
           </div>
         </div>
       </div>
@@ -111,8 +111,8 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
     <div className="py-10 border-t border-brand-plum/10 space-y-8">
       <div className="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0">
         {/* Left: Ratings Summary */}
-        <div className="flex flex-col space-y-3.5 md:w-1/3 bg-brand-gold-soft/40 border border-brand-gold-stroke/45 p-6 md:p-8 rounded-3xl shadow-xs relative overflow-hidden h-max">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
+        <div className="flex flex-col space-y-3.5 md:w-1/3 bg-brand-gold/40 border border-brand-gold-stroke/45 p-6 md:p-8 rounded-3xl shadow-xs relative overflow-hidden h-max">
+          <div className="card-accent-bar" />
           <div className="space-y-0.5">
             <span className="inline-block text-sm font-accent font-bold text-brand-blue-text leading-none">
               {isMY ? 'Customer Love' : 'Kata Mereka'}
@@ -138,7 +138,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
         {/* Right: Reviews List */}
         <div className="flex-1 space-y-6">
           {reviews.length === 0 ? (
-            <div className="p-8 rounded-3xl border border-dashed border-brand-plum/15 bg-brand-gold-soft/25 text-center space-y-1.5">
+            <div className="p-8 rounded-3xl border border-dashed border-brand-plum/15 bg-brand-gold/25 text-center space-y-1.5">
               <p className="text-base font-serif font-medium text-brand-plum">
                 {isMY ? 'No Reviews Yet' : 'Belum Ada Ulasan'}
               </p>
@@ -190,7 +190,7 @@ export function ReviewSection({ productId, ratingSummary }: ReviewSectionProps):
                       {review.review_media.map((media) => (
                         <div
                           key={media.id}
-                          className="relative aspect-square w-16 bg-brand-rose-soft/65 border border-brand-plum/10 overflow-hidden rounded-xl shadow-xs"
+                          className="relative aspect-square w-16 bg-brand-surface/65 border border-brand-plum/10 overflow-hidden rounded-xl shadow-xs"
                         >
                           <Image
                             src={getProxiedImageUrl(media.url)}

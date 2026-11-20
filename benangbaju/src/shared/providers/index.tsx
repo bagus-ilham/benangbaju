@@ -15,33 +15,33 @@ export function Providers({ children }: { children: React.ReactNode }): React.JS
           toastOptions={{
             duration: 3500,
             style: {
-              background: '#ffffff',
-              color: '#171717',
+              background: 'var(--color-brand-cream)',
+              color: 'var(--color-brand-plum)',
               fontSize: '11px',
               fontFamily: 'var(--font-sans)',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
-              borderRadius: '0px',
-              border: '1px solid #e5e5e5',
+              borderRadius: '12px',
+              border: '1px solid var(--color-brand-blue-stroke)',
               padding: '12px 20px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              boxShadow: '0 4px 20px rgba(45, 38, 64, 0.08)',
             },
             success: {
               iconTheme: {
-                primary: '#171717',
-                secondary: '#ffffff',
+                primary: 'var(--color-brand-plum)',
+                secondary: 'var(--color-brand-cream)',
               },
               style: {
-                borderLeft: '3px solid #171717',
+                borderLeft: '3px solid var(--color-brand-blue-text)',
               },
             },
             error: {
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#ffffff',
+                primary: 'var(--color-error)',
+                secondary: 'var(--color-brand-cream)',
               },
               style: {
-                borderLeft: '3px solid #ef4444',
+                borderLeft: '3px solid var(--color-error)',
               },
             },
           }}

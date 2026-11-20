@@ -242,7 +242,7 @@ function OrderReviewForm({
               ))}
 
               {reviewFiles.length < 2 && (
-                <label className="w-20 h-20 border-2 border-dashed border-brand-plum/20 bg-brand-gold-soft/25 rounded-xl flex flex-col items-center justify-center text-neutral-500 hover:text-brand-plum hover:border-brand-blue cursor-pointer transition-colors">
+                <label className="w-20 h-20 border-2 border-dashed border-brand-plum/20 bg-brand-gold/25 rounded-xl flex flex-col items-center justify-center text-neutral-500 hover:text-brand-plum hover:border-brand-blue cursor-pointer transition-colors">
                   <HandDrawnIcon name="image" className="h-5 w-5 mb-1" />
                   <span className="text-[9px] uppercase tracking-wider font-semibold">{isMY ? 'Add' : 'Tambah'}</span>
                   <input

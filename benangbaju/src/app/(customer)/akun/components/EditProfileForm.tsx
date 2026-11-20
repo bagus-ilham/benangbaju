@@ -33,7 +33,7 @@ export function EditProfileForm({
       variants={itemVariants}
       className="border border-brand-plum/10 p-6 sm:p-8 rounded-3xl bg-brand-cream shadow-xs relative overflow-hidden group"
     >
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blue-soft to-brand-gold" />
+      <div className="card-accent-bar" />
       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-brand-plum/10">
         <motion.div
           whileHover={{ rotate: 12 }}

@@ -95,7 +95,7 @@ function AdminNavLinks({ onNavigate }: { onNavigate?: () => void }) {
             {item.name}
             {isActive && (
               <span
-                className="ml-auto w-1 h-1 bg-brand-accent-light rounded-full"
+                className="ml-auto w-1 h-1 bg-brand-blue rounded-full"
                 aria-hidden="true"
               />
             )}
@@ -134,7 +134,7 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
             className="object-contain object-left"
           />
         </div>
-        <span className="text-brand-accent font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-accent-muted/10 px-1.5 py-0.5 rounded-xs">
+        <span className="text-brand-blue-text font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-blue-soft/10 px-1.5 py-0.5 rounded-xs">
           CMS
         </span>
       </div>
@@ -153,7 +153,7 @@ const SidebarLogo = ({ logoUrl, isMobile }: { logoUrl?: string | null; isMobile?
           className="object-contain object-left"
         />
       </div>
-      <span className="text-brand-accent font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-accent-muted/10 px-1.5 py-0.5 rounded-xs">
+      <span className="text-brand-blue-text font-heading text-[10px] font-bold tracking-wider uppercase bg-brand-blue-soft/10 px-1.5 py-0.5 rounded-xs">
         CMS
       </span>
     </Link>

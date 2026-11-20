@@ -30,7 +30,7 @@ export function Badge({
           // Brand / Soft Pastel Blue: Deep Plum text
           'bg-brand-blue text-brand-plum shadow-xs border border-brand-blue-stroke/80':
             variant === 'brand' || variant === 'blue',
-          'bg-[#E85D75] text-white shadow-sm shadow-[#E85D75]/25': variant === 'sale',
+          'bg-brand-sale text-white shadow-sm shadow-brand-sale/25': variant === 'sale',
           // Soft Butter Yellow: Deep Plum text
           'bg-brand-gold text-brand-plum border border-brand-gold-stroke/80 shadow-xs':
             variant === 'gold',
