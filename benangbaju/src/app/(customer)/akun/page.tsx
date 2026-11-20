@@ -179,7 +179,12 @@ export default function AkunPage(): React.JSX.Element {
         <motion.div initial="hidden" animate="visible" variants={containerVariants}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Quick Navigation Menu */}
-            <AccountNavMenu itemVariants={itemVariants} handleSignOut={handleSignOut} />
+            <AccountNavMenu
+              itemVariants={itemVariants}
+              handleSignOut={handleSignOut}
+              userName={profile?.name || name}
+              userEmail={user?.email}
+            />
 
             {/* Forms Section */}
             <div className="md:col-span-2 space-y-8">

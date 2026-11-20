@@ -27,50 +27,63 @@ export function EditProfileForm({
 }: EditProfileFormProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
+
   return (
     <motion.div
       variants={itemVariants}
-      className="border border-neutral-200/80 p-6 sm:p-8 rounded-2xl bg-brand-cream shadow-xs relative overflow-hidden group"
+      className="border border-brand-plum/10 p-6 sm:p-8 rounded-3xl bg-brand-cream shadow-xs relative overflow-hidden group"
     >
-      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-gold via-amber-200 to-brand-gold" />
-      <h2 className="text-sm uppercase tracking-widest font-sans font-bold text-brand-plum mb-6 flex items-center">
-        <motion.div whileHover={{ rotate: 15 }} className="mr-2">
-          <HandDrawnIcon
-            name="user"
-            className="w-4 h-4"
-          />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold" />
+      <div className="flex items-center gap-3 mb-6 pb-4 border-b border-brand-plum/10">
+        <motion.div
+          whileHover={{ rotate: 12 }}
+          className="w-10 h-10 rounded-2xl bg-brand-blush/70 border border-brand-blush-stroke/60 flex items-center justify-center text-brand-plum shrink-0"
+        >
+          <HandDrawnIcon name="user" className="w-4 h-4" />
         </motion.div>
-        {isMY ? 'Profile Information' : 'Informasi Profil'}
-      </h2>
+        <div>
+          <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
+            {isMY ? 'Personal Details' : 'Data Diri'}
+          </span>
+          <h2 className="text-lg sm:text-xl font-serif font-medium tracking-tight text-brand-plum">
+            {isMY ? 'Profile Information' : 'Informasi Profil'}
+          </h2>
+        </div>
+      </div>
 
       <form onSubmit={handleUpdateProfile} className="space-y-6">
-        <Input label={isMY ? "Email (Read-only)" : "Email (Tidak dapat diubah)"} value={email} readOnly disabled />
+        <Input
+          label={isMY ? 'Email (Read-only)' : 'Email (Tidak dapat diubah)'}
+          value={email}
+          readOnly
+          disabled
+        />
 
         <Input
-          label={isMY ? "Full Name*" : "Nama Lengkap*"}
+          label={isMY ? 'Full Name*' : 'Nama Lengkap*'}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={isMY ? "Your full name" : "Nama lengkap Anda"}
+          placeholder={isMY ? 'Your full name' : 'Nama lengkap Anda'}
           maxLength={100}
           required
         />
 
         <Input
-          label={isMY ? "Phone Number" : "Nomor Telepon"}
+          label={isMY ? 'Phone Number' : 'Nomor Telepon'}
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           maxLength={20}
-          placeholder={isMY ? "e.g. +60123456789" : "cth: 08123456789"}
+          placeholder={isMY ? 'e.g. +60123456789' : 'cth: 08123456789'}
         />
 
-        <div className="pt-4 border-t border-neutral-200/60 flex justify-end">
+        <div className="pt-4 border-t border-brand-plum/10 flex justify-end">
           <Button
             type="submit"
             variant="accent"
             isLoading={isSaving}
             className="text-xs uppercase tracking-widest font-bold py-3 px-6"
           >
-            {isMY ? "Save Changes" : "Simpan Perubahan"}
+            {isMY ? 'Save Changes' : 'Simpan Perubahan'}
           </Button>
         </div>
       </form>

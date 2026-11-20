@@ -62,10 +62,10 @@ export function OrderCard({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-      className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream transition-all duration-300 rounded-2xl shadow-xs hover:shadow-md font-sans"
+      className="border border-brand-plum/10 p-5 sm:p-6 bg-brand-cream transition-all duration-300 rounded-2xl shadow-xs hover:shadow-md font-sans"
     >
       {/* Header info */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-neutral-200/60 mb-4 text-sm gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-brand-plum/10 mb-4 text-sm gap-2">
         <div className="space-y-1">
           <p className="font-bold text-brand-plum">
             {isMY ? 'Order No.:' : 'No. Pesanan:'}{' '}
@@ -90,7 +90,7 @@ export function OrderCard({
         {order.order_items.map((item) => (
           <div key={item.id} className="flex justify-between items-center text-sm font-sans">
             <div className="min-w-0 pr-4">
-              <p className="font-bold text-brand-plum truncate">
+              <p className="font-serif font-medium text-[15px] text-brand-plum truncate">
                 {item.product_name} - {item.variant_name}
               </p>
               <p className="text-xs text-neutral-600 font-sans mt-0.5">

@@ -45,13 +45,13 @@ export function AddressCard({
       className={cn(
         'p-5 border text-sm font-sans relative transition-all duration-300 rounded-2xl cursor-pointer hover:-translate-y-1 hover:shadow-md',
         isSelected
-          ? 'border-brand-gold bg-brand-gold/20 ring-1 ring-amber-300 shadow-xs'
-          : 'border-neutral-200/80 bg-brand-cream'
+          ? 'border-brand-gold-stroke bg-brand-gold-soft/45 ring-1 ring-brand-gold shadow-xs'
+          : 'border-brand-plum/10 bg-brand-cream'
       )}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center space-x-2">
-          <span className="font-bold text-brand-plum">{address.label}</span>
+          <span className="font-serif text-base font-medium text-brand-plum">{address.label}</span>
           {address.is_default && (
             <Badge variant="gold" className="text-[10px] py-0 px-2">
               {isMY ? 'Default' : 'Utama'}
@@ -134,7 +134,7 @@ export function AddressCard({
               onSelect(address)
             }}
           >
-            {isMY ? 'Select Address' : 'Pilih Alamat'} Ini
+            {isMY ? 'Select This Address' : 'Pilih Alamat Ini'}
           </Button>
         </div>
       )}
