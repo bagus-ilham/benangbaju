@@ -1,5 +1,5 @@
 import React from 'react'
-import { AdminPanel, Button, HandDrawnIcon, OrderStatusBadge } from '@/shared/components'
+import { AdminPanel, Button, HandDrawnIcon } from '@/shared/components'
 import { formatIDR, formatDate, formatMYR } from '@/lib/utils'
 import type { Order } from '@/modules/orders/types'
 
@@ -15,21 +15,42 @@ export function AdminOrderPaymentPanel({
   isSyncing,
 }: AdminOrderPaymentPanelProps): React.JSX.Element {
   const primaryPayment = order.payments && order.payments.length > 0 ? order.payments[0] : null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const gatewayResponse = (primaryPayment as any)?.gateway_response
 
-  // Extract payment details if available from DOKU response
-  const dokuTransaction = gatewayResponse?.transaction
-  const qrisInfo = gatewayResponse?.qris_payment
-  const vaInfo = gatewayResponse?.virtual_account_info || gatewayResponse?.virtual_account_payment
+  // Resolve latest DOKU status snapshot (reconcile_check / status_check / webhook / top-level)
+  const latestSnapshot =
+    gatewayResponse?.reconcile_check ||
+    gatewayResponse?.status_check ||
+    gatewayResponse?.webhook ||
+    gatewayResponse
+
+  const dokuTransaction = latestSnapshot?.transaction || gatewayResponse?.transaction
+  const qrisInfo = latestSnapshot?.qris_payment || gatewayResponse?.qris_payment
+  const vaInfo =
+    latestSnapshot?.virtual_account_payment ||
+    latestSnapshot?.virtual_account_info ||
+    gatewayResponse?.virtual_account_info ||
+    gatewayResponse?.virtual_account_payment
 
   const payerName =
-    qrisInfo?.payer_account_name ||
+    qrisInfo?.payer_account_name?.trim() ||
     vaInfo?.virtual_account_number ||
     dokuTransaction?.original_request_id ||
     null
 
   const payerIssuer = qrisInfo?.payer_account_issuer || vaInfo?.bank_name || null
   const referenceId = qrisInfo?.reference_id || vaInfo?.payment_code || null
+
+  const hasDokuSuccess =
+    [
+      gatewayResponse?.reconcile_check?.transaction?.status,
+      gatewayResponse?.status_check?.transaction?.status,
+      gatewayResponse?.webhook?.transaction?.status,
+      gatewayResponse?.transaction?.status,
+    ].some((s) => String(s || '').toUpperCase() === 'SUCCESS')
+
+  const isPaidButCancelled = order.status === 'cancelled' && hasDokuSuccess
 
   const isPaid =
     primaryPayment?.status === 'success' ||
@@ -130,7 +151,20 @@ export function AdminOrderPaymentPanel({
           </div>
         )}
 
-        {order.status === 'pending_payment' && (
+        {isPaidButCancelled && (
+          <div className="p-3 rounded-lg bg-amber-50 border border-amber-300 text-amber-950 space-y-1">
+            <p className="font-bold text-[11px] uppercase tracking-wider">
+              Perhatian: Tercatat Lunas di DOKU
+            </p>
+            <p className="text-[11px] leading-relaxed">
+              Status pesanan di sistem adalah <strong>Dibatalkan</strong>, namun gateway DOKU
+              melaporkan pembayaran <strong>SUCCESS</strong>. Segera lakukan pemulihan pesanan atau
+              refund manual.
+            </p>
+          </div>
+        )}
+
+        {(order.status === 'pending_payment' || order.status === 'cancelled') && (
           <div className="pt-3 border-t border-neutral-100">
             <Button
               onClick={onSyncPayment}
@@ -140,7 +174,9 @@ export function AdminOrderPaymentPanel({
               <HandDrawnIcon name="refresh" className="h-3.5 w-3.5" /> Cek Status Pembayaran (DOKU)
             </Button>
             <p className="text-[10px] text-neutral-400 text-center mt-1.5">
-              Klik untuk memeriksa apakah customer sudah transfer di sistem DOKU.
+              {order.status === 'cancelled'
+                ? 'Periksa ulang ke DOKU untuk memastikan apakah customer sempat menyelesaikan pembayaran.'
+                : 'Klik untuk memeriksa apakah customer sudah transfer di sistem DOKU.'}
             </p>
           </div>
         )}

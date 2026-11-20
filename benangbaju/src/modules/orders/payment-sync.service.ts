@@ -159,6 +159,11 @@ export class PaymentSyncService {
         dokuData.virtual_account_payment?.date ||
         new Date().toISOString()
 
+      const isPaidButCancelled = transactionStatus === 'SUCCESS' && order.status === 'cancelled'
+      if (isPaidButCancelled) {
+        message = `PERHATIAN: Pembayaran tercatat SUKSES (LUNAS) di DOKU (${paidDate}), tetapi pesanan ini berstatus DIBATALKAN di sistem. Segera lakukan pemulihan pesanan atau refund manual.`
+      }
+
       const updatedGatewayResponse = paymentRecord?.gateway_response
         ? { ...paymentRecord.gateway_response, status_check: dokuData }
         : dokuData
@@ -243,7 +248,7 @@ export class PaymentSyncService {
       try {
         await (supabase.from as any)('payment_logs').insert({
           gateway_order_id: cleanOrderNumber,
-          event_type: `SYNC_${transactionStatus}`,
+          event_type: isPaidButCancelled ? 'SYNC_SUCCESS_ON_CANCELLED' : `SYNC_${transactionStatus}`,
           raw_payload: dokuData,
           payment_id: paymentRecord?.id || null,
         })

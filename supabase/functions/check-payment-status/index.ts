@@ -3,7 +3,12 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { generateDokuSignature } from "../_shared/doku-signature.ts";
+import {
+  extractDokuPaidAt,
+  generateDokuSignature,
+  getDokuApiUrl,
+  getDokuTimestamp,
+} from "../_shared/doku-signature.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -71,14 +76,10 @@ serve(async (req: Request) => {
     // DOKU Check Status API
     const clientId = (Deno.env.get('DOKU_CLIENT_ID') ?? '').trim();
     const secretKey = (Deno.env.get('DOKU_SECRET_KEY') ?? '').trim();
-    const isProd =
-      Deno.env.get('DOKU_ENVIRONMENT')?.toLowerCase() === 'production' ||
-      Deno.env.get('ENVIRONMENT')?.toLowerCase() === 'production';
-    const defaultApiUrl = isProd ? 'https://api.doku.com' : 'https://api-sandbox.doku.com';
-    const dokuEndpoint = (Deno.env.get('DOKU_API_URL') ?? defaultApiUrl).trim().replace(/\/$/, '');
-    const requestTarget = `/orders/v1/status/${order_number}`; 
+    const dokuEndpoint = getDokuApiUrl();
+    const requestTarget = `/orders/v1/status/${order_number}`;
     const requestId = crypto.randomUUID();
-    const requestTimestamp = new Date().toISOString();
+    const requestTimestamp = getDokuTimestamp();
 
     const signature = await generateDokuSignature(
       clientId,
@@ -204,11 +205,15 @@ serve(async (req: Request) => {
       updated_at: new Date().toISOString(),
     };
 
+    const paidDate = extractDokuPaidAt(dokuData);
+    const isPaidButCancelled =
+      transactionStatus === 'SUCCESS' && order.status === 'cancelled';
+
     if (!shouldPreservePaymentState) {
       paymentUpdatePayload.status = finalPaymentStatus;
       paymentUpdatePayload.paid_at =
         finalPaymentStatus === 'success'
-          ? existingPayment?.paid_at || new Date().toISOString()
+          ? existingPayment?.paid_at || paidDate
           : existingPayment?.paid_at || null;
     }
 
@@ -218,14 +223,29 @@ serve(async (req: Request) => {
       .update(paymentUpdatePayload)
       .eq('order_id', order.id);
 
+    // Record discrepancy if payment succeeded at DOKU on a cancelled order
+    if (isPaidButCancelled) {
+      await supabaseClient.from('payment_logs').insert({
+        gateway_order_id: order_number,
+        event_type: 'SYNC_SUCCESS_ON_CANCELLED',
+        raw_payload: dokuData,
+        payment_id: existingPayment?.id ?? null,
+      });
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         data: {
           order_status: finalOrderStatus,
           payment_status: finalPaymentStatus,
-          transaction_status: dokuData.transaction?.status || 'UNKNOWN'
-        }
+          transaction_status: dokuData.transaction?.status || 'UNKNOWN',
+          ...(isPaidButCancelled
+            ? {
+                warning: `PERHATIAN: Pembayaran tercatat LUNAS di DOKU (${paidDate}), namun pesanan berstatus dibatalkan di database. Hubungi admin untuk pemulihan pesanan.`,
+              }
+            : {}),
+        },
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );

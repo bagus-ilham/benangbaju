@@ -3,7 +3,12 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { generateDokuSignature } from "../_shared/doku-signature.ts";
+import {
+  generateDokuSignature,
+  getCanonicalAppUrl,
+  getDokuApiUrl,
+  getDokuTimestamp,
+} from "../_shared/doku-signature.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': Deno.env.get('NEXT_PUBLIC_APP_URL') ?? '*',
@@ -182,11 +187,7 @@ serve(async (req: Request) => {
     // Persiapan parameter DOKU
     const clientId = (Deno.env.get('DOKU_CLIENT_ID') ?? '').trim();
     const secretKey = (Deno.env.get('DOKU_SECRET_KEY') ?? '').trim();
-    const isProd =
-      Deno.env.get('DOKU_ENVIRONMENT')?.toLowerCase() === 'production' ||
-      Deno.env.get('ENVIRONMENT')?.toLowerCase() === 'production';
-    const defaultApiUrl = isProd ? 'https://api.doku.com' : 'https://api-sandbox.doku.com';
-    const dokuEndpoint = (Deno.env.get('DOKU_API_URL') ?? defaultApiUrl).trim().replace(/\/$/, ''); 
+    const dokuEndpoint = getDokuApiUrl();
     const requestTarget = '/checkout/v1/payment';
 
     if (!clientId || !secretKey) {
@@ -195,10 +196,16 @@ serve(async (req: Request) => {
     
     // Always use a unique UUID for DOKU Request-Id to prevent "REQUEST ID ALREADY USED" errors
     const requestId = crypto.randomUUID();
-    const requestTimestamp = new Date().toISOString().slice(0, 19) + 'Z';
+    const requestTimestamp = getDokuTimestamp();
 
     // Hitung dueDate dalam menit (misal 60 menit)
     const paymentDueDate = 60;
+
+    // Canonical merchant return URLs so DOKU redirects customer right back to payment verification page
+    const appUrl = getCanonicalAppUrl();
+    const encodedOrderNumber = encodeURIComponent(String(order.order_number));
+    const callbackUrl = `${appUrl}/pesanan/${encodedOrderNumber}?verifying=1`;
+    const callbackUrlCancel = `${appUrl}/pesanan/${encodedOrderNumber}`;
 
     // Normalisasi nomor telepon
     let customerPhone = String(shipping?.phone || '08123456789').replace(/[^\d+]/g, '');
@@ -214,6 +221,10 @@ serve(async (req: Request) => {
       order: {
         amount: Math.round(Number(order.total_amount)),
         invoice_number: String(order.order_number),
+        currency: 'IDR',
+        callback_url: callbackUrl,
+        callback_url_cancel: callbackUrlCancel,
+        auto_redirect: true,
       },
       payment: {
         payment_due_date: paymentDueDate,

@@ -264,7 +264,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
     checkPaymentMutationRef.current = checkPaymentMutation
   }, [checkPaymentMutation])
 
-  // Start payment verification — actively check with Midtrans API in 3 attempts (3s, 10s, 25s)
+  // Start payment verification — actively check with DOKU API over a 3-minute window
+  // (covers typical QRIS / mobile-banking scan completion time)
   const startPaymentVerification = useCallback(() => {
     if (verifyTimeoutsRef.current.length > 0) return
 
@@ -290,8 +291,8 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       return false
     }
 
-    // Schedule 3 attempts: 3s, 10s, 25s
-    const delays = [3000, 10000, 25000]
+    // Schedule 7 attempts across 3 minutes: 5s, 15s, 30s, 60s, 90s, 120s, 180s
+    const delays = [5000, 15000, 30000, 60000, 90000, 120000, 180000]
 
     delays.forEach((delay, index) => {
       const timeoutId = setTimeout(async () => {
@@ -310,6 +311,41 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       verifyTimeoutsRef.current.push(timeoutId)
     })
   }, [orderNumber, refetch])
+
+  // Auto-sync payment status when customer returns from DOKU / GoPay / Mobile Banking app
+  const lastFocusSyncRef = useRef<number>(0)
+  useEffect(() => {
+    if (!order || order.status !== 'pending_payment') return
+
+    const checkOnReturn = async () => {
+      if (document.visibilityState && document.visibilityState !== 'visible') return
+      const now = Date.now()
+      if (now - lastFocusSyncRef.current < 10_000) return
+      lastFocusSyncRef.current = now
+
+      try {
+        const result = await checkPaymentMutationRef.current.mutateAsync(orderNumber)
+        if (result.order_status && result.order_status !== 'pending_payment') {
+          verifyTimeoutsRef.current.forEach(clearTimeout)
+          verifyTimeoutsRef.current = []
+          setIsVerifyingPayment(false)
+          refetch()
+          if (result.order_status === 'processing' || result.order_status === 'completed') {
+            toast.success('Pembayaran terverifikasi! Status pesanan diperbarui.')
+          }
+        }
+      } catch {
+        // Silent best-effort check on tab return
+      }
+    }
+
+    window.addEventListener('focus', checkOnReturn)
+    document.addEventListener('visibilitychange', checkOnReturn)
+    return () => {
+      window.removeEventListener('focus', checkOnReturn)
+      document.removeEventListener('visibilitychange', checkOnReturn)
+    }
+  }, [order, orderNumber, refetch])
 
   // Handle Manual Status Check
   const handleManualCheckStatus = async () => {
@@ -457,6 +493,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
       toast.dismiss('payment-loading')
 
       if (redirect_url) {
+        startPaymentVerification()
         if (payWindow) {
           payWindow.location.href = redirect_url
         } else {

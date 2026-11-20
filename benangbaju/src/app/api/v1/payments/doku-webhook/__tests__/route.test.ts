@@ -122,4 +122,39 @@ describe('POST /api/v1/payments/doku-webhook', () => {
     expect(res.status).toBe(200)
     expect(syncOrderPaymentMock).toHaveBeenCalledWith('BB-2026-0003')
   })
+
+  it('accepts signature signed against explicit Request-Target header', async () => {
+    const body = JSON.stringify({ order: { invoice_number: 'BB-2026-0004' } })
+    const customTarget = '/custom/proxy/doku-webhook'
+    const validSig = buildSignature(
+      body,
+      'test-doku-secret-key',
+      'BRN-123',
+      'req-3',
+      '2026-11-20T00:00:00Z',
+      customTarget
+    )
+
+    syncOrderPaymentMock.mockResolvedValueOnce({
+      success: true,
+      data: { order_status: 'processing', payment_status: 'success' },
+    })
+
+    const req = new NextRequest('https://www.benangbaju.com/api/v1/payments/doku-webhook', {
+      method: 'POST',
+      body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Id': 'BRN-123',
+        'Request-Id': 'req-3',
+        'Request-Timestamp': '2026-11-20T00:00:00Z',
+        'Request-Target': customTarget,
+        Signature: validSig,
+      },
+    })
+
+    const res = await POST(req)
+    expect(res.status).toBe(200)
+    expect(syncOrderPaymentMock).toHaveBeenCalledWith('BB-2026-0004')
+  })
 })

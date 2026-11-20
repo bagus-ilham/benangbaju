@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
     const requestId = req.headers.get('Request-Id') || ''
     const requestTimestamp = req.headers.get('Request-Timestamp') || ''
     const incomingSignature = req.headers.get('Signature') || ''
-    const requestTarget = req.nextUrl.pathname
 
     if (!incomingSignature || !clientId || !requestId || !requestTimestamp) {
       safeLogError(
@@ -46,16 +45,27 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const calculatedSignature = generateDokuSignature({
-      clientId,
-      requestId,
-      requestTimestamp,
-      requestTarget,
-      secretKey,
-      rawBody,
+    const candidateTargets = Array.from(
+      new Set(
+        [req.headers.get('Request-Target'), req.nextUrl.pathname].filter((t): t is string =>
+          Boolean(t && t.trim())
+        )
+      )
+    )
+
+    const isSignatureValid = candidateTargets.some((requestTarget) => {
+      const calculatedSignature = generateDokuSignature({
+        clientId,
+        requestId,
+        requestTimestamp,
+        requestTarget,
+        secretKey,
+        rawBody,
+      })
+      return constantTimeCompare(calculatedSignature, incomingSignature)
     })
 
-    if (!constantTimeCompare(calculatedSignature, incomingSignature)) {
+    if (!isSignatureValid) {
       safeLogError(
         'DOKU_WEBHOOK_SIGNATURE',
         new Error('Invalid DOKU webhook signature received')
