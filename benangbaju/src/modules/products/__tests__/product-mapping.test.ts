@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mapProductListItem } from '../product.mapper'
+import { mapImages, mapProductListItem } from '../product.mapper'
 
 describe('Product Repository - mapProductListItem', () => {
   const baseProduct = {
@@ -174,5 +174,15 @@ describe('Product Repository - mapProductListItem', () => {
     expect(result.discountPercentMyr).toBe(25)
     expect(result.product_variants[0].stock).toBe(20)
     expect(result.product_variants[0].stock_my).toBe(4)
+  })
+
+  it('orders primary and main product images ahead of variant-specific images regardless of sort_order', () => {
+    const sorted = mapImages([
+      { id: 'img-v1', url: 'variant-1.jpg', sort_order: 0, is_primary: false, variant_id: 'v-1' },
+      { id: 'img-main-2', url: 'main-2.jpg', sort_order: 2, is_primary: false, variant_id: null },
+      { id: 'img-primary', url: 'primary.jpg', sort_order: 5, is_primary: true, variant_id: null },
+    ])
+
+    expect(sorted.map((i) => i.url)).toEqual(['primary.jpg', 'main-2.jpg', 'variant-1.jpg'])
   })
 })

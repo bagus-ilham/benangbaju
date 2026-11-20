@@ -74,3 +74,62 @@ export function ScallopEdge({
     </div>
   )
 }
+
+export type SectionEdgeStyle = 'flat' | 'scallop'
+
+export interface SectionBandEdgesProps {
+  /** Edge shape along the top boundary of the section ('flat' = crisp box, 'scallop' = upward scallop) */
+  topEdge?: SectionEdgeStyle
+  /** Edge shape along the bottom boundary of the section ('flat' = crisp box, 'scallop' = downward scallop) */
+  bottomEdge?: SectionEdgeStyle
+  /** SVG fill matching the section's background color */
+  fill: string
+  /** Optional subtle contour stroke color */
+  stroke?: string
+  strokeOpacity?: number
+  tileWidth?: number
+  height?: number
+}
+
+/**
+ * DRY helper for full-bleed colored sections to mix crisp flat ("kotak") edges
+ * and scalloped ("rumbai") edges consistently without duplicating positioning markup.
+ */
+export function SectionBandEdges({
+  topEdge = 'flat',
+  bottomEdge = 'flat',
+  fill,
+  stroke,
+  strokeOpacity = 0.45,
+  tileWidth = 56,
+  height = 22,
+}: SectionBandEdgesProps): React.JSX.Element | null {
+  if (topEdge !== 'scallop' && bottomEdge !== 'scallop') return null
+
+  return (
+    <>
+      {topEdge === 'scallop' && (
+        <ScallopEdge
+          direction="up"
+          fill={fill}
+          stroke={stroke}
+          strokeOpacity={strokeOpacity}
+          tileWidth={tileWidth}
+          height={height}
+          className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
+        />
+      )}
+      {bottomEdge === 'scallop' && (
+        <ScallopEdge
+          direction="down"
+          fill={fill}
+          stroke={stroke}
+          strokeOpacity={strokeOpacity}
+          tileWidth={tileWidth}
+          height={height}
+          className="absolute left-0 right-0 top-full mt-[-1px] pointer-events-none z-20"
+        />
+      )}
+    </>
+  )
+}

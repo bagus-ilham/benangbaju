@@ -20,7 +20,7 @@ interface ProductInfoSectionProps {
   isAdding: boolean
   isBuying: boolean
   onSizeGuideOpen: () => void
-  onVariantSelect: (variant: ProductVariant | null) => void
+  onVariantSelect: (variant: ProductVariant | null, isUserInitiated?: boolean) => void
   onIncrement: () => void
   onDecrement: () => void
   onToggleWishlist: () => void

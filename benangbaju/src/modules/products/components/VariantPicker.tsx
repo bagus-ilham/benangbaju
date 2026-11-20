@@ -11,7 +11,7 @@ import { translateVariantAttrName } from '@/lib/i18n'
 interface VariantPickerProps {
   variants: ProductVariant[]
   selectedVariantId: string | null
-  onVariantSelect: (variant: ProductVariant | null) => void
+  onVariantSelect: (variant: ProductVariant | null, isUserInitiated?: boolean) => void
 }
 
 export function VariantPicker({
@@ -61,6 +61,7 @@ export function VariantPicker({
 
   // Safe ref wrapper for parent callback
   const onVariantSelectRef = React.useRef(onVariantSelect)
+  const userInitiatedRef = React.useRef(false)
   React.useEffect(() => {
     onVariantSelectRef.current = onVariantSelect
   }, [onVariantSelect])
@@ -194,6 +195,9 @@ export function VariantPicker({
 
   // Run matching reactive validation whenever selected values change
   React.useEffect(() => {
+    const isUserInitiated = userInitiatedRef.current
+    userInitiatedRef.current = false
+
     const matchedVariant = variants.find((v) => {
       if (!v.is_active || !v.product_variant_attrs || v.product_variant_attrs.length === 0) {
         return false
@@ -205,13 +209,28 @@ export function VariantPicker({
     })
 
     if (matchedVariant) {
-      onVariantSelectRef.current(matchedVariant)
+      onVariantSelectRef.current(matchedVariant, isUserInitiated)
     } else {
-      onVariantSelectRef.current(null)
+      onVariantSelectRef.current(null, isUserInitiated)
     }
   }, [selectedValues, variants])
 
   const handleSelect = (attrName: string, value: string) => {
+    // If clicking the already-selected option, still notify parent as user-initiated so gallery can focus its variant image
+    if (selectedValues[attrName] === value) {
+      const currentMatched = variants.find(
+        (v) =>
+          v.is_active &&
+          v.product_variant_attrs?.length &&
+          v.product_variant_attrs.every((attr) => selectedValues[attr.attr_name] === attr.attr_value)
+      )
+      if (currentMatched) {
+        onVariantSelectRef.current(currentMatched, true)
+      }
+      return
+    }
+
+    userInitiatedRef.current = true
     setSelectedValues((prev) => {
       const next = { ...prev, [attrName]: value }
 

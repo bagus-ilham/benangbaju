@@ -6,28 +6,38 @@ import {
   CurrentYear,
   SmartImage as Image,
   HandDrawnIcon,
-  ScallopEdge,
+  SectionBandEdges,
+  type SectionEdgeStyle,
 } from '@/shared/components'
 
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 import { useMarket } from '@/shared/stores/marketStore'
+import { cn } from '@/lib/utils'
 
-export function Footer(): React.JSX.Element {
+interface FooterProps {
+  topEdge?: SectionEdgeStyle
+}
+
+export function Footer({ topEdge = 'flat' }: FooterProps = {}): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
   const { logoUrl, instagramUrl, tiktokUrl, whatsappUrl, shopeeUrl, shopeeMyUrl } = useSiteSettings()
   const activeShopeeUrl = isMY ? shopeeMyUrl : shopeeUrl
 
   return (
-    <footer className="relative bg-brand-gold text-brand-plum pt-4 pb-20 md:pb-0">
-      {/* Upward scalloped top edge rising organically into whatever section sits above */}
-      <ScallopEdge
-        direction="up"
+    <footer
+      className={cn(
+        'relative bg-brand-gold text-brand-plum pt-6 pb-20 md:pb-0',
+        topEdge === 'flat' && 'border-t border-brand-gold-stroke/70'
+      )}
+    >
+      <SectionBandEdges
+        topEdge={topEdge}
+        bottomEdge="flat"
         fill="var(--color-brand-gold)"
         stroke="var(--color-brand-gold-stroke)"
         strokeOpacity={0.55}
-        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-10"
       />
 
       <div className="py-10 md:py-14">

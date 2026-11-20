@@ -3,15 +3,27 @@
 import React from 'react'
 import { ProductListItem } from '@/modules/products/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
-import { PageContainer, ScallopEdge, SectionHeader } from '@/shared/components'
+import {
+  PageContainer,
+  SectionBandEdges,
+  SectionHeader,
+  type SectionEdgeStyle,
+} from '@/shared/components'
 import { motion } from 'framer-motion'
 import { useMarket } from '@/shared/stores/marketStore'
+import { cn } from '@/lib/utils'
 
 interface RelatedProductsProps {
   products: ProductListItem[]
+  topEdge?: SectionEdgeStyle
+  bottomEdge?: SectionEdgeStyle
 }
 
-export function RelatedProducts({ products }: RelatedProductsProps): React.JSX.Element | null {
+export function RelatedProducts({
+  products,
+  topEdge = 'flat',
+  bottomEdge = 'scallop',
+}: RelatedProductsProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
   const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
@@ -33,13 +45,19 @@ export function RelatedProducts({ products }: RelatedProductsProps): React.JSX.E
   }
 
   return (
-    <section className="relative bg-brand-blue-soft pt-14 pb-20 md:pt-16 md:pb-24 mt-4">
-      <ScallopEdge
-        direction="up"
+    <section
+      className={cn(
+        'relative bg-brand-blue-soft pt-14 pb-20 md:pt-16 md:pb-24 mt-4',
+        topEdge === 'flat' && 'border-t border-brand-blue-stroke/55',
+        bottomEdge === 'flat' && 'border-b border-brand-blue-stroke/55'
+      )}
+    >
+      <SectionBandEdges
+        topEdge={topEdge}
+        bottomEdge={bottomEdge}
         fill="var(--color-brand-blue-soft)"
         stroke="var(--color-brand-blue-stroke)"
         strokeOpacity={0.55}
-        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-10"
       />
 
       <PageContainer className="space-y-8">

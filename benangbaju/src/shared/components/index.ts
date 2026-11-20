@@ -45,7 +45,13 @@ export { Pagination } from './Pagination'
 export { StatusBadge, OrderStatusBadge, ReviewStatusBadge } from './StatusBadge'
 export { AdminSearchInput } from './AdminSearchInput'
 export { MarketSwitcher, MarketFlagIcon } from './MarketSwitcher'
-export { ScallopEdge, type ScallopEdgeProps } from './ScallopEdge'
+export {
+  ScallopEdge,
+  SectionBandEdges,
+  type ScallopEdgeProps,
+  type SectionBandEdgesProps,
+  type SectionEdgeStyle,
+} from './ScallopEdge'
 export { ImageUploadGrid } from './ImageUploadGrid'
 
 

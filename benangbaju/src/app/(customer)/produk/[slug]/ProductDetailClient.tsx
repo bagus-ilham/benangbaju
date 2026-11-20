@@ -60,6 +60,7 @@ export function ProductDetailClient({
   const router = useRouter()
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)
+  const [variantSelectionTick, setVariantSelectionTick] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
   const [isBuying, setIsBuying] = useState(false)
@@ -99,7 +100,9 @@ export function ProductDetailClient({
   }, [selectedVariant, effectiveProduct.product_variants])
 
   const [activeImage, setActiveImage] = useState<string | null>(
-    product.product_images.find((img) => img.is_primary)?.url ||
+    product.product_images.find((img) => img.is_primary && !img.variant_id)?.url ||
+      product.product_images.find((img) => img.is_primary)?.url ||
+      product.product_images.find((img) => !img.variant_id)?.url ||
       product.product_images[0]?.url ||
       null
   )
@@ -384,6 +387,7 @@ export function ProductDetailClient({
               images={product.product_images}
               productName={product.name}
               selectedVariantId={selectedVariant?.id || null}
+              variantSelectionTick={variantSelectionTick}
               activeImage={activeImage}
               setActiveImage={setActiveImage}
               hideThumbnailsOnDesktop={true}
@@ -421,9 +425,12 @@ export function ProductDetailClient({
               isAdding={isAdding}
               isBuying={isBuying}
               onSizeGuideOpen={() => setIsSizeGuideOpen(true)}
-              onVariantSelect={(variant) => {
+              onVariantSelect={(variant, isUserInitiated) => {
                 setSelectedVariant(variant)
                 setQuantity(1)
+                if (isUserInitiated) {
+                  setVariantSelectionTick((tick) => tick + 1)
+                }
               }}
               onIncrement={handleIncrement}
               onDecrement={handleDecrement}

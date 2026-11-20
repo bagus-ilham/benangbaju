@@ -38,21 +38,27 @@ export function mapVariants(rawVariants: any, includeAttrs = true): ProductVaria
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapImages(rawImages: any): ProductImage[] {
   const imagesList = Array.isArray(rawImages) ? rawImages : []
-  return (
-    imagesList
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((img: any) => ({
-        id: img.id,
-        url: img.url,
-        alt_text: img.alt_text,
-        sort_order: img.sort_order,
-        is_primary: img.is_primary,
-        variant_id: img.variant_id,
-      }))
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .sort((a: any, b: any) => a.sort_order - b.sort_order)
-  )
+  const getPriority = (img: ProductImage) => {
+    if (img.is_primary && !img.variant_id) return 0
+    if (img.is_primary) return 1
+    if (!img.variant_id) return 2
+    return 3
+  }
+  return imagesList
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((img: any) => ({
+      id: img.id,
+      url: img.url,
+      alt_text: img.alt_text,
+      sort_order: img.sort_order,
+      is_primary: img.is_primary,
+      variant_id: img.variant_id,
+    }))
+    .sort((a: ProductImage, b: ProductImage) => {
+      const priorityDiff = getPriority(a) - getPriority(b)
+      if (priorityDiff !== 0) return priorityDiff
+      return (a.sort_order ?? 0) - (b.sort_order ?? 0)
+    })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

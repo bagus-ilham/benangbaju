@@ -6,19 +6,30 @@ import { motion } from 'framer-motion'
 import { FlashSaleDetail } from '@/modules/flash-sales/types'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
-import { Button, PageContainer, ScallopEdge, SectionHeader } from '@/shared/components'
+import {
+  Button,
+  PageContainer,
+  SectionBandEdges,
+  SectionHeader,
+  type SectionEdgeStyle,
+} from '@/shared/components'
 import { useMarket } from '@/shared/stores/marketStore'
+import { cn } from '@/lib/utils'
 
 interface FlashSaleSectionProps {
   flashSale: FlashSaleDetail | null
   flashSales?: FlashSaleDetail[]
   isFullPage?: boolean
+  topEdge?: SectionEdgeStyle
+  bottomEdge?: SectionEdgeStyle
 }
 
 export function FlashSaleSection({
   flashSale,
   flashSales,
   isFullPage = false,
+  topEdge = 'scallop',
+  bottomEdge = 'flat',
 }: FlashSaleSectionProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
@@ -207,13 +218,20 @@ export function FlashSaleSection({
   const displayProducts = isFullPage ? visibleProducts : visibleProducts.slice(0, 4)
 
   return (
-    <section className="relative bg-brand-gold py-16 md:py-20 border-b border-brand-gold-stroke/40 text-brand-plum">
-      <ScallopEdge
-        direction="up"
+    <section
+      className={cn(
+        'relative bg-brand-gold py-16 md:py-20 text-brand-plum',
+        topEdge === 'flat' && 'border-t border-brand-gold-stroke/65',
+        bottomEdge === 'flat' && 'border-b border-brand-gold-stroke/65',
+        bottomEdge === 'scallop' && 'mb-6'
+      )}
+    >
+      <SectionBandEdges
+        topEdge={topEdge}
+        bottomEdge={bottomEdge}
         fill="var(--color-brand-gold)"
         stroke="var(--color-brand-gold-stroke)"
         strokeOpacity={0.45}
-        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
       />
 
       <PageContainer className="relative z-20">

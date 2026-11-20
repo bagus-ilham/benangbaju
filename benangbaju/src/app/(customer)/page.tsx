@@ -109,14 +109,30 @@ export default async function Homepage(): Promise<React.JSX.Element> {
         {/* 2. Produk Pilihan */}
         <FeaturedProductsSection products={featuredProducts} />
 
-        {/* 3. Collection 1 */}
-        {col1 && <CollectionShowcase collection={col1} products={collection1Products} index={0} />}
+        {/* 3. Collection 1: Atas kotak, bawah rumbai */}
+        {col1 && (
+          <CollectionShowcase
+            collection={col1}
+            products={collection1Products}
+            index={0}
+            topEdge="flat"
+            bottomEdge="scallop"
+          />
+        )}
 
         {/* Mid Banner */}
         <MidBannerSection banners={midBanners} />
 
-        {/* 5. Collection 2 */}
-        {col2 && <CollectionShowcase collection={col2} products={collection2Products} index={1} />}
+        {/* 5. Collection 2: Atas & bawah kotak (variasi seimbang) */}
+        {col2 && (
+          <CollectionShowcase
+            collection={col2}
+            products={collection2Products}
+            index={1}
+            topEdge="flat"
+            bottomEdge="flat"
+          />
+        )}
 
         {/* Additional sections wrapped in Suspense */}
         <Suspense fallback={<div className="py-8"><ProductGridSkeleton count={4} /></div>}>

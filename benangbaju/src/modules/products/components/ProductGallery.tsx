@@ -12,6 +12,8 @@ interface ProductGalleryProps {
   images: ProductImage[]
   productName: string
   selectedVariantId?: string | null
+  /** Incremented only when the user explicitly clicks a variant option (keeps primary image visible on initial load) */
+  variantSelectionTick?: number
   activeImage?: string | null
   setActiveImage?: (url: string) => void
   hideThumbnailsOnDesktop?: boolean
@@ -21,13 +23,18 @@ export function ProductGallery({
   images,
   productName,
   selectedVariantId,
+  variantSelectionTick,
   activeImage: controlledActiveImage,
   setActiveImage: controlledSetActiveImage,
   hideThumbnailsOnDesktop,
 }: ProductGalleryProps): React.JSX.Element {
   const market = useMarket()
   const [internalActiveImage, setInternalActiveImage] = useState<string | null>(
-    images.find((img) => img.is_primary)?.url || images[0]?.url || null
+    images.find((img) => img.is_primary && !img.variant_id)?.url ||
+      images.find((img) => img.is_primary)?.url ||
+      images.find((img) => !img.variant_id)?.url ||
+      images[0]?.url ||
+      null
   )
 
   const activeImage =
@@ -80,27 +87,42 @@ export function ProductGallery({
   }, [isLightboxOpen, activeImage, paginate])
 
   const prevVariantIdRef = useRef<string | null>(null)
+  const prevSelectionTickRef = useRef<number>(variantSelectionTick ?? 0)
 
-  // Auto-switch active image when a variant is selected and has a matching variant_id image
+  // Auto-switch active image ONLY when the user explicitly selects a variant (never overwrite primary image on initial load)
   useEffect(() => {
-    if (selectedVariantId && selectedVariantId !== prevVariantIdRef.current) {
-      prevVariantIdRef.current = selectedVariantId
-      const variantImage = images.find((img) => img.variant_id === selectedVariantId)
-      if (variantImage) {
-        setDirection(1)
+    if (!selectedVariantId) return
 
-        setActiveImage(variantImage.url)
+    if (variantSelectionTick !== undefined) {
+      if (variantSelectionTick === 0 || variantSelectionTick === prevSelectionTickRef.current) {
+        prevVariantIdRef.current = selectedVariantId
+        return
+      }
+      prevSelectionTickRef.current = variantSelectionTick
+    } else {
+      // Uncontrolled fallback: skip the initial auto-selected variant on mount
+      if (prevVariantIdRef.current === null) {
+        prevVariantIdRef.current = selectedVariantId
+        return
+      }
+      if (selectedVariantId === prevVariantIdRef.current) return
+    }
 
-        if (isMobile) {
-          const mobileGallery = document.getElementById('mobile-product-gallery')
-          const targetImg = document.getElementById(`gallery-img-${variantImage.id}`)
-          if (mobileGallery && targetImg) {
-            mobileGallery.scrollTo({ left: targetImg.offsetLeft, behavior: 'smooth' })
-          }
+    prevVariantIdRef.current = selectedVariantId
+    const variantImage = images.find((img) => img.variant_id === selectedVariantId)
+    if (variantImage) {
+      setDirection(1)
+      setActiveImage(variantImage.url)
+
+      if (isMobile) {
+        const mobileGallery = document.getElementById('mobile-product-gallery')
+        const targetImg = document.getElementById(`gallery-img-${variantImage.id}`)
+        if (mobileGallery && targetImg) {
+          mobileGallery.scrollTo({ left: targetImg.offsetLeft, behavior: 'smooth' })
         }
       }
     }
-  }, [selectedVariantId, images, isMobile])
+  }, [selectedVariantId, variantSelectionTick, images, isMobile])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile) return // Disable zoom on mobile

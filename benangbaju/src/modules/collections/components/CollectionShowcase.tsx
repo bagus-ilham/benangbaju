@@ -5,7 +5,12 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Collection } from '@/modules/collections/types'
 import { ProductListItem } from '@/modules/products/types'
-import { SmartLink as Link, HandDrawnIcon, ScallopEdge } from '@/shared/components'
+import {
+  SmartLink as Link,
+  HandDrawnIcon,
+  SectionBandEdges,
+  type SectionEdgeStyle,
+} from '@/shared/components'
 import { ProductCard } from '@/modules/products/components/ProductCard'
 import { cn } from '@/lib/utils'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
@@ -16,12 +21,16 @@ interface CollectionShowcaseProps {
   collection: Collection
   products: ProductListItem[]
   index?: number
+  topEdge?: SectionEdgeStyle
+  bottomEdge?: SectionEdgeStyle
 }
 
 export function CollectionShowcase({
   collection,
   products,
   index = 0,
+  topEdge,
+  bottomEdge,
 }: CollectionShowcaseProps): React.JSX.Element | null {
   const market = useMarket()
   const isMY = market === 'MY'
@@ -30,7 +39,10 @@ export function CollectionShowcase({
 
   if (isMY && visibleProducts.length === 0) return null
   const isReversed = index % 2 === 1
+  const resolvedTopEdge: SectionEdgeStyle = topEdge ?? 'flat'
+  const resolvedBottomEdge: SectionEdgeStyle = bottomEdge ?? (isReversed ? 'flat' : 'scallop')
   const bgColor = isReversed ? 'bg-brand-blue-soft' : 'bg-brand-gold'
+  const flatBorderColor = isReversed ? 'border-brand-blue-stroke/55' : 'border-brand-gold-stroke/65'
   const scallopFill = isReversed ? 'var(--color-brand-blue-soft)' : 'var(--color-brand-gold)'
   const scallopStroke = isReversed ? 'var(--color-brand-blue-stroke)' : 'var(--color-brand-gold-stroke)'
   const textColor = 'text-brand-plum'
@@ -50,14 +62,20 @@ export function CollectionShowcase({
 
   return (
     <section
-      className={cn('relative w-full transition-colors duration-500', bgColor)}
+      className={cn(
+        'relative w-full transition-colors duration-500',
+        bgColor,
+        resolvedTopEdge === 'flat' && ['border-t', flatBorderColor],
+        resolvedBottomEdge === 'flat' && ['border-b', flatBorderColor],
+        resolvedBottomEdge === 'scallop' && 'mb-6'
+      )}
     >
-      <ScallopEdge
-        direction="up"
+      <SectionBandEdges
+        topEdge={resolvedTopEdge}
+        bottomEdge={resolvedBottomEdge}
         fill={scallopFill}
         stroke={scallopStroke}
-        strokeOpacity={0.4}
-        className="absolute left-0 right-0 bottom-full mb-[-1px] pointer-events-none z-20"
+        strokeOpacity={0.45}
       />
       <div className="relative w-full overflow-hidden">
       <div
