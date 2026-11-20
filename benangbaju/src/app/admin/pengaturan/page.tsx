@@ -17,6 +17,7 @@ import toast from 'react-hot-toast'
 import { ActivityLogsTable } from './components/ActivityLogsTable'
 import { SettingsForm } from './components/SettingsForm'
 import { AdminPaymentSettingsForm } from './components/AdminPaymentSettingsForm'
+import { DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 
 const DEFAULT_SETTINGS: SiteSetting[] = [
   { key: 'store_name', value: 'Benangbaju', type: 'text', group: 'general', label: 'Nama Toko' },
@@ -113,10 +114,10 @@ const DEFAULT_SETTINGS: SiteSetting[] = [
   },
   {
     key: 'myr_exchange_rate',
-    value: '3600',
+    value: String(DEFAULT_MYR_EXCHANGE_RATE),
     type: 'number',
     group: 'shipping',
-    label: 'Estimasi Kurs IDR per 1 MYR (Contoh: 3600)',
+    label: `Estimasi Kurs IDR per 1 MYR (Contoh: ${DEFAULT_MYR_EXCHANGE_RATE})`,
   },
 ]
 

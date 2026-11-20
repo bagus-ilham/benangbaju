@@ -1,6 +1,7 @@
 import React from 'react'
 import { Select, Input, Button } from '@/shared/components'
 import type { SiteSetting } from '@/modules/settings/types'
+import { parseMyrExchangeRate } from '@/lib/constants'
 
 interface Collection {
   slug: string
@@ -27,7 +28,7 @@ export function SettingsForm({
   handleFieldChange,
   handleSaveSettings,
 }: SettingsFormProps): React.JSX.Element {
-  const currentRate = Number(fields['myr_exchange_rate']) || 3600
+  const currentRate = parseMyrExchangeRate(fields['myr_exchange_rate'])
 
   return (
     <form onSubmit={handleSaveSettings} className="space-y-8 max-w-3xl font-sans text-xs">

@@ -1,10 +1,9 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Button, SmartLink as Link } from '@/shared/components'
+import { Button, SmartLink as Link, OrderStatusBadge } from '@/shared/components'
 import { formatIDR, formatApproxMYR, formatMYR, formatDateWithTimezone } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
 import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
-import { OrderStatusBadge } from './OrderStatusBadge'
 
 interface OrderItem {
   id: string

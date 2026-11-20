@@ -1,8 +1,8 @@
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { safeLogError } from '../logger'
+import { CDN_BASE_URL } from '@/lib/constants'
 
-const CDN_BASE_URL = 'https://cdn.benangbaju.com'
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'benangbaju-assets'
 
 function getR2Client(): S3Client | null {

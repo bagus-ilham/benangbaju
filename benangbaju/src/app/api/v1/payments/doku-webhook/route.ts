@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import crypto from 'crypto'
 import { paymentSyncService } from '@/modules/orders/payment-sync.service'
 import { safeLogError } from '@/lib/logger'
-
-/**
- * Constant-time comparison to prevent timing attacks
- */
-function constantTimeCompare(a: string, b: string): boolean {
-  const aBuf = Buffer.from(a, 'utf8')
-  const bBuf = Buffer.from(b, 'utf8')
-  if (aBuf.length !== bBuf.length) return false
-  return crypto.timingSafeEqual(aBuf, bBuf)
-}
+import { constantTimeCompare, generateDokuSignature } from '@/lib/doku'
 
 export async function POST(req: NextRequest) {
   try {
@@ -56,13 +46,14 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Digest = base64(sha256(rawBody))
-    const digest = crypto.createHash('sha256').update(rawBody).digest('base64')
-    const component = `Client-Id:${clientId}\nRequest-Id:${requestId}\nRequest-Timestamp:${requestTimestamp}\nRequest-Target:${requestTarget}\nDigest:${digest}`
-    const calculatedSignature = `HMACSHA256=${crypto
-      .createHmac('sha256', secretKey)
-      .update(component)
-      .digest('base64')}`
+    const calculatedSignature = generateDokuSignature({
+      clientId,
+      requestId,
+      requestTimestamp,
+      requestTarget,
+      secretKey,
+      rawBody,
+    })
 
     if (!constantTimeCompare(calculatedSignature, incomingSignature)) {
       safeLogError(

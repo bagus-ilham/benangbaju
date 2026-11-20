@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getSiteSettingsAction } from '@/modules/settings/actions'
-import { SOCIAL_LINKS } from '@/lib/constants'
+import { SOCIAL_LINKS, parseMyrExchangeRate } from '@/lib/constants'
 import type { MyPricingConfig, MyPriceRounding } from '@/lib/utils/pricing'
 
 export function useSiteSettings() {
@@ -11,7 +11,15 @@ export function useSiteSettings() {
     staleTime: 1000 * 60 * 10, // 10 minutes
   })
 
-  const settings = query.data?.data || []
+  const settings = useMemo(() => query.data?.data || [], [query.data?.data])
+
+  const settingsMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    for (const s of settings) {
+      map[s.key] = s.value || ''
+    }
+    return map
+  }, [settings])
 
   const getSetting = (keys: string[]) => settings.find((s) => keys.includes(s.key))
 
@@ -63,8 +71,7 @@ export function useSiteSettings() {
   const shopeeMyUrl = shopeeMySetting?.value?.trim() || ''
 
   const myrRateSetting = getSetting(['myr_exchange_rate'])
-  const parsedMyrRate = parseFloat(myrRateSetting?.value || '3600')
-  const myrExchangeRate = !isNaN(parsedMyrRate) && parsedMyrRate > 0 ? parsedMyrRate : 3600
+  const myrExchangeRate = parseMyrExchangeRate(myrRateSetting?.value)
 
   const markupSetting = getSetting(['my_price_markup_percent'])
   const parsedMarkup = parseFloat(markupSetting?.value || '0')
@@ -100,6 +107,7 @@ export function useSiteSettings() {
   return {
     ...query,
     settings,
+    settingsMap,
     logoUrl,
     faviconUrl,
     instagramUrl,

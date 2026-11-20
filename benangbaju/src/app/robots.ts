@@ -1,9 +1,7 @@
 import { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export default function robots(): MetadataRoute.Robots {
-  // Menggunakan env URL atau langsung hardcode ke domain produksi
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://benangbaju.com'
-
   return {
     rules: {
       userAgent: '*',
@@ -19,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
         '/api/',
       ],
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }

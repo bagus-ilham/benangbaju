@@ -12,7 +12,7 @@ import {
 } from '@/modules/shipping/shipping.utils'
 import { fail, type ApiResponse } from '@/lib/api-response'
 import { validateMalaysiaStatePostalCodeMatch, hasPoBoxAddress } from '@/lib/utils/validation'
-import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
+import { QRIS_MAX_AMOUNT_IDR, parseMyrExchangeRate } from '@/lib/constants'
 
 const ERROR_CODES = {
   UNAUTHORIZED: 'UNAUTHORIZED',
@@ -338,8 +338,9 @@ export async function createSecureOrderAction(params: CreateOrderParams) {
       activeFlashItems = (fData || []) as unknown as ActiveFlashItem[]
     }
 
-    const exchangeRate =
-      Number(settingsRes.data?.find((s) => s.key === 'myr_exchange_rate')?.value) || 3600
+    const exchangeRate = parseMyrExchangeRate(
+      settingsRes.data?.find((s) => s.key === 'myr_exchange_rate')?.value
+    )
 
     const orderCountry = isMalaysia ? 'MY' : 'ID'
 

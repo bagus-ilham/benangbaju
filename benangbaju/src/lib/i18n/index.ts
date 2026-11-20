@@ -1,6 +1,7 @@
 'use client'
 
 import { useMarket, type Market } from '@/shared/stores/marketStore'
+import { ORDER_STATUS_LABELS_BILINGUAL } from '@/lib/constants'
 
 export interface TranslationContext {
   market: Market
@@ -45,16 +46,9 @@ export function translateVariantAttrName(attrName: string, isMY: boolean): strin
 }
 
 /**
- * Order Status bilingual label mapping.
+ * Order Status bilingual label mapping (re-exported from canonical constants).
  */
-export const ORDER_STATUS_LABELS: Record<string, { id: string; en: string }> = {
-  pending_payment: { id: 'Menunggu Pembayaran', en: 'Pending Payment' },
-  processing: { id: 'Diproses', en: 'Processing' },
-  shipped: { id: 'Dikirim', en: 'Shipped' },
-  completed: { id: 'Selesai', en: 'Completed' },
-  cancelled: { id: 'Dibatalkan', en: 'Cancelled' },
-  expired: { id: 'Kedaluwarsa', en: 'Expired' },
-}
+export const ORDER_STATUS_LABELS = ORDER_STATUS_LABELS_BILINGUAL
 
 export function getOrderStatusLabel(status: string, isMY: boolean): string {
   const entry = ORDER_STATUS_LABELS[status]

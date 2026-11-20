@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { createServerClient } from '@/lib/supabase/server'
+import { CDN_BASE_URL } from '@/lib/constants'
 
 const r2Client = new S3Client({
   region: 'auto',
@@ -12,7 +13,6 @@ const r2Client = new S3Client({
 })
 
 const R2_BUCKET = process.env.R2_BUCKET_NAME || 'benangbaju-assets'
-const CDN_BASE_URL = 'https://cdn.benangbaju.com'
 
 const MIME_TO_EXT: Record<string, string> = {
   'image/jpeg': 'jpg',

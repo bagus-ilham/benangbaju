@@ -1,8 +1,94 @@
-import { createServerClient } from '@/lib/supabase/server'
 import { createStaticClient } from '@/lib/supabase/static'
-import type { Database, Json } from '@/shared/types/database'
-import { ProductFilters, ProductPayload } from './types'
+import type { ProductFilters, ProductPayload } from './types'
 import { scoreProduct, type SearchCandidateProduct } from './product-search'
+import {
+  adminProductRepository,
+  type AdminFindVariantsParams,
+  type AdminVariantBatchUpdateItem,
+  type AdminVariantUpdateInput,
+} from './admin-product.repository'
+
+type StaticSupabase = ReturnType<typeof createStaticClient>
+
+interface ResolvedPublicFilters {
+  empty: boolean
+  categoryIds?: string[]
+  collectionProductIds?: string[]
+}
+
+const PUBLIC_VARIANT_IMAGE_RELATIONS = `
+  product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
+  product_images (id, url, alt_text, sort_order, is_primary)
+`
+
+async function resolvePublicFilterConstraints(
+  supabase: StaticSupabase,
+  filters: Pick<ProductFilters, 'categorySlug' | 'collectionSlug'>
+): Promise<ResolvedPublicFilters> {
+  let categoryIds: string[] | undefined
+  let collectionProductIds: string[] | undefined
+
+  if (filters.categorySlug) {
+    const { data: categories } = await supabase.from('categories').select('id, slug, parent_id')
+    const category = categories?.find((c) => c.slug === filters.categorySlug)
+    if (!category) return { empty: true }
+
+    categoryIds = [
+      category.id,
+      ...(categories?.filter((c) => c.parent_id === category.id).map((c) => c.id) || []),
+    ]
+  }
+
+  if (filters.collectionSlug) {
+    const { data: junction } = await supabase
+      .from('collection_products')
+      .select('product_id, collections!inner(id, slug)')
+      .eq('collections.slug', filters.collectionSlug)
+
+    const pIds = junction?.map((j) => j.product_id) || []
+    if (pIds.length === 0) return { empty: true }
+    collectionProductIds = pIds
+  }
+
+  return { empty: false, categoryIds, collectionProductIds }
+}
+
+interface FilterableQuery<T> {
+  in(column: string, values: string[]): T
+  gt(column: string, value: number): T
+  gte(column: string, value: number): T
+  lte(column: string, value: number): T
+}
+
+function applyPublicProductConstraints<T extends FilterableQuery<T>>(
+  query: T,
+  resolved: ResolvedPublicFilters,
+  filters: Pick<ProductFilters, 'productIds' | 'market' | 'minPrice' | 'maxPrice'>
+): T {
+  let q = query
+  if (resolved.categoryIds) {
+    q = q.in('category_id', resolved.categoryIds)
+  }
+  if (resolved.collectionProductIds) {
+    q = q.in('id', resolved.collectionProductIds)
+  }
+  if (filters.productIds && filters.productIds.length > 0) {
+    q = q.in('id', filters.productIds)
+  }
+  if (filters.market === 'MY') {
+    q = q.gt('min_price_myr', 0)
+  }
+
+  const minCol = filters.market === 'MY' ? 'min_price_myr' : 'min_price'
+  const maxCol = filters.market === 'MY' ? 'max_price_myr' : 'max_price'
+  if (filters.minPrice !== undefined) {
+    q = q.gte(minCol, filters.minPrice)
+  }
+  if (filters.maxPrice !== undefined) {
+    q = q.lte(maxCol, filters.maxPrice)
+  }
+  return q
+}
 
 export class ProductRepository {
   /**
@@ -24,67 +110,32 @@ export class ProductRepository {
     } = filters
 
     const offset = (page - 1) * limit
+    const resolved = await resolvePublicFilterConstraints(supabase, {
+      categorySlug,
+      collectionSlug,
+    })
+    if (resolved.empty) {
+      return { data: [], count: 0 }
+    }
 
     // JIKA ADA SEARCH QUERY: Gunakan pencarian cerdas multi-token + sinonim busana + relevance scoring
     if (searchQuery && searchQuery.trim().length > 0) {
-      let baseSearchQuery = supabase
-        .from('products')
-        .select(
+      const baseSearchQuery = applyPublicProductConstraints(
+        supabase
+          .from('products')
+          .select(
+            `
+            id, category_id, name, slug, is_featured, created_at, min_price, max_price, min_price_myr, max_price_myr,
+            description, short_description, description_en, short_description_en, care_guide_en, meta_title, meta_description,
+            categories (id, name, slug),
+            ${PUBLIC_VARIANT_IMAGE_RELATIONS}
           `
-          id, category_id, name, slug, is_featured, created_at, min_price, max_price, min_price_myr, max_price_myr,
-          description, short_description, description_en, short_description_en, care_guide_en, meta_title, meta_description,
-          categories (id, name, slug),
-          product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
-          product_images (id, url, alt_text, sort_order, is_primary)
-        `
-        )
-        .eq('is_active', true)
-        .eq('product_variants.is_active', true)
-
-      if (categorySlug) {
-        const { data: categories } = await supabase.from('categories').select('id, slug, parent_id')
-        const category = categories?.find((c) => c.slug === categorySlug)
-        if (category) {
-          const categoryIds = [
-            category.id,
-            ...(categories?.filter((c) => c.parent_id === category.id).map((c) => c.id) || []),
-          ]
-          baseSearchQuery = baseSearchQuery.in('category_id', categoryIds)
-        } else {
-          return { data: [], count: 0 }
-        }
-      }
-
-      if (collectionSlug) {
-        const { data: junction } = await supabase
-          .from('collection_products')
-          .select('product_id, collections!inner(id, slug)')
-          .eq('collections.slug', collectionSlug)
-
-        const pIds = junction?.map((j) => j.product_id) || []
-        if (pIds.length > 0) {
-          baseSearchQuery = baseSearchQuery.in('id', pIds)
-        } else {
-          return { data: [], count: 0 }
-        }
-      }
-
-      if (productIds && productIds.length > 0) {
-        baseSearchQuery = baseSearchQuery.in('id', productIds)
-      }
-
-      if (market === 'MY') {
-        baseSearchQuery = baseSearchQuery.gt('min_price_myr', 0)
-      }
-
-      const searchMinCol = market === 'MY' ? 'min_price_myr' : 'min_price'
-      const searchMaxCol = market === 'MY' ? 'max_price_myr' : 'max_price'
-      if (minPrice !== undefined) {
-        baseSearchQuery = baseSearchQuery.gte(searchMinCol, minPrice)
-      }
-      if (maxPrice !== undefined) {
-        baseSearchQuery = baseSearchQuery.lte(searchMaxCol, maxPrice)
-      }
+          )
+          .eq('is_active', true)
+          .eq('product_variants.is_active', true),
+        resolved,
+        { productIds, market, minPrice, maxPrice }
+      )
 
       const { data: searchCandidates, error } = await baseSearchQuery
       if (error) throw error
@@ -93,7 +144,6 @@ export class ProductRepository {
         return { data: [], count: 0 }
       }
 
-      // Hitung skor relevansi untuk setiap produk
       const scoredItems = searchCandidates
         .map((p) => ({
           product: p,
@@ -101,7 +151,6 @@ export class ProductRepository {
         }))
         .filter((item) => item.score > 0)
 
-      // Pengurutan berdasarkan skor relevansi atau kriteria sortBy
       scoredItems.sort((a, b) => {
         if (sortBy === 'price-low') {
           const aPrice = Number(market === 'MY' ? a.product.min_price_myr : a.product.min_price) || 0
@@ -117,7 +166,6 @@ export class ProductRepository {
           if (a.score !== b.score) return b.score - a.score
           return (b.product.is_featured ? 1 : 0) - (a.product.is_featured ? 1 : 0)
         }
-        // Default / newest: prioritas skor relevansi tertinggi, lalu tanggal terbaru
         if (b.score !== a.score) return b.score - a.score
         return new Date(b.product.created_at).getTime() - new Date(a.product.created_at).getTime()
       })
@@ -127,64 +175,24 @@ export class ProductRepository {
       return { data: paginatedData, count }
     }
 
-    let query = supabase
-      .from('products')
-      .select(
-        `
-        id, category_id, name, slug, is_featured, created_at, min_price, max_price, min_price_myr, max_price_myr,
-        categories (name, slug),
-        product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
-        product_images (id, url, alt_text, sort_order, is_primary)
-      `,
-        { count: 'exact' }
-      )
-      .eq('is_active', true)
-      .eq('product_variants.is_active', true)
-
-    if (categorySlug) {
-      const { data: categories } = await supabase.from('categories').select('id, slug, parent_id')
-      const category = categories?.find((c) => c.slug === categorySlug)
-      if (category) {
-        const categoryIds = [
-          category.id,
-          ...(categories?.filter((c) => c.parent_id === category.id).map((c) => c.id) || []),
-        ]
-        query = query.in('category_id', categoryIds)
-      } else {
-        return { data: [], count: 0 }
-      }
-    }
-
-    if (collectionSlug) {
-      const { data: junction } = await supabase
-        .from('collection_products')
-        .select('product_id, collections!inner(id, slug)')
-        .eq('collections.slug', collectionSlug)
-
-      const pIds = junction?.map((j) => j.product_id) || []
-      if (pIds.length > 0) {
-        query = query.in('id', pIds)
-      } else {
-        return { data: [], count: 0 }
-      }
-    }
-
-    if (productIds && productIds.length > 0) {
-      query = query.in('id', productIds)
-    }
-
-    if (market === 'MY') {
-      query = query.gt('min_price_myr', 0)
-    }
+    let query = applyPublicProductConstraints(
+      supabase
+        .from('products')
+        .select(
+          `
+          id, category_id, name, slug, is_featured, created_at, min_price, max_price, min_price_myr, max_price_myr,
+          categories (name, slug),
+          ${PUBLIC_VARIANT_IMAGE_RELATIONS}
+        `,
+          { count: 'exact' }
+        )
+        .eq('is_active', true)
+        .eq('product_variants.is_active', true),
+      resolved,
+      { productIds, market, minPrice, maxPrice }
+    )
 
     const priceCol = market === 'MY' ? 'min_price_myr' : 'min_price'
-    const maxPriceCol = market === 'MY' ? 'max_price_myr' : 'max_price'
-    if (minPrice !== undefined) {
-      query = query.gte(priceCol, minPrice)
-    }
-    if (maxPrice !== undefined) {
-      query = query.lte(maxPriceCol, maxPrice)
-    }
     if (sortBy === 'newest') {
       query = query.order('created_at', { ascending: false })
     } else if (sortBy === 'featured') {
@@ -199,9 +207,7 @@ export class ProductRepository {
       query = query.order('is_featured', { ascending: false })
     }
 
-    query = query.range(offset, offset + limit - 1)
-
-    const { data, count, error } = await query
+    const { data, count, error } = await query.range(offset, offset + limit - 1)
     if (error) throw error
     return { data, count }
   }
@@ -243,8 +249,7 @@ export class ProductRepository {
         `
         id, category_id, name, slug, is_featured, created_at, min_price_myr, max_price_myr,
         categories (name, slug),
-        product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active, product_variant_attrs(id, attr_name, attr_value)),
-        product_images (id, url, alt_text, sort_order, is_primary)
+        ${PUBLIC_VARIANT_IMAGE_RELATIONS}
       `
       )
       .eq('is_active', true)
@@ -257,92 +262,29 @@ export class ProductRepository {
     return data
   }
 
-  /**
-   * ADMIN: Mendapatkan daftar produk dengan filter minimalis
-   */
-  async adminFindMany(params: { page?: number; limit?: number; search?: string } = {}) {
-    const supabase = await createServerClient()
-    const { page = 1, limit = 20, search = '' } = params
-    const offset = (page - 1) * limit
+  // --- Admin delegations (implemented in AdminProductRepository) ---
 
-    if (search && search.trim().length > 0) {
-      const query = supabase.from('products').select(
-        `
-          id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, is_active, created_at,
-          categories (name, slug),
-          product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active)
-        `
-      )
-
-      const { data: allAdminProducts, error } = await query
-      if (error) throw error
-
-      const scored = (allAdminProducts || [])
-        .map((p) => ({
-          product: p,
-          score: scoreProduct(p as unknown as SearchCandidateProduct, search),
-        }))
-        .filter((item) => item.score > 0)
-        .sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score
-          return new Date(b.product.created_at).getTime() - new Date(a.product.created_at).getTime()
-        })
-
-      const count = scored.length
-      const paginatedData = scored.slice(offset, offset + limit).map((s) => s.product)
-      return { data: paginatedData, count }
-    }
-
-    const query = supabase.from('products').select(
-      `
-        id, name, slug, description, short_description, description_en, short_description_en, care_guide_en, weight_gram, is_featured, is_active, created_at,
-        categories (name, slug),
-        product_variants (id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active)
-      `,
-      { count: 'exact' }
-    )
-
-    const { data, count, error } = await query
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-
-    if (error) throw error
-    return { data, count }
+  adminFindMany(params?: { page?: number; limit?: number; search?: string }) {
+    return adminProductRepository.adminFindMany(params)
   }
 
-  /**
-   * ADMIN: Eksekusi RPC untuk membuat produk
-   */
-  async adminCreate(
+  adminCreate(
     productData: ProductPayload['productData'],
     variants: ProductPayload['variants'],
     images: ProductPayload['images'],
     marketplaceLinks: ProductPayload['links'],
     collectionIds: string[] = []
   ) {
-    const supabase = await createServerClient()
-    const { data: result, error: rpcErr } = await supabase.rpc('admin_create_product', {
-      p_product: productData as unknown as Json,
-      p_variants: variants as unknown as Json,
-      p_images: images as unknown as Json,
-      p_links: marketplaceLinks as unknown as Json,
-      p_collections: collectionIds as any,
-    } as any)
-
-    if (rpcErr) throw rpcErr
-    const res = result as Record<string, unknown>
-    if (res && res.success === false) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      throw new Error((res.error as any)?.message || 'Transaction failed')
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (res?.data as any)?.id
+    return adminProductRepository.adminCreate(
+      productData,
+      variants,
+      images,
+      marketplaceLinks,
+      collectionIds
+    )
   }
 
-  /**
-   * ADMIN: Eksekusi RPC untuk update produk
-   */
-  async adminUpdate(
+  adminUpdate(
     productId: string,
     productData: ProductPayload['productData'],
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -356,307 +298,54 @@ export class ProductRepository {
     linkIdsToDelete: string[],
     collectionIds: string[] = []
   ) {
-    const supabase = await createServerClient()
-    const { data: result, error: rpcErr } = await supabase.rpc('admin_update_product', {
-      p_product_id: productId as unknown as Json,
-      p_product: productData as unknown as Json,
-      p_variants_to_upsert: variantsToUpsert as unknown as Json,
-      p_variant_ids_to_delete: variantIdsToDelete as unknown as Json,
-      p_images_to_upsert: imagesToUpsert as unknown as Json,
-      p_image_ids_to_delete: imageIdsToDelete as unknown as Json,
-      p_links_to_upsert: linksToUpsert as unknown as Json,
-      p_link_ids_to_delete: linkIdsToDelete as unknown as Json,
-      p_collections: collectionIds as any,
-    } as any)
-
-    if (rpcErr) throw rpcErr
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = result as any
-    if (res && res.success === false) {
-      throw new Error(res.error?.message || 'Transaction failed')
-    }
-    return productId
-  }
-
-  /**
-   * ADMIN: Soft delete atau hard delete produk
-   */
-  async adminDelete(productId: string) {
-    const supabase = await createServerClient()
-    const { error } = await supabase.from('products').delete().eq('id', productId)
-    if (error) throw error
-    return true
-  }
-
-  /**
-   * Mendapatkan gambar-gambar suatu produk
-   */
-  async getProductImages(productId: string) {
-    const supabase = await createServerClient()
-    const { data, error } = await supabase
-      .from('product_images')
-      .select('id, url')
-      .eq('product_id', productId)
-    if (error) throw error
-    return data
-  }
-
-  /**
-   * Mendapatkan varian dari sebuah produk
-   */
-  async getProductVariants(productId: string) {
-    const supabase = await createServerClient()
-    const { data, error } = await supabase
-      .from('product_variants')
-      .select('id')
-      .eq('product_id', productId)
-    if (error) throw error
-    return data
-  }
-
-  /**
-   * Mendapatkan links dari produk
-   */
-  async getProductLinks(productId: string) {
-    const supabase = await createServerClient()
-    const { data, error } = await supabase
-      .from('product_marketplace_links')
-      .select('id, url')
-      .eq('product_id', productId)
-    if (error) throw error
-    return data
-  }
-
-  /**
-   * ADMIN: Update status aktif produk
-   */
-  async adminUpdateActiveStatus(productId: string, isActive: boolean) {
-    const supabase = await createServerClient()
-    const { error } = await supabase
-      .from('products')
-      .update({ is_active: isActive })
-      .eq('id', productId)
-    if (error) throw error
-    return true
-  }
-
-  /**
-   * ADMIN: Update status featured produk
-   */
-  async adminUpdateFeaturedStatus(productId: string, isFeatured: boolean) {
-    const supabase = await createServerClient()
-    const { error } = await supabase
-      .from('products')
-      .update({ is_featured: isFeatured })
-      .eq('id', productId)
-    if (error) throw error
-    return true
-  }
-
-  /**
-   * ADMIN: Mendapatkan daftar varian terpaginasi dengan filter pencarian dan status stok
-   */
-  async adminFindManyVariants(params: {
-    page?: number
-    limit?: number
-    search?: string
-    stockFilter?: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
-    statusFilter?: 'all' | 'active' | 'inactive'
-    sortBy?: 'name_asc' | 'price_asc' | 'price_desc' | 'stock_asc' | 'stock_desc' | 'newest'
-    market?: 'ID' | 'MY'
-  } = {}) {
-    const supabase = await createServerClient()
-    const {
-      page = 1,
-      limit = 20,
-      search = '',
-      stockFilter = 'all',
-      statusFilter = 'all',
-      sortBy = 'newest',
-      market = 'ID',
-    } = params
-    const offset = (page - 1) * limit
-    const stockCol = market === 'MY' ? 'stock_my' : 'stock'
-    const priceCol = market === 'MY' ? 'price_myr' : 'price'
-
-    let query = supabase.from('product_variants').select(
-      `
-        id, product_id, sku, name, price, compare_price, price_myr, compare_price_myr, stock, stock_my, is_active,
-        products!inner (
-          id, name, slug, is_active,
-          categories (name)
-        )
-      `,
-      { count: 'exact' }
+    return adminProductRepository.adminUpdate(
+      productId,
+      productData,
+      variantsToUpsert,
+      variantIdsToDelete,
+      imagesToUpsert,
+      imageIdsToDelete,
+      linksToUpsert,
+      linkIdsToDelete,
+      collectionIds
     )
-
-    if (search) {
-      const escapedSearch = search
-        .replace(/\\/g, '\\\\')
-        .replace(/%/g, '\\%')
-        .replace(/_/g, '\\_')
-        .replace(/,/g, '\\,')
-
-      const { data: matchedProducts } = await supabase
-        .from('products')
-        .select('id')
-        .ilike('name', `%${escapedSearch}%`)
-
-      const matchedProductIds = (matchedProducts || []).map((p) => p.id)
-
-      if (matchedProductIds.length > 0) {
-        query = query.or(
-          `name.ilike.%${escapedSearch}%,sku.ilike.%${escapedSearch}%,product_id.in.(${matchedProductIds.join(',')})`
-        )
-      } else {
-        query = query.or(`name.ilike.%${escapedSearch}%,sku.ilike.%${escapedSearch}%`)
-      }
-    }
-
-    if (stockFilter === 'out_of_stock') {
-      query = query.lte(stockCol, 0)
-    } else if (stockFilter === 'low_stock') {
-      query = query.gt(stockCol, 0).lte(stockCol, 5)
-    } else if (stockFilter === 'in_stock') {
-      query = query.gt(stockCol, 0)
-    }
-
-    if (statusFilter === 'active') {
-      query = query.eq('is_active', true)
-    } else if (statusFilter === 'inactive') {
-      query = query.eq('is_active', false)
-    }
-
-    if (sortBy === 'name_asc') {
-      query = query.order('name', { ascending: true })
-    } else if (sortBy === 'price_asc') {
-      query = query.order(priceCol, { ascending: true, nullsFirst: false })
-    } else if (sortBy === 'price_desc') {
-      query = query.order(priceCol, { ascending: false, nullsFirst: false })
-    } else if (sortBy === 'stock_asc') {
-      query = query.order(stockCol, { ascending: true })
-    } else if (sortBy === 'stock_desc') {
-      query = query.order(stockCol, { ascending: false })
-    } else {
-      query = query.order('id', { ascending: false })
-    }
-
-    const { data, count, error } = await query.range(offset, offset + limit - 1)
-
-    if (error) throw error
-    return { data, count }
   }
 
-  /**
-   * ADMIN: Update single variant price & stock (ID & MY)
-   */
-  async adminUpdateVariant(
-    variantId: string,
-    data: {
-      price: number
-      compare_price: number | null
-      price_myr?: number | null
-      compare_price_myr?: number | null
-      stock: number
-      stock_my?: number
-      is_active: boolean
-    }
-  ) {
-    const supabase = await createServerClient()
-
-    const { data: currentVar } = await supabase
-      .from('product_variants')
-      .select('stock, stock_my')
-      .eq('id', variantId)
-      .single()
-
-    const oldStock = currentVar?.stock ?? 0
-    const oldStockMy = currentVar?.stock_my ?? 0
-
-    const updatePayload: Database['public']['Tables']['product_variants']['Update'] = {
-      price: data.price,
-      compare_price: data.compare_price,
-      stock: data.stock,
-      is_active: data.is_active,
-    }
-    if (data.price_myr !== undefined) updatePayload.price_myr = data.price_myr
-    if (data.compare_price_myr !== undefined) updatePayload.compare_price_myr = data.compare_price_myr
-    if (data.stock_my !== undefined) updatePayload.stock_my = data.stock_my
-
-    const { error } = await supabase
-      .from('product_variants')
-      .update(updatePayload)
-      .eq('id', variantId)
-
-    if (error) throw error
-
-    const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
-    if (oldStock <= 0 && data.stock > 0) {
-      await checkAndDispatchStockNotifications(supabase, variantId, data.stock, 'ID')
-    }
-    if (data.stock_my !== undefined && oldStockMy <= 0 && data.stock_my > 0) {
-      await checkAndDispatchStockNotifications(supabase, variantId, data.stock_my, 'MY')
-    }
-
-    return true
+  adminDelete(productId: string) {
+    return adminProductRepository.adminDelete(productId)
   }
 
-  /**
-   * ADMIN: Batch update variant price & stock (ID & MY)
-   */
-  async adminBatchUpdateVariants(
-    updates: Array<{
-      variantId: string
-      price: number
-      compare_price: number | null
-      price_myr?: number | null
-      compare_price_myr?: number | null
-      stock: number
-      stock_my?: number
-      is_active: boolean
-    }>
-  ) {
-    const supabase = await createServerClient()
-    const { checkAndDispatchStockNotifications } = await import('./inventory.repository')
+  getProductImages(productId: string) {
+    return adminProductRepository.getProductImages(productId)
+  }
 
-    for (const item of updates) {
-      const { data: currentVar } = await supabase
-        .from('product_variants')
-        .select('stock, stock_my')
-        .eq('id', item.variantId)
-        .single()
+  getProductVariants(productId: string) {
+    return adminProductRepository.getProductVariants(productId)
+  }
 
-      const oldStock = currentVar?.stock ?? 0
-      const oldStockMy = currentVar?.stock_my ?? 0
+  getProductLinks(productId: string) {
+    return adminProductRepository.getProductLinks(productId)
+  }
 
-      const updatePayload: Database['public']['Tables']['product_variants']['Update'] = {
-        price: item.price,
-        compare_price: item.compare_price,
-        stock: item.stock,
-        is_active: item.is_active,
-      }
-      if (item.price_myr !== undefined) updatePayload.price_myr = item.price_myr
-      if (item.compare_price_myr !== undefined) updatePayload.compare_price_myr = item.compare_price_myr
-      if (item.stock_my !== undefined) updatePayload.stock_my = item.stock_my
+  adminUpdateActiveStatus(productId: string, isActive: boolean) {
+    return adminProductRepository.adminUpdateActiveStatus(productId, isActive)
+  }
 
-      const { error } = await supabase
-        .from('product_variants')
-        .update(updatePayload)
-        .eq('id', item.variantId)
+  adminUpdateFeaturedStatus(productId: string, isFeatured: boolean) {
+    return adminProductRepository.adminUpdateFeaturedStatus(productId, isFeatured)
+  }
 
-      if (error) throw error
+  adminFindManyVariants(params?: AdminFindVariantsParams) {
+    return adminProductRepository.adminFindManyVariants(params)
+  }
 
-      if (oldStock <= 0 && item.stock > 0) {
-        await checkAndDispatchStockNotifications(supabase, item.variantId, item.stock, 'ID')
-      }
-      if (item.stock_my !== undefined && oldStockMy <= 0 && item.stock_my > 0) {
-        await checkAndDispatchStockNotifications(supabase, item.variantId, item.stock_my, 'MY')
-      }
-    }
+  adminUpdateVariant(variantId: string, data: AdminVariantUpdateInput) {
+    return adminProductRepository.adminUpdateVariant(variantId, data)
+  }
 
-    return true
+  adminBatchUpdateVariants(updates: AdminVariantBatchUpdateItem[]) {
+    return adminProductRepository.adminBatchUpdateVariants(updates)
   }
 }
-
 
 export const productRepository = new ProductRepository()

@@ -4,6 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Button, Textarea, HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { formatIDR, formatMYR } from '@/lib/utils'
+import { DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 import { useMarket } from '@/shared/stores/marketStore'
 import type { UserAddress, ShippingOption } from '@/modules/shipping/types'
 
@@ -36,7 +37,7 @@ export function CheckoutAddressForm({
   notes,
   onNotesChange,
   totalWeightGram = 0,
-  myrExchangeRate = 3600,
+  myrExchangeRate = DEFAULT_MYR_EXCHANGE_RATE,
 }: CheckoutAddressFormProps): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY' || selectedAddress?.country_code === 'MY'

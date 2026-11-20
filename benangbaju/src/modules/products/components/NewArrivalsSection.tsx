@@ -1,13 +1,8 @@
 'use client'
 
 import React from 'react'
-import { SmartLink as Link } from '@/shared/components'
-import { motion } from 'framer-motion'
-import { ProductCard } from '@/modules/products/components/ProductCard'
 import { ProductListItem } from '@/modules/products/types'
-import { Button, PageContainer, SectionHeader } from '@/shared/components'
-import { staggerContainer, fadeUpItem } from '@/lib/motion'
-import { useMarket } from '@/shared/stores/marketStore'
+import { ProductShowcaseSection } from './ProductShowcaseSection'
 
 interface NewArrivalsSectionProps {
   products: ProductListItem[]
@@ -16,52 +11,21 @@ interface NewArrivalsSectionProps {
 export function NewArrivalsSection({
   products,
 }: NewArrivalsSectionProps): React.JSX.Element | null {
-  const market = useMarket()
-  const isMY = market === 'MY'
-  const visibleProducts = isMY ? products.filter((p) => p.isAvailableInMY) : products
-  if (visibleProducts.length === 0) return null
-
   return (
-    <section className="bg-brand-cream section-texture pt-16 pb-20 md:pt-20 md:pb-24 font-sans">
-      <PageContainer>
-        <SectionHeader
-          eyebrow={isMY ? "Fresh Drops" : "Koleksi Terbaru"}
-          title={isMY ? "New Arrivals" : "Keluaran Terbaru"}
-          className="[&_h2]:text-brand-plum"
-        />
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          className="flex md:grid md:grid-cols-4 gap-x-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory w-full"
-        >
-          {visibleProducts.slice(0, 4).map((product) => (
-            <motion.div
-              key={product.id}
-              variants={fadeUpItem}
-              className="w-[45vw] sm:w-[35vw] md:w-auto flex-shrink-0 snap-start bg-brand-gold/75 border border-brand-gold-stroke/65 rounded-2xl p-2"
-            >
-              <ProductCard product={product} />
-            </motion.div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="flex justify-center mt-12"
-        >
-          <Link href="/produk?urutkan=newest">
-            <Button variant="accent" size="lg" className="min-w-[200px] font-bold">
-              {isMY ? "View All New Arrivals" : "Lihat Semua Koleksi Terbaru"}
-            </Button>
-          </Link>
-        </motion.div>
-      </PageContainer>
-    </section>
+    <ProductShowcaseSection
+      products={products}
+      eyebrowId="Koleksi Terbaru"
+      eyebrowMy="Fresh Drops"
+      titleId="Keluaran Terbaru"
+      titleMy="New Arrivals"
+      ctaLabelId="Lihat Semua Koleksi Terbaru"
+      ctaLabelMy="View All New Arrivals"
+      ctaHref="/produk?urutkan=newest"
+      ctaSize="lg"
+      ctaClassName="min-w-[200px]"
+      sectionClassName="section-texture pt-16 pb-20 md:pt-20 md:pb-24"
+      headerClassName="[&_h2]:text-brand-plum"
+      cardWrapperClassName="bg-brand-gold/75 border border-brand-gold-stroke/65 rounded-2xl p-2"
+    />
   )
 }

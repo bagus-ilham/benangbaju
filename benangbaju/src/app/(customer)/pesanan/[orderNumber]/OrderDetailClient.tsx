@@ -25,7 +25,7 @@ import toast from 'react-hot-toast'
 import { useDokuCheckoutScript } from '@/shared/hooks/useDokuCheckoutScript'
 import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { useQuery } from '@tanstack/react-query'
-import { useSiteSettings } from '@/modules/settings/hooks/useAdminSettings'
+import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { useMarket } from '@/shared/stores/marketStore'
 import { formatDateWithTimezone } from '@/lib/utils'
 import { trackPurchase } from '@/lib/analytics'
@@ -66,7 +66,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
 
   const [isReordering, setIsReordering] = useState(false)
-  const { data: siteSettingsRes } = useSiteSettings()
+  const { myrExchangeRate: siteMyrRate } = useSiteSettings()
 
   // Re-order handler
   const handleReorder = async () => {
@@ -203,15 +203,7 @@ function OrderDetailContent({ params }: OrderDetailPageProps): React.JSX.Element
 
   // R4 Snapshot: Prioritize exchange rate snapshot stored when the order was created
   const snapRate = order?.exchange_rate_at_order
-  const settingsData = siteSettingsRes?.data
-  const myrExchangeRate = React.useMemo(() => {
-    if (snapRate && Number(snapRate) > 0) {
-      return Number(snapRate)
-    }
-    const s = settingsData?.find((item) => item.key === 'myr_exchange_rate')
-    const rate = parseFloat(s?.value || '3600')
-    return isNaN(rate) || rate <= 0 ? 3600 : rate
-  }, [snapRate, settingsData])
+  const myrExchangeRate = snapRate && Number(snapRate) > 0 ? Number(snapRate) : siteMyrRate
 
   // Fetch return request if order exists
   const { data: returnRequest } = useQuery({

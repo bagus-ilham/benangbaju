@@ -1,5 +1,7 @@
 import { formatIDR } from './format'
 
+import { DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
+
 export type MyPriceRounding = 'none' | 'x.90' | 'whole'
 
 export interface MyPricingConfig {
@@ -71,7 +73,7 @@ export function getMyPrice(baseIdr: number, config?: MyPricingConfig): MyPriceRe
   const exchangeRate =
     typeof config?.exchangeRate === 'number' && config.exchangeRate > 0
       ? config.exchangeRate
-      : 3600
+      : DEFAULT_MYR_EXCHANGE_RATE
   const markupPercent =
     typeof config?.markupPercent === 'number' && !isNaN(config.markupPercent)
       ? Math.max(0, config.markupPercent)

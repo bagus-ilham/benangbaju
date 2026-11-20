@@ -2,7 +2,11 @@ import React from 'react'
 import { AdminPanel, Input, HandDrawnIcon } from '@/shared/components'
 import { buildWhatsAppUrl, formatApproxMYR, formatIDR, formatMYR } from '@/lib/utils/format'
 import { getCourierTrackingUrl, parseTrackingNumbers } from '@/lib/utils/shipping'
-import { DEFAULT_WEIGHT_GRAM } from '@/lib/constants'
+import {
+  DEFAULT_WEIGHT_GRAM,
+  DEFAULT_MYR_EXCHANGE_RATE,
+  isEastMalaysiaProvince,
+} from '@/lib/constants'
 import type { OrderItem } from '@/modules/orders/types'
 import toast from 'react-hot-toast'
 
@@ -54,9 +58,7 @@ export function AdminOrderShippingPanel({
   const isMalaysia = orderShipping.country_code === 'MY'
   const isEastMalaysia =
     isMalaysia &&
-    (orderShipping.province_name?.toLowerCase().includes('sabah') ||
-      orderShipping.province_name?.toLowerCase().includes('sarawak') ||
-      orderShipping.province_name?.toLowerCase().includes('labuan') ||
+    (isEastMalaysiaProvince(orderShipping.province_name) ||
       (parseInt(orderShipping.postal_code || '0', 10) >= 87000 &&
         parseInt(orderShipping.postal_code || '0', 10) <= 98999))
 
@@ -273,7 +275,10 @@ export function AdminOrderShippingPanel({
                       <p className="text-[10px] text-amber-800 font-semibold mt-0.5">
                         {declaredMyr != null
                           ? `Settlement: ${formatIDR(declaredValueIdr)}`
-                          : formatApproxMYR(declaredValueIdr, order?.exchange_rate_at_order || 3600)}
+                          : formatApproxMYR(
+                              declaredValueIdr,
+                              order?.exchange_rate_at_order || DEFAULT_MYR_EXCHANGE_RATE
+                            )}
                       </p>
                     </>
                   )

@@ -17,6 +17,7 @@ import { AdminOrderShippingPanel } from './components/AdminOrderShippingPanel'
 import { AdminOrderStatusPanel } from './components/AdminOrderStatusPanel'
 import { AdminOrderPaymentPanel } from './components/AdminOrderPaymentPanel'
 import { formatDateWithTimezone, formatMYR } from '@/lib/utils'
+import { DEFAULT_MYR_EXCHANGE_RATE, isEastMalaysiaProvince } from '@/lib/constants'
 
 const supabase = createBrowserClient()
 
@@ -186,8 +187,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
 
   const isMalaysia = order.country_code === 'MY' || order.order_shipping?.country_code === 'MY'
   const isEastMalaysia =
-    isMalaysia &&
-    /sabah|sarawak|labuan/i.test(order.order_shipping?.province_name || '')
+    isMalaysia && isEastMalaysiaProvince(order.order_shipping?.province_name)
   const declaredValueIdr = Math.max(0, Number(order.subtotal || 0) - Number(order.discount_amount || 0))
 
   return (
@@ -339,7 +339,7 @@ function AdminOrderDetailContent({ params }: AdminOrderDetailPageProps): React.J
           <AdminPanel title={isMalaysia ? 'Rincian Biaya (MYR)' : 'Rincian Biaya'}>
             <div className="space-y-3 text-neutral-600 font-medium">
               {(() => {
-                const effRate = order.exchange_rate_at_order || 3600
+                const effRate = order.exchange_rate_at_order || DEFAULT_MYR_EXCHANGE_RATE
                 const subMyr =
                   order.subtotal_myr != null
                     ? Number(order.subtotal_myr)

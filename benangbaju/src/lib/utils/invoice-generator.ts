@@ -1,5 +1,5 @@
-import { formatIDR, formatMYR, formatApproxMYR } from './format'
-import { DEFAULT_WEIGHT_GRAM } from '@/lib/constants'
+import { formatIDR, formatMYR } from './format'
+import { DEFAULT_WEIGHT_GRAM, DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 
 export interface InvoiceOrderData {
   id?: string
@@ -73,7 +73,7 @@ export function generateCustomerInvoiceHtml(
 
   const shipping = order.order_shipping
   const items = order.order_items || []
-  const rate = order.exchange_rate_at_order || 3600
+  const rate = order.exchange_rate_at_order || DEFAULT_MYR_EXCHANGE_RATE
 
   const itemsHtml = items
     .map((item, idx) => {
@@ -325,7 +325,7 @@ export function generateCommercialInvoiceHtml(
 ): string {
   const shipping = order.order_shipping
   const items = order.order_items || []
-  const rate = order.exchange_rate_at_order || 3600
+  const rate = order.exchange_rate_at_order || DEFAULT_MYR_EXCHANGE_RATE
   const defaultHs = options?.defaultHsCode || '6204.43.00'
 
   let totalQty = 0

@@ -1,7 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { safeLogError } from '../logger'
-
-const CDN_BASE_URL = 'https://cdn.benangbaju.com'
+import { CDN_BASE_URL } from '@/lib/constants'
 
 /**
  * Uploads an image file to R2 via API route and returns its CDN URL.

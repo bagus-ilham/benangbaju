@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, HandDrawnIcon } from '@/shared/components'
 import { formatIDR, formatMYR } from '@/lib/utils'
-import { QRIS_MAX_AMOUNT_IDR } from '@/lib/constants'
+import { QRIS_MAX_AMOUNT_IDR, DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 import type { CartItem } from '@/modules/cart/stores/cartStore'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -74,7 +74,7 @@ export function CheckoutSummaryCard({
   canSubmit,
   selectedChannelCode = null,
   isMalaysia = false,
-  myrExchangeRate = 3600,
+  myrExchangeRate = DEFAULT_MYR_EXCHANGE_RATE,
 }: CheckoutSummaryCardProps): React.JSX.Element {
   const isQris = selectedChannelCode?.toUpperCase() === 'QRIS' || isMalaysia
   const isQrisLimitExceeded = isQris && totalAmount > QRIS_MAX_AMOUNT_IDR

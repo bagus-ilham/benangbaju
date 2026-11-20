@@ -46,5 +46,6 @@ export { StatusBadge, OrderStatusBadge, ReviewStatusBadge } from './StatusBadge'
 export { AdminSearchInput } from './AdminSearchInput'
 export { MarketSwitcher, MarketFlagIcon } from './MarketSwitcher'
 export { ScallopEdge, type ScallopEdgeProps } from './ScallopEdge'
+export { ImageUploadGrid } from './ImageUploadGrid'
 
 

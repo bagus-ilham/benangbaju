@@ -1,17 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useId, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Modal, Button, Input, Textarea, Select, Checkbox } from '@/shared/components'
-import {
-  useAddUserAddress,
-  useUpdateUserAddress,
-  useDistrictSearch,
-} from '@/modules/shipping/hooks/useShipping'
-import { useDebounce } from '@/shared/hooks/useDebounce'
-import type { UserAddress } from '@/modules/shipping/types'
-import { createBrowserClient } from '@/lib/supabase/client'
+import { useAddUserAddress, useUpdateUserAddress } from '@/modules/shipping/hooks/useShipping'
+import type { District, UserAddress } from '@/modules/shipping/types'
 import toast from 'react-hot-toast'
-import { z } from 'zod'
 import { useForm, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
@@ -22,84 +15,15 @@ import {
   SUPPORTED_COUNTRIES,
   type SupportedCountryCode,
 } from '@/lib/constants'
+import { normalizePhoneE164 } from '@/lib/utils/validation'
 import {
-  isValidPhoneByCountry,
-  normalizePhoneE164,
-  validateMalaysiaStatePostalCodeMatch,
-  hasPoBoxAddress,
-  validatePostalCode,
-} from '@/lib/utils/validation'
-
-const addressSchema = z
-  .object({
-    country_code: z.enum(['ID', 'MY']),
-    label: z.string().min(1, 'Label alamat wajib diisi (cth: Rumah)'),
-    recipient_name: z.string().min(3, 'Nama penerima minimal 3 karakter'),
-    phone: z.string().min(8, 'Nomor telepon minimal 8 digit'),
-    province_name: z.string().min(1, 'Provinsi/Negeri wajib dipilih'),
-    city_name: z.string().min(1, 'Kota/Bandar wajib diisi'),
-    district_name: z.string().optional().nullable(),
-    postal_code: z.string().min(1, 'Kode Pos/Poskod wajib diisi'),
-    full_address: z.string().min(10, 'Alamat lengkap minimal 10 karakter'),
-    zone_id: z.string().nullable(),
-    is_default: z.boolean(),
-  })
-  .superRefine((data, ctx) => {
-    // 1. Phone validation by country
-    if (!isValidPhoneByCountry(data.phone, data.country_code)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['phone'],
-        message:
-          data.country_code === 'MY'
-            ? 'Format nomor Malaysia tidak valid (cth: +60123456789 atau 012-3456789)'
-            : 'Format nomor Indonesia tidak valid (cth: 08123456789 atau +628123456789)',
-      })
-    }
-
-    // 2. PO Box rejection (unsupported by crossborder couriers)
-    if (hasPoBoxAddress(data.full_address)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['full_address'],
-        message: 'Pengiriman tidak dapat dilakukan ke alamat P.O. Box atau Peti Surat',
-      })
-    }
-
-    // 3. Country-specific rules
-    if (data.country_code === 'ID') {
-      if (!data.district_name || data.district_name.trim().length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['district_name'],
-          message: 'Kecamatan wajib diisi untuk alamat Indonesia',
-        })
-      }
-      if (!validatePostalCode(data.postal_code)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['postal_code'],
-          message: 'Kode pos Indonesia harus 5 digit angka',
-        })
-      }
-    } else if (data.country_code === 'MY') {
-      const matchResult = validateMalaysiaStatePostalCodeMatch(
-        data.province_name,
-        data.postal_code
-      )
-      if (!matchResult.valid) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['postal_code'],
-          message:
-            matchResult.errorMessage ||
-            'Poskod Malaysia tidak valid untuk negeri yang dipilih.',
-        })
-      }
-    }
-  })
-
-type AddressFormValues = z.infer<typeof addressSchema>
+  addressSchema,
+  createEmptyAddressValues,
+  lookupShippingZoneId,
+  mapAddressToFormValues,
+  type AddressFormValues,
+} from './AddressModal.schema'
+import { IndonesiaDistrictAutocomplete } from './IndonesiaDistrictAutocomplete'
 
 interface AddressModalProps {
   isOpen: boolean
@@ -108,7 +32,11 @@ interface AddressModalProps {
   addressToEdit?: UserAddress | null
 }
 
-const supabase = createBrowserClient()
+const TOUCH_OPTIONS = {
+  shouldValidate: true,
+  shouldDirty: true,
+  shouldTouch: true,
+} as const
 
 export function AddressModal({
   isOpen,
@@ -118,7 +46,6 @@ export function AddressModal({
 }: AddressModalProps): React.JSX.Element {
   const isEdit = !!addressToEdit
   const market = useMarket()
-  
 
   const {
     control,
@@ -128,98 +55,39 @@ export function AddressModal({
     formState: { errors },
   } = useForm<AddressFormValues>({
     resolver: zodResolver(addressSchema),
-    defaultValues: {
-      country_code: 'ID',
-      label: '',
-      recipient_name: '',
-      phone: '',
-      province_name: '',
-      city_name: '',
-      district_name: '',
-      postal_code: '',
-      full_address: '',
-      zone_id: null,
-      is_default: false,
-    },
+    defaultValues: createEmptyAddressValues('ID'),
   })
 
-  const countryCode = (useWatch({
-    control,
-    name: 'country_code',
-  }) || 'ID') as SupportedCountryCode
+  const countryCode = (useWatch({ control, name: 'country_code' }) || 'ID') as SupportedCountryCode
   const isMY = market === 'MY' || countryCode === 'MY'
-
-  const provinceName = useWatch({
-    control,
-    name: 'province_name',
-  })
+  const provinceName = useWatch({ control, name: 'province_name' })
 
   const [searchQuery, setSearchQuery] = useState('')
-  const debouncedSearchQuery = useDebounce(searchQuery, 400)
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [focusedIndex, setFocusedIndex] = useState(-1)
-
-  const { data: searchResultsRes } = useDistrictSearch(debouncedSearchQuery)
-  const searchResults = searchResultsRes?.data || []
-
   const skipProvinceFetchRef = useRef(false)
-  const listboxRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const listboxId = useId()
+  const justInitializedRef = useRef(false)
 
   const addAddressMutation = useAddUserAddress()
   const updateAddressMutation = useUpdateUserAddress()
 
-  const justInitializedRef = useRef(false)
-
   // Initialize fields on open/edit change
   useEffect(() => {
-    if (isOpen) {
-      if (addressToEdit) {
-        const initialCountry = addressToEdit.country_code === 'MY' ? 'MY' : 'ID'
-        reset({
-          country_code: initialCountry,
-          label: addressToEdit.label,
-          recipient_name: addressToEdit.recipient_name,
-          phone: addressToEdit.phone,
-          province_name: addressToEdit.province_name,
-          city_name: addressToEdit.city_name,
-          district_name: addressToEdit.district_name || '',
-          postal_code: addressToEdit.postal_code || '',
-          full_address: addressToEdit.full_address,
-          zone_id: addressToEdit.zone_id,
-          is_default: addressToEdit.is_default,
-        })
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setSearchQuery(
-          initialCountry === 'ID' && addressToEdit.district_name
-            ? `${addressToEdit.district_name}, ${addressToEdit.city_name}`
-            : ''
-        )
-        setShowSuggestions(false)
-        if (addressToEdit.province_name) {
-          justInitializedRef.current = true
-        }
-      } else {
-        reset({
-          country_code: market === 'MY' ? 'MY' : 'ID',
-          label: '',
-          recipient_name: '',
-          phone: '',
-          province_name: '',
-          city_name: '',
-          district_name: '',
-          postal_code: '',
-          full_address: '',
-          zone_id: null,
-          is_default: false,
-        })
-        setSearchQuery('')
-        setShowSuggestions(false)
-        justInitializedRef.current = false
-      }
-      setFocusedIndex(-1)
+    if (!isOpen) return
+
+    const defaultCountry: SupportedCountryCode = market === 'MY' ? 'MY' : 'ID'
+    reset(mapAddressToFormValues(addressToEdit, defaultCountry))
+
+    if (addressToEdit) {
+      const initialCountry = addressToEdit.country_code === 'MY' ? 'MY' : 'ID'
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSearchQuery(
+        initialCountry === 'ID' && addressToEdit.district_name
+          ? `${addressToEdit.district_name}, ${addressToEdit.city_name}`
+          : ''
+      )
+      justInitializedRef.current = Boolean(addressToEdit.province_name)
+    } else {
+      setSearchQuery('')
+      justInitializedRef.current = false
     }
   }, [addressToEdit, isOpen, market, reset])
 
@@ -241,48 +109,22 @@ export function AddressModal({
       return
     }
 
-    const fetchZone = async () => {
-      try {
-        const { data } = await supabase
-          .from('shipping_zone_coverage')
-          .select('zone_id')
-          .eq('country_code', countryCode)
-          .ilike('province_name', provinceName.trim())
-          .limit(1)
-          .maybeSingle()
-
-        if (data?.zone_id) {
-          setValue('zone_id', data.zone_id)
-        } else {
-          setValue('zone_id', null)
-        }
-      } catch {
-        setValue('zone_id', null)
+    let cancelled = false
+    lookupShippingZoneId(countryCode, provinceName).then((zoneId) => {
+      if (!cancelled) {
+        setValue('zone_id', zoneId)
       }
+    })
+    return () => {
+      cancelled = true
     }
-    fetchZone()
   }, [countryCode, provinceName, setValue])
 
   const onSubmitForm = async (data: AddressFormValues) => {
     const normalizedPhone = normalizePhoneE164(data.phone, data.country_code)
 
-    let resolvedZoneId = data.zone_id
-    if (!resolvedZoneId && data.province_name.trim()) {
-      try {
-        const { data: zoneRow } = await supabase
-          .from('shipping_zone_coverage')
-          .select('zone_id')
-          .eq('country_code', data.country_code)
-          .ilike('province_name', data.province_name.trim())
-          .limit(1)
-          .maybeSingle()
-        if (zoneRow?.zone_id) {
-          resolvedZoneId = zoneRow.zone_id
-        }
-      } catch {
-        // Fallback to null if lookup fails
-      }
-    }
+    const resolvedZoneId =
+      data.zone_id || (await lookupShippingZoneId(data.country_code, data.province_name))
 
     const addressData = {
       user_id: userId,
@@ -292,7 +134,7 @@ export function AddressModal({
       country_code: data.country_code,
       province_name: data.province_name.trim(),
       city_name: data.city_name.trim(),
-      district_name: data.country_code === 'MY' ? null : (data.district_name?.trim() || null),
+      district_name: data.country_code === 'MY' ? null : data.district_name?.trim() || null,
       postal_code: data.postal_code.trim(),
       full_address: data.full_address.trim(),
       zone_id: resolvedZoneId,
@@ -319,88 +161,31 @@ export function AddressModal({
   }
 
   const handleSelectDistrict = useCallback(
-    (district: (typeof searchResults)[0]) => {
-      // Only skip the next province-change effect if countryCode or provinceName will actually change
+    (district: District) => {
       if (countryCode !== 'ID' || provinceName !== district.province_name) {
         skipProvinceFetchRef.current = true
       }
       setValue('country_code', 'ID')
-      setValue('province_name', district.province_name, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      })
-      setValue('city_name', district.city_name, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      })
-      setValue('district_name', district.district_name, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      })
-      setValue('postal_code', district.postal_code || '', {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      })
-      setValue('zone_id', district.zone_id, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      })
+      setValue('province_name', district.province_name, TOUCH_OPTIONS)
+      setValue('city_name', district.city_name, TOUCH_OPTIONS)
+      setValue('district_name', district.district_name, TOUCH_OPTIONS)
+      setValue('postal_code', district.postal_code || '', TOUCH_OPTIONS)
+      setValue('zone_id', district.zone_id, TOUCH_OPTIONS)
       setSearchQuery(`${district.district_name}, ${district.city_name}`)
-      setShowSuggestions(false)
-      setFocusedIndex(-1)
     },
     [setValue, countryCode, provinceName]
   )
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showSuggestions || searchResults.length === 0) return
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault()
-        setFocusedIndex((prev) => (prev < searchResults.length - 1 ? prev + 1 : prev))
-        break
-      case 'ArrowUp':
-        e.preventDefault()
-        setFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev))
-        break
-      case 'Enter':
-        e.preventDefault()
-        if (focusedIndex >= 0 && focusedIndex < searchResults.length) {
-          handleSelectDistrict(searchResults[focusedIndex])
-        }
-        break
-      case 'Escape':
-        e.preventDefault()
-        setShowSuggestions(false)
-        setFocusedIndex(-1)
-        break
-    }
+  const handleCountrySwitch = (nextCode: SupportedCountryCode) => {
+    if (countryCode === nextCode) return
+    setValue('country_code', nextCode, { shouldValidate: true, shouldDirty: true })
+    setValue('province_name', '')
+    setValue('city_name', '')
+    setValue('district_name', '')
+    setValue('postal_code', '')
+    setValue('zone_id', null)
+    setSearchQuery('')
   }
-
-  useEffect(() => {
-    if (showSuggestions && focusedIndex >= 0 && listboxRef.current) {
-      const optionEl = listboxRef.current.children[focusedIndex] as HTMLElement
-      if (optionEl) {
-        const listbox = listboxRef.current
-        const optionTop = optionEl.offsetTop
-        const optionBottom = optionTop + optionEl.offsetHeight
-        const listboxTop = listbox.scrollTop
-        const listboxBottom = listboxTop + listbox.clientHeight
-
-        if (optionTop < listboxTop) {
-          listbox.scrollTop = optionTop
-        } else if (optionBottom > listboxBottom) {
-          listbox.scrollTop = optionBottom - listbox.clientHeight
-        }
-      }
-    }
-  }, [focusedIndex, showSuggestions])
 
   const isSaving = addAddressMutation.isPending || updateAddressMutation.isPending
 
@@ -409,8 +194,16 @@ export function AddressModal({
       ? MALAYSIA_STATES.map((s) => ({ label: s, value: s }))
       : INDONESIA_PROVINCES.map((p) => ({ label: p, value: p }))
 
+  const modalTitle = isEdit
+    ? isMY
+      ? 'Edit Address'
+      : 'Ubah Alamat'
+    : isMY
+      ? 'Add New Address'
+      : 'Tambah Alamat Baru'
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? (isMY ? 'Edit Address' : 'Ubah Alamat') : (isMY ? 'Add New Address' : 'Tambah Alamat Baru')}>
+    <Modal isOpen={isOpen} onClose={onClose} title={modalTitle}>
       <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-5 text-sm font-sans">
         {/* Country Selector */}
         <div className="space-y-1.5">
@@ -424,20 +217,7 @@ export function AddressModal({
                 <button
                   key={c.code}
                   type="button"
-                  onClick={() => {
-                    if (countryCode !== c.code) {
-                      setValue('country_code', c.code as SupportedCountryCode, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      })
-                      setValue('province_name', '')
-                      setValue('city_name', '')
-                      setValue('district_name', '')
-                      setValue('postal_code', '')
-                      setValue('zone_id', null)
-                      setSearchQuery('')
-                    }
-                  }}
+                  onClick={() => handleCountrySwitch(c.code as SupportedCountryCode)}
                   className={cn(
                     'flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border text-xs font-semibold transition-all',
                     isSelected
@@ -460,8 +240,8 @@ export function AddressModal({
             render={({ field }) => (
               <Input
                 {...field}
-                label={isMY ? "Address Label (e.g. Home, Office)*" : "Label Alamat (cth: Rumah, Kantor)*"}
-                placeholder={isMY ? "e.g. Home" : "cth: Rumah"}
+                label={isMY ? 'Address Label (e.g. Home, Office)*' : 'Label Alamat (cth: Rumah, Kantor)*'}
+                placeholder={isMY ? 'e.g. Home' : 'cth: Rumah'}
                 error={errors.label?.message}
               />
             )}
@@ -472,8 +252,8 @@ export function AddressModal({
             render={({ field }) => (
               <Input
                 {...field}
-                label={isMY ? "Recipient Name*" : "Nama Penerima*"}
-                placeholder={isMY ? "Recipient full name" : "Nama lengkap penerima"}
+                label={isMY ? 'Recipient Name*' : 'Nama Penerima*'}
+                placeholder={isMY ? 'Recipient full name' : 'Nama lengkap penerima'}
                 error={errors.recipient_name?.message}
               />
             )}
@@ -488,15 +268,21 @@ export function AddressModal({
               {...field}
               label={
                 countryCode === 'MY'
-                  ? (isMY ? 'Recipient Phone Number (Malaysia)*' : 'Nomor Telepon Penerima (Malaysia)*')
-                  : (isMY ? 'Recipient Phone Number (Indonesia)*' : 'Nomor Telepon Penerima (Indonesia)*')
+                  ? isMY
+                    ? 'Recipient Phone Number (Malaysia)*'
+                    : 'Nomor Telepon Penerima (Malaysia)*'
+                  : isMY
+                    ? 'Recipient Phone Number (Indonesia)*'
+                    : 'Nomor Telepon Penerima (Indonesia)*'
               }
               placeholder={
                 countryCode === 'MY' ? 'cth: +60123456789 atau 012-3456789' : 'cth: 08123456789'
               }
               helperText={
                 countryCode === 'MY'
-                  ? (isMY ? 'Active WhatsApp number recommended for delivery notifications.' : 'Gunakan nomor WhatsApp aktif untuk kemudahan konfirmasi pengiriman.')
+                  ? isMY
+                    ? 'Active WhatsApp number recommended for delivery notifications.'
+                    : 'Gunakan nomor WhatsApp aktif untuk kemudahan konfirmasi pengiriman.'
                   : undefined
               }
               error={errors.phone?.message}
@@ -506,74 +292,11 @@ export function AddressModal({
 
         {/* Autocomplete district search for Indonesia only */}
         {countryCode === 'ID' && (
-          <div className="relative">
-            <Input
-              ref={inputRef}
-              label="Cari Kota / Kecamatan (Ketik min. 2 karakter)*"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                setShowSuggestions(true)
-                setFocusedIndex(-1)
-              }}
-              onFocus={() => {
-                if (searchQuery.length >= 2) setShowSuggestions(true)
-              }}
-              onBlur={() => {
-                setTimeout(() => setShowSuggestions(false), 250)
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Cari cth: Kebayoran Baru atau Bandung..."
-              helperText="Pencarian otomatis untuk provinsi, kota, kecamatan, dan kode pos."
-              aria-expanded={showSuggestions && searchResults.length > 0}
-              aria-autocomplete="list"
-              aria-controls={showSuggestions ? listboxId : undefined}
-              aria-activedescendant={
-                focusedIndex >= 0 ? `${listboxId}-opt-${focusedIndex}` : undefined
-              }
-              role="combobox"
-            />
-            {showSuggestions && searchResults.length > 0 && (
-              <div
-                ref={listboxRef}
-                id={listboxId}
-                role="listbox"
-                className="absolute z-50 w-full bg-brand-cream border border-neutral-200/80 shadow-2xl rounded-xl max-h-48 overflow-y-auto mt-1 font-sans text-xs outline-none divide-y divide-neutral-100"
-              >
-                {searchResults.map((district, index) => (
-                  <div
-                    key={district.id}
-                    id={`${listboxId}-opt-${index}`}
-                    role="option"
-                    aria-selected={focusedIndex === index}
-                    onMouseDown={(e) => {
-                      e.preventDefault()
-                      handleSelectDistrict(district)
-                    }}
-                    onClick={() => handleSelectDistrict(district)}
-                    onMouseMove={() => setFocusedIndex(index)}
-                    className={cn(
-                      'p-3 cursor-pointer transition-colors select-none text-left',
-                      focusedIndex === index
-                        ? 'bg-brand-gold/40 text-brand-plum'
-                        : 'hover:bg-brand-gold/30 text-neutral-800'
-                    )}
-                  >
-                    <p className="font-bold text-brand-plum">
-                      {district.district_name}, {district.city_name}
-                    </p>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-wider mt-0.5">
-                      {district.province_name}{' '}
-                      {district.postal_code ? `• ${district.postal_code}` : ''}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div aria-live="polite" className="sr-only">
-              {showSuggestions ? `${searchResults.length} hasil ditemukan.` : ''}
-            </div>
-          </div>
+          <IndonesiaDistrictAutocomplete
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSelectDistrict={handleSelectDistrict}
+          />
         )}
 
         {/* Province / State Dropdown */}
@@ -582,11 +305,27 @@ export function AddressModal({
           name="province_name"
           render={({ field }) => (
             <Select
-              label={countryCode === 'MY' ? (isMY ? 'State (Negeri)*' : 'Negeri (State)*') : (isMY ? 'Province*' : 'Provinsi*')}
+              label={
+                countryCode === 'MY'
+                  ? isMY
+                    ? 'State (Negeri)*'
+                    : 'Negeri (State)*'
+                  : isMY
+                    ? 'Province*'
+                    : 'Provinsi*'
+              }
               value={field.value}
               onChange={field.onChange}
               options={provinceOptions}
-              placeholder={countryCode === 'MY' ? (isMY ? 'Select State' : 'Pilih Negeri') : (isMY ? 'Select Province' : 'Pilih Provinsi')}
+              placeholder={
+                countryCode === 'MY'
+                  ? isMY
+                    ? 'Select State'
+                    : 'Pilih Negeri'
+                  : isMY
+                    ? 'Select Province'
+                    : 'Pilih Provinsi'
+              }
               error={errors.province_name?.message}
             />
           )}
@@ -600,7 +339,15 @@ export function AddressModal({
             render={({ field }) => (
               <Input
                 {...field}
-                label={countryCode === 'MY' ? (isMY ? 'City / Town*' : 'Bandar / Daerah (City)*') : (isMY ? 'City / Regency*' : 'Kota/Kabupaten*')}
+                label={
+                  countryCode === 'MY'
+                    ? isMY
+                      ? 'City / Town*'
+                      : 'Bandar / Daerah (City)*'
+                    : isMY
+                      ? 'City / Regency*'
+                      : 'Kota/Kabupaten*'
+                }
                 placeholder={
                   countryCode === 'MY' ? 'cth: Shah Alam / Petaling Jaya' : 'cth: Jakarta Barat'
                 }
@@ -634,11 +381,21 @@ export function AddressModal({
           render={({ field }) => (
             <Input
               {...field}
-              label={countryCode === 'MY' ? (isMY ? 'Postcode (5 digits)*' : 'Poskod (5 digit)*') : (isMY ? 'Postal Code (5 digits)*' : 'Kode Pos (5 digit)*')}
+              label={
+                countryCode === 'MY'
+                  ? isMY
+                    ? 'Postcode (5 digits)*'
+                    : 'Poskod (5 digit)*'
+                  : isMY
+                    ? 'Postal Code (5 digits)*'
+                    : 'Kode Pos (5 digit)*'
+              }
               placeholder={countryCode === 'MY' ? 'cth: 50450' : 'cth: 12110'}
               helperText={
                 countryCode === 'MY'
-                  ? (isMY ? 'Delivery covers Peninsular & East Malaysia (01000–98999).' : 'Mencakup Semenanjung, Sabah, Sarawak & Labuan (Poskod 01000–98999).')
+                  ? isMY
+                    ? 'Delivery covers Peninsular & East Malaysia (01000–98999).'
+                    : 'Mencakup Semenanjung, Sabah, Sarawak & Labuan (Poskod 01000–98999).'
                   : undefined
               }
               error={errors.postal_code?.message}
@@ -654,8 +411,12 @@ export function AddressModal({
               {...field}
               label={
                 countryCode === 'MY'
-                  ? (isMY ? 'Full Address (Unit / House No, Street, Building / Residential Area)*' : 'Alamat Lengkap (No. Rumah, Jalan, Kawasan / Taman / Bangunan)*')
-                  : (isMY ? 'Full Address (Street, House No, Unit / Block)*' : 'Alamat Lengkap (Jalan, No. Rumah, RT/RW, Blok, Gg)*')
+                  ? isMY
+                    ? 'Full Address (Unit / House No, Street, Building / Residential Area)*'
+                    : 'Alamat Lengkap (No. Rumah, Jalan, Kawasan / Taman / Bangunan)*'
+                  : isMY
+                    ? 'Full Address (Street, House No, Unit / Block)*'
+                    : 'Alamat Lengkap (Jalan, No. Rumah, RT/RW, Blok, Gg)*'
               }
               placeholder={
                 countryCode === 'MY'
@@ -664,7 +425,9 @@ export function AddressModal({
               }
               helperText={
                 countryCode === 'MY'
-                  ? (isMY ? 'Export couriers cannot deliver to P.O. Box addresses.' : 'Kurir ekspor tidak dapat mengirim ke P.O. Box atau Peti Surat.')
+                  ? isMY
+                    ? 'Export couriers cannot deliver to P.O. Box addresses.'
+                    : 'Kurir ekspor tidak dapat mengirim ke P.O. Box atau Peti Surat.'
                   : undefined
               }
               error={errors.full_address?.message}
@@ -677,7 +440,7 @@ export function AddressModal({
           name="is_default"
           render={({ field: { value, onChange } }) => (
             <Checkbox
-              label={isMY ? "Set as default address" : "Jadikan alamat utama (default)"}
+              label={isMY ? 'Set as default address' : 'Jadikan alamat utama (default)'}
               checked={value}
               onChange={(e) => onChange(e.target.checked)}
               className="py-1"
@@ -690,7 +453,13 @@ export function AddressModal({
             {isMY ? 'Cancel' : 'Batal'}
           </Button>
           <Button type="submit" disabled={isSaving}>
-            {isSaving ? (isMY ? 'Saving...' : 'Menyimpan...') : (isMY ? 'Save Address' : 'Simpan Alamat')}
+            {isSaving
+              ? isMY
+                ? 'Saving...'
+                : 'Menyimpan...'
+              : isMY
+                ? 'Save Address'
+                : 'Simpan Alamat'}
           </Button>
         </div>
       </form>

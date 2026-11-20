@@ -25,3 +25,8 @@ export const DEFAULT_OG_IMAGE = {
   type: 'image/png',
   alt: 'Benangbaju — Show How Really Well-Dressed You Are',
 }
+
+/** Safely serializes JSON-LD objects for injection inside <script type="application/ld+json">. */
+export function sanitizeJsonLd(obj: Record<string, unknown>): string {
+  return JSON.stringify(obj).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
+}

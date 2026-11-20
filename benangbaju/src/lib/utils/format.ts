@@ -1,4 +1,5 @@
 import { normalizePhoneE164 } from './validation'
+import { DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 export { formatMYR } from './pricing'
 
 /**
@@ -21,7 +22,10 @@ export function formatIDR(amount: number | string): string {
  * Formats an IDR amount to approximate Malaysian Ringgit (MYR).
  * Example: formatApproxMYR(360000, 3600) -> "≈ RM 100.00"
  */
-export function formatApproxMYR(amountIdr: number, rateIdrPerMyr: number = 3600): string {
+export function formatApproxMYR(
+  amountIdr: number,
+  rateIdrPerMyr: number = DEFAULT_MYR_EXCHANGE_RATE
+): string {
   if (!amountIdr || amountIdr <= 0 || !rateIdrPerMyr || rateIdrPerMyr <= 0) {
     return '≈ RM 0.00'
   }

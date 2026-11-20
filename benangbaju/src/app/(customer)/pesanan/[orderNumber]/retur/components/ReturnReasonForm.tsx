@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
-import React, { useEffect, useMemo } from 'react'
-import { Select, Textarea, HandDrawnIcon } from '@/shared/components'
+import React from 'react'
+import { Select, Textarea, ImageUploadGrid } from '@/shared/components'
 
 const RETURN_REASONS = [
   { value: 'wrong_item', label: 'Salah Kirim Produk / Varian' },
@@ -30,17 +29,6 @@ export function ReturnReasonForm({
   onFileChange,
   onRemoveFile,
 }: ReturnReasonFormProps): React.JSX.Element {
-  const previewUrls = useMemo(
-    () => returnFiles.map((file) => URL.createObjectURL(file)),
-    [returnFiles]
-  )
-
-  useEffect(() => {
-    return () => {
-      previewUrls.forEach((url) => URL.revokeObjectURL(url))
-    }
-  }, [previewUrls])
-
   return (
     <div className="border border-neutral-200/80 p-5 sm:p-6 bg-brand-cream space-y-4 relative overflow-hidden rounded-2xl shadow-xs font-sans">
       <div className="card-accent-bar" />
@@ -64,38 +52,14 @@ export function ReturnReasonForm({
           Lampirkan Bukti Foto (Opsional, Maks 2 Foto)
         </label>
 
-        <div className="flex flex-wrap gap-4">
-          {previewUrls.map((previewUrl, idx) => (
-            <div key={previewUrl} className="relative w-24 h-24 border border-neutral-200 group">
-              <img
-                src={previewUrl}
-                alt={`Preview ${idx}`}
-                className="w-full h-full object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => onRemoveFile(idx)}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <HandDrawnIcon name="close" className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
-
-          {returnFiles.length < 2 && (
-            <label className="w-24 h-24 border-2 border-dashed border-neutral-300 flex flex-col items-center justify-center text-neutral-500 cursor-pointer hover:border-brand-blue-stroke hover:text-brand-blue-text transition group">
-              <HandDrawnIcon name="image" className="h-5 w-5 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] uppercase font-bold tracking-wider">Tambah</span>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={onFileChange}
-              />
-            </label>
-          )}
-        </div>
+        <ImageUploadGrid
+          files={returnFiles}
+          maxFiles={2}
+          onFileChange={onFileChange}
+          onRemoveFile={onRemoveFile}
+          addLabel="Tambah"
+          tileSize="md"
+        />
         <p className="text-[10px] text-neutral-400">Format: JPG/PNG, maks 2MB per foto.</p>
       </div>
     </div>

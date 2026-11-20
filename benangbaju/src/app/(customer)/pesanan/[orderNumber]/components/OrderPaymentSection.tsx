@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Button, SmartLink as Link, HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { buildWhatsAppUrl, formatMYR } from '@/lib/utils'
+import { DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 import { useMarket } from '@/shared/stores/marketStore'
 import toast from 'react-hot-toast'
 
@@ -35,7 +36,7 @@ export function OrderPaymentSection({
   onConfirmDelivery,
   onReorder,
   isReordering,
-  myrExchangeRate = 3600,
+  myrExchangeRate = DEFAULT_MYR_EXCHANGE_RATE,
 }: OrderPaymentSectionProps): React.JSX.Element {
   const [copiedCode, setCopiedCode] = useState(false)
   const [isDownloadingQR, setIsDownloadingQR] = useState(false)

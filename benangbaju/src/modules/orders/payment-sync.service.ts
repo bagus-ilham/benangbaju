@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { safeLogError } from '@/lib/logger'
 import { ApiResponse, ok, fail } from '@/lib/api-response'
 import { ApiErrorCode } from '@/lib/api-errors'
+import { generateDokuSignature, getDokuApiUrl } from '@/lib/doku'
 
 export interface PaymentSyncResult {
   order_number: string
@@ -37,11 +38,7 @@ export class PaymentSyncService {
       // 2. Setup DOKU API Credentials
       const clientId = (process.env.DOKU_CLIENT_ID || '').trim()
       const secretKey = (process.env.DOKU_SECRET_KEY || '').trim()
-      const isProd =
-        process.env.DOKU_ENVIRONMENT?.toLowerCase() === 'production' ||
-        process.env.ENVIRONMENT?.toLowerCase() === 'production'
-      const defaultApiUrl = isProd ? 'https://api.doku.com' : 'https://api-sandbox.doku.com'
-      const dokuEndpoint = (process.env.DOKU_API_URL || defaultApiUrl).trim().replace(/\/$/, '')
+      const dokuEndpoint = getDokuApiUrl()
 
       if (!clientId || !secretKey) {
         return fail(
@@ -54,11 +51,13 @@ export class PaymentSyncService {
       const requestTarget = `/orders/v1/status/${cleanOrderNumber}`
       const requestId = crypto.randomUUID()
       const requestTimestamp = new Date().toISOString().slice(0, 19) + 'Z'
-
-      const component = `Client-Id:${clientId}\nRequest-Id:${requestId}\nRequest-Timestamp:${requestTimestamp}\nRequest-Target:${requestTarget}`
-      const hmac = crypto.createHmac('sha256', secretKey)
-      hmac.update(component)
-      const signature = `HMACSHA256=${hmac.digest('base64')}`
+      const signature = generateDokuSignature({
+        clientId,
+        requestId,
+        requestTimestamp,
+        requestTarget,
+        secretKey,
+      })
 
       // 4. Call DOKU Check Status API with timeout
       const controller = new AbortController()

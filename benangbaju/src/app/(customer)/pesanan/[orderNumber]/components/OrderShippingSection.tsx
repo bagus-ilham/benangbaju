@@ -1,6 +1,7 @@
 import React from 'react'
 import { HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import { parseTrackingNumbers, getCourierTrackingUrl } from '@/lib/utils'
+import { isEastMalaysiaProvince } from '@/lib/constants'
 
 interface OrderShippingProps {
   orderShipping?: {
@@ -23,7 +24,7 @@ export function OrderShippingSection({
   notes,
 }: OrderShippingProps): React.JSX.Element {
   const isMalaysia = orderShipping?.country_code === 'MY'
-  const isEastMalaysia = /sabah|sarawak|labuan/i.test(orderShipping?.province_name || '')
+  const isEastMalaysia = isEastMalaysiaProvince(orderShipping?.province_name)
   const trackingNumbers = parseTrackingNumbers(orderShipping?.tracking_number)
 
   return (

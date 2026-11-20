@@ -10,7 +10,7 @@ import { FeaturedProductsSection } from '@/modules/products/components/FeaturedP
 import { NewArrivalsSection } from '@/modules/products/components/NewArrivalsSection'
 import { RecentlyViewedSection } from '@/modules/products/components/RecentlyViewedSection'
 import { ProductGridSkeleton } from '@/shared/components'
-import { SITE_URL, DEFAULT_OG_IMAGE } from '@/lib/siteUrl'
+import { SITE_URL, DEFAULT_OG_IMAGE, sanitizeJsonLd } from '@/lib/siteUrl'
 
 export async function generateMetadata() {
   return {
@@ -41,7 +41,6 @@ export default async function Homepage(): Promise<React.JSX.Element> {
   const {
     banners,
     categories,
-    collections,
     flashSale,
     flashSales,
     featuredProducts,
@@ -52,7 +51,7 @@ export default async function Homepage(): Promise<React.JSX.Element> {
     collection2Products,
   } = await homeService.getHomepageData()
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.benangbaju.com'
+  const baseUrl = SITE_URL
 
   const heroBanners = banners.filter((b) => b.position === 'homepage_hero' || !b.position)
   const midBanners = banners.filter((b) => b.position === 'mid_banner')
@@ -89,9 +88,6 @@ export default async function Homepage(): Promise<React.JSX.Element> {
       'query-input': 'required name=search_term_string',
     },
   }
-
-  const sanitizeJsonLd = (obj: Record<string, unknown>) =>
-    JSON.stringify(obj).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
 
   return (
     <>

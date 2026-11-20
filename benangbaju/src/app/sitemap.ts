@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '@/shared/types/database'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://benangbaju.com'
+  const baseUrl = SITE_URL
 
   // Core static public routes
   const staticRoutes = [

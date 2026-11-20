@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { HandDrawnIcon, MarketFlagIcon } from '@/shared/components'
 import type { HandDrawnIconName } from '@/shared/components'
 import { formatIDR, formatMYR } from '@/lib/utils'
+import { DEFAULT_MYR_EXCHANGE_RATE } from '@/lib/constants'
 import { useMarket } from '@/shared/stores/marketStore'
 import type { PaymentFeeConfig } from '@/modules/orders/types'
 
@@ -40,7 +41,7 @@ export function calculateChannelFee(
 export function calculateChannelFeeMyr(
   config: PaymentFeeConfig,
   baseAmountMyr: number,
-  exchangeRate = 3600
+  exchangeRate = DEFAULT_MYR_EXCHANGE_RATE
 ): number {
   if (!config) return 0
   let feeMyr = 0
@@ -71,7 +72,7 @@ export function PaymentMethodSelector({
   shippingCost,
   discountAmount,
   baseAmountMyr,
-  myrExchangeRate = 3600,
+  myrExchangeRate = DEFAULT_MYR_EXCHANGE_RATE,
   loading = false,
   countryCode = 'ID',
 }: PaymentMethodSelectorProps): React.JSX.Element {

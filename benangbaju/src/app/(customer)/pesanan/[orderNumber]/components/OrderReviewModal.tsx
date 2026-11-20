@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
-import React, { useState, useEffect, useMemo } from 'react'
-import { Modal, Button, Input, Textarea, Checkbox, HandDrawnIcon } from '@/shared/components'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react'
+import { Modal, Button, Input, Textarea, Checkbox, ImageUploadGrid } from '@/shared/components'
 import toast from 'react-hot-toast'
 import { uploadImage } from '@/lib/supabase/storage'
 import { createBrowserClient } from '@/lib/supabase/client'
@@ -36,18 +36,6 @@ function OrderReviewForm({
   const [reviewFiles, setReviewFiles] = useState<File[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [supabase] = useState(() => createBrowserClient())
-
-  // Create and revoke object URLs cleanly to prevent memory leaks
-  const previewUrls = useMemo(
-    () => reviewFiles.map((file) => URL.createObjectURL(file)),
-    [reviewFiles]
-  )
-
-  useEffect(() => {
-    return () => {
-      previewUrls.forEach((url) => URL.revokeObjectURL(url))
-    }
-  }, [previewUrls])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -223,38 +211,14 @@ function OrderReviewForm({
               {isMY ? 'Attach Photos (Max 2 photos, 2MB each)' : 'Lampirkan Foto (Maks 2 Foto, 2MB/Foto)'}
             </label>
 
-            <div className="flex flex-wrap gap-3">
-              {previewUrls.map((previewUrl, idx) => (
-                <div key={previewUrl} className="relative w-20 h-20 border border-brand-plum/15 rounded-xl">
-                  <img
-                    src={previewUrl}
-                    alt={`Preview ${idx}`}
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeFile(idx)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 shadow-sm cursor-pointer"
-                  >
-                    <HandDrawnIcon name="close" className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-
-              {reviewFiles.length < 2 && (
-                <label className="w-20 h-20 border-2 border-dashed border-brand-plum/20 bg-brand-gold/25 rounded-xl flex flex-col items-center justify-center text-neutral-500 hover:text-brand-plum hover:border-brand-blue cursor-pointer transition-colors">
-                  <HandDrawnIcon name="image" className="h-5 w-5 mb-1" />
-                  <span className="text-[9px] uppercase tracking-wider font-semibold">{isMY ? 'Add' : 'Tambah'}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
-              )}
-            </div>
+            <ImageUploadGrid
+              files={reviewFiles}
+              maxFiles={2}
+              onFileChange={handleFileChange}
+              onRemoveFile={removeFile}
+              addLabel={isMY ? 'Add' : 'Tambah'}
+              tileSize="sm"
+            />
           </div>
 
           <div className="flex gap-3 pt-2">
