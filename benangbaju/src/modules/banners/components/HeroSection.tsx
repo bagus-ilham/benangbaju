@@ -46,7 +46,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
     return (
       <div className="relative w-full bg-brand-cream flex items-center justify-center h-[50vh] min-h-[360px] md:h-[70vh] font-sans">
         <div className="text-center space-y-4 max-w-lg px-4">
-          <h2 className="text-3xl md:text-5xl font-display font-normal tracking-normal text-brand-plum leading-tight">
+          <h2 className="text-3xl md:text-5xl font-display font-semibold tracking-tight text-brand-plum leading-tight">
             {isMY ? 'Elegance in Simplicity' : 'Elegan dalam Kesederhanaan'}
           </h2>
           <p className="text-xs md:text-sm text-neutral-600 font-sans max-w-sm mx-auto">
@@ -174,7 +174,7 @@ export function HeroSection({ banners }: HeroSectionProps): React.JSX.Element {
                       opacity: 1,
                       transition: { delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
                     }}
-                    className="text-3xl md:text-5xl lg:text-6xl font-display font-normal tracking-normal text-white leading-[1.18] drop-shadow-md"
+                    className="text-3xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tight text-white leading-[1.18] drop-shadow-md"
                   >
                     {bannerTitle}
                   </motion.h1>

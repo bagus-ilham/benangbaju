@@ -119,7 +119,7 @@ export function CollectionShowcase({
           >
             <h2
               className={cn(
-                'text-3xl md:text-4xl lg:text-5xl font-display font-normal tracking-normal mb-6 transition-colors duration-500',
+                'text-3xl md:text-4xl lg:text-5xl font-display font-semibold tracking-tight mb-6 transition-colors duration-500',
                 textColor
               )}
             >

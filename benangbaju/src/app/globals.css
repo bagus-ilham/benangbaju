@@ -5,7 +5,7 @@
  * Ubah warna palet utama cukup di blok @theme ini saja.
  * ============================================================================ */
 @theme {
-  /* Typography — 2 Fonts Only (Poppins + Mansalva OFL) */
+  /* Typography — 2 Fonts Only (Poppins + Playpen Sans OFL) */
   --font-sans: var(--font-poppins), sans-serif;
   --font-heading: var(--font-poppins), sans-serif;
   --font-serif: var(--font-poppins), sans-serif;
@@ -57,12 +57,6 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Prevent browser faux-bold distortion on single-weight handwritten display font (Mansalva 400) */
-.font-display,
-.font-accent {
-  font-synthesis-weight: none;
 }
 
 input,
