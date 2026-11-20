@@ -8,7 +8,6 @@ import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button } from '@/shared/components/Button'
 import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import { useFocusTrap } from '@/shared/hooks/useFocusTrap'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -17,7 +16,6 @@ import { useProducts } from '@/modules/products/hooks/useProducts'
 export function MiniCartDrawer(): React.JSX.Element {
   const market = useMarket()
   const isMY = market === 'MY'
-  const { freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
   const items = useCartStore((state) => state.items)
   const isCartDrawerOpen = useCartStore((state) => state.isCartDrawerOpen)
   const setCartDrawerOpen = useCartStore((state) => state.setCartDrawerOpen)
@@ -33,13 +31,6 @@ export function MiniCartDrawer(): React.JSX.Element {
     : 0
   const hasUnavailableMYItems =
     isMY && items.some((item) => !item.priceMyr || Number(item.priceMyr) <= 0)
-
-  const targetThreshold = isMY ? freeShippingThresholdMyr : freeShippingThresholdIdr
-  const currentProgressAmount = isMY ? totalMyr : subtotal
-  const isFreeShipping = items.length > 0 && currentProgressAmount >= targetThreshold
-  const remainingAmount = Math.max(0, targetThreshold - currentProgressAmount)
-  const progressPercent =
-    items.length === 0 ? 0 : Math.min(100, (currentProgressAmount / targetThreshold) * 100)
 
   // Real Database Cross-Sell recommendations
   const { data: recsData } = useProducts({ sortBy: 'featured', limit: 6 })
@@ -118,47 +109,6 @@ export function MiniCartDrawer(): React.JSX.Element {
               >
                 <HandDrawnIcon name="close" className="h-5 w-5" aria-hidden="true" />
               </button>
-            </div>
-
-            {/* Free Shipping Progress Bar */}
-            <div className="bg-brand-gold-soft/55 px-6 py-3 border-b border-brand-gold-stroke/35 space-y-1.5">
-              <p className="text-[10px] font-heading font-medium uppercase tracking-wider text-brand-plum text-center">
-                {isFreeShipping ? (
-                  <span className="text-emerald-700 font-bold">
-                    {isMY
-                      ? '🎉 Congratulations! You Unlocked Free Shipping to Malaysia'
-                      : '🎉 Selamat! Anda Mendapatkan Gratis Ongkir'}
-                  </span>
-                ) : (
-                  <>
-                    {isMY ? (
-                      <>
-                        Add{' '}
-                        <span className="font-bold text-brand-plum">
-                          {formatMYR(remainingAmount)}
-                        </span>{' '}
-                        more for <span className="font-bold">Free Shipping to Malaysia</span>
-                      </>
-                    ) : (
-                      <>
-                        Belanja{' '}
-                        <span className="font-bold text-brand-plum">
-                          {formatIDR(remainingAmount)}
-                        </span>{' '}
-                        lagi untuk <span className="font-bold">Gratis Ongkir</span>
-                      </>
-                    )}
-                  </>
-                )}
-              </p>
-              <div className="w-full h-1.5 bg-neutral-200 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-brand-gold to-amber-300"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercent}%` }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                />
-              </div>
             </div>
 
             {/* B2-5: De Minimis Customs Notice for Malaysia */}

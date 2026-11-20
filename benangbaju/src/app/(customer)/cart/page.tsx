@@ -8,7 +8,6 @@ import { useCartStore } from '@/modules/cart/stores/cartStore'
 import { Button, Card, PageContainer, EmptyState, PageHero, HandDrawnIcon } from '@/shared/components'
 import { formatIDR, formatMYR } from '@/lib/utils'
 import { useMarket } from '@/shared/stores/marketStore'
-import { useSiteSettings } from '@/shared/hooks/useSiteSettings'
 import toast from 'react-hot-toast'
 import { getProxiedImageUrl } from '@/lib/getImageUrl'
 
@@ -18,7 +17,6 @@ export default function CartPage(): React.JSX.Element {
   const removeItem = useCartStore((state) => state.removeItem)
   const market = useMarket()
   const isMY = market === 'MY'
-  const { freeShippingThresholdIdr, freeShippingThresholdMyr } = useSiteSettings()
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0)
@@ -41,13 +39,6 @@ export default function CartPage(): React.JSX.Element {
   const totalDiscountMyr = Math.max(0, originalMyr - totalMyr)
   const hasUnavailableMYItems =
     isMY && items.some((item) => !item.priceMyr || Number(item.priceMyr) <= 0)
-
-  const targetThreshold = isMY ? freeShippingThresholdMyr : freeShippingThresholdIdr
-  const currentProgressAmount = isMY ? totalMyr : subtotal
-  const isFreeShipping = items.length > 0 && currentProgressAmount >= targetThreshold
-  const remainingAmount = Math.max(0, targetThreshold - currentProgressAmount)
-  const progressPercent =
-    items.length === 0 ? 0 : Math.min(100, (currentProgressAmount / targetThreshold) * 100)
 
   const [isMounted, setIsMounted] = useState(false)
 
@@ -120,53 +111,6 @@ export default function CartPage(): React.JSX.Element {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left: Cart Items List (8 cols) */}
             <div className="lg:col-span-8 space-y-4">
-              {/* Free Shipping Progress Bar */}
-              <div className="bg-brand-gold-soft/45 border border-brand-gold-stroke/45 rounded-2xl p-4 md:p-5 shadow-xs space-y-2">
-                <div className="flex items-center justify-between text-xs font-heading font-medium tracking-wide text-brand-plum">
-                  <span>
-                    {isFreeShipping ? (
-                      <span className="text-emerald-700 font-bold flex items-center gap-1.5">
-                        <span>🎉</span>
-                        {isMY
-                          ? 'Congratulations! You Unlocked Free Shipping to Malaysia'
-                          : 'Selamat! Anda Mendapatkan Gratis Ongkir'}
-                      </span>
-                    ) : (
-                      <>
-                        {isMY ? (
-                          <>
-                            Add{' '}
-                            <span className="font-bold text-brand-plum">
-                              {formatMYR(remainingAmount)}
-                            </span>{' '}
-                            more for <span className="font-bold">Free Shipping to Malaysia</span>
-                          </>
-                        ) : (
-                          <>
-                            Belanja{' '}
-                            <span className="font-bold text-brand-plum">
-                              {formatIDR(remainingAmount)}
-                            </span>{' '}
-                            lagi untuk <span className="font-bold">Gratis Ongkir</span>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </span>
-                  <span className="text-[11px] font-sans font-semibold text-neutral-400">
-                    {Math.round(progressPercent)}%
-                  </span>
-                </div>
-                <div className="w-full h-2 bg-neutral-200/70 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-brand-gold to-amber-300 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPercent}%` }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                  />
-                </div>
-              </div>
-
               <div className="space-y-0">
                 <AnimatePresence mode="popLayout">
                   {items.map((item) => (
