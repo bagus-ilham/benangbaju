@@ -63,8 +63,8 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
   }
 
   return (
-    <div className="space-y-3 py-4">
-      <span className="text-[10px] uppercase tracking-wider font-heading font-medium text-neutral-600 block">
+    <div className="space-y-2.5 py-4">
+      <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
         {isMY ? 'Also Available on Marketplace' : 'Tersedia juga di Marketplace'}
       </span>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -74,7 +74,7 @@ export function MarketplaceLinks({ links }: MarketplaceLinksProps): React.JSX.El
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center space-x-2 px-4 py-3 border border-neutral-200 hover:border-brand-plum bg-brand-cream text-xs font-heading font-medium tracking-wide uppercase transition-all duration-200 text-brand-plum rounded-xl hover:-translate-y-0.5 hover:shadow-sm"
+            className="flex items-center justify-center space-x-2 px-4 py-3 border border-brand-plum/15 hover:border-brand-gold-stroke hover:bg-brand-gold-soft/50 bg-brand-cream text-xs font-heading font-semibold tracking-wide uppercase transition-all duration-200 text-brand-plum rounded-xl hover:-translate-y-0.5 hover:shadow-sm"
           >
             <HandDrawnIcon name={getPlatformIconName(link.platform)} className="h-4 w-4" />
             <span>{resolveLinkLabel(link)}</span>

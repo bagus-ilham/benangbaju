@@ -45,12 +45,17 @@ export function ProductSizeGuideModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-brand-cream p-6 shadow-2xl z-10 border border-neutral-200/80 rounded-2xl"
+            className="relative w-full max-w-lg bg-brand-cream p-6 pt-7 shadow-2xl z-10 border border-brand-plum/10 rounded-3xl overflow-hidden"
           >
+            <div
+              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+              aria-hidden="true"
+            />
             {/* Close Button */}
             <button
+              type="button"
               onClick={onClose}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-brand-plum transition-colors cursor-pointer"
+              className="absolute top-5 right-5 text-brand-plum/55 hover:text-brand-plum transition-colors cursor-pointer"
               aria-label="Tutup panduan ukuran"
             >
               <HandDrawnIcon name="close" className="h-5 w-5" />
@@ -58,11 +63,11 @@ export function ProductSizeGuideModal({
 
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-4 pr-8">
-                <div className="space-y-1">
-                  <span className="text-[9px] uppercase tracking-widest font-sans font-bold text-brand-blue">
+                <div className="space-y-0.5">
+                  <span className="inline-block text-sm font-accent font-bold text-brand-blue leading-none">
                     {unit === 'INCH' ? 'Size Guide' : 'Panduan Ukuran'}
                   </span>
-                  <h2 className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum">
+                  <h2 className="text-lg font-serif font-medium tracking-tight text-brand-plum">
                     {unit === 'INCH'
                       ? 'Size Chart (Inches)'
                       : 'Panduan Ukuran Pakaian (CM)'}
@@ -70,7 +75,7 @@ export function ProductSizeGuideModal({
                 </div>
 
                 {/* Unit Switcher: CM / INCH */}
-                <div className="flex items-center bg-neutral-200/80 p-0.5 rounded-full border border-neutral-300 shrink-0">
+                <div className="flex items-center bg-brand-gold-soft/65 p-0.5 rounded-full border border-brand-plum/15 shrink-0">
                   <button
                     type="button"
                     onClick={() => setSelectedUnit('CM')}

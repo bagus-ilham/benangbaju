@@ -73,7 +73,7 @@ export function Modal({
               transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
             }}
             className={cn(
-              'relative w-full bg-brand-cream border border-neutral-200/80 shadow-[0_20px_60px_-15px_rgba(45,38,64,0.15)] rounded-2xl flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
+              'relative w-full bg-brand-cream border border-brand-plum/10 shadow-[0_20px_60px_-15px_rgba(45,38,64,0.2)] rounded-3xl flex flex-col max-h-[90vh] z-10 overflow-hidden outline-none',
               {
                 'max-w-sm': size === 'sm',
                 'max-w-md': size === 'md',
@@ -83,11 +83,15 @@ export function Modal({
               className
             )}
           >
-            <div className="flex items-center justify-between px-6 py-4 border-b border-amber-200/60 bg-brand-gold/20">
+            <div
+              className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+              aria-hidden="true"
+            />
+            <div className="flex items-center justify-between px-6 py-4 pt-5 border-b border-brand-plum/10 bg-brand-gold-soft/40">
               {title ? (
                 <h2
                   id={titleId}
-                  className="text-sm font-sans font-bold uppercase tracking-wider text-brand-plum"
+                  className="text-lg font-serif font-medium tracking-tight text-brand-plum"
                 >
                   {title}
                 </h2>
@@ -95,8 +99,9 @@ export function Modal({
                 <div />
               )}
               <button
+                type="button"
                 onClick={onClose}
-                className="text-neutral-400 hover:text-brand-plum transition-colors duration-200 p-1 cursor-pointer"
+                className="text-brand-plum/55 hover:text-brand-plum transition-colors duration-200 p-1 cursor-pointer"
                 aria-label="Tutup"
               >
                 <HandDrawnIcon name="close" className="h-4 w-4" />

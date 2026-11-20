@@ -15,32 +15,37 @@ export function OrderStatusBadge({ status }: OrderStatusBadgeProps): React.JSX.E
   switch (status) {
     case 'pending_payment':
       return (
-        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-amber-800 bg-amber-50 border border-amber-200 animate-pulse-glow">
-          <HandDrawnIcon name="clock" className="h-3 w-3 mr-1" /> {isMY ? 'Pending Payment' : 'Menunggu Pembayaran'}
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-amber-900 bg-brand-gold-soft/80 border border-brand-gold-stroke/60 animate-pulse-glow">
+          <HandDrawnIcon name="clock" className="h-3 w-3 mr-1.5" />{' '}
+          {isMY ? 'Pending Payment' : 'Menunggu Pembayaran'}
         </span>
       )
     case 'processing':
       return (
-        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-blue-800 bg-blue-50 border border-blue-200">
-          <HandDrawnIcon name="package" className="h-3 w-3 mr-1" /> {isMY ? 'Processing' : 'Diproses'}
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-brand-plum bg-brand-blue-soft border border-brand-blue-stroke">
+          <HandDrawnIcon name="package" className="h-3 w-3 mr-1.5" />{' '}
+          {isMY ? 'Processing' : 'Diproses'}
         </span>
       )
     case 'shipped':
       return (
-        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-indigo-800 bg-indigo-50 border border-indigo-200">
-          <HandDrawnIcon name="truck" className="h-3 w-3 mr-1" /> {isMY ? 'Shipped' : 'Dikirim'}
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-brand-plum bg-brand-blush border border-brand-blush-stroke">
+          <HandDrawnIcon name="truck" className="h-3 w-3 mr-1.5" />{' '}
+          {isMY ? 'Shipped' : 'Dikirim'}
         </span>
       )
     case 'completed':
       return (
-        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-green-800 bg-green-50 border border-green-200">
-          <HandDrawnIcon name="check-circle" className="h-3 w-3 mr-1" /> {isMY ? 'Completed' : 'Selesai'}
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-emerald-800 bg-emerald-50 border border-emerald-200">
+          <HandDrawnIcon name="check-circle" className="h-3 w-3 mr-1.5" />{' '}
+          {isMY ? 'Completed' : 'Selesai'}
         </span>
       )
     case 'cancelled':
       return (
-        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 text-neutral-600 bg-neutral-50 border border-neutral-200">
-          <HandDrawnIcon name="close" className="h-3 w-3 mr-1" /> {isMY ? 'Cancelled' : 'Dibatalkan'}
+        <span className="inline-flex items-center text-[11px] font-semibold px-3 py-1 rounded-full text-neutral-600 bg-neutral-100 border border-neutral-200">
+          <HandDrawnIcon name="close" className="h-3 w-3 mr-1.5" />{' '}
+          {isMY ? 'Cancelled' : 'Dibatalkan'}
         </span>
       )
     default:
