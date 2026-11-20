@@ -31,53 +31,56 @@ export function ProductAccordionTabs({
 
   return (
     <motion.div variants={itemVariants} className="space-y-2 pt-2">
-      <div className="flex bg-neutral-100/80 p-1.5 rounded-2xl w-full border border-neutral-200/60 font-sans text-[10px] font-bold uppercase tracking-widest relative mb-2 shadow-inner">
+      <div className="flex bg-brand-gold-soft/45 p-1.5 rounded-2xl w-full border border-brand-plum/10 font-sans text-[10px] font-bold uppercase tracking-widest relative mb-2">
         <button
+          type="button"
           onClick={() => setActiveTab('details')}
           className={cn(
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
-            activeTab === 'details' ? 'text-brand-plum font-bold' : 'text-neutral-600 hover:text-brand-plum'
+            activeTab === 'details' ? 'text-brand-plum font-bold' : 'text-brand-plum/65 hover:text-brand-plum'
           )}
         >
           {market === 'MY' ? 'Details' : 'Detail'}
           {activeTab === 'details' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-brand-gold/60 shadow-xs rounded-xl -z-10 border border-amber-200/60"
+              className="absolute inset-0 bg-brand-blush/90 shadow-xs rounded-xl -z-10 border border-brand-blush-stroke/70"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('shipping')}
           className={cn(
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
             activeTab === 'shipping'
               ? 'text-brand-plum font-bold'
-              : 'text-neutral-600 hover:text-brand-plum'
+              : 'text-brand-plum/65 hover:text-brand-plum'
           )}
         >
           {market === 'MY' ? 'Size Guide' : 'Panduan'}
           {activeTab === 'shipping' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-brand-gold/60 shadow-xs rounded-xl -z-10 border border-amber-200/60"
+              className="absolute inset-0 bg-brand-blush/90 shadow-xs rounded-xl -z-10 border border-brand-blush-stroke/70"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('care')}
           className={cn(
             'flex-1 py-2 text-center transition-colors relative z-10 rounded-xl cursor-pointer',
-            activeTab === 'care' ? 'text-brand-plum font-bold' : 'text-neutral-600 hover:text-brand-plum'
+            activeTab === 'care' ? 'text-brand-plum font-bold' : 'text-brand-plum/65 hover:text-brand-plum'
           )}
         >
           {market === 'MY' ? 'Care Guide' : 'Perawatan'}
           {activeTab === 'care' && (
             <motion.div
               layoutId="activeTabUnderline"
-              className="absolute inset-0 bg-brand-cream shadow-xs rounded-xl -z-10 border border-neutral-200/60"
+              className="absolute inset-0 bg-brand-blush/90 shadow-xs rounded-xl -z-10 border border-brand-blush-stroke/70"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
           )}
@@ -117,7 +120,7 @@ export function ProductAccordionTabs({
                     <span className="text-[10px] uppercase font-bold text-neutral-400">
                       {unit === 'INCH' ? 'Size Guide (Inches)' : 'Panduan Ukuran (CM)'}
                     </span>
-                    <div className="flex items-center bg-neutral-200/80 p-0.5 rounded-full border border-neutral-300">
+                    <div className="flex items-center bg-brand-gold-soft/60 p-0.5 rounded-full border border-brand-plum/15">
                       <button
                         type="button"
                         onClick={() => setSelectedUnit('CM')}

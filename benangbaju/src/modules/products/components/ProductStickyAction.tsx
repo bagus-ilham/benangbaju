@@ -70,12 +70,16 @@ export function ProductStickyAction({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 25 }}
-          className="fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-md border-t border-neutral-200/80 shadow-xs py-3 px-4 md:py-4 md:px-8 rounded-t-2xl font-sans"
+          className="fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-md border-t border-brand-plum/10 shadow-[0_-10px_30px_-10px_rgba(45,38,64,0.14)] py-3 px-4 md:py-4 md:px-8 rounded-t-3xl font-sans overflow-hidden"
         >
+          <div
+            className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-blue via-brand-blush to-brand-gold"
+            aria-hidden="true"
+          />
           <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
             {/* Product Info (Desktop/Tablet) */}
             <div className="hidden sm:flex items-center space-x-3">
-              <div className="relative w-8 h-10 bg-neutral-100 border border-neutral-100 flex-shrink-0 rounded-md overflow-hidden">
+              <div className="relative w-9 h-11 bg-brand-rose-soft/65 border border-brand-plum/10 flex-shrink-0 rounded-xl overflow-hidden">
                 <Image
                   src={getProxiedImageUrl(
                     product.product_images.find((img) => img.is_primary)?.url ||
@@ -85,11 +89,11 @@ export function ProductStickyAction({
                   alt={product.name}
                   className="object-cover"
                   fill
-                  sizes="32px"
+                  sizes="36px"
                 />
               </div>
               <div>
-                <div className="text-xs font-sans font-bold uppercase tracking-wider text-brand-plum line-clamp-1">
+                <div className="text-sm font-serif font-medium text-brand-plum line-clamp-1 leading-snug">
                   {product.name}
                 </div>
                 <div className="flex items-baseline gap-1.5 mt-0.5">

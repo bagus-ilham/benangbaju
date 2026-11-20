@@ -138,17 +138,17 @@ export const ProductCard = React.memo(function ProductCard({
         {/* Discount badge */}
         {typeof activeDiscountPercent === 'number' && activeDiscountPercent > 0 && (
           <div className="absolute top-3 left-3 z-10">
-            <Badge variant="sale" size="sm">
+            <Badge variant="sale" size="sm" className="-rotate-1">
               -{activeDiscountPercent}%
             </Badge>
           </div>
         )}
 
-        {/* Featured badge */}
+        {/* Featured badge — playful boutique sticker style */}
         {product.is_featured && !activeDiscountPercent && (
           <div className="absolute top-3 left-3 z-10">
-            <Badge variant="gold" size="sm">
-              {market === 'MY' ? 'Featured' : 'Pilihan'}
+            <Badge variant="gold" size="sm" isPlayful className="-rotate-2 px-2.5 shadow-xs">
+              {market === 'MY' ? 'Featured ✨' : 'Pilihan ✨'}
             </Badge>
           </div>
         )}

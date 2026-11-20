@@ -50,7 +50,7 @@ export function FloatingWhatsApp({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'fixed z-45 w-11 h-11 rounded-full bg-[#25D366] text-white shadow-lg flex items-center justify-center hover:bg-[#20ba5a] hover:scale-110 active:scale-95 transition-all duration-350 cursor-pointer',
+        'fixed z-45 h-11 px-3 md:px-3.5 rounded-full bg-[#2FA866] hover:bg-[#279156] text-white ring-2 ring-brand-cream shadow-[0_10px_28px_-6px_rgba(45,38,64,0.28)] flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 cursor-pointer group',
         pathname?.startsWith('/produk/') ? 'bottom-24 md:bottom-6' : 'bottom-20 md:bottom-6'
       )}
       style={{
@@ -59,7 +59,10 @@ export function FloatingWhatsApp({
       aria-label={isMY ? 'Chat with Us on WhatsApp' : 'Chat WhatsApp'}
       title={isMY ? 'Chat with Us on WhatsApp' : 'Chat WhatsApp'}
     >
-      <HandDrawnIcon name="whatsapp" className="w-5 h-5 invert brightness-200" />
+      <HandDrawnIcon name="whatsapp" className="w-5 h-5 invert brightness-200 shrink-0" />
+      <span className="hidden md:inline-block max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-[90px] transition-all duration-300 text-[11px] font-sans font-bold tracking-wide">
+        {isMY ? 'Chat Us' : 'Tanya Kami'}
+      </span>
     </motion.a>
   )
 }

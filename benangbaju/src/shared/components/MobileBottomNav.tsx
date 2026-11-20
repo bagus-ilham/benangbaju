@@ -20,6 +20,9 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
   const wishlistCount = useWishlistStore((state) => state.productIds.length)
   const { isAuthenticated } = useAuthStore()
 
+  // Keep prop referenced for future extensibility without unused warning
+  void onOpenSearch
+
   const navItems: Array<{
     name: string
     href?: string
@@ -36,20 +39,26 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
       isActive: pathname === '/',
     },
     {
-      name: isMY ? 'Custom Size' : 'Custom Size',
+      name: 'Custom Size',
       href: '/produk/customize-size',
       handDrawnName: 'measuring-tape',
       isActive: pathname === '/produk/customize-size',
     },
     {
-      name: isMY ? 'Wishlist' : 'Wishlist',
+      name: 'Wishlist',
       href: '/wishlist',
       handDrawnName: wishlistCount > 0 || pathname === '/wishlist' ? 'heart-filled' : 'heart',
       badge: wishlistCount > 0 ? wishlistCount : null,
       isActive: pathname === '/wishlist',
     },
     {
-      name: isMY ? (isAuthenticated ? 'Orders' : 'Catalog') : (isAuthenticated ? 'Pesanan' : 'Katalog'),
+      name: isMY
+        ? isAuthenticated
+          ? 'Orders'
+          : 'Catalog'
+        : isAuthenticated
+          ? 'Pesanan'
+          : 'Katalog',
       href: isAuthenticated ? '/pesanan' : '/produk',
       handDrawnName: isAuthenticated ? 'box' : 'grid',
       isActive: isAuthenticated
@@ -57,34 +66,47 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
         : pathname.startsWith('/produk') && pathname !== '/produk/customize-size',
     },
     {
-      name: isMY ? (isAuthenticated ? 'Account' : 'Sign In') : (isAuthenticated ? 'Akun' : 'Masuk'),
+      name: isMY
+        ? isAuthenticated
+          ? 'Account'
+          : 'Sign In'
+        : isAuthenticated
+          ? 'Akun'
+          : 'Masuk',
       href: isAuthenticated ? '/akun' : '/masuk',
       handDrawnName: 'user',
-      isActive: pathname === '/akun' || pathname === '/masuk',
+      isActive: pathname.startsWith('/akun') || pathname === '/masuk',
     },
   ]
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-lg border-t border-neutral-200/80 shadow-xs pb-safe font-sans">
-      <nav className="flex items-center justify-around h-14 px-2">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-cream/95 backdrop-blur-lg border-t border-brand-plum/10 shadow-[0_-8px_24px_-8px_rgba(45,38,64,0.12)] pb-safe font-sans">
+      <nav className="flex items-center justify-around h-15 px-2">
         {navItems.map((item) => {
           const LucideIconComp = item.lucideIcon
           const content = (
             <div className="relative flex flex-col items-center justify-center w-full py-1">
-              <div className="relative">
+              <div className="relative flex items-center justify-center px-3 py-1 rounded-full">
+                {item.isActive && (
+                  <motion.div
+                    layoutId="bottom-nav-active-pill"
+                    className="absolute inset-0 bg-brand-blush/80 border border-brand-blush-stroke/60 rounded-full -z-10"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
                 {item.handDrawnName ? (
                   <HandDrawnIcon
                     name={item.handDrawnName}
                     className={cn(
                       'h-5 w-5 transition-transform duration-200',
-                      item.isActive ? 'scale-110' : ''
+                      item.isActive ? 'scale-105' : ''
                     )}
                   />
                 ) : LucideIconComp ? (
                   <LucideIconComp
                     className={cn(
                       'h-5 w-5 transition-transform duration-200',
-                      item.isActive ? 'text-brand-plum scale-110' : 'text-neutral-500'
+                      item.isActive ? 'text-brand-plum scale-105' : 'text-neutral-500'
                     )}
                     strokeWidth={item.isActive ? 2.5 : 1.75}
                   />
@@ -93,7 +115,7 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-2 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
+                    className="absolute -top-0.5 right-1 bg-brand-gold text-brand-plum text-[8px] font-sans font-bold h-3.5 w-3.5 flex items-center justify-center rounded-full leading-none shadow-xs"
                   >
                     {item.badge}
                   </motion.span>
@@ -107,13 +129,6 @@ export function MobileBottomNav({ onOpenSearch }: MobileBottomNavProps): React.J
               >
                 {item.name}
               </span>
-              {item.isActive && (
-                <motion.div
-                  layoutId="bottom-nav-active"
-                  className="absolute -bottom-1 w-5 h-0.5 bg-brand-gold rounded-full"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
             </div>
           )
 

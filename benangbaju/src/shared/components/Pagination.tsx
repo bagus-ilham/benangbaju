@@ -25,7 +25,6 @@ export function Pagination({
 }: PaginationProps): React.JSX.Element | null {
   if (totalPages <= 1) return null
 
-  // Calculate sliding window range (maximum maxButtons, e.g. 5)
   const maxVisible = Math.min(maxButtons, totalPages)
   let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2))
   let endPage = startPage + maxVisible - 1
@@ -49,21 +48,21 @@ export function Pagination({
     >
       {showInfo && (
         <div className="text-xs font-sans text-neutral-500 font-medium">
-          Menampilkan halaman <span className="font-bold text-neutral-900">{currentPage}</span> dari{' '}
-          <span className="font-bold text-neutral-900">{totalPages}</span>
+          Menampilkan halaman <span className="font-bold text-brand-plum">{currentPage}</span> dari{' '}
+          <span className="font-bold text-brand-plum">{totalPages}</span>
           {totalItems !== undefined && (
             <span className="ml-1 text-neutral-400">({totalItems} total data)</span>
           )}
         </div>
       )}
 
-      <div className="flex items-center space-x-1.5 mx-auto sm:mx-0">
+      <div className="flex items-center space-x-2 mx-auto sm:mx-0">
         {/* Left Arrow Button */}
         <button
           type="button"
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
           disabled={currentPage <= 1}
-          className="p-2 border border-neutral-200 rounded-lg text-neutral-700 bg-white hover:bg-neutral-100 hover:border-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition duration-150 shadow-2xs cursor-pointer"
+          className="h-9 w-9 flex items-center justify-center border border-brand-plum/15 rounded-full text-brand-plum bg-brand-cream hover:bg-brand-blush/70 hover:border-brand-blush-stroke disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-2xs cursor-pointer"
           aria-label="Halaman sebelumnya"
           title="Halaman sebelumnya"
         >
@@ -76,12 +75,12 @@ export function Pagination({
             <button
               type="button"
               onClick={() => onPageChange(1)}
-              className="h-8 min-w-[32px] px-2 border border-neutral-200 rounded-lg text-xs font-bold bg-white text-neutral-700 hover:bg-neutral-100 hover:border-neutral-300 transition duration-150 shadow-2xs cursor-pointer"
+              className="h-9 min-w-[36px] px-2.5 border border-brand-plum/15 rounded-full text-xs font-bold bg-brand-cream text-brand-plum hover:bg-brand-blush/70 hover:border-brand-blush-stroke transition-all duration-200 shadow-2xs cursor-pointer"
             >
               1
             </button>
             {startPage > 2 && (
-              <span className="px-1 text-xs text-neutral-400 font-bold select-none">...</span>
+              <span className="px-1 text-xs text-brand-plum/45 font-bold select-none">...</span>
             )}
           </>
         )}
@@ -95,10 +94,10 @@ export function Pagination({
               type="button"
               onClick={() => onPageChange(p)}
               className={cn(
-                'h-8 min-w-[32px] px-2 border rounded-lg text-xs font-bold transition duration-150 shadow-2xs cursor-pointer',
+                'h-9 min-w-[36px] px-2.5 border rounded-full text-xs font-bold transition-all duration-200 cursor-pointer',
                 isActive
-                  ? 'bg-brand-plum text-white border-brand-plum shadow-sm'
-                  : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300'
+                  ? 'bg-brand-plum text-brand-gold border-brand-plum shadow-sm scale-105'
+                  : 'bg-brand-cream text-brand-plum border-brand-plum/15 hover:bg-brand-blush/70 hover:border-brand-blush-stroke shadow-2xs'
               )}
               aria-current={isActive ? 'page' : undefined}
             >
@@ -111,12 +110,12 @@ export function Pagination({
         {endPage < totalPages && (
           <>
             {endPage < totalPages - 1 && (
-              <span className="px-1 text-xs text-neutral-400 font-bold select-none">...</span>
+              <span className="px-1 text-xs text-brand-plum/45 font-bold select-none">...</span>
             )}
             <button
               type="button"
               onClick={() => onPageChange(totalPages)}
-              className="h-8 min-w-[32px] px-2 border border-neutral-200 rounded-lg text-xs font-bold bg-white text-neutral-700 hover:bg-neutral-100 hover:border-neutral-300 transition duration-150 shadow-2xs cursor-pointer"
+              className="h-9 min-w-[36px] px-2.5 border border-brand-plum/15 rounded-full text-xs font-bold bg-brand-cream text-brand-plum hover:bg-brand-blush/70 hover:border-brand-blush-stroke transition-all duration-200 shadow-2xs cursor-pointer"
             >
               {totalPages}
             </button>
@@ -128,7 +127,7 @@ export function Pagination({
           type="button"
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage >= totalPages}
-          className="p-2 border border-neutral-200 rounded-lg text-neutral-700 bg-white hover:bg-neutral-100 hover:border-neutral-300 disabled:opacity-30 disabled:pointer-events-none transition duration-150 shadow-2xs cursor-pointer"
+          className="h-9 w-9 flex items-center justify-center border border-brand-plum/15 rounded-full text-brand-plum bg-brand-cream hover:bg-brand-blush/70 hover:border-brand-blush-stroke disabled:opacity-30 disabled:pointer-events-none transition-all duration-200 shadow-2xs cursor-pointer"
           aria-label="Halaman berikutnya"
           title="Halaman berikutnya"
         >
